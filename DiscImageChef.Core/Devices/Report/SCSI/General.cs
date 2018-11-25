@@ -55,7 +55,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
         /// <param name="report">Device report</param>
         /// <param name="debug">If debug is enabled</param>
         /// <param name="removable">If device is removable</param>
-        public static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
+        public static void Report(Device dev, ref DeviceReportV2 report, bool debug, ref bool removable)
         {
             if(report == null) return;
 
@@ -87,110 +87,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             DicConsole.WriteLine("Querying SCSI INQUIRY...");
             sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer);
 
-            report.SCSI = new scsiType();
+            report.SCSI = new Scsi();
 
             if(!sense && Inquiry.Decode(buffer).HasValue)
             {
-                Inquiry.SCSIInquiry inq = Inquiry.Decode(buffer).Value;
+                report.SCSI.Inquiry = Inquiry.Decode(buffer);
 
-                List<ushort> versionDescriptors = new List<ushort>();
-                report.SCSI.Inquiry = new scsiInquiryType();
-
-                if(inq.DeviceTypeModifier != 0)
-                {
-                    report.SCSI.Inquiry.DeviceTypeModifier          = inq.DeviceTypeModifier;
-                    report.SCSI.Inquiry.DeviceTypeModifierSpecified = true;
-                }
-
-                if(inq.ISOVersion != 0)
-                {
-                    report.SCSI.Inquiry.ISOVersion          = inq.ISOVersion;
-                    report.SCSI.Inquiry.ISOVersionSpecified = true;
-                }
-
-                if(inq.ECMAVersion != 0)
-                {
-                    report.SCSI.Inquiry.ECMAVersion          = inq.ECMAVersion;
-                    report.SCSI.Inquiry.ECMAVersionSpecified = true;
-                }
-
-                if(inq.ANSIVersion != 0)
-                {
-                    report.SCSI.Inquiry.ANSIVersion          = inq.ANSIVersion;
-                    report.SCSI.Inquiry.ANSIVersionSpecified = true;
-                }
-
-                if(inq.ResponseDataFormat != 0)
-                {
-                    report.SCSI.Inquiry.ResponseDataFormat          = inq.ResponseDataFormat;
-                    report.SCSI.Inquiry.ResponseDataFormatSpecified = true;
-                }
-
-                if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.VendorIdentification)))
-                {
-                    report.SCSI.Inquiry.VendorIdentification =
-                        StringHandlers.CToString(inq.VendorIdentification).Trim();
-                    if(!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.VendorIdentification))
-                        report.SCSI.Inquiry.VendorIdentificationSpecified = true;
-                }
-
-                if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductIdentification)))
-                {
-                    report.SCSI.Inquiry.ProductIdentification =
-                        StringHandlers.CToString(inq.ProductIdentification).Trim();
-                    if(!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductIdentification))
-                        report.SCSI.Inquiry.ProductIdentificationSpecified = true;
-                }
-
-                if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(inq.ProductRevisionLevel)))
-                {
-                    report.SCSI.Inquiry.ProductRevisionLevel =
-                        StringHandlers.CToString(inq.ProductRevisionLevel).Trim();
-                    if(!string.IsNullOrWhiteSpace(report.SCSI.Inquiry.ProductRevisionLevel))
-                        report.SCSI.Inquiry.ProductRevisionLevelSpecified = true;
-                }
-
-                if(inq.VersionDescriptors != null)
-                {
-                    versionDescriptors.AddRange(inq.VersionDescriptors.Where(descriptor => descriptor != 0));
-
-                    if(versionDescriptors.Count > 0)
-                        report.SCSI.Inquiry.VersionDescriptors = versionDescriptors.ToArray();
-                }
-
-                report.SCSI.Inquiry.PeripheralQualifier   = (PeripheralQualifiers)inq.PeripheralQualifier;
-                report.SCSI.Inquiry.PeripheralDeviceType  = (PeripheralDeviceTypes)inq.PeripheralDeviceType;
-                report.SCSI.Inquiry.AsymmetricalLUNAccess = (TGPSValues)inq.TPGS;
-                report.SCSI.Inquiry.SPIClocking           = (SPIClocking)inq.Clocking;
-
-                report.SCSI.Inquiry.AccessControlCoordinator = inq.ACC;
-                report.SCSI.Inquiry.ACKRequests              = inq.ACKREQQ;
-                report.SCSI.Inquiry.AERCSupported            = inq.AERC;
-                report.SCSI.Inquiry.Address16                = inq.Addr16;
-                report.SCSI.Inquiry.Address32                = inq.Addr32;
-                report.SCSI.Inquiry.BasicQueueing            = inq.BQue;
-                report.SCSI.Inquiry.EnclosureServices        = inq.EncServ;
-                report.SCSI.Inquiry.HierarchicalLUN          = inq.HiSup;
-                report.SCSI.Inquiry.IUS                      = inq.IUS;
-                report.SCSI.Inquiry.LinkedCommands           = inq.Linked;
-                report.SCSI.Inquiry.MediumChanger            = inq.MChngr;
-                report.SCSI.Inquiry.MultiPortDevice          = inq.MultiP;
-                report.SCSI.Inquiry.NormalACA                = inq.NormACA;
-                report.SCSI.Inquiry.Protection               = inq.Protect;
-                report.SCSI.Inquiry.QAS                      = inq.QAS;
-                report.SCSI.Inquiry.RelativeAddressing       = inq.RelAddr;
-                report.SCSI.Inquiry.Removable                = inq.RMB;
-                report.SCSI.Inquiry.TaggedCommandQueue       = inq.CmdQue;
-                report.SCSI.Inquiry.TerminateTaskSupported   = inq.TrmTsk;
-                report.SCSI.Inquiry.ThirdPartyCopy           = inq.ThreePC;
-                report.SCSI.Inquiry.TranferDisable           = inq.TranDis;
-                report.SCSI.Inquiry.SoftReset                = inq.SftRe;
-                report.SCSI.Inquiry.StorageArrayController   = inq.SCCS;
-                report.SCSI.Inquiry.SyncTransfer             = inq.Sync;
-                report.SCSI.Inquiry.WideBus16                = inq.WBus16;
-                report.SCSI.Inquiry.WideBus32                = inq.WBus32;
-
-                if(debug) report.SCSI.Inquiry.Data = buffer;
+                if(debug) report.SCSI.InquiryData = buffer;
             }
 
             DicConsole.WriteLine("Querying list of SCSI EVPDs...");
@@ -201,14 +104,14 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 byte[] evpdPages = EVPD.DecodePage00(buffer);
                 if(evpdPages != null && evpdPages.Length > 0)
                 {
-                    List<pageType> evpds = new List<pageType>();
+                    List<ScsiPage> evpds = new List<ScsiPage>();
                     foreach(byte page in evpdPages.Where(page => page != 0x80))
                     {
                         DicConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
                         sense = dev.ScsiInquiry(out buffer, out senseBuffer, page);
                         if(sense) continue;
 
-                        pageType evpd = new pageType {page = page, value = buffer};
+                        ScsiPage evpd = new ScsiPage {page = page, value = buffer};
                         evpds.Add(evpd);
                     }
 
@@ -287,7 +190,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
             if(decMode.HasValue)
             {
-                report.SCSI.ModeSense = new modeType
+                report.SCSI.ModeSense = new ScsiMode
                 {
                     BlankCheckEnabled = decMode.Value.Header.EBC,
                     DPOandFUA         = decMode.Value.Header.DPOFUA,
@@ -295,27 +198,18 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 };
 
                 if(decMode.Value.Header.BufferedMode > 0)
-                {
-                    report.SCSI.ModeSense.BufferedMode          = decMode.Value.Header.BufferedMode;
-                    report.SCSI.ModeSense.BufferedModeSpecified = true;
-                }
+                    report.SCSI.ModeSense.BufferedMode = decMode.Value.Header.BufferedMode;
 
-                if(decMode.Value.Header.Speed > 0)
-                {
-                    report.SCSI.ModeSense.Speed          = decMode.Value.Header.Speed;
-                    report.SCSI.ModeSense.SpeedSpecified = true;
-                }
+                if(decMode.Value.Header.Speed > 0) report.SCSI.ModeSense.Speed = decMode.Value.Header.Speed;
 
                 if(decMode.Value.Pages != null)
                 {
-                    List<modePageType> modePages = new List<modePageType>();
+                    List<ScsiPage> modePages = new List<ScsiPage>();
                     foreach(Modes.ModePage page in decMode.Value.Pages)
                     {
-                        modePageType modePage = new modePageType
+                        ScsiPage modePage = new ScsiPage
                         {
-                            page    = page.Page,
-                            subpage = page.Subpage,
-                            value   = page.PageResponse
+                            page = page.Page, subpage = page.Subpage, value = page.PageResponse
                         };
                         modePages.Add(modePage);
 
@@ -327,10 +221,14 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
             }
 
+            string productIdentification = null;
+            if(!string.IsNullOrWhiteSpace(StringHandlers.CToString(report.SCSI.Inquiry?.ProductIdentification)))
+                productIdentification = StringHandlers.CToString(report.SCSI.Inquiry?.ProductIdentification).Trim();
+
             switch(dev.ScsiType)
             {
                 case PeripheralDeviceTypes.MultiMediaDevice:
-                    Mmc.Report(dev, ref report, debug, ref cdromMode);
+                    Mmc.Report(dev, ref report, debug, ref cdromMode, productIdentification);
                     break;
                 case PeripheralDeviceTypes.SequentialAccess:
                     Ssc.Report(dev, ref report, debug);
@@ -338,7 +236,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 default:
                     if(removable)
                     {
-                        List<testedMediaType> mediaTests = new List<testedMediaType>();
+                        List<TestedMedia> mediaTests = new List<TestedMedia>();
 
                         pressedKey = new ConsoleKeyInfo();
                         while(pressedKey.Key != ConsoleKey.N)
@@ -356,7 +254,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
                             System.Console.ReadKey(true);
 
-                            testedMediaType mediaTest = new testedMediaType();
+                            TestedMedia mediaTest = new TestedMedia();
                             DicConsole.Write("Please write a description of the media type and press enter: ");
                             mediaTest.MediumTypeName = System.Console.ReadLine();
                             DicConsole.Write("Please write the media manufacturer and press enter: ");
@@ -364,9 +262,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             DicConsole.Write("Please write the media model and press enter: ");
                             mediaTest.Model = System.Console.ReadLine();
 
-                            mediaTest.ManufacturerSpecified = true;
-                            mediaTest.ModelSpecified        = true;
-                            mediaTest.MediaIsRecognized     = true;
+                            mediaTest.MediaIsRecognized = true;
 
                             sense = dev.ScsiTestUnitReady(out senseBuffer, TIMEOUT, out _);
                             if(sense)
@@ -409,9 +305,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                             if(mediaTest.MediaIsRecognized)
                             {
-                                mediaTest.SupportsReadCapacitySpecified   = true;
-                                mediaTest.SupportsReadCapacity16Specified = true;
-
                                 DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
                                 sense = dev.ReadCapacity(out buffer, out senseBuffer, TIMEOUT, out _);
                                 if(!sense && !dev.Error)
@@ -422,8 +315,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         1;
                                     mediaTest.BlockSize =
                                         (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
-                                    mediaTest.BlocksSpecified    = true;
-                                    mediaTest.BlockSizeSpecified = true;
                                 }
 
                                 DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
@@ -437,8 +328,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     mediaTest.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
                                     mediaTest.BlockSize =
                                         (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]);
-                                    mediaTest.BlocksSpecified    = true;
-                                    mediaTest.BlockSizeSpecified = true;
                                 }
 
                                 decMode = null;
@@ -464,26 +353,15 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                                 if(decMode.HasValue)
                                 {
-                                    mediaTest.MediumType          = (byte)decMode.Value.Header.MediumType;
-                                    mediaTest.MediumTypeSpecified = true;
+                                    mediaTest.MediumType = (byte)decMode.Value.Header.MediumType;
                                     if(decMode.Value.Header.BlockDescriptors        != null &&
                                        decMode.Value.Header.BlockDescriptors.Length > 0)
-                                    {
-                                        mediaTest.Density =
-                                            (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                                        mediaTest.DensitySpecified = true;
-                                    }
+                                        mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                                 }
 
-                                mediaTest.SupportsReadSpecified     = true;
-                                mediaTest.SupportsRead10Specified   = true;
-                                mediaTest.SupportsRead12Specified   = true;
-                                mediaTest.SupportsRead16Specified   = true;
-                                mediaTest.SupportsReadLongSpecified = true;
-
                                 DicConsole.WriteLine("Trying SCSI READ (6)...");
-                                mediaTest.SupportsRead =
-                                    !dev.Read6(out buffer, out senseBuffer, 0, mediaTest.BlockSize, TIMEOUT, out _);
+                                mediaTest.SupportsRead = !dev.Read6(out buffer, out senseBuffer, 0,
+                                                                    mediaTest.BlockSize ?? 512, TIMEOUT, out _);
                                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead);
                                 if(debug)
                                     DataFile.WriteTo("SCSI Report", "read6",
@@ -493,7 +371,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 DicConsole.WriteLine("Trying SCSI READ (10)...");
                                 mediaTest.SupportsRead10 =
                                     !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                mediaTest.BlockSize, 0, 1, TIMEOUT, out _);
+                                                mediaTest.BlockSize ?? 512, 0, 1, TIMEOUT, out _);
                                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
                                 if(debug)
                                     DataFile.WriteTo("SCSI Report", "read10",
@@ -503,7 +381,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 DicConsole.WriteLine("Trying SCSI READ (12)...");
                                 mediaTest.SupportsRead12 =
                                     !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                mediaTest.BlockSize, 0, 1, false, TIMEOUT, out _);
+                                                mediaTest.BlockSize ?? 512, 0, 1, false, TIMEOUT, out _);
                                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
                                 if(debug)
                                     DataFile.WriteTo("SCSI Report", "read12",
@@ -513,7 +391,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 DicConsole.WriteLine("Trying SCSI READ (16)...");
                                 mediaTest.SupportsRead16 =
                                     !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
-                                                mediaTest.BlockSize, 0, 1, false, TIMEOUT, out _);
+                                                mediaTest.BlockSize ?? 512, 0, 1, false, TIMEOUT, out _);
                                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
                                 if(debug)
                                     DataFile.WriteTo("SCSI Report", "read16",
@@ -534,15 +412,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                         {
                                             mediaTest.SupportsReadLong = true;
                                             if(decSense.Value.InformationValid && decSense.Value.ILI)
-                                            {
                                                 mediaTest.LongBlockSize =
                                                     0xFFFF - (decSense.Value.Information & 0xFFFF);
-                                                mediaTest.LongBlockSizeSpecified = true;
-                                            }
                                         }
                                 }
 
-                                if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                if(mediaTest.SupportsReadLong == true && mediaTest.LongBlockSize == mediaTest.BlockSize)
                                     if(mediaTest.BlockSize == 512)
                                         foreach(int i in new[]
                                         {
@@ -559,9 +434,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                                    testSize, TIMEOUT, out _);
                                             if(sense || dev.Error) continue;
 
-                                            mediaTest.SupportsReadLong       = true;
-                                            mediaTest.LongBlockSize          = testSize;
-                                            mediaTest.LongBlockSizeSpecified = true;
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize    = testSize;
                                             break;
                                         }
                                     else if(mediaTest.BlockSize == 1024)
@@ -578,9 +452,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                                    (ushort)i, TIMEOUT, out _);
                                             if(sense || dev.Error) continue;
 
-                                            mediaTest.SupportsReadLong       = true;
-                                            mediaTest.LongBlockSize          = testSize;
-                                            mediaTest.LongBlockSizeSpecified = true;
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize    = testSize;
                                             break;
                                         }
                                     else if(mediaTest.BlockSize == 2048)
@@ -589,9 +462,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                                TIMEOUT, out _);
                                         if(!sense && !dev.Error)
                                         {
-                                            mediaTest.SupportsReadLong       = true;
-                                            mediaTest.LongBlockSize          = 2380;
-                                            mediaTest.LongBlockSizeSpecified = true;
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize    = 2380;
                                         }
                                     }
                                     else if(mediaTest.BlockSize == 4096)
@@ -600,9 +472,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                                TIMEOUT, out _);
                                         if(!sense && !dev.Error)
                                         {
-                                            mediaTest.SupportsReadLong       = true;
-                                            mediaTest.LongBlockSize          = 4760;
-                                            mediaTest.LongBlockSizeSpecified = true;
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize    = 4760;
                                         }
                                     }
                                     else if(mediaTest.BlockSize == 8192)
@@ -611,13 +482,12 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                                TIMEOUT, out _);
                                         if(!sense && !dev.Error)
                                         {
-                                            mediaTest.SupportsReadLong       = true;
-                                            mediaTest.LongBlockSize          = 9424;
-                                            mediaTest.LongBlockSizeSpecified = true;
+                                            mediaTest.SupportsReadLong = true;
+                                            mediaTest.LongBlockSize    = 9424;
                                         }
                                     }
 
-                                if(mediaTest.SupportsReadLong && mediaTest.LongBlockSize == mediaTest.BlockSize)
+                                if(mediaTest.SupportsReadLong == true && mediaTest.LongBlockSize == mediaTest.BlockSize)
                                 {
                                     pressedKey = new ConsoleKeyInfo();
                                     while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
@@ -637,8 +507,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                                    TIMEOUT, out _);
                                             if(!sense)
                                             {
-                                                mediaTest.LongBlockSize          = i;
-                                                mediaTest.LongBlockSizeSpecified = true;
+                                                mediaTest.LongBlockSize = i;
                                                 break;
                                             }
 
@@ -649,8 +518,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                     }
                                 }
 
-                                if(debug && mediaTest.SupportsReadLong && mediaTest.LongBlockSizeSpecified &&
-                                   mediaTest.LongBlockSize != mediaTest.BlockSize)
+                                if(debug && mediaTest.SupportsReadLong == true &&
+                                   mediaTest.LongBlockSize             != mediaTest.BlockSize)
                                 {
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                            (ushort)mediaTest.LongBlockSize, TIMEOUT, out _);
@@ -660,7 +529,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                          buffer);
                                 }
 
-                                mediaTest.CanReadMediaSerialSpecified = true;
                                 DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
                                 mediaTest.CanReadMediaSerial =
                                     !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, TIMEOUT, out _);
@@ -673,12 +541,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     }
                     else
                     {
-                        report.SCSI.ReadCapabilities                   = new testedMediaType();
-                        report.SCSI.ReadCapabilitiesSpecified          = true;
+                        report.SCSI.ReadCapabilities                   = new TestedMedia();
                         report.SCSI.ReadCapabilities.MediaIsRecognized = true;
-
-                        report.SCSI.ReadCapabilities.SupportsReadCapacitySpecified   = true;
-                        report.SCSI.ReadCapabilities.SupportsReadCapacity16Specified = true;
 
                         DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
                         sense = dev.ReadCapacity(out buffer, out senseBuffer, TIMEOUT, out _);
@@ -689,8 +553,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) + 1;
                             report.SCSI.ReadCapabilities.BlockSize =
                                 (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
-                            report.SCSI.ReadCapabilities.BlocksSpecified    = true;
-                            report.SCSI.ReadCapabilities.BlockSizeSpecified = true;
                         }
 
                         DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
@@ -704,8 +566,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             report.SCSI.ReadCapabilities.Blocks = BitConverter.ToUInt64(temp, 0) + 1;
                             report.SCSI.ReadCapabilities.BlockSize =
                                 (uint)((buffer[8] << 24) + (buffer[9] << 16) + (buffer[10] << 8) + buffer[11]);
-                            report.SCSI.ReadCapabilities.BlocksSpecified    = true;
-                            report.SCSI.ReadCapabilities.BlockSizeSpecified = true;
                         }
 
                         decMode = null;
@@ -732,65 +592,51 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                         if(decMode.HasValue)
                         {
-                            report.SCSI.ReadCapabilities.MediumType          = (byte)decMode.Value.Header.MediumType;
-                            report.SCSI.ReadCapabilities.MediumTypeSpecified = true;
+                            report.SCSI.ReadCapabilities.MediumType = (byte)decMode.Value.Header.MediumType;
                             if(decMode.Value.Header.BlockDescriptors        != null &&
                                decMode.Value.Header.BlockDescriptors.Length > 0)
-                            {
                                 report.SCSI.ReadCapabilities.Density =
                                     (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                                report.SCSI.ReadCapabilities.DensitySpecified = true;
-                            }
                         }
-
-                        report.SCSI.ReadCapabilities.SupportsReadSpecified     = true;
-                        report.SCSI.ReadCapabilities.SupportsRead10Specified   = true;
-                        report.SCSI.ReadCapabilities.SupportsRead12Specified   = true;
-                        report.SCSI.ReadCapabilities.SupportsRead16Specified   = true;
-                        report.SCSI.ReadCapabilities.SupportsReadLongSpecified = true;
 
                         DicConsole.WriteLine("Trying SCSI READ (6)...");
                         report.SCSI.ReadCapabilities.SupportsRead =
-                            !dev.Read6(out buffer, out senseBuffer, 0, report.SCSI.ReadCapabilities.BlockSize, TIMEOUT,
-                                       out _);
+                            !dev.Read6(out buffer, out senseBuffer, 0, report.SCSI.ReadCapabilities.BlockSize ?? 512,
+                                       TIMEOUT, out _);
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                   !report.SCSI.ReadCapabilities.SupportsRead);
                         if(debug)
-                            DataFile.WriteTo("SCSI Report", "read6",
-                                             "_debug_" + report.SCSI.Inquiry.ProductIdentification + ".bin",
+                            DataFile.WriteTo("SCSI Report", "read6", "_debug_" + productIdentification + ".bin",
                                              "read results", buffer);
 
                         DicConsole.WriteLine("Trying SCSI READ (10)...");
                         report.SCSI.ReadCapabilities.SupportsRead10 =
                             !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                        report.SCSI.ReadCapabilities.BlockSize, 0, 1, TIMEOUT, out _);
+                                        report.SCSI.ReadCapabilities.BlockSize ?? 512, 0, 1, TIMEOUT, out _);
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                   !report.SCSI.ReadCapabilities.SupportsRead10);
                         if(debug)
-                            DataFile.WriteTo("SCSI Report", "read10",
-                                             "_debug_" + report.SCSI.Inquiry.ProductIdentification + ".bin",
+                            DataFile.WriteTo("SCSI Report", "read10", "_debug_" + productIdentification + ".bin",
                                              "read results", buffer);
 
                         DicConsole.WriteLine("Trying SCSI READ (12)...");
                         report.SCSI.ReadCapabilities.SupportsRead12 =
                             !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                        report.SCSI.ReadCapabilities.BlockSize, 0, 1, false, TIMEOUT, out _);
+                                        report.SCSI.ReadCapabilities.BlockSize ?? 512, 0, 1, false, TIMEOUT, out _);
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                   !report.SCSI.ReadCapabilities.SupportsRead12);
                         if(debug)
-                            DataFile.WriteTo("SCSI Report", "read12",
-                                             "_debug_" + report.SCSI.Inquiry.ProductIdentification + ".bin",
+                            DataFile.WriteTo("SCSI Report", "read12", "_debug_" + productIdentification + ".bin",
                                              "read results", buffer);
 
                         DicConsole.WriteLine("Trying SCSI READ (16)...");
                         report.SCSI.ReadCapabilities.SupportsRead16 =
                             !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
-                                        report.SCSI.ReadCapabilities.BlockSize, 0, 1, false, TIMEOUT, out _);
+                                        report.SCSI.ReadCapabilities.BlockSize ?? 512, 0, 1, false, TIMEOUT, out _);
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                   !report.SCSI.ReadCapabilities.SupportsRead16);
                         if(debug)
-                            DataFile.WriteTo("SCSI Report", "read16",
-                                             "_debug_" + report.SCSI.Inquiry.ProductIdentification + ".bin",
+                            DataFile.WriteTo("SCSI Report", "read16", "_debug_" + productIdentification + ".bin",
                                              "read results", buffer);
 
                         report.SCSI.ReadCapabilities.LongBlockSize = report.SCSI.ReadCapabilities.BlockSize;
@@ -805,16 +651,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 {
                                     report.SCSI.ReadCapabilities.SupportsReadLong = true;
                                     if(decSense.Value.InformationValid && decSense.Value.ILI)
-                                    {
                                         report.SCSI.ReadCapabilities.LongBlockSize =
                                             0xFFFF - (decSense.Value.Information & 0xFFFF);
-                                        report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
-                                    }
                                 }
                         }
 
-                        if(report.SCSI.ReadCapabilities.SupportsReadLong &&
-                           report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
+                        if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
+                           report.SCSI.ReadCapabilities.LongBlockSize    == report.SCSI.ReadCapabilities.BlockSize)
                             if(report.SCSI.ReadCapabilities.BlockSize == 512)
                                 foreach(int i in new[]
                                 {
@@ -831,9 +674,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                            TIMEOUT, out _);
                                     if(sense || dev.Error) continue;
 
-                                    report.SCSI.ReadCapabilities.SupportsReadLong       = true;
-                                    report.SCSI.ReadCapabilities.LongBlockSize          = testSize;
-                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize    = testSize;
                                     break;
                                 }
                             else if(report.SCSI.ReadCapabilities.BlockSize == 1024)
@@ -850,9 +692,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                            TIMEOUT, out _);
                                     if(sense || dev.Error) continue;
 
-                                    report.SCSI.ReadCapabilities.SupportsReadLong       = true;
-                                    report.SCSI.ReadCapabilities.LongBlockSize          = testSize;
-                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize    = testSize;
                                     break;
                                 }
                             else if(report.SCSI.ReadCapabilities.BlockSize == 2048)
@@ -861,9 +702,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                        out _);
                                 if(!sense && !dev.Error)
                                 {
-                                    report.SCSI.ReadCapabilities.SupportsReadLong       = true;
-                                    report.SCSI.ReadCapabilities.LongBlockSize          = 2380;
-                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize    = 2380;
                                 }
                             }
                             else if(report.SCSI.ReadCapabilities.BlockSize == 4096)
@@ -872,9 +712,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                        out _);
                                 if(!sense && !dev.Error)
                                 {
-                                    report.SCSI.ReadCapabilities.SupportsReadLong       = true;
-                                    report.SCSI.ReadCapabilities.LongBlockSize          = 4760;
-                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize    = 4760;
                                 }
                             }
                             else if(report.SCSI.ReadCapabilities.BlockSize == 8192)
@@ -883,14 +722,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                                        out _);
                                 if(!sense && !dev.Error)
                                 {
-                                    report.SCSI.ReadCapabilities.SupportsReadLong       = true;
-                                    report.SCSI.ReadCapabilities.LongBlockSize          = 9424;
-                                    report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                    report.SCSI.ReadCapabilities.SupportsReadLong = true;
+                                    report.SCSI.ReadCapabilities.LongBlockSize    = 9424;
                                 }
                             }
 
-                        if(report.SCSI.ReadCapabilities.SupportsReadLong &&
-                           report.SCSI.ReadCapabilities.LongBlockSize == report.SCSI.ReadCapabilities.BlockSize)
+                        if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
+                           report.SCSI.ReadCapabilities.LongBlockSize    == report.SCSI.ReadCapabilities.BlockSize)
                         {
                             pressedKey = new ConsoleKeyInfo();
                             while(pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
@@ -918,8 +756,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                             bingo.Close();
                                         }
 
-                                        report.SCSI.ReadCapabilities.LongBlockSize          = i;
-                                        report.SCSI.ReadCapabilities.LongBlockSizeSpecified = true;
+                                        report.SCSI.ReadCapabilities.LongBlockSize = i;
                                         break;
                                     }
 
@@ -930,17 +767,15 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                             }
                         }
 
-                        if(debug                                               &&
-                           report.SCSI.ReadCapabilities.SupportsReadLong       &&
-                           report.SCSI.ReadCapabilities.LongBlockSizeSpecified &&
-                           report.SCSI.ReadCapabilities.LongBlockSize != report.SCSI.ReadCapabilities.BlockSize)
+                        if(debug && report.SCSI.ReadCapabilities.SupportsReadLong == true &&
+                           report.SCSI.ReadCapabilities.LongBlockSize !=
+                           report.SCSI.ReadCapabilities.BlockSize)
                         {
                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                    (ushort)report.SCSI.ReadCapabilities.LongBlockSize, TIMEOUT, out _);
                             if(!sense)
                                 DataFile.WriteTo("SCSI Report", "readlong10",
-                                                 "_debug_" + report.SCSI.Inquiry.ProductIdentification + ".bin",
-                                                 "read results", buffer);
+                                                 "_debug_" + productIdentification + ".bin", "read results", buffer);
                         }
                     }
 

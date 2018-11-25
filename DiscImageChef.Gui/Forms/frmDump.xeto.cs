@@ -49,8 +49,10 @@ using DiscImageChef.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
+using Ata = DiscImageChef.Core.Devices.Dumping.Ata;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using Scsi = DiscImageChef.Core.Devices.Dumping.Scsi;
 
 namespace DiscImageChef.Gui.Forms
 {

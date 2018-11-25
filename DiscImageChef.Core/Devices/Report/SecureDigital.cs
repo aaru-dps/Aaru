@@ -46,17 +46,17 @@ namespace DiscImageChef.Core.Devices.Report
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
-        public static void Report(Device dev, ref DeviceReport report)
+        public static void Report(Device dev, ref DeviceReportV2 report)
         {
             if(report == null) return;
 
             switch(dev.Type)
             {
                 case DeviceType.MMC:
-                    report.MultiMediaCard = new mmcsdType();
+                    report.MultiMediaCard = new MmcSd();
                     break;
                 case DeviceType.SecureDigital:
-                    report.SecureDigital = new mmcsdType();
+                    report.SecureDigital = new MmcSd();
                     break;
             }
 

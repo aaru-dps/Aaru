@@ -45,6 +45,8 @@ using DiscImageChef.Core.Devices.Dumping;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using Schemas;
+using Ata = DiscImageChef.Core.Devices.Dumping.Ata;
+using Scsi = DiscImageChef.Core.Devices.Dumping.Scsi;
 
 namespace DiscImageChef.Commands
 {

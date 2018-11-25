@@ -76,6 +76,7 @@
     <Compile Include="Interop\PlatformID.cs" />
     <Compile Include="Interop\Version.cs" />
     <Compile Include="Metadata\DeviceReport.cs" />
+    <Compile Include="Metadata\DeviceReportV2.cs" />
     <Compile Include="Metadata\Dimensions.cs" />
     <Compile Include="Metadata\MediaType.cs" />
     <Compile Include="Metadata\Resume.cs" />

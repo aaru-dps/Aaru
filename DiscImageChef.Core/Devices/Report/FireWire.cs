@@ -48,7 +48,7 @@ namespace DiscImageChef.Core.Devices.Report
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
         /// <param name="removable">If device is removable</param>
-        internal static void Report(Device dev, ref DeviceReport report, ref bool removable)
+        internal static void Report(Device dev, ref DeviceReportV2 report, ref bool removable)
         {
             if(report == null) return;
 
@@ -62,7 +62,7 @@ namespace DiscImageChef.Core.Devices.Report
 
             if(pressedKey.Key != ConsoleKey.Y) return;
 
-            report.FireWire = new firewireType
+            report.FireWire = new CommonTypes.Metadata.FireWire
             {
                 Manufacturer = dev.FireWireVendorName,
                 Product      = dev.FireWireModelName,

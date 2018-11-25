@@ -42,6 +42,8 @@ using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Server.App_Start;
+using Ata = DiscImageChef.Server.App_Start.Ata;
+using TestedMedia = DiscImageChef.Server.App_Start.TestedMedia;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Server

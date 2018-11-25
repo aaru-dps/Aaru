@@ -32,12 +32,13 @@
 
 using System;
 using System.IO;
-using System.Xml.Serialization;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
-using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Report;
 using DiscImageChef.Core.Devices.Report.SCSI;
 using DiscImageChef.Devices;
+using Newtonsoft.Json;
+using Ata = DiscImageChef.Core.Devices.Report.Ata;
 
 namespace DiscImageChef.Commands
 {
@@ -63,21 +64,18 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            CommonTypes.Metadata.DeviceReport report    = new CommonTypes.Metadata.DeviceReport();
-            bool                              removable = false;
-            string                            xmlFile;
-            if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
-                xmlFile =
-                    dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".xml";
-            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
-                xmlFile = dev.Manufacturer + "_" + dev.Model + ".xml";
-            else if(!string.IsNullOrWhiteSpace(dev.Revision))
-                xmlFile = dev.Model + "_" + dev.Revision + ".xml";
-            else
-                xmlFile =
-                    dev.Model + ".xml";
+            DeviceReportV2 report    = new DeviceReportV2();
+            bool           removable = false;
+            string         jsonFile;
 
-            xmlFile = xmlFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
+            if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
+                jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".json";
+            else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
+                jsonFile                                               = dev.Manufacturer + "_" + dev.Model + ".json";
+            else if(!string.IsNullOrWhiteSpace(dev.Revision)) jsonFile = dev.Model + "_" + dev.Revision     + ".json";
+            else jsonFile                                              = dev.Model                          + ".json";
+
+            jsonFile = jsonFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 
             switch(dev.Type)
             {
@@ -98,14 +96,20 @@ namespace DiscImageChef.Commands
                 default: throw new NotSupportedException("Unknown device type.");
             }
 
-            FileStream xmlFs = new FileStream(xmlFile, FileMode.Create);
+            FileStream   jsonFs = new FileStream(jsonFile, FileMode.Create);
+            StreamWriter jsonSw = new StreamWriter(jsonFs);
+            jsonSw.Write(JsonConvert.SerializeObject(report, Formatting.Indented,
+                                                     new JsonSerializerSettings
+                                                     {
+                                                         NullValueHandling = NullValueHandling.Ignore
+                                                     }));
+            jsonSw.Close();
+            jsonFs.Close();
 
-            XmlSerializer xmlSer = new XmlSerializer(typeof(CommonTypes.Metadata.DeviceReport));
-            xmlSer.Serialize(xmlFs, report);
-            xmlFs.Close();
             Core.Statistics.AddCommand("device-report");
 
-            if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
+            // TODO:
+            //if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
         }
     }
 }

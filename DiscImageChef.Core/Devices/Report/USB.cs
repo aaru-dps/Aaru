@@ -49,7 +49,7 @@ namespace DiscImageChef.Core.Devices.Report
         /// <param name="report">Device report</param>
         /// <param name="removable">If device is removable</param>
         /// <param name="debug">If debug is enabled</param>
-        internal static void Report(Device dev, ref DeviceReport report, bool debug, ref bool removable)
+        internal static void Report(Device dev, ref DeviceReportV2 report, bool debug, ref bool removable)
         {
             if(report == null) return;
 
@@ -63,7 +63,7 @@ namespace DiscImageChef.Core.Devices.Report
 
             if(pressedKey.Key != ConsoleKey.Y) return;
 
-            report.USB = new usbType
+            report.USB = new CommonTypes.Metadata.Usb
             {
                 Manufacturer = dev.UsbManufacturerString,
                 Product      = dev.UsbProductString,

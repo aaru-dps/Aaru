@@ -46,9 +46,9 @@ namespace DiscImageChef.Core.Devices.Report
         /// </summary>
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
-        internal static void Report(Device dev, ref DeviceReport report)
+        internal static void Report(Device dev, ref DeviceReportV2 report)
         {
-            report.PCMCIA = new pcmciaType {CIS = dev.Cis};
+            report.PCMCIA = new CommonTypes.Metadata.Pcmcia {CIS = dev.Cis};
             Tuple[] tuples = CIS.GetTuples(dev.Cis);
             if(tuples == null) return;
 
@@ -60,10 +60,8 @@ namespace DiscImageChef.Core.Devices.Report
 
                         if(manfid != null)
                         {
-                            report.PCMCIA.ManufacturerCode          = manfid.ManufacturerID;
-                            report.PCMCIA.CardCode                  = manfid.CardID;
-                            report.PCMCIA.ManufacturerCodeSpecified = true;
-                            report.PCMCIA.CardCodeSpecified         = true;
+                            report.PCMCIA.ManufacturerCode = manfid.ManufacturerID;
+                            report.PCMCIA.CardCode         = manfid.CardID;
                         }
 
                         break;

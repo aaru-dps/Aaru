@@ -52,7 +52,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
         /// <param name="dev">Device</param>
         /// <param name="report">Device report</param>
         /// <param name="debug">If debug is enabled</param>
-        internal static void Report(Device dev, ref DeviceReport report, bool debug)
+        internal static void Report(Device dev, ref DeviceReportV2 report, bool debug)
         {
             if(report == null) return;
 
@@ -60,7 +60,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
             const uint     TIMEOUT = 5;
             ConsoleKeyInfo pressedKey;
 
-            report.SCSI.SequentialDevice = new sscType();
+            report.SCSI.SequentialDevice = new CommonTypes.Metadata.Ssc();
             DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
             sense = dev.ReadBlockLimits(out byte[] buffer, out byte[] senseBuffer, TIMEOUT, out _);
             if(!sense)
@@ -69,22 +69,13 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 if(decBl.HasValue)
                 {
                     if(decBl.Value.granularity > 0)
-                    {
-                        report.SCSI.SequentialDevice.BlockSizeGranularitySpecified = true;
-                        report.SCSI.SequentialDevice.BlockSizeGranularity          = decBl.Value.granularity;
-                    }
+                        report.SCSI.SequentialDevice.BlockSizeGranularity = decBl.Value.granularity;
 
                     if(decBl.Value.maxBlockLen > 0)
-                    {
-                        report.SCSI.SequentialDevice.MaxBlockLengthSpecified = true;
-                        report.SCSI.SequentialDevice.MaxBlockLength          = decBl.Value.maxBlockLen;
-                    }
+                        report.SCSI.SequentialDevice.MaxBlockLength = decBl.Value.maxBlockLen;
 
                     if(decBl.Value.minBlockLen > 0)
-                    {
-                        report.SCSI.SequentialDevice.MinBlockLengthSpecified = true;
-                        report.SCSI.SequentialDevice.MinBlockLength          = decBl.Value.minBlockLen;
-                    }
+                        report.SCSI.SequentialDevice.MinBlockLength = decBl.Value.minBlockLen;
                 }
             }
 
@@ -153,7 +144,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 }
             }
 
-            List<SequentialMedia> seqTests = new List<SequentialMedia>();
+            List<TestedSequentialMedia> seqTests = new List<TestedSequentialMedia>();
 
             pressedKey = new ConsoleKeyInfo();
             while(pressedKey.Key != ConsoleKey.N)
@@ -171,7 +162,7 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                 DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
                 System.Console.ReadKey(true);
 
-                SequentialMedia seqTest = new SequentialMedia();
+                TestedSequentialMedia seqTest = new TestedSequentialMedia();
                 DicConsole.Write("Please write a description of the media type and press enter: ");
                 seqTest.MediumTypeName = System.Console.ReadLine();
                 DicConsole.Write("Please write the media manufacturer and press enter: ");
@@ -246,14 +237,10 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
 
                     if(decMode.HasValue)
                     {
-                        seqTest.MediumType          = (byte)decMode.Value.Header.MediumType;
-                        seqTest.MediumTypeSpecified = true;
+                        seqTest.MediumType = (byte)decMode.Value.Header.MediumType;
                         if(decMode.Value.Header.BlockDescriptors        != null &&
                            decMode.Value.Header.BlockDescriptors.Length > 0)
-                        {
-                            seqTest.Density          = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                            seqTest.DensitySpecified = true;
-                        }
+                            seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                     }
                 }
 
@@ -310,7 +297,6 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                     }
                 }
 
-                seqTest.CanReadMediaSerialSpecified = true;
                 DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
                 seqTest.CanReadMediaSerial = !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, TIMEOUT, out _);
                 seqTests.Add(seqTest);
