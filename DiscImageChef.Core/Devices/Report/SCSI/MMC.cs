@@ -1008,8 +1008,8 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         }
 
                         DicConsole.WriteLine("Trying SCSI READ (6)...");
-                        mediaTest.SupportsRead = !dev.Read6(out buffer, out senseBuffer, 0, 2048, TIMEOUT, out _);
-                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead);
+                        mediaTest.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 0, 2048, TIMEOUT, out _);
+                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
                         if(debug)
                             DataFile.WriteTo("SCSI Report", "read6",
                                              "_debug_" + productIdentification + "_" + mediaType + ".bin",

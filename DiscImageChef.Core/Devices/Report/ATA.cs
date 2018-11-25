@@ -247,8 +247,9 @@ namespace DiscImageChef.Core.Devices.Report
                         DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
                         sense = dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1,
                                          TIMEOUT, out _);
-                        mediaTest.SupportsRead = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
-                                                 readBuf.Length                     > 0;
+                        mediaTest.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 &&
+                                                        errorChs.Error                     == 0    &&
+                                                        readBuf.Length                     > 0;
                         DicConsole.DebugWriteLine("ATA Report",
                                                   "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                                   sense, errorChs.Status, errorChs.Error, readBuf.Length);
@@ -553,7 +554,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
                 sense = dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1, TIMEOUT,
                                  out _);
-                report.ATA.ReadCapabilities.SupportsRead =
+                report.ATA.ReadCapabilities.SupportsReadSectors =
                     !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,

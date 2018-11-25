@@ -360,9 +360,9 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                                 }
 
                                 DicConsole.WriteLine("Trying SCSI READ (6)...");
-                                mediaTest.SupportsRead = !dev.Read6(out buffer, out senseBuffer, 0,
-                                                                    mediaTest.BlockSize ?? 512, TIMEOUT, out _);
-                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead);
+                                mediaTest.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 0,
+                                                                     mediaTest.BlockSize ?? 512, TIMEOUT, out _);
+                                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
                                 if(debug)
                                     DataFile.WriteTo("SCSI Report", "read6",
                                                      "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
@@ -600,11 +600,11 @@ namespace DiscImageChef.Core.Devices.Report.SCSI
                         }
 
                         DicConsole.WriteLine("Trying SCSI READ (6)...");
-                        report.SCSI.ReadCapabilities.SupportsRead =
+                        report.SCSI.ReadCapabilities.SupportsRead6 =
                             !dev.Read6(out buffer, out senseBuffer, 0, report.SCSI.ReadCapabilities.BlockSize ?? 512,
                                        TIMEOUT, out _);
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                  !report.SCSI.ReadCapabilities.SupportsRead);
+                                                  !report.SCSI.ReadCapabilities.SupportsRead6);
                         if(debug)
                             DataFile.WriteTo("SCSI Report", "read6", "_debug_" + productIdentification + ".bin",
                                              "read results", buffer);
