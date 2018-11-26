@@ -37,9 +37,11 @@
 // ****************************************************************************/
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
+using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -48,6 +50,8 @@ namespace DiscImageChef.CommonTypes.Metadata
 {
     public class DeviceReportV2
     {
+        [JsonIgnore]
+        public int Id { get;                  set; }
         public Usb      USB            { get; set; }
         public FireWire FireWire       { get; set; }
         public Pcmcia   PCMCIA         { get; set; }
@@ -61,6 +65,8 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Usb
     {
+        [JsonIgnore]
+        public int Id { get;                set; }
         public ushort VendorID       { get; set; }
         public ushort ProductID      { get; set; }
         public string Manufacturer   { get; set; }
@@ -71,6 +77,8 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class FireWire
     {
+        [JsonIgnore]
+        public int Id { get;                set; }
         public uint   VendorID       { get; set; }
         public uint   ProductID      { get; set; }
         public string Manufacturer   { get; set; }
@@ -80,16 +88,18 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Ata
     {
-        public Identify.IdentifyDevice? IdentifyDevice { get; set; }
-
-        public byte[] Identify { get; set; }
-
+        public Identify.IdentifyDevice? IdentifyDevice;
+        [JsonIgnore]
+        public int Id { get;                         set; }
+        public byte[]        Identify         { get; set; }
         public TestedMedia   ReadCapabilities { get; set; }
         public TestedMedia[] RemovableMedias  { get; set; }
     }
 
     public class Chs
     {
+        [JsonIgnore]
+        public int Id { get;           set; }
         public ushort Cylinders { get; set; }
         public ushort Heads     { get; set; }
         public ushort Sectors   { get; set; }
@@ -97,23 +107,27 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Scsi
     {
-        public Inquiry.SCSIInquiry? Inquiry              { get; set; }
-        public byte[]               InquiryData          { get; set; }
-        public ScsiPage[]           EVPDPages            { get; set; }
-        public bool                 SupportsModeSense6   { get; set; }
-        public bool                 SupportsModeSense10  { get; set; }
-        public bool                 SupportsModeSubpages { get; set; }
-        public ScsiMode             ModeSense            { get; set; }
-        public Mmc                  MultiMediaDevice     { get; set; }
-        public TestedMedia          ReadCapabilities     { get; set; }
-        public TestedMedia[]        RemovableMedias      { get; set; }
-        public Ssc                  SequentialDevice     { get; set; }
-        public byte[]               ModeSense6Data       { get; set; }
-        public byte[]               ModeSense10Data      { get; set; }
+        public Inquiry.SCSIInquiry? Inquiry;
+        [JsonIgnore]
+        public int Id { get;                             set; }
+        public byte[]        InquiryData          { get; set; }
+        public ScsiPage[]    EVPDPages            { get; set; }
+        public bool          SupportsModeSense6   { get; set; }
+        public bool          SupportsModeSense10  { get; set; }
+        public bool          SupportsModeSubpages { get; set; }
+        public ScsiMode      ModeSense            { get; set; }
+        public Mmc           MultiMediaDevice     { get; set; }
+        public TestedMedia   ReadCapabilities     { get; set; }
+        public TestedMedia[] RemovableMedias      { get; set; }
+        public Ssc           SequentialDevice     { get; set; }
+        public byte[]        ModeSense6Data       { get; set; }
+        public byte[]        ModeSense10Data      { get; set; }
     }
 
     public class ScsiMode
     {
+        [JsonIgnore]
+        public int Id { get;                              set; }
         public byte?             MediumType        { get; set; }
         public bool              WriteProtected    { get; set; }
         public BlockDescriptor[] BlockDescriptors  { get; set; }
@@ -126,6 +140,8 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class BlockDescriptor
     {
+        [JsonIgnore]
+        public int Id { get;             set; }
         public byte   Density     { get; set; }
         public ulong? Blocks      { get; set; }
         public uint?  BlockLength { get; set; }
@@ -133,6 +149,8 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class ScsiPage
     {
+        [JsonIgnore]
+        public int Id { get;         set; }
         public byte   page    { get; set; }
         public byte?  subpage { get; set; }
         public byte[] value   { get; set; }
@@ -140,13 +158,17 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Mmc
     {
-        public Modes.ModePage_2A? ModeSense2A { get; set; }
-        public MmcFeatures        Features    { get; set; }
-        public TestedMedia[]      TestedMedia { get; set; }
+        [JsonIgnore]
+        public int Id { get;                        set; }
+        public Modes.ModePage_2A ModeSense2A { get; set; }
+        public MmcFeatures       Features    { get; set; }
+        public TestedMedia[]     TestedMedia { get; set; }
     }
 
     public class MmcFeatures
     {
+        [JsonIgnore]
+        public int Id { get;                                              set; }
         public byte?               AACSVersion                     { get; set; }
         public byte?               AGIDs                           { get; set; }
         public byte?               BindingNonceBlocks              { get; set; }
@@ -275,66 +297,68 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class TestedMedia
     {
-        public Identify.IdentifyDevice? IdentifyDevice                   { get; set; }
-        public byte[]                   IdentifyData                     { get; set; }
-        public ulong?                   Blocks                           { get; set; }
-        public uint?                    BlockSize                        { get; set; }
-        public bool?                    CanReadAACS                      { get; set; }
-        public bool?                    CanReadADIP                      { get; set; }
-        public bool?                    CanReadATIP                      { get; set; }
-        public bool?                    CanReadBCA                       { get; set; }
-        public bool?                    CanReadC2Pointers                { get; set; }
-        public bool?                    CanReadCMI                       { get; set; }
-        public bool?                    CanReadCorrectedSubchannel       { get; set; }
-        public bool?                    CanReadCorrectedSubchannelWithC2 { get; set; }
-        public bool?                    CanReadDCB                       { get; set; }
-        public bool?                    CanReadDDS                       { get; set; }
-        public bool?                    CanReadDMI                       { get; set; }
-        public bool?                    CanReadDiscInformation           { get; set; }
-        public bool?                    CanReadFullTOC                   { get; set; }
-        public bool?                    CanReadHDCMI                     { get; set; }
-        public bool?                    CanReadLayerCapacity             { get; set; }
-        public bool?                    CanReadFirstTrackPreGap          { get; set; }
-        public bool?                    CanReadLeadIn                    { get; set; }
-        public bool?                    CanReadLeadOut                   { get; set; }
-        public bool?                    CanReadMediaID                   { get; set; }
-        public bool?                    CanReadMediaSerial               { get; set; }
-        public bool?                    CanReadPAC                       { get; set; }
-        public bool?                    CanReadPFI                       { get; set; }
-        public bool?                    CanReadPMA                       { get; set; }
-        public bool?                    CanReadPQSubchannel              { get; set; }
-        public bool?                    CanReadPQSubchannelWithC2        { get; set; }
-        public bool?                    CanReadPRI                       { get; set; }
-        public bool?                    CanReadRWSubchannel              { get; set; }
-        public bool?                    CanReadRWSubchannelWithC2        { get; set; }
-        public bool?                    CanReadRecordablePFI             { get; set; }
-        public bool?                    CanReadSpareAreaInformation      { get; set; }
-        public bool?                    CanReadTOC                       { get; set; }
-        public byte?                    Density                          { get; set; }
-        public uint?                    LongBlockSize                    { get; set; }
-        public string                   Manufacturer                     { get; set; }
-        public bool                     MediaIsRecognized                { get; set; }
-        public byte?                    MediumType                       { get; set; }
-        public string                   MediumTypeName                   { get; set; }
-        public string                   Model                            { get; set; }
-        public bool?                    SupportsHLDTSTReadRawDVD         { get; set; }
-        public bool?                    SupportsNECReadCDDA              { get; set; }
-        public bool?                    SupportsPioneerReadCDDA          { get; set; }
-        public bool?                    SupportsPioneerReadCDDAMSF       { get; set; }
-        public bool?                    SupportsPlextorReadCDDA          { get; set; }
-        public bool?                    SupportsPlextorReadRawDVD        { get; set; }
-        public bool?                    SupportsRead10                   { get; set; }
-        public bool?                    SupportsRead12                   { get; set; }
-        public bool?                    SupportsRead16                   { get; set; }
-        public bool?                    SupportsRead6                    { get; set; }
-        public bool?                    SupportsReadCapacity16           { get; set; }
-        public bool?                    SupportsReadCapacity             { get; set; }
-        public bool?                    SupportsReadCd                   { get; set; }
-        public bool?                    SupportsReadCdMsf                { get; set; }
-        public bool?                    SupportsReadCdRaw                { get; set; }
-        public bool?                    SupportsReadCdMsfRaw             { get; set; }
-        public bool?                    SupportsReadLong16               { get; set; }
-        public bool?                    SupportsReadLong                 { get; set; }
+        public Identify.IdentifyDevice? IdentifyDevice;
+        [JsonIgnore]
+        public int Id { get;                                  set; }
+        public byte[] IdentifyData                     { get; set; }
+        public ulong? Blocks                           { get; set; }
+        public uint?  BlockSize                        { get; set; }
+        public bool?  CanReadAACS                      { get; set; }
+        public bool?  CanReadADIP                      { get; set; }
+        public bool?  CanReadATIP                      { get; set; }
+        public bool?  CanReadBCA                       { get; set; }
+        public bool?  CanReadC2Pointers                { get; set; }
+        public bool?  CanReadCMI                       { get; set; }
+        public bool?  CanReadCorrectedSubchannel       { get; set; }
+        public bool?  CanReadCorrectedSubchannelWithC2 { get; set; }
+        public bool?  CanReadDCB                       { get; set; }
+        public bool?  CanReadDDS                       { get; set; }
+        public bool?  CanReadDMI                       { get; set; }
+        public bool?  CanReadDiscInformation           { get; set; }
+        public bool?  CanReadFullTOC                   { get; set; }
+        public bool?  CanReadHDCMI                     { get; set; }
+        public bool?  CanReadLayerCapacity             { get; set; }
+        public bool?  CanReadFirstTrackPreGap          { get; set; }
+        public bool?  CanReadLeadIn                    { get; set; }
+        public bool?  CanReadLeadOut                   { get; set; }
+        public bool?  CanReadMediaID                   { get; set; }
+        public bool?  CanReadMediaSerial               { get; set; }
+        public bool?  CanReadPAC                       { get; set; }
+        public bool?  CanReadPFI                       { get; set; }
+        public bool?  CanReadPMA                       { get; set; }
+        public bool?  CanReadPQSubchannel              { get; set; }
+        public bool?  CanReadPQSubchannelWithC2        { get; set; }
+        public bool?  CanReadPRI                       { get; set; }
+        public bool?  CanReadRWSubchannel              { get; set; }
+        public bool?  CanReadRWSubchannelWithC2        { get; set; }
+        public bool?  CanReadRecordablePFI             { get; set; }
+        public bool?  CanReadSpareAreaInformation      { get; set; }
+        public bool?  CanReadTOC                       { get; set; }
+        public byte?  Density                          { get; set; }
+        public uint?  LongBlockSize                    { get; set; }
+        public string Manufacturer                     { get; set; }
+        public bool   MediaIsRecognized                { get; set; }
+        public byte?  MediumType                       { get; set; }
+        public string MediumTypeName                   { get; set; }
+        public string Model                            { get; set; }
+        public bool?  SupportsHLDTSTReadRawDVD         { get; set; }
+        public bool?  SupportsNECReadCDDA              { get; set; }
+        public bool?  SupportsPioneerReadCDDA          { get; set; }
+        public bool?  SupportsPioneerReadCDDAMSF       { get; set; }
+        public bool?  SupportsPlextorReadCDDA          { get; set; }
+        public bool?  SupportsPlextorReadRawDVD        { get; set; }
+        public bool?  SupportsRead10                   { get; set; }
+        public bool?  SupportsRead12                   { get; set; }
+        public bool?  SupportsRead16                   { get; set; }
+        public bool?  SupportsRead6                    { get; set; }
+        public bool?  SupportsReadCapacity16           { get; set; }
+        public bool?  SupportsReadCapacity             { get; set; }
+        public bool?  SupportsReadCd                   { get; set; }
+        public bool?  SupportsReadCdMsf                { get; set; }
+        public bool?  SupportsReadCdRaw                { get; set; }
+        public bool?  SupportsReadCdMsfRaw             { get; set; }
+        public bool?  SupportsReadLong16               { get; set; }
+        public bool?  SupportsReadLong                 { get; set; }
 
         public byte[] ModeSense6Data  { get; set; }
         public byte[] ModeSense10Data { get; set; }
@@ -371,26 +395,30 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Ssc
     {
+        [JsonIgnore]
+        public int Id { get;                     set; }
         public byte? BlockSizeGranularity { get; set; }
         public uint? MaxBlockLength       { get; set; }
         public uint? MinBlockLength       { get; set; }
 
         public SupportedDensity[]      SupportedDensities  { get; set; }
-        public SupportedMedia[]        SupportedMediaTypes { get; set; }
+        public SscSupportedMedia[]     SupportedMediaTypes { get; set; }
         public TestedSequentialMedia[] TestedMedia         { get; set; }
     }
 
-    public struct TestedSequentialMedia
+    public class TestedSequentialMedia
     {
-        public bool?              CanReadMediaSerial  { get; set; }
-        public byte?              Density             { get; set; }
-        public string             Manufacturer        { get; set; }
-        public bool               MediaIsRecognized   { get; set; }
-        public byte?              MediumType          { get; set; }
-        public string             MediumTypeName      { get; set; }
-        public string             Model               { get; set; }
-        public SupportedDensity[] SupportedDensities  { get; set; }
-        public SupportedMedia[]   SupportedMediaTypes { get; set; }
+        [JsonIgnore]
+        public int Id { get;                                  set; }
+        public bool?               CanReadMediaSerial  { get; set; }
+        public byte?               Density             { get; set; }
+        public string              Manufacturer        { get; set; }
+        public bool                MediaIsRecognized   { get; set; }
+        public byte?               MediumType          { get; set; }
+        public string              MediumTypeName      { get; set; }
+        public string              Model               { get; set; }
+        public SupportedDensity[]  SupportedDensities  { get; set; }
+        public SscSupportedMedia[] SupportedMediaTypes { get; set; }
 
         public byte[] ModeSense6Data  { get; set; }
         public byte[] ModeSense10Data { get; set; }
@@ -398,21 +426,44 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Pcmcia
     {
-        public byte[]   CIS                   { get; set; }
-        public string   Compliance            { get; set; }
-        public ushort?  ManufacturerCode      { get; set; }
-        public ushort?  CardCode              { get; set; }
-        public string   Manufacturer          { get; set; }
-        public string   ProductName           { get; set; }
-        public string[] AdditionalInformation { get; set; }
+        public string[] AdditionalInformation;
+        [JsonIgnore]
+        public int Id { get;                   set; }
+        public byte[]  CIS              { get; set; }
+        public string  Compliance       { get; set; }
+        public ushort? ManufacturerCode { get; set; }
+        public ushort? CardCode         { get; set; }
+        public string  Manufacturer     { get; set; }
+        public string  ProductName      { get; set; }
     }
 
     public class MmcSd
     {
+        [JsonIgnore]
+        public int Id { get;             set; }
         public byte[] CID         { get; set; }
         public byte[] CSD         { get; set; }
         public byte[] OCR         { get; set; }
         public byte[] SCR         { get; set; }
         public byte[] ExtendedCSD { get; set; }
+    }
+
+    public class SscSupportedMedia
+    {
+        [JsonIgnore]
+        public int Id { get;                     set; }
+        public byte          MediumType   { get; set; }
+        public DensityCode[] DensityCodes { get; set; }
+        public ushort        Width        { get; set; }
+        public ushort        Length       { get; set; }
+        public string        Organization { get; set; }
+        public string        Name         { get; set; }
+        public string        Description  { get; set; }
+    }
+
+    public class DensityCode
+    {
+        [Key]
+        public int Code { get; set; }
     }
 }
