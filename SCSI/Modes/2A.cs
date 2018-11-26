@@ -30,9 +30,11 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -52,135 +54,139 @@ namespace DiscImageChef.Decoders.SCSI
         ///     26 bytes in MMC-2
         ///     Variable bytes in MMC-3
         /// </summary>
-        public struct ModePage_2A
+        public class ModePage_2A
         {
+            public ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
             /// <summary>
             ///     Parameters can be saved
             /// </summary>
-            public bool PS;
+            public bool PS { get; set; }
             /// <summary>
             ///     Drive supports multi-session and/or Photo-CD
             /// </summary>
-            public bool MultiSession;
+            public bool MultiSession { get; set; }
             /// <summary>
             ///     Drive is capable of reading sectors in Mode 2 Form 2 format
             /// </summary>
-            public bool Mode2Form2;
+            public bool Mode2Form2 { get; set; }
             /// <summary>
             ///     Drive is capable of reading sectors in Mode 2 Form 1 format
             /// </summary>
-            public bool Mode2Form1;
+            public bool Mode2Form1 { get; set; }
             /// <summary>
             ///     Drive is capable of playing audio
             /// </summary>
-            public bool AudioPlay;
+            public bool AudioPlay { get; set; }
             /// <summary>
             ///     Drive can return the ISRC
             /// </summary>
-            public bool ISRC;
+            public bool ISRC { get; set; }
             /// <summary>
             ///     Drive can return the media catalogue number
             /// </summary>
-            public bool UPC;
+            public bool UPC { get; set; }
             /// <summary>
             ///     Drive can return C2 pointers
             /// </summary>
-            public bool C2Pointer;
+            public bool C2Pointer { get; set; }
             /// <summary>
             ///     Drive can read, deinterlave and correct R-W subchannels
             /// </summary>
-            public bool DeinterlaveSubchannel;
+            public bool DeinterlaveSubchannel { get; set; }
             /// <summary>
             ///     Drive can read interleaved and uncorrected R-W subchannels
             /// </summary>
-            public bool Subchannel;
+            public bool Subchannel { get; set; }
             /// <summary>
             ///     Drive can continue from a loss of streaming on audio reading
             /// </summary>
-            public bool AccurateCDDA;
+            public bool AccurateCDDA { get; set; }
             /// <summary>
             ///     Audio can be read as digital data
             /// </summary>
-            public bool CDDACommand;
+            public bool CDDACommand { get; set; }
             /// <summary>
             ///     Loading Mechanism Type
             /// </summary>
-            public byte LoadingMechanism;
+            public byte LoadingMechanism { get; set; }
             /// <summary>
             ///     Drive can eject discs
             /// </summary>
-            public bool Eject;
+            public bool Eject { get; set; }
             /// <summary>
             ///     Drive's optional prevent jumper status
             /// </summary>
-            public bool PreventJumper;
+            public bool PreventJumper { get; set; }
             /// <summary>
             ///     Current lock status
             /// </summary>
-            public bool LockState;
+            public bool LockState { get; set; }
             /// <summary>
             ///     Drive can lock media
             /// </summary>
-            public bool Lock;
+            public bool Lock { get; set; }
             /// <summary>
             ///     Each channel can be muted independently
             /// </summary>
-            public bool SeparateChannelMute;
+            public bool SeparateChannelMute { get; set; }
             /// <summary>
             ///     Each channel's volume can be controlled independently
             /// </summary>
-            public bool SeparateChannelVolume;
+            public bool SeparateChannelVolume { get; set; }
             /// <summary>
             ///     Maximum drive speed in Kbytes/second
             /// </summary>
-            public ushort MaximumSpeed;
+            public ushort MaximumSpeed { get; set; }
             /// <summary>
             ///     Supported volume levels
             /// </summary>
-            public ushort SupportedVolumeLevels;
+            public ushort SupportedVolumeLevels { get; set; }
             /// <summary>
             ///     Buffer size in Kbytes
             /// </summary>
-            public ushort BufferSize;
+            public ushort BufferSize { get; set; }
             /// <summary>
             ///     Current drive speed in Kbytes/second
             /// </summary>
-            public ushort CurrentSpeed;
+            public ushort CurrentSpeed { get; set; }
 
-            public bool Method2;
-            public bool ReadCDRW;
-            public bool ReadCDR;
-            public bool WriteCDRW;
-            public bool WriteCDR;
-            public bool DigitalPort2;
-            public bool DigitalPort1;
-            public bool Composite;
-            public bool SSS;
-            public bool SDP;
-            public byte Length;
-            public bool LSBF;
-            public bool RCK;
-            public bool BCK;
+            public bool Method2      { get; set; }
+            public bool ReadCDRW     { get; set; }
+            public bool ReadCDR      { get; set; }
+            public bool WriteCDRW    { get; set; }
+            public bool WriteCDR     { get; set; }
+            public bool DigitalPort2 { get; set; }
+            public bool DigitalPort1 { get; set; }
+            public bool Composite    { get; set; }
+            public bool SSS          { get; set; }
+            public bool SDP          { get; set; }
+            public byte Length       { get; set; }
+            public bool LSBF         { get; set; }
+            public bool RCK          { get; set; }
+            public bool BCK          { get; set; }
 
-            public bool   TestWrite;
-            public ushort MaxWriteSpeed;
-            public ushort CurrentWriteSpeed;
+            public bool   TestWrite         { get; set; }
+            public ushort MaxWriteSpeed     { get; set; }
+            public ushort CurrentWriteSpeed { get; set; }
 
-            public bool ReadBarcode;
+            public bool ReadBarcode { get; set; }
 
-            public bool   ReadDVDRAM;
-            public bool   ReadDVDR;
-            public bool   ReadDVDROM;
-            public bool   WriteDVDRAM;
-            public bool   WriteDVDR;
-            public bool   LeadInPW;
-            public bool   SCC;
-            public ushort CMRSupported;
+            public bool   ReadDVDRAM   { get; set; }
+            public bool   ReadDVDR     { get; set; }
+            public bool   ReadDVDROM   { get; set; }
+            public bool   WriteDVDRAM  { get; set; }
+            public bool   WriteDVDR    { get; set; }
+            public bool   LeadInPW     { get; set; }
+            public bool   SCC          { get; set; }
+            public ushort CMRSupported { get; set; }
 
-            public bool                          BUF;
-            public byte                          RotationControlSelected;
-            public ushort                        CurrentWriteSpeedSelected;
-            public ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors;
+            public bool   BUF                       { get; set; }
+            public byte   RotationControlSelected   { get; set; }
+            public ushort CurrentWriteSpeedSelected { get; set; }
+
+            [JsonIgnore]
+            [Key]
+            public int Id { get; set; }
         }
 
         public struct ModePage_2A_WriteDescriptor
@@ -189,7 +195,7 @@ namespace DiscImageChef.Decoders.SCSI
             public ushort WriteSpeed;
         }
 
-        public static ModePage_2A? DecodeModePage_2A(byte[] pageResponse)
+        public static ModePage_2A DecodeModePage_2A(byte[] pageResponse)
         {
             if((pageResponse?[0] & 0x40) == 0x40) return null;
 
@@ -293,16 +299,14 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyModePage_2A(byte[] pageResponse)
-        {
-            return PrettifyModePage_2A(DecodeModePage_2A(pageResponse));
-        }
+        public static string PrettifyModePage_2A(byte[] pageResponse) =>
+            PrettifyModePage_2A(DecodeModePage_2A(pageResponse));
 
-        public static string PrettifyModePage_2A(ModePage_2A? modePage)
+        public static string PrettifyModePage_2A(ModePage_2A modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(modePage is null) return null;
 
-            ModePage_2A   page = modePage.Value;
+            ModePage_2A   page = modePage;
             StringBuilder sb   = new StringBuilder();
 
             sb.AppendLine("SCSI CD-ROM capabilities page:");
