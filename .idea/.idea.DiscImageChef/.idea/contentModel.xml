@@ -293,41 +293,13 @@
         <e p="Context.cs" t="Include" />
         <e p="DiscImageChef.Database.csproj" t="IncludeRecursive" />
         <e p="Migrations" t="Include">
-          <e p="20180805182209_InitialCreate.Designer.cs" t="Include" />
-          <e p="20180805182209_InitialCreate.cs" t="Include" />
+          <e p="20181126222301_DeviceReportV2.Designer.cs" t="Include" />
+          <e p="20181126222301_DeviceReportV2.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
-          <e p="ATA.cs" t="Include" />
-          <e p="BaseEntity.cs" t="Include" />
-          <e p="BaseTypes.cs" t="Include" />
-          <e p="CHS.cs" t="Include" />
           <e p="Device.cs" t="Include" />
-          <e p="FireWire.cs" t="Include" />
-          <e p="PCMCIA.cs" t="Include" />
-          <e p="SCSI" t="Include">
-            <e p="BlockDescriptor.cs" t="Include" />
-            <e p="Inquiry.cs" t="Include" />
-            <e p="MMC" t="Include">
-              <e p="Features.cs" t="Include" />
-              <e p="MMC.cs" t="Include" />
-              <e p="Mode2A.cs" t="Include" />
-              <e p="WriteDescriptor.cs" t="Include" />
-            </e>
-            <e p="Mode.cs" t="Include" />
-            <e p="ModePage.cs" t="Include" />
-            <e p="Page.cs" t="Include" />
-            <e p="SCSI.cs" t="Include" />
-            <e p="SSC" t="Include">
-              <e p="SSC.cs" t="Include" />
-              <e p="SequentialMedia.cs" t="Include" />
-              <e p="SupportedDensity.cs" t="Include" />
-            </e>
-            <e p="SupportedMedia.cs" t="Include" />
-          </e>
-          <e p="SecureDigital.cs" t="Include" />
-          <e p="TestedMedia.cs" t="Include" />
-          <e p="Usb.cs" t="Include" />
+          <e p="Report.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
@@ -1121,6 +1093,18 @@
             </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.DiscImages.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="DiscImageChef.EntityFramework" t="IncludeRecursive">
+        <e p="DiscImageChef.EntityFramework.csproj" t="IncludeRecursive" />
+        <e p="Program.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.1" t="Include">
+              <e p="DiscImageChef.EntityFramework.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>

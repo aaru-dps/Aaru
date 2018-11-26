@@ -91,7 +91,7 @@ namespace DiscImageChef.Core.Devices.Report
             DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
             if(!mtsh.HasValue) return report;
 
-            report.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
+            report.SupportedMediaTypes = new SscSupportedMedia[mtsh.Value.descriptors.Length];
             for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
             {
                 report.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
@@ -102,9 +102,11 @@ namespace DiscImageChef.Core.Devices.Report
                 report.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
                 if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
-                report.SupportedMediaTypes[i].DensityCodes = new int[mtsh.Value.descriptors[i].densityCodes.Length];
+                report.SupportedMediaTypes[i].DensityCodes =
+                    new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
                 for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                    report.SupportedMediaTypes[i].DensityCodes[j] = mtsh.Value.descriptors[i].densityCodes[j];
+                    report.SupportedMediaTypes[i].DensityCodes[j] =
+                        new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
             }
 
             return report;
@@ -173,7 +175,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
                 if(mtsh.HasValue)
                 {
-                    seqTest.SupportedMediaTypes = new SupportedMedia[mtsh.Value.descriptors.Length];
+                    seqTest.SupportedMediaTypes = new SscSupportedMedia[mtsh.Value.descriptors.Length];
                     for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                     {
                         seqTest.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
@@ -185,9 +187,10 @@ namespace DiscImageChef.Core.Devices.Report
                         if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
                         seqTest.SupportedMediaTypes[i].DensityCodes =
-                            new int[mtsh.Value.descriptors[i].densityCodes.Length];
+                            new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
                         for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                            seqTest.SupportedMediaTypes[i].DensityCodes[j] = mtsh.Value.descriptors[i].densityCodes[j];
+                            seqTest.SupportedMediaTypes[i].DensityCodes[j] =
+                                new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
                     }
                 }
             }

@@ -82,7 +82,7 @@ namespace DiscImageChef.Core.Devices.Report
             return evpds.Count > 0 ? evpds.ToArray() : null;
         }
 
-        public void ReportScsiModes(ref DeviceReportV2 report, ref Modes.ModePage_2A? cdromMode)
+        public void ReportScsiModes(ref DeviceReportV2 report, ref Modes.ModePage_2A cdromMode)
         {
             Modes.DecodedMode?    decMode = null;
             PeripheralDeviceTypes devType = dev.ScsiType;

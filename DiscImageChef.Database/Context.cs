@@ -30,15 +30,21 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DiscImageChef.Database
 {
-    public class DicContext : DbContext
+    public sealed class DicContext : DbContext
     {
         public DbSet<Device> Devices { get; set; }
-        public DbSet<Device> Reports { get; set; }
+        public DbSet<DeviceReportV2> Reports { get; set; }
+
+        public DicContext()
+        {
+            Database.EnsureCreated();
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

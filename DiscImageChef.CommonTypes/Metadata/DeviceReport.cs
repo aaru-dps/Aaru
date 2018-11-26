@@ -41,6 +41,7 @@ using System.Xml.Serialization;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
+using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -978,8 +979,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool MinBlockLengthSpecified { get; set; }
     }
 
-    public struct SupportedDensity
+    public class SupportedDensity
     {
+        [XmlIgnore]
+        [JsonIgnore]
+        public int Id { get;                set; }
         public byte   PrimaryCode    { get; set; }
         public byte   SecondaryCode  { get; set; }
         public bool   Writable       { get; set; }
@@ -994,8 +998,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Description    { get; set; }
     }
 
-    public struct SupportedMedia
+    public class SupportedMedia
     {
+        [XmlIgnore]
+        [JsonIgnore]
+        public int Id { get;              set; }
         public byte   MediumType   { get; set; }
         public int[]  DensityCodes { get; set; }
         public ushort Width        { get; set; }

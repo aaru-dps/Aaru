@@ -282,7 +282,7 @@ namespace DiscImageChef.Commands
 
                     report.SCSI.EVPDPages = reporter.ReportEvpdPages();
 
-                    Modes.ModePage_2A? cdromMode = null;
+                    Modes.ModePage_2A cdromMode = null;
 
                     reporter.ReportScsiModes(ref report, ref cdromMode);
 
@@ -301,15 +301,15 @@ namespace DiscImageChef.Commands
                                 ModeSense2A = cdromMode, Features = reporter.ReportMmcFeatures()
                             };
 
-                            if(cdromMode.HasValue)
+                            if(cdromMode != null)
                             {
                                 mediaTypes.Add("CD-ROM");
                                 mediaTypes.Add("Audio CD");
-                                if(cdromMode.Value.ReadCDR) mediaTypes.Add("CD-R");
-                                if(cdromMode.Value.ReadCDRW) mediaTypes.Add("CD-RW");
-                                if(cdromMode.Value.ReadDVDROM) mediaTypes.Add("DVD-ROM");
-                                if(cdromMode.Value.ReadDVDRAM) mediaTypes.Add("DVD-RAM");
-                                if(cdromMode.Value.ReadDVDR) mediaTypes.Add("DVD-R");
+                                if(cdromMode.ReadCDR) mediaTypes.Add("CD-R");
+                                if(cdromMode.ReadCDRW) mediaTypes.Add("CD-RW");
+                                if(cdromMode.ReadDVDROM) mediaTypes.Add("DVD-ROM");
+                                if(cdromMode.ReadDVDRAM) mediaTypes.Add("DVD-RAM");
+                                if(cdromMode.ReadDVDR) mediaTypes.Add("DVD-R");
                             }
 
                             if(report.SCSI.MultiMediaDevice.Features != null)

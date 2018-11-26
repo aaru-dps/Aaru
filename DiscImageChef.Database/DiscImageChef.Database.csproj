@@ -57,33 +57,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
-    <Compile Include="Migrations\20180805182209_InitialCreate.cs" />
-    <Compile Include="Migrations\20180805182209_InitialCreate.Designer.cs" />
+    <Compile Include="Migrations\20181126222301_DeviceReportV2.cs" />
+    <Compile Include="Migrations\20181126222301_DeviceReportV2.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
-    <Compile Include="Models\ATA.cs" />
-    <Compile Include="Models\BaseEntity.cs" />
-    <Compile Include="Models\BaseTypes.cs" />
-    <Compile Include="Models\CHS.cs" />
     <Compile Include="Models\Device.cs" />
-    <Compile Include="Models\FireWire.cs" />
-    <Compile Include="Models\PCMCIA.cs" />
-    <Compile Include="Models\SCSI\BlockDescriptor.cs" />
-    <Compile Include="Models\SCSI\Inquiry.cs" />
-    <Compile Include="Models\SCSI\MMC\Features.cs" />
-    <Compile Include="Models\SCSI\MMC\MMC.cs" />
-    <Compile Include="Models\SCSI\MMC\Mode2A.cs" />
-    <Compile Include="Models\SCSI\MMC\WriteDescriptor.cs" />
-    <Compile Include="Models\SCSI\Mode.cs" />
-    <Compile Include="Models\SCSI\ModePage.cs" />
-    <Compile Include="Models\SCSI\Page.cs" />
-    <Compile Include="Models\SCSI\SCSI.cs" />
-    <Compile Include="Models\SCSI\SSC\SequentialMedia.cs" />
-    <Compile Include="Models\SCSI\SSC\SSC.cs" />
-    <Compile Include="Models\SCSI\SSC\SupportedDensity.cs" />
-    <Compile Include="Models\SCSI\SupportedMedia.cs" />
-    <Compile Include="Models\SecureDigital.cs" />
-    <Compile Include="Models\TestedMedia.cs" />
-    <Compile Include="Models\Usb.cs" />
+    <Compile Include="Models\Report.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />

@@ -12,184 +12,45 @@ namespace DiscImageChef.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "2.1.1-rtm-30846");
+            modelBuilder.HasAnnotation("ProductVersion", "2.1.4-rtm-31024");
 
-            modelBuilder.Entity("EFTest.Models.ATA", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<byte?>("APIOSupported");
-
-                b.Property<ushort?>("ATAPIByteCount");
-
-                b.Property<string>("AdditionalPID");
-
-                b.Property<ushort?>("BufferSize");
-
-                b.Property<ushort?>("BufferType");
-
-                b.Property<ushort?>("CFAPowerMode");
-
-                b.Property<ushort?>("Capabilities");
-
-                b.Property<ushort?>("Capabilities2");
-
-                b.Property<byte?>("Capabilities3");
-
-                b.Property<ushort?>("CommandSet");
-
-                b.Property<ushort?>("CommandSet2");
-
-                b.Property<ushort?>("CommandSet3");
-
-                b.Property<ushort?>("CommandSet4");
-
-                b.Property<ushort?>("CommandSet5");
-
-                b.Property<byte?>("CurrentAAM");
-
-                b.Property<ushort?>("CurrentAPM");
-
-                b.Property<byte?>("DMAActive");
-
-                b.Property<byte?>("DMASupported");
-
-                b.Property<byte?>("DMATransferTimingMode");
-
-                b.Property<ushort?>("DataSetMgmt");
-
-                b.Property<ushort?>("DataSetMgmtSize");
-
-                b.Property<ushort?>("DeviceFormFactor");
-
-                b.Property<ushort?>("EnabledCommandSet");
-
-                b.Property<ushort?>("EnabledCommandSet2");
-
-                b.Property<ushort?>("EnabledCommandSet3");
-
-                b.Property<ushort?>("EnabledCommandSet4");
-
-                b.Property<ushort?>("EnabledSATAFeatures");
-
-                b.Property<ushort?>("EnhancedSecurityEraseTime");
-
-                b.Property<ulong?>("ExtendedUserSectors");
-
-                b.Property<string>("FirmwareRevision");
-
-                b.Property<byte?>("FreeFallSensitivity");
-
-                b.Property<ushort?>("GeneralConfiguration");
-
-                b.Property<ushort?>("HardwareResetResult");
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<byte[]>("Identify");
 
-                b.Property<ushort?>("InterseekDelay");
-
-                b.Property<byte?>("MDMAActive");
-
-                b.Property<byte?>("MDMASupported");
-
-                b.Property<ushort?>("MajorVersion");
-
-                b.Property<ushort?>("MasterPasswordRevisionCode");
-
-                b.Property<ushort?>("MaxDownloadMicroMode3");
-
-                b.Property<ushort?>("MaxQueueDepth");
-
-                b.Property<ushort?>("MinDownloadMicroMode3");
-
-                b.Property<ushort?>("MinMDMACycleTime");
-
-                b.Property<ushort?>("MinPIOCycleTimeFlow");
-
-                b.Property<ushort?>("MinPIOCycleTimeNoFlow");
-
-                b.Property<ushort?>("MinorVersion");
-
-                b.Property<string>("Model");
-
-                b.Property<byte?>("MultipleMaxSectors");
-
-                b.Property<byte?>("MultipleSectorNumber");
-
-                b.Property<ushort?>("NVCacheCaps");
-
-                b.Property<uint?>("NVCacheSize");
-
-                b.Property<ushort?>("NVCacheWriteSpeed");
-
-                b.Property<byte?>("NVEstimatedSpinUp");
-
-                b.Property<byte?>("PIOTransferTimingMode");
-
-                b.Property<ushort?>("PacketBusRelease");
-
-                b.Property<ulong?>("ReadCapabilitiesId");
-
-                b.Property<byte?>("RecommendedAAM");
-
-                b.Property<ushort?>("RecommendedMDMACycleTime");
-
-                b.Property<ushort?>("RemovableStatusSet");
-
-                b.Property<ushort?>("SATACapabilities");
-
-                b.Property<ushort?>("SATACapabilities2");
-
-                b.Property<ushort?>("SATAFeatures");
-
-                b.Property<ushort?>("SCTCommandTransport");
-
-                b.Property<uint?>("SectorsPerCard");
-
-                b.Property<ushort?>("SecurityEraseTime");
-
-                b.Property<ushort?>("SecurityStatus");
-
-                b.Property<ushort?>("ServiceBusyClear");
-
-                b.Property<ushort?>("SpecificConfiguration");
-
-                b.Property<ushort?>("StreamAccessLatency");
-
-                b.Property<ushort?>("StreamMinReqSize");
-
-                b.Property<uint?>("StreamPerformanceGranularity");
-
-                b.Property<ushort?>("StreamTransferTimeDMA");
-
-                b.Property<ushort?>("StreamTransferTimePIO");
-
-                b.Property<ushort?>("TransportMajorVersion");
-
-                b.Property<ushort?>("TransportMinorVersion");
-
-                b.Property<ushort?>("TrustedComputing");
-
-                b.Property<byte?>("UDMAActive");
-
-                b.Property<byte?>("UDMASupported");
-
-                b.Property<byte?>("WRVMode");
-
-                b.Property<uint?>("WRVSectorCountMode2");
-
-                b.Property<uint?>("WRVSectorCountMode3");
+                b.Property<int?>("ReadCapabilitiesId");
 
                 b.HasKey("Id");
 
                 b.HasIndex("ReadCapabilitiesId");
 
-                b.ToTable("ATA");
+                b.ToTable("Ata");
             });
 
-            modelBuilder.Entity("EFTest.Models.CHS", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.BlockDescriptor", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<uint?>("BlockLength");
+
+                b.Property<ulong?>("Blocks");
+
+                b.Property<byte>("Density");
+
+                b.Property<int?>("ScsiModeId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ScsiModeId");
+
+                b.ToTable("BlockDescriptor");
+            });
+
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Chs", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<ushort>("Cylinders");
 
@@ -199,44 +60,45 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.ToTable("CHS");
+                b.ToTable("Chs");
             });
 
-            modelBuilder.Entity("EFTest.Models.Device", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DensityCode", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Code").ValueGeneratedOnAdd();
 
-                b.Property<ulong?>("ATAId");
+                b.Property<int?>("SscSupportedMediaId");
 
-                b.Property<ulong?>("ATAPIId");
+                b.HasKey("Code");
 
-                b.Property<ulong?>("FireWireId");
+                b.HasIndex("SscSupportedMediaId");
 
-                b.Property<bool>("IsValid");
+                b.ToTable("DensityCode");
+            });
 
-                b.Property<string>("Manufacturer");
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DeviceReportV2", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<string>("Model");
+                b.Property<int?>("ATAId");
 
-                b.Property<ulong?>("MultiMediaCardId");
+                b.Property<int?>("ATAPIId");
 
-                b.Property<ulong?>("PCMCIAId");
+                b.Property<bool>("CompactFlash");
 
-                b.Property<string>("Revision");
+                b.Property<string>("Discriminator").IsRequired();
 
-                b.Property<ulong?>("SCSIId");
+                b.Property<int?>("FireWireId");
 
-                b.Property<ulong?>("SecureDigitalId");
+                b.Property<int?>("MultiMediaCardId");
 
-                b.Property<ulong>("TimesSeen");
+                b.Property<int?>("PCMCIAId");
 
-                b.Property<int>("Type");
+                b.Property<int?>("SCSIId");
 
-                b.Property<ulong?>("USBId");
+                b.Property<int?>("SecureDigitalId");
 
-                b.Property<DateTime>("WhenAdded");
-
-                b.Property<DateTime?>("WhenModified");
+                b.Property<int?>("USBId");
 
                 b.HasKey("Id");
 
@@ -256,12 +118,14 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasIndex("USBId");
 
-                b.ToTable("Device");
+                b.ToTable("Reports");
+
+                b.HasDiscriminator<string>("Discriminator").HasValue("DeviceReportV2");
             });
 
-            modelBuilder.Entity("EFTest.Models.FireWire", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.FireWire", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<string>("Manufacturer");
 
@@ -278,151 +142,26 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("FireWire");
             });
 
-            modelBuilder.Entity("EFTest.Models.IntClass", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<ulong?>("SupportedMediaId");
+                b.Property<int?>("FeaturesId");
 
-                b.Property<int>("Value");
+                b.Property<int?>("ModeSense2AId");
 
                 b.HasKey("Id");
 
-                b.HasIndex("SupportedMediaId");
+                b.HasIndex("FeaturesId");
 
-                b.ToTable("IntClass");
+                b.HasIndex("ModeSense2AId");
+
+                b.ToTable("Mmc");
             });
 
-            modelBuilder.Entity("EFTest.Models.PCMCIA", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.MmcFeatures", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<byte[]>("CIS");
-
-                b.Property<ushort>("CardCode");
-
-                b.Property<string>("Compliance");
-
-                b.Property<string>("Manufacturer");
-
-                b.Property<ushort>("ManufacturerCode");
-
-                b.Property<string>("ProductName");
-
-                b.HasKey("Id");
-
-                b.ToTable("PCMCIA");
-            });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.BlockDescriptor", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<uint?>("BlockLength");
-
-                b.Property<ulong?>("Blocks");
-
-                b.Property<byte>("Density");
-
-                b.Property<ulong?>("ModeId");
-
-                b.HasKey("Id");
-
-                b.HasIndex("ModeId");
-
-                b.ToTable("BlockDescriptor");
-            });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.Inquiry", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<bool>("ACKRequests");
-
-                b.Property<bool>("AERCSupported");
-
-                b.Property<byte?>("ANSIVersion");
-
-                b.Property<bool>("AccessControlCoordinator");
-
-                b.Property<bool>("Address16");
-
-                b.Property<bool>("Address32");
-
-                b.Property<byte>("AsymmetricalLUNAccess");
-
-                b.Property<bool>("BasicQueueing");
-
-                b.Property<byte[]>("Data");
-
-                b.Property<byte?>("DeviceTypeModifier");
-
-                b.Property<byte?>("ECMAVersion");
-
-                b.Property<bool>("EnclosureServices");
-
-                b.Property<bool>("HierarchicalLUN");
-
-                b.Property<byte?>("ISOVersion");
-
-                b.Property<bool>("IUS");
-
-                b.Property<bool>("LinkedCommands");
-
-                b.Property<bool>("MediumChanger");
-
-                b.Property<bool>("MultiPortDevice");
-
-                b.Property<bool>("NormalACA");
-
-                b.Property<byte>("PeripheralDeviceType");
-
-                b.Property<byte>("PeripheralQualifier");
-
-                b.Property<string>("ProductIdentification");
-
-                b.Property<string>("ProductRevisionLevel");
-
-                b.Property<bool>("Protection");
-
-                b.Property<bool>("QAS");
-
-                b.Property<bool>("RelativeAddressing");
-
-                b.Property<bool>("Removable");
-
-                b.Property<byte?>("ResponseDataFormat");
-
-                b.Property<byte>("SPIClocking");
-
-                b.Property<bool>("SoftReset");
-
-                b.Property<bool>("StorageArrayController");
-
-                b.Property<bool>("SyncTransfer");
-
-                b.Property<bool>("TaggedCommandQueue");
-
-                b.Property<bool>("TerminateTaskSupported");
-
-                b.Property<bool>("ThirdPartyCopy");
-
-                b.Property<bool>("TranferDisable");
-
-                b.Property<string>("VendorIdentification");
-
-                b.Property<bool>("WideBus16");
-
-                b.Property<bool>("WideBus32");
-
-                b.HasKey("Id");
-
-                b.ToTable("Inquiry");
-            });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.MMC.Features", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<byte?>("AACSVersion");
 
@@ -610,7 +349,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<byte>("ChangerSlots");
 
-                b.Property<bool?>("ChangerSupportsDiscPresent");
+                b.Property<bool>("ChangerSupportsDiscPresent");
 
                 b.Property<bool>("DBML");
 
@@ -674,155 +413,89 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.ToTable("Features");
+                b.ToTable("MmcFeatures");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.MMC.MMC", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.MmcSd", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<ulong?>("FeaturesId");
+                b.Property<byte[]>("CID");
 
-                b.Property<ulong?>("ModeSense2AId");
+                b.Property<byte[]>("CSD");
+
+                b.Property<byte[]>("ExtendedCSD");
+
+                b.Property<byte[]>("OCR");
+
+                b.Property<byte[]>("SCR");
 
                 b.HasKey("Id");
 
-                b.HasIndex("FeaturesId");
-
-                b.HasIndex("ModeSense2AId");
-
-                b.ToTable("MMC");
+                b.ToTable("MmcSd");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.MMC.Mode2A", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Pcmcia", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<bool>("AccurateCDDA");
+                b.Property<byte[]>("CIS");
 
-                b.Property<bool>("BCK");
+                b.Property<ushort?>("CardCode");
 
-                b.Property<ushort>("BufferSize");
+                b.Property<string>("Compliance");
 
-                b.Property<bool?>("BufferUnderRunProtection");
+                b.Property<string>("Manufacturer");
 
-                b.Property<bool>("CDDACommand");
+                b.Property<ushort?>("ManufacturerCode");
 
-                b.Property<bool>("CSSandCPPMSupported");
-
-                b.Property<bool>("CanEject");
-
-                b.Property<bool>("CanLockMedia");
-
-                b.Property<bool>("CompositeAudioVideo");
-
-                b.Property<ushort?>("CurrentSpeed");
-
-                b.Property<ushort?>("CurrentWriteSpeed");
-
-                b.Property<ushort?>("CurrentWriteSpeedSelected");
-
-                b.Property<bool>("DeterministicSlotChanger");
-
-                b.Property<bool>("DigitalPort1");
-
-                b.Property<bool>("DigitalPort2");
-
-                b.Property<bool>("LSBF");
-
-                b.Property<bool>("LeadInPW");
-
-                b.Property<byte>("LoadingMechanismType");
-
-                b.Property<bool>("LockStatus");
-
-                b.Property<ushort?>("MaximumSpeed");
-
-                b.Property<ushort?>("MaximumWriteSpeed");
-
-                b.Property<bool>("PlaysAudio");
-
-                b.Property<bool>("PreventJumperStatus");
-
-                b.Property<bool>("RCK");
-
-                b.Property<bool>("ReadsBarcode");
-
-                b.Property<bool>("ReadsBothSides");
-
-                b.Property<bool>("ReadsCDR");
-
-                b.Property<bool>("ReadsCDRW");
-
-                b.Property<bool>("ReadsDVDR");
-
-                b.Property<bool>("ReadsDVDRAM");
-
-                b.Property<bool>("ReadsDVDROM");
-
-                b.Property<bool>("ReadsDeinterlavedSubchannel");
-
-                b.Property<bool>("ReadsISRC");
-
-                b.Property<bool>("ReadsMode2Form1");
-
-                b.Property<bool>("ReadsMode2Form2");
-
-                b.Property<bool>("ReadsPacketCDR");
-
-                b.Property<bool>("ReadsSubchannel");
-
-                b.Property<bool>("ReadsUPC");
-
-                b.Property<bool>("ReturnsC2Pointers");
-
-                b.Property<byte?>("RotationControlSelected");
-
-                b.Property<bool>("SSS");
-
-                b.Property<bool>("SeparateChannelMute");
-
-                b.Property<bool>("SeparateChannelVolume");
-
-                b.Property<ushort?>("SupportedVolumeLevels");
-
-                b.Property<bool>("SupportsMultiSession");
-
-                b.Property<bool>("TestWrite");
-
-                b.Property<bool>("WritesCDR");
-
-                b.Property<bool>("WritesCDRW");
-
-                b.Property<bool>("WritesDVDR");
-
-                b.Property<bool>("WritesDVDRAM");
+                b.Property<string>("ProductName");
 
                 b.HasKey("Id");
 
-                b.ToTable("Mode2A");
+                b.ToTable("Pcmcia");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.MMC.WriteDescriptor", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Scsi", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<ulong?>("Mode2AId");
+                b.Property<byte[]>("InquiryData");
 
-                b.Property<byte>("RotationControl");
+                b.Property<byte[]>("ModeSense10Data");
 
-                b.Property<ushort>("WriteSpeed");
+                b.Property<byte[]>("ModeSense6Data");
+
+                b.Property<int?>("ModeSenseId");
+
+                b.Property<int?>("MultiMediaDeviceId");
+
+                b.Property<int?>("ReadCapabilitiesId");
+
+                b.Property<int?>("SequentialDeviceId");
+
+                b.Property<bool>("SupportsModeSense10");
+
+                b.Property<bool>("SupportsModeSense6");
+
+                b.Property<bool>("SupportsModeSubpages");
 
                 b.HasKey("Id");
 
-                b.HasIndex("Mode2AId");
+                b.HasIndex("ModeSenseId");
 
-                b.ToTable("WriteDescriptor");
+                b.HasIndex("MultiMediaDeviceId");
+
+                b.HasIndex("ReadCapabilitiesId");
+
+                b.HasIndex("SequentialDeviceId");
+
+                b.ToTable("Scsi");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.Mode", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.ScsiMode", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<bool>("BlankCheckEnabled");
 
@@ -838,118 +511,35 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.ToTable("Mode");
+                b.ToTable("ScsiMode");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.ModePage", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.ScsiPage", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<ulong?>("ModeId");
+                b.Property<int?>("ScsiId");
+
+                b.Property<int?>("ScsiModeId");
 
                 b.Property<byte>("page");
 
-                b.Property<byte>("subpage");
+                b.Property<byte?>("subpage");
 
                 b.Property<byte[]>("value");
 
                 b.HasKey("Id");
 
-                b.HasIndex("ModeId");
+                b.HasIndex("ScsiId");
 
-                b.ToTable("ModePage");
+                b.HasIndex("ScsiModeId");
+
+                b.ToTable("ScsiPage");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.Page", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ssc", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<ulong?>("SCSIId");
-
-                b.Property<byte>("page");
-
-                b.Property<byte[]>("value");
-
-                b.HasKey("Id");
-
-                b.HasIndex("SCSIId");
-
-                b.ToTable("Page");
-            });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.SCSI", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<ulong?>("InquiryId");
-
-                b.Property<byte[]>("ModeSense10Data");
-
-                b.Property<byte[]>("ModeSense6Data");
-
-                b.Property<ulong?>("ModeSenseId");
-
-                b.Property<ulong?>("MultiMediaDeviceId");
-
-                b.Property<ulong?>("ReadCapabilitiesId");
-
-                b.Property<ulong?>("SequentialDeviceId");
-
-                b.Property<bool>("SupportsModeSense10");
-
-                b.Property<bool>("SupportsModeSense6");
-
-                b.Property<bool>("SupportsModeSubpages");
-
-                b.HasKey("Id");
-
-                b.HasIndex("InquiryId");
-
-                b.HasIndex("ModeSenseId");
-
-                b.HasIndex("MultiMediaDeviceId");
-
-                b.HasIndex("ReadCapabilitiesId");
-
-                b.HasIndex("SequentialDeviceId");
-
-                b.ToTable("SCSI");
-            });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.SSC.SequentialMedia", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<bool?>("CanReadMediaSerial");
-
-                b.Property<byte?>("Density");
-
-                b.Property<string>("Manufacturer");
-
-                b.Property<bool>("MediaIsRecognized");
-
-                b.Property<byte?>("MediumType");
-
-                b.Property<string>("MediumTypeName");
-
-                b.Property<byte[]>("ModeSense10Data");
-
-                b.Property<byte[]>("ModeSense6Data");
-
-                b.Property<string>("Model");
-
-                b.Property<ulong?>("SSCId");
-
-                b.HasKey("Id");
-
-                b.HasIndex("SSCId");
-
-                b.ToTable("SequentialMedia");
-            });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.SSC.SSC", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<byte?>("BlockSizeGranularity");
 
@@ -959,12 +549,41 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.ToTable("SSC");
+                b.ToTable("Ssc");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.SSC.SupportedDensity", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Description");
+
+                b.Property<ushort>("Length");
+
+                b.Property<byte>("MediumType");
+
+                b.Property<string>("Name");
+
+                b.Property<string>("Organization");
+
+                b.Property<int?>("SscId");
+
+                b.Property<int?>("TestedSequentialMediaId");
+
+                b.Property<ushort>("Width");
+
+                b.HasKey("Id");
+
+                b.HasIndex("SscId");
+
+                b.HasIndex("TestedSequentialMediaId");
+
+                b.ToTable("SscSupportedMedia");
+            });
+
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.SupportedDensity", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<uint>("BitsPerMm");
 
@@ -982,11 +601,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<byte>("PrimaryCode");
 
-                b.Property<ulong?>("SSCId");
-
                 b.Property<byte>("SecondaryCode");
 
-                b.Property<ulong?>("SequentialMediaId");
+                b.Property<int?>("SscId");
+
+                b.Property<int?>("TestedSequentialMediaId");
 
                 b.Property<ushort>("Tracks");
 
@@ -996,87 +615,24 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.HasIndex("SSCId");
+                b.HasIndex("SscId");
 
-                b.HasIndex("SequentialMediaId");
+                b.HasIndex("TestedSequentialMediaId");
 
                 b.ToTable("SupportedDensity");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.SupportedMedia", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.TestedMedia", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<string>("Description");
-
-                b.Property<ushort>("Length");
-
-                b.Property<byte>("MediumType");
-
-                b.Property<string>("Name");
-
-                b.Property<string>("Organization");
-
-                b.Property<ulong?>("SSCId");
-
-                b.Property<ulong?>("SequentialMediaId");
-
-                b.Property<ushort>("Width");
-
-                b.HasKey("Id");
-
-                b.HasIndex("SSCId");
-
-                b.HasIndex("SequentialMediaId");
-
-                b.ToTable("SupportedMedia");
-            });
-
-            modelBuilder.Entity("EFTest.Models.SecureDigital", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<byte[]>("CID");
-
-                b.Property<byte[]>("CSD");
-
-                b.Property<byte[]>("ExtendedCSD");
-
-                b.Property<byte[]>("OCR");
-
-                b.Property<byte[]>("SCR");
-
-                b.HasKey("Id");
-
-                b.ToTable("SecureDigital");
-            });
-
-            modelBuilder.Entity("EFTest.Models.StringClass", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<ulong?>("PCMCIAId");
-
-                b.Property<string>("Value").IsRequired();
-
-                b.HasKey("Id");
-
-                b.HasIndex("PCMCIAId");
-
-                b.ToTable("StringClass");
-            });
-
-            modelBuilder.Entity("EFTest.Models.TestedMedia", b =>
-            {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
-
-                b.Property<ulong?>("ATAId");
+                b.Property<int?>("AtaId");
 
                 b.Property<uint?>("BlockSize");
 
                 b.Property<ulong?>("Blocks");
 
-                b.Property<ulong?>("CHSId");
+                b.Property<int?>("CHSId");
 
                 b.Property<bool?>("CanReadAACS");
 
@@ -1102,6 +658,8 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<bool?>("CanReadDiscInformation");
 
+                b.Property<bool?>("CanReadFirstTrackPreGap");
+
                 b.Property<bool?>("CanReadFullTOC");
 
                 b.Property<bool?>("CanReadHDCMI");
@@ -1109,8 +667,6 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<bool?>("CanReadLayerCapacity");
 
                 b.Property<bool?>("CanReadLeadIn");
-
-                b.Property<bool?>("CanReadLeadInPostgap");
 
                 b.Property<bool?>("CanReadLeadOut");
 
@@ -1140,9 +696,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<bool?>("CanReadTOC");
 
-                b.Property<ulong?>("CurrentCHSId");
+                b.Property<int?>("CurrentCHSId");
 
                 b.Property<byte?>("Density");
+
+                b.Property<byte[]>("IdentifyData");
 
                 b.Property<ulong?>("LBA48Sectors");
 
@@ -1152,8 +710,6 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("LongBlockSize");
 
-                b.Property<ulong?>("MMCId");
-
                 b.Property<string>("Manufacturer");
 
                 b.Property<bool>("MediaIsRecognized");
@@ -1161,6 +717,8 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<byte?>("MediumType");
 
                 b.Property<string>("MediumTypeName");
+
+                b.Property<int?>("MmcId");
 
                 b.Property<byte[]>("ModeSense10Data");
 
@@ -1172,7 +730,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("PhysicalBlockSize");
 
-                b.Property<ulong?>("SCSIId");
+                b.Property<int?>("ScsiId");
 
                 b.Property<bool?>("SolidStateDevice");
 
@@ -1188,13 +746,13 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<bool?>("SupportsPlextorReadRawDVD");
 
-                b.Property<bool?>("SupportsRead");
-
                 b.Property<bool?>("SupportsRead10");
 
                 b.Property<bool?>("SupportsRead12");
 
                 b.Property<bool?>("SupportsRead16");
+
+                b.Property<bool?>("SupportsRead6");
 
                 b.Property<bool?>("SupportsReadCapacity");
 
@@ -1236,6 +794,8 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<bool?>("SupportsReadRetryLba");
 
+                b.Property<bool?>("SupportsReadSectors");
+
                 b.Property<bool?>("SupportsSeek");
 
                 b.Property<bool?>("SupportsSeekLba");
@@ -1246,22 +806,53 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.HasIndex("ATAId");
+                b.HasIndex("AtaId");
 
                 b.HasIndex("CHSId");
 
                 b.HasIndex("CurrentCHSId");
 
-                b.HasIndex("MMCId");
+                b.HasIndex("MmcId");
 
-                b.HasIndex("SCSIId");
+                b.HasIndex("ScsiId");
 
                 b.ToTable("TestedMedia");
             });
 
-            modelBuilder.Entity("EFTest.Models.USB", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<bool?>("CanReadMediaSerial");
+
+                b.Property<byte?>("Density");
+
+                b.Property<string>("Manufacturer");
+
+                b.Property<bool>("MediaIsRecognized");
+
+                b.Property<byte?>("MediumType");
+
+                b.Property<string>("MediumTypeName");
+
+                b.Property<byte[]>("ModeSense10Data");
+
+                b.Property<byte[]>("ModeSense6Data");
+
+                b.Property<string>("Model");
+
+                b.Property<int?>("SscId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("SscId");
+
+                b.ToTable("TestedSequentialMedia");
+            });
+
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Usb", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
                 b.Property<byte[]>("Descriptors");
 
@@ -1277,154 +868,245 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasKey("Id");
 
-                b.ToTable("USB");
+                b.ToTable("Usb");
             });
 
-            modelBuilder.Entity("EFTest.Models.UshortClass", b =>
+            modelBuilder.Entity("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", b =>
             {
-                b.Property<ulong>("Id").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
 
-                b.Property<ulong?>("InquiryId");
+                b.Property<bool>("AccurateCDDA");
 
-                b.Property<ushort>("Value");
+                b.Property<bool>("AudioPlay");
+
+                b.Property<bool>("BCK");
+
+                b.Property<bool>("BUF");
+
+                b.Property<ushort>("BufferSize");
+
+                b.Property<bool>("C2Pointer");
+
+                b.Property<bool>("CDDACommand");
+
+                b.Property<ushort>("CMRSupported");
+
+                b.Property<bool>("Composite");
+
+                b.Property<ushort>("CurrentSpeed");
+
+                b.Property<ushort>("CurrentWriteSpeed");
+
+                b.Property<ushort>("CurrentWriteSpeedSelected");
+
+                b.Property<bool>("DeinterlaveSubchannel");
+
+                b.Property<bool>("DigitalPort1");
+
+                b.Property<bool>("DigitalPort2");
+
+                b.Property<bool>("Eject");
+
+                b.Property<bool>("ISRC");
+
+                b.Property<bool>("LSBF");
+
+                b.Property<bool>("LeadInPW");
+
+                b.Property<byte>("Length");
+
+                b.Property<byte>("LoadingMechanism");
+
+                b.Property<bool>("Lock");
+
+                b.Property<bool>("LockState");
+
+                b.Property<ushort>("MaxWriteSpeed");
+
+                b.Property<ushort>("MaximumSpeed");
+
+                b.Property<bool>("Method2");
+
+                b.Property<bool>("Mode2Form1");
+
+                b.Property<bool>("Mode2Form2");
+
+                b.Property<bool>("MultiSession");
+
+                b.Property<bool>("PS");
+
+                b.Property<bool>("PreventJumper");
+
+                b.Property<bool>("RCK");
+
+                b.Property<bool>("ReadBarcode");
+
+                b.Property<bool>("ReadCDR");
+
+                b.Property<bool>("ReadCDRW");
+
+                b.Property<bool>("ReadDVDR");
+
+                b.Property<bool>("ReadDVDRAM");
+
+                b.Property<bool>("ReadDVDROM");
+
+                b.Property<byte>("RotationControlSelected");
+
+                b.Property<bool>("SCC");
+
+                b.Property<bool>("SDP");
+
+                b.Property<bool>("SSS");
+
+                b.Property<bool>("SeparateChannelMute");
+
+                b.Property<bool>("SeparateChannelVolume");
+
+                b.Property<bool>("Subchannel");
+
+                b.Property<ushort>("SupportedVolumeLevels");
+
+                b.Property<bool>("TestWrite");
+
+                b.Property<bool>("UPC");
+
+                b.Property<bool>("WriteCDR");
+
+                b.Property<bool>("WriteCDRW");
+
+                b.Property<bool>("WriteDVDR");
+
+                b.Property<bool>("WriteDVDRAM");
 
                 b.HasKey("Id");
 
-                b.HasIndex("InquiryId");
-
-                b.ToTable("UshortClass");
+                b.ToTable("ModePage_2A");
             });
 
-            modelBuilder.Entity("EFTest.Models.ATA",
-                                b =>
-                                {
-                                    b.HasOne("EFTest.Models.TestedMedia", "ReadCapabilities").WithMany()
-                                     .HasForeignKey("ReadCapabilitiesId");
-                                });
-
-            modelBuilder.Entity("EFTest.Models.Device", b =>
+            modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
             {
-                b.HasOne("EFTest.Models.ATA", "ATA").WithMany().HasForeignKey("ATAId");
+                b.HasBaseType("DiscImageChef.CommonTypes.Metadata.DeviceReportV2");
 
-                b.HasOne("EFTest.Models.ATA", "ATAPI").WithMany().HasForeignKey("ATAPIId");
+                b.Property<DateTime>("LastSynchronized");
 
-                b.HasOne("EFTest.Models.FireWire", "FireWire").WithMany().HasForeignKey("FireWireId");
+                b.ToTable("Device");
 
-                b.HasOne("EFTest.Models.SecureDigital", "MultiMediaCard").WithMany().HasForeignKey("MultiMediaCardId");
-
-                b.HasOne("EFTest.Models.PCMCIA", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
-
-                b.HasOne("EFTest.Models.SCSI.SCSI", "SCSI").WithMany().HasForeignKey("SCSIId");
-
-                b.HasOne("EFTest.Models.SecureDigital", "SecureDigital").WithMany().HasForeignKey("SecureDigitalId");
-
-                b.HasOne("EFTest.Models.USB", "USB").WithMany().HasForeignKey("USBId");
+                b.HasDiscriminator().HasValue("Device");
             });
 
-            modelBuilder.Entity("EFTest.Models.IntClass",
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata",
                                 b =>
                                 {
-                                    b.HasOne("EFTest.Models.SCSI.SupportedMedia").WithMany("DensityCodes")
-                                     .HasForeignKey("SupportedMediaId");
+                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedMedia", "ReadCapabilities")
+                                     .WithMany().HasForeignKey("ReadCapabilitiesId");
                                 });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.BlockDescriptor",
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.BlockDescriptor",
                                 b =>
                                 {
-                                    b.HasOne("EFTest.Models.SCSI.Mode").WithMany("BlockDescriptors")
-                                     .HasForeignKey("ModeId");
+                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode").WithMany("BlockDescriptors")
+                                     .HasForeignKey("ScsiModeId");
                                 });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.MMC.MMC", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DensityCode",
+                                b =>
+                                {
+                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia")
+                                     .WithMany("DensityCodes").HasForeignKey("SscSupportedMediaId");
+                                });
+
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DeviceReportV2", b =>
             {
-                b.HasOne("EFTest.Models.SCSI.MMC.Features", "Features").WithMany().HasForeignKey("FeaturesId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId");
 
-                b.HasOne("EFTest.Models.SCSI.MMC.Mode2A", "ModeSense2A").WithMany().HasForeignKey("ModeSense2AId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany()
+                 .HasForeignKey("FireWireId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany()
+                 .HasForeignKey("MultiMediaCardId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany()
+                 .HasForeignKey("SecureDigitalId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.MMC.WriteDescriptor",
-                                b =>
-                                {
-                                    b.HasOne("EFTest.Models.SCSI.MMC.Mode2A")
-                                     .WithMany("WriteSpeedPerformanceDescriptors").HasForeignKey("Mode2AId");
-                                });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.ModePage",
-                                b =>
-                                {
-                                    b.HasOne("EFTest.Models.SCSI.Mode").WithMany("ModePages").HasForeignKey("ModeId");
-                                });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.Page",
-                                b =>
-                                {
-                                    b.HasOne("EFTest.Models.SCSI.SCSI").WithMany("EVPDPages").HasForeignKey("SCSIId");
-                                });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.SCSI", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc", b =>
             {
-                b.HasOne("EFTest.Models.SCSI.Inquiry", "Inquiry").WithMany().HasForeignKey("InquiryId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcFeatures", "Features").WithMany()
+                 .HasForeignKey("FeaturesId");
 
-                b.HasOne("EFTest.Models.SCSI.Mode", "ModeSense").WithMany().HasForeignKey("ModeSenseId");
+                b.HasOne("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", "ModeSense2A").WithMany()
+                 .HasForeignKey("ModeSense2AId");
+            });
 
-                b.HasOne("EFTest.Models.SCSI.MMC.MMC", "MultiMediaDevice").WithMany()
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Scsi", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode", "ModeSense").WithMany()
+                 .HasForeignKey("ModeSenseId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Mmc", "MultiMediaDevice").WithMany()
                  .HasForeignKey("MultiMediaDeviceId");
 
-                b.HasOne("EFTest.Models.TestedMedia", "ReadCapabilities").WithMany()
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany()
                  .HasForeignKey("ReadCapabilitiesId");
 
-                b.HasOne("EFTest.Models.SCSI.SSC.SSC", "SequentialDevice").WithMany()
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc", "SequentialDevice").WithMany()
                  .HasForeignKey("SequentialDeviceId");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.SSC.SequentialMedia",
-                                b =>
-                                {
-                                    b.HasOne("EFTest.Models.SCSI.SSC.SSC").WithMany("TestedMedia")
-                                     .HasForeignKey("SSCId");
-                                });
-
-            modelBuilder.Entity("EFTest.Models.SCSI.SSC.SupportedDensity", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.ScsiPage", b =>
             {
-                b.HasOne("EFTest.Models.SCSI.SSC.SSC").WithMany("SupportedDensities").HasForeignKey("SSCId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi").WithMany("EVPDPages").HasForeignKey("ScsiId");
 
-                b.HasOne("EFTest.Models.SCSI.SSC.SequentialMedia").WithMany("SupportedDensities")
-                 .HasForeignKey("SequentialMediaId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode").WithMany("ModePages")
+                 .HasForeignKey("ScsiModeId");
             });
 
-            modelBuilder.Entity("EFTest.Models.SCSI.SupportedMedia", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia", b =>
             {
-                b.HasOne("EFTest.Models.SCSI.SSC.SSC").WithMany("SupportedMediaTypes").HasForeignKey("SSCId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("SupportedMediaTypes")
+                 .HasForeignKey("SscId");
 
-                b.HasOne("EFTest.Models.SCSI.SSC.SequentialMedia").WithMany("SupportedMediaTypes")
-                 .HasForeignKey("SequentialMediaId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedMediaTypes")
+                 .HasForeignKey("TestedSequentialMediaId");
             });
 
-            modelBuilder.Entity("EFTest.Models.StringClass",
-                                b =>
-                                {
-                                    b.HasOne("EFTest.Models.PCMCIA").WithMany("AdditionalInformation")
-                                     .HasForeignKey("PCMCIAId");
-                                });
-
-            modelBuilder.Entity("EFTest.Models.TestedMedia", b =>
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.SupportedDensity", b =>
             {
-                b.HasOne("EFTest.Models.ATA").WithMany("RemovableMedias").HasForeignKey("ATAId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("SupportedDensities")
+                 .HasForeignKey("SscId");
 
-                b.HasOne("EFTest.Models.CHS", "CHS").WithMany().HasForeignKey("CHSId");
-
-                b.HasOne("EFTest.Models.CHS", "CurrentCHS").WithMany().HasForeignKey("CurrentCHSId");
-
-                b.HasOne("EFTest.Models.SCSI.MMC.MMC").WithMany("TestedMedia").HasForeignKey("MMCId");
-
-                b.HasOne("EFTest.Models.SCSI.SCSI").WithMany("RemovableMedias").HasForeignKey("SCSIId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedDensities")
+                 .HasForeignKey("TestedSequentialMediaId");
             });
 
-            modelBuilder.Entity("EFTest.Models.UshortClass",
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.TestedMedia", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata").WithMany("RemovableMedias").HasForeignKey("AtaId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Chs", "CHS").WithMany().HasForeignKey("CHSId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Chs", "CurrentCHS").WithMany()
+                 .HasForeignKey("CurrentCHSId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Mmc").WithMany("TestedMedia").HasForeignKey("MmcId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi").WithMany("RemovableMedias").HasForeignKey("ScsiId");
+            });
+
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia",
                                 b =>
                                 {
-                                    b.HasOne("EFTest.Models.SCSI.Inquiry").WithMany("VersionDescriptors")
-                                     .HasForeignKey("InquiryId");
+                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("TestedMedia")
+                                     .HasForeignKey("SscId");
                                 });
             #pragma warning restore 612, 618
         }

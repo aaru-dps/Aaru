@@ -125,8 +125,8 @@ namespace DiscImageChef.DiscImages
             {
                 stream.Read(mode2A, 0, mode2A.Length);
                 mode2A[1] -= 2;
-                Modes.ModePage_2A? decoded2A = Modes.DecodeModePage_2A(mode2A);
-                if(decoded2A.HasValue)
+                Modes.ModePage_2A decoded2A = Modes.DecodeModePage_2A(mode2A);
+                if(!(decoded2A is null))
                     DicConsole.DebugWriteLine("BlindWrite5 plugin", "mode page 2A: {0}",
                                               Modes.PrettifyModePage_2A(decoded2A));
                 else mode2A = null;
@@ -1016,25 +1016,14 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
-        public byte[] ReadSector(ulong sectorAddress, uint track)
-        {
-            return ReadSectors(sectorAddress, 1, track);
-        }
+        public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, track, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
+            ReadSectorsTag(sectorAddress, 1, track, tag);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
@@ -1469,15 +1458,9 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            return ReadSectorsLong(sectorAddress, 1);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
-        {
-            return ReadSectorsLong(sectorAddress, 1, track);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
@@ -1672,9 +1655,6 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifyMediaImage()
-        {
-            return null;
-        }
+        public bool? VerifyMediaImage() => null;
     }
 }
