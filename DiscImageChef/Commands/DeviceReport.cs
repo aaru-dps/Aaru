@@ -67,9 +67,12 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddDevice(dev);
 
-            DeviceReportV2 report    = new DeviceReportV2();
-            bool           removable = false;
-            string         jsonFile;
+            DeviceReportV2 report = new DeviceReportV2
+            {
+                Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.Revision, Type = dev.Type
+            };
+            bool   removable = false;
+            string jsonFile;
 
             if(!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
                 jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".json";

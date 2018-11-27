@@ -5,6 +5,12 @@ namespace DiscImageChef.Database.Models
 {
     public class Report : DeviceReportV2
     {
+        public Report()
+        {
+            Created = DateTime.UtcNow;
+            Uploaded = false;
+        }
+
         public Report(DeviceReportV2 report)
         {
             ATA            = report.ATA;
@@ -18,6 +24,10 @@ namespace DiscImageChef.Database.Models
             SecureDigital  = report.SecureDigital;
             USB            = report.USB;
             Uploaded       = false;
+            Manufacturer   = report.Manufacturer;
+            Model          = report.Model;
+            Revision       = report.Revision;
+            Type           = report.Type;
         }
 
         public DateTime Created  { get; set; }

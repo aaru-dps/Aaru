@@ -296,6 +296,8 @@
         <e p="Migrations" t="Include">
           <e p="20181126222301_DeviceReportV2.Designer.cs" t="Include" />
           <e p="20181126222301_DeviceReportV2.cs" t="Include" />
+          <e p="20181127001622_AddDeviceBasicFields.Designer.cs" t="Include" />
+          <e p="20181127001622_AddDeviceBasicFields.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1102,6 +1104,7 @@
         <e p="DiscImageChef.EntityFramework.csproj" t="IncludeRecursive" />
         <e p="Program.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="discimagechef.db" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.1" t="Include">

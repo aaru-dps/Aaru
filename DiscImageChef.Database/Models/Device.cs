@@ -5,6 +5,11 @@ namespace DiscImageChef.Database.Models
 {
     public class Device : DeviceReportV2
     {
+        public Device()
+        {
+            LastSynchronized = DateTime.UtcNow;
+        }
+
         public Device(DeviceReportV2 report)
         {
             ATA              = report.ATA;
@@ -17,6 +22,10 @@ namespace DiscImageChef.Database.Models
             SCSI             = report.SCSI;
             SecureDigital    = report.SecureDigital;
             USB              = report.USB;
+            Manufacturer     = report.Manufacturer;
+            Model            = report.Model;
+            Revision         = report.Revision;
+            Type             = report.Type;
         }
 
         public DateTime LastSynchronized { get; set; }

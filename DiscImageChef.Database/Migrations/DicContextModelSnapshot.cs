@@ -90,13 +90,21 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<int?>("FireWireId");
 
+                b.Property<string>("Manufacturer");
+
+                b.Property<string>("Model");
+
                 b.Property<int?>("MultiMediaCardId");
 
                 b.Property<int?>("PCMCIAId");
 
+                b.Property<string>("Revision");
+
                 b.Property<int?>("SCSIId");
 
                 b.Property<int?>("SecureDigitalId");
+
+                b.Property<int>("Type");
 
                 b.Property<int?>("USBId");
 
