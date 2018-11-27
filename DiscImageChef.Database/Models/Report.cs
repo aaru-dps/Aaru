@@ -7,14 +7,14 @@ namespace DiscImageChef.Database.Models
     {
         public Report()
         {
-            Created = DateTime.UtcNow;
+            Created  = DateTime.UtcNow;
             Uploaded = false;
         }
 
         public Report(DeviceReportV2 report)
         {
             ATA            = report.ATA;
-            ATAPI          = report.ATA;
+            ATAPI          = report.ATAPI;
             CompactFlash   = report.CompactFlash;
             FireWire       = report.FireWire;
             Created        = DateTime.UtcNow;

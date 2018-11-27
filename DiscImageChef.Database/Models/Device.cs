@@ -13,7 +13,7 @@ namespace DiscImageChef.Database.Models
         public Device(DeviceReportV2 report)
         {
             ATA              = report.ATA;
-            ATAPI            = report.ATA;
+            ATAPI            = report.ATAPI;
             CompactFlash     = report.CompactFlash;
             FireWire         = report.FireWire;
             LastSynchronized = DateTime.UtcNow;
