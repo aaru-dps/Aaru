@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System.Linq;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
@@ -65,7 +66,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
                 if(dsh.HasValue)
                 {
-                    report.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
+                    SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
                     for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                     {
                         report.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
@@ -81,6 +82,8 @@ namespace DiscImageChef.Core.Devices.Report
                         report.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
                         report.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
                     }
+
+                    report.SupportedDensities = array.ToList();
                 }
             }
 
@@ -91,7 +94,7 @@ namespace DiscImageChef.Core.Devices.Report
             DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
             if(!mtsh.HasValue) return report;
 
-            report.SupportedMediaTypes = new SscSupportedMedia[mtsh.Value.descriptors.Length];
+            SscSupportedMedia[] array2 = new SscSupportedMedia[mtsh.Value.descriptors.Length];
             for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
             {
                 report.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
@@ -102,12 +105,14 @@ namespace DiscImageChef.Core.Devices.Report
                 report.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
                 if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
-                report.SupportedMediaTypes[i].DensityCodes =
-                    new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
+                DensityCode[] array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
                 for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
                     report.SupportedMediaTypes[i].DensityCodes[j] =
                         new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
+                report.SupportedMediaTypes[i].DensityCodes = array3.ToList();
             }
+
+            report.SupportedMediaTypes = array2.ToList();
 
             return report;
         }
@@ -149,7 +154,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
                 if(dsh.HasValue)
                 {
-                    seqTest.SupportedDensities = new SupportedDensity[dsh.Value.descriptors.Length];
+                    SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
                     for(int i = 0; i < dsh.Value.descriptors.Length; i++)
                     {
                         seqTest.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
@@ -165,6 +170,8 @@ namespace DiscImageChef.Core.Devices.Report
                         seqTest.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
                         seqTest.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
                     }
+
+                    seqTest.SupportedDensities = array.ToList();
                 }
             }
 
@@ -175,7 +182,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
                 if(mtsh.HasValue)
                 {
-                    seqTest.SupportedMediaTypes = new SscSupportedMedia[mtsh.Value.descriptors.Length];
+                    SscSupportedMedia[] array = new SscSupportedMedia[mtsh.Value.descriptors.Length];
                     for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                     {
                         seqTest.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
@@ -186,12 +193,14 @@ namespace DiscImageChef.Core.Devices.Report
                         seqTest.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
                         if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
-                        seqTest.SupportedMediaTypes[i].DensityCodes =
-                            new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
+                        DensityCode[] array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
                         for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
                             seqTest.SupportedMediaTypes[i].DensityCodes[j] =
                                 new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
+                        seqTest.SupportedMediaTypes[i].DensityCodes = array2.ToList();
                     }
+
+                    seqTest.SupportedMediaTypes = array.ToList();
                 }
             }
 

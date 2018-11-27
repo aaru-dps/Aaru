@@ -58,7 +58,7 @@ namespace DiscImageChef.Core.Devices.Report
             return report;
         }
 
-        public ScsiPage[] ReportEvpdPages()
+        public List<ScsiPage> ReportEvpdPages()
         {
             DicConsole.WriteLine("Querying list of SCSI EVPDs...");
             bool sense = dev.ScsiInquiry(out byte[] buffer, out _, 0x00);
@@ -79,7 +79,7 @@ namespace DiscImageChef.Core.Devices.Report
                 evpds.Add(evpd);
             }
 
-            return evpds.Count > 0 ? evpds.ToArray() : null;
+            return evpds.Count > 0 ? evpds : null;
         }
 
         public void ReportScsiModes(ref DeviceReportV2 report, ref Modes.ModePage_2A cdromMode)
@@ -160,7 +160,7 @@ namespace DiscImageChef.Core.Devices.Report
                     cdromMode = Modes.DecodeModePage_2A(page.PageResponse);
             }
 
-            if(modePages.Count > 0) report.SCSI.ModeSense.ModePages = modePages.ToArray();
+            if(modePages.Count > 0) report.SCSI.ModeSense.ModePages = modePages;
         }
 
         public TestedMedia ReportScsiMedia()

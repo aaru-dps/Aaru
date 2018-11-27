@@ -38,10 +38,12 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.Database;
+using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
 using Newtonsoft.Json;
+using Device = DiscImageChef.Devices.Device;
 
 namespace DiscImageChef.Commands
 {
@@ -220,7 +222,7 @@ namespace DiscImageChef.Commands
                             mediaTests.Add(mediaTest);
                         }
 
-                        report.ATA.RemovableMedias = mediaTests.ToArray();
+                        report.ATA.RemovableMedias = mediaTests;
                     }
                     else report.ATA.ReadCapabilities = reporter.ReportAta(report.ATA.IdentifyDevice.Value);
 
@@ -607,7 +609,7 @@ namespace DiscImageChef.Commands
                                 mediaTests.Add(mediaTest);
                             }
 
-                            report.SCSI.MultiMediaDevice.TestedMedia = mediaTests.ToArray();
+                            report.SCSI.MultiMediaDevice.TestedMedia = mediaTests;
                         }
                             break;
                         case PeripheralDeviceTypes.SequentialAccess:
@@ -694,7 +696,7 @@ namespace DiscImageChef.Commands
                                 seqTests.Add(seqTest);
                             }
 
-                            report.SCSI.SequentialDevice.TestedMedia = seqTests.ToArray();
+                            report.SCSI.SequentialDevice.TestedMedia = seqTests;
                         }
 
                             break;
@@ -828,7 +830,7 @@ namespace DiscImageChef.Commands
                                     mediaTests.Add(mediaTest);
                                 }
 
-                                report.SCSI.RemovableMedias = mediaTests.ToArray();
+                                report.SCSI.RemovableMedias = mediaTests;
                             }
                             else
                             {
