@@ -30,7 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Devices;
+using DiscImageChef.CommonTypes.Enums;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 

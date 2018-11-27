@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices
 {

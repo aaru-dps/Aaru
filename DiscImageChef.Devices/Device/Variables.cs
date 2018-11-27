@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Decoders.SCSI;
 

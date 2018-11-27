@@ -37,6 +37,7 @@ using System.Linq;
 using System.Threading;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Media.Detection;
 using DiscImageChef.Decoders.CD;

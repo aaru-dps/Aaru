@@ -30,9 +30,9 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Report
 {

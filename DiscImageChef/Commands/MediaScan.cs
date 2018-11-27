@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Devices;

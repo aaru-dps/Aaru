@@ -39,6 +39,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Core;

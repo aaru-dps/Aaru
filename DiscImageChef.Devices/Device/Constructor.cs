@@ -35,6 +35,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
@@ -475,7 +476,9 @@ namespace DiscImageChef.Devices
 
                     // I have to search for USB disks, floppies and CD-ROMs as separate device types
                     foreach(string devGuid in new[]
-                        {Usb.GuidDevinterfaceFloppy, Usb.GuidDevinterfaceCdrom, Usb.GuidDevinterfaceDisk})
+                    {
+                        Usb.GuidDevinterfaceFloppy, Usb.GuidDevinterfaceCdrom, Usb.GuidDevinterfaceDisk
+                    })
                     {
                         usbDevice = Usb.FindDrivePath(devicePath, devGuid);
                         if(usbDevice != null) break;

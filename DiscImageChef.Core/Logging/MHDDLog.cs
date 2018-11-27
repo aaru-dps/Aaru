@@ -34,6 +34,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging

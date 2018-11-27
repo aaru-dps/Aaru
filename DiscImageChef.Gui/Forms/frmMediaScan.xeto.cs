@@ -32,6 +32,7 @@
 
 using System;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Core.Media.Info;
@@ -68,8 +69,8 @@ namespace DiscImageChef.Gui.Forms
         // TODO: Allow to save MHDD and ImgBurn log files
         void OnBtnScanClick(object sender, EventArgs e)
         {
-            btnStop.Visible = true;
-            btnScan.Visible = false;
+            btnStop.Visible   = true;
+            btnScan.Visible   = false;
             btnCancel.Visible = false;
 
             if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))

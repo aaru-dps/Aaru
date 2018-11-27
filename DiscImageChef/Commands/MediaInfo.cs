@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Media.Info;

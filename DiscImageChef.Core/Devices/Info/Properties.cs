@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.SSC;

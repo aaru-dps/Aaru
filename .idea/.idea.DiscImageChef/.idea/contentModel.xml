@@ -95,6 +95,7 @@
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
         <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
         <e p="Enums" t="Include">
+          <e p="DeviceType.cs" t="Include" />
           <e p="Images.cs" t="Include" />
         </e>
         <e p="Exceptions" t="Include">

@@ -37,17 +37,6 @@ using System;
 
 namespace DiscImageChef.Devices
 {
-    public enum DeviceType
-    {
-        Unknown,
-        ATA,
-        ATAPI,
-        SCSI,
-        SecureDigital,
-        MMC,
-        NVMe
-    }
-
     #region ATA Commands
     /// <summary>
     ///     All known ATA commands

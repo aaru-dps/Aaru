@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices;
 
@@ -123,15 +124,11 @@ namespace DiscImageChef.Core.Devices
             }
         }
 
-        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration)
-        {
-            return ReadBlocks(out buffer, block, 1, out duration);
-        }
+        internal bool ReadBlock(out byte[] buffer, ulong block, out double duration) =>
+            ReadBlocks(out buffer, block, 1, out duration);
 
-        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration)
-        {
-            return ReadBlocks(out buffer, block, BlocksToRead, out duration);
-        }
+        internal bool ReadBlocks(out byte[] buffer, ulong block, out double duration) =>
+            ReadBlocks(out buffer, block, BlocksToRead, out duration);
 
         internal bool ReadBlocks(out byte[] buffer, ulong block, uint count, out double duration)
         {

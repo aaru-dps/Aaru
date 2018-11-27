@@ -49,6 +49,7 @@
     <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
       <Link>Metadata/cicm.cs</Link>
     </Compile>
+    <Compile Include="Enums\DeviceType.cs" />
     <Compile Include="Enums\Images.cs" />
     <Compile Include="Exceptions\Images.cs" />
     <Compile Include="Extents\ExtentsByte.cs" />
