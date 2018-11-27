@@ -38,6 +38,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
@@ -61,6 +62,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         public Scsi     SCSI           { get; set; }
         public MmcSd    MultiMediaCard { get; set; }
         public MmcSd    SecureDigital  { get; set; }
+
+        public string     Manufacturer { get; set; }
+        public string     Model        { get; set; }
+        public string     Revision     { get; set; }
+        public DeviceType Type         { get; set; }
     }
 
     public class Usb
