@@ -910,6 +910,12 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddCommand("device-report");
 
+            using(DicContext ctx = new DicContext())
+            {
+                ctx.Reports.Add(new Report(report));
+                ctx.SaveChanges();
+            }
+
             // TODO:
             //if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
         }
