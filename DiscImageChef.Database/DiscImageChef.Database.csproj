@@ -59,6 +59,10 @@
     <Compile Include="Context.cs" />
     <Compile Include="Migrations\20181126222301_DeviceReportV2.cs" />
     <Compile Include="Migrations\20181126222301_DeviceReportV2.Designer.cs" />
+    <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.cs" />
+    <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.Designer.cs" />
+    <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.cs" />
+    <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\Report.cs" />

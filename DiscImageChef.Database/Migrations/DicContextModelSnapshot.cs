@@ -76,61 +76,6 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("DensityCode");
             });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DeviceReportV2", b =>
-            {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
-
-                b.Property<int?>("ATAId");
-
-                b.Property<int?>("ATAPIId");
-
-                b.Property<bool>("CompactFlash");
-
-                b.Property<string>("Discriminator").IsRequired();
-
-                b.Property<int?>("FireWireId");
-
-                b.Property<string>("Manufacturer");
-
-                b.Property<string>("Model");
-
-                b.Property<int?>("MultiMediaCardId");
-
-                b.Property<int?>("PCMCIAId");
-
-                b.Property<string>("Revision");
-
-                b.Property<int?>("SCSIId");
-
-                b.Property<int?>("SecureDigitalId");
-
-                b.Property<int>("Type");
-
-                b.Property<int?>("USBId");
-
-                b.HasKey("Id");
-
-                b.HasIndex("ATAId");
-
-                b.HasIndex("ATAPIId");
-
-                b.HasIndex("FireWireId");
-
-                b.HasIndex("MultiMediaCardId");
-
-                b.HasIndex("PCMCIAId");
-
-                b.HasIndex("SCSIId");
-
-                b.HasIndex("SecureDigitalId");
-
-                b.HasIndex("USBId");
-
-                b.ToTable("Reports");
-
-                b.HasDiscriminator<string>("Discriminator").HasValue("DeviceReportV2");
-            });
-
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.FireWire", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
@@ -879,6 +824,114 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Usb");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int?>("ATAId");
+
+                b.Property<int?>("ATAPIId");
+
+                b.Property<bool>("CompactFlash");
+
+                b.Property<int?>("FireWireId");
+
+                b.Property<DateTime>("LastSynchronized");
+
+                b.Property<string>("Manufacturer");
+
+                b.Property<string>("Model");
+
+                b.Property<int?>("MultiMediaCardId");
+
+                b.Property<int?>("PCMCIAId");
+
+                b.Property<string>("Revision");
+
+                b.Property<int?>("SCSIId");
+
+                b.Property<int?>("SecureDigitalId");
+
+                b.Property<int>("Type");
+
+                b.Property<int?>("USBId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ATAId");
+
+                b.HasIndex("ATAPIId");
+
+                b.HasIndex("FireWireId");
+
+                b.HasIndex("MultiMediaCardId");
+
+                b.HasIndex("PCMCIAId");
+
+                b.HasIndex("SCSIId");
+
+                b.HasIndex("SecureDigitalId");
+
+                b.HasIndex("USBId");
+
+                b.ToTable("Devices");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Report", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int?>("ATAId");
+
+                b.Property<int?>("ATAPIId");
+
+                b.Property<bool>("CompactFlash");
+
+                b.Property<DateTime>("Created");
+
+                b.Property<int?>("FireWireId");
+
+                b.Property<string>("Manufacturer");
+
+                b.Property<string>("Model");
+
+                b.Property<int?>("MultiMediaCardId");
+
+                b.Property<int?>("PCMCIAId");
+
+                b.Property<string>("Revision");
+
+                b.Property<int?>("SCSIId");
+
+                b.Property<int?>("SecureDigitalId");
+
+                b.Property<int>("Type");
+
+                b.Property<int?>("USBId");
+
+                b.Property<bool>("Uploaded");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ATAId");
+
+                b.HasIndex("ATAPIId");
+
+                b.HasIndex("FireWireId");
+
+                b.HasIndex("MultiMediaCardId");
+
+                b.HasIndex("PCMCIAId");
+
+                b.HasIndex("SCSIId");
+
+                b.HasIndex("SecureDigitalId");
+
+                b.HasIndex("USBId");
+
+                b.ToTable("Reports");
+            });
+
             modelBuilder.Entity("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
@@ -992,17 +1045,6 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("ModePage_2A");
             });
 
-            modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
-            {
-                b.HasBaseType("DiscImageChef.CommonTypes.Metadata.DeviceReportV2");
-
-                b.Property<DateTime>("LastSynchronized");
-
-                b.ToTable("Device");
-
-                b.HasDiscriminator().HasValue("Device");
-            });
-
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata",
                                 b =>
                                 {
@@ -1023,28 +1065,6 @@ namespace DiscImageChef.Database.Migrations
                                     b.HasOne("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia")
                                      .WithMany("DensityCodes").HasForeignKey("SscSupportedMediaId");
                                 });
-
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DeviceReportV2", b =>
-            {
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId");
-
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
-
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany()
-                 .HasForeignKey("FireWireId");
-
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany()
-                 .HasForeignKey("MultiMediaCardId");
-
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
-
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
-
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany()
-                 .HasForeignKey("SecureDigitalId");
-
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
-            });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc", b =>
             {
@@ -1116,6 +1136,50 @@ namespace DiscImageChef.Database.Migrations
                                     b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("TestedMedia")
                                      .HasForeignKey("SscId");
                                 });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany()
+                 .HasForeignKey("FireWireId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany()
+                 .HasForeignKey("MultiMediaCardId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany()
+                 .HasForeignKey("SecureDigitalId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Report", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATA").WithMany().HasForeignKey("ATAId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany()
+                 .HasForeignKey("FireWireId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany()
+                 .HasForeignKey("MultiMediaCardId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany()
+                 .HasForeignKey("SecureDigitalId");
+
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
+            });
             #pragma warning restore 612, 618
         }
     }

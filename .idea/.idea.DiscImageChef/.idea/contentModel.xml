@@ -298,6 +298,8 @@
           <e p="20181126222301_DeviceReportV2.cs" t="Include" />
           <e p="20181127001622_AddDeviceBasicFields.Designer.cs" t="Include" />
           <e p="20181127001622_AddDeviceBasicFields.cs" t="Include" />
+          <e p="20181127013131_CorrectReportsDbSet.Designer.cs" t="Include" />
+          <e p="20181127013131_CorrectReportsDbSet.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

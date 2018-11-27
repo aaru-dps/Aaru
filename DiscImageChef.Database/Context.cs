@@ -30,7 +30,6 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,13 +37,13 @@ namespace DiscImageChef.Database
 {
     public sealed class DicContext : DbContext
     {
-        public DbSet<Device> Devices { get; set; }
-        public DbSet<DeviceReportV2> Reports { get; set; }
-
         public DicContext()
         {
             Database.Migrate();
         }
+
+        public DbSet<Device> Devices { get; set; }
+        public DbSet<Report> Reports { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
