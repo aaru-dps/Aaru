@@ -40,6 +40,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 namespace DiscImageChef.CommonTypes.Interop
 {
@@ -56,6 +57,11 @@ namespace DiscImageChef.CommonTypes.Interop
         ///     Checks if the underlying runtime runs in 32-bit mode
         /// </summary>
         public static readonly bool Is32Bit = IntPtr.Size == 4;
+
+        public static bool IsWindows =>
+            GetRealPlatformID() == PlatformID.Win32NT      || GetRealPlatformID() == PlatformID.Win32S ||
+            GetRealPlatformID() == PlatformID.Win32Windows || GetRealPlatformID() == PlatformID.WinCE  ||
+            GetRealPlatformID() == PlatformID.WindowsPhone || GetRealPlatformID() == PlatformID.Xbox;
 
         [DllImport("libc", SetLastError = true)]
         static extern int uname(out utsname name);
@@ -270,6 +276,28 @@ namespace DiscImageChef.CommonTypes.Interop
             }
         }
 
+        public static bool IsAdmin
+        {
+            get
+            {
+                if(!IsWindows) return Environment.UserName == "root";
+
+                bool            isAdmin;
+                WindowsIdentity user = null;
+                try
+                {
+                    user = WindowsIdentity.GetCurrent();
+                    WindowsPrincipal principal = new WindowsPrincipal(user);
+                    isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+                }
+                catch(UnauthorizedAccessException ex) { isAdmin = false; }
+                catch(Exception ex) { isAdmin                   = false; }
+                finally { user?.Dispose(); }
+
+                return isAdmin;
+            }
+        }
+
         /// <summary>
         ///     POSIX uname structure, size from OSX, big enough to handle extra fields
         /// </summary>
@@ -302,10 +330,5 @@ namespace DiscImageChef.CommonTypes.Interop
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string machine;
         }
-
-        public static bool IsWindows =>
-            GetRealPlatformID() == PlatformID.Win32NT      || GetRealPlatformID() == PlatformID.Win32S ||
-            GetRealPlatformID() == PlatformID.Win32Windows || GetRealPlatformID() == PlatformID.WinCE  ||
-            GetRealPlatformID() == PlatformID.WindowsPhone || GetRealPlatformID() == PlatformID.Xbox;
     }
 }
