@@ -43,7 +43,7 @@ namespace DiscImageChef.Database
 
         public DicContext()
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
