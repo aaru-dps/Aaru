@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -54,6 +55,13 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--debug={0}",   options.Debug);
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}",  options.DevicePath);
+
+            if(!DetectOS.IsAdmin)
+            {
+                DicConsole.ErrorWriteLine("Because of the commands sent to a device, device report must be run with administrative privileges.");
+                DicConsole.ErrorWriteLine("Not continuing.");
+                return;
+            }
 
             if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
                char.IsLetter(options.DevicePath[0]))
