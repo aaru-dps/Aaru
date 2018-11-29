@@ -77,7 +77,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SharpCompress" Version="0.20.0" />
+    <PackageReference Include="SharpCompress" Version="0.22.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
   </ItemGroup>
   <ProjectExtensions>
