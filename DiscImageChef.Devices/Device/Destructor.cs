@@ -31,7 +31,7 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Devices.Windows;
+using DiscImageChef.Devices.Linux;
 using Microsoft.Win32.SafeHandles;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
@@ -55,10 +55,10 @@ namespace DiscImageChef.Devices
             switch(PlatformId)
             {
                 case PlatformID.Win32NT:
-                    Extern.CloseHandle((SafeFileHandle)FileHandle);
+                    (FileHandle as SafeFileHandle)?.Close();
                     break;
                 case PlatformID.Linux:
-                    Linux.Extern.close((int)FileHandle);
+                    Extern.close((int)FileHandle);
                     break;
                 case PlatformID.FreeBSD:
                     FreeBSD.Extern.cam_close_device((IntPtr)FileHandle);
