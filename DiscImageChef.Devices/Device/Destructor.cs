@@ -64,6 +64,8 @@ namespace DiscImageChef.Devices
                     FreeBSD.Extern.cam_close_device((IntPtr)FileHandle);
                     break;
             }
+
+            FileHandle = null;
         }
     }
 }

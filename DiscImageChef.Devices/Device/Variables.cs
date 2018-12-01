@@ -61,7 +61,7 @@ namespace DiscImageChef.Devices
         ///     Gets the file handle representing this device
         /// </summary>
         /// <value>The file handle</value>
-        public object FileHandle { get; }
+        public object FileHandle { get; private set; }
 
         /// <summary>
         ///     Gets or sets the standard timeout for commands sent to this device
