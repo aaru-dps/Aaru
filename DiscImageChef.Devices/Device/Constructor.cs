@@ -37,7 +37,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SecureDigital;
@@ -245,8 +244,6 @@ namespace DiscImageChef.Devices
                         }
                     }
 
-                    string ntDevicePath = Windows.Command.GetDevicePath((SafeFileHandle)FileHandle);
-                    DicConsole.DebugWriteLine("Windows devices", "NT device path: {0}", ntDevicePath);
                     Marshal.FreeHGlobal(descriptorPtr);
 
                     if(Windows.Command.IsSdhci((SafeFileHandle)FileHandle))
