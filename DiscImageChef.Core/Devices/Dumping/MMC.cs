@@ -641,9 +641,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
 
-                    CSS_CPRM.LeadInCopyright cpy = CSS_CPRM.DecodeLeadInCopyright(tag.Value).Value;
-                    if(cpy.CopyrightType != CopyrightType.NoProtection)
-                        sidecar.OpticalDisc[0].CopyProtection = cpy.CopyrightType.ToString();
+                    byte[] tmp = new byte[tag.Value.Length + 4];
+                    Array.Copy(tag.Value, 0, tmp, 4, tag.Value.Length);
+                    tmp[0] = (byte)((tag.Value.Length & 0xFF00) >> 8);
+                    tmp[1] = (byte)(tag.Value.Length & 0xFF);
+
+                    CSS_CPRM.LeadInCopyright? cpy = CSS_CPRM.DecodeLeadInCopyright(tmp);
+                    if(cpy.HasValue && cpy.Value.CopyrightType != CopyrightType.NoProtection)
+                        sidecar.OpticalDisc[0].CopyProtection = cpy.Value.CopyrightType.ToString();
 
                     break;
                 case MediaTagType.DVD_BCA:
