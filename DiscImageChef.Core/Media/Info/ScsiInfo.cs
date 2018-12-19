@@ -1244,14 +1244,15 @@ namespace DiscImageChef.Core.Media.Info
 
             if(DeviceInfo.ScsiType != PeripheralDeviceTypes.MultiMediaDevice) return;
 
-            byte[] sector0                 = null;
-            byte[] sector1                 = null;
-            byte[] ps2BootSectors          = null;
-            byte[] playdia1                = null;
-            byte[] playdia2                = null;
-            byte[] firstDataSectorNotZero  = null;
-            byte[] secondDataSectorNotZero = null;
-            byte[] firstTrackSecondSession = null;
+            byte[] sector0                      = null;
+            byte[] sector1                      = null;
+            byte[] ps2BootSectors               = null;
+            byte[] playdia1                     = null;
+            byte[] playdia2                     = null;
+            byte[] firstDataSectorNotZero       = null;
+            byte[] secondDataSectorNotZero      = null;
+            byte[] firstTrackSecondSession      = null;
+            byte[] firstTrackSecondSessionAudio = null;
 
             if(secondSessionFirstTrack != 0 && DecodedToc.HasValue &&
                DecodedToc.Value.TrackDescriptors.Any(t => t.TrackNumber == secondSessionFirstTrack))
@@ -1273,6 +1274,20 @@ namespace DiscImageChef.Core.Media.Info
                                        MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
 
                     if(!sense && !dev.Error) firstTrackSecondSession = cmdBuf;
+                }
+
+                sense = dev.ReadCd(out cmdBuf, out senseBuf, firstSectorSecondSessionFirstTrack - 1, 2352, 3,
+                                   MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                if(!sense && !dev.Error) firstTrackSecondSessionAudio = cmdBuf;
+                else
+                {
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, firstSectorSecondSessionFirstTrack - 1, 2352, 3,
+                                       MmcSectorTypes.Cdda, false, false, true, MmcHeaderCodes.None, true, true,
+                                       MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                    if(!sense && !dev.Error) firstTrackSecondSessionAudio = cmdBuf;
                 }
             }
 
@@ -1691,26 +1706,27 @@ namespace DiscImageChef.Core.Media.Info
                         if(PcFxSignature.SequenceEqual(pcfx)) MediaType = MediaType.PCFX;
                     }
 
-                    if(firstTrackSecondSession != null)
+                    if(firstTrackSecondSessionAudio != null)
                     {
                         byte[] jaguar = new byte[AtariSignature.Length];
-                        for(int i = 0; i + jaguar.Length <= firstTrackSecondSession.Length; i += 2)
+                        for(int i = 0; i + jaguar.Length <= firstTrackSecondSessionAudio.Length; i += 2)
                         {
-                            Array.Copy(firstTrackSecondSession, i, jaguar, 0, jaguar.Length);
+                            Array.Copy(firstTrackSecondSessionAudio, i, jaguar, 0, jaguar.Length);
 
                             if(!AtariSignature.SequenceEqual(jaguar)) continue;
 
                             MediaType = MediaType.JaguarCD;
                             break;
                         }
+                    }
 
+                    if(firstTrackSecondSession != null)
                         if(firstTrackSecondSession.Length >= 2336)
                         {
                             byte[] milcd = new byte[2048];
                             Array.Copy(firstTrackSecondSession, 24, milcd, 0, 2048);
                             if(Dreamcast.DecodeIPBin(milcd).HasValue) MediaType = MediaType.MilCD;
                         }
-                    }
 
                     break;
                 }
