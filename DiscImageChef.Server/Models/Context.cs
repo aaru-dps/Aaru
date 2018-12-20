@@ -1,15 +1,15 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : WebApiConfig.cs
+// Filename       : Context.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef Server.
+// Component      : Database.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Configures Web API
+//     Entity framework database context.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,32 +30,15 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-// This is verbatim from ASP.NET so left as is
-// ReSharper disable All
+using System.Data.Entity;
+using MySql.Data.EntityFramework;
 
-using System.Data.Entity.Migrations;
-using System.Web.Http;
-using DiscImageChef.Server.Migrations;
-using DiscImageChef.Server.Models;
-
-namespace DiscImageChef.Server
+namespace DiscImageChef.Server.Models
 {
-    public static class WebApiConfig
+    [DbConfigurationType(typeof(MySqlEFConfiguration))]
+    public sealed class DicServerContext : DbContext
     {
-        public static void Register(HttpConfiguration config)
-        {
-            // Web API configuration and services
-
-            // Web API routes
-            config.MapHttpAttributeRoutes();
-
-            config.Routes.MapHttpRoute(name: "DefaultApi", routeTemplate: "api/{controller}/{id}",
-                                       defaults: new {id = RouteParameter.Optional});
-
-            //DicServerContext ctx = new DicServerContext();
-            Configuration migratorConfig = new Migrations.Configuration();
-            DbMigrator    dbMigrator     = new DbMigrator(migratorConfig);
-            dbMigrator.Update();
-        }
+        public DbSet<Device>         Devices { get; set; }
+        public DbSet<UploadedReport> Reports { get; set; }
     }
 }

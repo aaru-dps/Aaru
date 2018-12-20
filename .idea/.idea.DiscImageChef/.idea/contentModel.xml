@@ -1741,6 +1741,7 @@
         </e>
       </e>
       <e p="DiscImageChef.Server" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
         <e p="App_Start" t="Include">
           <e p="Ata.cs" t="Include" />
           <e p="ScsiEvpd.cs" t="Include" />
@@ -1764,6 +1765,17 @@
         <e p="DiscImageChef.Server.csproj" t="IncludeRecursive" />
         <e p="Global.asax" t="Include" />
         <e p="Global.asax.cs" t="Include" />
+        <e p="Migrations" t="Include">
+          <e p="201812201613369_InitialMigration.Designer.cs" t="Include" />
+          <e p="201812201613369_InitialMigration.cs" t="Include" />
+          <e p="201812201613369_InitialMigration.resx" t="Include" />
+          <e p="Configuration.cs" t="Include" />
+        </e>
+        <e p="Models" t="Include">
+          <e p="Context.cs" t="Include" />
+          <e p="Device.cs" t="Include" />
+          <e p="UploadedReport.cs" t="Include" />
+        </e>
         <e p="Reports" t="Include">
           <e p=".htaccess" t="Include" />
         </e>
@@ -1781,6 +1793,8 @@
         <e p="ViewReport.aspx" t="Include" />
         <e p="ViewReport.aspx.cs" t="Include" />
         <e p="ViewReport.aspx.designer.cs" t="Include" />
+        <e p="Web.Debug.config" t="Include" />
+        <e p="Web.Release.config" t="Include" />
         <e p="Web.config" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="docs" t="Include">
@@ -1794,13 +1808,7 @@
           <e p="vga_squarepx.woff" t="Include" />
           <e p="vga_squarepx.woff2" t="Include" />
         </e>
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="DiscImageChef.Server.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
         <e p="usb.ids" t="Include" />
       </e>

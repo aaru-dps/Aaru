@@ -41,12 +41,15 @@ using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.Server.Models;
 using Newtonsoft.Json;
 
 namespace DiscImageChef.Server.Controllers
 {
     public class UploadReportController : ApiController
     {
+        DicServerContext ctx = new DicServerContext();
+
         /// <summary>
         ///     Receives a report from DiscImageChef.Core, verifies it's in the correct format and stores it on the server
         /// </summary>
@@ -113,8 +116,7 @@ namespace DiscImageChef.Server.Controllers
                 HttpRequest request = HttpContext.Current.Request;
 
                 StreamReader   sr        = new StreamReader(request.InputStream);
-                string         jsonData  = sr.ReadToEnd();
-                DeviceReportV2 newReport = JsonConvert.DeserializeObject<DeviceReportV2>(jsonData);
+                DeviceReportV2 newReport = JsonConvert.DeserializeObject<DeviceReportV2>(sr.ReadToEnd());
 
                 if(newReport == null)
                 {
@@ -122,20 +124,8 @@ namespace DiscImageChef.Server.Controllers
                     return response;
                 }
 
-                Random rng      = new Random();
-                string filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.json";
-                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                               "Upload", filename)))
-                    filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.json";
-
-                FileStream newFile =
-                    new
-                        FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),
-                                   FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
-                StreamWriter sw = new StreamWriter(newFile);
-                sw.Write(jsonData);
-                sw.Close();
-                newFile.Close();
+                ctx.Reports.Add(new UploadedReport(newReport));
+                ctx.SaveChanges();
 
                 response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
                 return response;
