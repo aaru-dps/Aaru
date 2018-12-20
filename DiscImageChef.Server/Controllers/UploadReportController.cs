@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -90,13 +91,13 @@ namespace DiscImageChef.Server.Controllers
             catch
             {
                 #if DEBUG
-                throw;
-                #else
-                response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
+                if(Debugger.IsAttached) throw;
+                #endif
+                response.Content = new StringContent("error", Encoding.UTF8, "text/plain");
                 return response;
-#endif
             }
         }
+
         /// <summary>
         ///     Receives a report from DiscImageChef.Core, verifies it's in the correct format and stores it on the server
         /// </summary>
@@ -109,12 +110,12 @@ namespace DiscImageChef.Server.Controllers
 
             try
             {
-                HttpRequest  request   = HttpContext.Current.Request;
+                HttpRequest request = HttpContext.Current.Request;
 
-                StreamReader sr = new StreamReader(request.InputStream);
-                string jsonData = sr.ReadToEnd();
+                StreamReader   sr        = new StreamReader(request.InputStream);
+                string         jsonData  = sr.ReadToEnd();
                 DeviceReportV2 newReport = JsonConvert.DeserializeObject<DeviceReportV2>(jsonData);
-                
+
                 if(newReport == null)
                 {
                     response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
@@ -143,11 +144,10 @@ namespace DiscImageChef.Server.Controllers
             catch
             {
                 #if DEBUG
-                throw;
-                #else
-                response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
+                if(Debugger.IsAttached) throw;
+                #endif
+                response.Content = new StringContent("error", Encoding.UTF8, "text/plain");
                 return response;
-#endif
             }
         }
     }

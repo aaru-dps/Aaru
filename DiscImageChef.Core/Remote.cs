@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -94,7 +95,7 @@ namespace DiscImageChef.Core
                 catch
                 {
                     #if DEBUG
-                    throw;
+                    if(Debugger.IsAttached) throw;
                     #endif
                 }
             });
@@ -155,7 +156,7 @@ namespace DiscImageChef.Core
                 catch
                 {
                     #if DEBUG
-                    throw;
+                    if(Debugger.IsAttached) throw;
                     #endif
                 }
             });

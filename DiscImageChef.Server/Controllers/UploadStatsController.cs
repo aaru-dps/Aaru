@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -158,9 +159,7 @@ namespace DiscImageChef.Server.Controllers
                         {
                             addNvs = new OsStats
                             {
-                                name    = oldNvs.name,
-                                Value   = oldNvs.Value + 1,
-                                version = oldNvs.version
+                                name = oldNvs.name, Value = oldNvs.Value + 1, version = oldNvs.version
                             };
                             removeNvs = oldNvs;
                             break;
@@ -188,10 +187,9 @@ namespace DiscImageChef.Server.Controllers
                                 oldStats.Versions.Where(oldNvs => oldNvs.name == newNvs.name))
                             {
                                 addNvs = new NameValueStats
- {
-                                    name  = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                                    {
+                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
+                                    };
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -242,10 +240,9 @@ namespace DiscImageChef.Server.Controllers
                                 oldStats.Filesystems.Where(oldNvs => oldNvs.name == newNvs.name))
                             {
                                 addNvs = new NameValueStats
- {
-                                    name  = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                                    {
+                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
+                                    };
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -271,10 +268,9 @@ namespace DiscImageChef.Server.Controllers
                                 oldStats.Partitions.Where(oldNvs => oldNvs.name == newNvs.name))
                             {
                                 addNvs = new NameValueStats
- {
-                                    name  = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                                    {
+                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
+                                    };
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -300,10 +296,9 @@ namespace DiscImageChef.Server.Controllers
                                 oldStats.MediaImages.Where(oldNvs => oldNvs.name == newNvs.name))
                             {
                                 addNvs = new NameValueStats
- {
-                                    name  = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                                    {
+                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
+                                    };
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -329,10 +324,9 @@ namespace DiscImageChef.Server.Controllers
                                 oldStats.Filters.Where(oldNvs => oldNvs.name == newNvs.name))
                             {
                                 addNvs = new NameValueStats
- {
-                                    name  = oldNvs.name,
-                                    Value = oldNvs.Value + newNvs.Value
-                                };
+                                    {
+                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
+                                    };
                                 removeNvs = oldNvs;
                                 break;
                             }
@@ -469,12 +463,10 @@ namespace DiscImageChef.Server.Controllers
             catch(Exception ex)
             {
                 #if DEBUG
-                System.Console.WriteLine("{0} {1}", ex.Message, ex.InnerException);
-                throw;
-                #else
-                response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
+                if(Debugger.IsAttached) throw;
+                #endif
+                response.Content = new StringContent("error", Encoding.UTF8, "text/plain");
                 return response;
-#endif
             }
         }
 
