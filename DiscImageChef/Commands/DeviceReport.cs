@@ -58,7 +58,8 @@ namespace DiscImageChef.Commands
 
             if(!DetectOS.IsAdmin)
             {
-                DicConsole.ErrorWriteLine("Because of the commands sent to a device, device report must be run with administrative privileges.");
+                DicConsole
+                   .ErrorWriteLine("Because of the commands sent to a device, device report must be run with administrative privileges.");
                 DicConsole.ErrorWriteLine("Not continuing.");
                 return;
             }
@@ -925,7 +926,7 @@ namespace DiscImageChef.Commands
             }
 
             // TODO:
-            //if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
+            if(Settings.Settings.Current.ShareReports) Remote.SubmitReportV2(report);
         }
     }
 }
