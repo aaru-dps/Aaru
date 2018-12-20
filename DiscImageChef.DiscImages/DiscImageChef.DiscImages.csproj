@@ -54,7 +54,7 @@
     <PackageReference Include="plist-cil" Version="1.16.0" />
     <PackageReference Include="SharpCompress" Version="0.22.0" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alcohol120\Alcohol120.cs" />

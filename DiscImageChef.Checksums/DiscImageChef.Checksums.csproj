@@ -82,7 +82,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.2-beta" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

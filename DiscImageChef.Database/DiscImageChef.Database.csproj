@@ -54,6 +54,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Design" Version="1.1.6" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
