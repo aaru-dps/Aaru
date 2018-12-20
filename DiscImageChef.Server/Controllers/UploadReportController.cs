@@ -30,14 +30,12 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web;
-using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Metadata;
@@ -74,18 +72,8 @@ namespace DiscImageChef.Server.Controllers
                     return response;
                 }
 
-                Random rng      = new Random();
-                string filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
-                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                               "Upload", filename)))
-                    filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
-
-                FileStream newFile =
-                    new
-                        FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),
-                                   FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
-                xs.Serialize(newFile, newReport);
-                newFile.Close();
+                ctx.Reports.Add(new UploadedReport(new DeviceReportV2(newReport)));
+                ctx.SaveChanges();
 
                 response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
                 return response;
