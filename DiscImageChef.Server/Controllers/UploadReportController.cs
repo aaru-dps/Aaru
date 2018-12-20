@@ -40,6 +40,7 @@ using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Metadata;
+using Newtonsoft.Json;
 
 namespace DiscImageChef.Server.Controllers
 {
@@ -80,6 +81,59 @@ namespace DiscImageChef.Server.Controllers
                         FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),
                                    FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
                 xs.Serialize(newFile, newReport);
+                newFile.Close();
+
+                response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
+                return response;
+            }
+            // ReSharper disable once RedundantCatchClause
+            catch
+            {
+                #if DEBUG
+                throw;
+                #else
+                response.Content = new StringContent("error", System.Text.Encoding.UTF8, "text/plain");
+                return response;
+#endif
+            }
+        }
+        /// <summary>
+        ///     Receives a report from DiscImageChef.Core, verifies it's in the correct format and stores it on the server
+        /// </summary>
+        /// <returns>HTTP response</returns>
+        [Route("api/uploadreportv2")]
+        [HttpPost]
+        public HttpResponseMessage UploadReportV2()
+        {
+            HttpResponseMessage response = new HttpResponseMessage {StatusCode = HttpStatusCode.OK};
+
+            try
+            {
+                HttpRequest  request   = HttpContext.Current.Request;
+
+                StreamReader sr = new StreamReader(request.InputStream);
+                string jsonData = sr.ReadToEnd();
+                DeviceReportV2 newReport = JsonConvert.DeserializeObject<DeviceReportV2>(jsonData);
+                
+                if(newReport == null)
+                {
+                    response.Content = new StringContent("notstats", Encoding.UTF8, "text/plain");
+                    return response;
+                }
+
+                Random rng      = new Random();
+                string filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.json";
+                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                               "Upload", filename)))
+                    filename = $"NewReport_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.json";
+
+                FileStream newFile =
+                    new
+                        FileStream(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Upload", filename),
+                                   FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+                StreamWriter sw = new StreamWriter(newFile);
+                sw.Write(jsonData);
+                sw.Close();
                 newFile.Close();
 
                 response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");

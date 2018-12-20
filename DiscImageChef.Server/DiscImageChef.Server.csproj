@@ -4,7 +4,6 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{75342D7A-C5EA-4A6F-A511-850B54310E5B}</ProjectGuid>
     <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Server</RootNamespace>
@@ -44,7 +43,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;NET461</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -114,12 +113,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
-      <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
-      <Name>DiscImageChef.CommonTypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
-      <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
-      <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
