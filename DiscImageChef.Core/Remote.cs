@@ -118,8 +118,8 @@ namespace DiscImageChef.Core
                     DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
                     #endif
 
-                    MemoryStream xmlStream = new MemoryStream();
-                    StreamWriter jsonSw    = new StreamWriter(xmlStream);
+                    MemoryStream jsonStream = new MemoryStream();
+                    StreamWriter jsonSw     = new StreamWriter(jsonStream);
 
                     jsonSw.Write(JsonConvert.SerializeObject(report, Formatting.Indented,
                                                              new JsonSerializerSettings
@@ -127,14 +127,14 @@ namespace DiscImageChef.Core
                                                                  NullValueHandling = NullValueHandling.Ignore
                                                              }));
                     jsonSw.Close();
-                    xmlStream.Seek(0, SeekOrigin.Begin);
+                    jsonStream.Seek(0, SeekOrigin.Begin);
                     WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreportv2");
                     ((HttpWebRequest)request).UserAgent = $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
                     request.Method                      = "POST";
-                    request.ContentLength               = xmlStream.Length;
+                    request.ContentLength               = jsonStream.Length;
                     request.ContentType                 = "application/json";
                     Stream reqStream = request.GetRequestStream();
-                    xmlStream.CopyTo(reqStream);
+                    jsonStream.CopyTo(reqStream);
                     reqStream.Close();
                     WebResponse response = request.GetResponse();
 
@@ -146,7 +146,7 @@ namespace DiscImageChef.Core
                     reader.ReadToEnd();
                     data.Close();
                     response.Close();
-                    xmlStream.Close();
+                    jsonStream.Close();
                 }
                 catch(WebException)
                 {
