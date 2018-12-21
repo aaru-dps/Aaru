@@ -68,9 +68,12 @@
     <Compile Include="Migrations\20181221015906_NameValueStatistics.Designer.cs" />
     <Compile Include="Migrations\20181221032605_MediaStatistics.cs" />
     <Compile Include="Migrations\20181221032605_MediaStatistics.Designer.cs" />
+    <Compile Include="Migrations\20181221034941_SeenDevicesStatistics.cs" />
+    <Compile Include="Migrations\20181221034941_SeenDevicesStatistics.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\DeviceStat.cs" />
     <Compile Include="Models\Filesystem.cs" />
     <Compile Include="Models\Filter.cs" />
     <Compile Include="Models\Media.cs" />

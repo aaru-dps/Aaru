@@ -51,6 +51,7 @@ namespace DiscImageChef.Database
         public DbSet<MediaFormat> MediaFormats { get; set; }
         public DbSet<Partition>   Partitions   { get; set; }
         public DbSet<Media>       Medias       { get; set; }
+        public DbSet<DeviceStat>  SeenDevices  { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

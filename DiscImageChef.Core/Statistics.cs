@@ -393,39 +393,14 @@ namespace DiscImageChef.Core
             else if(dev.IsFireWire) deviceBus = "FireWire";
             else deviceBus                    = dev.Type.ToString();
 
-            DeviceStats old = AllStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer &&
-                                                                    ds.Model        == dev.Model        &&
-                                                                    ds.Revision     == dev.Revision     &&
-                                                                    ds.Bus          == deviceBus);
-
-            if(old != null) AllStats.Devices.Remove(old);
-
-            DeviceStats nw = new DeviceStats
+            ctx.SeenDevices.Add(new DeviceStat
             {
-                Model                 = dev.Model,
-                Manufacturer          = dev.Manufacturer,
-                Revision              = dev.Revision,
-                Bus                   = deviceBus,
-                ManufacturerSpecified = true
-            };
-            AllStats.Devices.Add(nw);
-
-            old = CurrentStats.Devices.FirstOrDefault(ds => ds.Manufacturer == dev.Manufacturer &&
-                                                            ds.Model        == dev.Model        &&
-                                                            ds.Revision     == dev.Revision     &&
-                                                            ds.Bus          == deviceBus);
-
-            if(old != null) CurrentStats.Devices.Remove(old);
-
-            nw = new DeviceStats
-            {
-                Model                 = dev.Model,
-                Manufacturer          = dev.Manufacturer,
-                Revision              = dev.Revision,
-                Bus                   = deviceBus,
-                ManufacturerSpecified = true
-            };
-            CurrentStats.Devices.Add(nw);
+                Bus          = deviceBus,
+                Manufacturer = dev.Manufacturer,
+                Model        = dev.Model,
+                Revision     = dev.Revision,
+                Synchronized = false
+            });
         }
 
         /// <summary>

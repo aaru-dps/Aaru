@@ -890,6 +890,25 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Devices");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.DeviceStat", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Bus");
+
+                b.Property<string>("Manufacturer");
+
+                b.Property<string>("Model");
+
+                b.Property<string>("Revision");
+
+                b.Property<bool>("Synchronized");
+
+                b.HasKey("Id");
+
+                b.ToTable("SeenDevices");
+            });
+
             modelBuilder.Entity("DiscImageChef.Database.Models.Filesystem", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
