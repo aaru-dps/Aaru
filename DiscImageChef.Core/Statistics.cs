@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
@@ -58,10 +57,6 @@ namespace DiscImageChef.Core
         /// </summary>
         public static Stats AllStats;
         /// <summary>
-        ///     Contains statistics of current execution
-        /// </summary>
-        public static Stats CurrentStats;
-        /// <summary>
         ///     Statistics file semaphore
         /// </summary>
         static bool submitStatsLock;
@@ -83,7 +78,6 @@ namespace DiscImageChef.Core
                     Version      = DetectOS.GetVersion()
                 });
                 ctx.Versions.Add(new Version {Value = CommonTypes.Interop.Version.GetVersion(), Synchronized = false});
-                CurrentStats = new Stats();
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 StreamReader  sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                 AllStats = (Stats)xs.Deserialize(sr);
@@ -99,13 +93,8 @@ namespace DiscImageChef.Core
                     Version      = DetectOS.GetVersion()
                 });
                 ctx.Versions.Add(new Version {Value = CommonTypes.Interop.Version.GetVersion(), Synchronized = false});
-                CurrentStats = new Stats();
             }
-            else
-            {
-                AllStats     = null;
-                CurrentStats = null;
-            }
+            else AllStats = null;
         }
 
         /// <summary>
@@ -117,71 +106,11 @@ namespace DiscImageChef.Core
 
             if(AllStats == null) return;
 
-            if(AllStats.OperatingSystems != null)
-            {
-                long count = 0;
-
-                OsStats old = null;
-                foreach(OsStats nvs in AllStats.OperatingSystems.Where(nvs =>
-                                                                           nvs.name == DetectOS
-                                                                                      .GetRealPlatformID().ToString() &&
-                                                                           nvs.version == DetectOS.GetVersion()))
-                {
-                    count = nvs.Value + 1;
-                    old   = nvs;
-                    break;
-                }
-
-                if(old != null) AllStats.OperatingSystems.Remove(old);
-
-                count++;
-                AllStats.OperatingSystems.Add(new OsStats
-                {
-                    name    = DetectOS.GetRealPlatformID().ToString(),
-                    Value   = count,
-                    version = DetectOS.GetVersion()
-                });
-            }
-            else if(CurrentStats != null) AllStats.OperatingSystems = CurrentStats.OperatingSystems;
-
-            if(AllStats.Versions != null)
-            {
-                long count = 0;
-
-                NameValueStats old = null;
-                foreach(NameValueStats nvs in AllStats.Versions.Where(nvs => nvs.name == CommonTypes
-                                                                                        .Interop.Version.GetVersion()))
-                {
-                    count = nvs.Value + 1;
-                    old   = nvs;
-                    break;
-                }
-
-                if(old != null) AllStats.Versions.Remove(old);
-
-                count++;
-                AllStats.Versions.Add(new NameValueStats
-                {
-                    name = CommonTypes.Interop.Version.GetVersion(), Value = count
-                });
-            }
-            else if(CurrentStats != null) AllStats.Versions = CurrentStats.Versions;
-
             FileStream fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"),
                                            FileMode.Create);
             XmlSerializer xs = new XmlSerializer(AllStats.GetType());
             xs.Serialize(fs, AllStats);
             fs.Close();
-
-            if(CurrentStats != null)
-            {
-                string partial = $"PartialStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}.xml";
-
-                fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, partial), FileMode.Create);
-                xs = new XmlSerializer(CurrentStats.GetType());
-                xs.Serialize(fs, CurrentStats);
-                fs.Close();
-            }
 
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats) SubmitStats();
         }
@@ -312,43 +241,6 @@ namespace DiscImageChef.Core
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilterStats) return;
 
             ctx.Filters.Add(new Filter {Name = filter, Synchronized = false});
-
-            if(AllStats.Filters     == null) AllStats.Filters     = new List<NameValueStats>();
-            if(CurrentStats.Filters == null) CurrentStats.Filters = new List<NameValueStats>();
-
-            NameValueStats old = AllStats.Filters.FirstOrDefault(nvs => nvs.name == filter);
-
-            NameValueStats nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                AllStats.Filters.Remove(old);
-            }
-            else
-            {
-                nw.name  = filter;
-                nw.Value = 1;
-            }
-
-            AllStats.Filters.Add(nw);
-
-            old = CurrentStats.Filters.FirstOrDefault(nvs => nvs.name == filter);
-
-            nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                CurrentStats.Filters.Remove(old);
-            }
-            else
-            {
-                nw.name  = filter;
-                nw.Value = 1;
-            }
-
-            CurrentStats.Filters.Add(nw);
         }
 
         /// <summary>
@@ -371,9 +263,6 @@ namespace DiscImageChef.Core
         public static void AddDevice(Device dev)
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
-
-            if(AllStats.Devices     == null) AllStats.Devices     = new List<DeviceStats>();
-            if(CurrentStats.Devices == null) CurrentStats.Devices = new List<DeviceStats>();
 
             string deviceBus;
             if(dev.IsUsb) deviceBus           = "USB";
