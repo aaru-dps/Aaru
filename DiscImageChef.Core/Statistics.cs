@@ -437,46 +437,7 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaStats) return;
 
-            if(AllStats.Medias     == null) AllStats.Medias     = new List<MediaStats>();
-            if(CurrentStats.Medias == null) CurrentStats.Medias = new List<MediaStats>();
-
-            MediaStats old = AllStats.Medias.FirstOrDefault(ms => ms.real == real && ms.type == type.ToString());
-
-            MediaStats nw = new MediaStats();
-            if(old != null)
-            {
-                nw.type  = old.type;
-                nw.real  = old.real;
-                nw.Value = old.Value + 1;
-                AllStats.Medias.Remove(old);
-            }
-            else
-            {
-                nw.type  = type.ToString();
-                nw.real  = real;
-                nw.Value = 1;
-            }
-
-            AllStats.Medias.Add(nw);
-
-            old = CurrentStats.Medias.FirstOrDefault(ms => ms.real == real && ms.type == type.ToString());
-
-            nw = new MediaStats();
-            if(old != null)
-            {
-                nw.type  = old.type;
-                nw.real  = old.real;
-                nw.Value = old.Value + 1;
-                CurrentStats.Medias.Remove(old);
-            }
-            else
-            {
-                nw.type  = type.ToString();
-                nw.real  = real;
-                nw.Value = 1;
-            }
-
-            CurrentStats.Medias.Add(nw);
+            ctx.Medias.Add(new Database.Models.Media {Real = real, Synchronized = false, Type = type.ToString()});
         }
 
         /// <summary>

@@ -916,6 +916,21 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Filters");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.Media", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<bool>("Real");
+
+                b.Property<bool>("Synchronized");
+
+                b.Property<string>("Type");
+
+                b.HasKey("Id");
+
+                b.ToTable("Medias");
+            });
+
             modelBuilder.Entity("DiscImageChef.Database.Models.MediaFormat", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();

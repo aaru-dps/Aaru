@@ -305,6 +305,8 @@
           <e p="20181127013131_CorrectReportsDbSet.cs" t="Include" />
           <e p="20181221015906_NameValueStatistics.Designer.cs" t="Include" />
           <e p="20181221015906_NameValueStatistics.cs" t="Include" />
+          <e p="20181221032605_MediaStatistics.Designer.cs" t="Include" />
+          <e p="20181221032605_MediaStatistics.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -312,6 +314,7 @@
           <e p="Device.cs" t="Include" />
           <e p="Filesystem.cs" t="Include" />
           <e p="Filter.cs" t="Include" />
+          <e p="Media.cs" t="Include" />
           <e p="MediaFormat.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
           <e p="Report.cs" t="Include" />
