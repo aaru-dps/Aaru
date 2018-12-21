@@ -42,6 +42,7 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Media.Info;
+using DiscImageChef.Database;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using DiscImageChef.Gui.Dialogs;
@@ -596,7 +597,10 @@ namespace DiscImageChef.Gui.Forms
 
         protected void OnMenuStatistics(object sender, EventArgs e)
         {
-            if(Statistics.AllStats == null)
+            DicContext ctx = new DicContext();
+
+            if(!ctx.Commands.Any() && !ctx.Filesystems.Any() && !ctx.Filters.Any() && !ctx.MediaFormats.Any() &&
+               !ctx.Medias.Any()   && !ctx.Partitions.Any()  && !ctx.SeenDevices.Any())
             {
                 MessageBox.Show("There are no statistics.");
                 return;

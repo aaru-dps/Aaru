@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Xml.Serialization;
@@ -53,10 +54,6 @@ namespace DiscImageChef.Core
     public static class Statistics
     {
         /// <summary>
-        ///     Contains all known statistics
-        /// </summary>
-        public static Stats AllStats;
-        /// <summary>
         ///     Statistics file semaphore
         /// </summary>
         static bool submitStatsLock;
@@ -70,43 +67,353 @@ namespace DiscImageChef.Core
         {
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
             {
-                AllStats = new Stats();
-                ctx.OperatingSystems.Add(new OperatingSystem
-                {
-                    Name         = DetectOS.GetRealPlatformID().ToString(),
-                    Synchronized = false,
-                    Version      = DetectOS.GetVersion(),
-                    Count        = 1
-                });
-                ctx.Versions.Add(new Version
-                {
-                    Value        = CommonTypes.Interop.Version.GetVersion(),
-                    Synchronized = false,
-                    Count        = 1
-                });
-                XmlSerializer xs = new XmlSerializer(AllStats.GetType());
-                StreamReader  sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
-                AllStats = (Stats)xs.Deserialize(sr);
+                Stats         allStats = new Stats();
+                XmlSerializer xs       = new XmlSerializer(allStats.GetType());
+                StreamReader  sr       = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
+                allStats = (Stats)xs.Deserialize(sr);
                 sr.Close();
+
+                if(allStats.Commands != null)
+                {
+                    if(allStats.Commands.Analyze > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "analyze" && c.Synchronized) ??
+                                          new Command {Name = "analyze", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Analyze;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Benchmark > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "benchmark" && c.Synchronized) ??
+                                          new Command {Name = "benchmark", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Benchmark;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Checksum > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "checksum" && c.Synchronized) ??
+                                          new Command {Name = "checksum", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Checksum;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Compare > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "compare" && c.Synchronized) ??
+                                          new Command {Name = "compare", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Compare;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.ConvertImage > 0)
+                    {
+                        Command command =
+                            ctx.Commands.FirstOrDefault(c => c.Name == "convert-image" && c.Synchronized) ??
+                            new Command {Name = "convert-image", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.ConvertImage;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.CreateSidecar > 0)
+                    {
+                        Command command =
+                            ctx.Commands.FirstOrDefault(c => c.Name == "create-sidecar" && c.Synchronized) ??
+                            new Command {Name = "create-sidecar", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.CreateSidecar;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Decode > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "decode" && c.Synchronized) ??
+                                          new Command {Name = "decode", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Decode;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.DeviceInfo > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "device-info" && c.Synchronized) ??
+                                          new Command {Name = "device-info", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.DeviceInfo;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.DeviceReport > 0)
+                    {
+                        Command command =
+                            ctx.Commands.FirstOrDefault(c => c.Name == "device-report" && c.Synchronized) ??
+                            new Command {Name = "device-report", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.DeviceReport;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.DumpMedia > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "dump-media" && c.Synchronized) ??
+                                          new Command {Name = "dump-media", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.DumpMedia;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Entropy > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "entropy" && c.Synchronized) ??
+                                          new Command {Name = "entropy", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Entropy;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.ExtractFiles > 0)
+                    {
+                        Command command =
+                            ctx.Commands.FirstOrDefault(c => c.Name == "extract-files" && c.Synchronized) ??
+                            new Command {Name = "extract-files", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.ExtractFiles;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Formats > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "formats" && c.Synchronized) ??
+                                          new Command {Name = "formats", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Formats;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.ImageInfo > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "image-info" && c.Synchronized) ??
+                                          new Command {Name = "image-info", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.ImageInfo;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.ListDevices > 0)
+                    {
+                        Command command =
+                            ctx.Commands.FirstOrDefault(c => c.Name == "list-devices" && c.Synchronized) ??
+                            new Command {Name = "list-devices", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.ListDevices;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.ListEncodings > 0)
+                    {
+                        Command command =
+                            ctx.Commands.FirstOrDefault(c => c.Name == "list-encodings" && c.Synchronized) ??
+                            new Command {Name = "list-encodings", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.ListEncodings;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Ls > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "ls" && c.Synchronized) ??
+                                          new Command {Name = "ls", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Ls;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.MediaInfo > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "media-info" && c.Synchronized) ??
+                                          new Command {Name = "media-info", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.MediaInfo;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.MediaScan > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "media-scan" && c.Synchronized) ??
+                                          new Command {Name = "media-scan", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.MediaScan;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.PrintHex > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "printhex" && c.Synchronized) ??
+                                          new Command {Name = "printhex", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.PrintHex;
+                        ctx.Commands.Update(command);
+                    }
+
+                    if(allStats.Commands.Verify > 0)
+                    {
+                        Command command = ctx.Commands.FirstOrDefault(c => c.Name == "verify" && c.Synchronized) ??
+                                          new Command {Name = "verify", Synchronized = true};
+
+                        command.Count += (ulong)allStats.Commands.Verify;
+                        ctx.Commands.Update(command);
+                    }
+                }
+
+                if(allStats.OperatingSystems != null)
+                    foreach(OsStats operatingSystem in allStats.OperatingSystems)
+                    {
+                        if(string.IsNullOrWhiteSpace(operatingSystem.name) ||
+                           string.IsNullOrWhiteSpace(operatingSystem.version)) continue;
+
+                        OperatingSystem existing =
+                            ctx.OperatingSystems.FirstOrDefault(c => c.Name    == operatingSystem.name    &&
+                                                                     c.Version == operatingSystem.version &&
+                                                                     c.Synchronized) ?? new OperatingSystem
+                            {
+                                Name = operatingSystem.name, Version = operatingSystem.version, Synchronized = true
+                            };
+
+                        existing.Count += (ulong)operatingSystem.Value;
+                        ctx.OperatingSystems.Update(existing);
+                    }
+
+                if(allStats.Versions != null)
+                    foreach(NameValueStats nvs in allStats.Versions)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
+
+                        Version existing = ctx.Versions.FirstOrDefault(c => c.Value == nvs.name && c.Synchronized) ??
+                                           new Version {Value = nvs.name, Synchronized = true};
+
+                        existing.Count += (ulong)nvs.Value;
+                        ctx.Versions.Update(existing);
+                    }
+
+                if(allStats.Filesystems != null)
+                    foreach(NameValueStats nvs in allStats.Filesystems)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
+
+                        Filesystem existing =
+                            ctx.Filesystems.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
+                            new Filesystem {Name = nvs.name, Synchronized = true};
+
+                        existing.Count += (ulong)nvs.Value;
+                        ctx.Filesystems.Update(existing);
+                    }
+
+                if(allStats.Partitions != null)
+                    foreach(NameValueStats nvs in allStats.Partitions)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
+
+                        Partition existing = ctx.Partitions.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
+                                             new Partition {Name = nvs.name, Synchronized = true};
+
+                        existing.Count += (ulong)nvs.Value;
+                        ctx.Partitions.Update(existing);
+                    }
+
+                if(allStats.Filesystems != null)
+                    foreach(NameValueStats nvs in allStats.Filesystems)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
+
+                        Filesystem existing =
+                            ctx.Filesystems.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
+                            new Filesystem {Name = nvs.name, Synchronized = true};
+
+                        existing.Count += (ulong)nvs.Value;
+                        ctx.Filesystems.Update(existing);
+                    }
+
+                if(allStats.MediaImages != null)
+                    foreach(NameValueStats nvs in allStats.MediaImages)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
+
+                        MediaFormat existing =
+                            ctx.MediaFormats.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
+                            new MediaFormat {Name = nvs.name, Synchronized = true};
+
+                        existing.Count += (ulong)nvs.Value;
+                        ctx.MediaFormats.Update(existing);
+                    }
+
+                if(allStats.Filters != null)
+                    foreach(NameValueStats nvs in allStats.Filters)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
+
+                        Filter existing = ctx.Filters.FirstOrDefault(c => c.Name == nvs.name && c.Synchronized) ??
+                                          new Filter {Name = nvs.name, Synchronized = true};
+
+                        existing.Count += (ulong)nvs.Value;
+                        ctx.Filters.Update(existing);
+                    }
+
+                if(allStats.Devices != null)
+                    foreach(DeviceStats device in allStats.Devices)
+                    {
+                        if(ctx.SeenDevices.Any(d => d.Manufacturer == device.Manufacturer && d.Model == device.Model &&
+                                                    d.Revision     == device.Revision     && d.Bus   == device.Bus))
+                            continue;
+
+                        ctx.SeenDevices.Add(new DeviceStat
+                        {
+                            Bus          = device.Bus,
+                            Manufacturer = device.Manufacturer,
+                            Model        = device.Model,
+                            Revision     = device.Revision,
+                            Synchronized = true
+                        });
+                    }
+
+                if(allStats.Medias != null)
+                    foreach(MediaStats media in allStats.Medias)
+                    {
+                        if(string.IsNullOrWhiteSpace(media.type)) continue;
+
+                        Database.Models.Media existing =
+                            ctx.Medias.FirstOrDefault(c => c.Type == media.type && c.Real == media.real &&
+                                                           c.Synchronized) ?? new Database.Models.Media
+                            {
+                                Type = media.type, Real = media.real, Synchronized = true
+                            };
+
+                        existing.Count += (ulong)media.Value;
+                        ctx.Medias.Update(existing);
+                    }
+
+                ctx.SaveChanges();
+                File.Delete(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
             }
-            else if(Settings.Settings.Current.Stats != null)
+
+            if(Settings.Settings.Current.Stats == null) return;
+
+            ctx.OperatingSystems.Add(new OperatingSystem
             {
-                AllStats = new Stats();
-                ctx.OperatingSystems.Add(new OperatingSystem
-                {
-                    Name         = DetectOS.GetRealPlatformID().ToString(),
-                    Synchronized = false,
-                    Version      = DetectOS.GetVersion(),
-                    Count        = 1
-                });
-                ctx.Versions.Add(new Version
-                {
-                    Value        = CommonTypes.Interop.Version.GetVersion(),
-                    Synchronized = false,
-                    Count        = 1
-                });
-            }
-            else AllStats = null;
+                Name         = DetectOS.GetRealPlatformID().ToString(),
+                Synchronized = false,
+                Version      = DetectOS.GetVersion(),
+                Count        = 1
+            });
+            ctx.Versions.Add(new Version
+            {
+                Value = CommonTypes.Interop.Version.GetVersion(), Synchronized = false, Count = 1
+            });
         }
 
         /// <summary>
@@ -115,15 +422,6 @@ namespace DiscImageChef.Core
         public static void SaveStats()
         {
             ctx.SaveChanges();
-
-            if(AllStats == null) return;
-
-            FileStream fs = new FileStream(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"),
-                                           FileMode.Create);
-            XmlSerializer xs = new XmlSerializer(AllStats.GetType());
-            xs.Serialize(fs, AllStats);
-            fs.Close();
-
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats) SubmitStats();
         }
 
