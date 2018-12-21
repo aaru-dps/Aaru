@@ -309,6 +309,8 @@
           <e p="20181221032605_MediaStatistics.cs" t="Include" />
           <e p="20181221034941_SeenDevicesStatistics.Designer.cs" t="Include" />
           <e p="20181221034941_SeenDevicesStatistics.cs" t="Include" />
+          <e p="20181221040408_OperatingSystemStatistics.Designer.cs" t="Include" />
+          <e p="20181221040408_OperatingSystemStatistics.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -319,6 +321,7 @@
           <e p="Filter.cs" t="Include" />
           <e p="Media.cs" t="Include" />
           <e p="MediaFormat.cs" t="Include" />
+          <e p="OperatingSystem.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
           <e p="Report.cs" t="Include" />
         </e>

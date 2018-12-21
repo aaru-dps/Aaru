@@ -963,6 +963,21 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("MediaFormats");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.OperatingSystem", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.Property<string>("Version");
+
+                b.HasKey("Id");
+
+                b.ToTable("OperatingSystems");
+            });
+
             modelBuilder.Entity("DiscImageChef.Database.Models.Partition", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();

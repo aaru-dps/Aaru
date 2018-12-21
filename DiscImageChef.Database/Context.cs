@@ -43,15 +43,16 @@ namespace DiscImageChef.Database
             Database.Migrate();
         }
 
-        public DbSet<Device>      Devices      { get; set; }
-        public DbSet<Report>      Reports      { get; set; }
-        public DbSet<Command>     Commands     { get; set; }
-        public DbSet<Filesystem>  Filesystems  { get; set; }
-        public DbSet<Filter>      Filters      { get; set; }
-        public DbSet<MediaFormat> MediaFormats { get; set; }
-        public DbSet<Partition>   Partitions   { get; set; }
-        public DbSet<Media>       Medias       { get; set; }
-        public DbSet<DeviceStat>  SeenDevices  { get; set; }
+        public DbSet<Device>          Devices          { get; set; }
+        public DbSet<Report>          Reports          { get; set; }
+        public DbSet<Command>         Commands         { get; set; }
+        public DbSet<Filesystem>      Filesystems      { get; set; }
+        public DbSet<Filter>          Filters          { get; set; }
+        public DbSet<MediaFormat>     MediaFormats     { get; set; }
+        public DbSet<Partition>       Partitions       { get; set; }
+        public DbSet<Media>           Medias           { get; set; }
+        public DbSet<DeviceStat>      SeenDevices      { get; set; }
+        public DbSet<OperatingSystem> OperatingSystems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

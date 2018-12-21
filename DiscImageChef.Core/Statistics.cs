@@ -43,6 +43,7 @@ using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
 using Device = DiscImageChef.Devices.Device;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using OperatingSystem = DiscImageChef.Database.Models.OperatingSystem;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core
@@ -75,18 +76,14 @@ namespace DiscImageChef.Core
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
             {
                 AllStats = new Stats();
+                ctx.OperatingSystems.Add(new OperatingSystem
+                {
+                    Name         = DetectOS.GetRealPlatformID().ToString(),
+                    Synchronized = false,
+                    Version      = DetectOS.GetVersion()
+                });
                 CurrentStats = new Stats
                 {
-                    OperatingSystems =
-                        new List<OsStats>
-                        {
-                            new OsStats
-                            {
-                                name    = DetectOS.GetRealPlatformID().ToString(),
-                                Value   = 1,
-                                version = DetectOS.GetVersion()
-                            }
-                        },
                     Versions = new List<NameValueStats>
                     {
                         new NameValueStats {name = Version.GetVersion(), Value = 1}
@@ -100,18 +97,14 @@ namespace DiscImageChef.Core
             else if(Settings.Settings.Current.Stats != null)
             {
                 AllStats = new Stats();
+                ctx.OperatingSystems.Add(new OperatingSystem
+                {
+                    Name         = DetectOS.GetRealPlatformID().ToString(),
+                    Synchronized = false,
+                    Version      = DetectOS.GetVersion()
+                });
                 CurrentStats = new Stats
                 {
-                    OperatingSystems =
-                        new List<OsStats>
-                        {
-                            new OsStats
-                            {
-                                name    = DetectOS.GetRealPlatformID().ToString(),
-                                Value   = 1,
-                                version = DetectOS.GetVersion()
-                            }
-                        },
                     Versions = new List<NameValueStats>
                     {
                         new NameValueStats {name = Version.GetVersion(), Value = 1}
