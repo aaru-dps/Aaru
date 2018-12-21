@@ -174,47 +174,6 @@ namespace DiscImageChef.Gui.Dialogs
                                       lblPrintHex.Visible  || lblVerify.Visible;
             }
 
-            if(Statistics.AllStats.Benchmark != null)
-            {
-                StackLayout stkBenchmarks = new StackLayout();
-
-                foreach(ChecksumStats chk in Statistics.AllStats.Benchmark.Checksum)
-                    stkBenchmarks.Items.Add(new Label
-                    {
-                        Text =
-                            $"Took {chk.Value} seconds to calculate {chk.algorithm} algorithm"
-                    });
-
-                stkBenchmarks.Items.Add(new Label
-                {
-                    Text =
-                        $"Took {Statistics.AllStats.Benchmark.Sequential} seconds to calculate all algorithms sequentially"
-                });
-                stkBenchmarks.Items.Add(new Label
-                {
-                    Text =
-                        $"Took {Statistics.AllStats.Benchmark.All} seconds to calculate all algorithms at the same time"
-                });
-                stkBenchmarks.Items.Add(new Label
-                {
-                    Text =
-                        $"Took {Statistics.AllStats.Benchmark.Entropy} seconds to calculate entropy"
-                });
-
-                stkBenchmarks.Items.Add(new Label
-                {
-                    Text =
-                        $"Used a maximum of {Statistics.AllStats.Benchmark.MaxMemory} bytes of memory"
-                });
-                stkBenchmarks.Items.Add(new Label
-                {
-                    Text =
-                        $"Used a minimum of {Statistics.AllStats.Benchmark.MinMemory} bytes of memory"
-                });
-                tabBenchmark.Content = stkBenchmarks;
-                tabBenchmark.Visible = true;
-            }
-
             if(Statistics.AllStats.Filters != null && Statistics.AllStats.Filters.Count > 0)
             {
                 tabFilters.Visible = true;
@@ -307,61 +266,22 @@ namespace DiscImageChef.Gui.Dialogs
                     });
             }
 
-            if(Statistics.AllStats.Medias != null && Statistics.AllStats.Medias.Count > 0)
-            {
-                tabMedias.Visible = true;
+            if(Statistics.AllStats.Medias == null || Statistics.AllStats.Medias.Count <= 0) return;
 
-                TreeGridItemCollection mediaList = new TreeGridItemCollection();
+            tabMedias.Visible = true;
 
-                treeMedias.Columns.Add(new GridColumn {HeaderText = "Media", DataCell       = new TextBoxCell(0)});
-                treeMedias.Columns.Add(new GridColumn {HeaderText = "Times found", DataCell = new TextBoxCell(1)});
-                treeMedias.Columns.Add(new GridColumn {HeaderText = "Type", DataCell        = new TextBoxCell(2)});
+            TreeGridItemCollection mediaList = new TreeGridItemCollection();
 
-                treeMedias.AllowMultipleSelection = false;
-                treeMedias.ShowHeader             = true;
-                treeMedias.DataStore              = mediaList;
+            treeMedias.Columns.Add(new GridColumn {HeaderText = "Media", DataCell       = new TextBoxCell(0)});
+            treeMedias.Columns.Add(new GridColumn {HeaderText = "Times found", DataCell = new TextBoxCell(1)});
+            treeMedias.Columns.Add(new GridColumn {HeaderText = "Type", DataCell        = new TextBoxCell(2)});
 
-                foreach(MediaStats ms in Statistics.AllStats.Medias.OrderBy(m => m.type).ThenBy(m => m.real))
-                    mediaList.Add(new TreeGridItem
-                    {
-                        Values = new object[] {ms.type, ms.Value, ms.real ? "real" : "image"}
-                    });
-            }
+            treeMedias.AllowMultipleSelection = false;
+            treeMedias.ShowHeader             = true;
+            treeMedias.DataStore              = mediaList;
 
-            if(Statistics.AllStats.MediaScan != null)
-            {
-                tabMediaScan.Visible   = true;
-                lblSectorsTotal.Text   = $"Scanned a total of {Statistics.AllStats.MediaScan.Sectors.Total} sectors";
-                lblSectorsCorrect.Text = $"{Statistics.AllStats.MediaScan.Sectors.Correct} of them correctly";
-                lblSectorsError.Text   = $"{Statistics.AllStats.MediaScan.Sectors.Error} of them had errors";
-                lblLessThan3ms.Text =
-                    $"{Statistics.AllStats.MediaScan.Times.LessThan3ms} of them took less than 3 ms";
-                lblLessThan10ms.Text =
-                    $"{Statistics.AllStats.MediaScan.Times.LessThan10ms} of them took less than 10 ms but more than 3 ms";
-                lblLessThan50ms.Text =
-                    $"{Statistics.AllStats.MediaScan.Times.LessThan50ms} of them took less than 50 ms but more than 10 ms";
-                lblLessThan150ms.Text =
-                    $"{Statistics.AllStats.MediaScan.Times.LessThan150ms} of them took less than 150 ms but more than 50 ms";
-                lblLessThan500ms.Text =
-                    $"{Statistics.AllStats.MediaScan.Times.LessThan500ms} of them took less than 500 ms but more than 150 ms";
-                lblMoreThan500ms.Text =
-                    $"{Statistics.AllStats.MediaScan.Times.MoreThan500ms} of them took less than more than 500 ms";
-            }
-
-            if(Statistics.AllStats.Verify == null) return;
-
-            tabVerify.Visible = true;
-            lblCorrectImages.Text =
-                $"{Statistics.AllStats.Verify.MediaImages.Correct} media images has been correctly verified";
-            lblFailedImages.Text =
-                $"{Statistics.AllStats.Verify.MediaImages.Failed} media images has been determined as containing errors";
-            lblVerifiedSectors.Text = $"{Statistics.AllStats.Verify.Sectors.Total} sectors has been verified";
-            lblCorrectSectors.Text =
-                $"{Statistics.AllStats.Verify.Sectors.Correct} sectors has been determined correct";
-            lblFailedSectors.Text =
-                $"{Statistics.AllStats.Verify.Sectors.Error} sectors has been determined to contain errors";
-            lblUnknownSectors.Text =
-                $"{Statistics.AllStats.Verify.Sectors.Unverifiable} sectors could not be determined as correct or not";
+            foreach(MediaStats ms in Statistics.AllStats.Medias.OrderBy(m => m.type).ThenBy(m => m.real))
+                mediaList.Add(new TreeGridItem {Values = new object[] {ms.type, ms.Value, ms.real ? "real" : "image"}});
         }
 
         protected void OnBtnClose(object sender, EventArgs e)
@@ -388,7 +308,6 @@ namespace DiscImageChef.Gui.Dialogs
         Label        lblMediaScan;
         Label        lblPrintHex;
         Label        lblVerify;
-        TabPage      tabBenchmark;
         TabPage      tabFilters;
         TreeGridView treeFilters;
         TabPage      tabFormats;
@@ -401,23 +320,6 @@ namespace DiscImageChef.Gui.Dialogs
         TreeGridView treeDevices;
         TabPage      tabMedias;
         TreeGridView treeMedias;
-        TabPage      tabMediaScan;
-        Label        lblSectorsTotal;
-        Label        lblSectorsCorrect;
-        Label        lblSectorsError;
-        Label        lblLessThan3ms;
-        Label        lblLessThan10ms;
-        Label        lblLessThan50ms;
-        Label        lblLessThan150ms;
-        Label        lblLessThan500ms;
-        Label        lblMoreThan500ms;
-        TabPage      tabVerify;
-        Label        lblCorrectImages;
-        Label        lblFailedImages;
-        Label        lblVerifiedSectors;
-        Label        lblCorrectSectors;
-        Label        lblFailedSectors;
-        Label        lblUnknownSectors;
         #endregion
     }
 }

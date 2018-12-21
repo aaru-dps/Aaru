@@ -106,27 +106,6 @@ namespace DiscImageChef.Commands
                 thereAreStats = true;
             }
 
-            if(Core.Statistics.AllStats.Benchmark != null)
-            {
-                DicConsole.WriteLine("Benchmark statistics");
-                DicConsole.WriteLine("====================");
-                foreach(ChecksumStats chk in Core.Statistics.AllStats.Benchmark.Checksum)
-                    DicConsole.WriteLine("Took {0} seconds to calculate {1} algorithm", chk.Value, chk.algorithm);
-
-                DicConsole.WriteLine("Took {0} seconds to calculate all algorithms sequentially",
-                                     Core.Statistics.AllStats.Benchmark.Sequential);
-                DicConsole.WriteLine("Took {0} seconds to calculate all algorithms at the same time",
-                                     Core.Statistics.AllStats.Benchmark.All);
-                DicConsole.WriteLine("Took {0} seconds to calculate entropy",
-                                     Core.Statistics.AllStats.Benchmark.Entropy);
-                DicConsole.WriteLine("Used a maximum of {0} bytes of memory",
-                                     Core.Statistics.AllStats.Benchmark.MaxMemory);
-                DicConsole.WriteLine("Used a minimum of {0} bytes of memory",
-                                     Core.Statistics.AllStats.Benchmark.MinMemory);
-                DicConsole.WriteLine();
-                thereAreStats = true;
-            }
-
             if(Core.Statistics.AllStats.Filters != null && Core.Statistics.AllStats.Filters.Count > 0)
             {
                 DicConsole.WriteLine("Filters statistics");
@@ -193,47 +172,6 @@ namespace DiscImageChef.Commands
                                          ms.real ? "real" : "media");
 
                 DicConsole.WriteLine();
-                thereAreStats = true;
-            }
-
-            if(Core.Statistics.AllStats.MediaScan != null)
-            {
-                DicConsole.WriteLine("Media scan statistics");
-                DicConsole.WriteLine("=====================");
-                DicConsole.WriteLine("Scanned a total of {0} sectors",
-                                     Core.Statistics.AllStats.MediaScan.Sectors.Total);
-                DicConsole.WriteLine("{0} of them correctly",  Core.Statistics.AllStats.MediaScan.Sectors.Correct);
-                DicConsole.WriteLine("{0} of them had errors", Core.Statistics.AllStats.MediaScan.Sectors.Error);
-                DicConsole.WriteLine("{0} of them took less than 3 ms",
-                                     Core.Statistics.AllStats.MediaScan.Times.LessThan3ms);
-                DicConsole.WriteLine("{0} of them took less than 10 ms but more than 3 ms",
-                                     Core.Statistics.AllStats.MediaScan.Times.LessThan10ms);
-                DicConsole.WriteLine("{0} of them took less than 50 ms but more than 10 ms",
-                                     Core.Statistics.AllStats.MediaScan.Times.LessThan50ms);
-                DicConsole.WriteLine("{0} of them took less than 150 ms but more than 50 ms",
-                                     Core.Statistics.AllStats.MediaScan.Times.LessThan150ms);
-                DicConsole.WriteLine("{0} of them took less than 500 ms but more than 150 ms",
-                                     Core.Statistics.AllStats.MediaScan.Times.LessThan500ms);
-                DicConsole.WriteLine("{0} of them took less than more than 500 ms",
-                                     Core.Statistics.AllStats.MediaScan.Times.MoreThan500ms);
-                thereAreStats = true;
-            }
-
-            if(Core.Statistics.AllStats.Verify != null)
-            {
-                DicConsole.WriteLine("Verification statistics");
-                DicConsole.WriteLine("=======================");
-                DicConsole.WriteLine("{0} media images has been correctly verified",
-                                     Core.Statistics.AllStats.Verify.MediaImages.Correct);
-                DicConsole.WriteLine("{0} media images has been determined as containing errors",
-                                     Core.Statistics.AllStats.Verify.MediaImages.Failed);
-                DicConsole.WriteLine("{0} sectors has been verified", Core.Statistics.AllStats.Verify.Sectors.Total);
-                DicConsole.WriteLine("{0} sectors has been determined correct",
-                                     Core.Statistics.AllStats.Verify.Sectors.Correct);
-                DicConsole.WriteLine("{0} sectors has been determined to contain errors",
-                                     Core.Statistics.AllStats.Verify.Sectors.Error);
-                DicConsole.WriteLine("{0} sectors could not be determined as correct or not",
-                                     Core.Statistics.AllStats.Verify.Sectors.Unverifiable);
                 thereAreStats = true;
             }
 

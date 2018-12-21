@@ -140,9 +140,6 @@ namespace DiscImageChef.Gui.Forms
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
                                      */
 
-            Statistics.AddMediaScan((long)results.A, (long)results.B, (long)results.C, (long)results.D, (long)results.E,
-                                    (long)results.F, (long)results.Blocks, (long)results.Errored,
-                                    (long)(results.Blocks - results.Errored));
             Statistics.AddCommand("media-scan");
 
             dev.Close();

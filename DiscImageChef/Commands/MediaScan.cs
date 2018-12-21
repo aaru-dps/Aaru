@@ -109,9 +109,6 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
 
-            Core.Statistics.AddMediaScan((long)results.A, (long)results.B, (long)results.C, (long)results.D,
-                                         (long)results.E, (long)results.F, (long)results.Blocks, (long)results.Errored,
-                                         (long)(results.Blocks - results.Errored));
             Core.Statistics.AddCommand("media-scan");
 
             dev.Close();

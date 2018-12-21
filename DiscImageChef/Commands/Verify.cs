@@ -37,7 +37,6 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -245,7 +244,6 @@ namespace DiscImageChef.Commands
             }
 
             Core.Statistics.AddCommand("verify");
-            Core.Statistics.AddVerify(correctDisc, correctSectors, errorSectors, unknownSectors, totalSectors);
         }
     }
 }

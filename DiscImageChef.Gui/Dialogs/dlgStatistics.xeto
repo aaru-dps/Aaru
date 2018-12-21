@@ -56,7 +56,6 @@
                     <Label ID="lblVerify" Visible="False"/>
                 </StackLayout>
             </TabPage>
-            <TabPage ID="tabBenchmark" Text="Benchmark" Visible="False"/>
             <TabPage ID="tabFilters" Text="Filters" Visible="False">
                 <TreeGridView ID="treeFilters"/>
             </TabPage>
@@ -74,29 +73,6 @@
             </TabPage>
             <TabPage ID="tabMedias" Text="Medias" Visible="False">
                 <TreeGridView ID="treeMedias"/>
-            </TabPage>
-            <TabPage ID="tabMediaScan" Text="Media scan" Visible="False">
-                <StackLayout Orientation="Vertical">
-                    <Label ID="lblSectorsTotal"/>
-                    <Label ID="lblSectorsCorrect"/>
-                    <Label ID="lblSectorsError"/>
-                    <Label ID="lblLessThan3ms"/>
-                    <Label ID="lblLessThan10ms"/>
-                    <Label ID="lblLessThan50ms"/>
-                    <Label ID="lblLessThan150ms"/>
-                    <Label ID="lblLessThan500ms"/>
-                    <Label ID="lblMoreThan500ms"/>
-                </StackLayout>
-            </TabPage>
-            <TabPage ID="tabVerify" Text="Verification" Visible="False">
-                <StackLayout Orientation="Vertical">
-                    <Label ID="lblCorrectImages"/>
-                    <Label ID="lblFailedImages"/>
-                    <Label ID="lblVerifiedSectors"/>
-                    <Label ID="lblCorrectSectors"/>
-                    <Label ID="lblFailedSectors"/>
-                    <Label ID="lblUnknownSectors"/>
-                </StackLayout>
             </TabPage>
         </TabControl>
         <StackLayoutItem HorizontalAlignment="Right">

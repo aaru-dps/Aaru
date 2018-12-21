@@ -121,8 +121,6 @@ namespace DiscImageChef.Gui.Dialogs
             stkCalculationResults.Items.Add(new Label {Text = $"Min memory used is {results.MinMemory} bytes"});
 
             Statistics.AddCommand("benchmark");
-            Statistics.AddBenchmark(checksumTimes, results.EntropyTime, results.TotalTime, results.SeparateTime,
-                                    results.MaxMemory, results.MinMemory);
 
             stkCalculationResults.Items.Add(new StackLayoutItem(stkButtons, HorizontalAlignment.Right, true));
             stkCalculationResults.Visible = true;

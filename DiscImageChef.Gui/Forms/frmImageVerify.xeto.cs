@@ -359,7 +359,6 @@ namespace DiscImageChef.Gui.Forms
             }
 
             Statistics.AddCommand("verify");
-            Statistics.AddVerify(correctDisc, correctSectors, errorSectors, unknownSectors, totalSectors);
 
             Application.Instance.Invoke(() =>
             {

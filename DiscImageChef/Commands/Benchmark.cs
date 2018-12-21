@@ -71,8 +71,6 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Min memory used is {0} bytes", results.MinMemory);
 
             Core.Statistics.AddCommand("benchmark");
-            Core.Statistics.AddBenchmark(checksumTimes, results.EntropyTime, results.TotalTime, results.SeparateTime,
-                                         results.MaxMemory, results.MinMemory);
         }
     }
 }

@@ -386,55 +386,6 @@ namespace DiscImageChef.Server.Controllers
                             else oldStats.Medias.Add(newMstat);
                         }
 
-                if(newStats.MediaScan != null)
-                    if(oldStats.MediaScan == null)
-                        oldStats.MediaScan = newStats.MediaScan;
-                    else
-                    {
-                        if(oldStats.MediaScan.Sectors == null) oldStats.MediaScan.Sectors = newStats.MediaScan.Sectors;
-                        else
-                        {
-                            oldStats.MediaScan.Sectors.Correct      = newStats.MediaScan.Sectors.Correct;
-                            oldStats.MediaScan.Sectors.Error        = newStats.MediaScan.Sectors.Error;
-                            oldStats.MediaScan.Sectors.Total        = newStats.MediaScan.Sectors.Total;
-                            oldStats.MediaScan.Sectors.Unverifiable = newStats.MediaScan.Sectors.Unverifiable;
-                        }
-
-                        if(oldStats.MediaScan.Times == null) oldStats.MediaScan.Times = newStats.MediaScan.Times;
-                        else
-                        {
-                            oldStats.MediaScan.Times.LessThan10ms  = newStats.MediaScan.Times.LessThan10ms;
-                            oldStats.MediaScan.Times.LessThan150ms = newStats.MediaScan.Times.LessThan150ms;
-                            oldStats.MediaScan.Times.LessThan3ms   = newStats.MediaScan.Times.LessThan3ms;
-                            oldStats.MediaScan.Times.LessThan500ms = newStats.MediaScan.Times.LessThan500ms;
-                            oldStats.MediaScan.Times.LessThan50ms  = newStats.MediaScan.Times.LessThan50ms;
-                            oldStats.MediaScan.Times.MoreThan500ms = newStats.MediaScan.Times.MoreThan500ms;
-                        }
-                    }
-
-                if(newStats.Verify != null)
-                    if(oldStats.Verify == null)
-                        oldStats.Verify = newStats.Verify;
-                    else
-                    {
-                        if(oldStats.Verify.Sectors == null) oldStats.Verify.Sectors = newStats.Verify.Sectors;
-                        else
-                        {
-                            oldStats.Verify.Sectors.Correct      = newStats.Verify.Sectors.Correct;
-                            oldStats.Verify.Sectors.Error        = newStats.Verify.Sectors.Error;
-                            oldStats.Verify.Sectors.Total        = newStats.Verify.Sectors.Total;
-                            oldStats.Verify.Sectors.Unverifiable = newStats.Verify.Sectors.Unverifiable;
-                        }
-
-                        if(oldStats.Verify.MediaImages == null)
-                            oldStats.Verify.MediaImages = newStats.Verify.MediaImages;
-                        else
-                        {
-                            oldStats.Verify.MediaImages.Correct = newStats.Verify.MediaImages.Correct;
-                            oldStats.Verify.MediaImages.Failed  = newStats.Verify.MediaImages.Failed;
-                        }
-                    }
-
                 if(oldStats.Devices != null)
                     oldStats.Devices = oldStats.Devices.OrderBy(device => device.Manufacturer)
                                                .ThenBy(device => device.Model).ThenBy(device => device.Revision)
