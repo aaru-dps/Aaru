@@ -126,7 +126,6 @@ namespace DiscImageChef.Core
                                                              {
                                                                  NullValueHandling = NullValueHandling.Ignore
                                                              }));
-                    jsonSw.Close();
                     jsonStream.Seek(0, SeekOrigin.Begin);
                     WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreportv2");
                     ((HttpWebRequest)request).UserAgent = $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
@@ -146,6 +145,7 @@ namespace DiscImageChef.Core
                     reader.ReadToEnd();
                     data.Close();
                     response.Close();
+                    jsonSw.Close();
                     jsonStream.Close();
                 }
                 catch(WebException)

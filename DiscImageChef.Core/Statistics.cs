@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -41,6 +42,7 @@ using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
+using Newtonsoft.Json;
 using Device = DiscImageChef.Devices.Device;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using OperatingSystem = DiscImageChef.Database.Models.OperatingSystem;
@@ -432,6 +434,385 @@ namespace DiscImageChef.Core
         {
             Thread submitThread = new Thread(() =>
             {
+                lock(ctx)
+                    if(ctx.Commands.Any(c => !c.Synchronized)    || ctx.Filesystems.Any(c => !c.Synchronized)      ||
+                       ctx.Filters.Any(c => !c.Synchronized)     || ctx.MediaFormats.Any(c => !c.Synchronized)     ||
+                       ctx.Partitions.Any(c => !c.Synchronized)  || ctx.Medias.Any(c => !c.Synchronized)           ||
+                       ctx.SeenDevices.Any(c => !c.Synchronized) || ctx.OperatingSystems.Any(c => !c.Synchronized) ||
+                       ctx.Versions.Any(c => !c.Synchronized))
+                    {
+                        StatsDto dto = new StatsDto();
+
+                        if(ctx.Commands.Any(c => !c.Synchronized))
+                        {
+                            dto.Commands = new List<NameValueStats>();
+                            foreach(string nvs in
+                                ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                                dto.Commands.Add(new NameValueStats
+                                {
+                                    name = nvs,
+                                    Value = ctx.Commands.LongCount(c => !c.Synchronized &&
+                                                                        c.Name == nvs)
+                                });
+                        }
+
+                        if(ctx.Filesystems.Any(c => !c.Synchronized))
+                        {
+                            dto.Filesystems = new List<NameValueStats>();
+                            foreach(string nvs in
+                                ctx.Filesystems.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                                dto.Filesystems.Add(new NameValueStats
+                                {
+                                    name = nvs,
+                                    Value = ctx.Filesystems.LongCount(c => !c.Synchronized &&
+                                                                           c.Name == nvs)
+                                });
+                        }
+
+                        if(ctx.Filters.Any(c => !c.Synchronized))
+                        {
+                            dto.Filters = new List<NameValueStats>();
+                            foreach(string nvs in ctx.Filters.Where(c => !c.Synchronized).Select(c => c.Name).Distinct()
+                            )
+                                dto.Filters.Add(new NameValueStats
+                                {
+                                    name = nvs,
+                                    Value = ctx.Filters.LongCount(c => !c.Synchronized &&
+                                                                       c.Name == nvs)
+                                });
+                        }
+
+                        if(ctx.MediaFormats.Any(c => !c.Synchronized))
+                        {
+                            dto.MediaFormats = new List<NameValueStats>();
+                            foreach(string nvs in
+                                ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                                dto.MediaFormats.Add(new NameValueStats
+                                {
+                                    name = nvs,
+                                    Value = ctx.MediaFormats.LongCount(c => !c.Synchronized &&
+                                                                            c.Name == nvs)
+                                });
+                        }
+
+                        if(ctx.Partitions.Any(c => !c.Synchronized))
+                        {
+                            dto.Partitions = new List<NameValueStats>();
+                            foreach(string nvs in
+                                ctx.Partitions.Where(c => !c.Synchronized).Select(c => c.Name).Distinct())
+                                dto.Partitions.Add(new NameValueStats
+                                {
+                                    name = nvs,
+                                    Value = ctx.Partitions.LongCount(c => !c.Synchronized &&
+                                                                          c.Name == nvs)
+                                });
+                        }
+
+                        if(ctx.Versions.Any(c => !c.Synchronized))
+                        {
+                            dto.Versions = new List<NameValueStats>();
+                            foreach(string nvs in
+                                ctx.Versions.Where(c => !c.Synchronized).Select(c => c.Value).Distinct())
+                                dto.Versions.Add(new NameValueStats
+                                {
+                                    name = nvs,
+                                    Value = ctx.Versions.LongCount(c => !c.Synchronized &&
+                                                                        c.Value == nvs)
+                                });
+                        }
+
+                        if(ctx.Medias.Any(c => !c.Synchronized))
+                        {
+                            dto.Medias = new List<MediaStats>();
+                            foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type)
+                                                       .Distinct())
+                            {
+                                if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
+                                    dto.Medias.Add(new MediaStats
+                                    {
+                                        real = true,
+                                        type = media,
+                                        Value = ctx.Medias.LongCount(c => !c.Synchronized &&
+                                                                          c.Type == media && c.Real)
+                                    });
+                                if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real))
+                                    dto.Medias.Add(new MediaStats
+                                    {
+                                        real = false,
+                                        type = media,
+                                        Value = ctx.Medias.LongCount(c => !c.Synchronized &&
+                                                                          c.Type == media && !c.Real)
+                                    });
+                            }
+                        }
+
+                        if(ctx.SeenDevices.Any(c => !c.Synchronized))
+                        {
+                            dto.Devices = new List<DeviceStats>();
+                            foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
+                                dto.Devices.Add(new DeviceStats
+                                {
+                                    Bus                   = device.Bus,
+                                    Manufacturer          = device.Manufacturer,
+                                    ManufacturerSpecified = !(device.Manufacturer is null),
+                                    Model                 = device.Model,
+                                    Revision              = device.Revision
+                                });
+                        }
+
+                        if(ctx.OperatingSystems.Any(c => !c.Synchronized))
+                        {
+                            dto.OperatingSystems = new List<OsStats>();
+                            foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
+                                                        .Select(c => c.Name).Distinct())
+                            {
+                                foreach(string osVersion in
+                                    ctx.OperatingSystems.Where(c => !c.Synchronized && c.Name == osName)
+                                       .Select(c => c.Version).Distinct())
+                                    dto.OperatingSystems.Add(new OsStats
+                                    {
+                                        name    = osName,
+                                        version = osVersion,
+                                        Value =
+                                            ctx.OperatingSystems.LongCount(c =>
+                                                                               !c
+                                                                                  .Synchronized &&
+                                                                               c.Name ==
+                                                                               osName &&
+                                                                               c.Version ==
+                                                                               osVersion)
+                                    });
+                            }
+                        }
+
+                        try
+                        {
+                            #if DEBUG
+                            System.Console.WriteLine("Uploading statistics");
+                            #else
+                            DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading statistics");
+                            #endif
+
+                            MemoryStream jsonStream = new MemoryStream();
+                            StreamWriter jsonSw     = new StreamWriter(jsonStream);
+
+                            jsonSw.Write(JsonConvert.SerializeObject(dto, Formatting.Indented,
+                                                                     new JsonSerializerSettings
+                                                                     {
+                                                                         NullValueHandling =
+                                                                             NullValueHandling.Ignore
+                                                                     }));
+                            jsonStream.Seek(0, SeekOrigin.Begin);
+                            WebRequest request =
+                                WebRequest.Create("http://discimagechef.claunia.com/api/uploadstatsv2");
+                            ((HttpWebRequest)request).UserAgent =
+                                $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
+                            request.Method        = "POST";
+                            request.ContentLength = jsonStream.Length;
+                            request.ContentType   = "application/json";
+                            Stream reqStream = request.GetRequestStream();
+                            jsonStream.CopyTo(reqStream);
+                            reqStream.Close();
+                            WebResponse response = request.GetResponse();
+
+                            if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK) return;
+
+                            Stream       data   = response.GetResponseStream();
+                            StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
+
+                            reader.ReadToEnd();
+                            data.Close();
+                            response.Close();
+                            jsonSw.Close();
+                            jsonStream.Close();
+
+                            if(ctx.Commands.Any(c => !c.Synchronized))
+                                foreach(string nvs in ctx
+                                                     .Commands.Where(c => !c.Synchronized).Select(c => c.Name)
+                                                     .Distinct())
+                                {
+                                    Command existing =
+                                        ctx.Commands.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                        new Command {Name = nvs, Synchronized = true};
+
+                                    existing.Count +=
+                                        (ulong)ctx.Commands.LongCount(c => !c.Synchronized && c.Name == nvs);
+                                    ctx.Commands.Update(existing);
+                                    ctx.Commands.RemoveRange(ctx.Commands.Where(c => !c.Synchronized && c.Name == nvs));
+                                }
+
+                            if(ctx.Filesystems.Any(c => !c.Synchronized))
+                                foreach(string nvs in ctx
+                                                     .Filesystems.Where(c => !c.Synchronized).Select(c => c.Name)
+                                                     .Distinct())
+                                {
+                                    Filesystem existing =
+                                        ctx.Filesystems.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                        new Filesystem {Name = nvs, Synchronized = true};
+
+                                    existing.Count +=
+                                        (ulong)ctx.Filesystems.LongCount(c => !c.Synchronized && c.Name == nvs);
+                                    ctx.Filesystems.Update(existing);
+                                    ctx.Filesystems.RemoveRange(ctx.Filesystems.Where(c => !c.Synchronized &&
+                                                                                           c.Name == nvs));
+                                }
+
+                            if(ctx.Filters.Any(c => !c.Synchronized))
+                                foreach(string nvs in ctx
+                                                     .Filters.Where(c => !c.Synchronized).Select(c => c.Name)
+                                                     .Distinct())
+                                {
+                                    Filter existing =
+                                        ctx.Filters.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                        new Filter {Name = nvs, Synchronized = true};
+
+                                    existing.Count +=
+                                        (ulong)ctx.Filters.LongCount(c => !c.Synchronized && c.Name == nvs);
+                                    ctx.Filters.Update(existing);
+                                    ctx.Filters.RemoveRange(ctx.Filters.Where(c => !c.Synchronized && c.Name == nvs));
+                                }
+
+                            if(ctx.MediaFormats.Any(c => !c.Synchronized))
+                                foreach(string nvs in ctx
+                                                     .MediaFormats.Where(c => !c.Synchronized).Select(c => c.Name)
+                                                     .Distinct())
+                                {
+                                    MediaFormat existing =
+                                        ctx.MediaFormats.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                        new MediaFormat {Name = nvs, Synchronized = true};
+
+                                    existing.Count +=
+                                        (ulong)ctx.MediaFormats.LongCount(c => !c.Synchronized && c.Name == nvs);
+                                    ctx.MediaFormats.Update(existing);
+                                    ctx.MediaFormats.RemoveRange(ctx.MediaFormats.Where(c => !c.Synchronized &&
+                                                                                             c.Name == nvs));
+                                }
+
+                            if(ctx.Partitions.Any(c => !c.Synchronized))
+                                foreach(string nvs in ctx
+                                                     .Partitions.Where(c => !c.Synchronized).Select(c => c.Name)
+                                                     .Distinct())
+                                {
+                                    Partition existing =
+                                        ctx.Partitions.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                        new Partition {Name = nvs, Synchronized = true};
+
+                                    existing.Count +=
+                                        (ulong)ctx.Partitions.LongCount(c => !c.Synchronized && c.Name == nvs);
+                                    ctx.Partitions.Update(existing);
+                                    ctx.Partitions.RemoveRange(ctx.Partitions.Where(c => !c.Synchronized &&
+                                                                                         c.Name == nvs));
+                                }
+
+                            if(ctx.Versions.Any(c => !c.Synchronized))
+                                foreach(string nvs in ctx
+                                                     .Versions.Where(c => !c.Synchronized).Select(c => c.Value)
+                                                     .Distinct())
+                                {
+                                    Version existing =
+                                        ctx.Versions.FirstOrDefault(c => c.Synchronized && c.Value == nvs) ??
+                                        new Version {Value = nvs, Synchronized = true};
+
+                                    existing.Count +=
+                                        (ulong)ctx.Versions.LongCount(c => !c.Synchronized && c.Value == nvs);
+                                    ctx.Versions.Update(existing);
+                                    ctx.Versions.RemoveRange(ctx.Versions.Where(c => !c.Synchronized &&
+                                                                                     c.Value == nvs));
+                                }
+
+                            if(ctx.Medias.Any(c => !c.Synchronized))
+                                foreach(string media in ctx.Medias.Where(c => !c.Synchronized).Select(c => c.Type)
+                                                           .Distinct())
+                                {
+                                    if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
+                                    {
+                                        Database.Models.Media existing =
+                                            ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media &&
+                                                                           c.Real) ?? new Database.Models.Media
+                                            {
+                                                Synchronized = true, Type = media, Real = true
+                                            };
+
+                                        existing.Count +=
+                                            (ulong)ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media &&
+                                                                             c.Real);
+                                        ctx.Medias.Update(existing);
+                                        ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized &&
+                                                                                     c.Type == media && c.Real));
+                                    }
+
+                                    if(!ctx.Medias.Any(c => !c.Synchronized && c.Type == media && !c.Real)) continue;
+
+                                    {
+                                        Database.Models.Media existing =
+                                            ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media &&
+                                                                           !c.Real) ?? new Database.Models.Media
+                                            {
+                                                Synchronized = true, Type = media, Real = false
+                                            };
+
+                                        existing.Count +=
+                                            (ulong)ctx.Medias.LongCount(c => !c.Synchronized && c.Type == media &&
+                                                                             !c.Real);
+                                        ctx.Medias.Update(existing);
+                                        ctx.Medias.RemoveRange(ctx.Medias.Where(c => !c.Synchronized &&
+                                                                                     c.Type == media && !c.Real));
+                                    }
+                                }
+
+                            if(ctx.SeenDevices.Any(c => !c.Synchronized))
+                                foreach(DeviceStat device in ctx.SeenDevices.Where(c => !c.Synchronized))
+                                {
+                                    device.Synchronized = true;
+                                    ctx.Update(device);
+                                }
+
+                            if(ctx.OperatingSystems.Any(c => !c.Synchronized))
+                                foreach(string osName in ctx.OperatingSystems.Where(c => !c.Synchronized)
+                                                            .Select(c => c.Name).Distinct())
+                                {
+                                    foreach(string osVersion in ctx
+                                                               .OperatingSystems
+                                                               .Where(c => !c.Synchronized && c.Name == osName)
+                                                               .Select(c => c.Version).Distinct())
+                                    {
+                                        OperatingSystem existing =
+                                            ctx.OperatingSystems.FirstOrDefault(c => c.Synchronized      &&
+                                                                                     c.Name    == osName &&
+                                                                                     c.Version == osVersion) ??
+                                            new OperatingSystem
+                                            {
+                                                Synchronized = true, Version = osVersion, Name = osName
+                                            };
+
+                                        existing.Count +=
+                                            (ulong)ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
+                                                                                       c.Name    == osName &&
+                                                                                       c.Version == osVersion);
+                                        ctx.OperatingSystems.Update(existing);
+                                        ctx.OperatingSystems.RemoveRange(ctx.OperatingSystems.Where(c =>
+                                                                                                        !c
+                                                                                                           .Synchronized &&
+                                                                                                        c.Name ==
+                                                                                                        osName &&
+                                                                                                        c.Version ==
+                                                                                                        osVersion));
+                                    }
+                                }
+                        }
+                        catch(WebException)
+                        {
+                            // Can't connect to the server, do nothing
+                        }
+                        // ReSharper disable once RedundantCatchClause
+                        catch
+                        {
+                            #if DEBUG
+                            if(Debugger.IsAttached) throw;
+                            #endif
+                        }
+                    }
+
                 if(submitStatsLock) return;
 
                 submitStatsLock = true;
@@ -489,10 +870,10 @@ namespace DiscImageChef.Core
                     catch
                     {
                         #if DEBUG
+                        if(!Debugger.IsAttached) continue;
+
                         submitStatsLock = false;
                         throw;
-                        #else
-                        continue;
                         #endif
                     }
 
