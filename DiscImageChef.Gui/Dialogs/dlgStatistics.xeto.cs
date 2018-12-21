@@ -32,8 +32,8 @@
 
 using System;
 using System.Linq;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Core;
+using DiscImageChef.Database;
+using DiscImageChef.Database.Models;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
@@ -41,129 +41,184 @@ namespace DiscImageChef.Gui.Dialogs
 {
     public class dlgStatistics : Dialog
     {
+        DicContext ctx;
+
         public dlgStatistics()
         {
             XamlReader.Load(this);
 
-            if(Statistics.AllStats.Commands != null)
+            ctx = new DicContext();
+
+            if(ctx.Commands.Any())
             {
-                if(Statistics.AllStats.Commands.Analyze > 0)
+                if(ctx.Commands.Any(c => c.Name == "analyze"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "analyze" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "analyze" && !c.Synchronized);
+
                     lblAnalyze.Visible = true;
-                    lblAnalyze.Text =
-                        $"You have called the Analyze command {Statistics.AllStats.Commands.Analyze} times";
+                    lblAnalyze.Text    = $"You have called the Analyze command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.Benchmark > 0)
+                if(ctx.Commands.Any(c => c.Name == "benchmark"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "benchmark" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "benchmark" && !c.Synchronized);
+
                     lblBenchmark.Visible = true;
-                    lblBenchmark.Text =
-                        $"You have called the Benchmark command {Statistics.AllStats.Commands.Benchmark} times";
+                    lblBenchmark.Text    = $"You have called the Benchmark command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.Checksum > 0)
+                if(ctx.Commands.Any(c => c.Name == "checksum"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "checksum" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "checksum" && !c.Synchronized);
+
                     lblChecksum.Visible = true;
-                    lblChecksum.Text =
-                        $"You have called the Checksum command {Statistics.AllStats.Commands.Checksum} times";
+                    lblChecksum.Text    = $"You have called the Checksum command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.Compare > 0)
+                if(ctx.Commands.Any(c => c.Name == "compare"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "compare" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "compare" && !c.Synchronized);
+
                     lblCompare.Visible = true;
-                    lblCompare.Text =
-                        $"You have called the Compare command {Statistics.AllStats.Commands.Compare} times";
+                    lblCompare.Text    = $"You have called the Compare command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.ConvertImage > 0)
+                if(ctx.Commands.Any(c => c.Name == "convert-image"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "convert-image" && c.Synchronized)
+                                     .Select(c => c.Count).FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "convert-image" && !c.Synchronized);
+
                     lblConvertImage.Visible = true;
-                    lblConvertImage.Text =
-                        $"You have called the Convert-Image command {Statistics.AllStats.Commands.ConvertImage} times";
+                    lblConvertImage.Text    = $"You have called the Convert-Image command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.CreateSidecar > 0)
+                if(ctx.Commands.Any(c => c.Name == "create-sidecar"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "create-sidecar" && c.Synchronized)
+                                     .Select(c => c.Count).FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "create-sidecar" && !c.Synchronized);
+
                     lblCreateSidecar.Visible = true;
-                    lblCreateSidecar.Text =
-                        $"You have called the Create-Sidecar command {Statistics.AllStats.Commands.CreateSidecar} times";
+                    lblCreateSidecar.Text    = $"You have called the Create-Sidecar command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.Decode > 0)
+                if(ctx.Commands.Any(c => c.Name == "decode"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "decode" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "decode" && !c.Synchronized);
+
                     lblDecode.Visible = true;
-                    lblDecode.Text =
-                        $"You have called the Decode command {Statistics.AllStats.Commands.Decode} times";
+                    lblDecode.Text    = $"You have called the Decode command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.DeviceInfo > 0)
+                if(ctx.Commands.Any(c => c.Name == "device-info"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "device-info" && c.Synchronized)
+                                     .Select(c => c.Count).FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-info" && !c.Synchronized);
+
                     lblDeviceInfo.Visible = true;
-                    lblDeviceInfo.Text =
-                        $"You have called the Device-Info command {Statistics.AllStats.Commands.DeviceInfo} times";
+                    lblDeviceInfo.Text    = $"You have called the Device-Info command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.DeviceReport > 0)
+                if(ctx.Commands.Any(c => c.Name == "device-report"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "device-report" && c.Synchronized)
+                                     .Select(c => c.Count).FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-report" && !c.Synchronized);
+
                     lblDeviceReport.Visible = true;
-                    lblDeviceReport.Text =
-                        $"You have called the Device-Report command {Statistics.AllStats.Commands.DeviceReport} times";
+                    lblDeviceReport.Text    = $"You have called the Device-Report command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.DumpMedia > 0)
+                if(ctx.Commands.Any(c => c.Name == "dump-media"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "dump-media" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "dump-media" && !c.Synchronized);
+
                     lblDumpMedia.Visible = true;
-                    lblDumpMedia.Text =
-                        $"You have called the Dump-Media command {Statistics.AllStats.Commands.DumpMedia} times";
+                    lblDumpMedia.Text    = $"You have called the Dump-Media command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.Entropy > 0)
+                if(ctx.Commands.Any(c => c.Name == "entropy"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "entropy" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "entropy" && !c.Synchronized);
+
                     lblEntropy.Visible = true;
-                    lblEntropy.Text =
-                        $"You have called the Entropy command {Statistics.AllStats.Commands.Entropy} times";
+                    lblEntropy.Text    = $"You have called the Entropy command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.Formats > 0)
+                if(ctx.Commands.Any(c => c.Name == "formats"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "formats" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "formats" && !c.Synchronized);
+
                     lblFormats.Visible = true;
-                    lblFormats.Text =
-                        $"You have called the Formats command {Statistics.AllStats.Commands.Formats} times";
+                    lblFormats.Text    = $"You have called the Formats command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.ImageInfo > 0)
+                if(ctx.Commands.Any(c => c.Name == "image-info"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "image-info" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "image-info" && !c.Synchronized);
+
                     lblImageInfo.Visible = true;
-                    lblImageInfo.Text =
-                        $"You have called the Image-Info command {Statistics.AllStats.Commands.ImageInfo} times";
+                    lblImageInfo.Text    = $"You have called the Image-Info command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.MediaInfo > 0)
+                if(ctx.Commands.Any(c => c.Name == "media-info"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "media-info" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-info" && !c.Synchronized);
+
                     lblMediaInfo.Visible = true;
-                    lblMediaInfo.Text =
-                        $"You have called the Media-Info command {Statistics.AllStats.Commands.MediaInfo} times";
+                    lblMediaInfo.Text    = $"You have called the Media-Info command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.MediaScan > 0)
+                if(ctx.Commands.Any(c => c.Name == "media-scan"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "media-scan" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-scan" && !c.Synchronized);
+
                     lblMediaScan.Visible = true;
-                    lblMediaScan.Text =
-                        $"You have called the Media-Scan command {Statistics.AllStats.Commands.MediaScan} times";
+                    lblMediaScan.Text    = $"You have called the Media-Scan command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.PrintHex > 0)
+                if(ctx.Commands.Any(c => c.Name == "printhex"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "printhex" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "printhex" && !c.Synchronized);
+
                     lblPrintHex.Visible = true;
-                    lblPrintHex.Text =
-                        $"You have called the Print-Hex command {Statistics.AllStats.Commands.PrintHex} times";
+                    lblPrintHex.Text    = $"You have called the Print-Hex command {count} times";
                 }
 
-                if(Statistics.AllStats.Commands.Verify > 0)
+                if(ctx.Commands.Any(c => c.Name == "verify"))
                 {
+                    ulong count = ctx.Commands.Where(c => c.Name == "verify" && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "verify" && !c.Synchronized);
+
                     lblVerify.Visible = true;
-                    lblVerify.Text =
-                        $"You have called the Verify command {Statistics.AllStats.Commands.Verify} times";
+                    lblVerify.Text    = $"You have called the Verify command {count} times";
                 }
 
                 tabCommands.Visible = lblAnalyze.Visible   || lblBenchmark.Visible    || lblChecksum.Visible      ||
@@ -174,7 +229,7 @@ namespace DiscImageChef.Gui.Dialogs
                                       lblPrintHex.Visible  || lblVerify.Visible;
             }
 
-            if(Statistics.AllStats.Filters != null && Statistics.AllStats.Filters.Count > 0)
+            if(ctx.Filters.Any())
             {
                 tabFilters.Visible = true;
 
@@ -187,11 +242,17 @@ namespace DiscImageChef.Gui.Dialogs
                 treeFilters.ShowHeader             = true;
                 treeFilters.DataStore              = filterList;
 
-                foreach(NameValueStats nvs in Statistics.AllStats.Filters.OrderBy(n => n.name))
-                    filterList.Add(new TreeGridItem {Values = new object[] {nvs.name, nvs.Value}});
+                foreach(string nvs in ctx.Filters.Select(n => n.Name).Distinct())
+                {
+                    ulong count = ctx.Filters.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Filters.LongCount(c => c.Name == nvs && !c.Synchronized);
+
+                    filterList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                }
             }
 
-            if(Statistics.AllStats.MediaImages != null && Statistics.AllStats.MediaImages.Count > 0)
+            if(ctx.MediaFormats.Any())
             {
                 tabFormats.Visible = true;
 
@@ -204,11 +265,17 @@ namespace DiscImageChef.Gui.Dialogs
                 treeFormats.ShowHeader             = true;
                 treeFormats.DataStore              = formatList;
 
-                foreach(NameValueStats nvs in Statistics.AllStats.MediaImages.OrderBy(n => n.name))
-                    formatList.Add(new TreeGridItem {Values = new object[] {nvs.name, nvs.Value}});
+                foreach(string nvs in ctx.MediaFormats.Select(n => n.Name).Distinct())
+                {
+                    ulong count = ctx.MediaFormats.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.MediaFormats.LongCount(c => c.Name == nvs && !c.Synchronized);
+
+                    formatList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                }
             }
 
-            if(Statistics.AllStats.Partitions != null && Statistics.AllStats.Partitions.Count > 0)
+            if(ctx.Partitions.Any())
             {
                 tabPartitions.Visible = true;
 
@@ -221,11 +288,17 @@ namespace DiscImageChef.Gui.Dialogs
                 treePartitions.ShowHeader             = true;
                 treePartitions.DataStore              = partitionList;
 
-                foreach(NameValueStats nvs in Statistics.AllStats.Partitions.OrderBy(n => n.name))
-                    partitionList.Add(new TreeGridItem {Values = new object[] {nvs.name, nvs.Value}});
+                foreach(string nvs in ctx.Partitions.Select(n => n.Name).Distinct())
+                {
+                    ulong count = ctx.Partitions.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Partitions.LongCount(c => c.Name == nvs && !c.Synchronized);
+
+                    partitionList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                }
             }
 
-            if(Statistics.AllStats.Filesystems != null && Statistics.AllStats.Filesystems.Count > 0)
+            if(ctx.Filesystems.Any())
             {
                 tabFilesystems.Visible = true;
 
@@ -238,11 +311,17 @@ namespace DiscImageChef.Gui.Dialogs
                 treeFilesystems.ShowHeader             = true;
                 treeFilesystems.DataStore              = filesystemList;
 
-                foreach(NameValueStats nvs in Statistics.AllStats.Filesystems.OrderBy(n => n.name))
-                    filesystemList.Add(new TreeGridItem {Values = new object[] {nvs.name, nvs.Value}});
+                foreach(string nvs in ctx.Filesystems.Select(n => n.Name).Distinct())
+                {
+                    ulong count = ctx.Filesystems.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
+                                     .FirstOrDefault();
+                    count += (ulong)ctx.Filesystems.LongCount(c => c.Name == nvs && !c.Synchronized);
+
+                    filesystemList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                }
             }
 
-            if(Statistics.AllStats.Devices != null && Statistics.AllStats.Devices.Count > 0)
+            if(ctx.SeenDevices.Any())
             {
                 tabDevices.Visible = true;
 
@@ -257,16 +336,16 @@ namespace DiscImageChef.Gui.Dialogs
                 treeDevices.ShowHeader             = true;
                 treeDevices.DataStore              = deviceList;
 
-                foreach(DeviceStats ds in Statistics.AllStats.Devices.OrderBy(n => n.Manufacturer)
-                                                    .ThenBy(n => n.Manufacturer).ThenBy(n => n.Revision)
-                                                    .ThenBy(n => n.Bus))
+                foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(n => n.Manufacturer).ThenBy(n => n.Manufacturer)
+                                            .ThenBy(n => n.Revision)
+                                            .ThenBy(n => n.Bus))
                     deviceList.Add(new TreeGridItem
                     {
                         Values = new object[] {ds.Model, ds.Manufacturer, ds.Revision, ds.Bus}
                     });
             }
 
-            if(Statistics.AllStats.Medias == null || Statistics.AllStats.Medias.Count <= 0) return;
+            if(!ctx.Medias.Any()) return;
 
             tabMedias.Visible = true;
 
@@ -280,8 +359,22 @@ namespace DiscImageChef.Gui.Dialogs
             treeMedias.ShowHeader             = true;
             treeMedias.DataStore              = mediaList;
 
-            foreach(MediaStats ms in Statistics.AllStats.Medias.OrderBy(m => m.type).ThenBy(m => m.real))
-                mediaList.Add(new TreeGridItem {Values = new object[] {ms.type, ms.Value, ms.real ? "real" : "image"}});
+            foreach(string media in ctx.Medias.OrderBy(ms => ms.Type).Select(ms => ms.Type).Distinct())
+            {
+                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).Select(c => c.Count)
+                                 .FirstOrDefault();
+                count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
+
+                if(count > 0) mediaList.Add(new TreeGridItem {Values = new object[] {media, count, "real"}});
+
+                count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count)
+                           .FirstOrDefault();
+                count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && !c.Real);
+
+                if(count == 0) continue;
+
+                mediaList.Add(new TreeGridItem {Values = new object[] {media, count, "image"}});
+            }
         }
 
         protected void OnBtnClose(object sender, EventArgs e)
