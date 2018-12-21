@@ -1046,6 +1046,19 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Reports");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.Version", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<bool>("Synchronized");
+
+                b.Property<string>("Value");
+
+                b.HasKey("Id");
+
+                b.ToTable("Versions");
+            });
+
             modelBuilder.Entity("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();

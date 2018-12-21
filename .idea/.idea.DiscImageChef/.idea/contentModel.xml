@@ -311,6 +311,8 @@
           <e p="20181221034941_SeenDevicesStatistics.cs" t="Include" />
           <e p="20181221040408_OperatingSystemStatistics.Designer.cs" t="Include" />
           <e p="20181221040408_OperatingSystemStatistics.cs" t="Include" />
+          <e p="20181221041242_VersionStatistics.Designer.cs" t="Include" />
+          <e p="20181221041242_VersionStatistics.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -324,6 +326,7 @@
           <e p="OperatingSystem.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
           <e p="Report.cs" t="Include" />
+          <e p="Version.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">

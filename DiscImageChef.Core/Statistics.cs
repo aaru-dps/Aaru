@@ -44,7 +44,7 @@ using DiscImageChef.Database.Models;
 using Device = DiscImageChef.Devices.Device;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using OperatingSystem = DiscImageChef.Database.Models.OperatingSystem;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using Version = DiscImageChef.Database.Models.Version;
 
 namespace DiscImageChef.Core
 {
@@ -82,13 +82,8 @@ namespace DiscImageChef.Core
                     Synchronized = false,
                     Version      = DetectOS.GetVersion()
                 });
-                CurrentStats = new Stats
-                {
-                    Versions = new List<NameValueStats>
-                    {
-                        new NameValueStats {name = Version.GetVersion(), Value = 1}
-                    }
-                };
+                ctx.Versions.Add(new Version {Value = CommonTypes.Interop.Version.GetVersion(), Synchronized = false});
+                CurrentStats = new Stats();
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 StreamReader  sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                 AllStats = (Stats)xs.Deserialize(sr);
@@ -103,13 +98,8 @@ namespace DiscImageChef.Core
                     Synchronized = false,
                     Version      = DetectOS.GetVersion()
                 });
-                CurrentStats = new Stats
-                {
-                    Versions = new List<NameValueStats>
-                    {
-                        new NameValueStats {name = Version.GetVersion(), Value = 1}
-                    }
-                };
+                ctx.Versions.Add(new Version {Value = CommonTypes.Interop.Version.GetVersion(), Synchronized = false});
+                CurrentStats = new Stats();
             }
             else
             {
@@ -159,7 +149,8 @@ namespace DiscImageChef.Core
                 long count = 0;
 
                 NameValueStats old = null;
-                foreach(NameValueStats nvs in AllStats.Versions.Where(nvs => nvs.name == Version.GetVersion()))
+                foreach(NameValueStats nvs in AllStats.Versions.Where(nvs => nvs.name == CommonTypes
+                                                                                        .Interop.Version.GetVersion()))
                 {
                     count = nvs.Value + 1;
                     old   = nvs;
@@ -169,7 +160,10 @@ namespace DiscImageChef.Core
                 if(old != null) AllStats.Versions.Remove(old);
 
                 count++;
-                AllStats.Versions.Add(new NameValueStats {name = Version.GetVersion(), Value = count});
+                AllStats.Versions.Add(new NameValueStats
+                {
+                    name = CommonTypes.Interop.Version.GetVersion(), Value = count
+                });
             }
             else if(CurrentStats != null) AllStats.Versions = CurrentStats.Versions;
 
@@ -228,7 +222,7 @@ namespace DiscImageChef.Core
 
                         WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
                         ((HttpWebRequest)request).UserAgent =
-                            $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
+                            $"DiscImageChef {typeof(CommonTypes.Interop.Version).Assembly.GetName().Version}";
                         request.Method        = "POST";
                         request.ContentLength = fs.Length;
                         request.ContentType   = "application/xml";

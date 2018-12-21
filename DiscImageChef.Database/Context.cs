@@ -53,6 +53,7 @@ namespace DiscImageChef.Database
         public DbSet<Media>           Medias           { get; set; }
         public DbSet<DeviceStat>      SeenDevices      { get; set; }
         public DbSet<OperatingSystem> OperatingSystems { get; set; }
+        public DbSet<Version>         Versions         { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

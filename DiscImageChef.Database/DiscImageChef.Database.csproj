@@ -72,6 +72,8 @@
     <Compile Include="Migrations\20181221034941_SeenDevicesStatistics.Designer.cs" />
     <Compile Include="Migrations\20181221040408_OperatingSystemStatistics.cs" />
     <Compile Include="Migrations\20181221040408_OperatingSystemStatistics.Designer.cs" />
+    <Compile Include="Migrations\20181221041242_VersionStatistics.cs" />
+    <Compile Include="Migrations\20181221041242_VersionStatistics.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Partition.cs" />
     <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
