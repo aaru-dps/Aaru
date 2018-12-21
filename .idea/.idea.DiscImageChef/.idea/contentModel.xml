@@ -57,6 +57,7 @@
         <e p="Settings.StyleCop" t="Include" />
         <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="discimagechef.db" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
@@ -302,10 +303,17 @@
           <e p="20181127001622_AddDeviceBasicFields.cs" t="Include" />
           <e p="20181127013131_CorrectReportsDbSet.Designer.cs" t="Include" />
           <e p="20181127013131_CorrectReportsDbSet.cs" t="Include" />
+          <e p="20181221015906_NameValueStatistics.Designer.cs" t="Include" />
+          <e p="20181221015906_NameValueStatistics.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
+          <e p="Command.cs" t="Include" />
           <e p="Device.cs" t="Include" />
+          <e p="Filesystem.cs" t="Include" />
+          <e p="Filter.cs" t="Include" />
+          <e p="MediaFormat.cs" t="Include" />
+          <e p="Partition.cs" t="Include" />
           <e p="Report.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />

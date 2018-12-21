@@ -37,13 +37,19 @@ namespace DiscImageChef.Database
 {
     public sealed class DicContext : DbContext
     {
+        // Note: If table does not appear check that last migration has been REALLY added to the project
         public DicContext()
         {
             Database.Migrate();
         }
 
-        public DbSet<Device> Devices { get; set; }
-        public DbSet<Report> Reports { get; set; }
+        public DbSet<Device>      Devices      { get; set; }
+        public DbSet<Report>      Reports      { get; set; }
+        public DbSet<Command>     Commands     { get; set; }
+        public DbSet<Filesystem>  Filesystems  { get; set; }
+        public DbSet<Filter>      Filters      { get; set; }
+        public DbSet<MediaFormat> MediaFormats { get; set; }
+        public DbSet<Partition>   Partitions   { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

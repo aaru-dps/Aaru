@@ -39,7 +39,9 @@ using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Devices;
+using DiscImageChef.Database;
+using DiscImageChef.Database.Models;
+using Device = DiscImageChef.Devices.Device;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
@@ -62,6 +64,8 @@ namespace DiscImageChef.Core
         ///     Statistics file semaphore
         /// </summary>
         static bool submitStatsLock;
+
+        static DicContext ctx = new DicContext();
 
         /// <summary>
         ///     Loads saved statistics from disk
@@ -126,6 +130,8 @@ namespace DiscImageChef.Core
         /// </summary>
         public static void SaveStats()
         {
+            ctx.SaveChanges();
+
             if(AllStats == null) return;
 
             if(AllStats.OperatingSystems != null)
@@ -220,7 +226,7 @@ namespace DiscImageChef.Core
                         System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
                         #else
                     DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
-                                                                        #endif
+                        #endif
 
                         FileStream    fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);
                         XmlSerializer xs = new XmlSerializer(stats.GetType());
@@ -261,7 +267,7 @@ namespace DiscImageChef.Core
                         throw;
                         #else
                         continue;
-                                                                                                #endif
+                        #endif
                     }
 
                 submitStatsLock = false;
@@ -275,99 +281,11 @@ namespace DiscImageChef.Core
         /// <param name="command">Command</param>
         public static void AddCommand(string command)
         {
+            if(string.IsNullOrWhiteSpace(command)) return;
+
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
 
-            if(AllStats.Commands == null) AllStats.Commands = new CommandsStats();
-
-            if(CurrentStats.Commands == null) CurrentStats.Commands = new CommandsStats();
-
-            switch(command)
-            {
-                case "analyze":
-                    AllStats.Commands.Analyze++;
-                    CurrentStats.Commands.Analyze++;
-                    break;
-                case "benchmark":
-                    AllStats.Commands.Benchmark++;
-                    CurrentStats.Commands.Benchmark++;
-                    break;
-                case "checksum":
-                    AllStats.Commands.Checksum++;
-                    CurrentStats.Commands.Checksum++;
-                    break;
-                case "compare":
-                    AllStats.Commands.Compare++;
-                    CurrentStats.Commands.Compare++;
-                    break;
-                case "create-sidecar":
-                    AllStats.Commands.CreateSidecar++;
-                    CurrentStats.Commands.CreateSidecar++;
-                    break;
-                case "decode":
-                    AllStats.Commands.Decode++;
-                    CurrentStats.Commands.Decode++;
-                    break;
-                case "device-info":
-                    AllStats.Commands.DeviceInfo++;
-                    CurrentStats.Commands.DeviceInfo++;
-                    break;
-                case "device-report":
-                    AllStats.Commands.DeviceReport++;
-                    CurrentStats.Commands.DeviceReport++;
-                    break;
-                case "dump-media":
-                    AllStats.Commands.DumpMedia++;
-                    CurrentStats.Commands.DumpMedia++;
-                    break;
-                case "entropy":
-                    AllStats.Commands.Entropy++;
-                    CurrentStats.Commands.Entropy++;
-                    break;
-                case "extract-files":
-                    AllStats.Commands.ExtractFiles++;
-                    CurrentStats.Commands.ExtractFiles++;
-                    break;
-                case "formats":
-                    AllStats.Commands.Formats++;
-                    CurrentStats.Commands.Formats++;
-                    break;
-                case "ls":
-                    AllStats.Commands.Ls++;
-                    CurrentStats.Commands.Ls++;
-                    break;
-                case "media-info":
-                    AllStats.Commands.MediaInfo++;
-                    CurrentStats.Commands.MediaInfo++;
-                    break;
-                case "media-scan":
-                    AllStats.Commands.MediaScan++;
-                    CurrentStats.Commands.MediaScan++;
-                    break;
-                case "print-hex":
-                    AllStats.Commands.PrintHex++;
-                    CurrentStats.Commands.PrintHex++;
-                    break;
-                case "verify":
-                    AllStats.Commands.Verify++;
-                    CurrentStats.Commands.Verify++;
-                    break;
-                case "list-devices":
-                    AllStats.Commands.ListDevices++;
-                    CurrentStats.Commands.ListDevices++;
-                    break;
-                case "list-encodings":
-                    AllStats.Commands.ListEncodings++;
-                    CurrentStats.Commands.ListEncodings++;
-                    break;
-                case "convert-image":
-                    AllStats.Commands.ConvertImage++;
-                    CurrentStats.Commands.ConvertImage++;
-                    break;
-                case "image-info":
-                    AllStats.Commands.ImageInfo++;
-                    CurrentStats.Commands.ImageInfo++;
-                    break;
-            }
+            ctx.Commands.Add(new Command {Name = command, Synchronized = false});
         }
 
         /// <summary>
@@ -376,44 +294,11 @@ namespace DiscImageChef.Core
         /// <param name="filesystem">Filesystem name</param>
         public static void AddFilesystem(string filesystem)
         {
+            if(string.IsNullOrWhiteSpace(filesystem)) return;
+
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilesystemStats) return;
 
-            if(AllStats.Filesystems     == null) AllStats.Filesystems     = new List<NameValueStats>();
-            if(CurrentStats.Filesystems == null) CurrentStats.Filesystems = new List<NameValueStats>();
-
-            NameValueStats old = AllStats.Filesystems.FirstOrDefault(nvs => nvs.name == filesystem);
-
-            NameValueStats nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                AllStats.Filesystems.Remove(old);
-            }
-            else
-            {
-                nw.name  = filesystem;
-                nw.Value = 1;
-            }
-
-            AllStats.Filesystems.Add(nw);
-
-            old = CurrentStats.Filesystems.FirstOrDefault(nvs => nvs.name == filesystem);
-
-            nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                CurrentStats.Filesystems.Remove(old);
-            }
-            else
-            {
-                nw.name  = filesystem;
-                nw.Value = 1;
-            }
-
-            CurrentStats.Filesystems.Add(nw);
+            ctx.Filesystems.Add(new Filesystem {Name = filesystem, Synchronized = false});
         }
 
         /// <summary>
@@ -422,58 +307,29 @@ namespace DiscImageChef.Core
         /// <param name="partition">Partition scheme name</param>
         internal static void AddPartition(string partition)
         {
+            if(string.IsNullOrWhiteSpace(partition)) return;
+
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.PartitionStats) return;
 
-            if(AllStats.Partitions     == null) AllStats.Partitions     = new List<NameValueStats>();
-            if(CurrentStats.Partitions == null) CurrentStats.Partitions = new List<NameValueStats>();
-
-            NameValueStats old = AllStats.Partitions.FirstOrDefault(nvs => nvs.name == partition);
-
-            NameValueStats nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                AllStats.Partitions.Remove(old);
-            }
-            else
-            {
-                nw.name  = partition;
-                nw.Value = 1;
-            }
-
-            AllStats.Partitions.Add(nw);
-
-            old = CurrentStats.Partitions.FirstOrDefault(nvs => nvs.name == partition);
-
-            nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                CurrentStats.Partitions.Remove(old);
-            }
-            else
-            {
-                nw.name  = partition;
-                nw.Value = 1;
-            }
-
-            CurrentStats.Partitions.Add(nw);
+            ctx.Partitions.Add(new Partition {Name = partition, Synchronized = false});
         }
 
         /// <summary>
         ///     Adds a new filter to statistics
         /// </summary>
-        /// <param name="format">Filter name</param>
-        public static void AddFilter(string format)
+        /// <param name="filter">Filter name</param>
+        public static void AddFilter(string filter)
         {
+            if(string.IsNullOrWhiteSpace(filter)) return;
+
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilterStats) return;
+
+            ctx.Filters.Add(new Filter {Name = filter, Synchronized = false});
 
             if(AllStats.Filters     == null) AllStats.Filters     = new List<NameValueStats>();
             if(CurrentStats.Filters == null) CurrentStats.Filters = new List<NameValueStats>();
 
-            NameValueStats old = AllStats.Filters.FirstOrDefault(nvs => nvs.name == format);
+            NameValueStats old = AllStats.Filters.FirstOrDefault(nvs => nvs.name == filter);
 
             NameValueStats nw = new NameValueStats();
             if(old != null)
@@ -484,13 +340,13 @@ namespace DiscImageChef.Core
             }
             else
             {
-                nw.name  = format;
+                nw.name  = filter;
                 nw.Value = 1;
             }
 
             AllStats.Filters.Add(nw);
 
-            old = CurrentStats.Filters.FirstOrDefault(nvs => nvs.name == format);
+            old = CurrentStats.Filters.FirstOrDefault(nvs => nvs.name == filter);
 
             nw = new NameValueStats();
             if(old != null)
@@ -501,7 +357,7 @@ namespace DiscImageChef.Core
             }
             else
             {
-                nw.name  = format;
+                nw.name  = filter;
                 nw.Value = 1;
             }
 
@@ -514,44 +370,11 @@ namespace DiscImageChef.Core
         /// <param name="format">Media image name</param>
         public static void AddMediaFormat(string format)
         {
+            if(string.IsNullOrWhiteSpace(format)) return;
+
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaImageStats) return;
 
-            if(AllStats.MediaImages     == null) AllStats.MediaImages     = new List<NameValueStats>();
-            if(CurrentStats.MediaImages == null) CurrentStats.MediaImages = new List<NameValueStats>();
-
-            NameValueStats old = AllStats.MediaImages.FirstOrDefault(nvs => nvs.name == format);
-
-            NameValueStats nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                AllStats.MediaImages.Remove(old);
-            }
-            else
-            {
-                nw.name  = format;
-                nw.Value = 1;
-            }
-
-            AllStats.MediaImages.Add(nw);
-
-            old = CurrentStats.MediaImages.FirstOrDefault(nvs => nvs.name == format);
-
-            nw = new NameValueStats();
-            if(old != null)
-            {
-                nw.name  = old.name;
-                nw.Value = old.Value + 1;
-                CurrentStats.MediaImages.Remove(old);
-            }
-            else
-            {
-                nw.name  = format;
-                nw.Value = 1;
-            }
-
-            CurrentStats.MediaImages.Add(nw);
+            ctx.MediaFormats.Add(new MediaFormat {Name = format, Synchronized = false});
         }
 
         /// <summary>

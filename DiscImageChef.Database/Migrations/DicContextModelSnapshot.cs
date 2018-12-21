@@ -824,6 +824,19 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Usb");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.Command", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.HasKey("Id");
+
+                b.ToTable("Commands");
+            });
+
             modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
@@ -875,6 +888,58 @@ namespace DiscImageChef.Database.Migrations
                 b.HasIndex("USBId");
 
                 b.ToTable("Devices");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Filesystem", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.HasKey("Id");
+
+                b.ToTable("Filesystems");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Filter", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.HasKey("Id");
+
+                b.ToTable("Filters");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.MediaFormat", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.HasKey("Id");
+
+                b.ToTable("MediaFormats");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Partition", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.HasKey("Id");
+
+                b.ToTable("Partitions");
             });
 
             modelBuilder.Entity("DiscImageChef.Database.Models.Report", b =>

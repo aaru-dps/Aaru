@@ -64,8 +64,15 @@
     <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.Designer.cs" />
     <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.cs" />
     <Compile Include="Migrations\20181127013131_CorrectReportsDbSet.Designer.cs" />
+    <Compile Include="Migrations\20181221015906_NameValueStatistics.cs" />
+    <Compile Include="Migrations\20181221015906_NameValueStatistics.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
+    <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\Filesystem.cs" />
+    <Compile Include="Models\Filter.cs" />
+    <Compile Include="Models\MediaFormat.cs" />
+    <Compile Include="Models\Partition.cs" />
     <Compile Include="Models\Report.cs" />
   </ItemGroup>
   <ItemGroup>
