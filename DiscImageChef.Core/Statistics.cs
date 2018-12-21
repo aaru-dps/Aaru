@@ -75,9 +75,15 @@ namespace DiscImageChef.Core
                 {
                     Name         = DetectOS.GetRealPlatformID().ToString(),
                     Synchronized = false,
-                    Version      = DetectOS.GetVersion()
+                    Version      = DetectOS.GetVersion(),
+                    Count        = 1
                 });
-                ctx.Versions.Add(new Version {Value = CommonTypes.Interop.Version.GetVersion(), Synchronized = false});
+                ctx.Versions.Add(new Version
+                {
+                    Value        = CommonTypes.Interop.Version.GetVersion(),
+                    Synchronized = false,
+                    Count        = 1
+                });
                 XmlSerializer xs = new XmlSerializer(AllStats.GetType());
                 StreamReader  sr = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                 AllStats = (Stats)xs.Deserialize(sr);
@@ -90,9 +96,15 @@ namespace DiscImageChef.Core
                 {
                     Name         = DetectOS.GetRealPlatformID().ToString(),
                     Synchronized = false,
-                    Version      = DetectOS.GetVersion()
+                    Version      = DetectOS.GetVersion(),
+                    Count        = 1
                 });
-                ctx.Versions.Add(new Version {Value = CommonTypes.Interop.Version.GetVersion(), Synchronized = false});
+                ctx.Versions.Add(new Version
+                {
+                    Value        = CommonTypes.Interop.Version.GetVersion(),
+                    Synchronized = false,
+                    Count        = 1
+                });
             }
             else AllStats = null;
         }
@@ -201,7 +213,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
 
-            ctx.Commands.Add(new Command {Name = command, Synchronized = false});
+            ctx.Commands.Add(new Command {Name = command, Synchronized = false, Count = 1});
         }
 
         /// <summary>
@@ -214,7 +226,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilesystemStats) return;
 
-            ctx.Filesystems.Add(new Filesystem {Name = filesystem, Synchronized = false});
+            ctx.Filesystems.Add(new Filesystem {Name = filesystem, Synchronized = false, Count = 1});
         }
 
         /// <summary>
@@ -227,7 +239,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.PartitionStats) return;
 
-            ctx.Partitions.Add(new Partition {Name = partition, Synchronized = false});
+            ctx.Partitions.Add(new Partition {Name = partition, Synchronized = false, Count = 1});
         }
 
         /// <summary>
@@ -240,7 +252,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilterStats) return;
 
-            ctx.Filters.Add(new Filter {Name = filter, Synchronized = false});
+            ctx.Filters.Add(new Filter {Name = filter, Synchronized = false, Count = 1});
         }
 
         /// <summary>
@@ -253,7 +265,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaImageStats) return;
 
-            ctx.MediaFormats.Add(new MediaFormat {Name = format, Synchronized = false});
+            ctx.MediaFormats.Add(new MediaFormat {Name = format, Synchronized = false, Count = 1});
         }
 
         /// <summary>
@@ -288,7 +300,10 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaStats) return;
 
-            ctx.Medias.Add(new Database.Models.Media {Real = real, Synchronized = false, Type = type.ToString()});
+            ctx.Medias.Add(new Database.Models.Media
+            {
+                Real = real, Synchronized = false, Type = type.ToString(), Count = 1
+            });
         }
     }
 }

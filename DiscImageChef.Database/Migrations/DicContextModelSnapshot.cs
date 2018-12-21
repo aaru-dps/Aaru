@@ -828,6 +828,8 @@ namespace DiscImageChef.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
 
+                b.Property<ulong>("Count");
+
                 b.Property<string>("Name");
 
                 b.Property<bool>("Synchronized");
@@ -913,6 +915,8 @@ namespace DiscImageChef.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
 
+                b.Property<ulong>("Count");
+
                 b.Property<string>("Name");
 
                 b.Property<bool>("Synchronized");
@@ -926,6 +930,8 @@ namespace DiscImageChef.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
 
+                b.Property<ulong>("Count");
+
                 b.Property<string>("Name");
 
                 b.Property<bool>("Synchronized");
@@ -938,6 +944,8 @@ namespace DiscImageChef.Database.Migrations
             modelBuilder.Entity("DiscImageChef.Database.Models.Media", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<ulong>("Count");
 
                 b.Property<bool>("Real");
 
@@ -954,6 +962,8 @@ namespace DiscImageChef.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
 
+                b.Property<ulong>("Count");
+
                 b.Property<string>("Name");
 
                 b.Property<bool>("Synchronized");
@@ -966,6 +976,8 @@ namespace DiscImageChef.Database.Migrations
             modelBuilder.Entity("DiscImageChef.Database.Models.OperatingSystem", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<ulong>("Count");
 
                 b.Property<string>("Name");
 
@@ -981,6 +993,8 @@ namespace DiscImageChef.Database.Migrations
             modelBuilder.Entity("DiscImageChef.Database.Models.Partition", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<ulong>("Count");
 
                 b.Property<string>("Name");
 
@@ -1049,6 +1063,8 @@ namespace DiscImageChef.Database.Migrations
             modelBuilder.Entity("DiscImageChef.Database.Models.Version", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<ulong>("Count");
 
                 b.Property<bool>("Synchronized");
 

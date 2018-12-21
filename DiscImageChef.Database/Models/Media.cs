@@ -9,5 +9,6 @@ namespace DiscImageChef.Database.Models
         public string Type         { get; set; }
         public bool   Real         { get; set; }
         public bool   Synchronized { get; set; }
+        public ulong  Count        { get; set; }
     }
 }

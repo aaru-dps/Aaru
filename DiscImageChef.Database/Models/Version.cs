@@ -8,5 +8,6 @@ namespace DiscImageChef.Database.Models
         public int Id { get;              set; }
         public string Value        { get; set; }
         public bool   Synchronized { get; set; }
+        public ulong  Count        { get; set; }
     }
 }

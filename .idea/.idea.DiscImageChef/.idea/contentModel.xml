@@ -313,6 +313,8 @@
           <e p="20181221040408_OperatingSystemStatistics.cs" t="Include" />
           <e p="20181221041242_VersionStatistics.Designer.cs" t="Include" />
           <e p="20181221041242_VersionStatistics.cs" t="Include" />
+          <e p="20181221125353_AddStatsCounters.Designer.cs" t="Include" />
+          <e p="20181221125353_AddStatsCounters.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

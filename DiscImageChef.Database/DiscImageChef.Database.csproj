@@ -74,6 +74,8 @@
     <Compile Include="Migrations\20181221040408_OperatingSystemStatistics.Designer.cs" />
     <Compile Include="Migrations\20181221041242_VersionStatistics.cs" />
     <Compile Include="Migrations\20181221041242_VersionStatistics.Designer.cs" />
+    <Compile Include="Migrations\20181221125353_AddStatsCounters.cs" />
+    <Compile Include="Migrations\20181221125353_AddStatsCounters.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />
