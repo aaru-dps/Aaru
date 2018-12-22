@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -40,7 +39,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Web;
-using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Metadata;
@@ -77,340 +75,335 @@ namespace DiscImageChef.Server.Controllers
                     return response;
                 }
 
-                FileStream fs =
-                    WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
-                                FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-
-                if(fs == null)
+                DicServerContext ctx = new DicServerContext();
+                if(newStats.Commands != null)
                 {
-                    response.Content = new StringContent("retry", Encoding.UTF8, "text/plain");
-                    return response;
+                    if(newStats.Commands.Analyze > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "analyze");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Analyze, Name = "analyze"});
+                        else existing.Count += newStats.Commands.Analyze;
+                    }
+
+                    if(newStats.Commands.Benchmark > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "benchmark");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Benchmark, Name = "benchmark"});
+                        else existing.Count += newStats.Commands.Benchmark;
+                    }
+
+                    if(newStats.Commands.Checksum > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "checksum");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Checksum, Name = "checksum"});
+                        else existing.Count += newStats.Commands.Checksum;
+                    }
+
+                    if(newStats.Commands.Compare > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "compare");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Compare, Name = "compare"});
+                        else existing.Count += newStats.Commands.Compare;
+                    }
+
+                    if(newStats.Commands.CreateSidecar > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "create-sidecar");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command
+                            {
+                                Count = newStats.Commands.CreateSidecar, Name = "create-sidecar"
+                            });
+                        else existing.Count += newStats.Commands.CreateSidecar;
+                    }
+
+                    if(newStats.Commands.Decode > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "decode");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Decode, Name = "decode"});
+                        else existing.Count += newStats.Commands.Decode;
+                    }
+
+                    if(newStats.Commands.DeviceInfo > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "device-info");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.DeviceInfo, Name = "device-info"});
+                        else existing.Count += newStats.Commands.DeviceInfo;
+                    }
+
+                    if(newStats.Commands.DeviceReport > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "device-report");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command
+                            {
+                                Count = newStats.Commands.DeviceReport, Name = "device-report"
+                            });
+                        else existing.Count += newStats.Commands.DeviceReport;
+                    }
+
+                    if(newStats.Commands.DumpMedia > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "dump-media");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.DumpMedia, Name = "dump-media"});
+                        else existing.Count += newStats.Commands.DumpMedia;
+                    }
+
+                    if(newStats.Commands.Entropy > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "entropy");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Entropy, Name = "entropy"});
+                        else existing.Count += newStats.Commands.Entropy;
+                    }
+
+                    if(newStats.Commands.Formats > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "formats");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Formats, Name = "formats"});
+                        else existing.Count += newStats.Commands.Formats;
+                    }
+
+                    if(newStats.Commands.MediaInfo > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "media-info");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.MediaInfo, Name = "media-info"});
+                        else existing.Count += newStats.Commands.MediaInfo;
+                    }
+
+                    if(newStats.Commands.MediaScan > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "media-scan");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.MediaScan, Name = "media-scan"});
+                        else existing.Count += newStats.Commands.MediaScan;
+                    }
+
+                    if(newStats.Commands.PrintHex > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "printhex");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.PrintHex, Name = "printhex"});
+                        else existing.Count += newStats.Commands.PrintHex;
+                    }
+
+                    if(newStats.Commands.Verify > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "verify");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.Verify, Name = "verify"});
+                        else existing.Count += newStats.Commands.Verify;
+                    }
+
+                    if(newStats.Commands.Ls > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "ls");
+
+                        if(existing == null) ctx.Commands.Add(new Command {Count = newStats.Commands.Ls, Name = "ls"});
+                        else existing.Count += newStats.Commands.Ls;
+                    }
+
+                    if(newStats.Commands.ExtractFiles > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "extract-files");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command
+                            {
+                                Count = newStats.Commands.ExtractFiles, Name = "extract-files"
+                            });
+                        else existing.Count += newStats.Commands.ExtractFiles;
+                    }
+
+                    if(newStats.Commands.ListDevices > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "list-devices");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command
+                            {
+                                Count = newStats.Commands.ListDevices, Name = "list-devices"
+                            });
+                        else existing.Count += newStats.Commands.ListDevices;
+                    }
+
+                    if(newStats.Commands.ListEncodings > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "list-encodings");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command
+                            {
+                                Count = newStats.Commands.ListEncodings, Name = "list-encodings"
+                            });
+                        else existing.Count += newStats.Commands.ListEncodings;
+                    }
+
+                    if(newStats.Commands.ConvertImage > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "convert-image");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command
+                            {
+                                Count = newStats.Commands.ConvertImage, Name = "convert-image"
+                            });
+                        else existing.Count += newStats.Commands.ConvertImage;
+                    }
+
+                    if(newStats.Commands.ImageInfo > 0)
+                    {
+                        Command existing = ctx.Commands.FirstOrDefault(c => c.Name == "image-info");
+
+                        if(existing == null)
+                            ctx.Commands.Add(new Command {Count = newStats.Commands.ImageInfo, Name = "image-info"});
+                        else existing.Count += newStats.Commands.ImageInfo;
+                    }
                 }
 
-                Stats oldStats = new Stats();
-                xs       = new XmlSerializer(oldStats.GetType());
-                oldStats = (Stats)xs.Deserialize(fs);
-
-                if(newStats.Commands != null)
-                    if(oldStats.Commands == null)
-                        oldStats.Commands = newStats.Commands;
-                    else
-                    {
-                        oldStats.Commands.Analyze       += newStats.Commands.Analyze;
-                        oldStats.Commands.Benchmark     += newStats.Commands.Benchmark;
-                        oldStats.Commands.Checksum      += newStats.Commands.Checksum;
-                        oldStats.Commands.Compare       += newStats.Commands.Compare;
-                        oldStats.Commands.CreateSidecar += newStats.Commands.CreateSidecar;
-                        oldStats.Commands.Decode        += newStats.Commands.Decode;
-                        oldStats.Commands.DeviceInfo    += newStats.Commands.DeviceInfo;
-                        oldStats.Commands.DeviceReport  += newStats.Commands.DeviceReport;
-                        oldStats.Commands.DumpMedia     += newStats.Commands.DumpMedia;
-                        oldStats.Commands.Entropy       += newStats.Commands.Entropy;
-                        oldStats.Commands.Formats       += newStats.Commands.Formats;
-                        oldStats.Commands.MediaInfo     += newStats.Commands.MediaInfo;
-                        oldStats.Commands.MediaScan     += newStats.Commands.MediaScan;
-                        oldStats.Commands.PrintHex      += newStats.Commands.PrintHex;
-                        oldStats.Commands.Verify        += newStats.Commands.Verify;
-                        oldStats.Commands.Ls            += newStats.Commands.Ls;
-                        oldStats.Commands.ExtractFiles  += newStats.Commands.ExtractFiles;
-                        oldStats.Commands.ListDevices   += newStats.Commands.ListDevices;
-                        oldStats.Commands.ListEncodings += newStats.Commands.ListEncodings;
-                        oldStats.Commands.ConvertImage  += newStats.Commands.ConvertImage;
-                        oldStats.Commands.ImageInfo     += newStats.Commands.ImageInfo;
-                    }
-
                 if(newStats.OperatingSystems != null)
-                    if(oldStats.OperatingSystems == null)
-                        oldStats.OperatingSystems = newStats.OperatingSystems;
-                    else
-                        foreach(OsStats newNvs in newStats.OperatingSystems)
-                        {
-                            OsStats removeNvs = null;
-                            OsStats addNvs    = null;
+                    foreach(OsStats operatingSystem in newStats.OperatingSystems)
+                    {
+                        if(string.IsNullOrWhiteSpace(operatingSystem.name) ||
+                           string.IsNullOrWhiteSpace(operatingSystem.version)) continue;
 
-                            foreach(OsStats oldNvs in oldStats.OperatingSystems.Where(oldNvs =>
-                                                                                          oldNvs.name == newNvs.name &&
-                                                                                          oldNvs.version ==
-                                                                                          newNvs.version))
-                            {
-                                addNvs = new OsStats
-                                {
-                                    name    = oldNvs.name,
-                                    Value   = oldNvs.Value + newNvs.Value,
-                                    version = oldNvs.version
-                                };
-                                removeNvs = oldNvs;
-                                break;
-                            }
+                        OperatingSystem existing =
+                            ctx.OperatingSystems.FirstOrDefault(c => c.Name    == operatingSystem.name &&
+                                                                     c.Version == operatingSystem.version);
 
-                            if(removeNvs != null)
+                        if(existing == null)
+                            ctx.OperatingSystems.Add(new OperatingSystem
                             {
-                                oldStats.OperatingSystems.Remove(removeNvs);
-                                oldStats.OperatingSystems.Add(addNvs);
-                            }
-                            else oldStats.OperatingSystems.Add(newNvs);
-                        }
+                                Count   = operatingSystem.Value,
+                                Name    = operatingSystem.name,
+                                Version = operatingSystem.version
+                            });
+                        else existing.Count += operatingSystem.Value;
+                    }
                 else
                 {
-                    if(oldStats.OperatingSystems == null)
-                        oldStats.OperatingSystems = new List<OsStats> {new OsStats {name = "Linux", Value = 1}};
-                    else
-                    {
-                        OsStats removeNvs = null;
-                        OsStats addNvs    = null;
+                    OperatingSystem existing =
+                        ctx.OperatingSystems.FirstOrDefault(c => c.Name == "Linux" && c.Version == null);
 
-                        foreach(OsStats oldNvs in oldStats.OperatingSystems.Where(oldNvs => oldNvs.name == "Linux"))
-                        {
-                            addNvs = new OsStats
-                            {
-                                name = oldNvs.name, Value = oldNvs.Value + 1, version = oldNvs.version
-                            };
-                            removeNvs = oldNvs;
-                            break;
-                        }
-
-                        if(removeNvs != null)
-                        {
-                            oldStats.OperatingSystems.Remove(removeNvs);
-                            oldStats.OperatingSystems.Add(addNvs);
-                        }
-                        else oldStats.OperatingSystems.Add(new OsStats {name = "Linux", Value = 1});
-                    }
+                    if(existing == null) ctx.OperatingSystems.Add(new OperatingSystem {Count = 1, Name = "Linux"});
+                    else existing.Count++;
                 }
 
                 if(newStats.Versions != null)
-                    if(oldStats.Versions == null)
-                        oldStats.Versions = newStats.Versions;
-                    else
-                        foreach(NameValueStats newNvs in newStats.Versions)
-                        {
-                            NameValueStats removeNvs = null;
-                            NameValueStats addNvs    = null;
+                    foreach(NameValueStats nvs in newStats.Versions)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
 
-                            foreach(NameValueStats oldNvs in
-                                oldStats.Versions.Where(oldNvs => oldNvs.name == newNvs.name))
-                            {
-                                addNvs = new NameValueStats
-                                    {
-                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
-                                    };
-                                removeNvs = oldNvs;
-                                break;
-                            }
+                        Version existing = ctx.Versions.FirstOrDefault(c => c.Value == nvs.name);
 
-                            if(removeNvs != null)
-                            {
-                                oldStats.Versions.Remove(removeNvs);
-                                oldStats.Versions.Add(addNvs);
-                            }
-                            else oldStats.Versions.Add(newNvs);
-                        }
+                        if(existing == null) ctx.Versions.Add(new Version {Count = nvs.Value, Value = nvs.name});
+                        else existing.Count += nvs.Value;
+                    }
                 else
                 {
-                    if(oldStats.Versions == null)
-                        oldStats.Versions =
-                            new List<NameValueStats> {new NameValueStats {name = "previous", Value = 1}};
-                    else
-                    {
-                        NameValueStats removeNvs = null;
-                        NameValueStats addNvs    = null;
+                    Version existing = ctx.Versions.FirstOrDefault(c => c.Value == "previous");
 
-                        foreach(NameValueStats oldNvs in oldStats.Versions.Where(oldNvs => oldNvs.name == "previous"))
-                        {
-                            addNvs    = new NameValueStats {name = oldNvs.name, Value = oldNvs.Value + 1};
-                            removeNvs = oldNvs;
-                            break;
-                        }
-
-                        if(removeNvs != null)
-                        {
-                            oldStats.Versions.Remove(removeNvs);
-                            oldStats.Versions.Add(addNvs);
-                        }
-                        else oldStats.Versions.Add(new NameValueStats {name = "previous", Value = 1});
-                    }
+                    if(existing == null) ctx.Versions.Add(new Version {Count = 1, Value = "previous"});
+                    else existing.Count++;
                 }
 
                 if(newStats.Filesystems != null)
-                    if(oldStats.Filesystems == null)
-                        oldStats.Filesystems = newStats.Filesystems;
-                    else
-                        foreach(NameValueStats newNvs in newStats.Filesystems)
-                        {
-                            NameValueStats removeNvs = null;
-                            NameValueStats addNvs    = null;
+                    foreach(NameValueStats nvs in newStats.Filesystems)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
 
-                            foreach(NameValueStats oldNvs in
-                                oldStats.Filesystems.Where(oldNvs => oldNvs.name == newNvs.name))
-                            {
-                                addNvs = new NameValueStats
-                                    {
-                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
-                                    };
-                                removeNvs = oldNvs;
-                                break;
-                            }
+                        Filesystem existing = ctx.Filesystems.FirstOrDefault(c => c.Name == nvs.name);
 
-                            if(removeNvs != null)
-                            {
-                                oldStats.Filesystems.Remove(removeNvs);
-                                oldStats.Filesystems.Add(addNvs);
-                            }
-                            else oldStats.Filesystems.Add(newNvs);
-                        }
+                        if(existing == null) ctx.Filesystems.Add(new Filesystem {Count = nvs.Value, Name = nvs.name});
+                        else existing.Count += nvs.Value;
+                    }
 
                 if(newStats.Partitions != null)
-                    if(oldStats.Partitions == null)
-                        oldStats.Partitions = newStats.Partitions;
-                    else
-                        foreach(NameValueStats newNvs in newStats.Partitions)
-                        {
-                            NameValueStats removeNvs = null;
-                            NameValueStats addNvs    = null;
+                    foreach(NameValueStats nvs in newStats.Partitions)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
 
-                            foreach(NameValueStats oldNvs in
-                                oldStats.Partitions.Where(oldNvs => oldNvs.name == newNvs.name))
-                            {
-                                addNvs = new NameValueStats
-                                    {
-                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
-                                    };
-                                removeNvs = oldNvs;
-                                break;
-                            }
+                        Partition existing = ctx.Partitions.FirstOrDefault(c => c.Name == nvs.name);
 
-                            if(removeNvs != null)
-                            {
-                                oldStats.Partitions.Remove(removeNvs);
-                                oldStats.Partitions.Add(addNvs);
-                            }
-                            else oldStats.Partitions.Add(newNvs);
-                        }
+                        if(existing == null) ctx.Partitions.Add(new Partition {Count = nvs.Value, Name = nvs.name});
+                        else existing.Count += nvs.Value;
+                    }
 
                 if(newStats.MediaImages != null)
-                    if(oldStats.MediaImages == null)
-                        oldStats.MediaImages = newStats.MediaImages;
-                    else
-                        foreach(NameValueStats newNvs in newStats.MediaImages)
-                        {
-                            NameValueStats removeNvs = null;
-                            NameValueStats addNvs    = null;
+                    foreach(NameValueStats nvs in newStats.MediaImages)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
 
-                            foreach(NameValueStats oldNvs in
-                                oldStats.MediaImages.Where(oldNvs => oldNvs.name == newNvs.name))
-                            {
-                                addNvs = new NameValueStats
-                                    {
-                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
-                                    };
-                                removeNvs = oldNvs;
-                                break;
-                            }
+                        MediaFormat existing = ctx.MediaFormats.FirstOrDefault(c => c.Name == nvs.name);
 
-                            if(removeNvs != null)
-                            {
-                                oldStats.MediaImages.Remove(removeNvs);
-                                oldStats.MediaImages.Add(addNvs);
-                            }
-                            else oldStats.MediaImages.Add(newNvs);
-                        }
+                        if(existing == null) ctx.MediaFormats.Add(new MediaFormat {Count = nvs.Value, Name = nvs.name});
+                        else existing.Count += nvs.Value;
+                    }
 
                 if(newStats.Filters != null)
-                    if(oldStats.Filters == null)
-                        oldStats.Filters = newStats.Filters;
-                    else
-                        foreach(NameValueStats newNvs in newStats.Filters)
-                        {
-                            NameValueStats removeNvs = null;
-                            NameValueStats addNvs    = null;
+                    foreach(NameValueStats nvs in newStats.Filters)
+                    {
+                        if(string.IsNullOrWhiteSpace(nvs.name)) continue;
 
-                            foreach(NameValueStats oldNvs in
-                                oldStats.Filters.Where(oldNvs => oldNvs.name == newNvs.name))
-                            {
-                                addNvs = new NameValueStats
-                                    {
-                                        name = oldNvs.name, Value = oldNvs.Value + newNvs.Value
-                                    };
-                                removeNvs = oldNvs;
-                                break;
-                            }
+                        Filter existing = ctx.Filters.FirstOrDefault(c => c.Name == nvs.name);
 
-                            if(removeNvs != null)
-                            {
-                                oldStats.Filters.Remove(removeNvs);
-                                oldStats.Filters.Add(addNvs);
-                            }
-                            else oldStats.Filters.Add(newNvs);
-                        }
+                        if(existing == null) ctx.Filters.Add(new Filter {Count = nvs.Value, Name = nvs.name});
+                        else existing.Count += nvs.Value;
+                    }
 
                 if(newStats.Devices != null)
-                    if(oldStats.Devices == null)
-                        oldStats.Devices = newStats.Devices;
-                    else
-                        foreach(DeviceStats newDev in from newDev in newStats.Devices
-                                                      let found =
-                                                          oldStats.Devices.Any(oldDev =>
-                                                                                   oldDev.Manufacturer ==
-                                                                                   newDev.Manufacturer                &&
-                                                                                   oldDev.Model    == newDev.Model    &&
-                                                                                   oldDev.Revision == newDev.Revision &&
-                                                                                   oldDev.Bus      == newDev.Bus)
-                                                      where !found
-                                                      select newDev)
-                            oldStats.Devices.Add(newDev);
+                    foreach(DeviceStats device in newStats.Devices)
+                    {
+                        if(string.IsNullOrWhiteSpace(device.Model)) continue;
+
+                        if(!ctx.DeviceStats.Any(c => c.Bus   == device.Bus   && c.Manufacturer == device.Manufacturer &&
+                                                     c.Model == device.Model && c.Revision     == device.Revision))
+                            ctx.DeviceStats.Add(new DeviceStat
+                            {
+                                Bus          = device.Bus,
+                                Manufacturer = device.Manufacturer,
+                                Model        = device.Model,
+                                Revision     = device.Revision
+                            });
+                    }
 
                 if(newStats.Medias != null)
-                    if(oldStats.Medias == null)
-                        oldStats.Medias = newStats.Medias;
-                    else
-                        foreach(MediaStats newMstat in newStats.Medias)
-                        {
-                            MediaStats removeMstat = null;
-                            MediaStats addMstat    = null;
+                    foreach(MediaStats media in newStats.Medias)
+                    {
+                        if(string.IsNullOrWhiteSpace(media.type)) continue;
 
-                            foreach(MediaStats oldMstat in oldStats.Medias.Where(oldMstat =>
-                                                                                     oldMstat.real == newMstat.real &&
-                                                                                     oldMstat.type == newMstat.type))
-                            {
-                                addMstat = new MediaStats
-                                {
-                                    real  = oldMstat.real,
-                                    type  = oldMstat.type,
-                                    Value = oldMstat.Value + newMstat.Value
-                                };
-                                removeMstat = oldMstat;
-                                break;
-                            }
+                        Media existing = ctx.Medias.FirstOrDefault(c => c.Type == media.type && c.Real == media.real);
 
-                            if(removeMstat != null && addMstat != null)
-                            {
-                                oldStats.Medias.Remove(removeMstat);
-                                oldStats.Medias.Add(addMstat);
-                            }
-                            else oldStats.Medias.Add(newMstat);
-                        }
+                        if(existing == null)
+                            ctx.Medias.Add(new Media {Count = media.Value, Real = media.real, Type = media.type});
+                        else existing.Count += media.Value;
+                    }
 
-                if(oldStats.Devices != null)
-                    oldStats.Devices = oldStats.Devices.OrderBy(device => device.Manufacturer)
-                                               .ThenBy(device => device.Model).ThenBy(device => device.Revision)
-                                               .ThenBy(device => device.Bus).ToList();
-
-                Random rng      = new Random();
-                string filename = $"BackupStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
-                while(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", filename)))
-                    filename = $"BackupStats_{DateTime.UtcNow:yyyyMMddHHmmssfff}_{rng.Next()}.xml";
-
-                FileStream backup =
-                    new FileStream(Path.Combine(HostingEnvironment.MapPath("~"), "Statistics", filename),
-                                   FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
-                fs.Seek(0, SeekOrigin.Begin);
-                fs.CopyTo(backup);
-                backup.Close();
-                fs.Seek(0, SeekOrigin.Begin);
-                xs = new XmlSerializer(oldStats.GetType());
-                xs.Serialize(fs, oldStats);
-                fs.SetLength(fs.Position);
-                fs.Close();
+                ctx.SaveChanges();
 
                 response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
                 return response;

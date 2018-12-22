@@ -270,7 +270,6 @@
     <None Include="Reports\.htaccess" />
     <None Include="Statistics\.htaccess" />
     <None Include="Statistics\Statistics.xml" />
-    <None Include="Upload\.htaccess" />
     <None Include="usb.ids" />
   </ItemGroup>
   <ItemGroup>
