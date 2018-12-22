@@ -45,6 +45,8 @@ using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using Newtonsoft.Json;
+// ReSharper disable VirtualMemberNeverOverridden.Global
+// ReSharper disable VirtualMemberCallInConstructor
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -116,15 +118,15 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         [JsonIgnore]
         public int Id { get;                  set; }
-        public Usb      USB            { get; set; }
-        public FireWire FireWire       { get; set; }
-        public Pcmcia   PCMCIA         { get; set; }
+        public virtual Usb      USB            { get; set; }
+        public virtual FireWire FireWire       { get; set; }
+        public virtual Pcmcia   PCMCIA         { get; set; }
         public bool     CompactFlash   { get; set; }
-        public Ata      ATA            { get; set; }
-        public Ata      ATAPI          { get; set; }
-        public Scsi     SCSI           { get; set; }
-        public MmcSd    MultiMediaCard { get; set; }
-        public MmcSd    SecureDigital  { get; set; }
+        public virtual Ata      ATA            { get; set; }
+        public virtual Ata      ATAPI          { get; set; }
+        public virtual Scsi     SCSI           { get; set; }
+        public virtual MmcSd    MultiMediaCard { get; set; }
+        public virtual MmcSd    SecureDigital  { get; set; }
 
         public string     Manufacturer { get; set; }
         public string     Model        { get; set; }
@@ -373,8 +375,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         [JsonIgnore]
         public int Id { get;                             set; }
         public byte[]            Identify         { get; set; }
-        public TestedMedia       ReadCapabilities { get; set; }
-        public List<TestedMedia> RemovableMedias  { get; set; }
+        public virtual TestedMedia       ReadCapabilities { get; set; }
+        public virtual List<TestedMedia> RemovableMedias  { get; set; }
     }
 
     public class Chs
@@ -509,15 +511,15 @@ namespace DiscImageChef.CommonTypes.Metadata
         [JsonIgnore]
         public int Id { get;                                 set; }
         public byte[]            InquiryData          { get; set; }
-        public List<ScsiPage>    EVPDPages            { get; set; }
+        public virtual List<ScsiPage>    EVPDPages            { get; set; }
         public bool              SupportsModeSense6   { get; set; }
         public bool              SupportsModeSense10  { get; set; }
         public bool              SupportsModeSubpages { get; set; }
-        public ScsiMode          ModeSense            { get; set; }
-        public Mmc               MultiMediaDevice     { get; set; }
-        public TestedMedia       ReadCapabilities     { get; set; }
-        public List<TestedMedia> RemovableMedias      { get; set; }
-        public Ssc               SequentialDevice     { get; set; }
+        public virtual ScsiMode          ModeSense            { get; set; }
+        public virtual Mmc               MultiMediaDevice     { get; set; }
+        public virtual TestedMedia       ReadCapabilities     { get; set; }
+        public virtual List<TestedMedia> RemovableMedias      { get; set; }
+        public virtual Ssc               SequentialDevice     { get; set; }
         public byte[]            ModeSense6Data       { get; set; }
         public byte[]            ModeSense10Data      { get; set; }
     }
@@ -552,12 +554,12 @@ namespace DiscImageChef.CommonTypes.Metadata
         public int Id { get;                                  set; }
         public byte?                 MediumType        { get; set; }
         public bool                  WriteProtected    { get; set; }
-        public List<BlockDescriptor> BlockDescriptors  { get; set; }
+        public virtual List<BlockDescriptor> BlockDescriptors  { get; set; }
         public byte?                 Speed             { get; set; }
         public byte?                 BufferedMode      { get; set; }
         public bool                  BlankCheckEnabled { get; set; }
         public bool                  DPOandFUA         { get; set; }
-        public List<ScsiPage>        ModePages         { get; set; }
+        public virtual List<ScsiPage>        ModePages         { get; set; }
     }
 
     public class BlockDescriptor
@@ -673,9 +675,9 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         [JsonIgnore]
         public int Id { get;                        set; }
-        public Modes.ModePage_2A ModeSense2A { get; set; }
-        public MmcFeatures       Features    { get; set; }
-        public List<TestedMedia> TestedMedia { get; set; }
+        public virtual Modes.ModePage_2A ModeSense2A { get; set; }
+        public virtual MmcFeatures       Features    { get; set; }
+        public virtual List<TestedMedia> TestedMedia { get; set; }
     }
 
     public class MmcFeatures
@@ -924,12 +926,12 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool                DVDMultiRead                    { get; set; }
         public bool                EmbeddedChanger                 { get; set; }
         public bool                ErrorRecoveryPage               { get; set; }
-        public DateTime?           FirmwareDate                    { get; set; }
+        public virtual DateTime?           FirmwareDate                    { get; set; }
         public byte?               LoadingMechanismType            { get; set; }
         public bool                Locked                          { get; set; }
         public uint?               LogicalBlockSize                { get; set; }
         public bool                MultiRead                       { get; set; }
-        public PhysicalInterfaces? PhysicalInterfaceStandard       { get; set; }
+        public virtual PhysicalInterfaces? PhysicalInterfaceStandard       { get; set; }
         public uint?               PhysicalInterfaceStandardNumber { get; set; }
         public bool                PreventJumper                   { get; set; }
         public bool                SupportsAACS                    { get; set; }
@@ -1201,8 +1203,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte[] ModeSense6Data  { get; set; }
         public byte[] ModeSense10Data { get; set; }
 
-        public Chs     CHS                 { get; set; }
-        public Chs     CurrentCHS          { get; set; }
+        public virtual Chs     CHS                 { get; set; }
+        public virtual Chs     CurrentCHS          { get; set; }
         public uint?   LBASectors          { get; set; }
         public ulong?  LBA48Sectors        { get; set; }
         public ushort? LogicalAlignment    { get; set; }
@@ -1263,9 +1265,9 @@ namespace DiscImageChef.CommonTypes.Metadata
         public uint? MaxBlockLength       { get; set; }
         public uint? MinBlockLength       { get; set; }
 
-        public List<SupportedDensity>      SupportedDensities  { get; set; }
-        public List<SscSupportedMedia>     SupportedMediaTypes { get; set; }
-        public List<TestedSequentialMedia> TestedMedia         { get; set; }
+        public virtual List<SupportedDensity>      SupportedDensities  { get; set; }
+        public virtual List<SscSupportedMedia>     SupportedMediaTypes { get; set; }
+        public virtual List<TestedSequentialMedia> TestedMedia         { get; set; }
     }
 
     public class TestedSequentialMedia
@@ -1304,8 +1306,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte?                   MediumType          { get; set; }
         public string                  MediumTypeName      { get; set; }
         public string                  Model               { get; set; }
-        public List<SupportedDensity>  SupportedDensities  { get; set; }
-        public List<SscSupportedMedia> SupportedMediaTypes { get; set; }
+        public virtual List<SupportedDensity>  SupportedDensities  { get; set; }
+        public virtual List<SscSupportedMedia> SupportedMediaTypes { get; set; }
 
         public byte[] ModeSense6Data  { get; set; }
         public byte[] ModeSense10Data { get; set; }
@@ -1381,7 +1383,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         [JsonIgnore]
         public int Id { get;                         set; }
         public byte              MediumType   { get; set; }
-        public List<DensityCode> DensityCodes { get; set; }
+        public virtual List<DensityCode> DensityCodes { get; set; }
         public ushort            Width        { get; set; }
         public ushort            Length       { get; set; }
         public string            Organization { get; set; }
