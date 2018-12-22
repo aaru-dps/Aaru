@@ -36,7 +36,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Web;
 using System.Web.Hosting;
 using System.Web.UI;
 using System.Xml;
@@ -232,43 +231,48 @@ namespace DiscImageChef.Server
                     divVirtualMedia.Visible = false;
                 }
 
-                if(ctx.DeviceStats != null)
+                if(ctx.DeviceStats.Any())
                 {
                     devices = new List<DeviceItem>();
-                    foreach(DeviceStat device in ctx.DeviceStats)
+                    foreach(DeviceStat device in ctx.DeviceStats.ToList())
                     {
-                        string url;
                         string xmlFile;
                         if(!string.IsNullOrWhiteSpace(device.Manufacturer) &&
                            !string.IsNullOrWhiteSpace(device.Model)        &&
                            !string.IsNullOrWhiteSpace(device.Revision))
-                        {
                             xmlFile = device.Manufacturer + "_" + device.Model + "_" + device.Revision + ".xml";
-                            url =
-                                $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
-                        }
                         else if(!string.IsNullOrWhiteSpace(device.Manufacturer) &&
                                 !string.IsNullOrWhiteSpace(device.Model))
-                        {
                             xmlFile = device.Manufacturer + "_" + device.Model + ".xml";
-                            url =
-                                $"ViewReport.aspx?manufacturer={HttpUtility.UrlPathEncode(device.Manufacturer)}&model={HttpUtility.UrlPathEncode(device.Model)}";
-                        }
                         else if(!string.IsNullOrWhiteSpace(device.Model) && !string.IsNullOrWhiteSpace(device.Revision))
-                        {
-                            xmlFile = device.Model + "_" + device.Revision + ".xml";
-                            url =
-                                $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}&revision={HttpUtility.UrlPathEncode(device.Revision)}";
-                        }
-                        else
-                        {
-                            xmlFile = device.Model + ".xml";
-                            url     = $"ViewReport.aspx?model={HttpUtility.UrlPathEncode(device.Model)}";
-                        }
+                            xmlFile  = device.Model + "_" + device.Revision + ".xml";
+                        else xmlFile = device.Model                         + ".xml";
 
                         xmlFile = xmlFile.Replace('/', '_').Replace('\\', '_').Replace('?', '_');
 
-                        if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Reports", xmlFile))) url = null;
+                        if(File.Exists(Path.Combine(HostingEnvironment.MapPath("~"), "Reports", xmlFile)))
+                        {
+                            DeviceReport deviceReport = new DeviceReport();
+
+                            XmlSerializer xs = new XmlSerializer(deviceReport.GetType());
+                            FileStream fs =
+                                WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Reports", xmlFile),
+                                            FileMode.Open, FileAccess.Read, FileShare.Read);
+                            deviceReport = (DeviceReport)xs.Deserialize(fs);
+                            fs.Close();
+
+                            DeviceReportV2 deviceReportV2 = new DeviceReportV2(deviceReport);
+
+                            device.Report = ctx.Devices.Add(new Device(deviceReportV2));
+                            ctx.SaveChanges();
+
+                            File.Delete(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                                     "Reports", xmlFile));
+                        }
+
+                        string url = device.Report != null && device.Report.Id != 0
+                                         ? $"ViewReport.aspx?id={device.Report.Id}"
+                                         : null;
 
                         devices.Add(new DeviceItem
                         {
