@@ -205,6 +205,10 @@
     <Compile Include="Migrations\201812220029427_AddStatistics.Designer.cs">
       <DependentUpon>201812220029427_AddStatistics.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812221606592_LinkDeviceStatsToReport.cs" />
+    <Compile Include="Migrations\201812221606592_LinkDeviceStatsToReport.Designer.cs">
+      <DependentUpon>201812221606592_LinkDeviceStatsToReport.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Context.cs" />
@@ -290,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812220029427_AddStatistics.resx">
       <DependentUpon>201812220029427_AddStatistics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812221606592_LinkDeviceStatsToReport.resx">
+      <DependentUpon>201812221606592_LinkDeviceStatsToReport.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
