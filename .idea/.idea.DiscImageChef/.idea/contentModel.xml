@@ -1772,6 +1772,7 @@
           <e p="ScsiMmcMode.cs" t="Include" />
           <e p="ScsiModeSense.cs" t="Include" />
           <e p="SscTestedMedia.cs" t="Include" />
+          <e p="StatsConverter.cs" t="Include" />
           <e p="TestedMedia.cs" t="Include" />
           <e p="WebApiConfig.cs" t="Include" />
         </e>
@@ -1812,10 +1813,6 @@
         </e>
         <e p="Reports" t="Include">
           <e p=".htaccess" t="Include" />
-        </e>
-        <e p="Statistics" t="Include">
-          <e p=".htaccess" t="Include" />
-          <e p="Statistics.xml" t="Include" />
         </e>
         <e p="Statistics.aspx" t="Include" />
         <e p="Statistics.aspx.cs" t="Include" />

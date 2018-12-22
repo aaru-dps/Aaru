@@ -182,6 +182,7 @@
     <Compile Include="App_Start\ScsiMmcMode.cs" />
     <Compile Include="App_Start\ScsiModeSense.cs" />
     <Compile Include="App_Start\SscTestedMedia.cs" />
+    <Compile Include="App_Start\StatsConverter.cs" />
     <Compile Include="App_Start\TestedMedia.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\UploadReportController.cs" />
@@ -268,8 +269,6 @@
     <None Include="int10h.org\.htaccess" />
     <None Include="int10h.org\vga_squarepx.woff2" />
     <None Include="Reports\.htaccess" />
-    <None Include="Statistics\.htaccess" />
-    <None Include="Statistics\Statistics.xml" />
     <None Include="usb.ids" />
   </ItemGroup>
   <ItemGroup>

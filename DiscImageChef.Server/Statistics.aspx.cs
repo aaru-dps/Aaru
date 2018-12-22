@@ -39,6 +39,8 @@ using System.Threading;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.UI;
+using System.Xml;
+using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Server.Models;
@@ -57,8 +59,6 @@ namespace DiscImageChef.Server
         List<DeviceItem>     devices;
         List<NameValueStats> operatingSystems;
         List<MediaItem>      realMedia;
-
-        //Stats                statistics;
         List<NameValueStats> versions;
         List<MediaItem>      virtualMedia;
 
@@ -68,27 +68,28 @@ namespace DiscImageChef.Server
 
             try
             {
-                /*
-                if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                             "Statistics", "Statistics.xml")))
-                {
-                    #if DEBUG
-                    content.InnerHtml =
-                        $"<b>Sorry, cannot load data file \"{Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml")}\"</b>";
-                    #else
-                    content.InnerHtml = "<b>Sorry, cannot load data file</b>";
-                    #endif
-                    return;
-                }
+                if(File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                            "Statistics", "Statistics.xml")))
+                    try
+                    {
+                        Stats statistics = new Stats();
 
-                statistics = new Stats();
+                        XmlSerializer xs = new XmlSerializer(statistics.GetType());
+                        FileStream fs =
+                            WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
+                                        FileMode.Open, FileAccess.Read, FileShare.Read);
+                        statistics = (Stats)xs.Deserialize(fs);
+                        fs.Close();
 
-                XmlSerializer xs = new XmlSerializer(statistics.GetType());
-                FileStream fs =
-                    WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
-                                FileMode.Open, FileAccess.Read, FileShare.Read);
-                statistics = (Stats)xs.Deserialize(fs);
-                fs.Close();*/
+                        StatsConverter.Convert(statistics);
+
+                        File.Delete(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                                 "Statistics", "Statistics.xml"));
+                    }
+                    catch(XmlException)
+                    {
+                        // Do nothing
+                    }
 
                 if(ctx.OperatingSystems.Any())
                 {
