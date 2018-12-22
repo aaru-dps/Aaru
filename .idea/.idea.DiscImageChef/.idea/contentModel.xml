@@ -1791,12 +1791,24 @@
           <e p="201812201613369_InitialMigration.Designer.cs" t="Include" />
           <e p="201812201613369_InitialMigration.cs" t="Include" />
           <e p="201812201613369_InitialMigration.resx" t="Include" />
+          <e p="201812220029427_AddStatistics.Designer.cs" t="Include" />
+          <e p="201812220029427_AddStatistics.cs" t="Include" />
+          <e p="201812220029427_AddStatistics.resx" t="Include" />
           <e p="Configuration.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
+          <e p="Command.cs" t="Include" />
           <e p="Context.cs" t="Include" />
           <e p="Device.cs" t="Include" />
+          <e p="DeviceStat.cs" t="Include" />
+          <e p="Filesystem.cs" t="Include" />
+          <e p="Filter.cs" t="Include" />
+          <e p="Media.cs" t="Include" />
+          <e p="MediaFormat.cs" t="Include" />
+          <e p="OperatingSystem.cs" t="Include" />
+          <e p="Partition.cs" t="Include" />
           <e p="UploadedReport.cs" t="Include" />
+          <e p="Version.cs" t="Include" />
         </e>
         <e p="Reports" t="Include">
           <e p=".htaccess" t="Include" />

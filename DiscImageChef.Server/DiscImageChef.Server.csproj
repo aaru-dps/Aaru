@@ -200,10 +200,23 @@
     <Compile Include="Migrations\201812201613369_InitialMigration.Designer.cs">
       <DependentUpon>201812201613369_InitialMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812220029427_AddStatistics.cs" />
+    <Compile Include="Migrations\201812220029427_AddStatistics.Designer.cs">
+      <DependentUpon>201812220029427_AddStatistics.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Context.cs" />
     <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\DeviceStat.cs" />
+    <Compile Include="Models\Filesystem.cs" />
+    <Compile Include="Models\Filter.cs" />
+    <Compile Include="Models\Media.cs" />
+    <Compile Include="Models\MediaFormat.cs" />
+    <Compile Include="Models\OperatingSystem.cs" />
+    <Compile Include="Models\Partition.cs" />
     <Compile Include="Models\UploadedReport.cs" />
+    <Compile Include="Models\Version.cs" />
     <Compile Include="Statistics.aspx.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -276,6 +289,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201812201613369_InitialMigration.resx">
       <DependentUpon>201812201613369_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812220029427_AddStatistics.resx">
+      <DependentUpon>201812220029427_AddStatistics.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

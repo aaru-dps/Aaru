@@ -38,7 +38,16 @@ namespace DiscImageChef.Server.Models
     [DbConfigurationType(typeof(MySqlEFConfiguration))]
     public sealed class DicServerContext : DbContext
     {
-        public DbSet<Device>         Devices { get; set; }
-        public DbSet<UploadedReport> Reports { get; set; }
+        public DbSet<Device>          Devices          { get; set; }
+        public DbSet<UploadedReport>  Reports          { get; set; }
+        public DbSet<Command>         Commands         { get; set; }
+        public DbSet<DeviceStat>      DeviceStats      { get; set; }
+        public DbSet<Filesystem>      Filesystems      { get; set; }
+        public DbSet<Filter>          Filters          { get; set; }
+        public DbSet<Media>           Medias           { get; set; }
+        public DbSet<MediaFormat>     MediaFormats     { get; set; }
+        public DbSet<OperatingSystem> OperatingSystems { get; set; }
+        public DbSet<Partition>       Partitions       { get; set; }
+        public DbSet<Version>         Versions         { get; set; }
     }
 }
