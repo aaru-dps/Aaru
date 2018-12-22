@@ -1821,9 +1821,6 @@
         <e p="Statistics.aspx.cs" t="Include" />
         <e p="Statistics.aspx.designer.cs" t="Include" />
         <e p="TODO.aspx" t="Include" />
-        <e p="Upload" t="Include">
-          <e p=".htaccess" t="Include" />
-        </e>
         <e p="ViewReport.aspx" t="Include" />
         <e p="ViewReport.aspx.cs" t="Include" />
         <e p="ViewReport.aspx.designer.cs" t="Include" />

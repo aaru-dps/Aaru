@@ -197,11 +197,11 @@
                 <tr>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# Eval("name") %>' />
+                                   Text='<%# Eval("Name") %>' />
                     </td>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# string.Format("{0}", Eval("Value")) %>' />
+                                   Text='<%# string.Format("{0}", Eval("Count")) %>' />
                     </td>
                 </tr>
             </ItemTemplate>
@@ -223,11 +223,11 @@
                 <tr>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# Eval("name") %>' />
+                                   Text='<%# Eval("Name") %>' />
                     </td>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# string.Format("{0}", Eval("value")) %>' />
+                                   Text='<%# string.Format("{0}", Eval("Count")) %>' />
                     </td>
                 </tr>
             </ItemTemplate>
@@ -249,11 +249,11 @@
                 <tr>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# Eval("name") %>' />
+                                   Text='<%# Eval("Name") %>' />
                     </td>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# string.Format("{0}", Eval("value")) %>' />
+                                   Text='<%# string.Format("{0}", Eval("Count")) %>' />
                     </td>
                 </tr>
             </ItemTemplate>
@@ -275,11 +275,11 @@
                 <tr>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# Eval("name") %>' />
+                                   Text='<%# Eval("Name") %>' />
                     </td>
                     <td>
                         <asp:Label runat="server"
-                                   Text='<%# string.Format("{0}", Eval("value")) %>' />
+                                   Text='<%# string.Format("{0}", Eval("Count")) %>' />
                     </td>
                 </tr>
             </ItemTemplate>

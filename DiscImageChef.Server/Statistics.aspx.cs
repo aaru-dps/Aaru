@@ -39,10 +39,12 @@ using System.Threading;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.UI;
-using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.Server.Models;
+using OperatingSystem = DiscImageChef.Server.Models.OperatingSystem;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using Version = DiscImageChef.Server.Models.Version;
 
 namespace DiscImageChef.Server
 {
@@ -51,11 +53,12 @@ namespace DiscImageChef.Server
     /// </summary>
     public partial class Statistics : Page
     {
+        DicServerContext     ctx = new DicServerContext();
         List<DeviceItem>     devices;
         List<NameValueStats> operatingSystems;
         List<MediaItem>      realMedia;
 
-        Stats                statistics;
+        //Stats                statistics;
         List<NameValueStats> versions;
         List<MediaItem>      virtualMedia;
 
@@ -65,6 +68,7 @@ namespace DiscImageChef.Server
 
             try
             {
+                /*
                 if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
                                              "Statistics", "Statistics.xml")))
                 {
@@ -84,17 +88,17 @@ namespace DiscImageChef.Server
                     WaitForFile(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(), "Statistics", "Statistics.xml"),
                                 FileMode.Open, FileAccess.Read, FileShare.Read);
                 statistics = (Stats)xs.Deserialize(fs);
-                fs.Close();
+                fs.Close();*/
 
-                if(statistics.OperatingSystems != null)
+                if(ctx.OperatingSystems.Any())
                 {
                     operatingSystems = new List<NameValueStats>();
-                    foreach(OsStats nvs in statistics.OperatingSystems)
+                    foreach(OperatingSystem nvs in ctx.OperatingSystems)
                         operatingSystems.Add(new NameValueStats
                         {
                             name =
-                                $"{DetectOS.GetPlatformName((PlatformID)Enum.Parse(typeof(PlatformID), nvs.name), nvs.version)}{(string.IsNullOrEmpty(nvs.version) ? "" : " ")}{nvs.version}",
-                            Value = nvs.Value
+                                $"{DetectOS.GetPlatformName((PlatformID)Enum.Parse(typeof(PlatformID), nvs.Name), nvs.Version)}{(string.IsNullOrEmpty(nvs.Version) ? "" : " ")}{nvs.Version}",
+                            Value = nvs.Count
                         });
 
                     repOperatingSystems.DataSource = operatingSystems.OrderBy(os => os.name).ToList();
@@ -102,86 +106,108 @@ namespace DiscImageChef.Server
                 }
                 else divOperatingSystems.Visible = false;
 
-                if(statistics.Versions != null)
+                if(ctx.Versions.Any())
                 {
                     versions = new List<NameValueStats>();
-                    foreach(NameValueStats nvs in statistics.Versions)
-                        versions.Add(nvs.name == "previous"
-                                         ? new NameValueStats {name = "Previous than 3.4.99.0", Value = nvs.Value}
-                                         : nvs);
+                    foreach(Version nvs in ctx.Versions)
+                        versions.Add(new NameValueStats
+                        {
+                            name  = nvs.Value == "previous" ? "Previous than 3.4.99.0" : nvs.Value,
+                            Value = nvs.Count
+                        });
 
                     repVersions.DataSource = versions.OrderBy(ver => ver.name).ToList();
                     repVersions.DataBind();
                 }
                 else divVersions.Visible = false;
 
-                if(statistics.Commands != null)
+                if(ctx.Commands.Any())
                 {
-                    lblAnalyze.Text       = statistics.Commands.Analyze.ToString();
-                    lblCompare.Text       = statistics.Commands.Compare.ToString();
-                    lblChecksum.Text      = statistics.Commands.Checksum.ToString();
-                    lblEntropy.Text       = statistics.Commands.Entropy.ToString();
-                    lblVerify.Text        = statistics.Commands.Verify.ToString();
-                    lblPrintHex.Text      = statistics.Commands.PrintHex.ToString();
-                    lblDecode.Text        = statistics.Commands.Decode.ToString();
-                    lblDeviceInfo.Text    = statistics.Commands.DeviceInfo.ToString();
-                    lblMediaInfo.Text     = statistics.Commands.MediaInfo.ToString();
-                    lblMediaScan.Text     = statistics.Commands.MediaScan.ToString();
-                    lblFormats.Text       = statistics.Commands.Formats.ToString();
-                    lblBenchmark.Text     = statistics.Commands.Benchmark.ToString();
-                    lblCreateSidecar.Text = statistics.Commands.CreateSidecar.ToString();
-                    lblDumpMedia.Text     = statistics.Commands.DumpMedia.ToString();
-                    lblDeviceReport.Text  = statistics.Commands.DeviceReport.ToString();
-                    lblLs.Text            = statistics.Commands.Ls.ToString();
-                    lblExtractFiles.Text  = statistics.Commands.ExtractFiles.ToString();
-                    lblListDevices.Text   = statistics.Commands.ListDevices.ToString();
-                    lblListEncodings.Text = statistics.Commands.ListEncodings.ToString();
-                    lblConvertImage.Text  = statistics.Commands.ConvertImage.ToString();
-                    lblImageInfo.Text     = statistics.Commands.ImageInfo.ToString();
+                    lblAnalyze.Text  = ctx.Commands.FirstOrDefault(c => c.Name == "analyze")?.Count.ToString()  ?? "0";
+                    lblCompare.Text  = ctx.Commands.FirstOrDefault(c => c.Name == "compare")?.Count.ToString()  ?? "0";
+                    lblChecksum.Text = ctx.Commands.FirstOrDefault(c => c.Name == "checksum")?.Count.ToString() ?? "0";
+                    lblEntropy.Text  = ctx.Commands.FirstOrDefault(c => c.Name == "entropy")?.Count.ToString()  ?? "0";
+                    lblVerify.Text   = ctx.Commands.FirstOrDefault(c => c.Name == "verify")?.Count.ToString()   ?? "0";
+                    lblPrintHex.Text = ctx.Commands.FirstOrDefault(c => c.Name == "printhex")?.Count.ToString() ?? "0";
+                    lblDecode.Text   = ctx.Commands.FirstOrDefault(c => c.Name == "decode")?.Count.ToString()   ?? "0";
+                    lblDeviceInfo.Text = ctx.Commands.FirstOrDefault(c => c.Name == "device-info")?.Count.ToString() ??
+                                         "0";
+                    lblMediaInfo.Text = ctx.Commands.FirstOrDefault(c => c.Name == "media-info")?.Count.ToString() ??
+                                        "0";
+                    lblMediaScan.Text = ctx.Commands.FirstOrDefault(c => c.Name == "media-scan")?.Count.ToString() ??
+                                        "0";
+                    lblFormats.Text = ctx.Commands.FirstOrDefault(c => c.Name == "formats")?.Count.ToString() ?? "0";
+                    lblBenchmark.Text =
+                        ctx.Commands.FirstOrDefault(c => c.Name == "benchmark")?.Count.ToString() ?? "0";
+                    lblCreateSidecar.Text =
+                        ctx.Commands.FirstOrDefault(c => c.Name == "create-sidecar")?.Count.ToString() ?? "0";
+                    lblDumpMedia.Text = ctx.Commands.FirstOrDefault(c => c.Name == "dump-media")?.Count.ToString() ??
+                                        "0";
+                    lblDeviceReport.Text =
+                        ctx.Commands.FirstOrDefault(c => c.Name == "device-report")?.Count.ToString() ?? "0";
+                    lblLs.Text = ctx.Commands.FirstOrDefault(c => c.Name == "ls")?.Count.ToString() ?? "0";
+                    lblExtractFiles.Text =
+                        ctx.Commands.FirstOrDefault(c => c.Name == "extract-files")?.Count.ToString() ?? "0";
+                    lblListDevices.Text =
+                        ctx.Commands.FirstOrDefault(c => c.Name == "list-devices")?.Count.ToString() ?? "0";
+                    lblListEncodings.Text =
+                        ctx.Commands.FirstOrDefault(c => c.Name == "list-encodings")?.Count.ToString() ?? "0";
+                    lblConvertImage.Text =
+                        ctx.Commands.FirstOrDefault(c => c.Name == "convert-image")?.Count.ToString() ?? "0";
+                    lblImageInfo.Text = ctx.Commands.FirstOrDefault(c => c.Name == "image-info")?.Count.ToString() ??
+                                        "0";
                 }
                 else divCommands.Visible = false;
 
-                if(statistics.Filters != null)
+                if(ctx.Filters.Any())
                 {
-                    repFilters.DataSource = statistics.Filters.OrderBy(filter => filter.name).ToList();
+                    repFilters.DataSource = ctx.Filters.OrderBy(filter => filter.Name).ToList();
                     repFilters.DataBind();
                 }
                 else divFilters.Visible = false;
 
-                if(statistics.MediaImages != null)
+                if(ctx.MediaFormats.Any())
                 {
-                    repMediaImages.DataSource = statistics.MediaImages.OrderBy(filter => filter.name).ToList();
+                    repMediaImages.DataSource = ctx.MediaFormats.OrderBy(filter => filter.Name).ToList();
                     repMediaImages.DataBind();
                 }
                 else divMediaImages.Visible = false;
 
-                if(statistics.Partitions != null)
+                if(ctx.Partitions.Any())
                 {
-                    repPartitions.DataSource = statistics.Partitions.OrderBy(filter => filter.name).ToList();
+                    repPartitions.DataSource = ctx.Partitions.OrderBy(filter => filter.Name).ToList();
                     repPartitions.DataBind();
                 }
                 else divPartitions.Visible = false;
 
-                if(statistics.Filesystems != null)
+                if(ctx.Filesystems.Any())
                 {
-                    repFilesystems.DataSource = statistics.Filesystems.OrderBy(filter => filter.name).ToList();
+                    repFilesystems.DataSource = ctx.Filesystems.OrderBy(filter => filter.Name).ToList();
                     repFilesystems.DataBind();
                 }
                 else divFilesystems.Visible = false;
 
-                if(statistics.Medias != null)
+                if(ctx.Medias.Any())
                 {
                     realMedia    = new List<MediaItem>();
                     virtualMedia = new List<MediaItem>();
-                    foreach(MediaStats nvs in statistics.Medias)
-                    {
-                        MediaType
-                           .MediaTypeToString((CommonTypes.MediaType)Enum.Parse(typeof(CommonTypes.MediaType), nvs.type),
-                                              out string type, out string subtype);
+                    foreach(Media nvs in ctx.Medias)
+                        try
+                        {
+                            MediaType
+                               .MediaTypeToString((CommonTypes.MediaType)Enum.Parse(typeof(CommonTypes.MediaType), nvs.Type),
+                                                  out string type, out string subtype);
 
-                        if(nvs.real) realMedia.Add(new MediaItem {Type = type, SubType = subtype, Count = nvs.Value});
-                        else virtualMedia.Add(new MediaItem {Type      = type, SubType = subtype, Count = nvs.Value});
-                    }
+                            if(nvs.Real)
+                                realMedia.Add(new MediaItem {Type     = type, SubType = subtype, Count = nvs.Count});
+                            else virtualMedia.Add(new MediaItem {Type = type, SubType = subtype, Count = nvs.Count});
+                        }
+                        catch
+                        {
+                            if(nvs.Real)
+                                realMedia.Add(new MediaItem {Type     = nvs.Type, SubType = null, Count = nvs.Count});
+                            else virtualMedia.Add(new MediaItem {Type = nvs.Type, SubType = null, Count = nvs.Count});
+                        }
 
                     if(realMedia.Count > 0)
                     {
@@ -205,10 +231,10 @@ namespace DiscImageChef.Server
                     divVirtualMedia.Visible = false;
                 }
 
-                if(statistics.Devices != null)
+                if(ctx.DeviceStats != null)
                 {
                     devices = new List<DeviceItem>();
-                    foreach(DeviceStats device in statistics.Devices)
+                    foreach(DeviceStat device in ctx.DeviceStats)
                     {
                         string url;
                         string xmlFile;
@@ -249,7 +275,8 @@ namespace DiscImageChef.Server
                             Model        = device.Model,
                             Revision     = device.Revision,
                             Bus          = device.Bus,
-                            ReportLink   = url == null ? "No" : $"<a href=\"{url}\" target=\"_blank\">Yes</a>"
+                            ReportLink =
+                                url == null ? "No" : $"<a href=\"{url}\" target=\"_blank\">Yes</a>"
                         });
                     }
 
