@@ -1881,6 +1881,37 @@ namespace DiscImageChef.Decoders.ATA
             return ATAID;
         }
 
+        public static byte[] Encode(IdentifyDevice? identify)
+        {
+            if(identify is null) return null;
+
+            IdentifyDevice ataId = identify.Value;
+
+            ataId.WWN          = DescrambleWWN(ataId.WWN);
+            ataId.WWNExtension = DescrambleWWN(ataId.WWNExtension);
+
+            byte[] buf = new byte[512];
+            IntPtr ptr = Marshal.AllocHGlobal(512);
+            Marshal.StructureToPtr(ataId, ptr, false);
+            Marshal.Copy(ptr, buf, 0, 512);
+            Marshal.FreeHGlobal(ptr);
+
+            byte[] str = ScrambleATAString(ataId.SerialNumber, 20);
+            Array.Copy(str, 0, buf, 10 * 2, 20);
+            str = ScrambleATAString(ataId.FirmwareRevision, 8);
+            Array.Copy(str, 0, buf, 23 * 2, 8);
+            str = ScrambleATAString(ataId.Model, 40);
+            Array.Copy(str, 0, buf, 27 * 2, 40);
+            str = ScrambleATAString(ataId.AdditionalPID, 8);
+            Array.Copy(str, 0, buf, 170 * 2, 8);
+            str = ScrambleATAString(ataId.MediaSerial, 40);
+            Array.Copy(str, 0, buf, 176 * 2, 40);
+            str = ScrambleATAString(ataId.MediaManufacturer, 20);
+            Array.Copy(str, 0, buf, 196 * 2, 20);
+
+            return buf;
+        }
+
         public static string Prettify(byte[] IdentifyDeviceResponse)
         {
             if(IdentifyDeviceResponse.Length != 512) return null;
@@ -3539,6 +3570,14 @@ namespace DiscImageChef.Decoders.ATA
 
             string outStr = StringHandlers.CToString(outbuf);
             return outStr.Trim();
+        }
+
+        static byte[] ScrambleATAString(string str, int length)
+        {
+            byte[] bytes = Encoding.ASCII.GetBytes(str);
+            byte[] buf   = new byte[length];
+            Array.Copy(bytes, 0, buf, 0, bytes.Length);
+            return buf;
         }
     }
 }
