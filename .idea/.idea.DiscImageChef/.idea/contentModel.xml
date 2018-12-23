@@ -317,6 +317,8 @@
           <e p="20181221125353_AddStatsCounters.cs" t="Include" />
           <e p="20181223183913_FixUnsignedFields.Designer.cs" t="Include" />
           <e p="20181223183913_FixUnsignedFields.cs" t="Include" />
+          <e p="20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" t="Include" />
+          <e p="20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1803,6 +1805,9 @@
           <e p="201812231612080_FixUnsignedFields.Designer.cs" t="Include" />
           <e p="201812231612080_FixUnsignedFields.cs" t="Include" />
           <e p="201812231612080_FixUnsignedFields.resx" t="Include" />
+          <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" t="Include" />
+          <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" t="Include" />
+          <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.resx" t="Include" />
           <e p="Configuration.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

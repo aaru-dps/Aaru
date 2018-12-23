@@ -78,6 +78,8 @@
     <Compile Include="Migrations\20181221125353_AddStatsCounters.Designer.cs" />
     <Compile Include="Migrations\20181223183913_FixUnsignedFields.cs" />
     <Compile Include="Migrations\20181223183913_FixUnsignedFields.Designer.cs" />
+    <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" />
+    <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />

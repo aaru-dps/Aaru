@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DiscImageChef.Database.Migrations
 {
     [DbContext(typeof(DicContext))]
-    [Migration("20181126222301_DeviceReportV2")]
-    partial class DeviceReportV2
+    [Migration("20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports")]
+    partial class UseBinaryDataForIdentifyInquiryAndModesInReports
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,7 +41,11 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<uint?>("BlockLength");
 
+                    b.Property<int?>("BlockLengthSql");
+
                     b.Property<ulong?>("Blocks");
+
+                    b.Property<long?>("BlocksSql");
 
                     b.Property<byte>("Density");
 
@@ -61,9 +65,15 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort>("Cylinders");
 
+                    b.Property<short>("CylindersSql");
+
                     b.Property<ushort>("Heads");
 
+                    b.Property<short>("HeadsSql");
+
                     b.Property<ushort>("Sectors");
+
+                    b.Property<short>("SectorsSql");
 
                     b.HasKey("Id");
 
@@ -84,55 +94,6 @@ namespace DiscImageChef.Database.Migrations
                     b.ToTable("DensityCode");
                 });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DeviceReportV2", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("ATAId");
-
-                    b.Property<int?>("ATAPIId");
-
-                    b.Property<bool>("CompactFlash");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
-
-                    b.Property<int?>("FireWireId");
-
-                    b.Property<int?>("MultiMediaCardId");
-
-                    b.Property<int?>("PCMCIAId");
-
-                    b.Property<int?>("SCSIId");
-
-                    b.Property<int?>("SecureDigitalId");
-
-                    b.Property<int?>("USBId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ATAId");
-
-                    b.HasIndex("ATAPIId");
-
-                    b.HasIndex("FireWireId");
-
-                    b.HasIndex("MultiMediaCardId");
-
-                    b.HasIndex("PCMCIAId");
-
-                    b.HasIndex("SCSIId");
-
-                    b.HasIndex("SecureDigitalId");
-
-                    b.HasIndex("USBId");
-
-                    b.ToTable("Reports");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("DeviceReportV2");
-                });
-
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.FireWire", b =>
                 {
                     b.Property<int>("Id")
@@ -144,9 +105,13 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<uint>("ProductID");
 
+                    b.Property<int>("ProductIDSql");
+
                     b.Property<bool>("RemovableMedia");
 
                     b.Property<uint>("VendorID");
+
+                    b.Property<int>("VendorIDSql");
 
                     b.HasKey("Id");
 
@@ -159,6 +124,8 @@ namespace DiscImageChef.Database.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int?>("FeaturesId");
+
+                    b.Property<byte[]>("ModeSense2AData");
 
                     b.HasKey("Id");
 
@@ -179,6 +146,8 @@ namespace DiscImageChef.Database.Migrations
                     b.Property<byte?>("BindingNonceBlocks");
 
                     b.Property<ushort?>("BlocksPerReadableUnit");
+
+                    b.Property<short?>("BlocksPerReadableUnitSql");
 
                     b.Property<bool>("BufferUnderrunFreeInDVD");
 
@@ -376,9 +345,13 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<uint?>("LogicalBlockSize");
 
+                    b.Property<int?>("LogicalBlockSizeSql");
+
                     b.Property<bool>("MultiRead");
 
                     b.Property<uint?>("PhysicalInterfaceStandardNumber");
+
+                    b.Property<int?>("PhysicalInterfaceStandardNumberSql");
 
                     b.Property<bool>("PreventJumper");
 
@@ -418,6 +391,8 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort?>("VolumeLevels");
 
+                    b.Property<short?>("VolumeLevelsSql");
+
                     b.HasKey("Id");
 
                     b.ToTable("MmcFeatures");
@@ -452,11 +427,15 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort?>("CardCode");
 
+                    b.Property<short?>("CardCodeSql");
+
                     b.Property<string>("Compliance");
 
                     b.Property<string>("Manufacturer");
 
                     b.Property<ushort?>("ManufacturerCode");
+
+                    b.Property<short?>("ManufacturerCodeSql");
 
                     b.Property<string>("ProductName");
 
@@ -558,7 +537,11 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<uint?>("MaxBlockLength");
 
+                    b.Property<int?>("MaxBlockLengthSql");
+
                     b.Property<uint?>("MinBlockLength");
+
+                    b.Property<int?>("MinBlockLengthSql");
 
                     b.HasKey("Id");
 
@@ -574,6 +557,8 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort>("Length");
 
+                    b.Property<short>("LengthSql");
+
                     b.Property<byte>("MediumType");
 
                     b.Property<string>("Name");
@@ -585,6 +570,8 @@ namespace DiscImageChef.Database.Migrations
                     b.Property<int?>("TestedSequentialMediaId");
 
                     b.Property<ushort>("Width");
+
+                    b.Property<short>("WidthSql");
 
                     b.HasKey("Id");
 
@@ -602,7 +589,11 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<uint>("BitsPerMm");
 
+                    b.Property<int>("BitsPerMmSql");
+
                     b.Property<uint>("Capacity");
+
+                    b.Property<int>("CapacitySql");
 
                     b.Property<bool>("DefaultDensity");
 
@@ -624,7 +615,11 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort>("Tracks");
 
+                    b.Property<short>("TracksSql");
+
                     b.Property<ushort>("Width");
+
+                    b.Property<short>("WidthSql");
 
                     b.Property<bool>("Writable");
 
@@ -646,7 +641,11 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<uint?>("BlockSize");
 
+                    b.Property<int?>("BlockSizeSql");
+
                     b.Property<ulong?>("Blocks");
+
+                    b.Property<long?>("BlocksSql");
 
                     b.Property<int?>("CHSId");
 
@@ -720,11 +719,19 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ulong?>("LBA48Sectors");
 
+                    b.Property<long?>("LBA48SectorsSql");
+
                     b.Property<uint?>("LBASectors");
+
+                    b.Property<int?>("LBASectorsSql");
 
                     b.Property<ushort?>("LogicalAlignment");
 
+                    b.Property<short?>("LogicalAlignmentSql");
+
                     b.Property<uint?>("LongBlockSize");
+
+                    b.Property<int?>("LongBlockSizeSql");
 
                     b.Property<string>("Manufacturer");
 
@@ -744,7 +751,11 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort?>("NominalRotationRate");
 
+                    b.Property<short?>("NominalRotationRateSql");
+
                     b.Property<uint?>("PhysicalBlockSize");
+
+                    b.Property<int?>("PhysicalBlockSizeSql");
 
                     b.Property<int?>("ScsiId");
 
@@ -818,7 +829,11 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort?>("UnformattedBPS");
 
+                    b.Property<short?>("UnformattedBPSSql");
+
                     b.Property<ushort?>("UnformattedBPT");
+
+                    b.Property<short?>("UnformattedBPTSql");
 
                     b.HasKey("Id");
 
@@ -880,138 +895,279 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<ushort>("ProductID");
 
+                    b.Property<short>("ProductIDSql");
+
                     b.Property<bool>("RemovableMedia");
 
                     b.Property<ushort>("VendorID");
+
+                    b.Property<short>("VendorIDSql");
 
                     b.HasKey("Id");
 
                     b.ToTable("Usb");
                 });
 
-            modelBuilder.Entity("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", b =>
+            modelBuilder.Entity("DiscImageChef.Database.Models.Command", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("AccurateCDDA");
+                    b.Property<ulong>("Count");
 
-                    b.Property<bool>("AudioPlay");
+                    b.Property<string>("Name");
 
-                    b.Property<bool>("BCK");
-
-                    b.Property<bool>("BUF");
-
-                    b.Property<ushort>("BufferSize");
-
-                    b.Property<bool>("C2Pointer");
-
-                    b.Property<bool>("CDDACommand");
-
-                    b.Property<ushort>("CMRSupported");
-
-                    b.Property<bool>("Composite");
-
-                    b.Property<ushort>("CurrentSpeed");
-
-                    b.Property<ushort>("CurrentWriteSpeed");
-
-                    b.Property<ushort>("CurrentWriteSpeedSelected");
-
-                    b.Property<bool>("DeinterlaveSubchannel");
-
-                    b.Property<bool>("DigitalPort1");
-
-                    b.Property<bool>("DigitalPort2");
-
-                    b.Property<bool>("Eject");
-
-                    b.Property<bool>("ISRC");
-
-                    b.Property<bool>("LSBF");
-
-                    b.Property<bool>("LeadInPW");
-
-                    b.Property<byte>("Length");
-
-                    b.Property<byte>("LoadingMechanism");
-
-                    b.Property<bool>("Lock");
-
-                    b.Property<bool>("LockState");
-
-                    b.Property<ushort>("MaxWriteSpeed");
-
-                    b.Property<ushort>("MaximumSpeed");
-
-                    b.Property<bool>("Method2");
-
-                    b.Property<bool>("Mode2Form1");
-
-                    b.Property<bool>("Mode2Form2");
-
-                    b.Property<bool>("MultiSession");
-
-                    b.Property<bool>("PS");
-
-                    b.Property<bool>("PreventJumper");
-
-                    b.Property<bool>("RCK");
-
-                    b.Property<bool>("ReadBarcode");
-
-                    b.Property<bool>("ReadCDR");
-
-                    b.Property<bool>("ReadCDRW");
-
-                    b.Property<bool>("ReadDVDR");
-
-                    b.Property<bool>("ReadDVDRAM");
-
-                    b.Property<bool>("ReadDVDROM");
-
-                    b.Property<byte>("RotationControlSelected");
-
-                    b.Property<bool>("SCC");
-
-                    b.Property<bool>("SDP");
-
-                    b.Property<bool>("SSS");
-
-                    b.Property<bool>("SeparateChannelMute");
-
-                    b.Property<bool>("SeparateChannelVolume");
-
-                    b.Property<bool>("Subchannel");
-
-                    b.Property<ushort>("SupportedVolumeLevels");
-
-                    b.Property<bool>("TestWrite");
-
-                    b.Property<bool>("UPC");
-
-                    b.Property<bool>("WriteCDR");
-
-                    b.Property<bool>("WriteCDRW");
-
-                    b.Property<bool>("WriteDVDR");
-
-                    b.Property<bool>("WriteDVDRAM");
+                    b.Property<bool>("Synchronized");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ModePage_2A");
+                    b.ToTable("Commands");
                 });
 
             modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
                 {
-                    b.HasBaseType("DiscImageChef.CommonTypes.Metadata.DeviceReportV2");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("ATAId");
+
+                    b.Property<int?>("ATAPIId");
+
+                    b.Property<bool>("CompactFlash");
+
+                    b.Property<int?>("FireWireId");
 
                     b.Property<DateTime>("LastSynchronized");
 
-                    b.ToTable("Device");
+                    b.Property<string>("Manufacturer");
 
-                    b.HasDiscriminator().HasValue("Device");
+                    b.Property<string>("Model");
+
+                    b.Property<int?>("MultiMediaCardId");
+
+                    b.Property<int?>("PCMCIAId");
+
+                    b.Property<string>("Revision");
+
+                    b.Property<int?>("SCSIId");
+
+                    b.Property<int?>("SecureDigitalId");
+
+                    b.Property<int>("Type");
+
+                    b.Property<int?>("USBId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ATAId");
+
+                    b.HasIndex("ATAPIId");
+
+                    b.HasIndex("FireWireId");
+
+                    b.HasIndex("MultiMediaCardId");
+
+                    b.HasIndex("PCMCIAId");
+
+                    b.HasIndex("SCSIId");
+
+                    b.HasIndex("SecureDigitalId");
+
+                    b.HasIndex("USBId");
+
+                    b.ToTable("Devices");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.DeviceStat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Bus");
+
+                    b.Property<string>("Manufacturer");
+
+                    b.Property<string>("Model");
+
+                    b.Property<string>("Revision");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SeenDevices");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Filesystem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("Count");
+
+                    b.Property<string>("Name");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Filesystems");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Filter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("Count");
+
+                    b.Property<string>("Name");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Filters");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Media", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("Count");
+
+                    b.Property<bool>("Real");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.Property<string>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medias");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.MediaFormat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("Count");
+
+                    b.Property<string>("Name");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MediaFormats");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.OperatingSystem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("Count");
+
+                    b.Property<string>("Name");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.Property<string>("Version");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OperatingSystems");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Partition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("Count");
+
+                    b.Property<string>("Name");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Partitions");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Report", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int?>("ATAId");
+
+                    b.Property<int?>("ATAPIId");
+
+                    b.Property<bool>("CompactFlash");
+
+                    b.Property<DateTime>("Created");
+
+                    b.Property<int?>("FireWireId");
+
+                    b.Property<string>("Manufacturer");
+
+                    b.Property<string>("Model");
+
+                    b.Property<int?>("MultiMediaCardId");
+
+                    b.Property<int?>("PCMCIAId");
+
+                    b.Property<string>("Revision");
+
+                    b.Property<int?>("SCSIId");
+
+                    b.Property<int?>("SecureDigitalId");
+
+                    b.Property<int>("Type");
+
+                    b.Property<int?>("USBId");
+
+                    b.Property<bool>("Uploaded");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ATAId");
+
+                    b.HasIndex("ATAPIId");
+
+                    b.HasIndex("FireWireId");
+
+                    b.HasIndex("MultiMediaCardId");
+
+                    b.HasIndex("PCMCIAId");
+
+                    b.HasIndex("SCSIId");
+
+                    b.HasIndex("SecureDigitalId");
+
+                    b.HasIndex("USBId");
+
+                    b.ToTable("Reports");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Version", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("Count");
+
+                    b.Property<bool>("Synchronized");
+
+                    b.Property<string>("Value");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Versions");
                 });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata", b =>
@@ -1033,41 +1189,6 @@ namespace DiscImageChef.Database.Migrations
                     b.HasOne("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia")
                         .WithMany("DensityCodes")
                         .HasForeignKey("SscSupportedMediaId");
-                });
-
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DeviceReportV2", b =>
-                {
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATA")
-                        .WithMany()
-                        .HasForeignKey("ATAId");
-
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI")
-                        .WithMany()
-                        .HasForeignKey("ATAPIId");
-
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire")
-                        .WithMany()
-                        .HasForeignKey("FireWireId");
-
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard")
-                        .WithMany()
-                        .HasForeignKey("MultiMediaCardId");
-
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA")
-                        .WithMany()
-                        .HasForeignKey("PCMCIAId");
-
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI")
-                        .WithMany()
-                        .HasForeignKey("SCSIId");
-
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital")
-                        .WithMany()
-                        .HasForeignKey("SecureDigitalId");
-
-                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB")
-                        .WithMany()
-                        .HasForeignKey("USBId");
                 });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc", b =>
@@ -1157,6 +1278,76 @@ namespace DiscImageChef.Database.Migrations
                     b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc")
                         .WithMany("TestedMedia")
                         .HasForeignKey("SscId");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
+                {
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATA")
+                        .WithMany()
+                        .HasForeignKey("ATAId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI")
+                        .WithMany()
+                        .HasForeignKey("ATAPIId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire")
+                        .WithMany()
+                        .HasForeignKey("FireWireId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard")
+                        .WithMany()
+                        .HasForeignKey("MultiMediaCardId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA")
+                        .WithMany()
+                        .HasForeignKey("PCMCIAId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI")
+                        .WithMany()
+                        .HasForeignKey("SCSIId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital")
+                        .WithMany()
+                        .HasForeignKey("SecureDigitalId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB")
+                        .WithMany()
+                        .HasForeignKey("USBId");
+                });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.Report", b =>
+                {
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATA")
+                        .WithMany()
+                        .HasForeignKey("ATAId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI")
+                        .WithMany()
+                        .HasForeignKey("ATAPIId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire")
+                        .WithMany()
+                        .HasForeignKey("FireWireId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard")
+                        .WithMany()
+                        .HasForeignKey("MultiMediaCardId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA")
+                        .WithMany()
+                        .HasForeignKey("PCMCIAId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI")
+                        .WithMany()
+                        .HasForeignKey("SCSIId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital")
+                        .WithMany()
+                        .HasForeignKey("SecureDigitalId");
+
+                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB")
+                        .WithMany()
+                        .HasForeignKey("USBId");
                 });
 #pragma warning restore 612, 618
         }

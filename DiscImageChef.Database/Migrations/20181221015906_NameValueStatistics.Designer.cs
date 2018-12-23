@@ -111,13 +111,9 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<int?>("FeaturesId");
 
-                    b.Property<int?>("ModeSense2AId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FeaturesId");
-
-                    b.HasIndex("ModeSense2AId");
 
                     b.ToTable("Mmc");
                 });
@@ -1164,10 +1160,6 @@ namespace DiscImageChef.Database.Migrations
                     b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcFeatures", "Features")
                         .WithMany()
                         .HasForeignKey("FeaturesId");
-
-                    b.HasOne("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", "ModeSense2A")
-                        .WithMany()
-                        .HasForeignKey("ModeSense2AId");
                 });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Scsi", b =>

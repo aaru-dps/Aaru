@@ -287,16 +287,12 @@ namespace DiscImageChef.Database.Migrations
                                          {
                                              Id = table.Column<int>(nullable: false)
                                                        .Annotation("Sqlite:Autoincrement", true),
-                                             ModeSense2AId = table.Column<int>(nullable: true),
-                                             FeaturesId    = table.Column<int>(nullable: true)
+                                             FeaturesId = table.Column<int>(nullable: true)
                                          }, constraints: table =>
                                          {
                                              table.PrimaryKey("PK_Mmc", x => x.Id);
                                              table.ForeignKey("FK_Mmc_MmcFeatures_FeaturesId", x => x.FeaturesId,
                                                               "MmcFeatures", "Id",
-                                                              onDelete: ReferentialAction.Restrict);
-                                             table.ForeignKey("FK_Mmc_ModePage_2A_ModeSense2AId", x => x.ModeSense2AId,
-                                                              "ModePage_2A", "Id",
                                                               onDelete: ReferentialAction.Restrict);
                                          });
 
@@ -625,8 +621,6 @@ namespace DiscImageChef.Database.Migrations
             migrationBuilder.CreateIndex("IX_DensityCode_SscSupportedMediaId", "DensityCode", "SscSupportedMediaId");
 
             migrationBuilder.CreateIndex("IX_Mmc_FeaturesId", "Mmc", "FeaturesId");
-
-            migrationBuilder.CreateIndex("IX_Mmc_ModeSense2AId", "Mmc", "ModeSense2AId");
 
             migrationBuilder.CreateIndex("IX_Reports_ATAId", "Reports", "ATAId");
 

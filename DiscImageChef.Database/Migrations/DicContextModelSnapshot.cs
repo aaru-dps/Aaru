@@ -115,13 +115,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<int?>("FeaturesId");
 
-                b.Property<int?>("ModeSense2AId");
+                b.Property<byte[]>("ModeSense2AData");
 
                 b.HasKey("Id");
 
                 b.HasIndex("FeaturesId");
-
-                b.HasIndex("ModeSense2AId");
 
                 b.ToTable("Mmc");
             });
@@ -1139,119 +1137,6 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Versions");
             });
 
-            modelBuilder.Entity("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", b =>
-            {
-                b.Property<int>("Id").ValueGeneratedOnAdd();
-
-                b.Property<bool>("AccurateCDDA");
-
-                b.Property<bool>("AudioPlay");
-
-                b.Property<bool>("BCK");
-
-                b.Property<bool>("BUF");
-
-                b.Property<ushort>("BufferSize");
-
-                b.Property<bool>("C2Pointer");
-
-                b.Property<bool>("CDDACommand");
-
-                b.Property<ushort>("CMRSupported");
-
-                b.Property<bool>("Composite");
-
-                b.Property<ushort>("CurrentSpeed");
-
-                b.Property<ushort>("CurrentWriteSpeed");
-
-                b.Property<ushort>("CurrentWriteSpeedSelected");
-
-                b.Property<bool>("DeinterlaveSubchannel");
-
-                b.Property<bool>("DigitalPort1");
-
-                b.Property<bool>("DigitalPort2");
-
-                b.Property<bool>("Eject");
-
-                b.Property<bool>("ISRC");
-
-                b.Property<bool>("LSBF");
-
-                b.Property<bool>("LeadInPW");
-
-                b.Property<byte>("Length");
-
-                b.Property<byte>("LoadingMechanism");
-
-                b.Property<bool>("Lock");
-
-                b.Property<bool>("LockState");
-
-                b.Property<ushort>("MaxWriteSpeed");
-
-                b.Property<ushort>("MaximumSpeed");
-
-                b.Property<bool>("Method2");
-
-                b.Property<bool>("Mode2Form1");
-
-                b.Property<bool>("Mode2Form2");
-
-                b.Property<bool>("MultiSession");
-
-                b.Property<bool>("PS");
-
-                b.Property<bool>("PreventJumper");
-
-                b.Property<bool>("RCK");
-
-                b.Property<bool>("ReadBarcode");
-
-                b.Property<bool>("ReadCDR");
-
-                b.Property<bool>("ReadCDRW");
-
-                b.Property<bool>("ReadDVDR");
-
-                b.Property<bool>("ReadDVDRAM");
-
-                b.Property<bool>("ReadDVDROM");
-
-                b.Property<byte>("RotationControlSelected");
-
-                b.Property<bool>("SCC");
-
-                b.Property<bool>("SDP");
-
-                b.Property<bool>("SSS");
-
-                b.Property<bool>("SeparateChannelMute");
-
-                b.Property<bool>("SeparateChannelVolume");
-
-                b.Property<bool>("Subchannel");
-
-                b.Property<ushort>("SupportedVolumeLevels");
-
-                b.Property<bool>("TestWrite");
-
-                b.Property<bool>("UPC");
-
-                b.Property<bool>("WriteCDR");
-
-                b.Property<bool>("WriteCDRW");
-
-                b.Property<bool>("WriteDVDR");
-
-                b.Property<bool>("WriteDVDRAM");
-
-                b.HasKey("Id");
-
-                b.ToTable("ModePage_2A");
-            });
-
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata",
                                 b =>
                                 {
@@ -1273,14 +1158,12 @@ namespace DiscImageChef.Database.Migrations
                                      .WithMany("DensityCodes").HasForeignKey("SscSupportedMediaId");
                                 });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc", b =>
-            {
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcFeatures", "Features").WithMany()
-                 .HasForeignKey("FeaturesId");
-
-                b.HasOne("DiscImageChef.Decoders.SCSI.Modes+ModePage_2A", "ModeSense2A").WithMany()
-                 .HasForeignKey("ModeSense2AId");
-            });
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc",
+                                b =>
+                                {
+                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcFeatures", "Features").WithMany()
+                                     .HasForeignKey("FeaturesId");
+                                });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Scsi", b =>
             {
