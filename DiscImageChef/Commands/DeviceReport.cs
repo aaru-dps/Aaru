@@ -168,7 +168,7 @@ namespace DiscImageChef.Commands
 
                     if(!Identify.Decode(buffer).HasValue) break;
 
-                    report.ATA = new Ata {IdentifyDevice = Identify.Decode(buffer)};
+                    report.ATA = new Ata {Identify = buffer};
 
                     if(report.ATA.IdentifyDevice == null) break;
 
@@ -199,8 +199,7 @@ namespace DiscImageChef.Commands
                         System.Console.ReadKey(true);
                         DicConsole.WriteLine("Querying ATA IDENTIFY...");
                         dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
-                        report.ATA.IdentifyDevice = Identify.Decode(buffer);
-                        if(options.Debug) report.ATA.Identify = buffer;
+                        report.ATA.Identify = buffer;
                         List<TestedMedia> mediaTests          = new List<TestedMedia>();
 
                         pressedKey = new ConsoleKeyInfo();
@@ -252,9 +251,7 @@ namespace DiscImageChef.Commands
                     if(!Identify.Decode(buffer).HasValue) return;
 
                     Identify.IdentifyDevice? atapiIdNullable = Identify.Decode(buffer);
-                    if(atapiIdNullable != null) report.ATAPI = new Ata {IdentifyDevice = atapiIdNullable};
-
-                    if(options.Debug) report.ATAPI.Identify = buffer;
+                    report.ATAPI.Identify = buffer;
 
                     goto case DeviceType.SCSI;
                 case DeviceType.SCSI:
@@ -297,9 +294,7 @@ namespace DiscImageChef.Commands
 
                     report.SCSI.EVPDPages = reporter.ReportEvpdPages();
 
-                    Modes.ModePage_2A cdromMode = null;
-
-                    reporter.ReportScsiModes(ref report, ref cdromMode);
+                    reporter.ReportScsiModes(ref report, out byte[] cdromMode);
 
                     string mediumManufacturer;
                     byte[] senseBuffer;
@@ -313,18 +308,18 @@ namespace DiscImageChef.Commands
 
                             report.SCSI.MultiMediaDevice = new Mmc
                             {
-                                ModeSense2A = cdromMode, Features = reporter.ReportMmcFeatures()
+                                ModeSense2AData = cdromMode, Features = reporter.ReportMmcFeatures()
                             };
 
                             if(cdromMode != null)
                             {
                                 mediaTypes.Add("CD-ROM");
                                 mediaTypes.Add("Audio CD");
-                                if(cdromMode.ReadCDR) mediaTypes.Add("CD-R");
-                                if(cdromMode.ReadCDRW) mediaTypes.Add("CD-RW");
-                                if(cdromMode.ReadDVDROM) mediaTypes.Add("DVD-ROM");
-                                if(cdromMode.ReadDVDRAM) mediaTypes.Add("DVD-RAM");
-                                if(cdromMode.ReadDVDR) mediaTypes.Add("DVD-R");
+                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR) mediaTypes.Add("CD-R");
+                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW) mediaTypes.Add("CD-RW");
+                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDROM) mediaTypes.Add("DVD-ROM");
+                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM) mediaTypes.Add("DVD-RAM");
+                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR) mediaTypes.Add("DVD-R");
                             }
 
                             if(report.SCSI.MultiMediaDevice.Features != null)

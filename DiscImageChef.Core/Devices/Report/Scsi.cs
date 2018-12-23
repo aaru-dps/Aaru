@@ -51,9 +51,7 @@ namespace DiscImageChef.Core.Devices.Report
 
             if(sense || !Inquiry.Decode(buffer).HasValue) return null;
 
-            report.Inquiry = Inquiry.Decode(buffer);
-
-            if(debug) report.InquiryData = buffer;
+            report.InquiryData = buffer;
 
             return report;
         }
@@ -82,7 +80,7 @@ namespace DiscImageChef.Core.Devices.Report
             return evpds.Count > 0 ? evpds : null;
         }
 
-        public void ReportScsiModes(ref DeviceReportV2 report, ref Modes.ModePage_2A cdromMode)
+        public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode)
         {
             Modes.DecodedMode?    decMode = null;
             PeripheralDeviceTypes devType = dev.ScsiType;
@@ -157,7 +155,7 @@ namespace DiscImageChef.Core.Devices.Report
                 modePages.Add(modePage);
 
                 if(modePage.page == 0x2A && modePage.subpage == 0x00)
-                    cdromMode = Modes.DecodeModePage_2A(page.PageResponse);
+                    cdromMode = page.PageResponse;
             }
 
             if(modePages.Count > 0) report.SCSI.ModeSense.ModePages = modePages;
