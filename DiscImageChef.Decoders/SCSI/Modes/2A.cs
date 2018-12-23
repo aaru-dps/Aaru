@@ -30,6 +30,7 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -299,8 +300,132 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyModePage_2A(byte[] pageResponse) =>
-            PrettifyModePage_2A(DecodeModePage_2A(pageResponse));
+        public static byte[] EncodeModePage_2A(ModePage_2A decoded)
+        {
+            byte[] pageResponse = new byte[512];
+            byte   length       = 16;
+
+            pageResponse[0] = 0x2A;
+
+            if(decoded.PS) pageResponse[0] += 0x80;
+
+            if(decoded.AudioPlay) pageResponse[4]    += 0x01;
+            if(decoded.Mode2Form1) pageResponse[4]   += 0x10;
+            if(decoded.Mode2Form2) pageResponse[4]   += 0x20;
+            if(decoded.MultiSession) pageResponse[4] += 0x40;
+
+            if(decoded.CDDACommand) pageResponse[5]           += 0x01;
+            if(decoded.AccurateCDDA) pageResponse[5]          += 0x02;
+            if(decoded.Subchannel) pageResponse[5]            += 0x04;
+            if(decoded.DeinterlaveSubchannel) pageResponse[5] += 0x08;
+            if(decoded.C2Pointer) pageResponse[5]             += 0x10;
+            if(decoded.UPC) pageResponse[5]                   += 0x20;
+            if(decoded.ISRC) pageResponse[5]                  += 0x40;
+
+            decoded.LoadingMechanism = (byte)((pageResponse[6] & 0xE0) >> 5);
+            if(decoded.Lock) pageResponse[6]          += 0x01;
+            if(decoded.LockState) pageResponse[6]     += 0x02;
+            if(decoded.PreventJumper) pageResponse[6] += 0x04;
+            if(decoded.Eject) pageResponse[6]         += 0x08;
+
+            if(decoded.SeparateChannelVolume) pageResponse[7] += 0x01;
+            if(decoded.SeparateChannelMute) pageResponse[7]   += 0x02;
+
+            decoded.MaximumSpeed          = (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
+            decoded.SupportedVolumeLevels = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
+            decoded.BufferSize            = (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+            decoded.CurrentSpeed          = (ushort)((pageResponse[14] << 8) + pageResponse[15]);
+
+            if(decoded.Method2    || decoded.ReadCDRW || decoded.ReadCDR || decoded.WriteCDRW ||
+               decoded.WriteCDR   ||
+               decoded.Composite  || decoded.DigitalPort1 || decoded.DigitalPort2 || decoded.SDP ||
+               decoded.SSS        ||
+               decoded.Length > 0 || decoded.LSBF || decoded.RCK || decoded.BCK)
+            {
+                length = 20;
+                if(decoded.Method2) pageResponse[2]  += 0x04;
+                if(decoded.ReadCDRW) pageResponse[2] += 0x02;
+                if(decoded.ReadCDR) pageResponse[2]  += 0x01;
+
+                if(decoded.WriteCDRW) pageResponse[3] += 0x02;
+                if(decoded.WriteCDR) pageResponse[3]  += 0x01;
+
+                if(decoded.Composite) pageResponse[4]    += 0x02;
+                if(decoded.DigitalPort1) pageResponse[4] += 0x04;
+                if(decoded.DigitalPort2) pageResponse[4] += 0x08;
+
+                if(decoded.SDP) pageResponse[7] += 0x04;
+                if(decoded.SSS) pageResponse[7] += 0x08;
+
+                pageResponse[17] = (byte)(decoded.Length << 4);
+                if(decoded.LSBF) pageResponse[17] += 0x08;
+                if(decoded.RCK) pageResponse[17]  += 0x04;
+                if(decoded.BCK) pageResponse[17]  += 0x02;
+            }
+
+            if(decoded.TestWrite || decoded.MaxWriteSpeed > 0 || decoded.CurrentWriteSpeed > 0 || decoded.ReadBarcode)
+            {
+                length = 22;
+                if(decoded.TestWrite) pageResponse[3] += 0x04;
+                pageResponse[18] = (byte)((decoded.MaxWriteSpeed & 0xFF00) >> 8);
+                pageResponse[19] = (byte)(decoded.MaxWriteSpeed & 0xFF);
+                pageResponse[20] = (byte)((decoded.CurrentWriteSpeed & 0xFF00) >> 8);
+                pageResponse[21] = (byte)(decoded.CurrentWriteSpeed & 0xFF);
+                if(decoded.ReadBarcode) pageResponse[5] += 0x80;
+            }
+
+            if(decoded.ReadDVDRAM || decoded.ReadDVDR || decoded.ReadDVDROM || decoded.WriteDVDRAM ||
+               decoded.WriteDVDR  || decoded.LeadInPW || decoded.SCC        || decoded.CMRSupported > 0)
+
+            {
+                length = 26;
+                if(decoded.ReadDVDRAM) pageResponse[2] += 0x20;
+                if(decoded.ReadDVDR) pageResponse[2]   += 0x10;
+                if(decoded.ReadDVDROM) pageResponse[2] += 0x08;
+
+                if(decoded.WriteDVDRAM) pageResponse[3] += 0x20;
+                if(decoded.WriteDVDR) pageResponse[3]   += 0x10;
+
+                if(decoded.LeadInPW) pageResponse[3] += 0x20;
+                if(decoded.SCC) pageResponse[3]      += 0x10;
+
+                pageResponse[22] = (byte)((decoded.CMRSupported & 0xFF00) >> 8);
+                pageResponse[23] = (byte)(decoded.CMRSupported & 0xFF);
+            }
+
+            if(decoded.BUF || decoded.RotationControlSelected > 0 || decoded.CurrentWriteSpeedSelected > 0)
+            {
+                length = 32;
+                if(decoded.BUF) pageResponse[4] += 0x80;
+                pageResponse[27] += decoded.RotationControlSelected;
+                pageResponse[28] =  (byte)((decoded.CurrentWriteSpeedSelected & 0xFF00) >> 8);
+                pageResponse[29] =  (byte)(decoded.CurrentWriteSpeedSelected & 0xFF);
+            }
+
+            if(decoded.WriteSpeedPerformanceDescriptors != null)
+            {
+                length = 32;
+                for(int i = 0; i < decoded.WriteSpeedPerformanceDescriptors.Length; i++)
+                {
+                    length                       += 4;
+                    pageResponse[1 + 32 + i * 4] =  decoded.WriteSpeedPerformanceDescriptors[i].RotationControl;
+                    pageResponse[2 + 32 + i * 4] =
+                        (byte)((decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed & 0xFF00) >> 8);
+                    pageResponse[3 + 32 + i * 4] =
+                        (byte)(decoded.WriteSpeedPerformanceDescriptors[i].WriteSpeed & 0xFF);
+                }
+            }
+
+            pageResponse[1] = (byte)(length - 2);
+            byte[] buf = new byte[length];
+            Array.Copy(pageResponse, 0, buf, 0, length);
+            return buf;
+        }
+
+        public static string PrettifyModePage_2A(byte[] pageResponse)
+        {
+            return PrettifyModePage_2A(DecodeModePage_2A(pageResponse));
+        }
 
         public static string PrettifyModePage_2A(ModePage_2A modePage)
         {
