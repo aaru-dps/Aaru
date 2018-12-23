@@ -35,7 +35,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("BlockLength");
 
+                b.Property<int?>("BlockLengthSql");
+
                 b.Property<ulong?>("Blocks");
+
+                b.Property<long?>("BlocksSql");
 
                 b.Property<byte>("Density");
 
@@ -54,9 +58,15 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("Cylinders");
 
+                b.Property<short>("CylindersSql");
+
                 b.Property<ushort>("Heads");
 
+                b.Property<short>("HeadsSql");
+
                 b.Property<ushort>("Sectors");
+
+                b.Property<short>("SectorsSql");
 
                 b.HasKey("Id");
 
@@ -86,9 +96,13 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint>("ProductID");
 
+                b.Property<int>("ProductIDSql");
+
                 b.Property<bool>("RemovableMedia");
 
                 b.Property<uint>("VendorID");
+
+                b.Property<int>("VendorIDSql");
 
                 b.HasKey("Id");
 
@@ -123,6 +137,8 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<byte?>("BindingNonceBlocks");
 
                 b.Property<ushort?>("BlocksPerReadableUnit");
+
+                b.Property<short?>("BlocksPerReadableUnitSql");
 
                 b.Property<bool>("BufferUnderrunFreeInDVD");
 
@@ -320,11 +336,13 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("LogicalBlockSize");
 
+                b.Property<int?>("LogicalBlockSizeSql");
+
                 b.Property<bool>("MultiRead");
 
-                b.Property<uint?>("PhysicalInterfaceStandard");
-
                 b.Property<uint?>("PhysicalInterfaceStandardNumber");
+
+                b.Property<int?>("PhysicalInterfaceStandardNumberSql");
 
                 b.Property<bool>("PreventJumper");
 
@@ -364,6 +382,8 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("VolumeLevels");
 
+                b.Property<short?>("VolumeLevelsSql");
+
                 b.HasKey("Id");
 
                 b.ToTable("MmcFeatures");
@@ -396,11 +416,15 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("CardCode");
 
+                b.Property<short?>("CardCodeSql");
+
                 b.Property<string>("Compliance");
 
                 b.Property<string>("Manufacturer");
 
                 b.Property<ushort?>("ManufacturerCode");
+
+                b.Property<short?>("ManufacturerCodeSql");
 
                 b.Property<string>("ProductName");
 
@@ -498,7 +522,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("MaxBlockLength");
 
+                b.Property<int?>("MaxBlockLengthSql");
+
                 b.Property<uint?>("MinBlockLength");
+
+                b.Property<int?>("MinBlockLengthSql");
 
                 b.HasKey("Id");
 
@@ -513,6 +541,8 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("Length");
 
+                b.Property<short>("LengthSql");
+
                 b.Property<byte>("MediumType");
 
                 b.Property<string>("Name");
@@ -524,6 +554,8 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<int?>("TestedSequentialMediaId");
 
                 b.Property<ushort>("Width");
+
+                b.Property<short>("WidthSql");
 
                 b.HasKey("Id");
 
@@ -540,7 +572,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint>("BitsPerMm");
 
+                b.Property<int>("BitsPerMmSql");
+
                 b.Property<uint>("Capacity");
+
+                b.Property<int>("CapacitySql");
 
                 b.Property<bool>("DefaultDensity");
 
@@ -562,7 +598,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("Tracks");
 
+                b.Property<short>("TracksSql");
+
                 b.Property<ushort>("Width");
+
+                b.Property<short>("WidthSql");
 
                 b.Property<bool>("Writable");
 
@@ -583,7 +623,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("BlockSize");
 
+                b.Property<int?>("BlockSizeSql");
+
                 b.Property<ulong?>("Blocks");
+
+                b.Property<long?>("BlocksSql");
 
                 b.Property<int?>("CHSId");
 
@@ -657,11 +701,19 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ulong?>("LBA48Sectors");
 
+                b.Property<long?>("LBA48SectorsSql");
+
                 b.Property<uint?>("LBASectors");
+
+                b.Property<int?>("LBASectorsSql");
 
                 b.Property<ushort?>("LogicalAlignment");
 
+                b.Property<short?>("LogicalAlignmentSql");
+
                 b.Property<uint?>("LongBlockSize");
+
+                b.Property<int?>("LongBlockSizeSql");
 
                 b.Property<string>("Manufacturer");
 
@@ -681,7 +733,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("NominalRotationRate");
 
+                b.Property<short?>("NominalRotationRateSql");
+
                 b.Property<uint?>("PhysicalBlockSize");
+
+                b.Property<int?>("PhysicalBlockSizeSql");
 
                 b.Property<int?>("ScsiId");
 
@@ -755,7 +811,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("UnformattedBPS");
 
+                b.Property<short?>("UnformattedBPSSql");
+
                 b.Property<ushort?>("UnformattedBPT");
+
+                b.Property<short?>("UnformattedBPTSql");
 
                 b.HasKey("Id");
 
@@ -815,9 +875,13 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("ProductID");
 
+                b.Property<short>("ProductIDSql");
+
                 b.Property<bool>("RemovableMedia");
 
                 b.Property<ushort>("VendorID");
+
+                b.Property<short>("VendorIDSql");
 
                 b.HasKey("Id");
 

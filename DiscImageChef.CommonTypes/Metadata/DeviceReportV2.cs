@@ -45,6 +45,7 @@ using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using Newtonsoft.Json;
+
 // ReSharper disable VirtualMemberNeverOverridden.Global
 // ReSharper disable VirtualMemberCallInConstructor
 
@@ -117,11 +118,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                  set; }
+        public int Id { get;                          set; }
         public virtual Usb      USB            { get; set; }
         public virtual FireWire FireWire       { get; set; }
         public virtual Pcmcia   PCMCIA         { get; set; }
-        public bool     CompactFlash   { get; set; }
+        public         bool     CompactFlash   { get; set; }
         public virtual Ata      ATA            { get; set; }
         public virtual Ata      ATAPI          { get; set; }
         public virtual Scsi     SCSI           { get; set; }
@@ -156,6 +157,20 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Product        { get; set; }
         public bool   RemovableMedia { get; set; }
         public byte[] Descriptors    { get; set; }
+
+        [JsonIgnore]
+        public short VendorIDSql
+        {
+            get => (short)VendorID;
+            set => VendorID = (ushort)value;
+        }
+
+        [JsonIgnore]
+        public short ProductIDSql
+        {
+            get => (short)ProductID;
+            set => ProductID = (ushort)value;
+        }
     }
 
     public class FireWire
@@ -178,6 +193,20 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Manufacturer   { get; set; }
         public string Product        { get; set; }
         public bool   RemovableMedia { get; set; }
+
+        [JsonIgnore]
+        public int VendorIDSql
+        {
+            get => (int)VendorID;
+            set => VendorID = (uint)value;
+        }
+
+        [JsonIgnore]
+        public int ProductIDSql
+        {
+            get => (int)ProductID;
+            set => ProductID = (uint)value;
+        }
     }
 
     public class Ata
@@ -373,8 +402,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                             set; }
-        public byte[]            Identify         { get; set; }
+        public int Id { get;                                     set; }
+        public         byte[]            Identify         { get; set; }
         public virtual TestedMedia       ReadCapabilities { get; set; }
         public virtual List<TestedMedia> RemovableMedias  { get; set; }
     }
@@ -395,6 +424,25 @@ namespace DiscImageChef.CommonTypes.Metadata
         public ushort Cylinders { get; set; }
         public ushort Heads     { get; set; }
         public ushort Sectors   { get; set; }
+
+        [JsonIgnore]
+        public short CylindersSql
+        {
+            get => (short)Cylinders;
+            set => Cylinders = (ushort)value;
+        }
+        [JsonIgnore]
+        public short HeadsSql
+        {
+            get => (short)Heads;
+            set => Heads = (ushort)value;
+        }
+        [JsonIgnore]
+        public short SectorsSql
+        {
+            get => (short)Sectors;
+            set => Sectors = (ushort)value;
+        }
     }
 
     public class Scsi
@@ -509,19 +557,19 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                                 set; }
-        public byte[]            InquiryData          { get; set; }
+        public int Id { get;                                         set; }
+        public         byte[]            InquiryData          { get; set; }
         public virtual List<ScsiPage>    EVPDPages            { get; set; }
-        public bool              SupportsModeSense6   { get; set; }
-        public bool              SupportsModeSense10  { get; set; }
-        public bool              SupportsModeSubpages { get; set; }
+        public         bool              SupportsModeSense6   { get; set; }
+        public         bool              SupportsModeSense10  { get; set; }
+        public         bool              SupportsModeSubpages { get; set; }
         public virtual ScsiMode          ModeSense            { get; set; }
         public virtual Mmc               MultiMediaDevice     { get; set; }
         public virtual TestedMedia       ReadCapabilities     { get; set; }
         public virtual List<TestedMedia> RemovableMedias      { get; set; }
         public virtual Ssc               SequentialDevice     { get; set; }
-        public byte[]            ModeSense6Data       { get; set; }
-        public byte[]            ModeSense10Data      { get; set; }
+        public         byte[]            ModeSense6Data       { get; set; }
+        public         byte[]            ModeSense10Data      { get; set; }
     }
 
     public class ScsiMode
@@ -551,14 +599,14 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                                  set; }
-        public byte?                 MediumType        { get; set; }
-        public bool                  WriteProtected    { get; set; }
+        public int Id { get;                                          set; }
+        public         byte?                 MediumType        { get; set; }
+        public         bool                  WriteProtected    { get; set; }
         public virtual List<BlockDescriptor> BlockDescriptors  { get; set; }
-        public byte?                 Speed             { get; set; }
-        public byte?                 BufferedMode      { get; set; }
-        public bool                  BlankCheckEnabled { get; set; }
-        public bool                  DPOandFUA         { get; set; }
+        public         byte?                 Speed             { get; set; }
+        public         byte?                 BufferedMode      { get; set; }
+        public         bool                  BlankCheckEnabled { get; set; }
+        public         bool                  DPOandFUA         { get; set; }
         public virtual List<ScsiPage>        ModePages         { get; set; }
     }
 
@@ -578,6 +626,19 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte   Density     { get; set; }
         public ulong? Blocks      { get; set; }
         public uint?  BlockLength { get; set; }
+
+        [JsonIgnore]
+        public long? BlocksSql
+        {
+            get => (long?)Blocks;
+            set => Blocks = (ulong?)value;
+        }
+        [JsonIgnore]
+        public int? BlockLengthSql
+        {
+            get => (int?)BlockLength;
+            set => BlockLength = (uint?)value;
+        }
     }
 
     public class ScsiPage
@@ -674,7 +735,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                        set; }
+        public int Id { get;                                set; }
         public virtual Modes.ModePage_2A ModeSense2A { get; set; }
         public virtual MmcFeatures       Features    { get; set; }
         public virtual List<TestedMedia> TestedMedia { get; set; }
@@ -686,8 +747,8 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public MmcFeatures(mmcFeaturesType features)
         {
-            if(features.PhysicalInterfaceStandardSpecified)
-                PhysicalInterfaceStandard = features.PhysicalInterfaceStandard;
+            if(features.PhysicalInterfaceStandardSpecified && !features.PhysicalInterfaceStandardNumberSpecified)
+                PhysicalInterfaceStandardNumber = (uint?)features.PhysicalInterfaceStandard;
 
             if(features.PhysicalInterfaceStandardNumberSpecified)
                 PhysicalInterfaceStandardNumber = features.PhysicalInterfaceStandardNumber;
@@ -827,131 +888,156 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                                              set; }
-        public byte?               AACSVersion                     { get; set; }
-        public byte?               AGIDs                           { get; set; }
-        public byte?               BindingNonceBlocks              { get; set; }
-        public ushort?             BlocksPerReadableUnit           { get; set; }
-        public bool                BufferUnderrunFreeInDVD         { get; set; }
-        public bool                BufferUnderrunFreeInSAO         { get; set; }
-        public bool                BufferUnderrunFreeInTAO         { get; set; }
-        public bool                CanAudioScan                    { get; set; }
-        public bool                CanEject                        { get; set; }
-        public bool                CanEraseSector                  { get; set; }
-        public bool                CanExpandBDRESpareArea          { get; set; }
-        public bool                CanFormat                       { get; set; }
-        public bool                CanFormatBDREWithoutSpare       { get; set; }
-        public bool                CanFormatCert                   { get; set; }
-        public bool                CanFormatFRF                    { get; set; }
-        public bool                CanFormatQCert                  { get; set; }
-        public bool                CanFormatRRM                    { get; set; }
-        public bool                CanGenerateBindingNonce         { get; set; }
-        public bool                CanLoad                         { get; set; }
-        public bool                CanMuteSeparateChannels         { get; set; }
-        public bool                CanOverwriteSAOTrack            { get; set; }
-        public bool                CanOverwriteTAOTrack            { get; set; }
-        public bool                CanPlayCDAudio                  { get; set; }
-        public bool                CanPseudoOverwriteBDR           { get; set; }
-        public bool                CanReadAllDualR                 { get; set; }
-        public bool                CanReadAllDualRW                { get; set; }
-        public bool                CanReadBD                       { get; set; }
-        public bool                CanReadBDR                      { get; set; }
-        public bool                CanReadBDRE1                    { get; set; }
-        public bool                CanReadBDRE2                    { get; set; }
-        public bool                CanReadBDROM                    { get; set; }
-        public bool                CanReadBluBCA                   { get; set; }
-        public bool                CanReadCD                       { get; set; }
-        public bool                CanReadCDMRW                    { get; set; }
-        public bool                CanReadCPRM_MKB                 { get; set; }
-        public bool                CanReadDDCD                     { get; set; }
-        public bool                CanReadDVD                      { get; set; }
-        public bool                CanReadDVDPlusMRW               { get; set; }
-        public bool                CanReadDVDPlusR                 { get; set; }
-        public bool                CanReadDVDPlusRDL               { get; set; }
-        public bool                CanReadDVDPlusRW                { get; set; }
-        public bool                CanReadDVDPlusRWDL              { get; set; }
-        public bool                CanReadDriveAACSCertificate     { get; set; }
-        public bool                CanReadHDDVD                    { get; set; }
-        public bool                CanReadHDDVDR                   { get; set; }
-        public bool                CanReadHDDVDRAM                 { get; set; }
-        public bool                CanReadLeadInCDText             { get; set; }
-        public bool                CanReadOldBDR                   { get; set; }
-        public bool                CanReadOldBDRE                  { get; set; }
-        public bool                CanReadOldBDROM                 { get; set; }
-        public bool                CanReadSpareAreaInformation     { get; set; }
-        public bool                CanReportDriveSerial            { get; set; }
-        public bool                CanReportMediaSerial            { get; set; }
-        public bool                CanTestWriteDDCDR               { get; set; }
-        public bool                CanTestWriteDVD                 { get; set; }
-        public bool                CanTestWriteInSAO               { get; set; }
-        public bool                CanTestWriteInTAO               { get; set; }
-        public bool                CanUpgradeFirmware              { get; set; }
-        public bool                CanWriteBD                      { get; set; }
-        public bool                CanWriteBDR                     { get; set; }
-        public bool                CanWriteBDRE1                   { get; set; }
-        public bool                CanWriteBDRE2                   { get; set; }
-        public bool                CanWriteBusEncryptedBlocks      { get; set; }
-        public bool                CanWriteCDMRW                   { get; set; }
-        public bool                CanWriteCDRW                    { get; set; }
-        public bool                CanWriteCDRWCAV                 { get; set; }
-        public bool                CanWriteCDSAO                   { get; set; }
-        public bool                CanWriteCDTAO                   { get; set; }
-        public bool                CanWriteCSSManagedDVD           { get; set; }
-        public bool                CanWriteDDCDR                   { get; set; }
-        public bool                CanWriteDDCDRW                  { get; set; }
-        public bool                CanWriteDVDPlusMRW              { get; set; }
-        public bool                CanWriteDVDPlusR                { get; set; }
-        public bool                CanWriteDVDPlusRDL              { get; set; }
-        public bool                CanWriteDVDPlusRW               { get; set; }
-        public bool                CanWriteDVDPlusRWDL             { get; set; }
-        public bool                CanWriteDVDR                    { get; set; }
-        public bool                CanWriteDVDRDL                  { get; set; }
-        public bool                CanWriteDVDRW                   { get; set; }
-        public bool                CanWriteHDDVDR                  { get; set; }
-        public bool                CanWriteHDDVDRAM                { get; set; }
-        public bool                CanWriteOldBDR                  { get; set; }
-        public bool                CanWriteOldBDRE                 { get; set; }
-        public bool                CanWritePackedSubchannelInTAO   { get; set; }
-        public bool                CanWriteRWSubchannelInSAO       { get; set; }
-        public bool                CanWriteRWSubchannelInTAO       { get; set; }
-        public bool                CanWriteRaw                     { get; set; }
-        public bool                CanWriteRawMultiSession         { get; set; }
-        public bool                CanWriteRawSubchannelInTAO      { get; set; }
-        public bool                ChangerIsSideChangeCapable      { get; set; }
-        public byte                ChangerSlots                    { get; set; }
-        public bool                ChangerSupportsDiscPresent      { get; set; }
-        public byte?               CPRMVersion                     { get; set; }
-        public byte?               CSSVersion                      { get; set; }
-        public bool                DBML                            { get; set; }
-        public bool                DVDMultiRead                    { get; set; }
-        public bool                EmbeddedChanger                 { get; set; }
-        public bool                ErrorRecoveryPage               { get; set; }
-        public virtual DateTime?           FirmwareDate                    { get; set; }
-        public byte?               LoadingMechanismType            { get; set; }
-        public bool                Locked                          { get; set; }
-        public uint?               LogicalBlockSize                { get; set; }
-        public bool                MultiRead                       { get; set; }
-        public virtual PhysicalInterfaces? PhysicalInterfaceStandard       { get; set; }
-        public uint?               PhysicalInterfaceStandardNumber { get; set; }
-        public bool                PreventJumper                   { get; set; }
-        public bool                SupportsAACS                    { get; set; }
-        public bool                SupportsBusEncryption           { get; set; }
-        public bool                SupportsC2                      { get; set; }
-        public bool                SupportsCPRM                    { get; set; }
-        public bool                SupportsCSS                     { get; set; }
-        public bool                SupportsDAP                     { get; set; }
-        public bool                SupportsDeviceBusyEvent         { get; set; }
-        public bool                SupportsHybridDiscs             { get; set; }
-        public bool                SupportsModePage1Ch             { get; set; }
-        public bool                SupportsOSSC                    { get; set; }
-        public bool                SupportsPWP                     { get; set; }
-        public bool                SupportsSWPP                    { get; set; }
-        public bool                SupportsSecurDisc               { get; set; }
-        public bool                SupportsSeparateVolume          { get; set; }
-        public bool                SupportsVCPS                    { get; set; }
-        public bool                SupportsWriteInhibitDCB         { get; set; }
-        public bool                SupportsWriteProtectPAC         { get; set; }
-        public ushort?             VolumeLevels                    { get; set; }
+        public int Id { get;                                  set; }
+        public byte?     AACSVersion                   { get; set; }
+        public byte?     AGIDs                         { get; set; }
+        public byte?     BindingNonceBlocks            { get; set; }
+        public ushort?   BlocksPerReadableUnit         { get; set; }
+        public bool      BufferUnderrunFreeInDVD       { get; set; }
+        public bool      BufferUnderrunFreeInSAO       { get; set; }
+        public bool      BufferUnderrunFreeInTAO       { get; set; }
+        public bool      CanAudioScan                  { get; set; }
+        public bool      CanEject                      { get; set; }
+        public bool      CanEraseSector                { get; set; }
+        public bool      CanExpandBDRESpareArea        { get; set; }
+        public bool      CanFormat                     { get; set; }
+        public bool      CanFormatBDREWithoutSpare     { get; set; }
+        public bool      CanFormatCert                 { get; set; }
+        public bool      CanFormatFRF                  { get; set; }
+        public bool      CanFormatQCert                { get; set; }
+        public bool      CanFormatRRM                  { get; set; }
+        public bool      CanGenerateBindingNonce       { get; set; }
+        public bool      CanLoad                       { get; set; }
+        public bool      CanMuteSeparateChannels       { get; set; }
+        public bool      CanOverwriteSAOTrack          { get; set; }
+        public bool      CanOverwriteTAOTrack          { get; set; }
+        public bool      CanPlayCDAudio                { get; set; }
+        public bool      CanPseudoOverwriteBDR         { get; set; }
+        public bool      CanReadAllDualR               { get; set; }
+        public bool      CanReadAllDualRW              { get; set; }
+        public bool      CanReadBD                     { get; set; }
+        public bool      CanReadBDR                    { get; set; }
+        public bool      CanReadBDRE1                  { get; set; }
+        public bool      CanReadBDRE2                  { get; set; }
+        public bool      CanReadBDROM                  { get; set; }
+        public bool      CanReadBluBCA                 { get; set; }
+        public bool      CanReadCD                     { get; set; }
+        public bool      CanReadCDMRW                  { get; set; }
+        public bool      CanReadCPRM_MKB               { get; set; }
+        public bool      CanReadDDCD                   { get; set; }
+        public bool      CanReadDVD                    { get; set; }
+        public bool      CanReadDVDPlusMRW             { get; set; }
+        public bool      CanReadDVDPlusR               { get; set; }
+        public bool      CanReadDVDPlusRDL             { get; set; }
+        public bool      CanReadDVDPlusRW              { get; set; }
+        public bool      CanReadDVDPlusRWDL            { get; set; }
+        public bool      CanReadDriveAACSCertificate   { get; set; }
+        public bool      CanReadHDDVD                  { get; set; }
+        public bool      CanReadHDDVDR                 { get; set; }
+        public bool      CanReadHDDVDRAM               { get; set; }
+        public bool      CanReadLeadInCDText           { get; set; }
+        public bool      CanReadOldBDR                 { get; set; }
+        public bool      CanReadOldBDRE                { get; set; }
+        public bool      CanReadOldBDROM               { get; set; }
+        public bool      CanReadSpareAreaInformation   { get; set; }
+        public bool      CanReportDriveSerial          { get; set; }
+        public bool      CanReportMediaSerial          { get; set; }
+        public bool      CanTestWriteDDCDR             { get; set; }
+        public bool      CanTestWriteDVD               { get; set; }
+        public bool      CanTestWriteInSAO             { get; set; }
+        public bool      CanTestWriteInTAO             { get; set; }
+        public bool      CanUpgradeFirmware            { get; set; }
+        public bool      CanWriteBD                    { get; set; }
+        public bool      CanWriteBDR                   { get; set; }
+        public bool      CanWriteBDRE1                 { get; set; }
+        public bool      CanWriteBDRE2                 { get; set; }
+        public bool      CanWriteBusEncryptedBlocks    { get; set; }
+        public bool      CanWriteCDMRW                 { get; set; }
+        public bool      CanWriteCDRW                  { get; set; }
+        public bool      CanWriteCDRWCAV               { get; set; }
+        public bool      CanWriteCDSAO                 { get; set; }
+        public bool      CanWriteCDTAO                 { get; set; }
+        public bool      CanWriteCSSManagedDVD         { get; set; }
+        public bool      CanWriteDDCDR                 { get; set; }
+        public bool      CanWriteDDCDRW                { get; set; }
+        public bool      CanWriteDVDPlusMRW            { get; set; }
+        public bool      CanWriteDVDPlusR              { get; set; }
+        public bool      CanWriteDVDPlusRDL            { get; set; }
+        public bool      CanWriteDVDPlusRW             { get; set; }
+        public bool      CanWriteDVDPlusRWDL           { get; set; }
+        public bool      CanWriteDVDR                  { get; set; }
+        public bool      CanWriteDVDRDL                { get; set; }
+        public bool      CanWriteDVDRW                 { get; set; }
+        public bool      CanWriteHDDVDR                { get; set; }
+        public bool      CanWriteHDDVDRAM              { get; set; }
+        public bool      CanWriteOldBDR                { get; set; }
+        public bool      CanWriteOldBDRE               { get; set; }
+        public bool      CanWritePackedSubchannelInTAO { get; set; }
+        public bool      CanWriteRWSubchannelInSAO     { get; set; }
+        public bool      CanWriteRWSubchannelInTAO     { get; set; }
+        public bool      CanWriteRaw                   { get; set; }
+        public bool      CanWriteRawMultiSession       { get; set; }
+        public bool      CanWriteRawSubchannelInTAO    { get; set; }
+        public bool      ChangerIsSideChangeCapable    { get; set; }
+        public byte      ChangerSlots                  { get; set; }
+        public bool      ChangerSupportsDiscPresent    { get; set; }
+        public byte?     CPRMVersion                   { get; set; }
+        public byte?     CSSVersion                    { get; set; }
+        public bool      DBML                          { get; set; }
+        public bool      DVDMultiRead                  { get; set; }
+        public bool      EmbeddedChanger               { get; set; }
+        public bool      ErrorRecoveryPage             { get; set; }
+        public DateTime? FirmwareDate                  { get; set; }
+        public byte?     LoadingMechanismType          { get; set; }
+        public bool      Locked                        { get; set; }
+        public uint?     LogicalBlockSize              { get; set; }
+        public bool      MultiRead                     { get; set; }
+        public PhysicalInterfaces? PhysicalInterfaceStandard =>
+            (PhysicalInterfaces?)PhysicalInterfaceStandardNumber;
+        public uint?   PhysicalInterfaceStandardNumber { get; set; }
+        public bool    PreventJumper                   { get; set; }
+        public bool    SupportsAACS                    { get; set; }
+        public bool    SupportsBusEncryption           { get; set; }
+        public bool    SupportsC2                      { get; set; }
+        public bool    SupportsCPRM                    { get; set; }
+        public bool    SupportsCSS                     { get; set; }
+        public bool    SupportsDAP                     { get; set; }
+        public bool    SupportsDeviceBusyEvent         { get; set; }
+        public bool    SupportsHybridDiscs             { get; set; }
+        public bool    SupportsModePage1Ch             { get; set; }
+        public bool    SupportsOSSC                    { get; set; }
+        public bool    SupportsPWP                     { get; set; }
+        public bool    SupportsSWPP                    { get; set; }
+        public bool    SupportsSecurDisc               { get; set; }
+        public bool    SupportsSeparateVolume          { get; set; }
+        public bool    SupportsVCPS                    { get; set; }
+        public bool    SupportsWriteInhibitDCB         { get; set; }
+        public bool    SupportsWriteProtectPAC         { get; set; }
+        public ushort? VolumeLevels                    { get; set; }
+        [JsonIgnore]
+        public short? BlocksPerReadableUnitSql
+        {
+            get => (short?)BlocksPerReadableUnit;
+            set => BlocksPerReadableUnit = (ushort?)value;
+        }
+        [JsonIgnore]
+        public int? LogicalBlockSizeSql
+        {
+            get => (int?)LogicalBlockSize;
+            set => LogicalBlockSize = (uint?)value;
+        }
+        [JsonIgnore]
+        public int? PhysicalInterfaceStandardNumberSql
+        {
+            get => (int?)PhysicalInterfaceStandardNumber;
+            set => PhysicalInterfaceStandardNumber = (uint?)value;
+        }
+        [JsonIgnore]
+        public short? VolumeLevelsSql
+        {
+            get => (short?)VolumeLevels;
+            set => VolumeLevels = (ushort?)value;
+        }
     }
 
     public class TestedMedia
@@ -1205,14 +1291,14 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public virtual Chs     CHS                 { get; set; }
         public virtual Chs     CurrentCHS          { get; set; }
-        public uint?   LBASectors          { get; set; }
-        public ulong?  LBA48Sectors        { get; set; }
-        public ushort? LogicalAlignment    { get; set; }
-        public ushort? NominalRotationRate { get; set; }
-        public uint?   PhysicalBlockSize   { get; set; }
-        public bool?   SolidStateDevice    { get; set; }
-        public ushort? UnformattedBPT      { get; set; }
-        public ushort? UnformattedBPS      { get; set; }
+        public         uint?   LBASectors          { get; set; }
+        public         ulong?  LBA48Sectors        { get; set; }
+        public         ushort? LogicalAlignment    { get; set; }
+        public         ushort? NominalRotationRate { get; set; }
+        public         uint?   PhysicalBlockSize   { get; set; }
+        public         bool?   SolidStateDevice    { get; set; }
+        public         ushort? UnformattedBPT      { get; set; }
+        public         ushort? UnformattedBPS      { get; set; }
 
         public bool? SupportsReadDmaLba       { get; set; }
         public bool? SupportsReadDmaRetryLba  { get; set; }
@@ -1231,6 +1317,67 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool? SupportsReadSectors   { get; set; }
         public bool? SupportsReadLongRetry { get; set; }
         public bool? SupportsSeek          { get; set; }
+
+        [JsonIgnore]
+        public long? BlocksSql
+        {
+            get => (long?)Blocks;
+            set => Blocks = (ulong?)value;
+        }
+        [JsonIgnore]
+        public int? BlockSizeSql
+        {
+            get => (int?)BlockSize;
+            set => BlockSize = (uint?)value;
+        }
+        [JsonIgnore]
+        public int? LongBlockSizeSql
+        {
+            get => (int?)LongBlockSize;
+            set => LongBlockSize = (uint?)value;
+        }
+        [JsonIgnore]
+        public int? LBASectorsSql
+        {
+            get => (int?)LBASectors;
+            set => LBASectors = (uint?)value;
+        }
+        [JsonIgnore]
+        public long? LBA48SectorsSql
+        {
+            get => (long?)LBA48Sectors;
+            set => LBA48Sectors = (ulong?)value;
+        }
+        [JsonIgnore]
+        public short? LogicalAlignmentSql
+        {
+            get => (short?)LogicalAlignment;
+            set => LogicalAlignment = (ushort?)value;
+        }
+        [JsonIgnore]
+        public short? NominalRotationRateSql
+        {
+            get => (short?)NominalRotationRate;
+            set => NominalRotationRate = (ushort?)value;
+        }
+        [JsonIgnore]
+        public int? PhysicalBlockSizeSql
+        {
+            get => (int?)PhysicalBlockSize;
+            set => PhysicalBlockSize = (uint?)value;
+        }
+        [JsonIgnore]
+        public short? UnformattedBPTSql
+        {
+            get => (short?)UnformattedBPT;
+            set => UnformattedBPT = (ushort?)value;
+        }
+        [JsonIgnore]
+        public short? UnformattedBPSSql
+        {
+            get => (short?)UnformattedBPS;
+            set => UnformattedBPS = (ushort?)value;
+        }
     }
 
     public class Ssc
@@ -1268,6 +1415,18 @@ namespace DiscImageChef.CommonTypes.Metadata
         public virtual List<SupportedDensity>      SupportedDensities  { get; set; }
         public virtual List<SscSupportedMedia>     SupportedMediaTypes { get; set; }
         public virtual List<TestedSequentialMedia> TestedMedia         { get; set; }
+        [JsonIgnore]
+        public int? MaxBlockLengthSql
+        {
+            get => (int?)MaxBlockLength;
+            set => MaxBlockLength = (uint?)value;
+        }
+        [JsonIgnore]
+        public int? MinBlockLengthSql
+        {
+            get => (int?)MinBlockLength;
+            set => MinBlockLength = (uint?)value;
+        }
     }
 
     public class TestedSequentialMedia
@@ -1298,14 +1457,14 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                                      set; }
-        public bool?                   CanReadMediaSerial  { get; set; }
-        public byte?                   Density             { get; set; }
-        public string                  Manufacturer        { get; set; }
-        public bool                    MediaIsRecognized   { get; set; }
-        public byte?                   MediumType          { get; set; }
-        public string                  MediumTypeName      { get; set; }
-        public string                  Model               { get; set; }
+        public int Id { get;                                              set; }
+        public         bool?                   CanReadMediaSerial  { get; set; }
+        public         byte?                   Density             { get; set; }
+        public         string                  Manufacturer        { get; set; }
+        public         bool                    MediaIsRecognized   { get; set; }
+        public         byte?                   MediumType          { get; set; }
+        public         string                  MediumTypeName      { get; set; }
+        public         string                  Model               { get; set; }
         public virtual List<SupportedDensity>  SupportedDensities  { get; set; }
         public virtual List<SscSupportedMedia> SupportedMediaTypes { get; set; }
 
@@ -1338,6 +1497,18 @@ namespace DiscImageChef.CommonTypes.Metadata
         public ushort? CardCode         { get; set; }
         public string  Manufacturer     { get; set; }
         public string  ProductName      { get; set; }
+        [JsonIgnore]
+        public short? ManufacturerCodeSql
+        {
+            get => (short?)ManufacturerCode;
+            set => ManufacturerCode = (ushort?)value;
+        }
+        [JsonIgnore]
+        public short? CardCodeSql
+        {
+            get => (short?)CardCode;
+            set => CardCode = (ushort?)value;
+        }
     }
 
     public class MmcSd
@@ -1381,14 +1552,26 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                         set; }
-        public byte              MediumType   { get; set; }
+        public int Id { get;                                 set; }
+        public         byte              MediumType   { get; set; }
         public virtual List<DensityCode> DensityCodes { get; set; }
-        public ushort            Width        { get; set; }
-        public ushort            Length       { get; set; }
-        public string            Organization { get; set; }
-        public string            Name         { get; set; }
-        public string            Description  { get; set; }
+        public         ushort            Width        { get; set; }
+        public         ushort            Length       { get; set; }
+        public         string            Organization { get; set; }
+        public         string            Name         { get; set; }
+        public         string            Description  { get; set; }
+        [JsonIgnore]
+        public short WidthSql
+        {
+            get => (short)Width;
+            set => Width = (ushort)value;
+        }
+        [JsonIgnore]
+        public short LengthSql
+        {
+            get => (short)Length;
+            set => Length = (ushort)value;
+        }
     }
 
     public class DensityCode

@@ -996,6 +996,38 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Organization   { get; set; }
         public string Name           { get; set; }
         public string Description    { get; set; }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public int BitsPerMmSql
+        {
+            get => (int)BitsPerMm;
+            set => BitsPerMm = (uint)value;
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public short WidthSql
+        {
+            get => (short)Width;
+            set => Width = (ushort)value;
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public short TracksSql
+        {
+            get => (short)Tracks;
+            set => Tracks = (ushort)value;
+        }
+
+        [JsonIgnore]
+        [XmlIgnore]
+        public int CapacitySql
+        {
+            get => (int)Capacity;
+            set => Capacity = (uint)value;
+        }
     }
 
     public class SupportedMedia

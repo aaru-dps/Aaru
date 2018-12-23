@@ -138,7 +138,6 @@ namespace DiscImageChef.Database.Migrations
                                              Locked                          = table.Column<bool>(nullable: false),
                                              LogicalBlockSize                = table.Column<uint>(nullable: true),
                                              MultiRead                       = table.Column<bool>(nullable: false),
-                                             PhysicalInterfaceStandard       = table.Column<uint>(nullable: true),
                                              PhysicalInterfaceStandardNumber = table.Column<uint>(nullable: true),
                                              PreventJumper                   = table.Column<bool>(nullable: false),
                                              SupportsAACS                    = table.Column<bool>(nullable: false),

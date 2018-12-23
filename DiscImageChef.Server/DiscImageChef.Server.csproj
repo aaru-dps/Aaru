@@ -209,6 +209,10 @@
     <Compile Include="Migrations\201812221606592_LinkDeviceStatsToReport.Designer.cs">
       <DependentUpon>201812221606592_LinkDeviceStatsToReport.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812231612080_FixUnsignedFields.cs" />
+    <Compile Include="Migrations\201812231612080_FixUnsignedFields.Designer.cs">
+      <DependentUpon>201812231612080_FixUnsignedFields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Context.cs" />
@@ -297,6 +301,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812221606592_LinkDeviceStatsToReport.resx">
       <DependentUpon>201812221606592_LinkDeviceStatsToReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812231612080_FixUnsignedFields.resx">
+      <DependentUpon>201812231612080_FixUnsignedFields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

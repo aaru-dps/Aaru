@@ -333,8 +333,6 @@ namespace DiscImageChef.Database.Migrations
 
                     b.Property<bool>("MultiRead");
 
-                    b.Property<uint?>("PhysicalInterfaceStandard");
-
                     b.Property<uint?>("PhysicalInterfaceStandardNumber");
 
                     b.Property<bool>("PreventJumper");

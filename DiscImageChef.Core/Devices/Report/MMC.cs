@@ -61,12 +61,7 @@ namespace DiscImageChef.Core.Devices.Report
                         Feature_0001? ftr0001 = Features.Decode_0001(desc.Data);
                         if(ftr0001.HasValue)
                         {
-                            report.PhysicalInterfaceStandard = ftr0001.Value.PhysicalInterfaceStandard;
-                            if((uint)ftr0001.Value.PhysicalInterfaceStandard > 0x8)
-                            {
-                                report.PhysicalInterfaceStandardNumber = (uint)ftr0001.Value.PhysicalInterfaceStandard;
-                                report.PhysicalInterfaceStandard       = PhysicalInterfaces.Unspecified;
-                            }
+                            report.PhysicalInterfaceStandardNumber = (uint)ftr0001.Value.PhysicalInterfaceStandard;
 
                             report.SupportsDeviceBusyEvent = ftr0001.Value.DBE;
                         }
