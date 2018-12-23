@@ -420,7 +420,7 @@ namespace DiscImageChef.Core
                     ctx.SaveChanges();
                     File.Delete(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
                 }
-                catch(XmlException)
+                catch
                 {
                     // Do not care about it
                 }
