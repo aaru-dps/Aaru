@@ -39,6 +39,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Decoders.ATA;
@@ -74,6 +75,18 @@ namespace DiscImageChef.CommonTypes.Metadata
             {
                 SCSI = new Scsi(reportV1.SCSI);
                 Type = DeviceType.SCSI;
+
+                if(SCSI.ModeSense?.ModePages?.FirstOrDefault(p => p.page == 0x2A)?.value != null)
+                {
+                    if(SCSI.MultiMediaDevice != null)
+                        SCSI.MultiMediaDevice.ModeSense2AData =
+                            SCSI.ModeSense?.ModePages?.FirstOrDefault(p => p.page == 0x2A)?.value;
+                    else if(SCSI.Inquiry?.PeripheralDeviceType == (byte)PeripheralDeviceTypes.MultiMediaDevice)
+                        SCSI.MultiMediaDevice = new Mmc
+                        {
+                            ModeSense2AData = SCSI.ModeSense?.ModePages?.FirstOrDefault(p => p.page == 0x2A)?.value
+                        };
+                }
             }
 
             if(reportV1.ATAPI != null)
@@ -211,8 +224,6 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Ata
     {
-        public Identify.IdentifyDevice? IdentifyDevice;
-
         public Ata() { }
 
         public Ata(ataType ata)
@@ -229,11 +240,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     RemovableMedias.Add(new TestedMedia(ataRemovableMedia, true));
             }
 
-            if(Identify != null)
-            {
-                IdentifyDevice = Decoders.ATA.Identify.Decode(Identify);
-                return;
-            }
+            if(Identify != null) return;
 
             Identify.IdentifyDevice identifyDevice = new Identify.IdentifyDevice();
 
@@ -398,8 +405,10 @@ namespace DiscImageChef.CommonTypes.Metadata
 
             if(ata.WRVSectorCountMode2Specified) identifyDevice.WRVSectorCountMode2 = ata.WRVSectorCountMode2;
 
-            IdentifyDevice = identifyDevice;
+            Identify = Decoders.ATA.Identify.Encode(identifyDevice);
         }
+
+        public Identify.IdentifyDevice? IdentifyDevice => Decoders.ATA.Identify.Decode(Identify);
 
         [JsonIgnore]
         public int Id { get;                                     set; }
@@ -447,8 +456,6 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class Scsi
     {
-        public Inquiry.SCSIInquiry? Inquiry;
-
         public Scsi() { }
 
         public Scsi(scsiType scsi)
@@ -482,11 +489,7 @@ namespace DiscImageChef.CommonTypes.Metadata
 
             if(scsi.SequentialDevice != null) SequentialDevice = new Ssc(scsi.SequentialDevice);
 
-            if(InquiryData != null)
-            {
-                Inquiry = Decoders.SCSI.Inquiry.Decode(InquiryData);
-                return;
-            }
+            if(InquiryData != null) return;
 
             Inquiry.SCSIInquiry inq = new Inquiry.SCSIInquiry();
 
@@ -553,8 +556,10 @@ namespace DiscImageChef.CommonTypes.Metadata
             inq.WBus16               = scsi.Inquiry.WideBus16;
             inq.WBus32               = scsi.Inquiry.WideBus32;
 
-            Inquiry = inq;
+            InquiryData = Decoders.SCSI.Inquiry.Encode(inq);
         }
+
+        public Inquiry.SCSIInquiry? Inquiry => Decoders.SCSI.Inquiry.Decode(InquiryData);
 
         [JsonIgnore]
         public int Id { get;                                         set; }
@@ -672,60 +677,72 @@ namespace DiscImageChef.CommonTypes.Metadata
         public Mmc(mmcType mmc)
         {
             if(mmc.ModeSense2A != null)
-                ModeSense2A = new Modes.ModePage_2A
+                ModeSense2AData = Modes.EncodeModePage_2A(new Modes.ModePage_2A
                 {
-                    AccurateCDDA                     = mmc.ModeSense2A.AccurateCDDA,
-                    BCK                              = mmc.ModeSense2A.BCK,
-                    BufferSize                       = mmc.ModeSense2A.BufferSize,
-                    BUF                              = mmc.ModeSense2A.BufferUnderRunProtection,
-                    Eject                            = mmc.ModeSense2A.CanEject,
-                    Lock                             = mmc.ModeSense2A.CanLockMedia,
-                    CDDACommand                      = mmc.ModeSense2A.CDDACommand,
-                    Composite                        = mmc.ModeSense2A.CompositeAudioVideo,
-                    CMRSupported                     = (ushort)(mmc.ModeSense2A.CSSandCPPMSupported ? 1 : 0),
-                    CurrentSpeed                     = mmc.ModeSense2A.CurrentSpeed,
-                    CurrentWriteSpeed                = mmc.ModeSense2A.CurrentWriteSpeed,
-                    CurrentWriteSpeedSelected        = mmc.ModeSense2A.CurrentWriteSpeedSelected,
-                    SDP                              = mmc.ModeSense2A.DeterministicSlotChanger,
-                    DigitalPort1                     = mmc.ModeSense2A.DigitalPort1,
-                    DigitalPort2                     = mmc.ModeSense2A.DigitalPort2,
-                    LeadInPW                         = mmc.ModeSense2A.LeadInPW,
-                    LoadingMechanism                 = mmc.ModeSense2A.LoadingMechanismType,
-                    LockState                        = mmc.ModeSense2A.LockStatus,
-                    LSBF                             = mmc.ModeSense2A.LSBF,
-                    MaximumSpeed                     = mmc.ModeSense2A.MaximumSpeed,
-                    MaxWriteSpeed                    = mmc.ModeSense2A.MaximumWriteSpeed,
-                    AudioPlay                        = mmc.ModeSense2A.PlaysAudio,
-                    PreventJumper                    = mmc.ModeSense2A.PreventJumperStatus,
-                    RCK                              = mmc.ModeSense2A.RCK,
-                    ReadBarcode                      = mmc.ModeSense2A.ReadsBarcode,
-                    SCC                              = mmc.ModeSense2A.ReadsBothSides,
-                    ReadCDR                          = mmc.ModeSense2A.ReadsCDR,
-                    ReadCDRW                         = mmc.ModeSense2A.ReadsCDRW,
-                    DeinterlaveSubchannel            = mmc.ModeSense2A.ReadsDeinterlavedSubchannel,
-                    ReadDVDR                         = mmc.ModeSense2A.ReadsDVDR,
-                    ReadDVDRAM                       = mmc.ModeSense2A.ReadsDVDRAM,
-                    ReadDVDROM                       = mmc.ModeSense2A.ReadsDVDROM,
-                    ISRC                             = mmc.ModeSense2A.ReadsISRC,
-                    Mode2Form2                       = mmc.ModeSense2A.ReadsMode2Form2,
-                    Mode2Form1                       = mmc.ModeSense2A.ReadsMode2Form1,
-                    Method2                          = mmc.ModeSense2A.ReadsPacketCDR,
-                    Subchannel                       = mmc.ModeSense2A.ReadsSubchannel,
-                    UPC                              = mmc.ModeSense2A.ReadsUPC,
-                    C2Pointer                        = mmc.ModeSense2A.ReturnsC2Pointers,
-                    RotationControlSelected          = mmc.ModeSense2A.RotationControlSelected,
-                    SeparateChannelMute              = mmc.ModeSense2A.SeparateChannelMute,
-                    SeparateChannelVolume            = mmc.ModeSense2A.SeparateChannelVolume,
-                    SSS                              = mmc.ModeSense2A.SSS,
-                    MultiSession                     = mmc.ModeSense2A.SupportsMultiSession,
-                    SupportedVolumeLevels            = mmc.ModeSense2A.SupportedVolumeLevels,
-                    TestWrite                        = mmc.ModeSense2A.TestWrite,
-                    WriteCDR                         = mmc.ModeSense2A.WritesCDR,
-                    WriteCDRW                        = mmc.ModeSense2A.WritesCDRW,
-                    WriteDVDR                        = mmc.ModeSense2A.WritesDVDR,
-                    WriteDVDRAM                      = mmc.ModeSense2A.WritesDVDRAM,
-                    WriteSpeedPerformanceDescriptors = mmc.ModeSense2A.WriteSpeedPerformanceDescriptors
-                };
+                    AccurateCDDA = mmc.ModeSense2A.AccurateCDDA,
+                    BCK          = mmc.ModeSense2A.BCK,
+                    BufferSize   = mmc.ModeSense2A.BufferSize,
+                    BUF          = mmc.ModeSense2A.BufferUnderRunProtection,
+                    Eject        = mmc.ModeSense2A.CanEject,
+                    Lock         = mmc.ModeSense2A.CanLockMedia,
+                    CDDACommand  = mmc.ModeSense2A.CDDACommand,
+                    Composite    = mmc.ModeSense2A.CompositeAudioVideo,
+                    CMRSupported =
+                        (ushort)(mmc.ModeSense2A.CSSandCPPMSupported
+                                     ? 1
+                                     : 0),
+                    CurrentSpeed      = mmc.ModeSense2A.CurrentSpeed,
+                    CurrentWriteSpeed = mmc.ModeSense2A.CurrentWriteSpeed,
+                    CurrentWriteSpeedSelected =
+                        mmc.ModeSense2A.CurrentWriteSpeedSelected,
+                    SDP          = mmc.ModeSense2A.DeterministicSlotChanger,
+                    DigitalPort1 = mmc.ModeSense2A.DigitalPort1,
+                    DigitalPort2 = mmc.ModeSense2A.DigitalPort2,
+                    LeadInPW     = mmc.ModeSense2A.LeadInPW,
+                    LoadingMechanism =
+                        mmc.ModeSense2A.LoadingMechanismType,
+                    LockState     = mmc.ModeSense2A.LockStatus,
+                    LSBF          = mmc.ModeSense2A.LSBF,
+                    MaximumSpeed  = mmc.ModeSense2A.MaximumSpeed,
+                    MaxWriteSpeed = mmc.ModeSense2A.MaximumWriteSpeed,
+                    AudioPlay     = mmc.ModeSense2A.PlaysAudio,
+                    PreventJumper = mmc.ModeSense2A.PreventJumperStatus,
+                    RCK           = mmc.ModeSense2A.RCK,
+                    ReadBarcode   = mmc.ModeSense2A.ReadsBarcode,
+                    SCC           = mmc.ModeSense2A.ReadsBothSides,
+                    ReadCDR       = mmc.ModeSense2A.ReadsCDR,
+                    ReadCDRW      = mmc.ModeSense2A.ReadsCDRW,
+                    DeinterlaveSubchannel =
+                        mmc.ModeSense2A.ReadsDeinterlavedSubchannel,
+                    ReadDVDR   = mmc.ModeSense2A.ReadsDVDR,
+                    ReadDVDRAM = mmc.ModeSense2A.ReadsDVDRAM,
+                    ReadDVDROM = mmc.ModeSense2A.ReadsDVDROM,
+                    ISRC       = mmc.ModeSense2A.ReadsISRC,
+                    Mode2Form2 = mmc.ModeSense2A.ReadsMode2Form2,
+                    Mode2Form1 = mmc.ModeSense2A.ReadsMode2Form1,
+                    Method2    = mmc.ModeSense2A.ReadsPacketCDR,
+                    Subchannel = mmc.ModeSense2A.ReadsSubchannel,
+                    UPC        = mmc.ModeSense2A.ReadsUPC,
+                    C2Pointer  = mmc.ModeSense2A.ReturnsC2Pointers,
+                    RotationControlSelected =
+                        mmc.ModeSense2A.RotationControlSelected,
+                    SeparateChannelMute =
+                        mmc.ModeSense2A.SeparateChannelMute,
+                    SeparateChannelVolume =
+                        mmc.ModeSense2A.SeparateChannelVolume,
+                    SSS          = mmc.ModeSense2A.SSS,
+                    MultiSession = mmc.ModeSense2A.SupportsMultiSession,
+                    SupportedVolumeLevels =
+                        mmc.ModeSense2A.SupportedVolumeLevels,
+                    TestWrite   = mmc.ModeSense2A.TestWrite,
+                    WriteCDR    = mmc.ModeSense2A.WritesCDR,
+                    WriteCDRW   = mmc.ModeSense2A.WritesCDRW,
+                    WriteDVDR   = mmc.ModeSense2A.WritesDVDR,
+                    WriteDVDRAM = mmc.ModeSense2A.WritesDVDRAM,
+                    WriteSpeedPerformanceDescriptors =
+                        mmc.ModeSense2A.WriteSpeedPerformanceDescriptors
+                });
+
             if(mmc.Features != null) Features = new MmcFeatures(mmc.Features);
 
             if(mmc.TestedMedia == null) return;
@@ -735,10 +752,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                                set; }
-        public virtual Modes.ModePage_2A ModeSense2A { get; set; }
-        public virtual MmcFeatures       Features    { get; set; }
-        public virtual List<TestedMedia> TestedMedia { get; set; }
+        public int Id { get; set; }
+        public virtual Modes.ModePage_2A ModeSense2A     => Modes.DecodeModePage_2A(ModeSense2AData);
+        public virtual MmcFeatures       Features        { get; set; }
+        public virtual List<TestedMedia> TestedMedia     { get; set; }
+        public         byte[]            ModeSense2AData { get; set; }
     }
 
     public class MmcFeatures
