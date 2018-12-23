@@ -357,19 +357,19 @@ namespace DiscImageChef.Decoders.SCSI
             if(decoded.VendorIdentification != null)
             {
                 length = 16;
-                Array.Copy(decoded.VendorIdentification, 0, buffer, 8, 8);
+                Array.Copy(decoded.VendorIdentification, 0, buffer, 8, decoded.VendorIdentification.Length >= 8 ? 8 : decoded.VendorIdentification.Length);
             }
 
             if(decoded.ProductIdentification != null)
             {
                 length = 32;
-                Array.Copy(decoded.ProductIdentification, 0, buffer, 16, 16);
+                Array.Copy(decoded.ProductIdentification, 0, buffer, 16, decoded.ProductIdentification.Length >= 16 ? 16 : decoded.ProductIdentification.Length);
             }
 
             if(decoded.ProductRevisionLevel != null)
             {
                 length = 36;
-                Array.Copy(decoded.ProductRevisionLevel, 0, buffer, 32, 4);
+                Array.Copy(decoded.ProductRevisionLevel, 0, buffer, 32, decoded.ProductRevisionLevel.Length >= 4 ? 4 : decoded.ProductRevisionLevel.Length);
             }
 
             if(decoded.Seagate_DriveSerialNumber != null)

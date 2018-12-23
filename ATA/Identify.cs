@@ -3574,8 +3574,12 @@ namespace DiscImageChef.Decoders.ATA
 
         static byte[] ScrambleATAString(string str, int length)
         {
-            byte[] bytes = Encoding.ASCII.GetBytes(str);
             byte[] buf   = new byte[length];
+            for(int i = 0; i < length; i++) buf[i] = 0x20;
+
+            if(str is null) return buf;
+
+            byte[] bytes = Encoding.ASCII.GetBytes(str);
             Array.Copy(bytes, 0, buf, 0, bytes.Length);
             return buf;
         }
