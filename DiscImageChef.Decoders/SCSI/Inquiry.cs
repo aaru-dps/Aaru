@@ -281,6 +281,177 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
+        public static byte[] Encode(SCSIInquiry? inq)
+        {
+            if(inq is null) return null;
+
+            SCSIInquiry decoded = inq.Value;
+
+            byte[] buffer = new byte[512];
+            byte   length = 0;
+
+            buffer[0] =  (byte)(decoded.PeripheralQualifier << 5);
+            buffer[0] += decoded.PeripheralDeviceType;
+
+            if(decoded.RMB) buffer[1] = 0x80;
+            buffer[1] += decoded.DeviceTypeModifier;
+
+            buffer[2] =  (byte)(decoded.ISOVersion  << 6);
+            buffer[2] += (byte)(decoded.ECMAVersion << 3);
+            buffer[2] += decoded.ANSIVersion;
+
+            if(decoded.AERC) buffer[3]    =  0x80;
+            if(decoded.TrmTsk) buffer[3]  += 0x40;
+            if(decoded.NormACA) buffer[3] += 0x20;
+            if(decoded.HiSup) buffer[3]   += 0x10;
+            buffer[3] += decoded.ResponseDataFormat;
+
+            if(decoded.AdditionalLength > 0)
+            {
+                length    = 5;
+                buffer[4] = decoded.AdditionalLength;
+            }
+
+            if(decoded.SCCS || decoded.ACC || decoded.TPGS > 0 || decoded.ThreePC || decoded.Reserved2 > 0 ||
+               decoded.Protect)
+            {
+                length = 6;
+                if(decoded.SCCS) buffer[5] =  0x80;
+                if(decoded.ACC) buffer[5]  += 0x40;
+                buffer[5] += (byte)(decoded.TPGS << 4);
+                if(decoded.ThreePC) buffer[5] += 0x08;
+                buffer[5] += (byte)(decoded.Reserved2 << 1);
+                if(decoded.Protect) buffer[5] += 0x01;
+            }
+
+            if(decoded.BQue    || decoded.EncServ || decoded.VS1 || decoded.MultiP || decoded.MChngr ||
+               decoded.ACKREQQ ||
+               decoded.Addr32  || decoded.Addr16)
+            {
+                length = 7;
+                if(decoded.BQue) buffer[6]    =  0x80;
+                if(decoded.EncServ) buffer[6] += 0x40;
+                if(decoded.VS1) buffer[6]     += 0x20;
+                if(decoded.MultiP) buffer[6]  += 0x10;
+                if(decoded.MChngr) buffer[6]  += 0x08;
+                if(decoded.ACKREQQ) buffer[6] += 0x04;
+                if(decoded.Addr32) buffer[6]  += 0x02;
+                if(decoded.Addr16) buffer[6]  += 0x01;
+            }
+
+            if(decoded.RelAddr || decoded.WBus32 || decoded.WBus16 || decoded.Sync || decoded.Linked ||
+               decoded.TranDis || decoded.CmdQue || decoded.SftRe)
+
+            {
+                length = 8;
+                if(decoded.RelAddr) buffer[7] =  0x80;
+                if(decoded.WBus32) buffer[7]  += 0x40;
+                if(decoded.WBus16) buffer[7]  += 0x20;
+                if(decoded.Sync) buffer[7]    += 0x10;
+                if(decoded.Linked) buffer[7]  += 0x08;
+                if(decoded.TranDis) buffer[7] += 0x04;
+                if(decoded.CmdQue) buffer[7]  += 0x02;
+                if(decoded.SftRe) buffer[7]   += 0x01;
+            }
+
+            if(decoded.VendorIdentification != null)
+            {
+                length = 16;
+                Array.Copy(decoded.VendorIdentification, 0, buffer, 8, 8);
+            }
+
+            if(decoded.ProductIdentification != null)
+            {
+                length = 32;
+                Array.Copy(decoded.ProductIdentification, 0, buffer, 16, 16);
+            }
+
+            if(decoded.ProductRevisionLevel != null)
+            {
+                length = 36;
+                Array.Copy(decoded.ProductRevisionLevel, 0, buffer, 32, 4);
+            }
+
+            if(decoded.Seagate_DriveSerialNumber != null)
+            {
+                length = 44;
+                Array.Copy(decoded.Seagate_DriveSerialNumber, 0, buffer, 36, 8);
+            }
+
+            if(decoded.KreonIdentifier != null && decoded.KreonVersion != null)
+            {
+                length = 46;
+                Array.Copy(decoded.KreonIdentifier, 0, buffer, 36, 5);
+                buffer[41] = decoded.KreonSpace;
+                Array.Copy(decoded.KreonVersion, 0, buffer, 42, 5);
+            }
+
+            if(decoded.HP_WORM || decoded.HP_WORMVersion > 0 || decoded.HP_OBDR != null)
+            {
+                length = 49;
+                if(decoded.HP_WORM) buffer[40] = 0x01;
+                buffer[40] += (byte)(decoded.HP_WORMVersion << 1);
+                Array.Copy(decoded.HP_OBDR, 0, buffer, 43, 6);
+            }
+
+            if(decoded.VendorSpecific != null)
+            {
+                length = 56;
+                Array.Copy(decoded.VendorSpecific, 0, buffer, 36, 20);
+            }
+
+            if(decoded.Reserved3 > 0 || decoded.Clocking > 0 || decoded.QAS || decoded.IUS)
+            {
+                length     =  57;
+                buffer[56] =  (byte)(decoded.Reserved3 << 4);
+                buffer[56] += (byte)(decoded.Clocking  << 2);
+                if(decoded.QAS) buffer[56] += 0x02;
+                if(decoded.IUS) buffer[56] += 0x01;
+            }
+
+            if(decoded.Reserved4 != 0)
+            {
+                length     = 58;
+                buffer[57] = decoded.Reserved4;
+            }
+
+            if(decoded.VersionDescriptors != null)
+            {
+                length = (byte)(58 + decoded.VersionDescriptors.Length * 2);
+                for(int i = 0; i < decoded.VersionDescriptors.Length; i++)
+                    Array.Copy(BitConverter.GetBytes(decoded.VersionDescriptors[i]), 0, buffer, 56 + i * 2, 2);
+            }
+
+            if(decoded.Reserved5 != null)
+            {
+                length = (byte)(74 + decoded.Reserved5.Length);
+                Array.Copy(decoded.Reserved5, 0, buffer, 74, decoded.Reserved5.Length);
+            }
+
+            if(decoded.VendorSpecific2 != null)
+            {
+                length = (byte)(96 + decoded.VendorSpecific2.Length);
+                Array.Copy(decoded.VendorSpecific2, 0, buffer, 96, decoded.VendorSpecific2.Length);
+            }
+
+            if(decoded.Seagate_Copyright != null)
+            {
+                length = 144;
+                Array.Copy(decoded.Seagate_Copyright, 0, buffer, 96, 48);
+            }
+
+            if(decoded.Seagate_ServoPROMPartNo != null)
+            {
+                length = 148;
+                Array.Copy(decoded.Seagate_ServoPROMPartNo, 0, buffer, 144, 4);
+            }
+
+            buffer[4] = length;
+            byte[] dest = new byte[length];
+            Array.Copy(buffer, 0, dest, 0, length);
+            return dest;
+        }
+
         public static string Prettify(SCSIInquiry? SCSIInquiryResponse)
         {
             if(SCSIInquiryResponse == null) return null;
