@@ -67,7 +67,7 @@ namespace DiscImageChef.Decoders.SCSI
                 return null;
             }
 
-            if(SCSIInquiryResponse.Length < SCSIInquiryResponse[4] + 5)
+            if(SCSIInquiryResponse.Length < SCSIInquiryResponse[4] + 5 && SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
             {
                 DicConsole.DebugWriteLine("SCSI INQUIRY decoder",
                                           "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.",
