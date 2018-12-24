@@ -1140,6 +1140,10 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasIndex("VendorId");
 
+                b.HasIndex("ProductId");
+
+                b.HasIndex("ModifiedWhen");
+
                 b.ToTable("UsbProducts");
             });
 
@@ -1154,6 +1158,8 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<string>("Vendor");
 
                 b.HasKey("Id");
+
+                b.HasIndex("ModifiedWhen");
 
                 b.ToTable("UsbVendors");
             });

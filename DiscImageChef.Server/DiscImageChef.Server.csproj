@@ -221,6 +221,10 @@
     <Compile Include="Migrations\201812240552109_StoreUsbIdsInDatabase.Designer.cs">
       <DependentUpon>201812240552109_StoreUsbIdsInDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812241719441_FixUsbIdsAndIndexes.cs" />
+    <Compile Include="Migrations\201812241719441_FixUsbIdsAndIndexes.Designer.cs">
+      <DependentUpon>201812241719441_FixUsbIdsAndIndexes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Context.cs" />
@@ -324,6 +328,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812240552109_StoreUsbIdsInDatabase.resx">
       <DependentUpon>201812240552109_StoreUsbIdsInDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812241719441_FixUsbIdsAndIndexes.resx">
+      <DependentUpon>201812241719441_FixUsbIdsAndIndexes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

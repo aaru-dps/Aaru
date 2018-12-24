@@ -82,6 +82,8 @@
     <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" />
     <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.cs" />
     <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.Designer.cs" />
+    <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.cs" />
+    <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />

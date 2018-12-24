@@ -137,6 +137,7 @@
         <e p="MediaType.cs" t="Include" />
         <e p="MediaTypeFromSCSI.cs" t="Include" />
         <e p="Metadata" t="Include">
+          <e p="CdOffset.cs" t="Include" />
           <e p="DeviceReport.cs" t="Include" />
           <e p="DeviceReportV2.cs" t="Include" />
           <e p="Dimensions.cs" t="Include" />
@@ -319,6 +320,10 @@
           <e p="20181223183913_FixUnsignedFields.cs" t="Include" />
           <e p="20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" t="Include" />
           <e p="20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" t="Include" />
+          <e p="20181224044809_StoreUsbIdsInDatabase.Designer.cs" t="Include" />
+          <e p="20181224044809_StoreUsbIdsInDatabase.cs" t="Include" />
+          <e p="20181224172147_FixUsbIdsAndIndexes.Designer.cs" t="Include" />
+          <e p="20181224172147_FixUsbIdsAndIndexes.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -332,6 +337,8 @@
           <e p="OperatingSystem.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
           <e p="Report.cs" t="Include" />
+          <e p="UsbProduct.cs" t="Include" />
+          <e p="UsbVendor.cs" t="Include" />
           <e p="Version.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
@@ -1808,6 +1815,12 @@
           <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" t="Include" />
           <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" t="Include" />
           <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.resx" t="Include" />
+          <e p="201812240552109_StoreUsbIdsInDatabase.Designer.cs" t="Include" />
+          <e p="201812240552109_StoreUsbIdsInDatabase.cs" t="Include" />
+          <e p="201812240552109_StoreUsbIdsInDatabase.resx" t="Include" />
+          <e p="201812241719441_FixUsbIdsAndIndexes.Designer.cs" t="Include" />
+          <e p="201812241719441_FixUsbIdsAndIndexes.cs" t="Include" />
+          <e p="201812241719441_FixUsbIdsAndIndexes.resx" t="Include" />
           <e p="Configuration.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1822,6 +1835,8 @@
           <e p="OperatingSystem.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
           <e p="UploadedReport.cs" t="Include" />
+          <e p="UsbProduct.cs" t="Include" />
+          <e p="UsbVendor.cs" t="Include" />
           <e p="Version.cs" t="Include" />
         </e>
         <e p="Reports" t="Include">
