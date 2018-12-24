@@ -54,6 +54,8 @@ namespace DiscImageChef.Database
         public DbSet<DeviceStat>      SeenDevices      { get; set; }
         public DbSet<OperatingSystem> OperatingSystems { get; set; }
         public DbSet<Version>         Versions         { get; set; }
+        public DbSet<UsbVendor>       UsbVendors       { get; set; }
+        public DbSet<UsbProduct>      UsbProducts      { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

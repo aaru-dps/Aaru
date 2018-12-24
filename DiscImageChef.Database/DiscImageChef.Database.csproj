@@ -80,6 +80,8 @@
     <Compile Include="Migrations\20181223183913_FixUnsignedFields.Designer.cs" />
     <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" />
     <Compile Include="Migrations\20181223214411_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" />
+    <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.cs" />
+    <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />
@@ -91,6 +93,8 @@
     <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Partition.cs" />
     <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\UsbProduct.cs" />
+    <Compile Include="Models\UsbVendor.cs" />
     <Compile Include="Models\Version.cs" />
   </ItemGroup>
   <ItemGroup>

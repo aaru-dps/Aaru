@@ -217,6 +217,10 @@
     <Compile Include="Migrations\201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs">
       <DependentUpon>201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812240552109_StoreUsbIdsInDatabase.cs" />
+    <Compile Include="Migrations\201812240552109_StoreUsbIdsInDatabase.Designer.cs">
+      <DependentUpon>201812240552109_StoreUsbIdsInDatabase.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Context.cs" />
@@ -229,6 +233,8 @@
     <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Partition.cs" />
     <Compile Include="Models\UploadedReport.cs" />
+    <Compile Include="Models\UsbProduct.cs" />
+    <Compile Include="Models\UsbVendor.cs" />
     <Compile Include="Models\Version.cs" />
     <Compile Include="Statistics.aspx.cs">
       <DependentUpon>Statistics.aspx</DependentUpon>
@@ -315,6 +321,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.resx">
       <DependentUpon>201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812240552109_StoreUsbIdsInDatabase.resx">
+      <DependentUpon>201812240552109_StoreUsbIdsInDatabase.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

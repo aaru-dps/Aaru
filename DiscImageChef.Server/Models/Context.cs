@@ -49,5 +49,7 @@ namespace DiscImageChef.Server.Models
         public DbSet<OperatingSystem> OperatingSystems { get; set; }
         public DbSet<Partition>       Partitions       { get; set; }
         public DbSet<Version>         Versions         { get; set; }
+        public DbSet<UsbVendor>       UsbVendors       { get; set; }
+        public DbSet<UsbProduct>      UsbProducts      { get; set; }
     }
 }

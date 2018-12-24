@@ -1122,6 +1122,42 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Reports");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.UsbProduct", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<DateTime>("AddedWhen");
+
+                b.Property<DateTime>("ModifiedWhen");
+
+                b.Property<string>("Product");
+
+                b.Property<ushort>("ProductId");
+
+                b.Property<ushort>("VendorId");
+
+                b.HasKey("Id");
+
+                b.HasIndex("VendorId");
+
+                b.ToTable("UsbProducts");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.UsbVendor", b =>
+            {
+                b.Property<ushort>("Id").ValueGeneratedOnAdd();
+
+                b.Property<DateTime>("AddedWhen");
+
+                b.Property<DateTime>("ModifiedWhen");
+
+                b.Property<string>("Vendor");
+
+                b.HasKey("Id");
+
+                b.ToTable("UsbVendors");
+            });
+
             modelBuilder.Entity("DiscImageChef.Database.Models.Version", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
@@ -1270,6 +1306,13 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
             });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.UsbProduct",
+                                b =>
+                                {
+                                    b.HasOne("DiscImageChef.Database.Models.UsbVendor", "Vendor").WithMany("Products")
+                                     .HasForeignKey("VendorId").OnDelete(DeleteBehavior.Cascade);
+                                });
             #pragma warning restore 612, 618
         }
     }
