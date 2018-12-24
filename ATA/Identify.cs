@@ -3580,7 +3580,23 @@ namespace DiscImageChef.Decoders.ATA
             if(str is null) return buf;
 
             byte[] bytes = Encoding.ASCII.GetBytes(str);
-            Array.Copy(bytes, 0, buf, 0, bytes.Length);
+
+            if(bytes.Length % 2 != 0)
+            {
+                byte[] tmp = new byte[bytes.Length + 1];
+                tmp[tmp.Length - 1] = 0x20;
+                Array.Copy(bytes, 0, tmp, 0, bytes.Length);
+                bytes = tmp;
+            }
+
+            for(int i = 0; i < bytes.Length; i += 2)
+            {
+                buf[i] = bytes[i + 1];
+                buf[i                      + 1] = bytes[i];
+            }
+
+            string test1 = StringHandlers.CToString(buf);
+            string test2 = DescrambleATAString(buf, 0, length);
             return buf;
         }
     }
