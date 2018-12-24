@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.SCSI;
 
-namespace DiscImageChef.Server.App_Start
+namespace DiscImageChef.Server
 {
     public static class ScsiEvpd
     {
@@ -45,9 +45,9 @@ namespace DiscImageChef.Server.App_Start
         /// <param name="pages">EVPD pages</param>
         /// <param name="vendor">SCSI vendor string</param>
         /// <param name="evpdPages">List to put the key=value pairs on</param>
-        public static void Report(pageType[] pages, string vendor, ref Dictionary<string, string> evpdPages)
+        public static void Report(IEnumerable<ScsiPage> pages, string vendor, ref Dictionary<string, string> evpdPages)
         {
-            foreach(pageType evpd in pages)
+            foreach(ScsiPage evpd in pages)
             {
                 string decoded;
                 if(evpd.page >= 0x01 && evpd.page <= 0x7F) decoded = EVPD.DecodeASCIIPage(evpd.value);

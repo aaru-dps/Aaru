@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.SCSI.MMC;
 
-namespace DiscImageChef.Server.App_Start
+namespace DiscImageChef.Server
 {
     public static class ScsiMmcFeatures
     {
@@ -44,16 +44,16 @@ namespace DiscImageChef.Server.App_Start
         /// </summary>
         /// <param name="ftr">FEATURES part of the report</param>
         /// <param name="mmcOneValue">List to put the values on</param>
-        public static void Report(mmcFeaturesType ftr, ref List<string> mmcOneValue)
+        public static void Report(MmcFeatures ftr, ref List<string> mmcOneValue)
         {
-            if(ftr.SupportsAACS && ftr.AACSVersionSpecified)
+            if(ftr.SupportsAACS && ftr.AACSVersion.HasValue)
                 mmcOneValue.Add($"Drive supports AACS version {ftr.AACSVersion}");
             else if(ftr.SupportsAACS) mmcOneValue.Add("Drive supports AACS");
-            if(ftr.AGIDsSpecified) mmcOneValue.Add($"Drive supports {ftr.AGIDs} AGIDs concurrently");
+            if(ftr.AGIDs.HasValue) mmcOneValue.Add($"Drive supports {ftr.AGIDs} AGIDs concurrently");
             if(ftr.CanGenerateBindingNonce)
             {
                 mmcOneValue.Add("Drive supports generating the binding nonce");
-                if(ftr.BindingNonceBlocksSpecified)
+                if(ftr.BindingNonceBlocks.HasValue)
                     mmcOneValue.Add($"{ftr.BindingNonceBlocks} media blocks are required for the binding nonce");
             }
 
@@ -131,42 +131,44 @@ namespace DiscImageChef.Server.App_Start
             if(ftr.MultiRead)
                 mmcOneValue.Add("Drive claims capability to read all CD formats according to OSTA Multi-Read Specification");
 
-            switch(ftr.PhysicalInterfaceStandard)
-            {
-                case PhysicalInterfaces.Unspecified:
-                    mmcOneValue.Add("Drive uses an unspecified physical interface");
-                    break;
-                case PhysicalInterfaces.SCSI:
-                    mmcOneValue.Add("Drive uses SCSI interface");
-                    break;
-                case PhysicalInterfaces.ATAPI:
-                    mmcOneValue.Add("Drive uses ATAPI interface");
-                    break;
-                case PhysicalInterfaces.IEEE1394:
-                    mmcOneValue.Add("Drive uses IEEE-1394 interface");
-                    break;
-                case PhysicalInterfaces.IEEE1394A:
-                    mmcOneValue.Add("Drive uses IEEE-1394A interface");
-                    break;
-                case PhysicalInterfaces.FC:
-                    mmcOneValue.Add("Drive uses Fibre Channel interface");
-                    break;
-                case PhysicalInterfaces.IEEE1394B:
-                    mmcOneValue.Add("Drive uses IEEE-1394B interface");
-                    break;
-                case PhysicalInterfaces.SerialATAPI:
-                    mmcOneValue.Add("Drive uses Serial ATAPI interface");
-                    break;
-                case PhysicalInterfaces.USB:
-                    mmcOneValue.Add("Drive uses USB interface");
-                    break;
-                case PhysicalInterfaces.Vendor:
-                    mmcOneValue.Add("Drive uses a vendor unique interface");
-                    break;
-                default:
-                    mmcOneValue.Add($"Drive uses an unknown interface with code {(uint)ftr.PhysicalInterfaceStandard}");
-                    break;
-            }
+            if(ftr.PhysicalInterfaceStandard.HasValue)
+                switch(ftr.PhysicalInterfaceStandard)
+                {
+                    case PhysicalInterfaces.Unspecified:
+                        mmcOneValue.Add("Drive uses an unspecified physical interface");
+                        break;
+                    case PhysicalInterfaces.SCSI:
+                        mmcOneValue.Add("Drive uses SCSI interface");
+                        break;
+                    case PhysicalInterfaces.ATAPI:
+                        mmcOneValue.Add("Drive uses ATAPI interface");
+                        break;
+                    case PhysicalInterfaces.IEEE1394:
+                        mmcOneValue.Add("Drive uses IEEE-1394 interface");
+                        break;
+                    case PhysicalInterfaces.IEEE1394A:
+                        mmcOneValue.Add("Drive uses IEEE-1394A interface");
+                        break;
+                    case PhysicalInterfaces.FC:
+                        mmcOneValue.Add("Drive uses Fibre Channel interface");
+                        break;
+                    case PhysicalInterfaces.IEEE1394B:
+                        mmcOneValue.Add("Drive uses IEEE-1394B interface");
+                        break;
+                    case PhysicalInterfaces.SerialATAPI:
+                        mmcOneValue.Add("Drive uses Serial ATAPI interface");
+                        break;
+                    case PhysicalInterfaces.USB:
+                        mmcOneValue.Add("Drive uses USB interface");
+                        break;
+                    case PhysicalInterfaces.Vendor:
+                        mmcOneValue.Add("Drive uses a vendor unique interface");
+                        break;
+                    default:
+                        mmcOneValue
+                           .Add($"Drive uses an unknown interface with code {(uint)ftr.PhysicalInterfaceStandard}");
+                        break;
+                }
 
             if(ftr.PreventJumper) mmcOneValue.Add("Drive power ups locked");
             if(ftr.SupportsBusEncryption) mmcOneValue.Add("Drive supports bus encryption");
@@ -229,40 +231,41 @@ namespace DiscImageChef.Server.App_Start
                 mmcOneValue.Add($"Drive has {ftr.ChangerSlots + 1} slots");
             }
 
-            if(ftr.SupportsCSS && ftr.CSSVersionSpecified)
+            if(ftr.SupportsCSS && ftr.CSSVersion.HasValue)
                 mmcOneValue.Add($"Drive supports DVD CSS/CPPM version {ftr.CSSVersion}");
             else if(ftr.SupportsCSS) mmcOneValue.Add("Drive supports DVD CSS/CPRM");
-            if(ftr.SupportsCPRM && ftr.CPRMVersionSpecified)
+            if(ftr.SupportsCPRM && ftr.CPRMVersion.HasValue)
                 mmcOneValue.Add($"Drive supports DVD CPPM version {ftr.CPRMVersion}");
             else if(ftr.SupportsCPRM) mmcOneValue.Add("Drive supports DVD CPRM");
             if(ftr.DBML) mmcOneValue.Add("Drive reports Device Busy Class events during medium loading/unloading");
             if(ftr.DVDMultiRead) mmcOneValue.Add("Drive conforms to DVD Multi Drive Read-only Specifications");
-            if(ftr.FirmwareDateSpecified) mmcOneValue.Add($"Drive firmware is dated {ftr.FirmwareDate}");
+            if(ftr.FirmwareDate.HasValue) mmcOneValue.Add($"Drive firmware is dated {ftr.FirmwareDate}");
             if(ftr.SupportsC2) mmcOneValue.Add("Drive supports C2 Error Pointers");
             if(ftr.SupportsDAP) mmcOneValue.Add("Drive supports the DAP bit in the READ CD and READ CD MSF commands");
             if(ftr.SupportsDeviceBusyEvent) mmcOneValue.Add("Drive supports Device Busy events");
 
-            switch(ftr.LoadingMechanismType)
-            {
-                case 0:
-                    mmcOneValue.Add("Drive uses media caddy");
-                    break;
-                case 1:
-                    mmcOneValue.Add("Drive uses a tray");
-                    break;
-                case 2:
-                    mmcOneValue.Add("Drive is pop-up");
-                    break;
-                case 4:
-                    mmcOneValue.Add("Drive is a changer with individually changeable discs");
-                    break;
-                case 5:
-                    mmcOneValue.Add("Drive is a changer using cartridges");
-                    break;
-                default:
-                    mmcOneValue.Add($"Drive uses unknown loading mechanism type {ftr.LoadingMechanismType}");
-                    break;
-            }
+            if(ftr.LoadingMechanismType.HasValue)
+                switch(ftr.LoadingMechanismType)
+                {
+                    case 0:
+                        mmcOneValue.Add("Drive uses media caddy");
+                        break;
+                    case 1:
+                        mmcOneValue.Add("Drive uses a tray");
+                        break;
+                    case 2:
+                        mmcOneValue.Add("Drive is pop-up");
+                        break;
+                    case 4:
+                        mmcOneValue.Add("Drive is a changer with individually changeable discs");
+                        break;
+                    case 5:
+                        mmcOneValue.Add("Drive is a changer using cartridges");
+                        break;
+                    default:
+                        mmcOneValue.Add($"Drive uses unknown loading mechanism type {ftr.LoadingMechanismType}");
+                        break;
+                }
 
             if(ftr.SupportsHybridDiscs) mmcOneValue.Add("Drive is able to access Hybrid discs");
             if(ftr.SupportsModePage1Ch)
@@ -274,7 +277,7 @@ namespace DiscImageChef.Server.App_Start
             if(ftr.SupportsSecurDisc) mmcOneValue.Add("Drive supports SecurDisc");
             if(ftr.SupportsSeparateVolume) mmcOneValue.Add("Drive supports separate volume per channel");
             if(ftr.SupportsVCPS) mmcOneValue.Add("Drive supports VCPS");
-            if(ftr.VolumeLevelsSpecified) mmcOneValue.Add($"Drive has {ftr.VolumeLevels + 1} volume levels");
+            if(ftr.VolumeLevels.HasValue) mmcOneValue.Add($"Drive has {ftr.VolumeLevels + 1} volume levels");
             if(ftr.SupportsWriteProtectPAC)
                 mmcOneValue.Add("Drive supports reading/writing the Disc Write Protect PAC on BD-R/-RE media");
             if(ftr.SupportsWriteInhibitDCB)

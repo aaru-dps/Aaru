@@ -33,7 +33,7 @@
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Metadata;
 
-namespace DiscImageChef.Server.App_Start
+namespace DiscImageChef.Server
 {
     public static class SscTestedMedia
     {
@@ -42,16 +42,16 @@ namespace DiscImageChef.Server.App_Start
         /// </summary>
         /// <param name="mediaOneValue">List to put values on</param>
         /// <param name="testedMedia">List of tested media</param>
-        public static void Report(IEnumerable<SequentialMedia> testedMedia, ref List<string> mediaOneValue)
+        public static void Report(IEnumerable<TestedSequentialMedia> testedMedia, ref List<string> mediaOneValue)
         {
-            foreach(SequentialMedia media in testedMedia)
+            foreach(TestedSequentialMedia media in testedMedia)
             {
                 if(!string.IsNullOrWhiteSpace(media.MediumTypeName))
                 {
                     mediaOneValue.Add($"<i>Information for medium named \"{media.MediumTypeName}\"</i>");
-                    if(media.MediumTypeSpecified) mediaOneValue.Add($"Medium type code: {media.MediumType:X2}h");
+                    if(media.MediumType.HasValue) mediaOneValue.Add($"Medium type code: {media.MediumType:X2}h");
                 }
-                else if(media.MediumTypeSpecified)
+                else if(media.MediumType.HasValue)
                     mediaOneValue.Add($"<i>Information for medium type {media.MediumType:X2}h</i>");
                 else mediaOneValue.Add("<i>Information for unknown medium type</i>");
 
@@ -59,9 +59,9 @@ namespace DiscImageChef.Server.App_Start
                     mediaOneValue.Add($"Medium manufactured by: {media.Manufacturer}");
                 if(!string.IsNullOrWhiteSpace(media.Model)) mediaOneValue.Add($"Medium model: {media.Model}");
 
-                if(media.DensitySpecified) mediaOneValue.Add($"Medium has density code {media.Density:X2}h");
-                if(media.CanReadMediaSerial) mediaOneValue.Add("Drive can read medium serial number.");
-                if(media.MediaIsRecognized) mediaOneValue.Add("DiscImageChef recognizes this medium.");
+                if(media.Density.HasValue) mediaOneValue.Add($"Medium has density code {media.Density:X2}h");
+                if(media.CanReadMediaSerial == true) mediaOneValue.Add("Drive can read medium serial number.");
+                if(media.MediaIsRecognized) mediaOneValue.Add("Drive recognizes this medium.");
 
                 mediaOneValue.Add("");
             }

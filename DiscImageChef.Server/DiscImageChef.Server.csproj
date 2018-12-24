@@ -295,6 +295,10 @@
       <Project>{0beb3088-b634-4289-ae17-cdf2d25d00d5}</Project>
       <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+      <Project>{f8bdf57b-1571-4cd0-84b3-b422088d359a}</Project>
+      <Name>DiscImageChef.Helpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201812201613369_InitialMigration.resx">

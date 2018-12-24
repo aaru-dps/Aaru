@@ -33,17 +33,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.UI;
-using System.Xml.Serialization;
-using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Server.App_Start;
-using Ata = DiscImageChef.Server.App_Start.Ata;
-using TestedMedia = DiscImageChef.Server.App_Start.TestedMedia;
+using DiscImageChef.Server.Models;
+using TestedMedia = DiscImageChef.CommonTypes.Metadata.TestedMedia;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Server
@@ -57,56 +55,24 @@ namespace DiscImageChef.Server
         {
             try
             {
-                string manufacturer = Request.QueryString["manufacturer"];
-                string model        = Request.QueryString["model"];
-                string revision     = Request.QueryString["revision"];
-
-                // Strip non-ascii, strip slashes and question marks
-                if(manufacturer != null)
-                    manufacturer = Encoding
-                                  .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII,
-                                                                    Encoding.UTF8.GetBytes(manufacturer)))
-                                  .Replace('/', '_').Replace('\\', '_').Replace('?', '_');
-                if(model != null)
-                    model = Encoding
-                           .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII,
-                                                             Encoding.UTF8.GetBytes(model))).Replace('/', '_')
-                           .Replace('\\', '_').Replace('?', '_');
-                if(revision != null)
-                    revision = Encoding
-                              .ASCII.GetString(Encoding.Convert(Encoding.UTF8, Encoding.ASCII,
-                                                                Encoding.UTF8.GetBytes(revision))).Replace('/', '_')
-                              .Replace('\\', '_').Replace('?', '_');
-
-                string xmlFile = null;
-                if(!string.IsNullOrWhiteSpace(manufacturer) && !string.IsNullOrWhiteSpace(model) &&
-                   !string.IsNullOrWhiteSpace(revision)) xmlFile = manufacturer + "_" + model + "_" + revision + ".xml";
-                else if(!string.IsNullOrWhiteSpace(manufacturer) && !string.IsNullOrWhiteSpace(model))
-                    xmlFile = manufacturer + "_" + model + ".xml";
-                else if(!string.IsNullOrWhiteSpace(model) && !string.IsNullOrWhiteSpace(revision))
-                    xmlFile                                        = model + "_" + revision + ".xml";
-                else if(!string.IsNullOrWhiteSpace(model)) xmlFile = model                  + ".xml";
-
-                if(xmlFile == null ||
-                   !File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                             "Reports", xmlFile)))
+                if(!int.TryParse(Request.QueryString["id"], out int id) || id <= 0)
                 {
-                    content.InnerHtml = "<b>Could not find the specified report</b>";
+                    content.InnerHtml = "<b>Incorrect device report request</b>";
                     return;
                 }
 
-                lblManufacturer.Text = Request.QueryString["manufacturer"];
-                lblModel.Text        = Request.QueryString["model"];
-                lblRevision.Text     = Request.QueryString["revision"];
+                DicServerContext ctx    = new DicServerContext();
+                Device           report = ctx.Devices.FirstOrDefault(d => d.Id == id);
 
-                DeviceReport  report = new DeviceReport();
-                XmlSerializer xs     = new XmlSerializer(report.GetType());
-                StreamReader sr =
-                    new
-                        StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                                  "Reports", xmlFile));
-                report = (DeviceReport)xs.Deserialize(sr);
-                sr.Close();
+                if(report is null)
+                {
+                    content.InnerHtml = "<b>Cannot find requested report</b>";
+                    return;
+                }
+
+                lblManufacturer.Text = report.Manufacturer;
+                lblModel.Text        = report.Model;
+                lblRevision.Text     = report.Revision;
 
                 if(report.USB != null)
                 {
@@ -223,7 +189,7 @@ namespace DiscImageChef.Server
                 else divPcmcia.Visible = false;
 
                 bool              removable   = true;
-                testedMediaType[] testedMedia = null;
+                List<TestedMedia> testedMedia = null;
                 bool              ata         = false;
                 bool              atapi       = false;
                 bool              sscMedia    = false;
@@ -233,7 +199,7 @@ namespace DiscImageChef.Server
                     ata = true;
                     List<string>               ataOneValue = new List<string>();
                     Dictionary<string, string> ataTwoValue = new Dictionary<string, string>();
-                    ataType                    ataReport;
+                    CommonTypes.Metadata.Ata   ataReport;
 
                     if(report.ATAPI != null)
                     {
@@ -243,7 +209,7 @@ namespace DiscImageChef.Server
                     }
                     else ataReport = report.ATA;
 
-                    bool cfa = report.CompactFlashSpecified && report.CompactFlash;
+                    bool cfa = report.CompactFlash;
 
                     if(atapi       && !cfa) lblAtaDeviceType.Text = "ATAPI device";
                     else if(!atapi && cfa) lblAtaDeviceType.Text  = "CompactFlash device";
@@ -264,13 +230,16 @@ namespace DiscImageChef.Server
                     Dictionary<string, string> modePages    = new Dictionary<string, string>();
                     Dictionary<string, string> evpdPages    = new Dictionary<string, string>();
 
-                    lblScsiVendor.Text =
-                        VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification) !=
-                        report.SCSI.Inquiry.VendorIdentification
-                            ? $"{report.SCSI.Inquiry.VendorIdentification} ({VendorString.Prettify(report.SCSI.Inquiry.VendorIdentification)})"
-                            : report.SCSI.Inquiry.VendorIdentification;
-                    lblScsiProduct.Text  = report.SCSI.Inquiry.ProductIdentification;
-                    lblScsiRevision.Text = report.SCSI.Inquiry.ProductRevisionLevel;
+                    string vendorId = StringHandlers.CToString(report.SCSI.Inquiry?.VendorIdentification);
+                    if(report.SCSI.Inquiry != null)
+                    {
+                        Inquiry.SCSIInquiry inq = report.SCSI.Inquiry.Value;
+                        lblScsiVendor.Text = VendorString.Prettify(vendorId) != vendorId
+                                                 ? $"{vendorId} ({VendorString.Prettify(vendorId)})"
+                                                 : vendorId;
+                        lblScsiProduct.Text  = StringHandlers.CToString(inq.ProductIdentification);
+                        lblScsiRevision.Text = StringHandlers.CToString(inq.ProductRevisionLevel);
+                    }
 
                     scsiOneValue.AddRange(ScsiInquiry.Report(report.SCSI.Inquiry));
 
@@ -279,8 +248,12 @@ namespace DiscImageChef.Server
                     if(report.SCSI.SupportsModeSubpages) scsiOneValue.Add("Device supports MODE SENSE subpages");
 
                     if(report.SCSI.ModeSense != null)
-                        ScsiModeSense.Report(report.SCSI.ModeSense, report.SCSI.Inquiry.VendorIdentification,
-                                             report.SCSI.Inquiry.PeripheralDeviceType, ref scsiOneValue, ref modePages);
+                    {
+                        PeripheralDeviceTypes devType = PeripheralDeviceTypes.DirectAccess;
+                        if(report.SCSI.Inquiry != null)
+                            devType = (PeripheralDeviceTypes)report.SCSI.Inquiry.Value.PeripheralDeviceType;
+                        ScsiModeSense.Report(report.SCSI.ModeSense, vendorId, devType, ref scsiOneValue, ref modePages);
+                    }
 
                     if(modePages.Count > 0)
                     {
@@ -289,8 +262,7 @@ namespace DiscImageChef.Server
                     }
                     else divScsiModeSense.Visible = false;
 
-                    if(report.SCSI.EVPDPages != null)
-                        ScsiEvpd.Report(report.SCSI.EVPDPages, report.SCSI.Inquiry.VendorIdentification, ref evpdPages);
+                    if(report.SCSI.EVPDPages != null) ScsiEvpd.Report(report.SCSI.EVPDPages, vendorId, ref evpdPages);
 
                     if(evpdPages.Count > 0)
                     {
@@ -335,17 +307,14 @@ namespace DiscImageChef.Server
                     {
                         divScsiSsc.Visible = true;
 
-                        lblScsiSscGranularity.Text = report.SCSI.SequentialDevice.BlockSizeGranularitySpecified
-                                                         ? report.SCSI.SequentialDevice.BlockSizeGranularity.ToString()
-                                                         : "Unspecified";
+                        lblScsiSscGranularity.Text =
+                            report.SCSI.SequentialDevice.BlockSizeGranularity?.ToString() ?? "Unspecified";
 
-                        lblScsiSscMaxBlock.Text = report.SCSI.SequentialDevice.MaxBlockLengthSpecified
-                                                      ? report.SCSI.SequentialDevice.MaxBlockLength.ToString()
-                                                      : "Unspecified";
+                        lblScsiSscMaxBlock.Text =
+                            report.SCSI.SequentialDevice.MaxBlockLength?.ToString() ?? "Unspecified";
 
-                        lblScsiSscMinBlock.Text = report.SCSI.SequentialDevice.MinBlockLengthSpecified
-                                                      ? report.SCSI.SequentialDevice.MinBlockLength.ToString()
-                                                      : "Unspecified";
+                        lblScsiSscMinBlock.Text =
+                            report.SCSI.SequentialDevice.MinBlockLength?.ToString() ?? "Unspecified";
 
                         if(report.SCSI.SequentialDevice.SupportedDensities != null)
                         {
@@ -380,8 +349,8 @@ namespace DiscImageChef.Server
                         removable = false;
                         scsiOneValue.Add("");
 
-                        if(report.SCSI.ReadCapabilities.BlocksSpecified &&
-                           report.SCSI.ReadCapabilities.BlockSizeSpecified)
+                        if(report.SCSI.ReadCapabilities.Blocks.HasValue &&
+                           report.SCSI.ReadCapabilities.BlockSize.HasValue)
                         {
                             scsiOneValue
                                .Add($"Device has {report.SCSI.ReadCapabilities.Blocks} blocks of {report.SCSI.ReadCapabilities.BlockSize} bytes each");
@@ -400,29 +369,29 @@ namespace DiscImageChef.Server
                                    .Add($"Device size: {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize} bytes, {report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize / 1000 / 1000} Mb, {(double)(report.SCSI.ReadCapabilities.Blocks * report.SCSI.ReadCapabilities.BlockSize) / 1024 / 1024:F2} MiB");
                         }
 
-                        if(report.SCSI.ReadCapabilities.MediumTypeSpecified)
+                        if(report.SCSI.ReadCapabilities.MediumType.HasValue)
                             scsiOneValue.Add($"Medium type code: {report.SCSI.ReadCapabilities.MediumType:X2}h");
-                        if(report.SCSI.ReadCapabilities.DensitySpecified)
+                        if(report.SCSI.ReadCapabilities.Density.HasValue)
                             scsiOneValue.Add($"Density code: {report.SCSI.ReadCapabilities.Density:X2}h");
-                        if((report.SCSI.ReadCapabilities.SupportsReadLong ||
-                            report.SCSI.ReadCapabilities.SupportsReadLong16) &&
-                           report.SCSI.ReadCapabilities.LongBlockSizeSpecified)
+                        if((report.SCSI.ReadCapabilities.SupportsReadLong   == true ||
+                            report.SCSI.ReadCapabilities.SupportsReadLong16 == true) &&
+                           report.SCSI.ReadCapabilities.LongBlockSize.HasValue)
                             scsiOneValue.Add($"Long block size: {report.SCSI.ReadCapabilities.LongBlockSize} bytes");
-                        if(report.SCSI.ReadCapabilities.SupportsReadCapacity)
+                        if(report.SCSI.ReadCapabilities.SupportsReadCapacity == true)
                             scsiOneValue.Add("Device supports READ CAPACITY (10) command.");
-                        if(report.SCSI.ReadCapabilities.SupportsReadCapacity16)
+                        if(report.SCSI.ReadCapabilities.SupportsReadCapacity16 == true)
                             scsiOneValue.Add("Device supports READ CAPACITY (16) command.");
-                        if(report.SCSI.ReadCapabilities.SupportsRead)
+                        if(report.SCSI.ReadCapabilities.SupportsRead6 == true)
                             scsiOneValue.Add("Device supports READ (6) command.");
-                        if(report.SCSI.ReadCapabilities.SupportsRead10)
+                        if(report.SCSI.ReadCapabilities.SupportsRead10 == true)
                             scsiOneValue.Add("Device supports READ (10) command.");
-                        if(report.SCSI.ReadCapabilities.SupportsRead12)
+                        if(report.SCSI.ReadCapabilities.SupportsRead12 == true)
                             scsiOneValue.Add("Device supports READ (12) command.");
-                        if(report.SCSI.ReadCapabilities.SupportsRead16)
+                        if(report.SCSI.ReadCapabilities.SupportsRead16 == true)
                             scsiOneValue.Add("Device supports READ (16) command.");
-                        if(report.SCSI.ReadCapabilities.SupportsReadLong)
+                        if(report.SCSI.ReadCapabilities.SupportsReadLong == true)
                             scsiOneValue.Add("Device supports READ LONG (10) command.");
-                        if(report.SCSI.ReadCapabilities.SupportsReadLong16)
+                        if(report.SCSI.ReadCapabilities.SupportsReadLong16 == true)
                             scsiOneValue.Add("Device supports READ LONG (16) command.");
                     }
                     else testedMedia = report.SCSI.RemovableMedias;
@@ -509,7 +478,7 @@ namespace DiscImageChef.Server
                 if(removable && !sscMedia && testedMedia != null)
                 {
                     List<string> mediaOneValue = new List<string>();
-                    TestedMedia.Report(testedMedia, ata, ref mediaOneValue);
+                    App_Start.TestedMedia.Report(testedMedia, ref mediaOneValue);
                     if(mediaOneValue.Count > 0)
                     {
                         divTestedMedia.Visible    = true;

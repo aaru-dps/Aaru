@@ -31,10 +31,9 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.SCSI;
 
-namespace DiscImageChef.Server.App_Start
+namespace DiscImageChef.Server
 {
     static class ScsiInquiry
     {
@@ -42,13 +41,17 @@ namespace DiscImageChef.Server.App_Start
         ///     Takes the SCSI INQUIRY part of a device report and prints it as a list of values to be sequenced by ASP.NET in the
         ///     rendering
         /// </summary>
-        /// <param name="inquiry">INQUIRY part of the report</param>
+        /// <param name="inquiryNullable">INQUIRY part of the report</param>
         /// <returns>List of values</returns>
-        internal static List<string> Report(scsiInquiryType inquiry)
+        internal static IEnumerable<string> Report(Inquiry.SCSIInquiry? inquiryNullable)
         {
             List<string> scsiOneValue = new List<string>();
 
-            switch(inquiry.PeripheralQualifier)
+            if(!inquiryNullable.HasValue) return scsiOneValue;
+
+            Inquiry.SCSIInquiry inquiry = inquiryNullable.Value;
+
+            switch((PeripheralQualifiers)inquiry.PeripheralQualifier)
             {
                 case PeripheralQualifiers.Supported:
                     scsiOneValue.Add("Device is connected and supported.");
@@ -67,7 +70,7 @@ namespace DiscImageChef.Server.App_Start
                     break;
             }
 
-            switch(inquiry.PeripheralDeviceType)
+            switch((PeripheralDeviceTypes)inquiry.PeripheralDeviceType)
             {
                 case PeripheralDeviceTypes.DirectAccess: //0x00,
                     scsiOneValue.Add("Direct-access device");
@@ -200,35 +203,34 @@ namespace DiscImageChef.Server.App_Start
                     break;
             }
 
-            if(inquiry.Removable) scsiOneValue.Add("Device is removable");
-            if(inquiry.AERCSupported) scsiOneValue.Add("Device supports Asynchronous Event Reporting Capability");
-            if(inquiry.TerminateTaskSupported) scsiOneValue.Add("Device supports TERMINATE TASK command");
-            if(inquiry.NormalACA) scsiOneValue.Add("Device supports setting Normal ACA");
-            if(inquiry.HierarchicalLUN) scsiOneValue.Add("Device supports LUN hierarchical addressing");
-            if(inquiry.StorageArrayController) scsiOneValue.Add("Device contains an embedded storage array controller");
-            if(inquiry.AccessControlCoordinator) scsiOneValue.Add("Device contains an Access Control Coordinator");
-            if(inquiry.ThirdPartyCopy) scsiOneValue.Add("Device supports third-party copy commands");
-            if(inquiry.Protection) scsiOneValue.Add("Device supports protection information");
-            if(inquiry.BasicQueueing) scsiOneValue.Add("Device supports basic queueing");
-            if(inquiry.EnclosureServices) scsiOneValue.Add("Device contains an embedded enclosure services component");
-            if(inquiry.MultiPortDevice) scsiOneValue.Add("Multi-port device");
-            if(inquiry.MediumChanger) scsiOneValue.Add("Device contains or is attached to a medium changer");
-            if(inquiry.ACKRequests) scsiOneValue.Add("Device supports request and acknowledge handshakes");
-            if(inquiry.Address32) scsiOneValue.Add("Device supports 32-bit wide SCSI addresses");
-            if(inquiry.Address16) scsiOneValue.Add("Device supports 16-bit wide SCSI addresses");
-            if(inquiry.RelativeAddressing) scsiOneValue.Add("Device supports relative addressing");
-            if(inquiry.WideBus32) scsiOneValue.Add("Device supports 32-bit wide data transfers");
-            if(inquiry.WideBus16) scsiOneValue.Add("Device supports 16-bit wide data transfers");
-            if(inquiry.SyncTransfer) scsiOneValue.Add("Device supports synchronous data transfer");
-            if(inquiry.LinkedCommands) scsiOneValue.Add("Device supports linked commands");
-            if(inquiry.TranferDisable)
-                scsiOneValue.Add("Device supports CONTINUE TASK and TARGET TRANSFER DISABLE commands");
+            if(inquiry.RMB) scsiOneValue.Add("Device is removable");
+            if(inquiry.AERC) scsiOneValue.Add("Device supports Asynchronous Event Reporting Capability");
+            if(inquiry.TrmTsk) scsiOneValue.Add("Device supports TERMINATE TASK command");
+            if(inquiry.NormACA) scsiOneValue.Add("Device supports setting Normal ACA");
+            if(inquiry.HiSup) scsiOneValue.Add("Device supports LUN hierarchical addressing");
+            if(inquiry.SCCS) scsiOneValue.Add("Device contains an embedded storage array controller");
+            if(inquiry.ACC) scsiOneValue.Add("Device contains an Access Control Coordinator");
+            if(inquiry.ThreePC) scsiOneValue.Add("Device supports third-party copy commands");
+            if(inquiry.Protect) scsiOneValue.Add("Device supports protection information");
+            if(inquiry.BQue) scsiOneValue.Add("Device supports basic queueing");
+            if(inquiry.EncServ) scsiOneValue.Add("Device contains an embedded enclosure services component");
+            if(inquiry.MultiP) scsiOneValue.Add("Multi-port device");
+            if(inquiry.MChngr) scsiOneValue.Add("Device contains or is attached to a medium changer");
+            if(inquiry.ACKREQQ) scsiOneValue.Add("Device supports request and acknowledge handshakes");
+            if(inquiry.Addr32) scsiOneValue.Add("Device supports 32-bit wide SCSI addresses");
+            if(inquiry.Addr16) scsiOneValue.Add("Device supports 16-bit wide SCSI addresses");
+            if(inquiry.RelAddr) scsiOneValue.Add("Device supports relative addressing");
+            if(inquiry.WBus32) scsiOneValue.Add("Device supports 32-bit wide data transfers");
+            if(inquiry.WBus16) scsiOneValue.Add("Device supports 16-bit wide data transfers");
+            if(inquiry.Sync) scsiOneValue.Add("Device supports synchronous data transfer");
+            if(inquiry.Linked) scsiOneValue.Add("Device supports linked commands");
+            if(inquiry.TranDis) scsiOneValue.Add("Device supports CONTINUE TASK and TARGET TRANSFER DISABLE commands");
             if(inquiry.QAS) scsiOneValue.Add("Device supports Quick Arbitration and Selection");
-            if(inquiry.TaggedCommandQueue) scsiOneValue.Add("Device supports TCQ queue");
+            if(inquiry.CmdQue) scsiOneValue.Add("Device supports TCQ queue");
             if(inquiry.IUS) scsiOneValue.Add("Device supports information unit transfers");
-            if(inquiry.SoftReset) scsiOneValue.Add("Device implements RESET as a soft reset");
+            if(inquiry.SftRe) scsiOneValue.Add("Device implements RESET as a soft reset");
 
-            switch(inquiry.AsymmetricalLUNAccess)
+            switch((TGPSValues)inquiry.TPGS)
             {
                 case TGPSValues.NotSupported:
                     scsiOneValue.Add("Device does not support assymetrical access");
@@ -243,11 +245,11 @@ namespace DiscImageChef.Server.App_Start
                     scsiOneValue.Add("Device supports implicit and explicit assymetrical access");
                     break;
                 default:
-                    scsiOneValue.Add($"Unknown value in TPGS field 0x{inquiry.AsymmetricalLUNAccess:X2}");
+                    scsiOneValue.Add($"Unknown value in TPGS field 0x{inquiry.TPGS:X2}");
                     break;
             }
 
-            switch(inquiry.SPIClocking)
+            switch((SPIClocking)inquiry.Clocking)
             {
                 case SPIClocking.ST:
                     scsiOneValue.Add("Device supports only ST clocking");
@@ -262,7 +264,7 @@ namespace DiscImageChef.Server.App_Start
                     scsiOneValue.Add("Device supports ST and DT clocking");
                     break;
                 default:
-                    scsiOneValue.Add($"Unknown value in SPI clocking field 0x{inquiry.SPIClocking:X2}");
+                    scsiOneValue.Add($"Unknown value in SPI clocking field 0x{inquiry.Clocking:X2}");
                     break;
             }
 
