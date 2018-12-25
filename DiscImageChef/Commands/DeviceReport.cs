@@ -292,7 +292,10 @@ namespace DiscImageChef.Commands
                     report.SCSI = reporter.ReportScsiInquiry();
                     if(report.SCSI == null) break;
 
-                    report.SCSI.EVPDPages = reporter.ReportEvpdPages();
+                    report.SCSI.EVPDPages =
+                        reporter.ReportEvpdPages(StringHandlers
+                                                .CToString(report.SCSI.Inquiry?.VendorIdentification)?.Trim()
+                                                .ToLowerInvariant());
 
                     reporter.ReportScsiModes(ref report, out byte[] cdromMode);
 
