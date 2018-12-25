@@ -291,7 +291,6 @@
     <None Include="int10h.org\.htaccess" />
     <None Include="int10h.org\vga_squarepx.woff2" />
     <None Include="Reports\.htaccess" />
-    <None Include="usb.ids" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

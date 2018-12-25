@@ -32,16 +32,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Web;
-using System.Web.Hosting;
 using System.Web.UI;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Server.App_Start;
 using DiscImageChef.Server.Models;
-using TestedMedia = DiscImageChef.CommonTypes.Metadata.TestedMedia;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Server
@@ -76,8 +73,25 @@ namespace DiscImageChef.Server
 
                 if(report.USB != null)
                 {
-                    GetUsbDescriptions(report.USB.VendorID, report.USB.ProductID, out string usbVendorDescription,
-                                       out string usbProductDescription);
+                    string usbVendorDescription  = null;
+                    string usbProductDescription = null;
+
+                    UsbProduct dbProduct =
+                        ctx.UsbProducts.FirstOrDefault(p => p.ProductId       == report.USB.ProductID &&
+                                                            p.Vendor          != null                 &&
+                                                            p.Vendor.VendorId == report.USB.VendorID);
+
+                    if(dbProduct is null)
+                    {
+                        UsbVendor dbVendor = ctx.UsbVendors.FirstOrDefault(v => v.VendorId == report.USB.VendorID);
+
+                        if(!(dbVendor is null)) usbVendorDescription = dbVendor.Vendor;
+                    }
+                    else
+                    {
+                        usbProductDescription = dbProduct.Product;
+                        usbVendorDescription  = dbProduct.Vendor.Vendor;
+                    }
 
                     lblUsbManufacturer.Text = HttpUtility.HtmlEncode(report.USB.Manufacturer);
                     lblUsbProduct.Text      = HttpUtility.HtmlEncode(report.USB.Product);
@@ -495,55 +509,6 @@ namespace DiscImageChef.Server
                 #if DEBUG
                 throw;
                 #endif
-            }
-        }
-
-        static void GetUsbDescriptions(ushort     vendor, ushort product, out string vendorDescription,
-                                       out string productDescription)
-        {
-            vendorDescription  = null;
-            productDescription = null;
-
-            if(!File.Exists(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                         "usb.ids"))) return;
-
-            StreamReader tocStream =
-                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
-                                              "usb.ids"));
-            bool inManufacturer = false;
-
-            while(tocStream.Peek() >= 0)
-            {
-                string line = tocStream.ReadLine();
-
-                if(line == null) break;
-
-                if(line.Length == 0 || line[0] == '#') continue;
-
-                ushort number;
-                if(inManufacturer)
-                {
-                    // Finished with the manufacturer
-                    if(line[0] != '\t') return;
-
-                    number = Convert.ToUInt16(line.Substring(1, 4), 16);
-
-                    if(number != product) continue;
-
-                    productDescription = line.Substring(7);
-                    return;
-                }
-
-                // Skip products
-                if(line[0] == '\t') continue;
-
-                try { number = Convert.ToUInt16(line.Substring(0, 4), 16); }
-                catch(FormatException) { continue; }
-
-                if(number != vendor) continue;
-
-                vendorDescription = line.Substring(6);
-                inManufacturer    = true;
             }
         }
     }

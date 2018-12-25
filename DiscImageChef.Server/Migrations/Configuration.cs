@@ -3,7 +3,7 @@ using DiscImageChef.Server.Models;
 
 namespace DiscImageChef.Server.Migrations
 {
-    sealed class Configuration : DbMigrationsConfiguration<DicServerContext>
+    public sealed class Configuration : DbMigrationsConfiguration<DicServerContext>
     {
         public Configuration()
         {

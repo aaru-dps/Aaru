@@ -1868,6 +1868,16 @@
         <e p="packages.config" t="Include" />
         <e p="usb.ids" t="Include" />
       </e>
+      <e p="DiscImageChef.Server.Task" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="DiscImageChef.Server.Task.csproj" t="IncludeRecursive" />
+        <e p="Program.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
       <e p="DiscImageChef.Settings" t="IncludeRecursive">
         <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
         <e p="Settings.cs" t="Include" />
