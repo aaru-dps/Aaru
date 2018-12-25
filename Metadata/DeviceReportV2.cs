@@ -1032,6 +1032,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool    SupportsWriteInhibitDCB         { get; set; }
         public bool    SupportsWriteProtectPAC         { get; set; }
         public ushort? VolumeLevels                    { get; set; }
+        public byte[]  BinaryData                      { get; set; }
+
         [JsonIgnore]
         public short? BlocksPerReadableUnitSql
         {
