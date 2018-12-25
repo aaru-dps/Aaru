@@ -172,7 +172,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_81(byte[] pageResponse) => PrettifyPage_81(DecodePage_81(pageResponse));
+        public static string PrettifyPage_81(byte[] pageResponse)
+        {
+            return PrettifyPage_81(DecodePage_81(pageResponse));
+        }
 
         public static string DefinitionToString(ScsiDefinitions definition)
         {
@@ -427,7 +430,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_83(byte[] pageResponse) => PrettifyPage_83(DecodePage_83(pageResponse));
+        public static string PrettifyPage_83(byte[] pageResponse)
+        {
+            return PrettifyPage_83(DecodePage_83(pageResponse));
+        }
 
         public static string PrettifyPage_83(Page_83? modePage)
         {
@@ -817,7 +823,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_84(byte[] pageResponse) => PrettifyPage_84(DecodePage_84(pageResponse));
+        public static string PrettifyPage_84(byte[] pageResponse)
+        {
+            return PrettifyPage_84(DecodePage_84(pageResponse));
+        }
 
         public static string PrettifyPage_84(Page_84? modePage)
         {
@@ -946,7 +955,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_85(byte[] pageResponse) => PrettifyPage_85(DecodePage_85(pageResponse));
+        public static string PrettifyPage_85(byte[] pageResponse)
+        {
+            return PrettifyPage_85(DecodePage_85(pageResponse));
+        }
 
         public static string PrettifyPage_85(Page_85? modePage)
         {
@@ -1204,7 +1216,10 @@ namespace DiscImageChef.Decoders.SCSI
             };
         }
 
-        public static string PrettifyPage_86(byte[] pageResponse) => PrettifyPage_86(DecodePage_86(pageResponse));
+        public static string PrettifyPage_86(byte[] pageResponse)
+        {
+            return PrettifyPage_86(DecodePage_86(pageResponse));
+        }
 
         public static string PrettifyPage_86(Page_86? modePage)
         {
@@ -1359,17 +1374,20 @@ namespace DiscImageChef.Decoders.SCSI
                 IdentifyData          = new byte[512]
             };
 
-            Array.Copy(pageResponse, 8, decoded.VendorIdentification,  0, 8);
-            Array.Copy(pageResponse, 8, decoded.ProductIdentification, 0, 16);
-            Array.Copy(pageResponse, 8, decoded.ProductRevisionLevel,  0, 4);
-            Array.Copy(pageResponse, 8, decoded.Signature,             0, 20);
+            Array.Copy(pageResponse, 8,  decoded.VendorIdentification,  0, 8);
+            Array.Copy(pageResponse, 16, decoded.ProductIdentification, 0, 16);
+            Array.Copy(pageResponse, 32, decoded.ProductRevisionLevel,  0, 4);
+            Array.Copy(pageResponse, 36, decoded.Signature,             0, 20);
             decoded.CommandCode = pageResponse[56];
-            Array.Copy(pageResponse, 8, decoded.IdentifyData, 0, 512);
+            Array.Copy(pageResponse, 60, decoded.IdentifyData, 0, 512);
 
             return decoded;
         }
 
-        public static string PrettifyPage_89(byte[] pageResponse) => PrettifyPage_89(DecodePage_89(pageResponse));
+        public static string PrettifyPage_89(byte[] pageResponse)
+        {
+            return PrettifyPage_89(DecodePage_89(pageResponse));
+        }
 
         // TODO: Decode ATA signature?
         public static string PrettifyPage_89(Page_89? modePage)
@@ -1493,8 +1511,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_C0_Quantum(byte[] pageResponse) =>
-            PrettifyPage_C0_Quantum(DecodePage_C0_Quantum(pageResponse));
+        public static string PrettifyPage_C0_Quantum(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_Quantum(DecodePage_C0_Quantum(pageResponse));
+        }
 
         public static string PrettifyPage_C0_Quantum(Page_C0_Quantum? modePage)
         {
@@ -1573,8 +1593,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_C0_C1_Certance(byte[] pageResponse) =>
-            PrettifyPage_C0_C1_Certance(DecodePage_C0_C1_Certance(pageResponse));
+        public static string PrettifyPage_C0_C1_Certance(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_C1_Certance(DecodePage_C0_C1_Certance(pageResponse));
+        }
 
         public static string PrettifyPage_C0_C1_Certance(Page_C0_C1_Certance? modePage)
         {
@@ -1644,8 +1666,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(byte[] pageResponse) =>
-            PrettifyPage_C2_C3_C4_C5_C6_Certance(DecodePage_C2_C3_C4_C5_C6_Certance(pageResponse));
+        public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(byte[] pageResponse)
+        {
+            return PrettifyPage_C2_C3_C4_C5_C6_Certance(DecodePage_C2_C3_C4_C5_C6_Certance(pageResponse));
+        }
 
         public static string PrettifyPage_C2_C3_C4_C5_C6_Certance(Page_C2_C3_C4_C5_C6_Certance? modePage)
         {
@@ -1813,8 +1837,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_DF_Certance(byte[] pageResponse) =>
-            PrettifyPage_DF_Certance(DecodePage_DF_Certance(pageResponse));
+        public static string PrettifyPage_DF_Certance(byte[] pageResponse)
+        {
+            return PrettifyPage_DF_Certance(DecodePage_DF_Certance(pageResponse));
+        }
 
         public static string PrettifyPage_DF_Certance(Page_DF_Certance? modePage)
         {
@@ -1987,8 +2013,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_C0_IBM(byte[] pageResponse) =>
-            PrettifyPage_C0_IBM(DecodePage_C0_IBM(pageResponse));
+        public static string PrettifyPage_C0_IBM(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_IBM(DecodePage_C0_IBM(pageResponse));
+        }
 
         public static string PrettifyPage_C0_IBM(Page_C0_IBM? modePage)
         {
@@ -2056,8 +2084,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_C1_IBM(byte[] pageResponse) =>
-            PrettifyPage_C1_IBM(DecodePage_C1_IBM(pageResponse));
+        public static string PrettifyPage_C1_IBM(byte[] pageResponse)
+        {
+            return PrettifyPage_C1_IBM(DecodePage_C1_IBM(pageResponse));
+        }
 
         public static string PrettifyPage_C1_IBM(Page_C1_IBM? modePage)
         {
@@ -2124,7 +2154,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_B0(byte[] pageResponse) => PrettifyPage_B0(DecodePage_B0(pageResponse));
+        public static string PrettifyPage_B0(byte[] pageResponse)
+        {
+            return PrettifyPage_B0(DecodePage_B0(pageResponse));
+        }
 
         public static string PrettifyPage_B0(Page_B0? modePage)
         {
@@ -2306,8 +2339,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_C0_to_C5_HP(byte[] pageResponse) =>
-            PrettifyPage_C0_to_C5_HP(DecodePage_C0_to_C5_HP(pageResponse));
+        public static string PrettifyPage_C0_to_C5_HP(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_to_C5_HP(DecodePage_C0_to_C5_HP(pageResponse));
+        }
 
         public static string PrettifyPage_C0_to_C5_HP(Page_C0_to_C5_HP? modePage)
         {
@@ -2407,8 +2442,10 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyPage_C0_Seagate(byte[] pageResponse) =>
-            PrettifyPage_C0_Seagate(DecodePage_C0_Seagate(pageResponse));
+        public static string PrettifyPage_C0_Seagate(byte[] pageResponse)
+        {
+            return PrettifyPage_C0_Seagate(DecodePage_C0_Seagate(pageResponse));
+        }
 
         public static string PrettifyPage_C0_Seagate(Page_C0_Seagate? modePage)
         {
