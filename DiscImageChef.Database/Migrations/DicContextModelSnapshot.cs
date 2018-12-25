@@ -886,6 +886,29 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Usb");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.CdOffset", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<DateTime>("AddedWhen");
+
+                b.Property<float>("Agreement");
+
+                b.Property<string>("Manufacturer");
+
+                b.Property<string>("Model");
+
+                b.Property<DateTime>("ModifiedWhen");
+
+                b.Property<short>("Offset");
+
+                b.Property<int>("Submissions");
+
+                b.HasKey("Id");
+
+                b.ToTable("CdOffsets");
+            });
+
             modelBuilder.Entity("DiscImageChef.Database.Models.Command", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();

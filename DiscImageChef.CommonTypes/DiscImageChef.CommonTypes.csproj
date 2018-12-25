@@ -76,6 +76,7 @@
     <Compile Include="Interop\DetectOS.cs" />
     <Compile Include="Interop\PlatformID.cs" />
     <Compile Include="Interop\Version.cs" />
+    <Compile Include="Metadata\CdOffset.cs" />
     <Compile Include="Metadata\DeviceReport.cs" />
     <Compile Include="Metadata\DeviceReportV2.cs" />
     <Compile Include="Metadata\Dimensions.cs" />

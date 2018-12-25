@@ -84,7 +84,10 @@
     <Compile Include="Migrations\20181224044809_StoreUsbIdsInDatabase.Designer.cs" />
     <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.cs" />
     <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.Designer.cs" />
+    <Compile Include="Migrations\20181225002740_AddCdOffsets.cs" />
+    <Compile Include="Migrations\20181225002740_AddCdOffsets.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
+    <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />
     <Compile Include="Models\DeviceStat.cs" />

@@ -175,6 +175,19 @@ namespace DiscImageChef.Server.Task
                 #endif
                 Console.WriteLine("{0}: Exception {1} filling USB IDs...", DateTime.UtcNow, ex);
             }
+
+            Console.WriteLine("{0}: Fixing all devices without modification time...", DateTime.UtcNow);
+            start = DateTime.UtcNow;
+            foreach(Device device in ctx.Devices.Where(d => d.ModifiedWhen == null))
+                device.ModifiedWhen = device.AddedWhen;
+            end = DateTime.UtcNow;
+            Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
+
+            Console.WriteLine("{0}: Committing changes...", DateTime.UtcNow);
+            start = DateTime.UtcNow;
+            ctx.SaveChanges();
+            end = DateTime.UtcNow;
+            Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
         }
     }
 }

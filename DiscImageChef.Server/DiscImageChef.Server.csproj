@@ -225,7 +225,12 @@
     <Compile Include="Migrations\201812241719441_FixUsbIdsAndIndexes.Designer.cs">
       <DependentUpon>201812241719441_FixUsbIdsAndIndexes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812250223002_AddCdOffsets.cs" />
+    <Compile Include="Migrations\201812250223002_AddCdOffsets.Designer.cs">
+      <DependentUpon>201812250223002_AddCdOffsets.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Context.cs" />
     <Compile Include="Models\Device.cs" />
@@ -330,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812241719441_FixUsbIdsAndIndexes.resx">
       <DependentUpon>201812241719441_FixUsbIdsAndIndexes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812250223002_AddCdOffsets.resx">
+      <DependentUpon>201812250223002_AddCdOffsets.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

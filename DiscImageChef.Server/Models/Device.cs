@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using DiscImageChef.CommonTypes.Metadata;
 
 namespace DiscImageChef.Server.Models
@@ -17,6 +18,7 @@ namespace DiscImageChef.Server.Models
             CompactFlash   = report.CompactFlash;
             FireWire       = report.FireWire;
             AddedWhen      = DateTime.UtcNow;
+            ModifiedWhen   = DateTime.UtcNow;
             MultiMediaCard = report.MultiMediaCard;
             PCMCIA         = report.PCMCIA;
             SCSI           = report.SCSI;
@@ -29,5 +31,8 @@ namespace DiscImageChef.Server.Models
         }
 
         public DateTime AddedWhen { get; set; }
+        [Index]
+        public DateTime? ModifiedWhen { get;             set; }
+        public virtual CompactDiscOffset CdOffset { get; set; }
     }
 }
