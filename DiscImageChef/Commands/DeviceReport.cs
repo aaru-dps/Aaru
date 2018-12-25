@@ -200,7 +200,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Querying ATA IDENTIFY...");
                         dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
                         report.ATA.Identify = buffer;
-                        List<TestedMedia> mediaTests          = new List<TestedMedia>();
+                        List<TestedMedia> mediaTests = new List<TestedMedia>();
 
                         pressedKey = new ConsoleKeyInfo();
                         while(pressedKey.Key != ConsoleKey.N)
@@ -316,7 +316,13 @@ namespace DiscImageChef.Commands
                                 mediaTypes.Add("CD-ROM");
                                 mediaTypes.Add("Audio CD");
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR) mediaTypes.Add("CD-R");
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW) mediaTypes.Add("CD-RW");
+                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW)
+                                {
+                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                }
+
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDROM) mediaTypes.Add("DVD-ROM");
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM) mediaTypes.Add("DVD-RAM");
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR) mediaTypes.Add("DVD-R");
@@ -334,10 +340,18 @@ namespace DiscImageChef.Commands
                                    report.SCSI.MultiMediaDevice.Features.CanReadOldBDROM)
                                 {
                                     if(!mediaTypes.Contains("BD-ROM")) mediaTypes.Add("BD-ROM");
-                                    if(!mediaTypes.Contains("BD-R")) mediaTypes.Add("BD-R");
+                                    if(!mediaTypes.Contains("BD-R HTL (not LTH)")) mediaTypes.Add("BD-R HTL (not LTH)");
                                     if(!mediaTypes.Contains("BD-RE")) mediaTypes.Add("BD-RE");
                                     if(!mediaTypes.Contains("BD-R LTH")) mediaTypes.Add("BD-R LTH");
-                                    if(!mediaTypes.Contains("BD-R XL")) mediaTypes.Add("BD-R XL");
+                                    if(!mediaTypes.Contains("BD-R Triple Layer (100Gb)"))
+                                        mediaTypes.Add("BD-R Triple Layer (100Gb)");
+                                    if(!mediaTypes.Contains("BD-R Quad Layer (128Gb)"))
+                                        mediaTypes.Add("BD-R Quad Layer (128Gb)");
+                                    if(!mediaTypes.Contains("Ultra HD Blu-ray movie"))
+                                        mediaTypes.Add("Ultra HD Blu-ray movie");
+                                    if(!mediaTypes.Contains("PlayStation 3 game")) mediaTypes.Add("PlayStation 3 game");
+                                    if(!mediaTypes.Contains("PlayStation 4 game")) mediaTypes.Add("PlayStation 4 game");
+                                    if(!mediaTypes.Contains("Xbox One game")) mediaTypes.Add("Xbox One game");
                                 }
 
                                 if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
@@ -345,8 +359,15 @@ namespace DiscImageChef.Commands
                                 {
                                     if(!mediaTypes.Contains("CD-ROM")) mediaTypes.Add("CD-ROM");
                                     if(!mediaTypes.Contains("Audio CD")) mediaTypes.Add("Audio CD");
+                                    if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
+                                        mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                                     if(!mediaTypes.Contains("CD-R")) mediaTypes.Add("CD-R");
-                                    if(!mediaTypes.Contains("CD-RW")) mediaTypes.Add("CD-RW");
+                                    if(!mediaTypes.Contains("CD-RW Ultra Speed (marked 16x or higher)"))
+                                        mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                    if(!mediaTypes.Contains("CD-RW High Speed (marked between 8x and 12x)"))
+                                        mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                    if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
+                                        mediaTypes.Add("CD-RW (marked 4x or lower)");
                                 }
 
                                 if(report.SCSI.MultiMediaDevice.Features.CanReadCDMRW)
@@ -400,7 +421,12 @@ namespace DiscImageChef.Commands
                                 if(!mediaTypes.Contains("CD-ROM")) mediaTypes.Add("CD-ROM");
                                 if(!mediaTypes.Contains("Audio CD")) mediaTypes.Add("Audio CD");
                                 if(!mediaTypes.Contains("CD-R")) mediaTypes.Add("CD-R");
-                                if(!mediaTypes.Contains("CD-RW")) mediaTypes.Add("CD-RW");
+                                if(!mediaTypes.Contains("CD-RW Ultra Speed (marked 16x or higher)"))
+                                    mediaTypes.Add("CD-RW Ultra Speed (marked 16x or higher)");
+                                if(!mediaTypes.Contains("CD-RW High Speed (marked between 8x and 12x)"))
+                                    mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
+                                if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
+                                    mediaTypes.Add("CD-RW (marked 4x or lower)");
                             }
 
                             mediaTypes.Sort();
