@@ -326,6 +326,8 @@
           <e p="20181224172147_FixUsbIdsAndIndexes.cs" t="Include" />
           <e p="20181225002740_AddCdOffsets.Designer.cs" t="Include" />
           <e p="20181225002740_AddCdOffsets.cs" t="Include" />
+          <e p="20181225152947_StoreMmcGetConfigurationResponse.Designer.cs" t="Include" />
+          <e p="20181225152947_StoreMmcGetConfigurationResponse.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1827,6 +1829,9 @@
           <e p="201812250223002_AddCdOffsets.Designer.cs" t="Include" />
           <e p="201812250223002_AddCdOffsets.cs" t="Include" />
           <e p="201812250223002_AddCdOffsets.resx" t="Include" />
+          <e p="201812251556377_StoreMmcGetConfigurationResponse.Designer.cs" t="Include" />
+          <e p="201812251556377_StoreMmcGetConfigurationResponse.cs" t="Include" />
+          <e p="201812251556377_StoreMmcGetConfigurationResponse.resx" t="Include" />
           <e p="Configuration.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

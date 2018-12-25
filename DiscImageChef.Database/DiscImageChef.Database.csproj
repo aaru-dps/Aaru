@@ -86,6 +86,8 @@
     <Compile Include="Migrations\20181224172147_FixUsbIdsAndIndexes.Designer.cs" />
     <Compile Include="Migrations\20181225002740_AddCdOffsets.cs" />
     <Compile Include="Migrations\20181225002740_AddCdOffsets.Designer.cs" />
+    <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.cs" />
+    <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />

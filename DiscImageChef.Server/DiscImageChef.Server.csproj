@@ -229,6 +229,10 @@
     <Compile Include="Migrations\201812250223002_AddCdOffsets.Designer.cs">
       <DependentUpon>201812250223002_AddCdOffsets.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812251556377_StoreMmcGetConfigurationResponse.cs" />
+    <Compile Include="Migrations\201812251556377_StoreMmcGetConfigurationResponse.Designer.cs">
+      <DependentUpon>201812251556377_StoreMmcGetConfigurationResponse.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
@@ -338,6 +342,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812250223002_AddCdOffsets.resx">
       <DependentUpon>201812250223002_AddCdOffsets.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812251556377_StoreMmcGetConfigurationResponse.resx">
+      <DependentUpon>201812251556377_StoreMmcGetConfigurationResponse.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

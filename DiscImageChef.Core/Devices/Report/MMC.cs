@@ -42,6 +42,26 @@ namespace DiscImageChef.Core.Devices.Report
 {
     public partial class DeviceReport
     {
+        static byte[] ClearMmcFeatures(byte[] response)
+        {
+            uint offset = 8;
+
+            while(offset + 4 < response.Length)
+            {
+                ushort code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
+
+                if(code != 0x0108) continue;
+
+                byte[] data = new byte[response[offset + 3] + 4];
+
+                if(data.Length + offset > response.Length) data = new byte[response.Length - offset];
+                Array.Copy(data, 4, response, offset                                       + 4, data.Length - 4);
+                offset += (uint)data.Length;
+            }
+
+            return response;
+        }
+
         public MmcFeatures ReportMmcFeatures()
         {
             DicConsole.WriteLine("Querying MMC GET CONFIGURATION...");
@@ -52,7 +72,7 @@ namespace DiscImageChef.Core.Devices.Report
             Features.SeparatedFeatures ftr = Features.Separate(buffer);
             if(ftr.Descriptors == null || ftr.Descriptors.Length <= 0) return null;
 
-            MmcFeatures report = new MmcFeatures();
+            MmcFeatures report = new MmcFeatures {BinaryData = ClearMmcFeatures(buffer)};
             foreach(Features.FeatureDescriptor desc in ftr.Descriptors)
                 switch(desc.Code)
                 {

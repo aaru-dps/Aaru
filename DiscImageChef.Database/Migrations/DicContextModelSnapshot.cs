@@ -132,6 +132,8 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<byte?>("AGIDs");
 
+                b.Property<byte[]>("BinaryData");
+
                 b.Property<byte?>("BindingNonceBlocks");
 
                 b.Property<ushort?>("BlocksPerReadableUnit");
@@ -1163,10 +1165,6 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasIndex("VendorId");
 
-                b.HasIndex("ProductId");
-
-                b.HasIndex("ModifiedWhen");
-
                 b.ToTable("UsbProducts");
             });
 
@@ -1181,8 +1179,6 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<string>("Vendor");
 
                 b.HasKey("Id");
-
-                b.HasIndex("ModifiedWhen");
 
                 b.ToTable("UsbVendors");
             });
