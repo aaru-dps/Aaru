@@ -39,7 +39,6 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {
@@ -282,12 +281,6 @@ namespace DiscImageChef.Commands
                 if(!options.Verbose) sb.AppendLine("Image session status differ");
             }
 
-            if(image1Info.ImageSize != image2Info.ImageSize)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image size differ");
-            }
-
             if(image1Info.Sectors != image2Info.Sectors)
             {
                 imagesDiffer = true;
@@ -300,124 +293,10 @@ namespace DiscImageChef.Commands
                 if(!options.Verbose) sb.AppendLine("Image sector size differ");
             }
 
-            if(image1Info.CreationTime != image2Info.CreationTime)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image creation time differ");
-            }
-
-            if(image1Info.LastModificationTime != image2Info.LastModificationTime)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image last modification time differ");
-            }
-
             if(image1Info.MediaType != image2Info.MediaType)
             {
                 imagesDiffer = true;
                 if(!options.Verbose) sb.AppendLine("Disk type differ");
-            }
-
-            if(image1Info.Version != image2Info.Version)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image version differ");
-            }
-
-            if(image1Info.Application != image2Info.Application)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image application differ");
-            }
-
-            if(image1Info.ApplicationVersion != image2Info.ApplicationVersion)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image application version differ");
-            }
-
-            if(image1Info.Creator != image2Info.Creator)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image creator differ");
-            }
-
-            if(image1Info.MediaTitle != image2Info.MediaTitle)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image name differ");
-            }
-
-            if(image1Info.Comments != image2Info.Comments)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image comments differ");
-            }
-
-            if(image1Info.MediaManufacturer != image2Info.MediaManufacturer)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Disk manufacturer differ");
-            }
-
-            if(image1Info.MediaModel != image2Info.MediaModel)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Disk model differ");
-            }
-
-            if(image1Info.MediaSerialNumber != image2Info.MediaSerialNumber)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Disk serial number differ");
-            }
-
-            if(image1Info.MediaBarcode != image2Info.MediaBarcode)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Disk barcode differ");
-            }
-
-            if(image1Info.MediaPartNumber != image2Info.MediaPartNumber)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Disk part number differ");
-            }
-
-            if(image1Info.MediaSequence != image2Info.MediaSequence)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Disk sequence differ");
-            }
-
-            if(image1Info.LastMediaSequence != image2Info.LastMediaSequence)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Last disk in sequence differ");
-            }
-
-            if(image1Info.DriveManufacturer != image2Info.DriveManufacturer)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Drive manufacturer differ");
-            }
-
-            if(image1Info.DriveModel != image2Info.DriveModel)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Drive model differ");
-            }
-
-            if(image1Info.DriveSerialNumber != image2Info.DriveSerialNumber)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Drive serial number differ");
-            }
-
-            if(image1Info.DriveFirmwareRevision != image2Info.DriveFirmwareRevision)
-            {
-                imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Drive firmware revision differ");
             }
 
             ulong leastSectors;
