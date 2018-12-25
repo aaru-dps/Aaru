@@ -632,5 +632,17 @@ namespace DiscImageChef.Core.Devices.Report
 
             return capabilities;
         }
+
+        static byte[] ClearIdentify(byte[] buffer)
+        {
+            byte[] empty = new byte[512];
+
+            Array.Copy(empty, 0, buffer, 20,  20);
+            Array.Copy(empty, 0, buffer, 216, 8);
+            Array.Copy(empty, 0, buffer, 224, 8);
+            Array.Copy(empty, 0, buffer, 352, 40);
+
+            return buffer;
+        }
     }
 }

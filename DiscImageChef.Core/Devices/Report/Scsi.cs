@@ -49,14 +49,26 @@ namespace DiscImageChef.Core.Devices.Report
 
             Scsi report = new Scsi();
 
-            if(sense || !Inquiry.Decode(buffer).HasValue) return null;
+            if(sense) return null;
+
+            Inquiry.SCSIInquiry? decodedNullable = Inquiry.Decode(buffer);
+
+            if(!decodedNullable.HasValue) return null;
+
+            Inquiry.SCSIInquiry decoded = decodedNullable.Value;
+
+            // Clear Seagate serial number
+            if(decoded.SeagatePresent &&
+               StringHandlers.CToString(decoded.VendorIdentification)?.Trim().ToLowerInvariant() == "seagate")
+                for(int i = 36; i <= 43; i++)
+                    buffer[i] = 0;
 
             report.InquiryData = buffer;
 
             return report;
         }
 
-        public List<ScsiPage> ReportEvpdPages()
+        public List<ScsiPage> ReportEvpdPages(string vendor)
         {
             DicConsole.WriteLine("Querying list of SCSI EVPDs...");
             bool sense = dev.ScsiInquiry(out byte[] buffer, out _, 0x00);
@@ -73,11 +85,65 @@ namespace DiscImageChef.Core.Devices.Report
                 sense = dev.ScsiInquiry(out buffer, out _, page);
                 if(sense) continue;
 
+                byte[] empty;
+                switch(page)
+                {
+                    case 0x83:
+                        buffer = ClearPage83(buffer);
+                        break;
+                    case 0x80:
+                        byte[] identify = new byte[512];
+                        Array.Copy(buffer, 60, identify, 0, 512);
+                        identify = ClearIdentify(identify);
+                        Array.Copy(identify, 0, buffer, 60, 512);
+                        break;
+                    case 0xB1:
+                    case 0xB3:
+                        empty = new byte[buffer.Length - 4];
+                        Array.Copy(empty, 0, buffer, 4, buffer.Length - 4);
+                        break;
+                    case 0xC1 when vendor == "ibm":
+                        empty = new byte[12];
+                        Array.Copy(empty, 0, buffer, 4,  12);
+                        Array.Copy(empty, 0, buffer, 16, 12);
+                        break;
+                    case 0xC2 when vendor == "certance":
+                    case 0xC3 when vendor == "certance":
+                    case 0xC4 when vendor == "certance":
+                    case 0xC5 when vendor == "certance":
+                    case 0xC6 when vendor == "certance":
+                        Array.Copy(new byte[12], 0, buffer, 4, 12);
+                        break;
+                }
+
                 ScsiPage evpd = new ScsiPage {page = page, value = buffer};
                 evpds.Add(evpd);
             }
 
             return evpds.Count > 0 ? evpds : null;
+        }
+
+        byte[] ClearPage83(byte[] pageResponse)
+        {
+            if(pageResponse?[1] != 0x83) return null;
+
+            if(pageResponse[3] + 4 != pageResponse.Length) return null;
+
+            if(pageResponse.Length < 6) return null;
+
+            int position = 4;
+
+            while(position < pageResponse.Length)
+            {
+                byte length                                             = pageResponse[position + 3];
+                if(length + position + 4 >= pageResponse.Length) length = (byte)(pageResponse.Length - position - 4);
+                byte[] empty                                            = new byte[length];
+                Array.Copy(empty, 0, pageResponse, position + 4, length);
+
+                position += 4 + length;
+            }
+
+            return pageResponse;
         }
 
         public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode)
@@ -154,8 +220,7 @@ namespace DiscImageChef.Core.Devices.Report
                 ScsiPage modePage = new ScsiPage {page = page.Page, subpage = page.Subpage, value = page.PageResponse};
                 modePages.Add(modePage);
 
-                if(modePage.page == 0x2A && modePage.subpage == 0x00)
-                    cdromMode = page.PageResponse;
+                if(modePage.page == 0x2A && modePage.subpage == 0x00) cdromMode = page.PageResponse;
             }
 
             if(modePages.Count > 0) report.SCSI.ModeSense.ModePages = modePages;
