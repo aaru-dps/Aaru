@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using DiscImageChef.Server.Migrations;
 using DiscImageChef.Server.Models;
+using HtmlAgilityPack;
 
 namespace DiscImageChef.Server.Task
 {
@@ -28,12 +29,14 @@ namespace DiscImageChef.Server.Task
             end = DateTime.UtcNow;
             Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
 
+            WebClient client;
+
             try
             {
                 Console.WriteLine("{0}: Retrieving USB IDs from Linux USB...", DateTime.UtcNow);
-                start = DateTime.UtcNow;
-                WebClient    client = new WebClient();
-                StringReader sr     = new StringReader(client.DownloadString("http://www.linux-usb.org/usb.ids"));
+                start  = DateTime.UtcNow;
+                client = new WebClient();
+                StringReader sr = new StringReader(client.DownloadString("http://www.linux-usb.org/usb.ids"));
                 end = DateTime.UtcNow;
                 Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
 
@@ -188,6 +191,213 @@ namespace DiscImageChef.Server.Task
             ctx.SaveChanges();
             end = DateTime.UtcNow;
             Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
+
+            try
+            {
+                Console.WriteLine("{0}: Retrieving CompactDisc read offsets from AccurateRip...", DateTime.UtcNow);
+                start = DateTime.UtcNow;
+
+                client = new WebClient();
+                string html = client.DownloadString("http://www.accuraterip.com/driveoffsets.htm");
+                end = DateTime.UtcNow;
+                Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
+
+                // The HTML is too malformed to process easily, so find start of table
+                html = "<html><body><table><tr>" +
+                       html.Substring(html.IndexOf("<td bgcolor=\"#000000\">", StringComparison.Ordinal));
+
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                HtmlNode firstTable = doc.DocumentNode.SelectSingleNode("/html[1]/body[1]/table[1]");
+
+                bool firstRow = true;
+
+                int addedOffsets    = 0;
+                int modifiedOffsets = 0;
+
+                Console.WriteLine("{0}: Processing offsets...", DateTime.UtcNow);
+                start = DateTime.UtcNow;
+                foreach(HtmlNode row in firstTable.Descendants("tr"))
+                {
+                    HtmlNode[] columns = row.Descendants("td").ToArray();
+
+                    if(columns.Length != 4)
+                    {
+                        Console.WriteLine("{0}: Row does not have correct number of columns...", DateTime.UtcNow);
+                        continue;
+                    }
+
+                    string column0 = columns[0].InnerText;
+                    string column1 = columns[1].InnerText;
+                    string column2 = columns[2].InnerText;
+                    string column3 = columns[3].InnerText;
+
+                    if(firstRow)
+                    {
+                        if(column0.ToLowerInvariant() != "cd drive")
+                        {
+                            Console.WriteLine("{0}: Unexpected header \"{1}\" found...", DateTime.UtcNow,
+                                              columns[0].InnerText);
+                            break;
+                        }
+
+                        if(column1.ToLowerInvariant() != "correction offset")
+                        {
+                            Console.WriteLine("{0}: Unexpected header \"{1}\" found...", DateTime.UtcNow,
+                                              columns[1].InnerText);
+                            break;
+                        }
+
+                        if(column2.ToLowerInvariant() != "submitted by")
+                        {
+                            Console.WriteLine("{0}: Unexpected header \"{1}\" found...", DateTime.UtcNow,
+                                              columns[2].InnerText);
+                            break;
+                        }
+
+                        if(column3.ToLowerInvariant() != "percentage agree")
+                        {
+                            Console.WriteLine("{0}: Unexpected header \"{1}\" found...", DateTime.UtcNow,
+                                              columns[3].InnerText);
+                            break;
+                        }
+
+                        firstRow = false;
+                        continue;
+                    }
+
+                    string manufacturer;
+                    string model;
+
+                    if(column0[0] == '-' && column0[1] == ' ')
+                    {
+                        manufacturer = null;
+                        model        = column0.Substring(2).Trim();
+                    }
+                    else
+                    {
+                        int cutOffset = column0.IndexOf(" - ", StringComparison.Ordinal);
+
+                        if(cutOffset == -1)
+                        {
+                            manufacturer = null;
+                            model        = column0;
+                        }
+                        else
+                        {
+                            manufacturer = column0.Substring(0, cutOffset).Trim();
+                            model        = column0.Substring(cutOffset + 3).Trim();
+                        }
+                    }
+
+                    switch(manufacturer)
+                    {
+                        case "Lite-ON":
+                            manufacturer = "JLMS";
+                            break;
+                        case "LG Electronics":
+                            manufacturer = "HL-DT-ST";
+                            break;
+                        case "Panasonic":
+                            manufacturer = "MATSHITA";
+                            break;
+                    }
+
+                    CompactDiscOffset cdOffset =
+                        ctx.CdOffsets.FirstOrDefault(o => o.Manufacturer == manufacturer && o.Model == model);
+
+                    if(column1.ToLowerInvariant() == "[purged]")
+                    {
+                        if(cdOffset != null) ctx.CdOffsets.Remove(cdOffset);
+                        continue;
+                    }
+
+                    if(!short.TryParse(column1, out short offset)) continue;
+                    if(!int.TryParse(column2, out int submissions)) continue;
+
+                    if(column3[column3.Length - 1] != '%') continue;
+
+                    column3 = column3.Substring(0, column3.Length - 1);
+
+                    if(!float.TryParse(column3, out float percentage)) continue;
+
+                    percentage /= 100;
+
+                    if(cdOffset is null)
+                    {
+                        cdOffset = new CompactDiscOffset
+                        {
+                            AddedWhen    = DateTime.UtcNow,
+                            ModifiedWhen = DateTime.UtcNow,
+                            Agreement    = percentage,
+                            Manufacturer = manufacturer,
+                            Model        = model,
+                            Offset       = offset,
+                            Submissions  = submissions
+                        };
+
+                        ctx.CdOffsets.Add(cdOffset);
+                        addedOffsets++;
+                    }
+                    else
+                    {
+                        if(Math.Abs(cdOffset.Agreement - percentage) > 0)
+                        {
+                            cdOffset.Agreement    = percentage;
+                            cdOffset.ModifiedWhen = DateTime.UtcNow;
+                        }
+
+                        if(cdOffset.Offset != offset)
+                        {
+                            cdOffset.Offset       = offset;
+                            cdOffset.ModifiedWhen = DateTime.UtcNow;
+                        }
+
+                        if(cdOffset.Submissions != submissions)
+                        {
+                            cdOffset.Submissions  = submissions;
+                            cdOffset.ModifiedWhen = DateTime.UtcNow;
+                        }
+
+                        if(Math.Abs(cdOffset.Agreement - percentage) > 0 || cdOffset.Offset != offset ||
+                           cdOffset.Submissions                      != submissions) modifiedOffsets++;
+                    }
+
+                    foreach(Device device in ctx
+                                            .Devices
+                                            .Where(d => d.Manufacturer == null && d.Model != null &&
+                                                        d.Model.Trim() == model)
+                                            .Union(ctx.Devices.Where(d => d.Manufacturer        != null         &&
+                                                                          d.Manufacturer.Trim() == manufacturer &&
+                                                                          d.Model               != null         &&
+                                                                          d.Model               == model)))
+                    {
+                        if(device.CdOffset == cdOffset && device.ModifiedWhen == cdOffset.ModifiedWhen) continue;
+
+                        device.CdOffset     = cdOffset;
+                        device.ModifiedWhen = cdOffset.ModifiedWhen;
+                    }
+                }
+
+                end = DateTime.UtcNow;
+                Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
+
+                Console.WriteLine("{0}: Committing changes...", DateTime.UtcNow);
+                start = DateTime.UtcNow;
+                ctx.SaveChanges();
+                end = DateTime.UtcNow;
+                Console.WriteLine("{0}: Took {1:F2} seconds", end, (end - start).TotalSeconds);
+
+                Console.WriteLine("{0}: Added {1} offsets",    end, addedOffsets);
+                Console.WriteLine("{0}: Modified {1} offsets", end, modifiedOffsets);
+            }
+            catch(Exception ex)
+            {
+                #if DEBUG
+                if(Debugger.IsAttached) throw;
+                #endif
+                Console.WriteLine("{0}: Exception {1} filling CompactDisc read offsets...", DateTime.UtcNow, ex);
+            }
         }
     }
 }

@@ -32,6 +32,12 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="DiscImageChef.CommonTypes, Version=4.5.99.1693, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\..\tmp\claunia-temp-aspnet-0\e277a754\assembly\shadow\34ef13c2\840cc539_b0e3d6fb_00000001\DiscImageChef.CommonTypes.dll</HintPath>
+        </Reference>
+        <Reference Include="DiscImageChef.Decoders, Version=4.5.99.1693, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\..\tmp\claunia-temp-aspnet-0\e277a754\assembly\shadow\3a88f867\8a6b2e9c_b0e3d6fb_00000001\DiscImageChef.Decoders.dll</HintPath>
+        </Reference>
         <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <HintPath>..\..\..\.nuget\packages\entityframework\6.2.0\lib\net45\EntityFramework.dll</HintPath>
         </Reference>
@@ -45,6 +51,10 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+        <Project>{f8bdf57b-1571-4cd0-84b3-b422088d359a}</Project>
+        <Name>DiscImageChef.Helpers</Name>
+      </ProjectReference>
       <ProjectReference Include="..\DiscImageChef.Server\DiscImageChef.Server.csproj">
         <Project>{911addf5-e5fa-445d-88cd-c7f8ffdbe645}</Project>
         <Name>DiscImageChef.Server</Name>
@@ -52,6 +62,7 @@
     </ItemGroup>
     <ItemGroup>
       <PackageReference Include="EntityFramework" Version="6.2.0" />
+      <PackageReference Include="HtmlAgilityPack" Version="1.8.11" />
     </ItemGroup>
     <ItemGroup>
       <None Include="App.config" />
