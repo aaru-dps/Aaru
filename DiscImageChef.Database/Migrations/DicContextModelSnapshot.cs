@@ -619,7 +619,11 @@ namespace DiscImageChef.Database.Migrations
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
 
+                b.Property<byte[]>("AdipData");
+
                 b.Property<int?>("AtaId");
+
+                b.Property<byte[]>("AtipData");
 
                 b.Property<uint?>("BlockSize");
 
@@ -628,6 +632,18 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<ulong?>("Blocks");
 
                 b.Property<long?>("BlocksSql");
+
+                b.Property<byte[]>("BluBcaData");
+
+                b.Property<byte[]>("BluDdsData");
+
+                b.Property<byte[]>("BluDiData");
+
+                b.Property<byte[]>("BluPacData");
+
+                b.Property<byte[]>("BluSaiData");
+
+                b.Property<byte[]>("C2PointersData");
 
                 b.Property<int?>("CHSId");
 
@@ -693,9 +709,37 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<bool?>("CanReadTOC");
 
+                b.Property<byte[]>("CmiData");
+
+                b.Property<byte[]>("CorrectedSubchannelData");
+
+                b.Property<byte[]>("CorrectedSubchannelWithC2Data");
+
                 b.Property<int?>("CurrentCHSId");
 
+                b.Property<byte[]>("DcbData");
+
                 b.Property<byte?>("Density");
+
+                b.Property<byte[]>("DmiData");
+
+                b.Property<byte[]>("DvdAacsData");
+
+                b.Property<byte[]>("DvdBcaData");
+
+                b.Property<byte[]>("DvdDdsData");
+
+                b.Property<byte[]>("DvdLayerData");
+
+                b.Property<byte[]>("DvdSaiData");
+
+                b.Property<byte[]>("EmbossedPfiData");
+
+                b.Property<byte[]>("FullTocData");
+
+                b.Property<byte[]>("HLDTSTReadRawDVDData");
+
+                b.Property<byte[]>("HdCmiData");
 
                 b.Property<byte[]>("IdentifyData");
 
@@ -706,6 +750,10 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<uint?>("LBASectors");
 
                 b.Property<int?>("LBASectorsSql");
+
+                b.Property<byte[]>("LeadInData");
+
+                b.Property<byte[]>("LeadOutData");
 
                 b.Property<ushort?>("LogicalAlignment");
 
@@ -731,13 +779,85 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<string>("Model");
 
+                b.Property<byte[]>("NecReadCddaData");
+
                 b.Property<ushort?>("NominalRotationRate");
 
                 b.Property<short?>("NominalRotationRateSql");
 
+                b.Property<byte[]>("PQSubchannelData");
+
+                b.Property<byte[]>("PQSubchannelWithC2Data");
+
+                b.Property<byte[]>("PfiData");
+
                 b.Property<uint?>("PhysicalBlockSize");
 
                 b.Property<int?>("PhysicalBlockSizeSql");
+
+                b.Property<byte[]>("PioneerReadCddaData");
+
+                b.Property<byte[]>("PioneerReadCddaMsfData");
+
+                b.Property<byte[]>("PlextorReadCddaData");
+
+                b.Property<byte[]>("PlextorReadRawDVDData");
+
+                b.Property<byte[]>("PmaData");
+
+                b.Property<byte[]>("PriData");
+
+                b.Property<byte[]>("RWSubchannelData");
+
+                b.Property<byte[]>("RWSubchannelWithC2Data");
+
+                b.Property<byte[]>("Read10Data");
+
+                b.Property<byte[]>("Read12Data");
+
+                b.Property<byte[]>("Read16Data");
+
+                b.Property<byte[]>("Read6Data");
+
+                b.Property<byte[]>("ReadCdData");
+
+                b.Property<byte[]>("ReadCdFullData");
+
+                b.Property<byte[]>("ReadCdMsfData");
+
+                b.Property<byte[]>("ReadCdMsfFullData");
+
+                b.Property<byte[]>("ReadDmaData");
+
+                b.Property<byte[]>("ReadDmaLba48Data");
+
+                b.Property<byte[]>("ReadDmaLbaData");
+
+                b.Property<byte[]>("ReadDmaRetryData");
+
+                b.Property<byte[]>("ReadDmaRetryLbaData");
+
+                b.Property<byte[]>("ReadLba48Data");
+
+                b.Property<byte[]>("ReadLbaData");
+
+                b.Property<byte[]>("ReadLong10Data");
+
+                b.Property<byte[]>("ReadLong16Data");
+
+                b.Property<byte[]>("ReadLongData");
+
+                b.Property<byte[]>("ReadLongLbaData");
+
+                b.Property<byte[]>("ReadLongRetryData");
+
+                b.Property<byte[]>("ReadLongRetryLbaData");
+
+                b.Property<byte[]>("ReadRetryLbaData");
+
+                b.Property<byte[]>("ReadSectorsData");
+
+                b.Property<byte[]>("ReadSectorsRetryData");
 
                 b.Property<int?>("ScsiId");
 
@@ -808,6 +928,10 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<bool?>("SupportsSeek");
 
                 b.Property<bool?>("SupportsSeekLba");
+
+                b.Property<byte[]>("TocData");
+
+                b.Property<byte[]>("Track1PregapData");
 
                 b.Property<ushort?>("UnformattedBPS");
 

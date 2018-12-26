@@ -282,33 +282,25 @@ namespace DiscImageChef.Core.Devices.Report
             mediaTest.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 0,
                                                  mediaTest.BlockSize ?? 512, dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
-            if(debug)
-                DataFile.WriteTo("SCSI Report", "read6", "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                 buffer);
+            if(debug) mediaTest.Read6Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (10)...");
             mediaTest.SupportsRead10 = !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                    mediaTest.BlockSize ?? 512, 0, 1, dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
-            if(debug)
-                DataFile.WriteTo("SCSI Report", "read10", "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                 buffer);
+            if(debug) mediaTest.Read10Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (12)...");
             mediaTest.SupportsRead12 = !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                    mediaTest.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
-            if(debug)
-                DataFile.WriteTo("SCSI Report", "read12", "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                 buffer);
+            if(debug) mediaTest.Read12Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (16)...");
             mediaTest.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
                                                    mediaTest.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
-            if(debug)
-                DataFile.WriteTo("SCSI Report", "read16", "_debug_" + mediaTest.MediumTypeName + ".bin", "read results",
-                                 buffer);
+            if(debug) mediaTest.Read16Data = buffer;
 
             mediaTest.LongBlockSize = mediaTest.BlockSize;
             DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
@@ -456,25 +448,25 @@ namespace DiscImageChef.Core.Devices.Report
             capabilities.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
                                                     dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead6);
-            if(debug) DataFile.WriteTo("SCSI Report", "read6", "_debug_" + dev.Model + ".bin", "read results", buffer);
+            if(debug) capabilities.Read6Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (10)...");
             capabilities.SupportsRead10 = !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                       capabilities.BlockSize ?? 512, 0, 1, dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
-            if(debug) DataFile.WriteTo("SCSI Report", "read10", "_debug_" + dev.Model + ".bin", "read results", buffer);
+            if(debug) capabilities.Read10Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (12)...");
             capabilities.SupportsRead12 = !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                       capabilities.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
-            if(debug) DataFile.WriteTo("SCSI Report", "read12", "_debug_" + dev.Model + ".bin", "read results", buffer);
+            if(debug) capabilities.Read12Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (16)...");
             capabilities.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
                                                       capabilities.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
-            if(debug) DataFile.WriteTo("SCSI Report", "read16", "_debug_" + dev.Model + ".bin", "read results", buffer);
+            if(debug) capabilities.Read16Data = buffer;
 
             capabilities.LongBlockSize = capabilities.BlockSize;
             DicConsole.WriteLine("Trying SCSI READ LONG (10)...");

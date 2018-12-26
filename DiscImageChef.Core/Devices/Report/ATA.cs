@@ -164,9 +164,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readsectorschs", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadSectorsData = readBuf;
 
                 DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
                 sense = dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, dev.Timeout, out _);
@@ -175,9 +173,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readsectorsretrychs", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadSectorsRetryData = readBuf;
 
                 DicConsole.WriteLine("Trying READ DMA in CHS mode...");
                 sense = dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, dev.Timeout, out _);
@@ -186,9 +182,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readdmachs", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadDmaData = readBuf;
 
                 DicConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
                 sense = dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, dev.Timeout, out _);
@@ -197,9 +191,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readdmaretrychs", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadDmaRetryData = readBuf;
 
                 DicConsole.WriteLine("Trying SEEK in CHS mode...");
                 sense                  = dev.Seek(out errorChs, 0, 0, 1, dev.Timeout, out _);
@@ -214,9 +206,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readsectors", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadLbaData = readBuf;
 
                 DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
                 sense = dev.Read(out readBuf, out errorLba, true, 0, 1, dev.Timeout, out _);
@@ -225,9 +215,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readsectorsretry", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadRetryLbaData = readBuf;
 
                 DicConsole.WriteLine("Trying READ DMA in LBA mode...");
                 sense = dev.ReadDma(out readBuf, out errorLba, false, 0, 1, dev.Timeout, out _);
@@ -236,9 +224,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readdma", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadDmaLbaData = readBuf;
 
                 DicConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
                 sense = dev.ReadDma(out readBuf, out errorLba, true, 0, 1, dev.Timeout, out _);
@@ -247,9 +233,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readdmaretry", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadDmaRetryLbaData = readBuf;
 
                 DicConsole.WriteLine("Trying SEEK in LBA mode...");
                 sense                     = dev.Seek(out errorLba, 0, dev.Timeout, out _);
@@ -264,9 +248,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readsectors48", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadLba48Data = readBuf;
 
                 DicConsole.WriteLine("Trying READ DMA in LBA48 mode...");
                 sense = dev.ReadDma(out readBuf, out errorLba48, 0, 1, dev.Timeout, out _);
@@ -275,9 +257,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readdma48", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadDmaLba48Data = readBuf;
 
                 // Send SET FEATURES before sending READ LONG commands, retrieve IDENTIFY again and
                 // check if ECC size changed. Sector is set to 1 because without it most drives just return
@@ -305,9 +285,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readlongchs", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadLongData = readBuf;
 
                 DicConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
                 sense = dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
@@ -319,9 +297,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readlongretrychs", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadLongRetryData = readBuf;
 
                 DicConsole.WriteLine("Trying READ LONG in LBA mode...");
                 sense = dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize ?? 0, dev.Timeout,
@@ -332,9 +308,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readlong", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadLongLbaData = readBuf;
 
                 DicConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
                 sense = dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize ?? 0, dev.Timeout,
@@ -345,9 +319,7 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
-                if(debug)
-                    DataFile.WriteTo("ATA Report", "readlongretry", "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                     "read results", readBuf);
+                if(debug) mediaTest.ReadLongRetryLbaData = readBuf;
             }
             else mediaTest.MediaIsRecognized = false;
 
@@ -463,9 +435,7 @@ namespace DiscImageChef.Core.Devices.Report
                                                readBuf.Length                     > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readsectorschs", "_debug_" + dev.Model + ".bin", "read results",
-                                 readBuf);
+            if(debug) capabilities.ReadSectorsData = readBuf;
 
             DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
             sense = dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, dev.Timeout, out _);
@@ -473,9 +443,7 @@ namespace DiscImageChef.Core.Devices.Report
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readsectorsretrychs", "_debug_" + dev.Model + ".bin", "read results",
-                                 readBuf);
+            if(debug) capabilities.ReadSectorsRetryData = readBuf;
 
             DicConsole.WriteLine("Trying READ DMA in CHS mode...");
             sense = dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, dev.Timeout, out _);
@@ -483,8 +451,7 @@ namespace DiscImageChef.Core.Devices.Report
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readdmachs", "_debug_" + dev.Model + ".bin", "read results", readBuf);
+            if(debug) capabilities.ReadDmaData = readBuf;
 
             DicConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
             sense = dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, dev.Timeout, out _);
@@ -492,9 +459,7 @@ namespace DiscImageChef.Core.Devices.Report
                                                 readBuf.Length                     > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readdmaretrychs", "_debug_" + dev.Model + ".bin", "read results",
-                                 readBuf);
+            if(debug) capabilities.ReadDmaRetryData = readBuf;
 
             DicConsole.WriteLine("Trying SEEK in CHS mode...");
             sense                     = dev.Seek(out errorChs, 0, 0, 1, dev.Timeout, out _);
@@ -508,8 +473,7 @@ namespace DiscImageChef.Core.Devices.Report
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readsectors", "_debug_" + dev.Model + ".bin", "read results", readBuf);
+            if(debug) capabilities.ReadLbaData = readBuf;
 
             DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
             sense = dev.Read(out readBuf, out errorLba, true, 0, 1, dev.Timeout, out _);
@@ -517,9 +481,7 @@ namespace DiscImageChef.Core.Devices.Report
                                                 readBuf.Length                     > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readsectorsretry", "_debug_" + dev.Model + ".bin", "read results",
-                                 readBuf);
+            if(debug) capabilities.ReadRetryLbaData = readBuf;
 
             DicConsole.WriteLine("Trying READ DMA in LBA mode...");
             sense = dev.ReadDma(out readBuf, out errorLba, false, 0, 1, dev.Timeout, out _);
@@ -527,8 +489,7 @@ namespace DiscImageChef.Core.Devices.Report
                                               readBuf.Length                     > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readdma", "_debug_" + dev.Model + ".bin", "read results", readBuf);
+            if(debug) capabilities.ReadDmaLbaData = readBuf;
 
             DicConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
             sense = dev.ReadDma(out readBuf, out errorLba, true, 0, 1, dev.Timeout, out _);
@@ -536,8 +497,7 @@ namespace DiscImageChef.Core.Devices.Report
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readdmaretry", "_debug_" + dev.Model + ".bin", "read results", readBuf);
+            if(debug) capabilities.ReadDmaRetryLbaData = readBuf;
 
             DicConsole.WriteLine("Trying SEEK in LBA mode...");
             sense                        = dev.Seek(out errorLba, 0, dev.Timeout, out _);
@@ -551,9 +511,7 @@ namespace DiscImageChef.Core.Devices.Report
                                              readBuf.Length                       > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readsectors48", "_debug_" + dev.Model + ".bin", "read results",
-                                 readBuf);
+            if(debug) capabilities.ReadLba48Data = readBuf;
 
             DicConsole.WriteLine("Trying READ DMA in LBA48 mode...");
             sense = dev.ReadDma(out readBuf, out errorLba48, 0, 1, dev.Timeout, out _);
@@ -561,8 +519,7 @@ namespace DiscImageChef.Core.Devices.Report
                                                 readBuf.Length                       > 0;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readdma48", "_debug_" + dev.Model + ".bin", "read results", readBuf);
+            if(debug) capabilities.ReadDmaLba48Data = readBuf;
 
             // Send SET FEATURES before sending READ LONG commands, retrieve IDENTIFY again and
             // check if ECC size changed. Sector is set to 1 because without it most drives just return
@@ -590,8 +547,7 @@ namespace DiscImageChef.Core.Devices.Report
                                             BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readlongchs", "_debug_" + dev.Model + ".bin", "read results", readBuf);
+            if(debug) capabilities.ReadLongData = readBuf;
 
             DicConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
             sense = dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, capabilities.LongBlockSize ?? 0, dev.Timeout,
@@ -602,9 +558,7 @@ namespace DiscImageChef.Core.Devices.Report
                                                  checkCorrectRead;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readlongretrychs", "_debug_" + dev.Model + ".bin", "read results",
-                                 readBuf);
+            if(debug) capabilities.ReadLongRetryData = readBuf;
 
             DicConsole.WriteLine("Trying READ LONG in LBA mode...");
             sense = dev.ReadLong(out readBuf, out errorLba, false, 0, capabilities.LongBlockSize ?? 0, dev.Timeout,
@@ -614,8 +568,7 @@ namespace DiscImageChef.Core.Devices.Report
                                                BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readlong", "_debug_" + dev.Model + ".bin", "read results", readBuf);
+            if(debug) capabilities.ReadLongLbaData = readBuf;
 
             DicConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
             sense = dev.ReadLong(out readBuf, out errorLba, true, 0, capabilities.LongBlockSize ?? 0, dev.Timeout,
@@ -626,9 +579,7 @@ namespace DiscImageChef.Core.Devices.Report
                                                     checkCorrectRead;
             DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
-            if(debug)
-                DataFile.WriteTo("ATA Report", "readlongretry", "_debug_" + dev.Model + ".bin", "read results",
-                                 readBuf);
+            if(debug) capabilities.ReadLongRetryLbaData = readBuf;
 
             return capabilities;
         }

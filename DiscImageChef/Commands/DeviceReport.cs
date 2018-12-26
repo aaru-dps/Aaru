@@ -605,14 +605,7 @@ namespace DiscImageChef.Commands
                                                                        dev.Timeout, out _);
                                                 if(!sense)
                                                 {
-                                                    if(options.Debug)
-                                                    {
-                                                        FileStream bingo =
-                                                            new FileStream($"{mediaType}_readlong.bin",
-                                                                           FileMode.Create);
-                                                        bingo.Write(buffer, 0, buffer.Length);
-                                                        bingo.Close();
-                                                    }
+                                                    if(options.Debug) mediaTest.ReadLong10Data = buffer;
 
                                                     mediaTest.LongBlockSize = i;
                                                     break;
@@ -630,11 +623,10 @@ namespace DiscImageChef.Commands
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                                (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
-                                        if(!sense)
-                                            DataFile.WriteTo("SCSI Report", "readlong10",
-                                                             "_debug_" + dev.Model + "_" + mediaType + ".bin",
-                                                             "read results", buffer);
+                                        if(!sense) mediaTest.ReadLong10Data = buffer;
                                     }
+
+                                    // TODO: READ LONG (16)
                                 }
 
                                 mediaTest.MediumTypeName    = mediaType;
@@ -848,10 +840,7 @@ namespace DiscImageChef.Commands
                                         {
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                                    (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
-                                            if(!sense)
-                                                DataFile.WriteTo("SCSI Report", "readlong10",
-                                                                 "_debug_" + mediaTest.MediumTypeName + ".bin",
-                                                                 "read results", buffer);
+                                            if(!sense) mediaTest.ReadLong10Data = buffer;
                                         }
                                     }
 
@@ -891,13 +880,7 @@ namespace DiscImageChef.Commands
                                                                    dev.Timeout, out _);
                                             if(!sense)
                                             {
-                                                if(options.Debug)
-                                                {
-                                                    FileStream bingo =
-                                                        new FileStream($"{dev.Model}_readlong.bin", FileMode.Create);
-                                                    bingo.Write(buffer, 0, buffer.Length);
-                                                    bingo.Close();
-                                                }
+                                                if(options.Debug) report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
 
                                                 report.SCSI.ReadCapabilities.LongBlockSize = i;
                                                 break;
@@ -917,9 +900,7 @@ namespace DiscImageChef.Commands
                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                            (ushort)report.SCSI.ReadCapabilities.LongBlockSize,
                                                            dev.Timeout, out _);
-                                    if(!sense)
-                                        DataFile.WriteTo("SCSI Report", "readlong10", "_debug_" + dev.Model + ".bin",
-                                                         "read results", buffer);
+                                    if(!sense) report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
                                 }
                             }
 

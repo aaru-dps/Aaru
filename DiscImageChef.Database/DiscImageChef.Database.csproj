@@ -88,6 +88,8 @@
     <Compile Include="Migrations\20181225002740_AddCdOffsets.Designer.cs" />
     <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.cs" />
     <Compile Include="Migrations\20181225152947_StoreMmcGetConfigurationResponse.Designer.cs" />
+    <Compile Include="Migrations\20181225214500_StoreReadResultsInReportDatabase.cs" />
+    <Compile Include="Migrations\20181225214500_StoreReadResultsInReportDatabase.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />

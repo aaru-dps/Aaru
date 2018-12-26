@@ -1398,6 +1398,86 @@ namespace DiscImageChef.CommonTypes.Metadata
             get => (short?)UnformattedBPS;
             set => UnformattedBPS = (ushort?)value;
         }
+
+        #region SCSI data
+        public byte[] Read6Data      { get; set; }
+        public byte[] Read10Data     { get; set; }
+        public byte[] Read12Data     { get; set; }
+        public byte[] Read16Data     { get; set; }
+        public byte[] ReadLong10Data { get; set; }
+        public byte[] ReadLong16Data { get; set; }
+        #endregion
+
+        #region ATA data
+        public byte[] ReadSectorsData      { get; set; }
+        public byte[] ReadSectorsRetryData { get; set; }
+        public byte[] ReadDmaData          { get; set; }
+        public byte[] ReadDmaRetryData     { get; set; }
+        public byte[] ReadLbaData          { get; set; }
+        public byte[] ReadRetryLbaData     { get; set; }
+        public byte[] ReadDmaLbaData       { get; set; }
+        public byte[] ReadDmaRetryLbaData  { get; set; }
+        public byte[] ReadLba48Data        { get; set; }
+        public byte[] ReadDmaLba48Data     { get; set; }
+        public byte[] ReadLongData         { get; set; }
+        public byte[] ReadLongRetryData    { get; set; }
+        public byte[] ReadLongLbaData      { get; set; }
+        public byte[] ReadLongRetryLbaData { get; set; }
+        #endregion
+
+        #region CompactDisc data
+        public byte[] TocData                       { get; set; }
+        public byte[] FullTocData                   { get; set; }
+        public byte[] AtipData                      { get; set; }
+        public byte[] PmaData                       { get; set; }
+        public byte[] ReadCdData                    { get; set; }
+        public byte[] ReadCdMsfData                 { get; set; }
+        public byte[] ReadCdFullData                { get; set; }
+        public byte[] ReadCdMsfFullData             { get; set; }
+        public byte[] Track1PregapData              { get; set; }
+        public byte[] LeadInData                    { get; set; }
+        public byte[] LeadOutData                   { get; set; }
+        public byte[] C2PointersData                { get; set; }
+        public byte[] PQSubchannelData              { get; set; }
+        public byte[] RWSubchannelData              { get; set; }
+        public byte[] CorrectedSubchannelData       { get; set; }
+        public byte[] PQSubchannelWithC2Data        { get; set; }
+        public byte[] RWSubchannelWithC2Data        { get; set; }
+        public byte[] CorrectedSubchannelWithC2Data { get; set; }
+        #endregion
+
+        #region DVD data
+        public byte[] PfiData         { get; set; }
+        public byte[] DmiData         { get; set; }
+        public byte[] CmiData         { get; set; }
+        public byte[] DvdBcaData      { get; set; }
+        public byte[] DvdAacsData     { get; set; }
+        public byte[] DvdDdsData      { get; set; }
+        public byte[] DvdSaiData      { get; set; }
+        public byte[] PriData         { get; set; }
+        public byte[] EmbossedPfiData { get; set; }
+        public byte[] AdipData        { get; set; }
+        public byte[] DcbData         { get; set; }
+        public byte[] HdCmiData       { get; set; }
+        public byte[] DvdLayerData    { get; set; }
+        #endregion
+
+        #region Blu-ray data
+        public byte[] BluBcaData { get; set; }
+        public byte[] BluDdsData { get; set; }
+        public byte[] BluSaiData { get; set; }
+        public byte[] BluDiData  { get; set; }
+        public byte[] BluPacData { get; set; }
+        #endregion
+
+        #region Vendor data
+        public byte[] PlextorReadCddaData    { get; set; }
+        public byte[] PioneerReadCddaData    { get; set; }
+        public byte[] PioneerReadCddaMsfData { get; set; }
+        public byte[] NecReadCddaData        { get; set; }
+        public byte[] PlextorReadRawDVDData  { get; set; }
+        public byte[] HLDTSTReadRawDVDData   { get; set; }
+        #endregion
     }
 
     public class Ssc
