@@ -73,7 +73,12 @@
       <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Markdig, Version=0.15.5.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Markdig.0.15.5\lib\net40\Markdig.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="mscorlib" />
     <Reference Include="MySql.Data, Version=8.0.13.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
       <HintPath>..\packages\MySql.Data.8.0.13\lib\net452\MySql.Data.dll</HintPath>
       <Private>True</Private>
@@ -150,10 +155,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Velyo.AspNet.Markdown, Version=1.0.26.6184, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Velyo.AspNet.Markdown.1.0.26.6184\lib\net451\Velyo.AspNet.Markdown.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -176,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\Ata.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\ScsiEvpd.cs" />
     <Compile Include="App_Start\ScsiInquiry.cs" />
     <Compile Include="App_Start\ScsiMmcFeatures.cs" />
@@ -185,15 +187,11 @@
     <Compile Include="App_Start\StatsConverter.cs" />
     <Compile Include="App_Start\TestedMedia.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\StatsController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UploadReportController.cs" />
     <Compile Include="Controllers\UploadStatsController.cs" />
-    <Compile Include="Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -242,44 +240,34 @@
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Context.cs" />
     <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\DeviceItem.cs" />
     <Compile Include="Models\DeviceStat.cs" />
     <Compile Include="Models\Filesystem.cs" />
     <Compile Include="Models\Filter.cs" />
     <Compile Include="Models\Media.cs" />
     <Compile Include="Models\MediaFormat.cs" />
+    <Compile Include="Models\MediaItem.cs" />
     <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Partition.cs" />
     <Compile Include="Models\UploadedReport.cs" />
     <Compile Include="Models\UsbProduct.cs" />
     <Compile Include="Models\UsbVendor.cs" />
     <Compile Include="Models\Version.cs" />
-    <Compile Include="Statistics.aspx.cs">
-      <DependentUpon>Statistics.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Statistics.aspx.designer.cs">
-      <DependentUpon>Statistics.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="ViewReport.aspx.cs">
-      <DependentUpon>ViewReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="ViewReport.aspx.designer.cs">
-      <DependentUpon>ViewReport.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Changelog.aspx" />
-    <Content Include="Default.aspx" />
-    <Content Include="DONATING.aspx" />
+    <Content Include="docs\Changelog.md" />
+    <Content Include="docs\DONATING.md" />
+    <Content Include="docs\README.md" />
+    <Content Include="docs\TODO.md" />
     <Content Include="dos.css" />
     <Content Include="Global.asax" />
     <Content Include="int10h.org\vga_squarepx.eot" />
     <Content Include="int10h.org\vga_squarepx.ttf" />
     <Content Include="int10h.org\vga_squarepx.woff" />
-    <Content Include="Statistics.aspx" />
-    <Content Include="TODO.aspx" />
-    <Content Include="ViewReport.aspx" />
+    <Content Include="Views\Home\Changelog.cshtml" />
+    <Content Include="Views\Home\DONATING.cshtml" />
+    <Content Include="Views\Home\TODO.cshtml" />
+    <Content Include="Views\Report\View.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -287,23 +275,13 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <None Include="..\Changelog.md">
-      <Link>docs/Changelog.md</Link>
-    </None>
-    <None Include="..\DONATING.md">
-      <Link>docs/DONATING.md</Link>
-    </None>
-    <None Include="..\README.md">
-      <Link>docs/README.md</Link>
-    </None>
-    <None Include="..\TODO.md">
-      <Link>docs/TODO.md</Link>
-    </None>
     <None Include="App.config" />
-    <None Include="docs\README.md" />
     <None Include="int10h.org\.htaccess" />
     <None Include="int10h.org\vga_squarepx.woff2" />
     <None Include="Reports\.htaccess" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\Stats\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

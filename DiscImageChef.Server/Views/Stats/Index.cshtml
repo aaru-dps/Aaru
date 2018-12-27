@@ -1,0 +1,315 @@
+@using DiscImageChef.CommonTypes.Metadata
+@using DiscImageChef.Server.Models
+@using Filter = DiscImageChef.Server.Models.Filter
+@{
+    ViewBag.Title = "DiscImageChef Statistics";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0"
+          name="viewport">
+    <title>@ViewBag.Title</title>
+    <link href="../../dos.css"
+          rel="stylesheet"
+          type="text/css" />
+    <meta charset="utf-8" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() { dataLayer.push(arguments); }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-111466173-1');
+    </script>
+</head>
+<body>
+<h1 align="center">
+    Welcome to
+    <i>
+        <a href="http://github.com/claunia/discimagechef"
+           target="_blank">
+            DiscImageChef
+        </a>
+    </i> Server version @ViewBag.Version
+</h1>
+<br />
+<div>
+@if(ViewBag.repOperatingSystems != null)
+{
+    <div id="divOperatingSystems">
+        <table>
+            @foreach(NameValueStats os in ViewBag.repOperatingSystems)
+            {
+                <tr>
+                    <td>
+                        DiscImageChef has run on <i>@os.name</i> @os.Value times.
+                    </td>
+                </tr>
+            }
+        </table>
+        <br />
+    </div>
+}
+@if(ViewBag.repVersions != null)
+{
+    <div id="divVersions">
+        <table>
+            @foreach(NameValueStats version in ViewBag.repVersions)
+            {
+                <tr>
+                    <td>
+                        DiscImageChef version <i>@version.name</i> has been used @version.Value times.
+                    </td>
+                </tr>
+            }
+        </table>
+        <br />
+    </div>
+}
+<div id="divCommands">
+    <h4>Commands run:</h4>
+    <p>
+        <i>analyze</i> command has been run @ViewBag.lblAnalyze times<br />
+        <i>benchmark</i> command has been run @ViewBag.lblBenchmark times<br />
+        <i>checksum</i> command has been run @ViewBag.lblChecksum times<br />
+        <i>compare</i> command has been run @ViewBag.lblCompare times<br />
+        <i>convert-image</i> command has been run @ViewBag.lblConvertImage times<br />
+        <i>create-sidecar</i> command has been run @ViewBag.lblCreateSidecar times<br />
+        <i>decode</i> command has been run @ViewBag.lblDecode times<br />
+        <i>device-info</i> command has been run @ViewBag.lblDeviceInfo times<br />
+        <i>device-report</i> command has been run @ViewBag.lblDeviceReport times<br />
+        <i>dump-media</i> command has been run @ViewBag.lblDumpMedia times<br />
+        <i>entropy</i> command has been run @ViewBag.lblEntropy times<br />
+        <i>extract-files</i> command has been run @ViewBag.lblExtractFiles times<br />
+        <i>formats</i> command has been run @ViewBag.lblFormats times<br />
+        <i>image-info</i> command has been run @ViewBag.lblImageInfo times<br />
+        <i>list-devices</i> command has been run @ViewBag.lblListDevices times<br />
+        <i>list-encodings</i> command has been run @ViewBag.lblListEncodings times<br />
+        <i>ls</i> command has been run @ViewBag.lblLs times<br />
+        <i>media-info</i> command has been run @ViewBag.lblMediaInfo times<br />
+        <i>media-scan</i> command has been run @ViewBag.lblMediaScan times<br />
+        <i>printhex</i> command has been run @ViewBag.lblPrintHex times<br />
+        <i>verify</i> command has been run @ViewBag.lblVerify times
+    </p>
+</div>
+@if(ViewBag.repFilters != null)
+{
+    <div id="divFilters">
+        <h3>Filters found:</h3>
+        <table align="center"
+               border="1">
+            <tr>
+                <th>Filter</th>
+                <th>Times</th>
+            </tr>
+            @foreach(Filter filter in ViewBag.repFilters)
+            {
+                <tr>
+                    <td>
+                        @filter.Name
+                    </td>
+                    <td>
+                        @($"{filter.Count}")
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+@if(ViewBag.repMediaImages != null)
+{
+    <div id="divMediaImages">
+        <h3>Media image formats found:</h3>
+        <table align="center"
+               border="1">
+            <tr>
+                <th>Media image format</th>
+                <th>Times</th>
+            </tr>
+            @foreach(MediaFormat format in ViewBag.repMediaImages)
+            {
+                <tr>
+                    <td>
+                        @format.Name
+                    </td>
+                    <td>
+                        @($"{format.Count}")
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+@if(ViewBag.repPartitions != null)
+{
+    <div id="divPartitions">
+        <h3>Partition schemes found:</h3>
+        <table align="center"
+               border="1">
+            <tr>
+                <th>Partition scheme</th>
+                <th>Times</th>
+            </tr>
+            @foreach(Partition partition in ViewBag.repPartitions)
+            {
+                <tr>
+                    <td>
+                        @partition.Name
+                    </td>
+                    <td>
+                        @($"{partition.Count}")
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+@if(ViewBag.repFilesystems != null)
+{
+    <div id="divFilesystems">
+        <h3>Filesystems found:</h3>
+        <table align="center"
+               border="1">
+            <tr>
+                <th>Filesystem name</th>
+                <th>Times</th>
+            </tr>
+            @foreach(Filesystem filesystem in ViewBag.repFilesystems)
+            {
+                <tr>
+                    <td>
+                        @filesystem.Name
+                    </td>
+                    <td>
+                        @($"{filesystem.Count}")
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+@if(ViewBag.repVirtualMedia != null)
+{
+    <div id="divVirtualMedia">
+        <h3>Media types found in images:</h3>
+        <table align="center"
+               border="1">
+            <tr>
+                <th>Physical type</th>
+                <th>Logical type</th>
+                <th>Times</th>
+            </tr>
+            @foreach(MediaItem media in ViewBag.repVirtualMedia)
+            {
+                <tr>
+                    <td>
+                        @media.Type
+                    </td>
+                    <td>
+                        @media.SubType
+                    </td>
+                    <td>
+                        @($"{media.Count}")
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+@if(ViewBag.repRealMedia != null)
+{
+    <div id="divRealMedia">
+        <h3>Media types found in devices:</h3>
+        <table align="center"
+               border="1">
+            <tr>
+                <th>Physical type</th>
+                <th>Logical type</th>
+                <th>Times</th>
+            </tr>
+            @foreach(MediaItem media in ViewBag.repRealMedia)
+            {
+                <tr>
+                    <td>
+                        @media.Type
+                    </td>
+                    <td>
+                        @media.SubType
+                    </td>
+                    <td>
+                        @($"{media.Count}")
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+@if(ViewBag.repDevices != null)
+{
+    <div id="divDevices">
+        <h3>Found devices:</h3>
+        <table align="center"
+               border="1">
+            <tr>
+                <th>Manufacturer</th>
+                <th>Model</th>
+                <th>Revision</th>
+                <th>Bus</th>
+                <th>Report</th>
+            </tr>
+            @foreach(DeviceItem device in ViewBag.repDevices)
+            {
+                <tr>
+                    <td>
+                        @device.Manufacturer
+                    </td>
+                    <td>
+                        @device.Model
+                    </td>
+                    <td>
+                        @device.Revision
+                    </td>
+                    <td>
+                        @device.Bus
+                    </td>
+                    <td>
+                        @if(device.ReportId != 0)
+                        {
+                            <text>@Html.ActionLink("Yes", "View", "Report", new {id = device.ReportId}, new {target = "_blank"})</text>
+                        }
+                        else
+                        { <text>No</text> }
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+</div>
+<hr />
+<footer>
+    © 2011-2018
+    <a href="http://www.claunia.com"
+       target="_blank">
+        Claunia.com
+    </a><br />
+    Fonts are © 2015-2016
+    <a href="http://int10h.org"
+       target="_blank">
+        VileR
+    </a><br />
+    CSS © 2017
+    <a href="http://www.freedos.org"
+       target="_blank">
+        The FreeDOS Project
+    </a>
+</footer>
+</body>
+</html>

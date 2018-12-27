@@ -1,0 +1,250 @@
+@using DiscImageChef.CommonTypes.Metadata
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="../../dos.css"
+          rel="stylesheet"
+          type="text/css" />
+    <title>DiscImageChef Device Report</title>
+    <meta charset="utf-8" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() { dataLayer.push(arguments); }
+
+        gtag('js', new Date());
+
+        gtag('config', 'UA-111466173-1');
+    </script>
+</head>
+<body>
+DiscImageChef Report for
+@ViewBag.lblManufacturer
+@ViewBag.lblModel
+@ViewBag.lblRevision
+
+@if(ViewBag.UsbItem != null)
+{
+    <div id="divUsb">
+        <br />
+        <b>USB characteristics:</b><br />
+        <i>Manufacturer:</i> @ViewBag.UsbItem.Manufacturer<br />
+        <i>Product:</i> @ViewBag.UsbItem.Product<br />
+        <i>Vendor ID:</i> @ViewBag.UsbItem.VendorDescription<br />
+        <i>Product ID:</i> @ViewBag.UsbItem.ProductDescription
+    </div>
+}
+
+@if(ViewBag.FireWireItem != null)
+{
+    <div id="divFireWire">
+        <br />
+        <b>FireWire characteristics:</b><br />
+        <i>Manufacturer:</i> @ViewBag.FireWire.Manufacturer<br />
+        <i>Product:</i> @ViewBag.FireWire.Product<br />
+        <i>Vendor ID:</i> @ViewBag.FireWire.VendorDescription<br />
+        <i>Product ID:</i> @ViewBag.FireWire.ProductDescription
+    </div>
+}
+
+@if(ViewBag.PcmciaItem != null)
+{
+    <div id="divPcmcia">
+        <br />
+        <b>PCMCIA characteristics:</b><br />
+        <i>Manufacturer:</i> @ViewBag.PcmciaItem.Manufacturer<br />
+        <i>Product:</i> @ViewBag.PcmciaItem.ProductName<br />
+        <i>Manufacturer code:</i> @ViewBag.PcmciaItem.VendorDescription<br />
+        <i>Card code:</i> @ViewBag.PcmciaItem.CardCode<br />
+        <i>Compliance:</i> @ViewBag.PcmciaItem.Compliance<br />
+        @if(ViewBag.repPcmciaTuples != null)
+        {
+            foreach(KeyValuePair<string, string> kvp in ViewBag.repPcmciaTuples)
+            {
+                <text><i>@kvp.Key</i>: @kvp.Value<br /></text>
+            }
+        }
+    </div>
+}
+
+@if(ViewBag.AtaItem != null)
+{
+    <div id="divAta">
+        <br />
+        <b>
+            @ViewBag.AtaItem characteristics:
+        </b><br />
+        @ViewBag.lblAtaDeviceType<br />
+        @foreach(KeyValuePair<string, string> kvp in ViewBag.repAtaTwo)
+        {
+            <text><i>@kvp.Key</i>: @kvp.Value<br /></text>
+        }
+        <br />
+        @foreach(string item in ViewBag.repAtaOne)
+        {
+            @Html.Raw(item)<br />
+        }
+    </div>
+}
+@if(ViewBag.repScsi != null)
+{
+    <div id="divScsi">
+        <br />
+        <b>SCSI characteristics:</b><br />
+        <i>Vendor:</i>@ViewBag.lblScsiVendor<br />
+        <i>Product:</i>@ViewBag.lblScsiProduct<br />
+        <i>Revision:</i>@ViewBag.lblScsiRevision<br />
+        @foreach(string item in ViewBag.repScsi)
+        {
+            @Html.Raw(item)<br />
+        }
+        @if(ViewBag.repModeSense != null)
+        {
+            <div id="divScsiModeSense">
+                <br /><i>SCSI mode sense pages:</i>
+                <table border="1">
+                    <tr>
+                        <th>Mode</th>
+                        <th>Contents</th>
+                    </tr>
+                    @foreach(KeyValuePair<string, string> kvp in ViewBag.repModeSense)
+                    {
+                        <tr>
+                            <td>
+                                @kvp.Key
+                            </td>
+                            <td>
+                                @Html.Raw(kvp.Value)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        }
+        @if(ViewBag.repEvpd != null)
+        {
+            <div id="divScsiEvpd">
+                <br /><i>SCSI extended vital product data pages:</i>
+                <table border="1">
+                    <tr>
+                        <th>EVPD</th>
+                        <th>Contents</th>
+                    </tr>
+                    @foreach(KeyValuePair<string, string> kvp in ViewBag.repEvpd)
+                    {
+                        <tr>
+                            <td>
+                                @kvp.Key
+                            </td>
+                            <td>
+                                @Html.Raw(kvp.Value)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        }
+        @if(ViewBag.repScsiMmcMode != null)
+        {
+            <div id="divScsiMmcMode">
+                <br /><b>SCSI CD-ROM capabilities:</b><br />
+                @foreach(string item in ViewBag.repScsiMmcMode)
+                {
+                    @Html.Raw(item)<br />
+                }
+            </div>
+        }
+        @if(ViewBag.repScsiMmcFeatures != null)
+        {
+            <div id="divScsiMmcFeatures">
+                <br /><b>SCSI MMC features:</b><br />
+                @foreach(string item in ViewBag.repScsiMmcFeatures)
+                {
+                    @Html.Raw(item)<br />
+                }
+            </div>
+        }
+        @if(ViewBag.divScsiSscVisible == true)
+        {
+            <div id="divScsiSsc">
+                <br /><b>SCSI Streaming device capabilities:</b><br />
+                Block size granularity: @ViewBag.lblScsiSscGranularity<br />
+                Maximum block length: @ViewBag.lblScsiSscMaxBlock bytes<br />
+                Minimum block length: @ViewBag.lblScsiSscMinBlock bytes<br />
+                @if(ViewBag.repScsiSscDensities != null)
+                {
+                    foreach(SupportedDensity density in ViewBag.repScsiSscDensities)
+                    {
+                        <text>
+                            <br />
+                            <b>
+                                Information for supported density with primary code @($"{density.PrimaryCode:X2h}") and secondary code @($"{density.SecondaryCode:X2h}")
+                            </b><br />
+                            Drive can write this density: @density.Writable<br />
+                            Duplicate density: @density.Duplicate<br />
+                            Default density: @density.DefaultDensity<br />
+                            Density has @density.BitsPerMm bits per mm, with @density.Tracks tracks in a @density.Width mm width tape
+                            Name: @density.Name<br />
+                            Organization: @density.Organization<br />
+                            Description: @density.Description<br />
+                            Maximum capacity: @density.Capacity megabytes<br />
+                        </text>
+                    }
+                }
+                @if(ViewBag.repScsiSscMedias != null)
+                {
+                    foreach(SscSupportedMedia media in ViewBag.repScsiSscMedias)
+                    {
+                        <text>
+                            <br />
+                            <b>
+                                Information for supported media with type code @($"{media.MediumType:X2h}")
+                            </b><br />
+                            Media is @media.Length m long in a @media.Width mm width tape
+                            Name: @media.Name<br />
+                            Organization: @media.Organization<br />
+                            Description: @media.Description<br />
+                        </text>
+                    }
+                }
+            </div>
+        }
+    </div>
+}
+@if(ViewBag.repTestedMedia != null)
+{
+    <div id="divTestedMedia">
+        <br /><b>Tested media:</b><br />
+        @foreach(string item in ViewBag.repTestedMedia)
+        {
+            @Html.Raw(item)<br />
+        }
+    </div>
+}
+@if(ViewBag.repMMC != null)
+{
+    <div id="divMMC">
+        <br />
+        <b>MultiMediaCard device:</b><br />
+        @foreach(string item in ViewBag.repMMC)
+        {
+            @Html.Raw(item)<br />
+        }
+    </div>
+}
+@if(ViewBag.repSD != null)
+{
+    <div id="divSD">
+        <br />
+        <b>SecureDigital device:</b><br />
+        @foreach(string item in ViewBag.repSD)
+        {
+            @Html.Raw(item)<br />
+        }
+    </div>
+}
+</body>
+</html>

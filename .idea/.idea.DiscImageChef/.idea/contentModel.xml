@@ -1784,6 +1784,7 @@
         <e p="App.config" t="Include" />
         <e p="App_Start" t="Include">
           <e p="Ata.cs" t="Include" />
+          <e p="RouteConfig.cs" t="Include" />
           <e p="ScsiEvpd.cs" t="Include" />
           <e p="ScsiInquiry.cs" t="Include" />
           <e p="ScsiMmcFeatures.cs" t="Include" />
@@ -1794,15 +1795,13 @@
           <e p="TestedMedia.cs" t="Include" />
           <e p="WebApiConfig.cs" t="Include" />
         </e>
-        <e p="Changelog.aspx" t="Include" />
         <e p="Controllers" t="Include">
+          <e p="HomeController.cs" t="Include" />
+          <e p="ReportController.cs" t="Include" />
+          <e p="StatsController.cs" t="Include" />
           <e p="UploadReportController.cs" t="Include" />
           <e p="UploadStatsController.cs" t="Include" />
         </e>
-        <e p="DONATING.aspx" t="Include" />
-        <e p="Default.aspx" t="Include" />
-        <e p="Default.aspx.cs" t="Include" />
-        <e p="Default.aspx.designer.cs" t="Include" />
         <e p="DiscImageChef.Server.csproj" t="IncludeRecursive" />
         <e p="Global.asax" t="Include" />
         <e p="Global.asax.cs" t="Include" />
@@ -1844,11 +1843,13 @@
           <e p="Command.cs" t="Include" />
           <e p="Context.cs" t="Include" />
           <e p="Device.cs" t="Include" />
+          <e p="DeviceItem.cs" t="Include" />
           <e p="DeviceStat.cs" t="Include" />
           <e p="Filesystem.cs" t="Include" />
           <e p="Filter.cs" t="Include" />
           <e p="Media.cs" t="Include" />
           <e p="MediaFormat.cs" t="Include" />
+          <e p="MediaItem.cs" t="Include" />
           <e p="OperatingSystem.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
           <e p="UploadedReport.cs" t="Include" />
@@ -1859,19 +1860,30 @@
         <e p="Reports" t="Include">
           <e p=".htaccess" t="Include" />
         </e>
-        <e p="Statistics.aspx" t="Include" />
-        <e p="Statistics.aspx.cs" t="Include" />
-        <e p="Statistics.aspx.designer.cs" t="Include" />
-        <e p="TODO.aspx" t="Include" />
-        <e p="ViewReport.aspx" t="Include" />
-        <e p="ViewReport.aspx.cs" t="Include" />
-        <e p="ViewReport.aspx.designer.cs" t="Include" />
+        <e p="Views" t="Include">
+          <e p="Home" t="Include">
+            <e p="Changelog.cshtml" t="Include" />
+            <e p="DONATING.cshtml" t="Include" />
+            <e p="Index.cshtml" t="Include" />
+            <e p="TODO.cshtml" t="Include" />
+          </e>
+          <e p="Report" t="Include">
+            <e p="View.cshtml" t="Include" />
+          </e>
+          <e p="Stats" t="Include">
+            <e p="Index.cshtml" t="Include" />
+          </e>
+          <e p="Web.config" t="Include" />
+        </e>
         <e p="Web.Debug.config" t="Include" />
         <e p="Web.Release.config" t="Include" />
         <e p="Web.config" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="docs" t="Include">
+          <e p="Changelog.md" t="Include" />
+          <e p="DONATING.md" t="Include" />
           <e p="README.md" t="Include" />
+          <e p="TODO.md" t="Include" />
         </e>
         <e p="dos.css" t="Include" />
         <e p="int10h.org" t="Include">

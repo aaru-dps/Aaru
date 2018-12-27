@@ -1,75 +1,37 @@
-﻿// /***************************************************************************
-// The Disc Image Chef
-// ----------------------------------------------------------------------------
-//
-// Filename       : ViewReport.aspx.cs
-// Author(s)      : Natalia Portillo <claunia@claunia.com>
-//
-// Component      : DiscImageChef Server.
-//
-// --[ Description ] ----------------------------------------------------------
-//
-//     Renders a device report.
-//
-// --[ License ] --------------------------------------------------------------
-//
-//     This library is free software; you can redistribute it and/or modify
-//     it under the terms of the GNU Lesser General Public License as
-//     published by the Free Software Foundation; either version 2.1 of the
-//     License, or (at your option) any later version.
-//
-//     This library is distributed in the hope that it will be useful, but
-//     WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-//     Lesser General Public License for more details.
-//
-//     You should have received a copy of the GNU Lesser General Public
-//     License along with this library; if not, see <http://www.gnu.org/licenses/>.
-//
-// ----------------------------------------------------------------------------
-// Copyright © 2011-2018 Natalia Portillo
-// ****************************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
+using System.Web.Mvc;
+using System.Web.Routing;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Server.Models;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
-namespace DiscImageChef.Server
+namespace DiscImageChef.Server.Controllers
 {
-    /// <summary>
-    ///     Renders the specified report from the server
-    /// </summary>
-    public partial class ViewReport : Page
+    public class ReportController : Controller
     {
-        protected void Page_Load(object sender, EventArgs e)
+        public ActionResult Index()
         {
+            return RedirectToAction("View", "Report", new RouteValueDictionary {{"id", 1}});
+        }
+
+        public ActionResult View(int? id)
+        {
+            if(id == null || id <= 0) return Content("Incorrect device report request");
+
             try
             {
-                if(!int.TryParse(Request.QueryString["id"], out int id) || id <= 0)
-                {
-                    content.InnerHtml = "<b>Incorrect device report request</b>";
-                    return;
-                }
-
                 DicServerContext ctx    = new DicServerContext();
                 Device           report = ctx.Devices.FirstOrDefault(d => d.Id == id);
 
-                if(report is null)
-                {
-                    content.InnerHtml = "<b>Cannot find requested report</b>";
-                    return;
-                }
+                if(report is null) return Content("Cannot find requested report");
 
-                lblManufacturer.Text = report.Manufacturer;
-                lblModel.Text        = report.Model;
-                lblRevision.Text     = report.Revision;
+                ViewBag.lblManufacturer = report.Manufacturer;
+                ViewBag.lblModel        = report.Model;
+                ViewBag.lblRevision     = report.Revision;
 
                 if(report.USB != null)
                 {
@@ -93,33 +55,40 @@ namespace DiscImageChef.Server
                         usbVendorDescription  = dbProduct.Vendor.Vendor;
                     }
 
-                    lblUsbManufacturer.Text = HttpUtility.HtmlEncode(report.USB.Manufacturer);
-                    lblUsbProduct.Text      = HttpUtility.HtmlEncode(report.USB.Product);
-                    lblUsbVendor.Text       = $"0x{report.USB.VendorID:x4}";
-                    if(usbVendorDescription != null)
-                        lblUsbVendorDescription.Text = $"({HttpUtility.HtmlEncode(usbVendorDescription)})";
-                    lblUsbProductId.Text = $"0x{report.USB.ProductID:x4}";
-                    if(usbProductDescription != null)
-                        lblUsbProductDescription.Text = $"({HttpUtility.HtmlEncode(usbProductDescription)})";
+                    ViewBag.UsbItem = new Item
+                    {
+                        Manufacturer = report.USB.Manufacturer,
+                        Product      = report.USB.Product,
+                        VendorDescription =
+                            usbVendorDescription != null
+                                ? $"0x{report.USB.VendorID:x4} ({usbVendorDescription})"
+                                : $"0x{report.USB.VendorID:x4}",
+                        ProductDescription = usbProductDescription != null
+                                                 ? $"0x{report.USB.ProductID:x4} ({usbProductDescription})"
+                                                 : $"0x{report.USB.ProductID:x4}"
+                    };
                 }
-                else divUsb.Visible = false;
 
                 if(report.FireWire != null)
-                {
-                    lblFirewireManufacturer.Text = HttpUtility.HtmlEncode(report.FireWire.Manufacturer);
-                    lblFirewireProduct.Text      = HttpUtility.HtmlEncode(report.FireWire.Product);
-                    lblFirewireVendor.Text       = $"0x{report.FireWire.VendorID:x8}";
-                    lblFirewireProductId.Text    = $"0x{report.FireWire.ProductID:x8}";
-                }
-                else divFirewire.Visible = false;
+                    ViewBag.FireWireItem = new Item
+                    {
+                        Manufacturer       = report.FireWire.Manufacturer,
+                        Product            = report.FireWire.Product,
+                        VendorDescription  = $"0x{report.FireWire.VendorID:x8}",
+                        ProductDescription = $"0x{report.FireWire.ProductID:x8}"
+                    };
 
                 if(report.PCMCIA != null)
                 {
-                    lblPcmciaManufacturer.Text     = HttpUtility.HtmlEncode(report.PCMCIA.Manufacturer);
-                    lblPcmciaProduct.Text          = HttpUtility.HtmlEncode(report.PCMCIA.ProductName);
-                    lblPcmciaManufacturerCode.Text = $"0x{report.PCMCIA.ManufacturerCode:x4}";
-                    lblPcmciaCardCode.Text         = $"0x{report.PCMCIA.CardCode:x4}";
-                    lblPcmciaCompliance.Text       = HttpUtility.HtmlEncode(report.PCMCIA.Compliance);
+                    ViewBag.PcmciaItem = new PcmciaItem
+                    {
+                        Manufacturer       = report.PCMCIA.Manufacturer,
+                        Product            = report.PCMCIA.ProductName,
+                        VendorDescription  = $"0x{report.PCMCIA.ManufacturerCode:x4}",
+                        ProductDescription = $"0x{report.PCMCIA.CardCode:x4}",
+                        Compliance         = report.PCMCIA.Compliance
+                    };
+
                     Tuple[] tuples = CIS.GetTuples(report.PCMCIA.CIS);
                     if(tuples != null)
                     {
@@ -191,16 +160,9 @@ namespace DiscImageChef.Server
                                     break;
                             }
 
-                        if(decodedTuples.Count > 0)
-                        {
-                            repPcmciaTuples.DataSource = decodedTuples;
-                            repPcmciaTuples.DataBind();
-                        }
-                        else repPcmciaTuples.Visible = false;
+                        if(decodedTuples.Count > 0) ViewBag.repPcmciaTuples = decodedTuples;
                     }
-                    else repPcmciaTuples.Visible = false;
                 }
-                else divPcmcia.Visible = false;
 
                 bool              removable   = true;
                 List<TestedMedia> testedMedia = null;
@@ -217,26 +179,27 @@ namespace DiscImageChef.Server
 
                     if(report.ATAPI != null)
                     {
-                        lblAtapi.Text = "PI";
-                        ataReport     = report.ATAPI;
-                        atapi         = true;
+                        ViewBag.AtaItem = "ATAPI";
+                        ataReport       = report.ATAPI;
+                        atapi           = true;
                     }
-                    else ataReport = report.ATA;
+                    else
+                    {
+                        ViewBag.AtaItem = "ATA";
+                        ataReport       = report.ATA;
+                    }
 
                     bool cfa = report.CompactFlash;
 
-                    if(atapi       && !cfa) lblAtaDeviceType.Text = "ATAPI device";
-                    else if(!atapi && cfa) lblAtaDeviceType.Text  = "CompactFlash device";
-                    else lblAtaDeviceType.Text                    = "ATA device";
+                    if(atapi       && !cfa) ViewBag.lblAtaDeviceType = "ATAPI device";
+                    else if(!atapi && cfa) ViewBag.lblAtaDeviceType  = "CompactFlash device";
+                    else ViewBag.lblAtaDeviceType                    = "ATA device";
 
                     Ata.Report(ataReport, cfa, atapi, ref removable, ref ataOneValue, ref ataTwoValue, ref testedMedia);
 
-                    repAtaOne.DataSource = ataOneValue;
-                    repAtaOne.DataBind();
-                    repAtaTwo.DataSource = ataTwoValue;
-                    repAtaTwo.DataBind();
+                    ViewBag.repAtaOne = ataOneValue;
+                    ViewBag.repAtaTwo = ataTwoValue;
                 }
-                else divAta.Visible = false;
 
                 if(report.SCSI != null)
                 {
@@ -248,11 +211,11 @@ namespace DiscImageChef.Server
                     if(report.SCSI.Inquiry != null)
                     {
                         Inquiry.SCSIInquiry inq = report.SCSI.Inquiry.Value;
-                        lblScsiVendor.Text = VendorString.Prettify(vendorId) != vendorId
-                                                 ? $"{vendorId} ({VendorString.Prettify(vendorId)})"
-                                                 : vendorId;
-                        lblScsiProduct.Text  = StringHandlers.CToString(inq.ProductIdentification);
-                        lblScsiRevision.Text = StringHandlers.CToString(inq.ProductRevisionLevel);
+                        ViewBag.lblScsiVendor = VendorString.Prettify(vendorId) != vendorId
+                                                    ? $"{vendorId} ({VendorString.Prettify(vendorId)})"
+                                                    : vendorId;
+                        ViewBag.lblScsiProduct  = StringHandlers.CToString(inq.ProductIdentification);
+                        ViewBag.lblScsiRevision = StringHandlers.CToString(inq.ProductRevisionLevel);
                     }
 
                     scsiOneValue.AddRange(ScsiInquiry.Report(report.SCSI.Inquiry));
@@ -269,25 +232,11 @@ namespace DiscImageChef.Server
                         ScsiModeSense.Report(report.SCSI.ModeSense, vendorId, devType, ref scsiOneValue, ref modePages);
                     }
 
-                    if(modePages.Count > 0)
-                    {
-                        repModeSense.DataSource = modePages;
-                        repModeSense.DataBind();
-                    }
-                    else divScsiModeSense.Visible = false;
+                    if(modePages.Count > 0) ViewBag.repModeSense = modePages;
 
                     if(report.SCSI.EVPDPages != null) ScsiEvpd.Report(report.SCSI.EVPDPages, vendorId, ref evpdPages);
 
-                    if(evpdPages.Count > 0)
-                    {
-                        repEvpd.DataSource = evpdPages;
-                        repEvpd.DataBind();
-                    }
-                    else divScsiEvpd.Visible = false;
-
-                    divScsiMmcMode.Visible     = false;
-                    divScsiMmcFeatures.Visible = false;
-                    divScsiSsc.Visible         = false;
+                    if(evpdPages.Count > 0) ViewBag.repEvpd = evpdPages;
 
                     if(report.SCSI.MultiMediaDevice != null)
                     {
@@ -297,52 +246,34 @@ namespace DiscImageChef.Server
                         {
                             List<string> mmcModeOneValue = new List<string>();
                             ScsiMmcMode.Report(report.SCSI.MultiMediaDevice.ModeSense2A, ref mmcModeOneValue);
-                            if(mmcModeOneValue.Count > 0)
-                            {
-                                divScsiMmcMode.Visible    = true;
-                                repScsiMmcMode.DataSource = mmcModeOneValue;
-                                repScsiMmcMode.DataBind();
-                            }
+                            if(mmcModeOneValue.Count > 0) ViewBag.repScsiMmcMode = mmcModeOneValue;
                         }
 
                         if(report.SCSI.MultiMediaDevice.Features != null)
                         {
                             List<string> mmcFeaturesOneValue = new List<string>();
                             ScsiMmcFeatures.Report(report.SCSI.MultiMediaDevice.Features, ref mmcFeaturesOneValue);
-                            if(mmcFeaturesOneValue.Count > 0)
-                            {
-                                divScsiMmcFeatures.Visible    = true;
-                                repScsiMmcFeatures.DataSource = mmcFeaturesOneValue;
-                                repScsiMmcFeatures.DataBind();
-                            }
+                            if(mmcFeaturesOneValue.Count > 0) ViewBag.repScsiMmcFeatures = mmcFeaturesOneValue;
                         }
                     }
                     else if(report.SCSI.SequentialDevice != null)
                     {
-                        divScsiSsc.Visible = true;
+                        ViewBag.divScsiSscVisible = true;
 
-                        lblScsiSscGranularity.Text =
+                        ViewBag.lblScsiSscGranularity =
                             report.SCSI.SequentialDevice.BlockSizeGranularity?.ToString() ?? "Unspecified";
 
-                        lblScsiSscMaxBlock.Text =
+                        ViewBag.lblScsiSscMaxBlock =
                             report.SCSI.SequentialDevice.MaxBlockLength?.ToString() ?? "Unspecified";
 
-                        lblScsiSscMinBlock.Text =
+                        ViewBag.lblScsiSscMinBlock =
                             report.SCSI.SequentialDevice.MinBlockLength?.ToString() ?? "Unspecified";
 
                         if(report.SCSI.SequentialDevice.SupportedDensities != null)
-                        {
-                            repScsiSscDensities.DataSource = report.SCSI.SequentialDevice.SupportedDensities;
-                            repScsiSscDensities.DataBind();
-                        }
-                        else repScsiSscDensities.Visible = false;
+                            ViewBag.repScsiSscDensities = report.SCSI.SequentialDevice.SupportedDensities;
 
                         if(report.SCSI.SequentialDevice.SupportedMediaTypes != null)
-                        {
-                            repScsiSscMedias.DataSource = report.SCSI.SequentialDevice.SupportedMediaTypes;
-                            repScsiSscMedias.DataBind();
-                        }
-                        else repScsiSscMedias.Visible = false;
+                            ViewBag.repScsiSscMedias = report.SCSI.SequentialDevice.SupportedMediaTypes;
 
                         if(report.SCSI.SequentialDevice.TestedMedia != null)
                         {
@@ -350,13 +281,10 @@ namespace DiscImageChef.Server
                             SscTestedMedia.Report(report.SCSI.SequentialDevice.TestedMedia, ref mediaOneValue);
                             if(mediaOneValue.Count > 0)
                             {
-                                sscMedia                  = true;
-                                repTestedMedia.DataSource = mediaOneValue;
-                                repTestedMedia.DataBind();
+                                sscMedia               = true;
+                                ViewBag.repTestedMedia = mediaOneValue;
                             }
-                            else divTestedMedia.Visible = false;
                         }
-                        else divTestedMedia.Visible = false;
                     }
                     else if(report.SCSI.ReadCapabilities != null)
                     {
@@ -410,10 +338,8 @@ namespace DiscImageChef.Server
                     }
                     else testedMedia = report.SCSI.RemovableMedias;
 
-                    repScsi.DataSource = scsiOneValue;
-                    repScsi.DataBind();
+                    ViewBag.repScsi = scsiOneValue;
                 }
-                else divScsi.Visible = false;
 
                 if(report.MultiMediaCard != null)
                 {
@@ -447,10 +373,8 @@ namespace DiscImageChef.Server
                         mmcOneValue.Add("");
                     }
 
-                    repMMC.DataSource = mmcOneValue;
-                    repMMC.DataBind();
+                    ViewBag.repMMC = mmcOneValue;
                 }
-                else divMMC.Visible = false;
 
                 if(report.SecureDigital != null)
                 {
@@ -484,32 +408,38 @@ namespace DiscImageChef.Server
                         sdOneValue.Add("");
                     }
 
-                    repSD.DataSource = sdOneValue;
-                    repSD.DataBind();
+                    ViewBag.repSD = sdOneValue;
                 }
-                else divSD.Visible = false;
 
                 if(removable && !sscMedia && testedMedia != null)
                 {
                     List<string> mediaOneValue = new List<string>();
                     App_Start.TestedMedia.Report(testedMedia, ref mediaOneValue);
-                    if(mediaOneValue.Count > 0)
-                    {
-                        divTestedMedia.Visible    = true;
-                        repTestedMedia.DataSource = mediaOneValue;
-                        repTestedMedia.DataBind();
-                    }
-                    else divTestedMedia.Visible = false;
+                    if(mediaOneValue.Count > 0) ViewBag.repTestedMedia = mediaOneValue;
                 }
-                else divTestedMedia.Visible &= sscMedia;
             }
             catch(Exception)
             {
-                content.InnerHtml = "<b>Could not load device report</b>";
                 #if DEBUG
                 throw;
                 #endif
+                return Content("Could not load device report");
             }
+
+            return View();
         }
+    }
+
+    public class Item
+    {
+        public string Manufacturer;
+        public string Product;
+        public string ProductDescription;
+        public string VendorDescription;
+    }
+
+    public class PcmciaItem : Item
+    {
+        public string Compliance;
     }
 }
