@@ -43,3 +43,16 @@ $body-color:       $white;
 /* Colors for <a> */
 $link-color:       $teal;
 $link-hover-color: $yellow;
+
+/* Colors for cards */
+$card-border-color:                 rgba($darkgray, .125);
+$card-cap-bg:                       rgba($darkgray, .03);
+$card-cap-color:                    inherit;
+$card-bg:                           $blue;
+
+/* Colors for tables */
+$table-dark-bg:               $cyan;
+$table-dark-accent-bg:        rgba($white, .05) !default;
+$table-dark-hover-bg:         rgba($white, .075) !default;
+$table-dark-border-color:     lighten($yellow, 7.5%) !default;
+$table-dark-color:            $yellow !default;

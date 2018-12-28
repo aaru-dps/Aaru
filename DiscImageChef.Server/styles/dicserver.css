@@ -4,6 +4,8 @@
 /* Bootstrap color aliases */
 /* Colors for <body> */
 /* Colors for <a> */
+/* Colors for cards */
+/* Colors for tables */
 /* Sets font to VGA square */
 @font-face {
   font-family: "VGAsquarePx";
@@ -17,6 +19,8 @@
 /* Bootstrap color aliases */
 /* Colors for <body> */
 /* Colors for <a> */
+/* Colors for cards */
+/* Colors for tables */
 /* Sets the style for emphasis/italics */
 em, i {
   color: #00AA00;
@@ -1755,9 +1759,9 @@ pre code {
 }
 
 .table .thead-dark th {
-  color: #AAAAAA;
-  background-color: #555555;
-  border-color: #686868;
+  color: #FFFF55;
+  background-color: #00AAAA;
+  border-color: #ffff7b;
 }
 .table .thead-light th {
   color: #555555;
@@ -1766,13 +1770,13 @@ pre code {
 }
 
 .table-dark {
-  color: #AAAAAA;
-  background-color: #555555;
+  color: #FFFF55;
+  background-color: #00AAAA;
 }
 .table-dark th,
 .table-dark td,
 .table-dark thead th {
-  border-color: #686868;
+  border-color: #ffff7b;
 }
 .table-dark.table-bordered {
   border: 0;
@@ -4132,9 +4136,9 @@ input[type=button].btn-block {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #AAAAAA;
+  background-color: #0000AA;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid rgba(85, 85, 85, 0.125);
   border-radius: 0.25rem;
 }
 .card > hr {
@@ -4179,8 +4183,8 @@ input[type=button].btn-block {
   padding: 0.75rem 1.25rem;
   margin-bottom: 0;
   color: inherit;
-  background-color: rgba(0, 0, 0, 0.03);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  background-color: rgba(85, 85, 85, 0.03);
+  border-bottom: 1px solid rgba(85, 85, 85, 0.125);
 }
 .card-header:first-child {
   border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
@@ -4191,8 +4195,8 @@ input[type=button].btn-block {
 
 .card-footer {
   padding: 0.75rem 1.25rem;
-  background-color: rgba(0, 0, 0, 0.03);
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  background-color: rgba(85, 85, 85, 0.03);
+  border-top: 1px solid rgba(85, 85, 85, 0.125);
 }
 .card-footer:last-child {
   border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);
@@ -9567,6 +9571,26 @@ header a:hover {
 
 footer a:hover {
   text-decoration: none;
+}
+
+.table-centered {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.card-button {
+  color: #FFFF55;
+}
+
+.table-dark-em {
+  color: #AA5500;
+  font-style: normal;
+}
+
+.table-dark-header {
+  color: #AA5500;
+  font-style: normal;
+  text-align: center;
 }
 
 /*# sourceMappingURL=dicserver.css.map */

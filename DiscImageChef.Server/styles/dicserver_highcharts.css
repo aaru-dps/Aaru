@@ -3,6 +3,8 @@
 /* Bootstrap color aliases */
 /* Colors for <body> */
 /* Colors for <a> */
+/* Colors for cards */
+/* Colors for tables */
 /* Sets font to VGA square */
 @font-face {
   font-family: "VGAsquarePx";
@@ -16,6 +18,8 @@
 /* Bootstrap color aliases */
 /* Colors for <body> */
 /* Colors for <a> */
+/* Colors for cards */
+/* Colors for tables */
 /* Sets the style for emphasis/italics */
 em, i {
   color: #00AA00;

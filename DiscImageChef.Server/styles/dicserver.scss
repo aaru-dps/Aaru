@@ -32,3 +32,24 @@ footer a:hover
 {
     text-decoration: none;
 }
+
+.table-centered
+{
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.card-button{color:$yellow}
+
+.table-dark-em
+{
+    color: $brown;
+    font-style: normal;
+}
+
+.table-dark-header
+{
+    color: $brown;
+    font-style: normal;
+    text-align: center;
+}

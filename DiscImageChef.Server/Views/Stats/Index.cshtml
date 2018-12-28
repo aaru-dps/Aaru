@@ -45,9 +45,7 @@
         </a>
     </i> Server version @ViewBag.Version
 </header>
-<br />
-<div class="container">
-
+<div class="container-fluid mt-3">
 @if(ViewBag.repOperatingSystems != null)
 {
     <div class="container"
@@ -103,40 +101,92 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-        <table>
-            @foreach(NameValueStats os in ViewBag.repOperatingSystems)
-            {
-                <tr>
-                    <td>
-                        DiscImageChef has run on <i>@os.name</i> @os.Value times.
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="osAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="osHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="osCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#osCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All operating systems DiscImageChef has run on...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="osHeading"
+                     class="collapse"
+                     data-parent="#osAccordion"
+                     id="osCollapse">
+                    <div class="card-body">
+                        <table class="table-dark">
+                            @foreach(NameValueStats os in ViewBag.repOperatingSystems)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        DiscImageChef has run on <i class="table-dark-em">@os.name</i> @os.Value times.
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br />
     </div>
 }
 @if(ViewBag.repVersions != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divVersions">
         <div class="container"
              id="versionsChart">
         </div>
-        <table>
-            @foreach(NameValueStats version in ViewBag.repVersions)
-            {
-                <tr>
-                    <td>
-                        DiscImageChef version <i>@version.name</i> has been used @version.Value times.
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="versionsAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="versionsHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="versionsCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#versionsCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All DiscImageChef versions...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="versionsHeading"
+                     class="collapse"
+                     data-parent="#versionsAccordion"
+                     id="versionsCollapse">
+                    <div class="card-body">
+                        <table class="table-dark">
+                            @foreach(NameValueStats version in ViewBag.repVersions)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        DiscImageChef version <i class="table-dark-em">@version.name</i> has been used @version.Value times.
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
         <br />
     </div>
 }
-<div class="container"
+<div class="container mt-3"
      id="divCommands">
     <div class="container"
          id="commandsChart">
@@ -169,185 +219,328 @@
 </div>
 @if(ViewBag.repFilters != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divFilters">
         <div class="container"
              id="filtersChart">
         </div>
-        <h3>Filters found:</h3>
-        <table align="center"
-               border="1">
-            <tr>
-                <th>Filter</th>
-                <th>Times</th>
-            </tr>
-            @foreach(Filter filter in ViewBag.repFilters)
-            {
-                <tr>
-                    <td>
-                        @filter.Name
-                    </td>
-                    <td>
-                        @($"{filter.Count}")
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="filtersAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="filtersHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="filtersCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#filtersCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All filters found...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="filtersHeading"
+                     class="collapse"
+                     data-parent="#filtersAccordion"
+                     id="filtersCollapse">
+                    <div class="card-body">
+                        <table class="table-bordered table-centered table-dark table-striped">
+                            <tr>
+                                <th class="table-dark-header">Filter</th>
+                                <th class="table-dark-header">Times</th>
+                            </tr>
+                            @foreach(Filter filter in ViewBag.repFilters)
+                            {
+                                <tr>
+                                    <td class="text-right">
+                                        @filter.Name
+                                    </td>
+                                    <td class="text-left">
+                                        @($"{filter.Count}")
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if(ViewBag.repMediaImages != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divMediaImages">
         <div class="container"
              id="formatsChart">
         </div>
-        <h3>Media image formats found:</h3>
-        <table align="center"
-               border="1">
-            <tr>
-                <th>Media image format</th>
-                <th>Times</th>
-            </tr>
-            @foreach(MediaFormat format in ViewBag.repMediaImages)
-            {
-                <tr>
-                    <td>
-                        @format.Name
-                    </td>
-                    <td>
-                        @($"{format.Count}")
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="formatsAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="formatsHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="formatsCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#formatsCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All media image formats found...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="formatsHeading"
+                     class="collapse"
+                     data-parent="#formatsAccordion"
+                     id="formatsCollapse">
+                    <div class="card-body">
+                        <table class="table-bordered table-centered table-dark table-striped">
+                            <tr>
+                                <th class="table-dark-header">Media image format</th>
+                                <th class="table-dark-header">Times</th>
+                            </tr>
+                            @foreach(MediaFormat format in ViewBag.repMediaImages)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        @format.Name
+                                    </td>
+                                    <td class="text-left">
+                                        @($"{format.Count}")
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if(ViewBag.repPartitions != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divPartitions">
         <div class="container"
              id="partitionsChart">
         </div>
-        <h3>Partition schemes found:</h3>
-        <table align="center"
-               border="1">
-            <tr>
-                <th>Partition scheme</th>
-                <th>Times</th>
-            </tr>
-            @foreach(Partition partition in ViewBag.repPartitions)
-            {
-                <tr>
-                    <td>
-                        @partition.Name
-                    </td>
-                    <td>
-                        @($"{partition.Count}")
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="partitionsAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="partitionsHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="partitionsCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#partitionsCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All partitioning schemes found...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="partitionsHeading"
+                     class="collapse"
+                     data-parent="#partitionsAccordion"
+                     id="partitionsCollapse">
+                    <div class="card-body">
+                        <table class="table-bordered table-centered table-dark table-striped">
+                            <tr>
+                                <th class="table-dark-header">Partitioning scheme</th>
+                                <th class="table-dark-header">Times</th>
+                            </tr>
+                            @foreach(Partition partition in ViewBag.repPartitions)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        @partition.Name
+                                    </td>
+                                    <td class="text-left">
+                                        @($"{partition.Count}")
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if(ViewBag.repFilesystems != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divFilesystems">
         <div class="container"
              id="filesystemsChart">
         </div>
-        <h3>Filesystems found:</h3>
-        <table align="center"
-               border="1">
-            <tr>
-                <th>Filesystem name</th>
-                <th>Times</th>
-            </tr>
-            @foreach(Filesystem filesystem in ViewBag.repFilesystems)
-            {
-                <tr>
-                    <td>
-                        @filesystem.Name
-                    </td>
-                    <td>
-                        @($"{filesystem.Count}")
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="filesystemsAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="filesystemsHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="filesystemsCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#filesystemsCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All filesystems found...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="filesystemsHeading"
+                     class="collapse"
+                     data-parent="#filesystemsAccordion"
+                     id="filesystemsCollapse">
+                    <div class="card-body">
+                        <table class="table-bordered table-centered table-dark table-striped">
+                            <tr>
+                                <th class="table-dark-header">Filesystem name</th>
+                                <th class="table-dark-header">Times</th>
+                            </tr>
+                            @foreach(Filesystem filesystem in ViewBag.repFilesystems)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        @filesystem.Name
+                                    </td>
+                                    <td class="text-left">
+                                        @($"{filesystem.Count}")
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if(ViewBag.repVirtualMedia != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divVirtualMedia">
         <div class="container"
              id="virtualMediaChart">
         </div>
-        <h3>Media types found in images:</h3>
-        <table align="center"
-               border="1">
-            <tr>
-                <th>Physical type</th>
-                <th>Logical type</th>
-                <th>Times</th>
-            </tr>
-            @foreach(MediaItem media in ViewBag.repVirtualMedia)
-            {
-                <tr>
-                    <td>
-                        @media.Type
-                    </td>
-                    <td>
-                        @media.SubType
-                    </td>
-                    <td>
-                        @($"{media.Count}")
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="virtualMediaAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="virtualMediaHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="virtualMediaCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#virtualMediaCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All media types found in images...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="virtualMediaHeading"
+                     class="collapse"
+                     data-parent="#virtualMediaAccordion"
+                     id="virtualMediaCollapse">
+                    <div class="card-body">
+                        <table class="table-bordered table-centered table-dark table-striped">
+                            <tr>
+                                <th class="table-dark-header">Physical type</th>
+                                <th class="table-dark-header">Logical type</th>
+                                <th class="table-dark-header">Times</th>
+                            </tr>
+                            @foreach(MediaItem media in ViewBag.repVirtualMedia)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        @media.Type
+                                    </td>
+                                    <td class="text-left">
+                                        @media.SubType
+                                    </td>
+                                    <td class="text-left">
+                                        @($"{media.Count}")
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if(ViewBag.repRealMedia != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divRealMedia">
         <div class="container"
              id="realMediaChart">
         </div>
-        <h3>Media types found in devices:</h3>
-        <table align="center"
-               border="1">
-            <tr>
-                <th>Physical type</th>
-                <th>Logical type</th>
-                <th>Times</th>
-            </tr>
-            @foreach(MediaItem media in ViewBag.repRealMedia)
-            {
-                <tr>
-                    <td>
-                        @media.Type
-                    </td>
-                    <td>
-                        @media.SubType
-                    </td>
-                    <td>
-                        @($"{media.Count}")
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="accordion mt-3"
+             id="realMediaAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="realMediaHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="realMediaCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#realMediaCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All media types found in devices...
+                        </button>
+                    </h2>
+                </div>
+
+                <div aria-labelledby="realMediaHeading"
+                     class="collapse"
+                     data-parent="#realMediaAccordion"
+                     id="realMediaCollapse">
+                    <div class="card-body">
+                        <table class="table-bordered table-centered table-dark table-striped">
+                            <tr>
+                                <th class="table-dark-header">Physical type</th>
+                                <th class="table-dark-header">Logical type</th>
+                                <th class="table-dark-header">Times</th>
+                            </tr>
+                            @foreach(MediaItem media in ViewBag.repRealMedia)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        @media.Type
+                                    </td>
+                                    <td class="text-left">
+                                        @media.SubType
+                                    </td>
+                                    <td class="text-left">
+                                        @($"{media.Count}")
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 @if(ViewBag.repDevices != null)
 {
-    <div class="container"
+    <div class="container mt-3"
          id="divDevices">
-
         <div class="carousel slide"
              data-ride="carousel"
              id="carouselDevices">
@@ -393,47 +586,56 @@
                 <span class="sr-only">Next</span>
             </a>
         </div>
-        <h3>Found devices:</h3>
-        <table align="center"
-               border="1">
-            <tr>
-                <th>Manufacturer</th>
-                <th>Model</th>
-                <th>Revision</th>
-                <th>Bus</th>
-                <th>Report</th>
-            </tr>
-            @foreach(DeviceItem device in ViewBag.repDevices)
-            {
-                <tr>
-                    <td>
-                        @device.Manufacturer
-                    </td>
-                    <td>
-                        @device.Model
-                    </td>
-                    <td>
-                        @device.Revision
-                    </td>
-                    <td>
-                        @device.Bus
-                    </td>
-                    <td>
-                        @if(device.ReportId != 0)
-                        {
-                            <text>@Html.ActionLink("Yes", "View", "Report", new {id = device.ReportId}, new {target = "_blank"})</text>
-                        }
-                        else
-                        { <text>No</text> }
-                    </td>
-                </tr>
-            }
-        </table>
+        <div class="card mt-3">
+            <div class="card-header">
+                <h2 class="mb-0">
+                    <h2 class="card-button mb-0">
+                        All devices found...
+                    </h2>
+                </h2>
+            </div>
+            <div class="card-body">
+                <table class="table-bordered table-centered table-dark table-striped">
+                    <tr>
+                        <th class="table-dark-header">Manufacturer</th>
+                        <th class="table-dark-header">Model</th>
+                        <th class="table-dark-header">Revision</th>
+                        <th class="table-dark-header">Bus</th>
+                        <th class="table-dark-header">Report</th>
+                    </tr>
+                    @foreach(DeviceItem device in ViewBag.repDevices)
+                    {
+                        <tr>
+                            <td>
+                                @device.Manufacturer
+                            </td>
+                            <td>
+                                @device.Model
+                            </td>
+                            <td>
+                                @device.Revision
+                            </td>
+                            <td>
+                                @device.Bus
+                            </td>
+                            <td>
+                                @if(device.ReportId != 0)
+                                {
+                                    <text>@Html.ActionLink("Yes", "View", "Report", new {id = device.ReportId}, new {target = "_blank"})</text>
+                                }
+                                else
+                                { <text>No</text> }
+                            </td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
     </div>
 }
 </div>
 <hr />
-<footer class="container-fluid">
+<footer class="container-fluid mt-3">
     © 2011-2018
     <a href="http://www.claunia.com"
        target="_blank">
