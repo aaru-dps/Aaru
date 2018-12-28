@@ -52,17 +52,56 @@
 {
     <div class="container"
          id="divOperatingSystems">
-        <div class="container"
-             id="osChart">
-        </div>
-        <div class="container"
-             id="linuxChart">
-        </div>
-        <div class="container"
-             id="macosChart">
-        </div>
-        <div class="container"
-             id="windowsChart">
+        <div class="carousel slide"
+             data-ride="carousel"
+             id="carouselOses">
+            <ol class="carousel-indicators">
+                <li class="active"
+                    data-slide-to="0"
+                    data-target="#carouselOses">
+                </li>
+                <li data-slide-to="1"
+                    data-target="#carouselOses">
+                </li>
+                <li data-slide-to="2"
+                    data-target="#carouselOses">
+                </li>
+                <li data-slide-to="3"
+                    data-target="#carouselOses">
+                </li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="active carousel-item"
+                     id="osChart">
+                </div>
+                <div class="carousel-item"
+                     id="linuxChart">
+                </div>
+                <div class="carousel-item"
+                     id="macosChart">
+                </div>
+                <div class="carousel-item"
+                     id="windowsChart">
+                </div>
+            </div>
+            <a class="carousel-control-prev"
+               data-slide="prev"
+               href="#carouselOses"
+               role="button">
+                <span aria-hidden="true"
+                      class="carousel-control-prev-icon">
+                </span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next"
+               data-slide="next"
+               href="#carouselOses"
+               role="button">
+                <span aria-hidden="true"
+                      class="carousel-control-next-icon">
+                </span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
         <table>
             @foreach(NameValueStats os in ViewBag.repOperatingSystems)
@@ -308,11 +347,51 @@
 {
     <div class="container"
          id="divDevices">
-        <div class="container"
-             id="devicesBusChart">
-        </div>
-        <div class="container"
-             id="devicesManufacturerChart">
+
+        <div class="carousel slide"
+             data-ride="carousel"
+             id="carouselDevices">
+            <ol class="carousel-indicators">
+                <li class="active"
+                    data-slide-to="0"
+                    data-target="#carouselDevices">
+                </li>
+                <li data-slide-to="1"
+                    data-target="#carouselDevices">
+                </li>
+                <li data-slide-to="2"
+                    data-target="#carouselDevices">
+                </li>
+                <li data-slide-to="3"
+                    data-target="#carouselDevices">
+                </li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="active carousel-item"
+                     id="devicesBusChart">
+                </div>
+                <div class="carousel-item"
+                     id="devicesManufacturerChart">
+                </div>
+            </div>
+            <a class="carousel-control-prev"
+               data-slide="prev"
+               href="#carouselDevices"
+               role="button">
+                <span aria-hidden="true"
+                      class="carousel-control-prev-icon">
+                </span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next"
+               data-slide="next"
+               href="#carouselDevices"
+               role="button">
+                <span aria-hidden="true"
+                      class="carousel-control-next-icon">
+                </span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
         <h3>Found devices:</h3>
         <table align="center"
