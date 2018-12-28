@@ -1,5 +1,7 @@
 @using DiscImageChef.CommonTypes.Metadata
 @using DiscImageChef.Server.Models
+@using Highsoft.Web.Mvc.Charts
+@using Chart = Highsoft.Web.Mvc.Charts.Chart
 @using Filter = DiscImageChef.Server.Models.Filter
 @{
     ViewBag.Title = "DiscImageChef Statistics";
@@ -28,6 +30,8 @@
 
         gtag('config', 'UA-111466173-1');
     </script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
 </head>
 <body>
 <h1 align="center">
@@ -41,9 +45,22 @@
 </h1>
 <br />
 <div>
+
 @if(ViewBag.repOperatingSystems != null)
 {
     <div id="divOperatingSystems">
+        <div id="osChart"
+             style="background-color: transparent; width: 25%">
+        </div>
+        <div id="linuxChart"
+             style="background-color: transparent; width: 25%">
+        </div>
+        <div id="macosChart"
+             style="background-color: transparent; width: 25%">
+        </div>
+        <div id="windowsChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <table>
             @foreach(NameValueStats os in ViewBag.repOperatingSystems)
             {
@@ -60,6 +77,9 @@
 @if(ViewBag.repVersions != null)
 {
     <div id="divVersions">
+        <div id="versionsChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <table>
             @foreach(NameValueStats version in ViewBag.repVersions)
             {
@@ -74,6 +94,10 @@
     </div>
 }
 <div id="divCommands">
+    <div id="commandsChart"
+         style="background-color: transparent; width: 25%">
+    </div>
+
     <h4>Commands run:</h4>
     <p>
         <i>analyze</i> command has been run @ViewBag.lblAnalyze times<br />
@@ -102,6 +126,9 @@
 @if(ViewBag.repFilters != null)
 {
     <div id="divFilters">
+        <div id="filtersChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <h3>Filters found:</h3>
         <table align="center"
                border="1">
@@ -126,6 +153,9 @@
 @if(ViewBag.repMediaImages != null)
 {
     <div id="divMediaImages">
+        <div id="formatsChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <h3>Media image formats found:</h3>
         <table align="center"
                border="1">
@@ -150,6 +180,9 @@
 @if(ViewBag.repPartitions != null)
 {
     <div id="divPartitions">
+        <div id="partitionsChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <h3>Partition schemes found:</h3>
         <table align="center"
                border="1">
@@ -174,6 +207,9 @@
 @if(ViewBag.repFilesystems != null)
 {
     <div id="divFilesystems">
+        <div id="filesystemsChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <h3>Filesystems found:</h3>
         <table align="center"
                border="1">
@@ -198,6 +234,9 @@
 @if(ViewBag.repVirtualMedia != null)
 {
     <div id="divVirtualMedia">
+        <div id="virtualMediaChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <h3>Media types found in images:</h3>
         <table align="center"
                border="1">
@@ -226,6 +265,9 @@
 @if(ViewBag.repRealMedia != null)
 {
     <div id="divRealMedia">
+        <div id="realMediaChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <h3>Media types found in devices:</h3>
         <table align="center"
                border="1">
@@ -254,6 +296,12 @@
 @if(ViewBag.repDevices != null)
 {
     <div id="divDevices">
+        <div id="devicesBusChart"
+             style="background-color: transparent; width: 25%">
+        </div>
+        <div id="devicesManufacturerChart"
+             style="background-color: transparent; width: 25%">
+        </div>
         <h3>Found devices:</h3>
         <table align="center"
                border="1">
@@ -313,3 +361,32 @@
 </footer>
 </body>
 </html>
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Operating system usage"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["osPieData"] as List<PieSeriesData>}}}, "osChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Linux versions"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["linuxPieData"] as List<PieSeriesData>}}}, "linuxChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "macOS versions"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["macosPieData"] as List<PieSeriesData>}}}, "macosChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Windows versions"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["windowsPieData"] as List<PieSeriesData>}}}, "windowsChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "DiscImageChef versions"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["versionsPieData"] as List<PieSeriesData>}}}, "versionsChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Commands run"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["commandsPieData"] as List<PieSeriesData>}}}, "commandsChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Filters found"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["filtersPieData"] as List<PieSeriesData>}}}, "filtersChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Top 10 media image formats found"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["formatsPieData"] as List<PieSeriesData>}}}, "formatsChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Top 10 partitioning schemes found"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["partitionsPieData"] as List<PieSeriesData>}}}, "partitionsChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Top 10 filesystems found"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["filesystemsPieData"] as List<PieSeriesData>}}}, "filesystemsChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Top 10 media types found in images"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["virtualMediaPieData"] as List<PieSeriesData>}}}, "virtualMediaChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Top 10 media types found in real devices"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["realMediaPieData"] as List<PieSeriesData>}}}, "realMediaChart", false))
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Devices found by bus"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["devicesBusPieData"] as List<PieSeriesData>}}}, "devicesBusChart", false))
+
+
+@(Html.Highsoft().GetHighcharts(new Highcharts {Chart = new Chart {PlotBackgroundColor = null, PlotBorderWidth = null, PlotShadow = new Shadow {Enabled = true}}, Title = new Title {Text = "Devices found by bus"}, Tooltip = new Tooltip {PointFormat = "{series.name}: <b>{point.percentage:.1f}%</b>"}, PlotOptions = new PlotOptions {Pie = new PlotOptionsPie {AllowPointSelect = true, Cursor = PlotOptionsPieCursor.Pointer, DataLabels = new PlotOptionsPieDataLabels {Enabled = true, Format = "<b>{point.name}</b>: {point.percentage:.1f} %"}}}, Series = new List<Series> {new PieSeries {Name = "Percentage:", Data = ViewData["devicesManufacturerPieData"] as List<PieSeriesData>}}}, "devicesManufacturerChart", false))

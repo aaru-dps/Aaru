@@ -43,6 +43,8 @@ using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Server.Models;
+using Highsoft.Web.Mvc.Charts;
+using Filter = DiscImageChef.Server.Models.Filter;
 using OperatingSystem = DiscImageChef.Server.Models.OperatingSystem;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Version = DiscImageChef.Server.Models.Version;
@@ -105,6 +107,71 @@ namespace DiscImageChef.Server.Controllers
                         });
 
                     ViewBag.repOperatingSystems = operatingSystems.OrderBy(os => os.name).ToList();
+
+                    List<PieSeriesData> osPieData = new List<PieSeriesData>();
+
+                    decimal totalOsCount = ctx.OperatingSystems.Sum(o => o.Count);
+                    foreach(string os in ctx.OperatingSystems.Select(o => o.Name).Distinct().ToList())
+                    {
+                        decimal osCount = ctx.OperatingSystems.Where(o => o.Name == os).Sum(o => o.Count);
+
+                        osPieData.Add(new PieSeriesData
+                        {
+                            Name =
+                                DetectOS.GetPlatformName((PlatformID)Enum.Parse(typeof(PlatformID),
+                                                                                os)),
+                            Y        = (double?)(osCount / totalOsCount),
+                            Sliced   = os == "Linux",
+                            Selected = os == "Linux"
+                        });
+                    }
+
+                    ViewData["osPieData"] = osPieData;
+
+                    List<PieSeriesData> linuxPieData = new List<PieSeriesData>();
+
+                    decimal linuxCount = ctx.OperatingSystems.Where(o => o.Name == PlatformID.Linux.ToString())
+                                            .Sum(o => o.Count);
+                    foreach(OperatingSystem version in
+                        ctx.OperatingSystems.Where(o => o.Name == PlatformID.Linux.ToString()))
+                        linuxPieData.Add(new PieSeriesData
+                        {
+                            Name =
+                                $"{DetectOS.GetPlatformName(PlatformID.Linux, version.Version)}{(string.IsNullOrEmpty(version.Version) ? "" : " ")}{version.Version}",
+                            Y = (double?)(version.Count / linuxCount)
+                        });
+
+                    ViewData["linuxPieData"] = linuxPieData;
+
+                    List<PieSeriesData> macosPieData = new List<PieSeriesData>();
+
+                    decimal macosCount = ctx.OperatingSystems.Where(o => o.Name == PlatformID.MacOSX.ToString())
+                                            .Sum(o => o.Count);
+                    foreach(OperatingSystem version in
+                        ctx.OperatingSystems.Where(o => o.Name == PlatformID.MacOSX.ToString()))
+                        macosPieData.Add(new PieSeriesData
+                        {
+                            Name =
+                                $"{DetectOS.GetPlatformName(PlatformID.MacOSX, version.Version)}{(string.IsNullOrEmpty(version.Version) ? "" : " ")}{version.Version}",
+                            Y = (double?)(version.Count / macosCount)
+                        });
+
+                    ViewData["macosPieData"] = macosPieData;
+
+                    List<PieSeriesData> windowsPieData = new List<PieSeriesData>();
+
+                    decimal windowsCount = ctx.OperatingSystems.Where(o => o.Name == PlatformID.Win32NT.ToString())
+                                              .Sum(o => o.Count);
+                    foreach(OperatingSystem version in
+                        ctx.OperatingSystems.Where(o => o.Name == PlatformID.Win32NT.ToString()))
+                        windowsPieData.Add(new PieSeriesData
+                        {
+                            Name =
+                                $"{DetectOS.GetPlatformName(PlatformID.Win32NT, version.Version)}{(string.IsNullOrEmpty(version.Version) ? "" : " ")}{version.Version}",
+                            Y = (double?)(version.Count / windowsCount)
+                        });
+
+                    ViewData["windowsPieData"] = windowsPieData;
                 }
 
                 if(ctx.Versions.Any())
@@ -118,6 +185,20 @@ namespace DiscImageChef.Server.Controllers
                         });
 
                     ViewBag.repVersions = versions.OrderBy(ver => ver.name).ToList();
+
+                    decimal totalVersionCount = ctx.Versions.Sum(o => o.Count);
+
+                    ViewData["versionsPieData"] = ctx.Versions.Select(version => new PieSeriesData
+                    {
+                        Name =
+                            version.Value == "previous"
+                                ? "Previous than 3.4.99.0"
+                                : version.Value,
+                        Y = (double?)(version.Count /
+                                      totalVersionCount),
+                        Sliced   = version.Value == "previous",
+                        Selected = version.Value == "previous"
+                    }).ToList();
                 }
 
                 if(ctx.Commands.Any())
@@ -157,17 +238,133 @@ namespace DiscImageChef.Server.Controllers
                         ctx.Commands.FirstOrDefault(c => c.Name == "convert-image")?.Count.ToString() ?? "0";
                     ViewBag.lblImageInfo = ctx.Commands.FirstOrDefault(c => c.Name == "image-info")?.Count.ToString() ??
                                            "0";
+
+                    decimal totalCommandCount = ctx.Commands.Sum(o => o.Count);
+
+                    ViewData["commandsPieData"] = ctx
+                                                 .Commands.Select(command => new PieSeriesData
+                                                  {
+                                                      Name = command.Name,
+                                                      Y = (double?)(command.Count /
+                                                                    totalCommandCount),
+                                                      Sliced   = command.Name == "analyze",
+                                                      Selected = command.Name == "analyze"
+                                                  }).ToList();
                 }
 
-                if(ctx.Filters.Any()) ViewBag.repFilters = ctx.Filters.OrderBy(filter => filter.Name).ToList();
+                if(ctx.Filters.Any())
+                {
+                    ViewBag.repFilters = ctx.Filters.OrderBy(filter => filter.Name).ToList();
+
+                    List<PieSeriesData> filtersPieData = new List<PieSeriesData>();
+
+                    decimal totalFiltersCount = ctx.Filters.Sum(o => o.Count);
+                    foreach(Filter filter in ctx.Filters.ToList())
+                        filtersPieData.Add(new PieSeriesData
+                        {
+                            Name     = filter.Name,
+                            Y        = (double?)(filter.Count / totalFiltersCount),
+                            Sliced   = filter.Name == "No filter",
+                            Selected = filter.Name == "No filter"
+                        });
+
+                    ViewData["filtersPieData"] = filtersPieData;
+                }
 
                 if(ctx.MediaFormats.Any())
+                {
                     ViewBag.repMediaImages = ctx.MediaFormats.OrderBy(filter => filter.Name).ToList();
 
-                if(ctx.Partitions.Any()) ViewBag.repPartitions = ctx.Partitions.OrderBy(filter => filter.Name).ToList();
+                    List<PieSeriesData> formatsPieData = new List<PieSeriesData>();
+
+                    decimal totalFormatsCount = ctx.MediaFormats.Sum(o => o.Count);
+                    decimal top10FormatCount  = 0;
+
+                    foreach(MediaFormat format in ctx.MediaFormats.OrderByDescending(o => o.Count).Take(10))
+                    {
+                        top10FormatCount += format.Count;
+
+                        formatsPieData.Add(new PieSeriesData
+                        {
+                            Name = format.Name, Y = (double?)(format.Count / totalFormatsCount)
+                        });
+                    }
+
+                    formatsPieData.Add(new PieSeriesData
+                    {
+                        Name = "Other",
+                        Y = (double?)((totalFormatsCount - top10FormatCount) /
+                                      totalFormatsCount),
+                        Sliced   = true,
+                        Selected = true
+                    });
+
+                    ViewData["formatsPieData"] = formatsPieData;
+                }
+
+                if(ctx.Partitions.Any())
+                {
+                    ViewBag.repPartitions = ctx.Partitions.OrderBy(filter => filter.Name).ToList();
+
+                    List<PieSeriesData> partitionsPieData = new List<PieSeriesData>();
+
+                    decimal totalPartitionsCount = ctx.Partitions.Sum(o => o.Count);
+                    decimal top10PartitionCount  = 0;
+
+                    foreach(Partition partition in ctx.Partitions.OrderByDescending(o => o.Count).Take(10))
+                    {
+                        top10PartitionCount += partition.Count;
+
+                        partitionsPieData.Add(new PieSeriesData
+                        {
+                            Name = partition.Name,
+                            Y    = (double?)(partition.Count / totalPartitionsCount)
+                        });
+                    }
+
+                    partitionsPieData.Add(new PieSeriesData
+                    {
+                        Name = "Other",
+                        Y = (double?)((totalPartitionsCount - top10PartitionCount) /
+                                      totalPartitionsCount),
+                        Sliced   = true,
+                        Selected = true
+                    });
+
+                    ViewData["partitionsPieData"] = partitionsPieData;
+                }
 
                 if(ctx.Filesystems.Any())
+                {
                     ViewBag.repFilesystems = ctx.Filesystems.OrderBy(filter => filter.Name).ToList();
+
+                    List<PieSeriesData> filesystemsPieData = new List<PieSeriesData>();
+
+                    decimal totalFilesystemsCount = ctx.Filesystems.Sum(o => o.Count);
+                    decimal top10FilesystemCount  = 0;
+
+                    foreach(Filesystem filesystem in ctx.Filesystems.OrderByDescending(o => o.Count).Take(10))
+                    {
+                        top10FilesystemCount += filesystem.Count;
+
+                        filesystemsPieData.Add(new PieSeriesData
+                        {
+                            Name = filesystem.Name,
+                            Y    = (double?)(filesystem.Count / totalFilesystemsCount)
+                        });
+                    }
+
+                    filesystemsPieData.Add(new PieSeriesData
+                    {
+                        Name = "Other",
+                        Y = (double?)((totalFilesystemsCount - top10FilesystemCount) /
+                                      totalFilesystemsCount),
+                        Sliced   = true,
+                        Selected = true
+                    });
+
+                    ViewData["filesystemsPieData"] = filesystemsPieData;
+                }
 
                 if(ctx.Medias.Any())
                 {
@@ -192,12 +389,73 @@ namespace DiscImageChef.Server.Controllers
                         }
 
                     if(realMedia.Count > 0)
+                    {
                         ViewBag.repRealMedia =
                             realMedia.OrderBy(media => media.Type).ThenBy(media => media.SubType).ToList();
 
+                        List<PieSeriesData> realMediaPieData = new List<PieSeriesData>();
+
+                        decimal totalRealMediaCount = realMedia.Sum(o => o.Count);
+                        decimal top10RealMediaCount = 0;
+
+                        foreach(MediaItem realMediaItem in realMedia.OrderByDescending(o => o.Count).Take(10))
+                        {
+                            top10RealMediaCount += realMediaItem.Count;
+
+                            realMediaPieData.Add(new PieSeriesData
+                            {
+                                Name = $"{realMediaItem.Type} ({realMediaItem.SubType})",
+                                Y    = (double?)(realMediaItem.Count / totalRealMediaCount)
+                            });
+                        }
+
+                        realMediaPieData.Add(new PieSeriesData
+                        {
+                            Name = "Other",
+                            Y = (double?)((totalRealMediaCount - top10RealMediaCount) /
+                                          totalRealMediaCount),
+                            Sliced   = true,
+                            Selected = true
+                        });
+
+                        ViewData["realMediaPieData"] = realMediaPieData;
+                    }
+
                     if(virtualMedia.Count > 0)
+                    {
                         ViewBag.repVirtualMedia =
                             virtualMedia.OrderBy(media => media.Type).ThenBy(media => media.SubType).ToList();
+
+                        List<PieSeriesData> virtualMediaPieData = new List<PieSeriesData>();
+
+                        decimal totalVirtualMediaCount = virtualMedia.Sum(o => o.Count);
+                        decimal top10VirtualMediaCount = 0;
+
+                        foreach(MediaItem virtualMediaItem in virtualMedia.OrderByDescending(o => o.Count).Take(10))
+                        {
+                            top10VirtualMediaCount += virtualMediaItem.Count;
+
+                            virtualMediaPieData.Add(new PieSeriesData
+                            {
+                                Name =
+                                    $"{virtualMediaItem.Type} ({virtualMediaItem.SubType})",
+                                Y = (double?)(virtualMediaItem.Count /
+                                              totalVirtualMediaCount)
+                            });
+                        }
+
+                        virtualMediaPieData.Add(new PieSeriesData
+                        {
+                            Name = "Other",
+                            Y = (double?)
+                                ((totalVirtualMediaCount - top10VirtualMediaCount) /
+                                 totalVirtualMediaCount),
+                            Sliced   = true,
+                            Selected = true
+                        });
+
+                        ViewData["virtualMediaPieData"] = virtualMediaPieData;
+                    }
                 }
 
                 if(ctx.DeviceStats.Any())
@@ -255,6 +513,22 @@ namespace DiscImageChef.Server.Controllers
                     ViewBag.repDevices = devices.OrderBy(device => device.Manufacturer).ThenBy(device => device.Model)
                                                 .ThenBy(device => device.Revision).ThenBy(device => device.Bus)
                                                 .ToList();
+
+                    ViewData["devicesBusPieData"] = (from deviceBus in devices.Select(d => d.Bus).Distinct()
+                                                     let deviceBusCount = devices.Count(d => d.Bus == deviceBus)
+                                                     select new PieSeriesData
+                                                     {
+                                                         Name = deviceBus,
+                                                         Y    = deviceBusCount / (double)devices.Count
+                                                     }).ToList();
+
+                    ViewData["devicesManufacturerPieData"] =
+                        (from manufacturer in
+                             devices.Where(d => d.Manufacturer != null).Select(d => d.Manufacturer.ToLowerInvariant())
+                                    .Distinct()
+                         let manufacturerCount = devices.Count(d => d.Manufacturer?.ToLowerInvariant() == manufacturer)
+                         select new PieSeriesData {Name = manufacturer, Y = manufacturerCount / (double)devices.Count})
+                       .ToList();
                 }
             }
             catch(Exception)

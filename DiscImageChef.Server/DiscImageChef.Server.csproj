@@ -73,6 +73,10 @@
       <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Highcharts.Web.Mvc, Version=6.2.0.0, Culture=neutral, PublicKeyToken=90b74bd27a557bd3">
+      <HintPath>..\packages\Highsoft.Highcharts.6.2.0.67\lib\net40\Highcharts.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Markdig, Version=0.15.5.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Markdig.0.15.5\lib\net40\Markdig.dll</HintPath>
       <Private>True</Private>
