@@ -186,37 +186,52 @@
         <br />
     </div>
 }
-<div class="container mt-3"
-     id="divCommands">
-    <div class="container"
-         id="commandsChart">
-    </div>
+@if(ViewBag.repCommands != null)
+{
+    <div class="container mt-3"
+         id="divCommands">
+        <div class="container"
+             id="commandsChart">
+        </div>
+        <div class="accordion mt-3"
+             id="commandsAccordion">
+            <div class="card">
+                <div class="card-header"
+                     id="commandsHeading">
+                    <h2 class="mb-0">
+                        <button aria-controls="commandsCollapse"
+                                aria-expanded="true"
+                                class="btn btn-link card-button collapsed"
+                                data-target="#commandsCollapse"
+                                data-toggle="collapse"
+                                type="button">
+                            All DiscImageChef commands...
+                        </button>
+                    </h2>
+                </div>
 
-    <h4>Commands run:</h4>
-    <p>
-        <i>analyze</i> command has been run @ViewBag.lblAnalyze times<br />
-        <i>benchmark</i> command has been run @ViewBag.lblBenchmark times<br />
-        <i>checksum</i> command has been run @ViewBag.lblChecksum times<br />
-        <i>compare</i> command has been run @ViewBag.lblCompare times<br />
-        <i>convert-image</i> command has been run @ViewBag.lblConvertImage times<br />
-        <i>create-sidecar</i> command has been run @ViewBag.lblCreateSidecar times<br />
-        <i>decode</i> command has been run @ViewBag.lblDecode times<br />
-        <i>device-info</i> command has been run @ViewBag.lblDeviceInfo times<br />
-        <i>device-report</i> command has been run @ViewBag.lblDeviceReport times<br />
-        <i>dump-media</i> command has been run @ViewBag.lblDumpMedia times<br />
-        <i>entropy</i> command has been run @ViewBag.lblEntropy times<br />
-        <i>extract-files</i> command has been run @ViewBag.lblExtractFiles times<br />
-        <i>formats</i> command has been run @ViewBag.lblFormats times<br />
-        <i>image-info</i> command has been run @ViewBag.lblImageInfo times<br />
-        <i>list-devices</i> command has been run @ViewBag.lblListDevices times<br />
-        <i>list-encodings</i> command has been run @ViewBag.lblListEncodings times<br />
-        <i>ls</i> command has been run @ViewBag.lblLs times<br />
-        <i>media-info</i> command has been run @ViewBag.lblMediaInfo times<br />
-        <i>media-scan</i> command has been run @ViewBag.lblMediaScan times<br />
-        <i>printhex</i> command has been run @ViewBag.lblPrintHex times<br />
-        <i>verify</i> command has been run @ViewBag.lblVerify times
-    </p>
-</div>
+                <div aria-labelledby="commandsHeading"
+                     class="collapse"
+                     data-parent="#commandsAccordion"
+                     id="commandsCollapse">
+                    <div class="card-body">
+                        <table class="table-dark">
+                            @foreach(Command command in ViewBag.repCommands)
+                            {
+                                <tr>
+                                    <td class="text-left">
+                                        <i class="table-dark-em">@command.Name</i> has been run @command.Count times.
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+    </div>
+}
 @if(ViewBag.repFilters != null)
 {
     <div class="container mt-3"

@@ -203,41 +203,7 @@ namespace DiscImageChef.Server.Controllers
 
                 if(ctx.Commands.Any())
                 {
-                    ViewBag.lblAnalyze = ctx.Commands.FirstOrDefault(c => c.Name == "analyze")?.Count.ToString() ?? "0";
-                    ViewBag.lblCompare = ctx.Commands.FirstOrDefault(c => c.Name == "compare")?.Count.ToString() ?? "0";
-                    ViewBag.lblChecksum =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "checksum")?.Count.ToString() ?? "0";
-                    ViewBag.lblEntropy = ctx.Commands.FirstOrDefault(c => c.Name == "entropy")?.Count.ToString() ?? "0";
-                    ViewBag.lblVerify  = ctx.Commands.FirstOrDefault(c => c.Name == "verify")?.Count.ToString()  ?? "0";
-                    ViewBag.lblPrintHex =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "printhex")?.Count.ToString() ?? "0";
-                    ViewBag.lblDecode = ctx.Commands.FirstOrDefault(c => c.Name == "decode")?.Count.ToString() ?? "0";
-                    ViewBag.lblDeviceInfo =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "device-info")?.Count.ToString() ?? "0";
-                    ViewBag.lblMediaInfo = ctx.Commands.FirstOrDefault(c => c.Name == "media-info")?.Count.ToString() ??
-                                           "0";
-                    ViewBag.lblMediaScan = ctx.Commands.FirstOrDefault(c => c.Name == "media-scan")?.Count.ToString() ??
-                                           "0";
-                    ViewBag.lblFormats = ctx.Commands.FirstOrDefault(c => c.Name == "formats")?.Count.ToString() ?? "0";
-                    ViewBag.lblBenchmark =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "benchmark")?.Count.ToString() ?? "0";
-                    ViewBag.lblCreateSidecar =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "create-sidecar")?.Count.ToString() ?? "0";
-                    ViewBag.lblDumpMedia = ctx.Commands.FirstOrDefault(c => c.Name == "dump-media")?.Count.ToString() ??
-                                           "0";
-                    ViewBag.lblDeviceReport =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "device-report")?.Count.ToString() ?? "0";
-                    ViewBag.lblLs = ctx.Commands.FirstOrDefault(c => c.Name == "ls")?.Count.ToString() ?? "0";
-                    ViewBag.lblExtractFiles =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "extract-files")?.Count.ToString() ?? "0";
-                    ViewBag.lblListDevices =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "list-devices")?.Count.ToString() ?? "0";
-                    ViewBag.lblListEncodings =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "list-encodings")?.Count.ToString() ?? "0";
-                    ViewBag.lblConvertImage =
-                        ctx.Commands.FirstOrDefault(c => c.Name == "convert-image")?.Count.ToString() ?? "0";
-                    ViewBag.lblImageInfo = ctx.Commands.FirstOrDefault(c => c.Name == "image-info")?.Count.ToString() ??
-                                           "0";
+                    ViewBag.repCommands = ctx.Commands.OrderBy(c => c.Name).ToList();
 
                     decimal totalCommandCount = ctx.Commands.Sum(o => o.Count);
 
