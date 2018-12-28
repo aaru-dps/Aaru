@@ -3,3 +3,32 @@
 @import "_fontstyles";
 
 @import "../node_modules/bootstrap/scss/bootstrap";
+
+footer
+{
+    background-color: $brown;
+    color: $black;
+}
+
+header
+{
+    background-color: $teal;
+    color: $black;
+    text-align: center;
+}
+
+header a
+{
+    color: $pink;
+}
+
+header a:hover
+{
+    color: $orange;
+    text-decoration: none;
+}
+
+footer a:hover
+{
+    text-decoration: none;
+}

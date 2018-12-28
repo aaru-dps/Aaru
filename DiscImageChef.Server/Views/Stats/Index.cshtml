@@ -36,7 +36,7 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
 </head>
 <body>
-<h1 align="center">
+<header>
     Welcome to
     <i>
         <a href="http://github.com/claunia/discimagechef"
@@ -44,24 +44,25 @@
             DiscImageChef
         </a>
     </i> Server version @ViewBag.Version
-</h1>
+</header>
 <br />
-<div>
+<div class="container">
 
 @if(ViewBag.repOperatingSystems != null)
 {
-    <div id="divOperatingSystems">
-        <div id="osChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divOperatingSystems">
+        <div class="container"
+             id="osChart">
         </div>
-        <div id="linuxChart"
-             style="background-color: transparent; width: 25%">
+        <div class="container"
+             id="linuxChart">
         </div>
-        <div id="macosChart"
-             style="background-color: transparent; width: 25%">
+        <div class="container"
+             id="macosChart">
         </div>
-        <div id="windowsChart"
-             style="background-color: transparent; width: 25%">
+        <div class="container"
+             id="windowsChart">
         </div>
         <table>
             @foreach(NameValueStats os in ViewBag.repOperatingSystems)
@@ -78,9 +79,10 @@
 }
 @if(ViewBag.repVersions != null)
 {
-    <div id="divVersions">
-        <div id="versionsChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divVersions">
+        <div class="container"
+             id="versionsChart">
         </div>
         <table>
             @foreach(NameValueStats version in ViewBag.repVersions)
@@ -95,9 +97,10 @@
         <br />
     </div>
 }
-<div id="divCommands">
-    <div id="commandsChart"
-         style="background-color: transparent; width: 25%">
+<div class="container"
+     id="divCommands">
+    <div class="container"
+         id="commandsChart">
     </div>
 
     <h4>Commands run:</h4>
@@ -127,9 +130,10 @@
 </div>
 @if(ViewBag.repFilters != null)
 {
-    <div id="divFilters">
-        <div id="filtersChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divFilters">
+        <div class="container"
+             id="filtersChart">
         </div>
         <h3>Filters found:</h3>
         <table align="center"
@@ -154,9 +158,10 @@
 }
 @if(ViewBag.repMediaImages != null)
 {
-    <div id="divMediaImages">
-        <div id="formatsChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divMediaImages">
+        <div class="container"
+             id="formatsChart">
         </div>
         <h3>Media image formats found:</h3>
         <table align="center"
@@ -181,9 +186,10 @@
 }
 @if(ViewBag.repPartitions != null)
 {
-    <div id="divPartitions">
-        <div id="partitionsChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divPartitions">
+        <div class="container"
+             id="partitionsChart">
         </div>
         <h3>Partition schemes found:</h3>
         <table align="center"
@@ -208,9 +214,10 @@
 }
 @if(ViewBag.repFilesystems != null)
 {
-    <div id="divFilesystems">
-        <div id="filesystemsChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divFilesystems">
+        <div class="container"
+             id="filesystemsChart">
         </div>
         <h3>Filesystems found:</h3>
         <table align="center"
@@ -235,9 +242,10 @@
 }
 @if(ViewBag.repVirtualMedia != null)
 {
-    <div id="divVirtualMedia">
-        <div id="virtualMediaChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divVirtualMedia">
+        <div class="container"
+             id="virtualMediaChart">
         </div>
         <h3>Media types found in images:</h3>
         <table align="center"
@@ -266,9 +274,10 @@
 }
 @if(ViewBag.repRealMedia != null)
 {
-    <div id="divRealMedia">
-        <div id="realMediaChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divRealMedia">
+        <div class="container"
+             id="realMediaChart">
         </div>
         <h3>Media types found in devices:</h3>
         <table align="center"
@@ -297,12 +306,13 @@
 }
 @if(ViewBag.repDevices != null)
 {
-    <div id="divDevices">
-        <div id="devicesBusChart"
-             style="background-color: transparent; width: 25%">
+    <div class="container"
+         id="divDevices">
+        <div class="container"
+             id="devicesBusChart">
         </div>
-        <div id="devicesManufacturerChart"
-             style="background-color: transparent; width: 25%">
+        <div class="container"
+             id="devicesManufacturerChart">
         </div>
         <h3>Found devices:</h3>
         <table align="center"
@@ -344,7 +354,7 @@
 }
 </div>
 <hr />
-<footer>
+<footer class="container-fluid">
     © 2011-2018
     <a href="http://www.claunia.com"
        target="_blank">
