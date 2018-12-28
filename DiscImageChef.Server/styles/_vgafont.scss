@@ -1,0 +1,19 @@
+/* Sets font to VGA square */
+@font-face
+{
+    font-family: 'VGAsquarePx';
+    src: url(../int10h.org/vga_squarepx.eot);
+    src: url(../int10h.org/vga_squarepx.eot?#iefix) format('embedded-opentype'),
+    url(../int10h.org/vga_squarepx.woff2) format('woff2'),
+    url(../int10h.org/vga_squarepx.woff) format('woff'),
+    url(../int10h.org/vga_squarepx.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+$font-family-sans-serif:      'VGAsquarePx';
+$font-family-monospace:       'VGAsquarePx';
+$font-family-base:            'VGAsquarePx';
+$font-size-base:              1.75rem;
+
+$line-height-base:            1;

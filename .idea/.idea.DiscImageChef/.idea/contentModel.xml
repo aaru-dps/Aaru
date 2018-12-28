@@ -1893,8 +1893,25 @@
           <e p="vga_squarepx.woff" t="Include" />
           <e p="vga_squarepx.woff2" t="Include" />
         </e>
+        <e p="node_modules" t="ExcludeRecursive">
+          <e p="bootstrap" t="IncludeRecursive" />
+        </e>
         <e p="obj" t="ExcludeRecursive" />
+        <e p="package-lock.json" t="Include" />
+        <e p="package.json" t="Include" />
         <e p="packages.config" t="Include" />
+        <e p="styles" t="Include">
+          <e p="_colors.scss" t="Include" />
+          <e p="_fontstyles.scss" t="Include" />
+          <e p="_highcharts.scss" t="Include" />
+          <e p="_vgafont.scss" t="Include" />
+          <e p="dicserver.css" t="Include" />
+          <e p="dicserver.css.map" t="Include" />
+          <e p="dicserver.scss" t="Include" />
+          <e p="dicserver_highcharts.css" t="Include" />
+          <e p="dicserver_highcharts.css.map" t="Include" />
+          <e p="dicserver_highcharts.scss" t="Include" />
+        </e>
       </e>
       <e p="DiscImageChef.Server.Task" t="IncludeRecursive">
         <e p="App.config" t="Include" />

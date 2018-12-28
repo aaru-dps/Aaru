@@ -1,0 +1,45 @@
+/* Sets the grayscale for Bootstrap */
+$white:           #AAAAAA;
+$darkgray:        #555555;
+$gray-100:        #AAAAAA;
+$gray-200:        #AAAAAA;
+$gray-300:        #AAAAAA;
+$gray-400:        #AAAAAA;
+$gray-500:        #555555;
+$gray-600:        #555555;
+$gray-700:        #555555;
+$gray-800:        #555555;
+$gray-900:        #555555;
+$black:           #000;
+
+/* Sets color palette, using EGA colors */
+$blue:             #0000AA;
+$indigo:           #AA55AA;
+$purple:           #AA00FF;
+$pink:             #FF55FF;
+$red:              #AA0000;
+$orange:           #FF5555;
+$yellow:           #FFFF55;
+$green:            #00AA00;
+$teal:             #55FFFF;
+$cyan:             #00AAAA;
+$brown:            #AA5500;
+$brightwhite:      #FFFFFF;
+
+/* Bootstrap color aliases */
+$primary:          $blue;
+$secondary:        $gray-600;
+$success:          $green;
+$info:             $cyan;
+$warning:          $yellow;
+$danger:           $red;
+$light:            $gray-100;
+$dark:             $gray-800;
+
+/* Colors for <body> */
+$body-bg:          $black;
+$body-color:       $white;
+
+/* Colors for <a> */
+$link-color:       $teal;
+$link-hover-color: $yellow;

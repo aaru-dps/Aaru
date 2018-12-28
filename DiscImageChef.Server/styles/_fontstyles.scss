@@ -1,0 +1,19 @@
+@import "_colors";
+
+/* Sets the style for emphasis/italics */
+em, i
+{
+    color: $green;
+    font-style: normal;
+}
+
+/* Headings and bold text are bright white */
+h1, h2, h3, h4,
+b, strong
+{
+    color: $brightwhite;
+    font-size: 1em;
+    font-style: normal;
+    font-weight: normal;
+    margin: 0;
+}
