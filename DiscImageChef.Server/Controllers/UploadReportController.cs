@@ -30,14 +30,17 @@
 // Copyright © 2011-2018 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Http;
 using System.Xml.Serialization;
+using Cinchoo.PGP;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Server.Models;
 using MailKit.Net.Smtp;
@@ -86,6 +89,15 @@ namespace DiscImageChef.Server.Controllers
 
                 ctx.Reports.Add(new UploadedReport(reportV2));
                 ctx.SaveChanges();
+
+                MemoryStream         pgpIn  = new MemoryStream(Encoding.UTF8.GetBytes(reportV2String));
+                MemoryStream         pgpOut = new MemoryStream();
+                ChoPGPEncryptDecrypt pgp    = new ChoPGPEncryptDecrypt();
+                pgp.Encrypt(pgpIn, pgpOut,
+                            Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                         "public.asc"), true);
+                pgpOut.Position = 0;
+                reportV2String  = Encoding.UTF8.GetString(pgpOut.ToArray());
 
                 MimeMessage message = new MimeMessage
                 {
@@ -142,6 +154,15 @@ namespace DiscImageChef.Server.Controllers
 
                 ctx.Reports.Add(new UploadedReport(newReport));
                 ctx.SaveChanges();
+
+                MemoryStream         pgpIn  = new MemoryStream(Encoding.UTF8.GetBytes(reportJson));
+                MemoryStream         pgpOut = new MemoryStream();
+                ChoPGPEncryptDecrypt pgp    = new ChoPGPEncryptDecrypt();
+                pgp.Encrypt(pgpIn, pgpOut,
+                            Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                         "public.asc"), true);
+                pgpOut.Position = 0;
+                reportJson      = Encoding.UTF8.GetString(pgpOut.ToArray());
 
                 MimeMessage message = new MimeMessage
                 {

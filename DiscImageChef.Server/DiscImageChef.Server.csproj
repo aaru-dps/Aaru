@@ -65,6 +65,10 @@
       <HintPath>..\packages\BouncyCastle.1.8.2\lib\BouncyCastle.Crypto.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ChoPGP, Version=1.0.1.2, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\ChoPGP.1.0.1.2\lib\ChoPGP.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
