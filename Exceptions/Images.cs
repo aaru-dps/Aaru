@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Enums.cs
+// Filename       : Images.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
