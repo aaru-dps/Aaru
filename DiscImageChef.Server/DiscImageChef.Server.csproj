@@ -342,6 +342,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812201613369_InitialMigration.resx">
       <DependentUpon>201812201613369_InitialMigration.cs</DependentUpon>
     </EmbeddedResource>
