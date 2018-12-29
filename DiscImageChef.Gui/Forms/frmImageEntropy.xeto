@@ -3,14 +3,14 @@
 // The Disc Image Chef
 // ============================================================================
 //
-// Filename       : frmEntropy.xeto
+// Filename       : frmImageEntropy.xeto
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Main window.
+// Component      : Image entropy calculation window.
 //
 // ==[ Description ] ==========================================================
 //
-//     Defines the structure for the main GUI window.
+//     Defines the structure for the image entroy calculation GUI window.
 //
 // ==[ License ] ==============================================================
 //

@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Multithreads checksumming and hashing.
+//     Multithread checksumming and hashing.
 //
 // --[ License ] --------------------------------------------------------------
 //

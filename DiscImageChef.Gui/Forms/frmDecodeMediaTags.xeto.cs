@@ -5,7 +5,7 @@
 // Filename       : frmDecodeMediaTags.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Form to show decode media tags of images.
+// Component      : Form to decode media tags of images.
 //
 // --[ Description ] ----------------------------------------------------------
 //

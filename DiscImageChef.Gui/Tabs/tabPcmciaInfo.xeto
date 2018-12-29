@@ -3,14 +3,14 @@
 // The Disc Image Chef
 // ============================================================================
 //
-// Filename       : pnlDeviceInfo.xeto
+// Filename       : tabPcmciaInfo.xeto
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Device information panel.
+// Component      : Device information.
 //
 // ==[ Description ] ==========================================================
 //
-//     Defines the structure for the device information panel.
+//     Defines the structure for the PCMCIA device information.
 //
 // ==[ License ] ==============================================================
 //

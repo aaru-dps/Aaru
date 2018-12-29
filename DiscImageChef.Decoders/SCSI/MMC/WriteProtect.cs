@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Decodes SCSI's MMC write protection structures.
+//     Decodes SCSI MMC write protection structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

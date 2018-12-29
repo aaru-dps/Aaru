@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : frmMain.xeto.cs
+// Filename       : frmDump.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Main window.
+// Component      : Media dump window.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements main GUI window.
+//     Implements the media dump GUI window.
 //
 // --[ License ] --------------------------------------------------------------
 //

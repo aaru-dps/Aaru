@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : frmImageVerify.xeto.cs
+// Filename       : frmImageChecksum.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Image entropy calculation window.
+// Component      : Image checksum calculation window.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements verifying media image.
+//     Implements creating checksums of a media image.
 //
 // --[ License ] --------------------------------------------------------------
 //

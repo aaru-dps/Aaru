@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Decodes SCSI's DISC STRUCTURE structures.
+//     Decodes SCSI DISC STRUCTURE structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

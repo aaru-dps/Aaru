@@ -5,7 +5,7 @@
 // Filename       : pnlListFiles.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : List files.
+// Component      : List files panel.
 //
 // --[ Description ] ----------------------------------------------------------
 //

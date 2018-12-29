@@ -3,14 +3,14 @@
 // The Disc Image Chef
 // ============================================================================
 //
-// Filename       : pnlDeviceInfo.xeto
+// Filename       : pnlImageInfo.xeto
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Device information panel.
+// Component      : Image information.
 //
 // ==[ Description ] ==========================================================
 //
-//     Defines the structure for the device information panel.
+//     Defines the structure for the image information.
 //
 // ==[ License ] ==============================================================
 //

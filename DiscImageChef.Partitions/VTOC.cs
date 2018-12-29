@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UNIX.cs
+// Filename       : VTOC.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Partitioning scheme plugins.

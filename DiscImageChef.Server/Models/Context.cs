@@ -5,7 +5,7 @@
 // Filename       : Context.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Database.
+// Component      : DiscImageChef Server.
 //
 // --[ Description ] ----------------------------------------------------------
 //

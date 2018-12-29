@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains various SCSI's MMC enumerations.
+//     Contains various SCSI MMC enumerations.
 //
 // --[ License ] --------------------------------------------------------------
 //

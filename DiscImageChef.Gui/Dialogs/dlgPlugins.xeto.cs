@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the plugins dialog.
+//     Implements the plugins list dialog.
 //
 // --[ License ] --------------------------------------------------------------
 //

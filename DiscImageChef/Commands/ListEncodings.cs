@@ -5,11 +5,11 @@
 // Filename       : ListEncodings.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : Component
+// Component      : Verbs.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Description
+//     List all supported character encodings.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Decodes SCSI's MMC feature structures.
+//     Decodes SCSI MMC feature structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -3,14 +3,14 @@
 // The Disc Image Chef
 // ============================================================================
 //
-// Filename       : pnlScsiInfo.xeto
+// Filename       : tabXboxInfo.xeto
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : SCSI media information panel.
+// Component      : Media information.
 //
 // ==[ Description ] ==========================================================
 //
-//     Defines the structure for the SCSI media information panel.
+//     Defines the structure for the Xbox media information.
 //
 // ==[ License ] ==============================================================
 //

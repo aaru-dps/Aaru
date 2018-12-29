@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : StatisticsController.cs
+// Filename       : StatsController.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef Server.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Renders statistics and links to reports.
+//     Fetches statistics for Razor views.
 //
 // --[ License ] --------------------------------------------------------------
 //

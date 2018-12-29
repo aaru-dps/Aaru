@@ -62,7 +62,6 @@
     <Compile Include="Commands\Compare.cs" />
     <Compile Include="Commands\Checksum.cs" />
     <Compile Include="Commands\Verify.cs" />
-    <Compile Include="Commands\Commands.cs" />
     <Compile Include="Commands\PrintHex.cs" />
     <Compile Include="Commands\Decode.cs" />
     <Compile Include="Commands\Entropy.cs" />

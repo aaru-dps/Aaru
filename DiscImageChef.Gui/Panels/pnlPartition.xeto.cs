@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : pnlScsiInfo.xeto.cs
+// Filename       : pnlPartition.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : SCSI media information panel.
+// Component      : Partitions information panel.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the SCSI media information panel.
+//     Implements the partitions information panel.
 //
 // --[ License ] --------------------------------------------------------------
 //

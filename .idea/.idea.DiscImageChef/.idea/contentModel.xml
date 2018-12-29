@@ -22,7 +22,6 @@
           <e p="Analyze.cs" t="Include" />
           <e p="Benchmark.cs" t="Include" />
           <e p="Checksum.cs" t="Include" />
-          <e p="Commands.cs" t="Include" />
           <e p="Compare.cs" t="Include" />
           <e p="Configure.cs" t="Include" />
           <e p="ConvertImage.cs" t="Include" />
@@ -531,7 +530,6 @@
             <e p="MCPT.cs" t="Include" />
             <e p="Smart.cs" t="Include" />
           </e>
-          <e p="AtaCommands.cs" t="Include" />
           <e p="Commands.cs" t="Include" />
           <e p="Constructor.cs" t="Include" />
           <e p="Destructor.cs" t="Include" />

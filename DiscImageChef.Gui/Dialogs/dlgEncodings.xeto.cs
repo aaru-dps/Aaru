@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : dlgPlugins.xeto.cs
+// Filename       : dlgEncodings.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Plugins dialog.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the plugins dialog.
+//     Implements the encodings list dialog.
 //
 // --[ License ] --------------------------------------------------------------
 //

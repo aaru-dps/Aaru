@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] structures necessary for directly interfacing devices under
+//     Contains structures necessary for directly interfacing devices under
 //     FreeBSD.
 //
 // --[ License ] --------------------------------------------------------------

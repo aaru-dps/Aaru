@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : pnlDeviceInfo.xeto.cs
+// Filename       : tabAtaInfo.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Device information.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the device information panel.
+//     Implements the ATA device information.
 //
 // --[ License ] --------------------------------------------------------------
 //

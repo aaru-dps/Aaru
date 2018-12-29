@@ -5,7 +5,7 @@
 // Filename       : ConsoleHandler.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : GUI console.
+// Component      : DiscImageChef GUI.
 //
 // --[ Description ] ----------------------------------------------------------
 //

@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : pnlxeto.cs
+// Filename       : tabCompactDiscInfo.xeto..cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : SCSI media information panel.
+// Component      : Media information.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the SCSI media information panel.
+//     Implements the Compact Disc media information.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -2,7 +2,7 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : frmEntropy.xeto.cs
+// Filename       : frmImageEntropy.xeto.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Image entropy calculation window.
