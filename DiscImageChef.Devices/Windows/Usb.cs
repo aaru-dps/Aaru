@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2011-2019 Natalia Portillo
 // Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
@@ -774,7 +774,7 @@ namespace DiscImageChef.Devices.Windows
             internal byte[] BinaryDescriptors => BinaryDeviceDescriptors;
         }
 
-        #region "API Region" 
+        #region "API Region"
         // ********************** Constants ************************
 
         const           int    GENERIC_WRITE        = 0x40000000;

@@ -27,7 +27,7 @@ Contains ATA commands.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ----------------------------------------------------------------------------
-Copyright © 2011-2018 Natalia Portillo
+Copyright © 2011-2019 Natalia Portillo
 ****************************************************************************/
 
 #include <scsi/sg.h>

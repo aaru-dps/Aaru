@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
 // Information from http://www.thoukydides.webspace.virginmedia.com/software/psifs/sis.html
@@ -43,13 +43,13 @@ namespace DiscImageChef.Plugins
 		private const uint EPOCMagic     = 0x1000006D;
 		private const uint EPOC6Magic    = 0x10003A12;
 		private const uint Symbian9Magic = 0x10201A7A;
-		
+
 		// Options
 		private const ushort IsUnicode       = 0x0001;
 		private const ushort IsDistributable = 0x0002;
 		private const ushort NoCompress      = 0x0008;
 		private const ushort ShutdownApps    = 0x0010;
-		
+
 		// Types
 		private const ushort SISApp     = 0x0000; // Application
 		private const ushort SISSystem  = 0x0001; // System component (library)
@@ -57,7 +57,7 @@ namespace DiscImageChef.Plugins
 		private const ushort SISConfig  = 0x0003; // Configures an application
 		private const ushort SISPatch   = 0x0004; // Patch
 		private const ushort SISUpgrade = 0x0005; // Upgrade
-		
+
 		private enum LanguageCodes
 		{
 			Test,
@@ -158,24 +158,24 @@ namespace DiscImageChef.Plugins
 			CY,
 			ZU
 		};
-		
+
 		public SymbianIS()
         {
             base.Name = "Symbian Installation File Plugin";
             base.PluginUUID = new Guid("0ec84ec7-eae6-4196-83fe-943b3fe48dbd");
         }
-		
+
 		public override bool Identify(FileStream fileStream, long offset)
 		{
 			uint uid1, uid2, uid3;
 			BinaryReader br = new BinaryReader(fileStream);
-			
+
             br.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
 
 			uid1 = br.Readuint();
 			uid2 = br.Readuint();
 			uid3 = br.Readuint();
-			
+
 			if(uid1 == Symbian9Magic)
 				return true;
 			else if(uid3 == SymbianMagic)
@@ -185,10 +185,10 @@ namespace DiscImageChef.Plugins
 				else
 					return false;
 			}
-			
+
 			return false;
 		}
-		
+
 		public override void GetInformation (FileStream fileStream, long offset, out string information)
 		{
 			information = "";
@@ -200,12 +200,12 @@ namespace DiscImageChef.Plugins
 			uint comp_name_ptr;
 			byte[] ComponentName_b;
 			string ComponentName = "";
-			
+
 			SymbianHeader sh = new SymbianHeader();
 			BinaryReader br = new BinaryReader(fileStream);
-			
+
             br.BaseStream.Seek(0 + offset, SeekOrigin.Begin);
-			
+
 			sh.uid1 = br.Readuint();
 			sh.uid2 = br.Readuint();
 			sh.uid3 = br.Readuint();
@@ -235,7 +235,7 @@ namespace DiscImageChef.Plugins
 			sh.maxinsspc = br.Readuint();
 			sh.reserved1 = br.Readulong();
 			sh.reserved2 = br.Readulong();
-			
+
 			// Go to enumerate languages
 			br.BaseStream.Seek(sh.lang_ptr + offset, SeekOrigin.Begin);
 			for(int i = 0; i < sh.languages; i++)
@@ -245,7 +245,7 @@ namespace DiscImageChef.Plugins
 					ENpos = i;
 				languages.Add(((LanguageCodes)language).ToString("G"));
 			}
-			
+
 			// Go to component record
 			br.BaseStream.Seek(sh.comp_ptr + offset, SeekOrigin.Begin);
 			for(int i = 0; i < sh.languages; i++)
@@ -261,7 +261,7 @@ namespace DiscImageChef.Plugins
 					break;
 				}
 			}
-			
+
 			// Go to capabilities (???)
 			br.BaseStream.Seek(sh.caps_ptr + offset, SeekOrigin.Begin);
 			for(int i = 0; i < sh.capabilities; i++)
@@ -270,7 +270,7 @@ namespace DiscImageChef.Plugins
 				uint cap_value = br.Readuint();
 				capabilities.Add(cap_key, cap_value);
 			}
-				
+
 			if(sh.uid1 == Symbian9Magic)
 			{
 				description.AppendLine("Symbian Installation File");
@@ -293,16 +293,16 @@ namespace DiscImageChef.Plugins
 				description.AppendFormat("UIDs checksum: 0x{0:X8}", sh.uid4).AppendLine();
 				description.AppendFormat("CRC16 of header: 0x{0:X4}", sh.crc16).AppendLine();
 				description.AppendLine();
-				
+
 				switch(sh.type)
 				{
 					case SISApp:
 						description.AppendLine("SIS contains an application");
 						break;
 				}
-				
+
 				description.AppendFormat("Component: {0} v{1}.{2}", ComponentName, sh.major, sh.minor).AppendLine();
-				
+
 				description.AppendFormat("File contains {0} languages:", sh.languages).AppendLine();
 				for(int i = 0; i < languages.Count; i++)
 				{
@@ -321,7 +321,7 @@ namespace DiscImageChef.Plugins
 
             information = description.ToString();
 		}
-		
+
 		private struct SymbianHeader
 		{
 			public uint uid1;	        // Application UID before SymbianOS 9, magic after

@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
 // This is verbatim from ASP.NET so left as is

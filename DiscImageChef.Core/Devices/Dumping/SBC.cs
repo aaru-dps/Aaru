@@ -27,7 +27,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
 using System;
@@ -884,7 +884,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(!sense)
                             {
                                 byte[] pages = EVPD.DecodePage00(cmdBuf);
-    
+
                                 if(pages != null)
                                 {
                                     List<EVPDType> evpds = new List<EVPDType>();
@@ -893,7 +893,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         dumpLog.WriteLine("Requesting page {0:X2}h.", page);
                                         sense = dev.ScsiInquiry(out cmdBuf, out _, page);
                                         if(sense) continue;
-    
+
                                         EVPDType evpd = new EVPDType
                                         {
                                             Image = $"{outputPrefix}.evpd_{page:X2}h.bin",
@@ -904,7 +904,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         DataFile.WriteTo("SCSI Dump", evpd.Image, cmdBuf);
                                         evpds.Add(evpd);
                                     }
-    
+
                                     if(evpds.Count > 0) sidecar.BlockMedia[0].SCSI.EVPD = evpds.ToArray();
                                 }
                             }

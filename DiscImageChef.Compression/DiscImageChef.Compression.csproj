@@ -14,7 +14,7 @@
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
-    <Copyright>Copyright © 2011-2018 Natalia Portillo</Copyright>
+    <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
     <Title>The Disc Image Chef</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
@@ -238,7 +238,7 @@
   <ItemGroup>
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
   </ItemGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">
     </Target>

@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
 /*
@@ -35,9 +35,9 @@
 
  At the start of a file there's a header that contains a format version, application creator name, and a pointer to
  the index.
- 
+
  The index points to one or several DeDuplication Tables, or media tag blocks.
- 
+
  A deduplication table is a table of offsets to blocks and sectors inside blocks. Each entry equals to an LBA and points
  to a byte offset in the file shift left to the number of sectors contained in a block, plus the number of sector inside
  the block.
@@ -45,25 +45,25 @@
  The deduplication table should be stored decompressed if its size is too big to be stored on-memory. This is chosen at
  creation time but it is a good idea to set the limit to 256MiB (this allows for a device of 33 million sectors,
  17Gb at 512 bps, 68Gb at 2048 bps and 137Gb at 4096 bps).
- 
+
  Sector tags that are simply too small to be deduplicated are contained in a single block pointed by the index (e.g.
- Apple GCR sector tags). 
- 
+ Apple GCR sector tags).
+
  Optical disks contain a track block that describes the tracks.
  TODO: Streaming tapes contain a file block that describes the files and an optional partition block that describes the tape
  partitions.
- 
+
  There are also blocks for image metadata, contents metadata and dump hardware information.
- 
+
  A differencing image will have all the metadata and deduplication tables, but the entries in these ones will be set to
  0 if the block is stored in the parent image. TODO: This is not yet implemented.
- 
+
  Also because the file becomes useless without the index and deduplication table, each can be stored twice. In case of
  the index it should just be searched for. In case of deduplication tables, both copies should be indexed.
- 
+
  Finally, writing new data to an existing image is just Copy-On-Write. Create a new block with the modified data, change
  the pointer in the corresponding deduplication table.
- 
+
  P.S.: Data Position Measurement is doable, as soon as I know how to do it.
  P.S.2: Support for floppy image containg bitslices and/or fluxes will be added soon.
 */

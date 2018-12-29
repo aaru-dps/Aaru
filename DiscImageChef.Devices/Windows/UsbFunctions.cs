@@ -27,7 +27,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2011-2019 Natalia Portillo
 // Copyright © 2007 Fort Hood TX, herethen, Public Domain
 // ****************************************************************************/
 
@@ -37,10 +37,10 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices.Windows
 {
-    // 
+    //
     // A place for "higher level" related functions
     // You might not want to keep these in the USB class... your choice
-    // 
+    //
     // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
     /// <summary>
     ///     Implements functions for getting and accesing information from the USB bus

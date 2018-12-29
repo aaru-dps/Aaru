@@ -28,11 +28,11 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2017 Michael Drüing
-// Copyright © 2011-2018 Natalia Portillo
+// Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
 /* Some information on the file format from Michal Necasek (www.os2museum.com):
- * 
+ *
  * The HD-Copy diskette image format was used by the eponymous DOS utility,
  * written by Oliver Fromme around 1995. The HD-Copy format is relatively
  * straightforward, supporting images with 512-byte sector size and uniform

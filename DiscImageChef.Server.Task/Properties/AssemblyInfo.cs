@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("DiscImageChef.Server.Task")]
-[assembly: AssemblyCopyright("Copyright © 2011-2018 Natalia Portillo")]
+[assembly: AssemblyCopyright("Copyright © 2011-2019 Natalia Portillo")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
