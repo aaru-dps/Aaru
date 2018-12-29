@@ -40,6 +40,8 @@ using System.Web.Http;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Server.Models;
+using MailKit.Net.Smtp;
+using MimeKit;
 using Newtonsoft.Json;
 
 namespace DiscImageChef.Server.Controllers
@@ -72,8 +74,33 @@ namespace DiscImageChef.Server.Controllers
                     return response;
                 }
 
-                ctx.Reports.Add(new UploadedReport(new DeviceReportV2(newReport)));
+                DeviceReportV2 reportV2 = new DeviceReportV2(newReport);
+                StringWriter   jsonSw   = new StringWriter();
+                jsonSw.Write(JsonConvert.SerializeObject(reportV2, Formatting.Indented,
+                                                         new JsonSerializerSettings
+                                                         {
+                                                             NullValueHandling = NullValueHandling.Ignore
+                                                         }));
+                string reportV2String = jsonSw.ToString();
+                jsonSw.Close();
+
+                ctx.Reports.Add(new UploadedReport(reportV2));
                 ctx.SaveChanges();
+
+                MimeMessage message = new MimeMessage
+                {
+                    Subject = "New device report (old version)",
+                    Body    = new TextPart("plain") {Text = reportV2String}
+                };
+                message.From.Add(new MailboxAddress("DiscImageChef",  "dic@claunia.com"));
+                message.To.Add(new MailboxAddress("Natalia Portillo", "claunia@claunia.com"));
+
+                using(SmtpClient client = new SmtpClient())
+                {
+                    client.Connect("mail.claunia.com", 25, false);
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
 
                 response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
                 return response;
@@ -103,8 +130,9 @@ namespace DiscImageChef.Server.Controllers
             {
                 HttpRequest request = HttpContext.Current.Request;
 
-                StreamReader   sr        = new StreamReader(request.InputStream);
-                DeviceReportV2 newReport = JsonConvert.DeserializeObject<DeviceReportV2>(sr.ReadToEnd());
+                StreamReader   sr         = new StreamReader(request.InputStream);
+                string         reportJson = sr.ReadToEnd();
+                DeviceReportV2 newReport  = JsonConvert.DeserializeObject<DeviceReportV2>(reportJson);
 
                 if(newReport == null)
                 {
@@ -114,6 +142,20 @@ namespace DiscImageChef.Server.Controllers
 
                 ctx.Reports.Add(new UploadedReport(newReport));
                 ctx.SaveChanges();
+
+                MimeMessage message = new MimeMessage
+                {
+                    Subject = "New device report", Body = new TextPart("plain") {Text = reportJson}
+                };
+                message.From.Add(new MailboxAddress("DiscImageChef",  "dic@claunia.com"));
+                message.To.Add(new MailboxAddress("Natalia Portillo", "claunia@claunia.com"));
+
+                using(SmtpClient client = new SmtpClient())
+                {
+                    client.Connect("mail.claunia.com", 25, false);
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
 
                 response.Content = new StringContent("ok", Encoding.UTF8, "text/plain");
                 return response;
