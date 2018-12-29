@@ -1857,6 +1857,9 @@
           <e p="UsbVendor.cs" t="Include" />
           <e p="Version.cs" t="Include" />
         </e>
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
         <e p="Reports" t="Include">
           <e p=".htaccess" t="Include" />
         </e>
@@ -1894,7 +1897,6 @@
           <e p="README.md" t="Include" />
           <e p="TODO.md" t="Include" />
         </e>
-        <e p="dos.css" t="Include" />
         <e p="int10h.org" t="Include">
           <e p=".htaccess" t="Include" />
           <e p="vga_squarepx.eot" t="Include" />

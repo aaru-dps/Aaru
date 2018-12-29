@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DiscImageChef.Server.Task")]
+[assembly: AssemblyTitle("DiscImageChef.Server")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DiscImageChef.Server.Task")]
+[assembly: AssemblyProduct("DiscImageChef.Server")]
 [assembly: AssemblyCopyright("Copyright © 2011-2018 Natalia Portillo")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("79D6A54E-47B6-4D0A-ABEB-4FA7B5ADF4B2")]
+[assembly: Guid("A893FA0E-6952-4517-B4AA-658E421737C1")]
 
 // Version information for an assembly consists of the following four values:
 //

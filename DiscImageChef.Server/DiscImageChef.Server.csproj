@@ -273,6 +273,7 @@
     <Compile Include="Models\UsbProduct.cs" />
     <Compile Include="Models\UsbVendor.cs" />
     <Compile Include="Models\Version.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\Changelog.md" />
