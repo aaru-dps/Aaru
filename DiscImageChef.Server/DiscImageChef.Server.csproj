@@ -284,7 +284,6 @@
     <Content Include="docs\PULL_REQUEST_TEMPLATE.md" />
     <Content Include="docs\README.md" />
     <Content Include="docs\TODO.md" />
-    <Content Include="dos.css" />
     <Content Include="Global.asax" />
     <Content Include="int10h.org\vga_squarepx.eot" />
     <Content Include="int10h.org\vga_squarepx.ttf" />
