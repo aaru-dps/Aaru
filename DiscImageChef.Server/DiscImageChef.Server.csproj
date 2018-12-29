@@ -276,9 +276,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\Changelog.md" />
+    <Content Include="docs\CODE_OF_CONDUCT.md" />
     <Content Include="docs\CONTRIBUTING.md" />
     <Content Include="docs\DONATING.md" />
+    <Content Include="docs\ISSUE_TEMPLATE.md" />
     <Content Include="docs\NEEDINFO.md" />
+    <Content Include="docs\PULL_REQUEST_TEMPLATE.md" />
     <Content Include="docs\README.md" />
     <Content Include="docs\TODO.md" />
     <Content Include="dos.css" />

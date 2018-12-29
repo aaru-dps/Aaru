@@ -7,8 +7,13 @@ using Markdig;
 
 namespace DiscImageChef.Server.Controllers
 {
+    [RoutePrefix("Home")]
     public class HomeController : Controller
     {
+        [Route("")]
+        [Route("~/")]
+        [Route("README")]
+        [Route("~/README")]
         public ActionResult Index()
         {
             StreamReader sr =
@@ -26,6 +31,8 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        [Route("Changelog")]
+        [Route("~/Changelog")]
         public ActionResult Changelog()
         {
             StreamReader sr =
@@ -43,6 +50,8 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        [Route("CODE_OF_CONDUCT")]
+        [Route("~/CODE_OF_CONDUCT")]
         public ActionResult CODE_OF_CONDUCT()
         {
             StreamReader sr =
@@ -60,6 +69,8 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        [Route("PULL_REQUEST_TEMPLATE")]
+        [Route("~/PULL_REQUEST_TEMPLATE")]
         public ActionResult PULL_REQUEST_TEMPLATE()
         {
             StreamReader sr =
@@ -77,6 +88,8 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        [Route("ISSUE_TEMPLATE")]
+        [Route("~/ISSUE_TEMPLATE")]
         public ActionResult ISSUE_TEMPLATE()
         {
             StreamReader sr =
@@ -94,6 +107,8 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        [Route("CONTRIBUTING")]
+        [Route("~/CONTRIBUTING")]
         public ActionResult CONTRIBUTING()
         {
             StreamReader sr =
@@ -111,6 +126,8 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        [Route("DONATING")]
+        [Route("~/DONATING")]
         public ActionResult DONATING()
         {
             StreamReader sr =
@@ -128,6 +145,8 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        [Route("TODO")]
+        [Route("~/TODO")]
         public ActionResult TODO()
         {
             StreamReader sr =
