@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Decodes SCSI's SSC block limits structures.
+//     Decodes SCSI SSC block limits structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

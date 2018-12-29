@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Decodes MMC's GET DISC INFORMATION structures.
+//     Decodes MMC GET DISC INFORMATION structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

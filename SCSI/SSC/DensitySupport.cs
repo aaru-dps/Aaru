@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Decodes SCSI's SSC density support structures.
+//     Decodes SCSI SSC density support structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

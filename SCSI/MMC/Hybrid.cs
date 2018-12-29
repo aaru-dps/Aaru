@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Decodes SCSI MMC's hybrid structures.
+//     Decodes SCSI MMC hybrid structures.
 //
 // --[ License ] --------------------------------------------------------------
 //
