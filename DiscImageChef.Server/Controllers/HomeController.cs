@@ -43,6 +43,74 @@ namespace DiscImageChef.Server.Controllers
             return View();
         }
 
+        public ActionResult CODE_OF_CONDUCT()
+        {
+            StreamReader sr =
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                              "docs", "CODE_OF_CONDUCT.md"));
+            string mdcontent = sr.ReadToEnd();
+            sr.Close();
+
+            mdcontent = mdcontent.Replace(".md)", ")").Replace("(.github/", "(");
+
+            ViewBag.Markdown = Markdown.ToHtml(mdcontent);
+
+            ViewBag.lblVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            return View();
+        }
+
+        public ActionResult PULL_REQUEST_TEMPLATE()
+        {
+            StreamReader sr =
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                              "docs", "PULL_REQUEST_TEMPLATE.md"));
+            string mdcontent = sr.ReadToEnd();
+            sr.Close();
+
+            mdcontent = mdcontent.Replace(".md)", ")").Replace("(.github/", "(");
+
+            ViewBag.Markdown = Markdown.ToHtml(mdcontent);
+
+            ViewBag.lblVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            return View();
+        }
+
+        public ActionResult ISSUE_TEMPLATE()
+        {
+            StreamReader sr =
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                              "docs", "ISSUE_TEMPLATE.md"));
+            string mdcontent = sr.ReadToEnd();
+            sr.Close();
+
+            mdcontent = mdcontent.Replace(".md)", ")").Replace("(.github/", "(");
+
+            ViewBag.Markdown = Markdown.ToHtml(mdcontent);
+
+            ViewBag.lblVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            return View();
+        }
+
+        public ActionResult CONTRIBUTING()
+        {
+            StreamReader sr =
+                new StreamReader(Path.Combine(HostingEnvironment.MapPath("~") ?? throw new InvalidOperationException(),
+                                              "docs", "CONTRIBUTING.md"));
+            string mdcontent = sr.ReadToEnd();
+            sr.Close();
+
+            mdcontent = mdcontent.Replace(".md)", ")").Replace("(.github/", "(");
+
+            ViewBag.Markdown = Markdown.ToHtml(mdcontent);
+
+            ViewBag.lblVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+            return View();
+        }
+
         public ActionResult DONATING()
         {
             StreamReader sr =

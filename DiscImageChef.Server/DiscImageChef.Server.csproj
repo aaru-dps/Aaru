@@ -276,7 +276,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\Changelog.md" />
+    <Content Include="docs\CONTRIBUTING.md" />
     <Content Include="docs\DONATING.md" />
+    <Content Include="docs\NEEDINFO.md" />
     <Content Include="docs\README.md" />
     <Content Include="docs\TODO.md" />
     <Content Include="dos.css" />
@@ -297,7 +299,11 @@
     <Content Include="styles\_highcharts.scss" />
     <Content Include="styles\_vgafont.scss" />
     <Content Include="Views\Home\Changelog.cshtml" />
+    <Content Include="Views\Home\CODE_OF_CONDUCT.cshtml" />
+    <Content Include="Views\Home\CONTRIBUTING.cshtml" />
     <Content Include="Views\Home\DONATING.cshtml" />
+    <Content Include="Views\Home\ISSUE_TEMPLATE.cshtml" />
+    <Content Include="Views\Home\PULL_REQUEST_TEMPLATE.cshtml" />
     <Content Include="Views\Home\TODO.cshtml" />
     <Content Include="Views\Report\View.cshtml" />
     <Content Include="Web.config" />

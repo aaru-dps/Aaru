@@ -1862,9 +1862,13 @@
         </e>
         <e p="Views" t="Include">
           <e p="Home" t="Include">
+            <e p="CODE_OF_CONDUCT.cshtml" t="Include" />
+            <e p="CONTRIBUTING.cshtml" t="Include" />
             <e p="Changelog.cshtml" t="Include" />
             <e p="DONATING.cshtml" t="Include" />
+            <e p="ISSUE_TEMPLATE.cshtml" t="Include" />
             <e p="Index.cshtml" t="Include" />
+            <e p="PULL_REQUEST_TEMPLATE.cshtml" t="Include" />
             <e p="TODO.cshtml" t="Include" />
           </e>
           <e p="Report" t="Include">
@@ -1880,8 +1884,10 @@
         <e p="Web.config" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="docs" t="Include">
+          <e p="CONTRIBUTING.md" t="Include" />
           <e p="Changelog.md" t="Include" />
           <e p="DONATING.md" t="Include" />
+          <e p="NEEDINFO.md" t="Include" />
           <e p="README.md" t="Include" />
           <e p="TODO.md" t="Include" />
         </e>
