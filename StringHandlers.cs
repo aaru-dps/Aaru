@@ -42,10 +42,7 @@ namespace DiscImageChef
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="CString">A null-terminated (aka C string) ASCII byte array</param>
-        public static string CToString(byte[] CString)
-        {
-            return CToString(CString, Encoding.ASCII);
-        }
+        public static string CToString(byte[] CString) => CToString(CString, Encoding.ASCII);
 
         /// <summary>
         ///     Converts a null-terminated (aka C string) byte array with the specified encoding to a C# string
@@ -92,10 +89,7 @@ namespace DiscImageChef
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="PascalString">A length-prefixed (aka Pascal string) ASCII byte array</param>
-        public static string PascalToString(byte[] PascalString)
-        {
-            return PascalToString(PascalString, Encoding.ASCII);
-        }
+        public static string PascalToString(byte[] PascalString) => PascalToString(PascalString, Encoding.ASCII);
 
         /// <summary>
         ///     Converts a length-prefixed (aka Pascal string) ASCII byte array to a C# string
@@ -129,10 +123,8 @@ namespace DiscImageChef
         /// </summary>
         /// <returns>The corresponding C# string</returns>
         /// <param name="SpacePaddedString">A space (' ', 0x20, ASCII SPACE) padded ASCII byte array</param>
-        public static string SpacePaddedToString(byte[] SpacePaddedString)
-        {
-            return SpacePaddedToString(SpacePaddedString, Encoding.ASCII);
-        }
+        public static string SpacePaddedToString(byte[] SpacePaddedString) =>
+            SpacePaddedToString(SpacePaddedString, Encoding.ASCII);
 
         /// <summary>
         ///     Converts a space (' ', 0x20, ASCII SPACE) padded ASCII byte array to a C# string

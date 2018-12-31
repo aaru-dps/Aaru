@@ -52,50 +52,35 @@ namespace DiscImageChef
         /// </summary>
         /// <param name="macTimeStamp">Macintosh timestamp (seconds since 1st Jan. 1904)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime MacToDateTime(ulong macTimeStamp)
-        {
-            return MacEpoch.AddTicks((long)(macTimeStamp * 10000000));
-        }
+        public static DateTime MacToDateTime(ulong macTimeStamp) => MacEpoch.AddTicks((long)(macTimeStamp * 10000000));
 
         /// <summary>
         ///     Converts a Lisa timestamp to a .NET DateTime
         /// </summary>
         /// <param name="lisaTimeStamp">Lisa timestamp (seconds since 1st Jan. 1901)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime LisaToDateTime(uint lisaTimeStamp)
-        {
-            return LisaEpoch.AddSeconds(lisaTimeStamp);
-        }
+        public static DateTime LisaToDateTime(uint lisaTimeStamp) => LisaEpoch.AddSeconds(lisaTimeStamp);
 
         /// <summary>
         ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixToDateTime(int unixTimeStamp)
-        {
-            return UnixEpoch.AddSeconds(unixTimeStamp);
-        }
+        public static DateTime UnixToDateTime(int unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>
         ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixToDateTime(long unixTimeStamp)
-        {
-            return UnixEpoch.AddSeconds(unixTimeStamp);
-        }
+        public static DateTime UnixToDateTime(long unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>
         ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixUnsignedToDateTime(uint unixTimeStamp)
-        {
-            return UnixEpoch.AddSeconds(unixTimeStamp);
-        }
+        public static DateTime UnixUnsignedToDateTime(uint unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>
         ///     Converts a UNIX timestamp to a .NET DateTime
@@ -103,20 +88,15 @@ namespace DiscImageChef
         /// <param name="seconds">Seconds since 1st Jan. 1970)</param>
         /// <param name="nanoseconds">Nanoseconds</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixUnsignedToDateTime(uint seconds, uint nanoseconds)
-        {
-            return UnixEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
-        }
+        public static DateTime UnixUnsignedToDateTime(uint seconds, uint nanoseconds) =>
+            UnixEpoch.AddSeconds(seconds).AddTicks((long)nanoseconds / 100);
 
         /// <summary>
         ///     Converts a UNIX timestamp to a .NET DateTime
         /// </summary>
         /// <param name="unixTimeStamp">UNIX timestamp (seconds since 1st Jan. 1970)</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixUnsignedToDateTime(ulong unixTimeStamp)
-        {
-            return UnixEpoch.AddSeconds(unixTimeStamp);
-        }
+        public static DateTime UnixUnsignedToDateTime(ulong unixTimeStamp) => UnixEpoch.AddSeconds(unixTimeStamp);
 
         /// <summary>
         ///     Converts a High Sierra Format timestamp to a .NET DateTime
@@ -330,10 +310,7 @@ namespace DiscImageChef
         /// </summary>
         /// <param name="hrTimeStamp">Solaris high resolution timestamp</param>
         /// <returns>.NET DateTime</returns>
-        public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp)
-        {
-            return UnixEpoch.AddTicks((long)(hrTimeStamp / 100));
-        }
+        public static DateTime UnixHrTimeToDateTime(ulong hrTimeStamp) => UnixEpoch.AddTicks((long)(hrTimeStamp / 100));
 
         /// <summary>
         ///     Converts an OS-9 timestamp to .NET DateTime

@@ -93,15 +93,9 @@ namespace DiscImageChef
             return destination;
         }
 
-        public static uint PDPFromLittleEndian(uint x)
-        {
-            return ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
-        }
+        public static uint PDPFromLittleEndian(uint x) => ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
 
-        public static uint PDPFromBigEndian(uint x)
-        {
-            return ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
-        }
+        public static uint PDPFromBigEndian(uint x) => ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
 
         public static ulong Swap(ulong x)
         {
@@ -111,20 +105,11 @@ namespace DiscImageChef
             return x;
         }
 
-        public static long Swap(long x)
-        {
-            return BitConverter.ToInt64(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
-        }
+        public static long Swap(long x) => BitConverter.ToInt64(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
 
-        public static ushort Swap(ushort x)
-        {
-            return (ushort)((x << 8) | (x >> 8));
-        }
+        public static ushort Swap(ushort x) => (ushort)((x << 8) | (x >> 8));
 
-        public static short Swap(short x)
-        {
-            return (short)((x << 8) | ((x >> 8) & 0xFF));
-        }
+        public static short Swap(short x) => (short)((x << 8) | ((x >> 8) & 0xFF));
 
         public static uint Swap(uint x)
         {
