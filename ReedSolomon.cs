@@ -176,10 +176,7 @@ namespace DiscImageChef.Checksums
             return x;
         }
 
-        static int Min(int a, int b)
-        {
-            return a < b ? a : b;
-        }
+        static int Min(int a, int b) => a < b ? a : b;
 
         static void Clear(ref int[] a, int n)
         {

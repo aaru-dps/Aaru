@@ -52,44 +52,20 @@ namespace DiscImageChef.Checksums
                            .Where(t => t.IsClass).ToList();
         }
 
-        public List<Type> GetAllFilesystemPlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllFilesystemPlugins() => null;
 
-        public List<Type> GetAllFilterPlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllFilterPlugins() => null;
 
-        public List<Type> GetAllFloppyImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllFloppyImagePlugins() => null;
 
-        public List<Type> GetAllMediaImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllMediaImagePlugins() => null;
 
-        public List<Type> GetAllPartitionPlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllPartitionPlugins() => null;
 
-        public List<Type> GetAllReadOnlyFilesystemPlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllReadOnlyFilesystemPlugins() => null;
 
-        public List<Type> GetAllWritableFloppyImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllWritableFloppyImagePlugins() => null;
 
-        public List<Type> GetAllWritableImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllWritableImagePlugins() => null;
     }
 }

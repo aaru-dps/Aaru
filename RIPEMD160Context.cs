@@ -149,10 +149,7 @@ namespace DiscImageChef.Checksums
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>
-        public static string Data(byte[] data, out byte[] hash)
-        {
-            return Data(data, (uint)data.Length, out hash);
-        }
+        public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
     }
 }
 

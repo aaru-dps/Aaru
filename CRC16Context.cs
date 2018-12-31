@@ -152,10 +152,8 @@ namespace DiscImageChef.Checksums
         /// </summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
-        public static string File(string filename, out byte[] hash)
-        {
-            return File(filename, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
-        }
+        public static string File(string filename, out byte[] hash) =>
+            File(filename, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
 
         /// <summary>
         ///     Gets the hash of a file in hexadecimal and as a byte array.
@@ -204,10 +202,8 @@ namespace DiscImageChef.Checksums
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
         /// <param name="hash">Byte array of the hash value.</param>
-        public static string Data(byte[] data, uint len, out byte[] hash)
-        {
-            return Data(data, len, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
-        }
+        public static string Data(byte[] data, uint len, out byte[] hash) =>
+            Data(data, len, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
 
         /// <summary>
         ///     Gets the hash of the specified data buffer.
@@ -253,9 +249,6 @@ namespace DiscImageChef.Checksums
         /// </summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>
-        public static string Data(byte[] data, out byte[] hash)
-        {
-            return Data(data, (uint)data.Length, out hash);
-        }
+        public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
     }
 }
