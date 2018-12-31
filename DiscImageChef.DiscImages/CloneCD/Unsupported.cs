@@ -34,9 +34,6 @@ namespace DiscImageChef.DiscImages
 {
     public partial class CloneCd
     {
-        public bool? VerifyMediaImage()
-        {
-            return null;
-        }
+        public bool? VerifyMediaImage() => null;
     }
 }

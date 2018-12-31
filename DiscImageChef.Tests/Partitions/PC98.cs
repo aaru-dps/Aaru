@@ -40,7 +40,9 @@ namespace DiscImageChef.Tests.Partitions
     public class Pc98
     {
         readonly string[] testfiles =
-            {"msdos330.thd.lz", "msdos330_alt.thd.lz", "msdos500_epson.thd.lz", "msdos500.thd.lz", "msdos620.thd.lz"};
+        {
+            "msdos330.thd.lz", "msdos330_alt.thd.lz", "msdos500_epson.thd.lz", "msdos500.thd.lz", "msdos620.thd.lz"
+        };
 
         readonly Partition[][] wanted =
         {

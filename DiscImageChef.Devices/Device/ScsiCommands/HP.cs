@@ -50,11 +50,8 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool HpReadLong(out byte[] buffer, out byte[] senseBuffer, bool relAddr, uint address,
                                ushort     blockBytes,
-                               bool       pba, uint timeout, out double duration)
-        {
-            return HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
-                              out duration);
-        }
+                               bool       pba, uint timeout, out double duration) =>
+            HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout, out duration);
 
         /// <summary>
         ///     Sends the HP READ LONG vendor command

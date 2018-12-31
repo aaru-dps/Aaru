@@ -33,12 +33,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
 #if !NETSTANDARD2_0
+using System.Linq;
 using System.Management;
+
 #endif
 
 namespace DiscImageChef.Devices.Windows

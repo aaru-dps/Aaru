@@ -86,10 +86,7 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool WriteSector(byte[] data, ulong sectorAddress)
-        {
-            return WriteSectors(data, sectorAddress, 1);
-        }
+        public bool WriteSector(byte[] data, ulong sectorAddress) => WriteSectors(data, sectorAddress, 1);
 
         public bool WriteSectors(byte[] data, ulong sectorAddress, uint length)
         {
@@ -152,8 +149,12 @@ namespace DiscImageChef.DiscImages
             byte[] tmp = new byte[deinterleaved.Length];
 
             int[] offsets = extension == ".do"
-                                ? (isDos ? deinterleave : interleave)
-                                : (isDos ? interleave : deinterleave);
+                                ? isDos
+                                      ? deinterleave
+                                      : interleave
+                                : isDos
+                                    ? interleave
+                                    : deinterleave;
 
             for(int t = 0; t < 35; t++)
             {
@@ -172,16 +173,9 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            return true;
-        }
+        public bool SetMetadata(ImageInfo metadata) => true;
 
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
-        {
-            // Geometry is not stored in image
-            return true;
-        }
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
@@ -195,16 +189,8 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }

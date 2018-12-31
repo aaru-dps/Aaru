@@ -43,10 +43,8 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="statusRegisters" /> contains the error registers.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
-        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters)
-        {
-            return AtaIdentify(out buffer, out statusRegisters, Timeout);
-        }
+        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters) =>
+            AtaIdentify(out buffer, out statusRegisters, Timeout);
 
         /// <summary>
         ///     Sends the ATA IDENTIFY DEVICE command to the device, using default device timeout
@@ -55,10 +53,8 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="duration">Duration.</param>
-        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, out double duration)
-        {
-            return AtaIdentify(out buffer, out statusRegisters, Timeout, out duration);
-        }
+        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, out double duration) =>
+            AtaIdentify(out buffer, out statusRegisters, Timeout, out duration);
 
         /// <summary>
         ///     Sends the ATA IDENTIFY DEVICE command to the device
@@ -67,10 +63,8 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer.</param>
         /// <param name="statusRegisters">Status registers.</param>
         /// <param name="timeout">Timeout.</param>
-        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout)
-        {
-            return AtaIdentify(out buffer, out statusRegisters, timeout, out _);
-        }
+        public bool AtaIdentify(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, uint timeout) =>
+            AtaIdentify(out buffer, out statusRegisters, timeout, out _);
 
         /// <summary>
         ///     Sends the ATA IDENTIFY DEVICE command to the device
@@ -100,10 +94,8 @@ namespace DiscImageChef.Devices
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
                             byte       head,
                             byte       sector, byte count, uint timeout,
-                            out double duration)
-        {
-            return ReadDma(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
-        }
+                            out double duration) =>
+            ReadDma(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
 
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort cylinder,
                             byte       head,   byte                     sector,          byte count, uint   timeout,
@@ -158,10 +150,8 @@ namespace DiscImageChef.Devices
 
         public bool Read(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder, byte head,
                          byte       sector, byte                     count,           uint   timeout,
-                         out double duration)
-        {
-            return Read(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
-        }
+                         out double duration) =>
+            Read(out buffer, out statusRegisters, true, cylinder, head, sector, count, timeout, out duration);
 
         public bool Read(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry, ushort cylinder,
                          byte       head,   byte                     sector,          byte count, uint   timeout,
@@ -192,11 +182,8 @@ namespace DiscImageChef.Devices
         public bool ReadLong(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, ushort cylinder,
                              byte       head,
                              byte       sector, uint blockSize, uint timeout,
-                             out double duration)
-        {
-            return ReadLong(out buffer, out statusRegisters, true, cylinder, head, sector, blockSize, timeout,
-                            out duration);
-        }
+                             out double duration) =>
+            ReadLong(out buffer, out statusRegisters, true, cylinder, head, sector, blockSize, timeout, out duration);
 
         public bool ReadLong(out byte[] buffer, out AtaErrorRegistersChs statusRegisters, bool retry,
                              ushort     cylinder,
@@ -249,10 +236,8 @@ namespace DiscImageChef.Devices
         }
 
         public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, uint timeout,
-                                out double               duration)
-        {
-            return SetFeatures(out statusRegisters, feature, 0, 0, 0, 0, timeout, out duration);
-        }
+                                out double               duration) =>
+            SetFeatures(out statusRegisters, feature, 0, 0, 0, 0, timeout, out duration);
 
         public bool SetFeatures(out AtaErrorRegistersChs statusRegisters, AtaFeatures feature, ushort cylinder,
                                 byte                     head,            byte        sector,  byte   sectorCount,

@@ -45,6 +45,5 @@ namespace DiscImageChef.DiscImages
                 default:  return MediaType.Unknown;
             }
         }
-
     }
 }

@@ -47,10 +47,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool AdaptecTranslate(out byte[] buffer, out byte[] senseBuffer, uint lba, uint timeout,
-                                     out double duration)
-        {
-            return AdaptecTranslate(out buffer, out senseBuffer, false, lba, timeout, out duration);
-        }
+                                     out double duration) =>
+            AdaptecTranslate(out buffer, out senseBuffer, false, lba, timeout, out duration);
 
         /// <summary>
         ///     Gets the underlying drive cylinder, head and index bytes for the specified SCSI LBA.
@@ -91,10 +89,9 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return AdaptecSetErrorThreshold(threshold, out senseBuffer, false, timeout, out duration);
-        }
+        public bool
+            AdaptecSetErrorThreshold(byte threshold, out byte[] senseBuffer, uint timeout, out double duration) =>
+            AdaptecSetErrorThreshold(threshold, out senseBuffer, false, timeout, out duration);
 
         /// <summary>
         ///     Sets the error threshold
@@ -134,10 +131,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool AdaptecReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout,
-                                            out double duration)
-        {
-            return AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
-        }
+                                            out double duration) =>
+            AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
 
         /// <summary>
         ///     Requests the usage, seek and error counters, and resets them

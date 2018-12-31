@@ -44,10 +44,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool CertancePark(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return CertanceParkUnpark(out senseBuffer, true, timeout, out duration);
-        }
+        public bool CertancePark(out byte[] senseBuffer, uint timeout, out double duration) =>
+            CertanceParkUnpark(out senseBuffer, true, timeout, out duration);
 
         /// <summary>
         ///     Unparks the load arm prior to operation
@@ -55,10 +53,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool CertanceUnpark(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return CertanceParkUnpark(out senseBuffer, false, timeout, out duration);
-        }
+        public bool CertanceUnpark(out byte[] senseBuffer, uint timeout, out double duration) =>
+            CertanceParkUnpark(out senseBuffer, false, timeout, out duration);
 
         /// <summary>
         ///     Parks the load arm in preparation for transport or unparks it prior to operation

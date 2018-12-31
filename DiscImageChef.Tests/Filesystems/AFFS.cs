@@ -194,8 +194,8 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz", "amigaos_4.0.vdi.lz",
-            "amigaos_4.0_intl.vdi.lz", "amigaos_4.0_cache.vdi.lz"
+            "amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz",
+            "amigaos_4.0.vdi.lz", "amigaos_4.0_intl.vdi.lz", "amigaos_4.0_cache.vdi.lz"
         };
 
         readonly ulong[] sectors = {1024128, 1024128, 409600, 409600, 1024128, 1024128, 1024128};
@@ -213,7 +213,9 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly string[] volumeserial =
-            {"A56D0F5C", "A56D049C", "A58307A9", "A58304BE", "A56CC7EE", "A56CDDC4", "A56CC133"};
+        {
+            "A56D0F5C", "A56D049C", "A58307A9", "A58304BE", "A56CC7EE", "A56CDDC4", "A56CC133"
+        };
 
         [Test]
         public void Test()

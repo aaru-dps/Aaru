@@ -105,7 +105,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>
             ///     Set if a directory listing is present after the image
             /// </summary>
-            Directory = 0x02,
+            Directory = 0x02
         }
 
         /// <summary>
@@ -133,7 +133,6 @@ namespace DiscImageChef.DiscImages
             ///     The cylinder number this sector belongs to.
             /// </summary>
             public byte cylinder;
-
 
             /// <summary>
             ///     A simple CRC16 over the data, to detect errors.
@@ -169,7 +168,7 @@ namespace DiscImageChef.DiscImages
             ///     Not a sector but the directory information.
             ///     The <c>crc</c> field is the length of the data.
             /// </summary>
-            Directory = 0x04,
+            Directory = 0x04
         }
     }
 }

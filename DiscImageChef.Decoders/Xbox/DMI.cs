@@ -282,14 +282,8 @@ namespace DiscImageChef.Decoders.Xbox
             return sb.ToString();
         }
 
-        public static string PrettifyXbox(byte[] response)
-        {
-            return PrettifyXbox(DecodeXbox(response));
-        }
+        public static string PrettifyXbox(byte[] response) => PrettifyXbox(DecodeXbox(response));
 
-        public static string PrettifyXbox360(byte[] response)
-        {
-            return PrettifyXbox360(DecodeXbox360(response));
-        }
+        public static string PrettifyXbox360(byte[] response) => PrettifyXbox360(DecodeXbox360(response));
     }
 }

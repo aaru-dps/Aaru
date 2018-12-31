@@ -74,8 +74,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             {
                 MFS_FileEntry entry = new MFS_FileEntry
                 {
-                    flUsrWds = new byte[16],
-                    flFlags  = (MFS_FileFlags)directoryBlocks[offset + 0]
+                    flUsrWds = new byte[16], flFlags = (MFS_FileFlags)directoryBlocks[offset + 0]
                 };
 
                 if(!entry.flFlags.HasFlag(MFS_FileFlags.Used)) break;

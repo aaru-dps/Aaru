@@ -134,15 +134,11 @@ namespace DiscImageChef.Decoders.PCMCIA
             return sb.ToString();
         }
 
-        public static string PrettifyDeviceGeometryTuple(Tuple tuple)
-        {
-            return PrettifyDeviceGeometryTuple(DecodeDeviceGeometryTuple(tuple));
-        }
+        public static string PrettifyDeviceGeometryTuple(Tuple tuple) =>
+            PrettifyDeviceGeometryTuple(DecodeDeviceGeometryTuple(tuple));
 
-        public static string PrettifyDeviceGeometryTuple(byte[] data)
-        {
-            return PrettifyDeviceGeometryTuple(DecodeDeviceGeometryTuple(data));
-        }
+        public static string PrettifyDeviceGeometryTuple(byte[] data) =>
+            PrettifyDeviceGeometryTuple(DecodeDeviceGeometryTuple(data));
 
         public static ManufacturerIdentificationTuple DecodeManufacturerIdentificationTuple(Tuple tuple)
         {
@@ -178,15 +174,11 @@ namespace DiscImageChef.Decoders.PCMCIA
             return sb.ToString();
         }
 
-        public static string PrettifyManufacturerIdentificationTuple(Tuple tuple)
-        {
-            return PrettifyManufacturerIdentificationTuple(DecodeManufacturerIdentificationTuple(tuple));
-        }
+        public static string PrettifyManufacturerIdentificationTuple(Tuple tuple) =>
+            PrettifyManufacturerIdentificationTuple(DecodeManufacturerIdentificationTuple(tuple));
 
-        public static string PrettifyManufacturerIdentificationTuple(byte[] data)
-        {
-            return PrettifyManufacturerIdentificationTuple(DecodeManufacturerIdentificationTuple(data));
-        }
+        public static string PrettifyManufacturerIdentificationTuple(byte[] data) =>
+            PrettifyManufacturerIdentificationTuple(DecodeManufacturerIdentificationTuple(data));
 
         public static Level1VersionTuple DecodeLevel1VersionTuple(Tuple tuple)
         {
@@ -208,10 +200,7 @@ namespace DiscImageChef.Decoders.PCMCIA
 
             Level1VersionTuple tuple = new Level1VersionTuple
             {
-                Code         = (TupleCodes)data[0],
-                Link         = data[1],
-                MajorVersion = data[2],
-                MinorVersion = data[3]
+                Code = (TupleCodes)data[0], Link = data[1], MajorVersion = data[2], MinorVersion = data[3]
             };
 
             for(int position = 4; position < data.Length; position++)
@@ -278,14 +267,10 @@ namespace DiscImageChef.Decoders.PCMCIA
             return sb.ToString();
         }
 
-        public static string PrettifyLevel1VersionTuple(Tuple tuple)
-        {
-            return PrettifyLevel1VersionTuple(DecodeLevel1VersionTuple(tuple));
-        }
+        public static string PrettifyLevel1VersionTuple(Tuple tuple) =>
+            PrettifyLevel1VersionTuple(DecodeLevel1VersionTuple(tuple));
 
-        public static string PrettifyLevel1VersionTuple(byte[] data)
-        {
-            return PrettifyLevel1VersionTuple(DecodeLevel1VersionTuple(data));
-        }
+        public static string PrettifyLevel1VersionTuple(byte[] data) =>
+            PrettifyLevel1VersionTuple(DecodeLevel1VersionTuple(data));
     }
 }

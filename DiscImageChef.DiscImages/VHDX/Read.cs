@@ -183,8 +183,7 @@ namespace DiscImageChef.DiscImages
                 stream.Read(tmp, 0, 8);
                 vFileParms = new VhdxFileParameters
                 {
-                    blockSize = BitConverter.ToUInt32(tmp, 0),
-                    flags     = BitConverter.ToUInt32(tmp, 4)
+                    blockSize = BitConverter.ToUInt32(tmp, 0), flags = BitConverter.ToUInt32(tmp, 4)
                 };
             }
             else throw new Exception("File parameters not found.");

@@ -193,7 +193,9 @@ namespace DiscImageChef.Tests.Filesystems
     public class AofsRdb
     {
         readonly string[] testfiles =
-            {"amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz"};
+        {
+            "amigaos_3.9.vdi.lz", "amigaos_3.9_intl.vdi.lz", "aros.vdi.lz", "aros_intl.vdi.lz"
+        };
 
         readonly ulong[] sectors = {1024128, 1024128, 409600, 409600};
 

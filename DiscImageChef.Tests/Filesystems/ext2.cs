@@ -43,7 +43,8 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz", "netbsd_7.1_r0.vdi.lz"
+            "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz",
+            "netbsd_7.1_r0.vdi.lz"
         };
 
         readonly ulong[] sectors = {262144, 262144, 262144, 8388608, 2097152};

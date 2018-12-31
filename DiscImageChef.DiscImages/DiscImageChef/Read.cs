@@ -732,8 +732,7 @@ namespace DiscImageChef.DiscImages
 
                             DumpHardwareType dump = new DumpHardwareType
                             {
-                                Software = new SoftwareType(),
-                                Extents  = new ExtentType[dumpEntry.extents]
+                                Software = new SoftwareType(), Extents = new ExtentType[dumpEntry.extents]
                             };
 
                             byte[] tmp;
@@ -808,8 +807,7 @@ namespace DiscImageChef.DiscImages
                                 imageStream.Read(tmp, 0, tmp.Length);
                                 dump.Extents[j] = new ExtentType
                                 {
-                                    Start = BitConverter.ToUInt64(tmp, 0),
-                                    End   = BitConverter.ToUInt64(tmp, 8)
+                                    Start = BitConverter.ToUInt64(tmp, 0), End = BitConverter.ToUInt64(tmp, 8)
                                 };
                             }
 
@@ -879,8 +877,9 @@ namespace DiscImageChef.DiscImages
                         SessionSequence = (ushort)i,
                         StartTrack      = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackSequence),
                         EndTrack        = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackSequence),
-                        StartSector     = Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackStartSector),
-                        EndSector       = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackEndSector)
+                        StartSector =
+                            Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackStartSector),
+                        EndSector = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackEndSector)
                     });
 
                 ulong currentTrackOffset = 0;
@@ -895,7 +894,7 @@ namespace DiscImageChef.DiscImages
                         Offset   = currentTrackOffset,
                         Start    = track.TrackStartSector,
                         Size = (track.TrackEndSector - track.TrackStartSector + 1) *
-                                   (ulong)track.TrackBytesPerSector,
+                               (ulong)track.TrackBytesPerSector,
                         Length = track.TrackEndSector - track.TrackStartSector + 1,
                         Scheme = "Optical disc track"
                     });
@@ -1033,10 +1032,7 @@ namespace DiscImageChef.DiscImages
             return sector;
         }
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
         public byte[] ReadSector(ulong sectorAddress, uint track)
         {

@@ -103,7 +103,8 @@ namespace DiscImageChef.Core
                             Identify = new DumpType
                             {
                                 Checksums =
-                                    Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY)).ToArray(),
+                                    Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY))
+                                            .ToArray(),
                                 Size = image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY).Length
                             }
                         };
@@ -113,8 +114,9 @@ namespace DiscImageChef.Core
                         {
                             Identify = new DumpType
                             {
-                                Checksums =
-                                    Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY)).ToArray(),
+                                Checksums = Checksum
+                                           .GetChecksums(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY))
+                                           .ToArray(),
                                 Size = image.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length
                             }
                         };
@@ -166,8 +168,9 @@ namespace DiscImageChef.Core
                         {
                             Inquiry = new DumpType
                             {
-                                Checksums =
-                                    Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_INQUIRY)).ToArray(),
+                                Checksums = Checksum
+                                           .GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_INQUIRY))
+                                           .ToArray(),
                                 Size = image.ReadDiskTag(MediaTagType.SCSI_INQUIRY).Length
                             }
                         };
@@ -240,8 +243,8 @@ namespace DiscImageChef.Core
                             sidecar.BlockMedia[0].MultiMediaCard = new MultiMediaCardType();
                         sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
                         {
-                            Checksums =
-                                Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD)).ToArray(),
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD))
+                                                .ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD).Length
                         };
                         break;
@@ -249,8 +252,8 @@ namespace DiscImageChef.Core
                         if(sidecar.BlockMedia[0].USB == null) sidecar.BlockMedia[0].USB = new USBType();
                         sidecar.BlockMedia[0].USB.Descriptors = new DumpType
                         {
-                            Checksums =
-                                Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.USB_Descriptors)).ToArray(),
+                            Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.USB_Descriptors))
+                                                .ToArray(),
                             Size = image.ReadDiskTag(MediaTagType.USB_Descriptors).Length
                         };
                         break;

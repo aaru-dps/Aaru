@@ -288,16 +288,9 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            return true;
-        }
+        public bool SetMetadata(ImageInfo metadata) => true;
 
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
-        {
-            // Not stored in image
-            return true;
-        }
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
@@ -311,16 +304,8 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }

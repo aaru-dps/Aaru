@@ -87,10 +87,8 @@ namespace DiscImageChef.Decoders.SCSI
             };
         }
 
-        public static string PrettifyIBMModePage_2F(byte[] pageResponse)
-        {
-            return PrettifyIBMModePage_2F(DecodeIBMModePage_2F(pageResponse));
-        }
+        public static string PrettifyIBMModePage_2F(byte[] pageResponse) =>
+            PrettifyIBMModePage_2F(DecodeIBMModePage_2F(pageResponse));
 
         public static string PrettifyIBMModePage_2F(IBM_ModePage_2F? modePage)
         {

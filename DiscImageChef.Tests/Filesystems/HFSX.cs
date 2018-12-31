@@ -42,8 +42,8 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz",
-            "macosx_10.4_journal.vdi.lz", "macosx_10.4.vdi.lz"
+            "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "darwin_8.0.1_journal.vdi.lz",
+            "darwin_8.0.1.vdi.lz", "macosx_10.4_journal.vdi.lz", "macosx_10.4.vdi.lz"
         };
 
         readonly ulong[] sectors = {819200, 1228800, 1638400, 1433600, 4194304, 1024000};
@@ -173,7 +173,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] volumename = {null, null, null, null, null, null};
 
         readonly string[] volumeserial =
-            {"C2BCCCE6DE5BC98D", "AC54CD78C75CC30F", null, null, "7559DD01BCFADD9A", "AEA39CFBBF14C0FF"};
+        {
+            "C2BCCCE6DE5BC98D", "AC54CD78C75CC30F", null, null, "7559DD01BCFADD9A", "AEA39CFBBF14C0FF"
+        };
 
         readonly string[] oemid = {"10.0", "HFSJ", "10.0", "10.0", "10.0", "10.0"};
 

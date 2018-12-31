@@ -361,7 +361,8 @@ namespace DiscImageChef.Core
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion MD5
 
-#if !NETSTANDARD2_0
+            #if !NETSTANDARD2_0
+
             #region RIPEMD160
             ctx = new Ripemd160Context();
             ms.Seek(0, SeekOrigin.Begin);
@@ -393,7 +394,8 @@ namespace DiscImageChef.Core
                                 });
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion RIPEMD160
-#endif
+
+            #endif
 
             #region SHA1
             ctx = new Sha1Context();

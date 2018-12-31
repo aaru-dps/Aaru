@@ -53,10 +53,7 @@ namespace DiscImageChef.Core.Devices
         bool syqReadLong10;
         bool syqReadLong6;
 
-        ulong ScsiGetBlocks()
-        {
-            return ScsiGetBlockSize() ? 0 : Blocks;
-        }
+        ulong ScsiGetBlocks() => ScsiGetBlockSize() ? 0 : Blocks;
 
         bool ScsiFindReadCommand()
         {

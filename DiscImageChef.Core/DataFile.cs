@@ -68,10 +68,7 @@ namespace DiscImageChef.Core
         /// <param name="offset">Offset of <see cref="array" /> where data will be read</param>
         /// <param name="count">How many bytes to read</param>
         /// <returns>How many bytes were read</returns>
-        public int Read(byte[] array, int offset, int count)
-        {
-            return dataFs.Read(array, offset, count);
-        }
+        public int Read(byte[] array, int offset, int count) => dataFs.Read(array, offset, count);
 
         /// <summary>
         ///     Seeks to the specified block
@@ -79,10 +76,7 @@ namespace DiscImageChef.Core
         /// <param name="block">Block to seek to</param>
         /// <param name="blockSize">Block size in bytes</param>
         /// <returns>Position</returns>
-        public long Seek(ulong block, ulong blockSize)
-        {
-            return dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
-        }
+        public long Seek(ulong block, ulong blockSize) => dataFs.Seek((long)(block * blockSize), SeekOrigin.Begin);
 
         /// <summary>
         ///     Seeks to specified byte position
@@ -90,10 +84,7 @@ namespace DiscImageChef.Core
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
         /// <returns>Position</returns>
-        public long Seek(ulong offset, SeekOrigin origin)
-        {
-            return dataFs.Seek((long)offset, origin);
-        }
+        public long Seek(ulong offset, SeekOrigin origin) => dataFs.Seek((long)offset, origin);
 
         /// <summary>
         ///     Seeks to specified byte position
@@ -101,10 +92,7 @@ namespace DiscImageChef.Core
         /// <param name="offset">Byte position</param>
         /// <param name="origin">Where to count for position</param>
         /// <returns>Position</returns>
-        public long Seek(long offset, SeekOrigin origin)
-        {
-            return dataFs.Seek(offset, origin);
-        }
+        public long Seek(long offset, SeekOrigin origin) => dataFs.Seek(offset, origin);
 
         /// <summary>
         ///     Writes data at current position

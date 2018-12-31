@@ -38,16 +38,12 @@ namespace DiscImageChef.Devices
     public partial class Device
     {
         public bool EnableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                               out double               duration)
-        {
-            return CheckMediaCardType(1, out statusRegisters, timeout, out duration);
-        }
+                                               out double               duration) =>
+            CheckMediaCardType(1, out statusRegisters, timeout, out duration);
 
         public bool DisableMediaCardPassThrough(out AtaErrorRegistersChs statusRegisters, uint timeout,
-                                                out double               duration)
-        {
-            return CheckMediaCardType(0, out statusRegisters, timeout, out duration);
-        }
+                                                out double               duration) =>
+            CheckMediaCardType(0, out statusRegisters, timeout, out duration);
 
         public bool CheckMediaCardType(byte       feature, out AtaErrorRegistersChs statusRegisters, uint timeout,
                                        out double duration)

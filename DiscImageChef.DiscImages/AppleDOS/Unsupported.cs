@@ -39,15 +39,9 @@ namespace DiscImageChef.DiscImages
 {
     public partial class AppleDos
     {
-        public bool? VerifySector(ulong sectorAddress)
-        {
-            return null;
-        }
+        public bool? VerifySector(ulong sectorAddress) => null;
 
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            return null;
-        }
+        public bool? VerifySector(ulong sectorAddress, uint track) => null;
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
@@ -71,74 +65,45 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifyMediaImage()
-        {
-            return null;
-        }
+        public bool? VerifyMediaImage() => null;
 
-        public List<Track> GetSessionTracks(Session session)
-        {
+        public List<Track> GetSessionTracks(Session session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public List<Track> GetSessionTracks(ushort session)
-        {
+        public List<Track> GetSessionTracks(ushort session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSector(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSector(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
+        public byte[] ReadSectorLong(ulong sectorAddress) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
-        {
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadDiskTag(MediaTagType tag)
-        {
+        public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
     }
 }

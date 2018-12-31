@@ -223,10 +223,8 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyModePage_0A(byte[] pageResponse)
-        {
-            return PrettifyModePage_0A(DecodeModePage_0A(pageResponse));
-        }
+        public static string PrettifyModePage_0A(byte[] pageResponse) =>
+            PrettifyModePage_0A(DecodeModePage_0A(pageResponse));
 
         public static string PrettifyModePage_0A(ModePage_0A? modePage)
         {
@@ -420,10 +418,8 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyModePage_0A_S01(byte[] pageResponse)
-        {
-            return PrettifyModePage_0A_S01(DecodeModePage_0A_S01(pageResponse));
-        }
+        public static string PrettifyModePage_0A_S01(byte[] pageResponse) =>
+            PrettifyModePage_0A_S01(DecodeModePage_0A_S01(pageResponse));
 
         public static string PrettifyModePage_0A_S01(ModePage_0A_S01? modePage)
         {

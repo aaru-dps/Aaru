@@ -182,9 +182,7 @@ namespace DiscImageChef.Decoders.DVD
             return sb.ToString();
         }
 
-        public static string PrettifyLeadInCopyright(byte[] response)
-        {
-            return PrettifyLeadInCopyright(DecodeLeadInCopyright(response));
-        }
+        public static string PrettifyLeadInCopyright(byte[] response) =>
+            PrettifyLeadInCopyright(DecodeLeadInCopyright(response));
     }
 }

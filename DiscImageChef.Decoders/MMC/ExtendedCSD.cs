@@ -707,9 +707,6 @@ namespace DiscImageChef.Decoders.MMC
             return sb.ToString();
         }
 
-        public static string PrettifyExtendedCSD(byte[] response)
-        {
-            return PrettifyExtendedCSD(DecodeExtendedCSD(response));
-        }
+        public static string PrettifyExtendedCSD(byte[] response) => PrettifyExtendedCSD(DecodeExtendedCSD(response));
     }
 }

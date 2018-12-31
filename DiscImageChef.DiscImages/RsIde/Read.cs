@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.DiscImages
 {
@@ -74,7 +75,7 @@ namespace DiscImageChef.DiscImages
             {
                 identify = new byte[512];
                 Array.Copy(hdr.identify, 0, identify, 0, hdr.identify.Length);
-                Decoders.ATA.Identify.IdentifyDevice? ataId = Decoders.ATA.Identify.Decode(identify);
+                Identify.IdentifyDevice? ataId = Decoders.ATA.Identify.Decode(identify);
 
                 if(ataId.HasValue)
                 {
@@ -102,10 +103,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {

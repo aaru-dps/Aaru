@@ -422,10 +422,8 @@ namespace DiscImageChef.Decoders.SCSI
             return buf;
         }
 
-        public static string PrettifyModePage_2A(byte[] pageResponse)
-        {
-            return PrettifyModePage_2A(DecodeModePage_2A(pageResponse));
-        }
+        public static string PrettifyModePage_2A(byte[] pageResponse) =>
+            PrettifyModePage_2A(DecodeModePage_2A(pageResponse));
 
         public static string PrettifyModePage_2A(ModePage_2A modePage)
         {

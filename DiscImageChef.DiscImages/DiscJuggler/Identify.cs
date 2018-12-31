@@ -68,6 +68,5 @@ namespace DiscImageChef.DiscImages
             // Too many tracks
             return descriptor[2] <= 99;
         }
-
     }
 }

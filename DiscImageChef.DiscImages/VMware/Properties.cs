@@ -73,7 +73,7 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 ("adapter_type", typeof(string),
-                 "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.", "ide"),
+                    "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.", "ide"),
                 ("hwversion", typeof(uint), "VDMK hardware version.", 4),
                 ("sparse", typeof(bool), "Use sparse extents.", (object)false),
                 ("split", typeof(bool), "Split data file at 2GiB.", (object)false)

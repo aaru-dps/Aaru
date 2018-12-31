@@ -46,11 +46,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return GetConfiguration(out buffer, out senseBuffer, 0x0000, MmcGetConfigurationRt.All, timeout,
-                                    out duration);
-        }
+        public bool GetConfiguration(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            GetConfiguration(out buffer, out senseBuffer, 0x0000, MmcGetConfigurationRt.All, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC GET CONFIGURATION command for all Features starting with specified one
@@ -62,11 +59,9 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool GetConfiguration(out byte[] buffer,  out byte[] senseBuffer, ushort startingFeatureNumber,
-                                     uint       timeout, out double duration)
-        {
-            return GetConfiguration(out buffer, out senseBuffer, startingFeatureNumber, MmcGetConfigurationRt.All,
-                                    timeout,    out duration);
-        }
+                                     uint       timeout, out double duration) =>
+            GetConfiguration(out buffer, out senseBuffer, startingFeatureNumber, MmcGetConfigurationRt.All, timeout,
+                             out duration);
 
         /// <summary>
         ///     Sends the MMC GET CONFIGURATION command
@@ -203,10 +198,8 @@ namespace DiscImageChef.Devices
         /// <param name="track">Start TOC from this track</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadToc(out byte[] buffer, out byte[] senseBuffer, byte track, uint timeout, out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 0, track, timeout, out duration);
-        }
+        public bool ReadToc(out byte[] buffer, out byte[] senseBuffer, byte track, uint timeout, out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, true, 0, track, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command to get formatted TOC from disc
@@ -219,10 +212,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ReadToc(out byte[] buffer, out byte[] senseBuffer, bool msf, byte track, uint timeout,
-                            out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, msf, 0, track, timeout, out duration);
-        }
+                            out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, msf, 0, track, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command to get multi-session information, in MM:SS:FF format
@@ -232,10 +223,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadSessionInfo(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 1, 0, timeout, out duration);
-        }
+        public bool ReadSessionInfo(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, true, 1, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command to get multi-session information
@@ -247,10 +236,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ReadSessionInfo(out byte[] buffer, out byte[] senseBuffer, bool msf, uint timeout,
-                                    out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, msf, 1, 0, timeout, out duration);
-        }
+                                    out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, msf, 1, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command to get raw TOC subchannels
@@ -262,10 +249,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool ReadRawToc(out byte[] buffer, out byte[] senseBuffer, byte sessionNumber, uint timeout,
-                               out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 2, sessionNumber, timeout, out duration);
-        }
+                               out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, true, 2, sessionNumber, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command to get PMA
@@ -275,10 +260,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadPma(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 3, 0, timeout, out duration);
-        }
+        public bool ReadPma(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, true, 3, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command to get ATIP
@@ -288,10 +271,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadAtip(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 4, 0, timeout, out duration);
-        }
+        public bool ReadAtip(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, true, 4, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command to get Lead-In CD-TEXT
@@ -301,10 +282,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadCdText(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadTocPmaAtip(out buffer, out senseBuffer, true, 5, 0, timeout, out duration);
-        }
+        public bool ReadCdText(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadTocPmaAtip(out buffer, out senseBuffer, true, 5, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the MMC READ TOC/PMA/ATIP command
@@ -365,11 +344,9 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadDiscInformation(out buffer, out senseBuffer, MmcDiscInformationDataTypes.DiscInformation,
-                                       timeout,    out duration);
-        }
+        public bool ReadDiscInformation(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadDiscInformation(out buffer, out senseBuffer, MmcDiscInformationDataTypes.DiscInformation, timeout,
+                                out duration);
 
         /// <summary>
         ///     Sends the MMC READ DISC INFORMATION command
@@ -527,15 +504,11 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool PreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return PreventAllowMediumRemoval(out senseBuffer, false, true, timeout, out duration);
-        }
+        public bool PreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration) =>
+            PreventAllowMediumRemoval(out senseBuffer, false, true, timeout, out duration);
 
-        public bool AllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return PreventAllowMediumRemoval(out senseBuffer, false, false, timeout, out duration);
-        }
+        public bool AllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration) =>
+            PreventAllowMediumRemoval(out senseBuffer, false, false, timeout, out duration);
 
         public bool PreventAllowMediumRemoval(out byte[] senseBuffer, bool persistent, bool prevent, uint timeout,
                                               out double duration)
@@ -557,25 +530,17 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool LoadTray(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return StartStopUnit(out senseBuffer, false, 0, 0, false, true, true, timeout, out duration);
-        }
+        public bool LoadTray(out byte[] senseBuffer, uint timeout, out double duration) =>
+            StartStopUnit(out senseBuffer, false, 0, 0, false, true, true, timeout, out duration);
 
-        public bool EjectTray(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return StartStopUnit(out senseBuffer, false, 0, 0, false, true, false, timeout, out duration);
-        }
+        public bool EjectTray(out byte[] senseBuffer, uint timeout, out double duration) =>
+            StartStopUnit(out senseBuffer, false, 0, 0, false, true, false, timeout, out duration);
 
-        public bool StartUnit(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return StartStopUnit(out senseBuffer, false, 0, 0, false, false, true, timeout, out duration);
-        }
+        public bool StartUnit(out byte[] senseBuffer, uint timeout, out double duration) =>
+            StartStopUnit(out senseBuffer, false, 0, 0, false, false, true, timeout, out duration);
 
-        public bool StopUnit(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return StartStopUnit(out senseBuffer, false, 0, 0, false, false, false, timeout, out duration);
-        }
+        public bool StopUnit(out byte[] senseBuffer, uint timeout, out double duration) =>
+            StartStopUnit(out senseBuffer, false, 0, 0, false, false, false, timeout, out duration);
 
         public bool StartStopUnit(out byte[] senseBuffer,       bool immediate, byte formatLayer, byte powerConditions,
                                   bool       changeFormatLayer, bool loadEject, bool start,       uint timeout,

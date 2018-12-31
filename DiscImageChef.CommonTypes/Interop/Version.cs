@@ -48,10 +48,7 @@ namespace DiscImageChef.CommonTypes.Interop
         ///     Gets version string
         /// </summary>
         /// <returns>Version</returns>
-        public static string GetVersion()
-        {
-            return typeof(Version).Assembly.GetName().Version.ToString();
-        }
+        public static string GetVersion() => typeof(Version).Assembly.GetName().Version.ToString();
 
         public static string GetNetCoreVersion()
         {

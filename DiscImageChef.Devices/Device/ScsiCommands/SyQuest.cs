@@ -47,10 +47,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         public bool SyQuestRead6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
-                                 out double duration)
-        {
-            return SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, false, timeout, out duration);
-        }
+                                 out double duration) =>
+            SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, false, timeout, out duration);
 
         /// <summary>
         ///     Sends the SyQuest READ LONG (6) command
@@ -63,10 +61,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         public bool SyQuestReadLong6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
-                                     out double duration)
-        {
-            return SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
-        }
+                                     out double duration) =>
+            SyQuestRead6(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
 
         /// <summary>
         ///     Sends the SyQuest READ (6) command
@@ -128,10 +124,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool SyQuestReadUsageCounter(out byte[] buffer, out byte[] senseBuffer, uint timeout,
-                                            out double duration)
-        {
-            return AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
-        }
+                                            out double duration) =>
+            AdaptecReadUsageCounter(out buffer, out senseBuffer, false, timeout, out duration);
 
         /// <summary>
         ///     Sends the SyQuest READ LONG (10) command
@@ -144,10 +138,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         public bool SyQuestReadLong10(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
-                                      out double duration)
-        {
-            return SyQuestRead10(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
-        }
+                                      out double duration) =>
+            SyQuestRead10(out buffer, out senseBuffer, lba, blockSize, 1, false, true, timeout, out duration);
 
         /// <summary>
         ///     Sends the SyQuest READ (10) command

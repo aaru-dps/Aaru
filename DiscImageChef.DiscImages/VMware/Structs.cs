@@ -40,24 +40,23 @@ namespace DiscImageChef.DiscImages
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VMwareExtentHeader
         {
-            public uint  magic;
-            public uint  version;
-            public uint  flags;
-            public ulong capacity;
-            public ulong grainSize;
-            public ulong descriptorOffset;
-            public ulong descriptorSize;
-            public uint  GTEsPerGT;
-            public ulong rgdOffset;
-            public ulong gdOffset;
-            public ulong overhead;
-            [MarshalAs(UnmanagedType.U1)]
-            public bool uncleanShutdown;
-            public byte   singleEndLineChar;
-            public byte   nonEndLineChar;
-            public byte   doubleEndLineChar1;
-            public byte   doubleEndLineChar2;
-            public ushort compression;
+            public                               uint   magic;
+            public                               uint   version;
+            public                               uint   flags;
+            public                               ulong  capacity;
+            public                               ulong  grainSize;
+            public                               ulong  descriptorOffset;
+            public                               ulong  descriptorSize;
+            public                               uint   GTEsPerGT;
+            public                               ulong  rgdOffset;
+            public                               ulong  gdOffset;
+            public                               ulong  overhead;
+            [MarshalAs(UnmanagedType.U1)] public bool   uncleanShutdown;
+            public                               byte   singleEndLineChar;
+            public                               byte   nonEndLineChar;
+            public                               byte   doubleEndLineChar1;
+            public                               byte   doubleEndLineChar2;
+            public                               ushort compression;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 433)]
             public byte[] padding;
         }
@@ -88,8 +87,7 @@ namespace DiscImageChef.DiscImages
             public uint savedGeneration;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public byte[] reserved;
-            [MarshalAs(UnmanagedType.U1)]
-            public bool uncleanShutdown;
+            [MarshalAs(UnmanagedType.U1)] public bool uncleanShutdown;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 396)]
             public byte[] padding;
         }

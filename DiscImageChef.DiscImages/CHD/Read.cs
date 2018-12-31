@@ -44,6 +44,7 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.DiscImages
 {
@@ -901,7 +902,7 @@ namespace DiscImageChef.DiscImages
                             break;
                         // "IDNT"
                         case HARD_DISK_IDENT_METADATA:
-                            Decoders.ATA.Identify.IdentifyDevice? idnt = Decoders.ATA.Identify.Decode(meta);
+                            Identify.IdentifyDevice? idnt = Decoders.ATA.Identify.Decode(meta);
                             if(idnt.HasValue)
                             {
                                 imageInfo.MediaManufacturer     = idnt.Value.MediaManufacturer;

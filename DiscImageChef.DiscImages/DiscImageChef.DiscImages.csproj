@@ -325,7 +325,6 @@
     <Compile Include="QCOW\Unsupported.cs" />
     <Compile Include="QCOW\Write.cs" />
     <Compile Include="QED\Constants.cs" />
-    <Compile Include="QED\Enums.cs" />
     <Compile Include="QED\Helpers.cs" />
     <Compile Include="QED\Identify.cs" />
     <Compile Include="QED\Properties.cs" />

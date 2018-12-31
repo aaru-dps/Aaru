@@ -74,10 +74,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {

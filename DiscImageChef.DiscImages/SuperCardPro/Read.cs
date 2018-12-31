@@ -228,51 +228,32 @@ namespace DiscImageChef.DiscImages
             throw new NotImplementedException("Flux decoding is not yet implemented.");
         }
 
-        public byte[] ReadDiskTag(MediaTagType tag)
-        {
+        public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
-        public byte[] ReadSectors(ulong sectorAddress, uint length)
-        {
+        public byte[] ReadSectors(ulong sectorAddress, uint length) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
+        public byte[] ReadSectorLong(ulong sectorAddress) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
-        {
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
-        public bool? VerifySector(ulong sectorAddress)
-        {
+        public bool? VerifySector(ulong sectorAddress) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
+                                   out List<ulong> unknownLbas) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-        }
 
         public bool? VerifyMediaImage()
         {

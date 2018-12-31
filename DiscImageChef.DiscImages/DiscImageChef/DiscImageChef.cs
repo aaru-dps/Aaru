@@ -130,7 +130,8 @@ namespace DiscImageChef.DiscImages
         Md5Context md5Provider;
         /// <summary>Cache of media tags.</summary>
         Dictionary<MediaTagType, byte[]> mediaTags;
-        bool nocompress;
+        byte[] mode2Subheaders;
+        bool   nocompress;
         /// <summary>If DDT is on-disk, this is the image stream offset at which it starts.</summary>
         long outMemoryDdtPosition;
         bool rewinded;
@@ -161,7 +162,6 @@ namespace DiscImageChef.DiscImages
         ulong[] userDataDdt;
         bool  writingLong;
         ulong writtenSectors;
-        byte[] mode2Subheaders;
 
         public DiscImageChef()
         {

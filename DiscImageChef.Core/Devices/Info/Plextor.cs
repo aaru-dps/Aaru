@@ -52,12 +52,12 @@ namespace DiscImageChef.Core.Devices.Info
         public bool   HidesSessions;
         public bool   Hiding;
         public bool   IsDvd;
-        public ushort PoweRecLast;
-        public ushort PoweRecMax;
-        public ushort PoweRecSelected;
         public bool   PoweRec;
         public bool   PoweRecEnabled;
+        public ushort PoweRecLast;
+        public ushort PoweRecMax;
         public ushort PoweRecRecommendedSpeed;
+        public ushort PoweRecSelected;
         public bool   SecuRec;
         public bool   SilentMode;
         public bool   SilentModeEnabled;

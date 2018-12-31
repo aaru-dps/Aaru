@@ -37,7 +37,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using System.Xml;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
@@ -45,7 +44,6 @@ using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
 using Newtonsoft.Json;
 using Device = DiscImageChef.Devices.Device;
-using Formatting = Newtonsoft.Json.Formatting;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using OperatingSystem = DiscImageChef.Database.Models.OperatingSystem;
 using Version = DiscImageChef.Database.Models.Version;
@@ -70,7 +68,6 @@ namespace DiscImageChef.Core
         public static void LoadStats()
         {
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
-            {
                 try
                 {
                     Stats         allStats = new Stats();
@@ -424,7 +421,6 @@ namespace DiscImageChef.Core
                 {
                     // Do not care about it
                 }
-            }
 
             if(Settings.Settings.Current.Stats == null) return;
 

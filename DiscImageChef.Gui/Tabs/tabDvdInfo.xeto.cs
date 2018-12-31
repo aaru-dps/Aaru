@@ -32,50 +32,37 @@
 
 using System;
 using System.IO;
-using System.Text;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Decoders.Bluray;
 using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Decoders.Xbox;
-using DiscImageChef.Gui.Controls;
-using DiscImageChef.Gui.Forms;
-using DiscImageChef.Gui.Tabs;
-using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using BCA = DiscImageChef.Decoders.Bluray.BCA;
-using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
-using DDS = DiscImageChef.Decoders.DVD.DDS;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Spare = DiscImageChef.Decoders.DVD.Spare;
 
 namespace DiscImageChef.Gui.Tabs
 {
     public class tabDvdInfo : TabPage
     {
-        byte[] DvdPfi;
-        byte[] DvdDmi;
-        byte[] DvdCmi;
-        byte[] HddvdCopyrightInformation;
-        byte[] DvdBca;
         byte[] DvdAacs;
+        byte[] DvdBca;
+        byte[] DvdCmi;
+        byte[] DvdDmi;
+        byte[] DvdPfi;
+        byte[] HddvdCopyrightInformation;
 
         public tabDvdInfo()
         {
             XamlReader.Load(this);
         }
 
-        internal void LoadData(MediaType mediaType, byte[] pfi, byte[] dmi, byte[] cmi, byte[] hdCopyrightInformation, byte[] bca, byte[] aacs, PFI.PhysicalFormatInformation? decodedPfi)
+        internal void LoadData(MediaType mediaType, byte[] pfi, byte[] dmi, byte[] cmi,
+                               byte[]    hdCopyrightInformation,
+                               byte[]    bca, byte[] aacs, PFI.PhysicalFormatInformation? decodedPfi)
         {
-            DvdPfi=pfi;
-            DvdDmi=dmi;
-            DvdCmi=cmi;
-            HddvdCopyrightInformation=hdCopyrightInformation;
-            DvdBca=bca;
-            DvdAacs=aacs;
+            DvdPfi                    = pfi;
+            DvdDmi                    = dmi;
+            DvdCmi                    = cmi;
+            HddvdCopyrightInformation = hdCopyrightInformation;
+            DvdBca                    = bca;
+            DvdAacs                   = aacs;
 
             switch(mediaType)
             {
@@ -113,9 +100,9 @@ namespace DiscImageChef.Gui.Tabs
             btnSaveDvdAacs.Visible  = aacs                   != null;
 
             Visible = grpDvdPfi.Visible     || grpDvdCmi.Visible || btnSaveDvdPfi.Visible ||
-                             btnSaveDvdDmi.Visible ||
-                             btnSaveDvdCmi.Visible || btnSaveHdDvdCmi.Visible || btnSaveDvdBca.Visible ||
-                             btnSaveDvdAacs.Visible;
+                      btnSaveDvdDmi.Visible ||
+                      btnSaveDvdCmi.Visible || btnSaveHdDvdCmi.Visible || btnSaveDvdBca.Visible ||
+                      btnSaveDvdAacs.Visible;
         }
 
         void SaveElement(byte[] data)
@@ -165,18 +152,18 @@ namespace DiscImageChef.Gui.Tabs
         #region XAML controls
         #pragma warning disable 169
         #pragma warning disable 649
-        GroupBox     grpDvdPfi;
-        TextArea     txtDvdPfi;
-        GroupBox     grpDvdCmi;
-        TextArea     txtDvdCmi;
-        GroupBox     grpHdDvdCmi;
-        TextArea     txtHdDvdCmi;
-        Button       btnSaveDvdPfi;
-        Button       btnSaveDvdDmi;
-        Button       btnSaveDvdCmi;
-        Button       btnSaveHdDvdCmi;
-        Button       btnSaveDvdBca;
-        Button       btnSaveDvdAacs;
+        GroupBox grpDvdPfi;
+        TextArea txtDvdPfi;
+        GroupBox grpDvdCmi;
+        TextArea txtDvdCmi;
+        GroupBox grpHdDvdCmi;
+        TextArea txtHdDvdCmi;
+        Button   btnSaveDvdPfi;
+        Button   btnSaveDvdDmi;
+        Button   btnSaveDvdCmi;
+        Button   btnSaveHdDvdCmi;
+        Button   btnSaveDvdBca;
+        Button   btnSaveDvdAacs;
         #pragma warning restore 169
         #pragma warning restore 649
         #endregion

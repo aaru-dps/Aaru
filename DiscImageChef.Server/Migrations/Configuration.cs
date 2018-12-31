@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 using System.Data.Entity.Migrations;
 using DiscImageChef.Server.Models;
 

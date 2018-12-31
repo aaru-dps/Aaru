@@ -56,8 +56,12 @@ namespace DiscImageChef.DiscImages
             extension = Path.GetExtension(imageFilter.GetFilename())?.ToLower();
 
             int[] offsets = extension == ".do"
-                                ? (isDos ? deinterleave : interleave)
-                                : (isDos ? interleave : deinterleave);
+                                ? isDos
+                                      ? deinterleave
+                                      : interleave
+                                : isDos
+                                    ? interleave
+                                    : deinterleave;
 
             for(int t = 0; t < 35; t++)
             {
@@ -80,10 +84,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {

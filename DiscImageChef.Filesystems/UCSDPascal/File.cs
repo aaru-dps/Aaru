@@ -149,7 +149,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 Inode            = 0,
                 LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
                 Length = (entry.LastBlock - entry.FirstBlock) * device.Info.SectorSize * multiplier +
-                                   entry.LastBytes,
+                         entry.LastBytes,
                 Links = 1,
                 Mode  = 0x124,
                 UID   = 0

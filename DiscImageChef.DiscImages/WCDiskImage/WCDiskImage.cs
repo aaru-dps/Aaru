@@ -40,44 +40,46 @@ namespace DiscImageChef.DiscImages
 {
     public partial class WCDiskImage : IMediaImage
     {
+        public Dictionary<(int cylinder, int head, int sector), bool> badSectors =
+            new Dictionary<(int cylinder, int head, int sector), bool>();
         /// <summary>
         ///     The file header after the image has been opened
         /// </summary>
         WCDiskImageFileHeader fileHeader;
+        ImageInfo imageInfo;
+
+        /* the sectors are cached here */
+        public Dictionary<(int cylinder, int head, int sector), byte[]> sectorCache =
+            new Dictionary<(int cylinder, int head, int sector), byte[]>();
 
         /// <summary>
         ///     The ImageFilter we're reading from, after the file has been opened
         /// </summary>
         IFilter wcImageFilter;
-        ImageInfo imageInfo;
-
-        /* the sectors are cached here */
-        public Dictionary<(int cylinder, int head, int sector), byte[]> sectorCache = new Dictionary<(int cylinder, int head, int sector), byte[]>();
-        public Dictionary<(int cylinder, int head, int sector), bool> badSectors = new Dictionary<(int cylinder, int head, int sector), bool>();
 
         public WCDiskImage()
         {
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags = new List<MediaTagType>(),
-                HasPartitions = false,
-                HasSessions = false,
-                Version = null,
-                Application = null,
-                ApplicationVersion = null,
-                Creator = null,
-                Comments = null,
-                MediaManufacturer = null,
-                MediaModel = null,
-                MediaSerialNumber = null,
-                MediaBarcode = null,
-                MediaPartNumber = null,
-                MediaSequence = 0,
-                LastMediaSequence = 0,
-                DriveManufacturer = null,
-                DriveModel = null,
-                DriveSerialNumber = null,
+                ReadableSectorTags    = new List<SectorTagType>(),
+                ReadableMediaTags     = new List<MediaTagType>(),
+                HasPartitions         = false,
+                HasSessions           = false,
+                Version               = null,
+                Application           = null,
+                ApplicationVersion    = null,
+                Creator               = null,
+                Comments              = null,
+                MediaManufacturer     = null,
+                MediaModel            = null,
+                MediaSerialNumber     = null,
+                MediaBarcode          = null,
+                MediaPartNumber       = null,
+                MediaSequence         = 0,
+                LastMediaSequence     = 0,
+                DriveManufacturer     = null,
+                DriveModel            = null,
+                DriveSerialNumber     = null,
                 DriveFirmwareRevision = null
             };
         }

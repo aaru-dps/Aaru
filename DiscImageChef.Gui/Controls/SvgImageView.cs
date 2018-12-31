@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 using System;
 using System.IO;
 using Eto.Drawing;
@@ -38,11 +39,10 @@ namespace DiscImageChef.Gui.Controls
 {
     public class SvgImageView : ImageView
     {
+        byte[] cachedRender;
         Stream svgStream;
 
         public new Image Image => base.Image;
-
-        byte[] cachedRender;
 
         public Stream SvgStream
         {
@@ -58,7 +58,7 @@ namespace DiscImageChef.Gui.Controls
 
         void Redraw()
         {
-            if(Width == -1 || Height == -1 || svgStream== null) return;
+            if(Width == -1 || Height == -1 || svgStream == null) return;
 
             svgStream.Position = 0;
 
@@ -84,6 +84,7 @@ namespace DiscImageChef.Gui.Controls
             base.Image   = new Bitmap(cachedRender);
             */
         }
+
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);

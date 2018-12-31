@@ -56,8 +56,9 @@ namespace DiscImageChef.Tests.Images
 
         readonly string[] md5S =
         {
-            "eae3a95671d077deb702b3549a769f56", "eae3a95671d077deb702b3549a769f56", "c5d92544c3e78b7f0a9b4baaa9a64eec",
-            "c5d92544c3e78b7f0a9b4baaa9a64eec", "a99744348a70b62b57bce2dec9132ced", "a99744348a70b62b57bce2dec9132ced",
+            "eae3a95671d077deb702b3549a769f56", "eae3a95671d077deb702b3549a769f56",
+            "c5d92544c3e78b7f0a9b4baaa9a64eec", "c5d92544c3e78b7f0a9b4baaa9a64eec",
+            "a99744348a70b62b57bce2dec9132ced", "a99744348a70b62b57bce2dec9132ced",
             "93e71b9ecdb39d3ec9245b4f451856d4", "93e71b9ecdb39d3ec9245b4f451856d4"
         };
 

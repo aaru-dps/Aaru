@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Decoders.ATA;
 using Schemas;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
@@ -217,7 +218,7 @@ namespace DiscImageChef.DiscImages
 
             if(identify == null)
             {
-                Decoders.ATA.Identify.IdentifyDevice ataId = new Decoders.ATA.Identify.IdentifyDevice
+                Identify.IdentifyDevice ataId = new Identify.IdentifyDevice
                 {
                     GeneralConfiguration =
                         Decoders.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
@@ -229,7 +230,8 @@ namespace DiscImageChef.DiscImages
                     SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
                     VendorWord47    = 0x80,
                     Capabilities =
-                        Decoders.ATA.Identify.CapabilitiesBit.DMASupport | Decoders.ATA.Identify.CapabilitiesBit.IORDY |
+                        Decoders.ATA.Identify.CapabilitiesBit.DMASupport |
+                        Decoders.ATA.Identify.CapabilitiesBit.IORDY      |
                         Decoders.ATA.Identify.CapabilitiesBit.LBASupport,
                     ExtendedIdentify       = Decoders.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
                     CurrentCylinders       = (ushort)imageInfo.Cylinders,
@@ -330,16 +332,8 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }

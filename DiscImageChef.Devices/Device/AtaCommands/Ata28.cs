@@ -70,10 +70,8 @@ namespace DiscImageChef.Devices
         }
 
         public bool ReadDma(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, uint lba, byte count,
-                            uint       timeout, out double                 duration)
-        {
-            return ReadDma(out buffer, out statusRegisters, true, lba, count, timeout, out duration);
-        }
+                            uint       timeout, out double                 duration) =>
+            ReadDma(out buffer, out statusRegisters, true, lba, count, timeout, out duration);
 
         public bool ReadDma(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, bool       retry, uint lba,
                             byte       count,  uint                       timeout,         out double duration)
@@ -158,10 +156,8 @@ namespace DiscImageChef.Devices
         }
 
         public bool Read(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, uint lba, byte count,
-                         uint       timeout, out double                 duration)
-        {
-            return Read(out buffer, out statusRegisters, true, lba, count, timeout, out duration);
-        }
+                         uint       timeout, out double                 duration) =>
+            Read(out buffer, out statusRegisters, true, lba, count, timeout, out duration);
 
         public bool Read(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, bool       retry, uint lba,
                          byte       count,  uint                       timeout,         out double duration)
@@ -191,10 +187,8 @@ namespace DiscImageChef.Devices
         }
 
         public bool ReadLong(out byte[] buffer,  out AtaErrorRegistersLba28 statusRegisters, uint lba, uint blockSize,
-                             uint       timeout, out double                 duration)
-        {
-            return ReadLong(out buffer, out statusRegisters, true, lba, blockSize, timeout, out duration);
-        }
+                             uint       timeout, out double                 duration) =>
+            ReadLong(out buffer, out statusRegisters, true, lba, blockSize, timeout, out duration);
 
         public bool ReadLong(out byte[] buffer, out AtaErrorRegistersLba28 statusRegisters, bool retry,
                              uint       lba,

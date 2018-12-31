@@ -46,7 +46,6 @@ using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
-using DiscImageChef.Filters;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
@@ -498,9 +497,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 32, Parameter = 0x00};
                             currentModePage = new Modes.ModePage
                             {
-                                Page         = 0x01,
-                                Subpage      = 0x00,
-                                PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                             };
                         }
                         else
@@ -521,9 +518,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             currentModePage = new Modes.ModePage
                             {
-                                Page         = 0x01,
-                                Subpage      = 0x00,
-                                PageResponse = Modes.EncodeModePage_01(pg)
+                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
                             };
                         }
                     }
@@ -569,9 +564,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 new Modes.ModePage
                                 {
-                                    Page         = 0x01,
-                                    Subpage      = 0x00,
-                                    PageResponse = Modes.EncodeModePage_01(pg)
+                                    Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
                                 }
                             }
                         };
@@ -634,8 +627,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(),
-                        Pages  = new[] {currentModePage.Value}
+                        Header = new Modes.ModeHeader(), Pages = new[] {currentModePage.Value}
                     };
                     md6  = Modes.EncodeMode6(md, dev.ScsiType);
                     md10 = Modes.EncodeMode10(md, dev.ScsiType);
@@ -672,7 +664,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             if(!ret && !force)
                             {
-                                dumpLog.WriteLine($"Cannot write USB descriptors.");
+                                dumpLog.WriteLine("Cannot write USB descriptors.");
                                 throw new ArgumentException(outputPlugin.ErrorMessage);
                             }
                         }
@@ -688,7 +680,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                 if(!ret && !force)
                                 {
-                                    dumpLog.WriteLine($"Cannot write ATAPI IDENTIFY PACKET DEVICE.");
+                                    dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
                                     throw new ArgumentException(outputPlugin.ErrorMessage);
                                 }
                             }
@@ -702,7 +694,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             if(!ret && !force)
                             {
-                                dumpLog.WriteLine($"Cannot write SCSI INQUIRY.");
+                                dumpLog.WriteLine("Cannot write SCSI INQUIRY.");
                                 throw new ArgumentException(outputPlugin.ErrorMessage);
                             }
 
@@ -723,7 +715,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                     if(!ret && !force)
                                     {
-                                        dumpLog.WriteLine($"Cannot write SCSI MODE SENSE (10).");
+                                        dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
                                         throw new ArgumentException(outputPlugin.ErrorMessage);
                                     }
                                 }
@@ -744,7 +736,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                                     if(!ret && !force)
                                     {
-                                        dumpLog.WriteLine($"Cannot write SCSI MODE SENSE (6).");
+                                        dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
                                         throw new ArgumentException(outputPlugin.ErrorMessage);
                                     }
                                 }

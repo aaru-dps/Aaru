@@ -283,21 +283,27 @@ namespace DiscImageChef.Settings
                                             stats.TryGetValue("ShareStats", out NSObject obj2) &&
                                             ((NSNumber)obj2).ToBool(),
                                         BenchmarkStats =
-                                            stats.TryGetValue("BenchmarkStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                            stats.TryGetValue("BenchmarkStats", out obj2) &&
+                                            ((NSNumber)obj2).ToBool(),
                                         CommandStats =
-                                            stats.TryGetValue("CommandStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                            stats.TryGetValue("CommandStats", out obj2) &&
+                                            ((NSNumber)obj2).ToBool(),
                                         DeviceStats =
                                             stats.TryGetValue("DeviceStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                         FilesystemStats =
-                                            stats.TryGetValue("FilesystemStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                            stats.TryGetValue("FilesystemStats", out obj2) &&
+                                            ((NSNumber)obj2).ToBool(),
                                         FilterStats =
                                             stats.TryGetValue("FilterStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                         MediaImageStats =
-                                            stats.TryGetValue("MediaImageStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                            stats.TryGetValue("MediaImageStats", out obj2) &&
+                                            ((NSNumber)obj2).ToBool(),
                                         MediaScanStats =
-                                            stats.TryGetValue("MediaScanStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                            stats.TryGetValue("MediaScanStats", out obj2) &&
+                                            ((NSNumber)obj2).ToBool(),
                                         PartitionStats =
-                                            stats.TryGetValue("PartitionStats", out obj2) && ((NSNumber)obj2).ToBool(),
+                                            stats.TryGetValue("PartitionStats", out obj2) &&
+                                            ((NSNumber)obj2).ToBool(),
                                         MediaStats =
                                             stats.TryGetValue("MediaStats", out obj2) && ((NSNumber)obj2).ToBool(),
                                         VerifyStats =
@@ -321,7 +327,7 @@ namespace DiscImageChef.Settings
                         }
                     }
                         break;
-#if !NETSTANDARD2_0
+                    #if !NETSTANDARD2_0
                     // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/DiscImageChef
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
@@ -368,7 +374,7 @@ namespace DiscImageChef.Settings
                     }
 
                         break;
-#endif
+                    #endif
                     // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
                     default:
                     {
@@ -459,7 +465,7 @@ namespace DiscImageChef.Settings
                         fs.Close();
                     }
                         break;
-#if !NETSTANDARD2_0
+                    #if !NETSTANDARD2_0
                     // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/DiscImageChef
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
@@ -509,7 +515,7 @@ namespace DiscImageChef.Settings
                         }
                     }
                         break;
-#endif
+                    #endif
                     // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
                     default:
                     {

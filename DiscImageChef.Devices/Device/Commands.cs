@@ -54,11 +54,9 @@ namespace DiscImageChef.Devices
         ///     SCSI sense
         /// </param>
         public int SendScsiCommand(byte[]        cdb,       ref byte[] buffer,   out byte[] senseBuffer, uint timeout,
-                                   ScsiDirection direction, out double duration, out bool   sense)
-        {
-            return Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
-                                           out duration, out sense);
-        }
+                                   ScsiDirection direction, out double duration, out bool   sense) =>
+            Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
+                                    out duration, out sense);
 
         /// <summary>
         ///     Sends an ATA/ATAPI command to this device using CHS addressing
@@ -80,12 +78,9 @@ namespace DiscImageChef.Devices
                                   AtaProtocol     protocol,  AtaTransferRegister      transferRegister,
                                   ref byte[]      buffer,
                                   uint            timeout,  bool     transferBlocks,
-                                  out double      duration, out bool sense)
-        {
-            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
-                                          out sense);
-        }
+                                  out double      duration, out bool sense) =>
+            Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
+                                   ref buffer, timeout, transferBlocks, out duration, out sense);
 
         /// <summary>
         ///     Sends an ATA/ATAPI command to this device using 28-bit LBA addressing
@@ -107,12 +102,9 @@ namespace DiscImageChef.Devices
                                   AtaProtocol       protocol,  AtaTransferRegister        transferRegister,
                                   ref byte[]        buffer,
                                   uint              timeout,  bool     transferBlocks,
-                                  out double        duration, out bool sense)
-        {
-            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
-                                          out sense);
-        }
+                                  out double        duration, out bool sense) =>
+            Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
+                                   ref buffer, timeout, transferBlocks, out duration, out sense);
 
         /// <summary>
         ///     Sends an ATA/ATAPI command to this device using 48-bit LBA addressing
@@ -134,12 +126,9 @@ namespace DiscImageChef.Devices
                                   AtaProtocol       protocol,  AtaTransferRegister        transferRegister,
                                   ref byte[]        buffer,
                                   uint              timeout,  bool     transferBlocks,
-                                  out double        duration, out bool sense)
-        {
-            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
-                                          transferRegister, ref buffer, timeout, transferBlocks, out duration,
-                                          out sense);
-        }
+                                  out double        duration, out bool sense) =>
+            Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
+                                   ref buffer, timeout, transferBlocks, out duration, out sense);
 
         /// <summary>
         ///     Sends a MMC/SD command to this device

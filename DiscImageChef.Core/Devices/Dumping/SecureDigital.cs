@@ -45,7 +45,6 @@ using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.MMC;
 using DiscImageChef.Devices;
-using DiscImageChef.Filters;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 
@@ -488,9 +487,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     cidDump = new DumpType
                     {
-                        Image     = outputPath,
-                        Size      = cid.Length,
-                        Checksums = Checksum.GetChecksums(cid).ToArray()
+                        Image = outputPath, Size = cid.Length, Checksums = Checksum.GetChecksums(cid).ToArray()
                     };
 
                     ret =
@@ -511,9 +508,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     csdDump = new DumpType
                     {
-                        Image     = outputPath,
-                        Size      = csd.Length,
-                        Checksums = Checksum.GetChecksums(csd).ToArray()
+                        Image = outputPath, Size = csd.Length, Checksums = Checksum.GetChecksums(csd).ToArray()
                     };
 
                     ret =
@@ -534,9 +529,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
                     {
-                        Image     = outputPath,
-                        Size      = ecsd.Length,
-                        Checksums = Checksum.GetChecksums(ecsd).ToArray()
+                        Image = outputPath, Size = ecsd.Length, Checksums = Checksum.GetChecksums(ecsd).ToArray()
                     };
 
                     ret = outputPlugin.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
@@ -553,9 +546,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     ocrDump = new DumpType
                     {
-                        Image     = outputPath,
-                        Size      = ocr.Length,
-                        Checksums = Checksum.GetChecksums(ocr).ToArray()
+                        Image = outputPath, Size = ocr.Length, Checksums = Checksum.GetChecksums(ocr).ToArray()
                     };
 
                     ret =
@@ -576,9 +567,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                     {
-                        Image     = outputPath,
-                        Size      = scr.Length,
-                        Checksums = Checksum.GetChecksums(scr).ToArray()
+                        Image = outputPath, Size = scr.Length, Checksums = Checksum.GetChecksums(scr).ToArray()
                     };
 
                     ret = outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);

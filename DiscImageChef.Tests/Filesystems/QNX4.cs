@@ -41,10 +41,14 @@ namespace DiscImageChef.Tests.Filesystems
     public class Qnx4
     {
         readonly string[] testfiles =
-            {"qnx_4.24_dsdd.img.lz", "qnx_4.24_dshd.img.lz", "qnx_4.24_mf2dd.img.lz", "qnx_4.24_mf2hd.img.lz"};
+        {
+            "qnx_4.24_dsdd.img.lz", "qnx_4.24_dshd.img.lz", "qnx_4.24_mf2dd.img.lz", "qnx_4.24_mf2hd.img.lz"
+        };
 
         readonly MediaType[] mediatypes =
-            {MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD};
+        {
+            MediaType.DOS_525_DS_DD_9, MediaType.DOS_525_HD, MediaType.DOS_35_DS_DD_9, MediaType.DOS_35_HD
+        };
 
         readonly ulong[] sectors = {720, 2400, 1440, 2880};
 

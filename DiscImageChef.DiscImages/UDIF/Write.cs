@@ -283,10 +283,16 @@ namespace DiscImageChef.DiscImages
                                 new NSDictionary
                                 {
                                     {"Attributes", "0x0050"},
-                                    {"CFName", "whole disk (DiscImageChef : 0)"},
+                                    {
+                                        "CFName",
+                                        "whole disk (DiscImageChef : 0)"
+                                    },
                                     {"Data", chunkMs.ToArray()},
                                     {"ID", "0"},
-                                    {"Name", "whole disk (DiscImageChef : 0)"}
+                                    {
+                                        "Name",
+                                        "whole disk (DiscImageChef : 0)"
+                                    }
                                 }
                             }
                         }
@@ -355,16 +361,9 @@ namespace DiscImageChef.DiscImages
         }
 
         // TODO: Comments
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            return true;
-        }
+        public bool SetMetadata(ImageInfo metadata) => true;
 
-        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
-        {
-            // Not stored in image
-            return true;
-        }
+        public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
@@ -378,16 +377,8 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }

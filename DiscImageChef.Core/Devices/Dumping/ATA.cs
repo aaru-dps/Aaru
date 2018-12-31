@@ -46,7 +46,6 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Devices;
-using DiscImageChef.Filters;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;

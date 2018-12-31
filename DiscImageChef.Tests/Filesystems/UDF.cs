@@ -72,8 +72,8 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] volumename =
         {
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "*NoLabel*", "*NoLabel*",
-            "anonymous"
+            "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "*NoLabel*",
+            "*NoLabel*", "anonymous"
         };
 
         readonly string[] volumeserial =
@@ -82,8 +82,8 @@ namespace DiscImageChef.Tests.Filesystems
             "4DD0458B (Mac OS X newfs_udf) UDF Volume Set", "595c5d07f4fc8e8dLinuxUDF",
             "5D91CB4F (Mac OS X newfs_udf) UDF Volume Set", "595c5d0bee60c3bbLinuxUDF",
             "48847EB3 (Mac OS X newfs_udf) UDF Volume Set", "595c5d0e4f338552LinuxUDF",
-            "709E84A1 (Mac OS X newfs_udf) UDF Volume Set", "78CE3237 (Mac OS X newfs_udf) UDF Volume Set", "595EB2A9",
-            "595EB55A", "7cc94d726669d773"
+            "709E84A1 (Mac OS X newfs_udf) UDF Volume Set", "78CE3237 (Mac OS X newfs_udf) UDF Volume Set",
+            "595EB2A9", "595EB55A", "7cc94d726669d773"
         };
 
         readonly string[] oemid =
@@ -129,7 +129,9 @@ namespace DiscImageChef.Tests.Filesystems
     public class UdfOptical
     {
         readonly string[] testfiles =
-            {"1.50/ecs20.iso.lz", "2.00/ecs20.iso.lz", "2.01/ecs20.iso.lz", "2.01/ecs20_cdrw.iso.lz"};
+        {
+            "1.50/ecs20.iso.lz", "2.00/ecs20.iso.lz", "2.01/ecs20.iso.lz", "2.01/ecs20_cdrw.iso.lz"
+        };
 
         readonly ulong[] sectors = {2295104, 2295104, 2295104, 295264};
 
@@ -145,7 +147,8 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly string[] volumeserial =
         {
-            "Volume Set ID not specified", "Volume Set ID not specified", "VolumeSetId", "Volume Set ID not specified"
+            "Volume Set ID not specified", "Volume Set ID not specified", "VolumeSetId",
+            "Volume Set ID not specified"
         };
 
         readonly string[] oemid = {"*ExpressUDF", "*ExpressUDF", "*ExpressUDF", "*ExpressUDF"};

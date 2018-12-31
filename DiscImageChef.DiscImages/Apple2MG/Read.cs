@@ -133,8 +133,12 @@ namespace DiscImageChef.DiscImages
                                  tmp[0x11035] == 16 && tmp[0x11036] == 0 && tmp[0x11037] == 1;
                     decodedImage = new byte[imageHeader.DataSize];
                     offsets = imageHeader.ImageFormat == SectorOrder.Dos
-                                  ? (isDos ? deinterleave : interleave)
-                                  : (isDos ? interleave : deinterleave);
+                                  ? isDos
+                                        ? deinterleave
+                                        : interleave
+                                  : isDos
+                                      ? interleave
+                                      : deinterleave;
                     for(int t = 0; t < 35; t++)
                     {
                         for(int s = 0; s < 16; s++)
@@ -267,10 +271,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {

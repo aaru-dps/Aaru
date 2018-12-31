@@ -32,10 +32,10 @@
 
 using System;
 using System.IO;
+using Microsoft.Win32.SafeHandles;
 #if !NETSTANDARD2_0
 using System.Security.AccessControl;
 #endif
-using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Filters
 {
@@ -119,40 +119,6 @@ namespace DiscImageChef.Filters
 
             if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
         }
-
-#if !NETSTANDARD2_0
-        public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
-                            int         bufferSize,
-                            FileOptions options, long start, long end)
-        {
-            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
-
-            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
-
-            streamStart = start;
-            streamEnd   = end;
-
-            baseStream = new FileStream(path, mode, rights, share, bufferSize, options);
-
-            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
-        }
-
-        public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
-                            int         bufferSize,
-                            FileOptions options, FileSecurity fileSecurity, long start, long end)
-        {
-            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
-
-            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
-
-            streamStart = start;
-            streamEnd   = end;
-
-            baseStream = new FileStream(path, mode, rights, share, bufferSize, options, fileSecurity);
-
-            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
-        }
-#endif
 
         public OffsetStream(string path,     FileMode mode,  FileAccess access, FileShare share, int bufferSize,
                             bool   useAsync, long     start, long       end)
@@ -350,20 +316,14 @@ namespace DiscImageChef.Filters
             base.Dispose();
         }
 
-        public override int EndRead(IAsyncResult asyncResult)
-        {
-            return baseStream.EndRead(asyncResult);
-        }
+        public override int EndRead(IAsyncResult asyncResult) => baseStream.EndRead(asyncResult);
 
         public override void EndWrite(IAsyncResult asyncResult)
         {
             baseStream.EndWrite(asyncResult);
         }
 
-        public override int ReadByte()
-        {
-            return baseStream.Position == streamEnd + 1 ? -1 : baseStream.ReadByte();
-        }
+        public override int ReadByte() => baseStream.Position == streamEnd + 1 ? -1 : baseStream.ReadByte();
 
         public override void WriteByte(byte value)
         {
@@ -415,5 +375,39 @@ namespace DiscImageChef.Filters
 
             baseStream.Write(buffer, offset, count);
         }
+
+        #if !NETSTANDARD2_0
+        public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
+                            int         bufferSize,
+                            FileOptions options, long start, long end)
+        {
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+
+            streamStart = start;
+            streamEnd   = end;
+
+            baseStream = new FileStream(path, mode, rights, share, bufferSize, options);
+
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+        }
+
+        public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
+                            int         bufferSize,
+                            FileOptions options, FileSecurity fileSecurity, long start, long end)
+        {
+            if(start < 0) throw new ArgumentOutOfRangeException(nameof(start), "Start can't be a negative number.");
+
+            if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
+
+            streamStart = start;
+            streamEnd   = end;
+
+            baseStream = new FileStream(path, mode, rights, share, bufferSize, options, fileSecurity);
+
+            if(end > baseStream.Length) throw new ArgumentOutOfRangeException(nameof(end), "End is after stream end.");
+        }
+        #endif
     }
 }

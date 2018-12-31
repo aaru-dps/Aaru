@@ -40,7 +40,9 @@ namespace DiscImageChef.Tests.Partitions
     public class Bsd
     {
         readonly string[] testfiles =
-            {"parted.vdi.lz", "netbsd_1.6.vdi.lz", "netbsd_6.1.5.vdi.lz", "netbsd_7.1.vdi.lz"};
+        {
+            "parted.vdi.lz", "netbsd_1.6.vdi.lz", "netbsd_6.1.5.vdi.lz", "netbsd_7.1.vdi.lz"
+        };
 
         readonly Partition[][] wanted =
         {

@@ -69,7 +69,7 @@ namespace DiscImageChef.Commands
                     kvp.Value.SupportedOptions.ToList();
                 if(options.Count == 0) continue;
 
-                DicConsole.WriteLine("\tOptions for {0}:",                kvp.Value.Name);
+                DicConsole.WriteLine("\tOptions for {0}:",                 kvp.Value.Name);
                 DicConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", "Name", "Type", "Default", "Description");
                 foreach((string name, Type type, string description, object @default) option in
                     options.OrderBy(t => t.name))

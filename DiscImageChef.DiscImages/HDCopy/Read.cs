@@ -72,8 +72,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, 2,
-                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                         false));
+                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                            false));
 
             // the start offset of the track data
             long currentOffset = 2 + 2 * 82;

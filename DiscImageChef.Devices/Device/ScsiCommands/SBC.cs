@@ -48,10 +48,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Starting block.</param>
         /// <param name="blockSize">Block size in bytes.</param>
         public bool Read6(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize, uint timeout,
-                          out double duration)
-        {
-            return Read6(out buffer, out senseBuffer, lba, blockSize, 1, timeout, out duration);
-        }
+                          out double duration) =>
+            Read6(out buffer, out senseBuffer, lba, blockSize, 1, timeout, out duration);
 
         /// <summary>
         ///     Sends the SBC READ (6) command

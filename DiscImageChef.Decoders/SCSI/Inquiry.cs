@@ -67,7 +67,8 @@ namespace DiscImageChef.Decoders.SCSI
                 return null;
             }
 
-            if(SCSIInquiryResponse.Length < SCSIInquiryResponse[4] + 5 && SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
+            if(SCSIInquiryResponse.Length < SCSIInquiryResponse[4] + 5 &&
+               SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
             {
                 DicConsole.DebugWriteLine("SCSI INQUIRY decoder",
                                           "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.",
@@ -357,19 +358,22 @@ namespace DiscImageChef.Decoders.SCSI
             if(decoded.VendorIdentification != null)
             {
                 length = 16;
-                Array.Copy(decoded.VendorIdentification, 0, buffer, 8, decoded.VendorIdentification.Length >= 8 ? 8 : decoded.VendorIdentification.Length);
+                Array.Copy(decoded.VendorIdentification, 0, buffer, 8,
+                           decoded.VendorIdentification.Length >= 8 ? 8 : decoded.VendorIdentification.Length);
             }
 
             if(decoded.ProductIdentification != null)
             {
                 length = 32;
-                Array.Copy(decoded.ProductIdentification, 0, buffer, 16, decoded.ProductIdentification.Length >= 16 ? 16 : decoded.ProductIdentification.Length);
+                Array.Copy(decoded.ProductIdentification, 0, buffer, 16,
+                           decoded.ProductIdentification.Length >= 16 ? 16 : decoded.ProductIdentification.Length);
             }
 
             if(decoded.ProductRevisionLevel != null)
             {
                 length = 36;
-                Array.Copy(decoded.ProductRevisionLevel, 0, buffer, 32, decoded.ProductRevisionLevel.Length >= 4 ? 4 : decoded.ProductRevisionLevel.Length);
+                Array.Copy(decoded.ProductRevisionLevel, 0, buffer, 32,
+                           decoded.ProductRevisionLevel.Length >= 4 ? 4 : decoded.ProductRevisionLevel.Length);
             }
 
             if(decoded.Seagate_DriveSerialNumber != null)

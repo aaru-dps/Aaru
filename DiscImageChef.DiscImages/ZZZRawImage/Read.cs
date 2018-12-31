@@ -42,6 +42,7 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
@@ -849,7 +850,7 @@ namespace DiscImageChef.DiscImages
             // It's ATA, check tags
             if(mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] identifyBuf))
             {
-                Decoders.ATA.Identify.IdentifyDevice? ataId = Decoders.ATA.Identify.Decode(identifyBuf);
+                Identify.IdentifyDevice? ataId = Decoders.ATA.Identify.Decode(identifyBuf);
                 if(ataId.HasValue)
                 {
                     imageInfo.MediaType = (ushort)ataId.Value.GeneralConfiguration == 0x848A
@@ -968,10 +969,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
@@ -1111,10 +1109,7 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifyMediaImage()
-        {
-            return null;
-        }
+        public bool? VerifyMediaImage() => null;
 
         public List<Track> GetSessionTracks(Session session)
         {
@@ -1319,10 +1314,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            return ReadSectorsLong(sectorAddress, 1);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {

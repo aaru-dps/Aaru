@@ -53,25 +53,37 @@ namespace DiscImageChef.Gui.Forms
             grdMessages.DataStore = ConsoleHandler.Entries;
             grdMessages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<LogEntry, string>(r => $"{r.Timestamp}")},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<LogEntry, string>(r => $"{r.Timestamp}")
+                },
                 HeaderText = "Time",
                 Sortable   = true
             });
             grdMessages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<LogEntry, string>(r => r.Type)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<LogEntry, string>(r => r.Type)
+                },
                 HeaderText = "Type",
                 Sortable   = true
             });
             grdMessages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<LogEntry, string>(r => r.Module)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<LogEntry, string>(r => r.Module)
+                },
                 HeaderText = "Module",
                 Sortable   = true
             });
             grdMessages.Columns.Add(new GridColumn
             {
-                DataCell   = new TextBoxCell {Binding = Binding.Property<LogEntry, string>(r => r.Message)},
+                DataCell = new TextBoxCell
+                {
+                    Binding = Binding.Property<LogEntry, string>(r => r.Message)
+                },
                 HeaderText = "Message",
                 Sortable   = true
             });

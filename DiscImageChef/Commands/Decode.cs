@@ -38,7 +38,6 @@ using DiscImageChef.Core;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Filters;
 
 namespace DiscImageChef.Commands
 {

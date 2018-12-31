@@ -174,10 +174,8 @@ namespace DiscImageChef.DiscImages
             WriteEcc(address, data, 52, 43, 86, 88, ref ecc, addressOffset, dataOffset, eccOffset + 0xAC); // Q
         }
 
-        static (byte minute, byte second, byte frame) LbaToMsf(long pos)
-        {
-            return ((byte)((pos + 150) / 75 / 60), (byte)((pos + 150) / 75 % 60), (byte)((pos + 150) % 75));
-        }
+        static (byte minute, byte second, byte frame) LbaToMsf(long pos) =>
+            ((byte)((pos + 150) / 75 / 60), (byte)((pos + 150) / 75 % 60), (byte)((pos + 150) % 75));
 
         void ReconstructPrefix(ref byte[] sector, // must point to a full 2352-byte sector
                                TrackType  type,   long lba)

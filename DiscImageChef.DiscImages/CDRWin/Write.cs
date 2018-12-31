@@ -88,9 +88,7 @@ namespace DiscImageChef.DiscImages
 
             discimage = new CdrWinDisc
             {
-                Disktype = mediaType,
-                Sessions = new List<Session>(),
-                Tracks   = new List<CdrWinTrack>()
+                Disktype = mediaType, Sessions = new List<Session>(), Tracks = new List<CdrWinTrack>()
             };
 
             trackFlags = new Dictionary<byte, byte>();
@@ -480,22 +478,12 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
-        {
-            return WriteSectorTag(data, sectorAddress, tag);
-        }
+        public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag) =>
+            WriteSectorTag(data, sectorAddress, tag);
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
 
         public bool SetMetadata(ImageInfo metadata)
         {

@@ -269,7 +269,7 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Sega/Yamaha recordable Gigabyte Disc</summary>
         GDR = 153,
         SegaCard = 154,
-        MilCD = 155,
+        MilCD    = 155,
         #endregion Sega game media, types 150 to 169
 
         #region Other game media, types 170 to 179

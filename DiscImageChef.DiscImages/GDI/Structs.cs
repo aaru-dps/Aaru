@@ -75,6 +75,5 @@ namespace DiscImageChef.DiscImages
             /// <summary>Disk type</summary>
             public MediaType Disktype;
         }
-
     }
 }

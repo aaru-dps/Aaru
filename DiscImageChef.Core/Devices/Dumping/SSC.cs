@@ -652,8 +652,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // TODO: Implement device firmware revision
             sidecar.BlockMedia[0].Image = new ImageType
             {
-                format = "Raw disk image (sector by sector copy)",
-                Value  = outputPrefix + ".bin"
+                format = "Raw disk image (sector by sector copy)", Value = outputPrefix + ".bin"
             };
             sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
             sidecar.BlockMedia[0].Size              = (long)currentSize;

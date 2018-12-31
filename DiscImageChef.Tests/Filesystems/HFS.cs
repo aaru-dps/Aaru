@@ -42,9 +42,9 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "macos_1.1_mf2dd.img.lz", "macos_2.0_mf2dd.img.lz", "macos_6.0.7_mf2dd.img.lz", "nextstep_3.3_mf2hd.img.lz",
-            "openstep_4.0_mf2hd.img.lz", "openstep_4.2_mf2hd.img.lz", "rhapsody_dr1_mf2hd.img.lz",
-            "ecs20_mf2hd_fstester.img.lz"
+            "macos_1.1_mf2dd.img.lz", "macos_2.0_mf2dd.img.lz", "macos_6.0.7_mf2dd.img.lz",
+            "nextstep_3.3_mf2hd.img.lz", "openstep_4.0_mf2hd.img.lz", "openstep_4.2_mf2hd.img.lz",
+            "rhapsody_dr1_mf2hd.img.lz", "ecs20_mf2hd_fstester.img.lz"
         };
 
         readonly MediaType[] mediatypes =
@@ -106,20 +106,21 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "amigaos_3.9.vdi.lz", "darwin_1.3.1.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_6.0.2.vdi.lz",
-            "darwin_8.0.1.vdi.lz", "macos_1.1.vdi.lz", "macos_2.0.vdi.lz", "macos_6.0.7.vdi.lz", "macos_7.5.3.vdi.lz",
-            "macos_7.5.vdi.lz", "macos_7.6.vdi.lz", "macos_8.0.vdi.lz", "macos_8.1.vdi.lz", "macos_9.0.4.vdi.lz",
-            "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz", "macosx_10.2.vdi.lz", "macosx_10.3.vdi.lz",
-            "macosx_10.4.vdi.lz", "rhapsody_dr1.vdi.lz", "d2_driver.vdi.lz", "hdt_1.8.vdi.lz", "macos_4.2.vdi.lz",
-            "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz", "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz", "macos_6.0.5.vdi.lz",
-            "macos_6.0.8.vdi.lz", "macos_6.0.vdi.lz", "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz", "parted.vdi.lz",
+            "darwin_8.0.1.vdi.lz", "macos_1.1.vdi.lz", "macos_2.0.vdi.lz", "macos_6.0.7.vdi.lz",
+            "macos_7.5.3.vdi.lz", "macos_7.5.vdi.lz", "macos_7.6.vdi.lz", "macos_8.0.vdi.lz", "macos_8.1.vdi.lz",
+            "macos_9.0.4.vdi.lz", "macos_9.1.vdi.lz", "macos_9.2.1.vdi.lz", "macos_9.2.2.vdi.lz",
+            "macosx_10.2.vdi.lz", "macosx_10.3.vdi.lz", "macosx_10.4.vdi.lz", "rhapsody_dr1.vdi.lz",
+            "d2_driver.vdi.lz", "hdt_1.8.vdi.lz", "macos_4.2.vdi.lz", "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz",
+            "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz", "macos_6.0.5.vdi.lz", "macos_6.0.8.vdi.lz",
+            "macos_6.0.vdi.lz", "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz", "parted.vdi.lz",
             "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz", "vcpformatter_2.1.1.vdi.lz"
         };
 
         readonly ulong[] sectors =
         {
-            1024128, 409600, 409600, 409600, 409600, 41820, 41820, 81648, 1024000, 1024000, 1024000, 1024000, 1024000,
-            1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 409600, 51200, 51200, 41820, 41820, 54840,
-            54840, 54840, 54840, 54840, 41820, 54840, 54840, 262144, 51200, 51200, 54840
+            1024128, 409600, 409600, 409600, 409600, 41820, 41820, 81648, 1024000, 1024000, 1024000, 1024000,
+            1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 1024000, 409600, 51200, 51200, 41820,
+            41820, 54840, 54840, 54840, 54840, 54840, 41820, 54840, 54840, 262144, 51200, 51200, 54840
         };
 
         readonly uint[] sectorsize =
@@ -137,8 +138,8 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly int[] clustersize =
         {
-            8192, 4096, 4096, 3584, 3584, 512, 512, 1024, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
-            8192, 8192, 3584, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 1024, 512, 512, 512
+            8192, 4096, 4096, 3584, 3584, 512, 512, 1024, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,
+            8192, 8192, 8192, 3584, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 1024, 512, 512, 512
         };
 
         readonly string[] volumename =
@@ -147,15 +148,15 @@ namespace DiscImageChef.Tests.Filesystems
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
             "Volume label", "Volume label", "Volume label", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Volume label", "Test disk", "Volume label", "Volume label", "Volume label",
-            "Volume label", "Volume label", "Untitled", "Untitled  #1", "24 MB Disk", "Volume label"
+            "Volume label", "Volume label", "Volume label", "Test disk", "Volume label", "Volume label",
+            "Volume label", "Volume label", "Volume label", "Untitled", "Untitled  #1", "24 MB Disk", "Volume label"
         };
 
         readonly string[] volumeserial =
         {
             null, null, null, null, "AAFE1382AF5AA898", null, null, null, null, null, null, null, null, null, null,
-            null, null, "5A7C38B0CAF279C4", "FB49083EBD150509", "632C0B1DB46FD188", null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null
+            null, null, "5A7C38B0CAF279C4", "FB49083EBD150509", "632C0B1DB46FD188", null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null
         };
 
         [Test]
@@ -198,8 +199,8 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "toast_3.5.7_hfs_from_volume.iso.lz", "toast_3.5.7_iso9660_hfs.iso.lz",
-            "toast_4.1.3_hfs_from_volume.iso.lz", "toast_4.1.3_iso9660_hfs.iso.lz", "toast_3.5.7_hfs_from_files.iso.lz",
-            "toast_4.1.3_hfs_from_files.iso.lz"
+            "toast_4.1.3_hfs_from_volume.iso.lz", "toast_4.1.3_iso9660_hfs.iso.lz",
+            "toast_3.5.7_hfs_from_files.iso.lz", "toast_4.1.3_hfs_from_files.iso.lz"
         };
 
         readonly ulong[] sectors = {942, 1880, 943, 1882, 1509, 1529};
@@ -211,7 +212,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly int[] clustersize = {512, 2048, 2048, 2048, 12288, 12288};
 
         readonly string[] volumename =
-            {"Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils"};
+        {
+            "Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils", "Disk utils"
+        };
 
         readonly string[] volumeserial = {null, null, null, null, null, null};
 
@@ -254,7 +257,8 @@ namespace DiscImageChef.Tests.Filesystems
     {
         readonly string[] testfiles =
         {
-            "linux.vdi.lz", "darwin_1.3.1.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_6.0.2.vdi.lz", "darwin_8.0.1.vdi.lz"
+            "linux.vdi.lz", "darwin_1.3.1.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_6.0.2.vdi.lz",
+            "darwin_8.0.1.vdi.lz"
         };
 
         readonly ulong[] sectors = {262144, 409600, 409600, 409600, 409600};

@@ -609,9 +609,7 @@ namespace DiscImageChef.DiscImages
                 Sessions = new List<Session>();
                 Session currentSession = new Session
                 {
-                    EndTrack        = uint.MinValue,
-                    StartTrack      = uint.MaxValue,
-                    SessionSequence = 1
+                    EndTrack = uint.MinValue, StartTrack = uint.MaxValue, SessionSequence = 1
                 };
                 Partitions = new List<Partition>();
                 offsetmap  = new Dictionary<uint, ulong>();
@@ -647,7 +645,8 @@ namespace DiscImageChef.DiscImages
                     {
                         Description = track.TrackDescription,
                         Size =
-                            (track.TrackEndSector - track.TrackStartSector + 1) * (ulong)track.TrackRawBytesPerSector,
+                            (track.TrackEndSector - track.TrackStartSector + 1) *
+                            (ulong)track.TrackRawBytesPerSector,
                         Length   = track.TrackEndSector - track.TrackStartSector + 1,
                         Sequence = track.TrackSequence,
                         Offset   = track.TrackFileOffset,
@@ -731,25 +730,14 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
-        public byte[] ReadSector(ulong sectorAddress, uint track)
-        {
-            return ReadSectors(sectorAddress, 1, track);
-        }
+        public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, track, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
+            ReadSectorsTag(sectorAddress, 1, track, tag);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
@@ -1100,15 +1088,9 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            return ReadSectorsLong(sectorAddress, 1);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
-        {
-            return ReadSectorsLong(sectorAddress, 1, track);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {

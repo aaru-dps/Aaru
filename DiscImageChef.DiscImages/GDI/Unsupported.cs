@@ -37,10 +37,7 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Gdi
     {
-        public byte[] ReadDiskTag(MediaTagType tag)
-        {
+        public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
-        }
-
     }
 }

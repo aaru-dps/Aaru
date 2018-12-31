@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains properties for Anex86 disk images.
+//     Contains properties for QEMU Enhanced Disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -73,10 +73,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical Block Address, starting from 1.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
-        {
-            return ArchiveCorpSeekBlock(out senseBuffer, false, lba, timeout, out duration);
-        }
+        public bool ArchiveCorpSeekBlock(out byte[] senseBuffer, uint lba, uint timeout, out double duration) =>
+            ArchiveCorpSeekBlock(out senseBuffer, false, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the tape at the specified block address

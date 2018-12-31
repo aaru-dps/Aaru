@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 using System.ComponentModel.DataAnnotations;
 
 namespace DiscImageChef.Server.Models

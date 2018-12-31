@@ -282,9 +282,10 @@ namespace DiscImageChef.Core
                         {
                             new BorderType
                             {
-                                Image     = Path.GetFileName(imagePath),
-                                Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.CD_LeadIn)).ToArray(),
-                                Size      = image.ReadDiskTag(MediaTagType.CD_LeadIn).Length
+                                Image = Path.GetFileName(imagePath),
+                                Checksums = Checksum
+                                           .GetChecksums(image.ReadDiskTag(MediaTagType.CD_LeadIn)).ToArray(),
+                                Size = image.ReadDiskTag(MediaTagType.CD_LeadIn).Length
                             }
                         };
                         break;
@@ -301,8 +302,10 @@ namespace DiscImageChef.Core
                                 {
                                     Image = Path.GetFileName(imagePath),
                                     Checksums =
-                                        Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.Xbox_SecuritySector))
-                                                .ToArray(),
+                                        Checksum
+                                           .GetChecksums(image.ReadDiskTag(MediaTagType
+                                                                              .Xbox_SecuritySector))
+                                           .ToArray(),
                                     Size = image.ReadDiskTag(MediaTagType.Xbox_SecuritySector).Length
                                 }
                             }
@@ -616,8 +619,7 @@ namespace DiscImageChef.Core
                 {
                     xmlTrk.FileSystemInformation[0] = new PartitionType
                     {
-                        EndSector   = (int)xmlTrk.EndSector,
-                        StartSector = (int)xmlTrk.StartSector
+                        EndSector = (int)xmlTrk.EndSector, StartSector = (int)xmlTrk.StartSector
                     };
                     List<FileSystemType> lstFs = new List<FileSystemType>();
 
@@ -703,8 +705,7 @@ namespace DiscImageChef.Core
                         Serial       = image.Info.DriveSerialNumber,
                         Software = new SoftwareType
                         {
-                            Name    = image.Info.Application,
-                            Version = image.Info.ApplicationVersion
+                            Name = image.Info.Application, Version = image.Info.ApplicationVersion
                         }
                     }
                 };

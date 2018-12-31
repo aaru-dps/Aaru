@@ -44,11 +44,11 @@ namespace DiscImageChef.Tests.Partitions
             "concurrentdos_6.0.vdi.lz", "darwin_1.4.1.vdi.lz", "darwin_6.0.2.vdi.lz", "darwin_8.0.1.vdi.lz",
             "drdos_3.40.vdi.lz", "drdos_3.41.vdi.lz", "drdos_5.00.vdi.lz", "drdos_6.00.vdi.lz", "drdos_7.02.vdi.lz",
             "drdos_7.03.vdi.lz", "drdos_8.0.vdi.lz", "linux.vdi.lz", "macosx_10.3.vdi.lz", "macosx_10.4.vdi.lz",
-            "msdos_3.30a.vdi.lz", "msdos_5.00.vdi.lz", "msdos_6.00.vdi.lz", "msdos_6.20.vdi.lz", "msdos_6.21.vdi.lz",
-            "msdos_6.22.vdi.lz", "multiuserdos_7.22r04.vdi.lz", "novelldos_7.00.vdi.lz", "opendos_7.01.vdi.lz",
-            "parted.vdi.lz", "pcdos_2000.vdi.lz", "pcdos_2.00.vdi.lz", "pcdos_2.10.vdi.lz", "pcdos_3.00.vdi.lz",
-            "pcdos_3.10.vdi.lz", "pcdos_3.30.vdi.lz", "pcdos_4.00.vdi.lz", "pcdos_5.00.vdi.lz", "pcdos_6.10.vdi.lz",
-            "win95.vdi.lz", "win96osr25.vdi.lz", "winnt_3.10.vdi.lz"
+            "msdos_3.30a.vdi.lz", "msdos_5.00.vdi.lz", "msdos_6.00.vdi.lz", "msdos_6.20.vdi.lz",
+            "msdos_6.21.vdi.lz", "msdos_6.22.vdi.lz", "multiuserdos_7.22r04.vdi.lz", "novelldos_7.00.vdi.lz",
+            "opendos_7.01.vdi.lz", "parted.vdi.lz", "pcdos_2000.vdi.lz", "pcdos_2.00.vdi.lz", "pcdos_2.10.vdi.lz",
+            "pcdos_3.00.vdi.lz", "pcdos_3.10.vdi.lz", "pcdos_3.30.vdi.lz", "pcdos_4.00.vdi.lz", "pcdos_5.00.vdi.lz",
+            "pcdos_6.10.vdi.lz", "win95.vdi.lz", "win96osr25.vdi.lz", "winnt_3.10.vdi.lz"
         };
 
         readonly Partition[][] wanted =
@@ -1469,12 +1469,28 @@ namespace DiscImageChef.Tests.Partitions
             // PC-DOS 3.00
             new[]
             {
-                new Partition {Description = null, Name = null, Type = "0x01", Length = 66465, Sequence = 0, Start = 63}
+                new Partition
+                {
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 66465,
+                    Sequence    = 0,
+                    Start       = 63
+                }
             },
             // PC-DOS 3.10
             new[]
             {
-                new Partition {Description = null, Name = null, Type = "0x01", Length = 66465, Sequence = 0, Start = 63}
+                new Partition
+                {
+                    Description = null,
+                    Name        = null,
+                    Type        = "0x01",
+                    Length      = 66465,
+                    Sequence    = 0,
+                    Start       = 63
+                }
             },
             // PC-DOS 3.30
             new[]

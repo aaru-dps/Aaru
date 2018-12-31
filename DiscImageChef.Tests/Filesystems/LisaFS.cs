@@ -42,8 +42,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "166files.dc42.lz", "222files.dc42.lz", "blank2.0.dc42.lz", "blank-disk.dc42.lz",
-            "file-with-a-password.dc42.lz", "tfwdndrc-has-been-erased.dc42.lz", "tfwdndrc-has-been-restored.dc42.lz",
-            "three-empty-folders.dc42.lz", "three-folders-with-differently-named-docs.dc42.lz",
+            "file-with-a-password.dc42.lz", "tfwdndrc-has-been-erased.dc42.lz",
+            "tfwdndrc-has-been-restored.dc42.lz", "three-empty-folders.dc42.lz",
+            "three-folders-with-differently-named-docs.dc42.lz",
             "three-folders-with-differently-named-docs-root-alphabetical.dc42.lz",
             "three-folders-with-differently-named-docs-root-chronological.dc42.lz",
             "three-folders-with-identically-named-docs.dc42.lz"

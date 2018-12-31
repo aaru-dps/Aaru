@@ -39,54 +39,34 @@ namespace DiscImageChef.DiscImages
 {
     public partial class TeleDisk
     {
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public List<Track> GetSessionTracks(Session session)
-        {
+        public List<Track> GetSessionTracks(Session session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public List<Track> GetSessionTracks(ushort session)
-        {
+        public List<Track> GetSessionTracks(ushort session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSector(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSector(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
     }
 }

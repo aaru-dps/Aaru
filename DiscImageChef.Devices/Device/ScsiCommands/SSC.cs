@@ -44,10 +44,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Load(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return LoadUnload(out senseBuffer, false, true, false, false, false, timeout, out duration);
-        }
+        public bool Load(out byte[] senseBuffer, uint timeout, out double duration) =>
+            LoadUnload(out senseBuffer, false, true, false, false, false, timeout, out duration);
 
         /// <summary>
         ///     Prepares the medium for ejection
@@ -56,10 +54,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Unload(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return LoadUnload(out senseBuffer, false, false, false, false, false, timeout, out duration);
-        }
+        public bool Unload(out byte[] senseBuffer, uint timeout, out double duration) =>
+            LoadUnload(out senseBuffer, false, false, false, false, false, timeout, out duration);
 
         /// <summary>
         ///     Prepares the medium for reading or ejection
@@ -106,10 +102,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate(out byte[] senseBuffer, uint lba, uint timeout, out double duration)
-        {
-            return Locate(out senseBuffer, false, false, true, 0, lba, timeout, out duration);
-        }
+        public bool Locate(out byte[] senseBuffer, uint lba, uint timeout, out double duration) =>
+            Locate(out senseBuffer, false, false, true, 0, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the specified partition
@@ -119,10 +113,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate(out byte[] senseBuffer, byte partition, uint lba, uint timeout, out double duration)
-        {
-            return Locate(out senseBuffer, false, false, true, partition, lba, timeout, out duration);
-        }
+        public bool Locate(out byte[] senseBuffer, byte partition, uint lba, uint timeout, out double duration) =>
+            Locate(out senseBuffer, false, false, true, partition, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the current partition
@@ -132,10 +124,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate(out byte[] senseBuffer, bool immediate, uint lba, uint timeout, out double duration)
-        {
-            return Locate(out senseBuffer, immediate, false, true, 0, lba, timeout, out duration);
-        }
+        public bool Locate(out byte[] senseBuffer, bool immediate, uint lba, uint timeout, out double duration) =>
+            Locate(out senseBuffer, immediate, false, true, 0, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the specified partition
@@ -147,10 +137,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate(out byte[] senseBuffer, bool immediate, byte partition, uint lba, uint timeout,
-                           out double duration)
-        {
-            return Locate(out senseBuffer, immediate, false, true, partition, lba, timeout, out duration);
-        }
+                           out double duration) =>
+            Locate(out senseBuffer, immediate, false, true, partition, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified object identifier
@@ -197,11 +185,8 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate16(out byte[] senseBuffer, ulong lba, uint timeout, out double duration)
-        {
-            return Locate16(out senseBuffer, false, false, SscLogicalIdTypes.ObjectId, false, 0, lba, timeout,
-                            out duration);
-        }
+        public bool Locate16(out byte[] senseBuffer, ulong lba, uint timeout, out double duration) =>
+            Locate16(out senseBuffer, false, false, SscLogicalIdTypes.ObjectId, false, 0, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the specified partition
@@ -211,11 +196,9 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate16(out byte[] senseBuffer, byte partition, ulong lba, uint timeout, out double duration)
-        {
-            return Locate16(out senseBuffer, false, true, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
-                            out duration);
-        }
+        public bool Locate16(out byte[] senseBuffer, byte partition, ulong lba, uint timeout, out double duration) =>
+            Locate16(out senseBuffer, false, true, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
+                     out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the current partition
@@ -225,11 +208,9 @@ namespace DiscImageChef.Devices
         /// <param name="lba">Logical block address.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Locate16(out byte[] senseBuffer, bool immediate, ulong lba, uint timeout, out double duration)
-        {
-            return Locate16(out senseBuffer, immediate, false, SscLogicalIdTypes.ObjectId, false, 0, lba, timeout,
-                            out duration);
-        }
+        public bool Locate16(out byte[] senseBuffer, bool immediate, ulong lba, uint timeout, out double duration) =>
+            Locate16(out senseBuffer, immediate, false, SscLogicalIdTypes.ObjectId, false, 0, lba, timeout,
+                     out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the specified partition
@@ -241,11 +222,9 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate16(out byte[] senseBuffer, bool immediate, byte partition, ulong lba, uint timeout,
-                             out double duration)
-        {
-            return Locate16(out senseBuffer, immediate, true, SscLogicalIdTypes.ObjectId, false, partition, lba,
-                            timeout,         out duration);
-        }
+                             out double duration) =>
+            Locate16(out senseBuffer, immediate, true, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
+                     out duration);
 
         /// <summary>
         ///     Positions the medium to the specified object identifier
@@ -318,10 +297,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Read6(out byte[] buffer,  out byte[] senseBuffer, bool sili, uint transferLen, uint blockSize,
-                          uint       timeout, out double duration)
-        {
-            return Read6(out buffer, out senseBuffer, sili, false, transferLen, blockSize, timeout, out duration);
-        }
+                          uint       timeout, out double duration) =>
+            Read6(out buffer, out senseBuffer, sili, false, transferLen, blockSize, timeout, out duration);
 
         /// <summary>
         ///     Reads the specified number of bytes or of blocks from the medium
@@ -376,11 +353,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Read16(out byte[] buffer,    out byte[] senseBuffer, bool       sili, ulong objectId, uint blocks,
-                           uint       blockSize, uint       timeout,     out double duration)
-        {
-            return Read16(out buffer, out senseBuffer, sili, false, 0, objectId, blocks, blockSize, timeout,
-                          out duration);
-        }
+                           uint       blockSize, uint       timeout,     out double duration) =>
+            Read16(out buffer, out senseBuffer, sili, false, 0, objectId, blocks, blockSize, timeout, out duration);
 
         /// <summary>
         ///     Reads a number of fixed-length blocks starting at specified block from the specified partition
@@ -396,11 +370,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool Read16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition,
                            ulong      objectId,
-                           uint       blocks, uint blockSize, uint timeout, out double duration)
-        {
-            return Read16(out buffer, out senseBuffer, sili, false, partition, objectId, blocks, blockSize, timeout,
-                          out duration);
-        }
+                           uint       blocks, uint blockSize, uint timeout, out double duration) =>
+            Read16(out buffer, out senseBuffer, sili, false, partition, objectId, blocks, blockSize, timeout,
+                   out duration);
 
         /// <summary>
         ///     Reads a number of fixed-length blocks starting at specified object
@@ -413,11 +385,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Read16(out byte[] buffer,  out byte[] senseBuffer, ulong objectId, uint blocks, uint blockSize,
-                           uint       timeout, out double duration)
-        {
-            return Read16(out buffer, out senseBuffer, false, true, 0, objectId, blocks, blockSize, timeout,
-                          out duration);
-        }
+                           uint       timeout, out double duration) =>
+            Read16(out buffer, out senseBuffer, false, true, 0, objectId, blocks, blockSize, timeout, out duration);
 
         /// <summary>
         ///     Reads a number of fixed-length blocks starting at specified block from the specified partition
@@ -432,11 +401,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool Read16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong objectId,
                            uint       blocks,
-                           uint       blockSize, uint timeout, out double duration)
-        {
-            return Read16(out buffer, out senseBuffer, false, true, partition, objectId, blocks, blockSize, timeout,
-                          out duration);
-        }
+                           uint       blockSize, uint timeout, out double duration) =>
+            Read16(out buffer, out senseBuffer, false, true, partition, objectId, blocks, blockSize, timeout,
+                   out duration);
 
         /// <summary>
         ///     Reads a number of bytes or objects starting at specified object from the specified partition
@@ -523,10 +490,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadPosition(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadPosition(out buffer, out senseBuffer, SscPositionForms.Short, timeout, out duration);
-        }
+        public bool ReadPosition(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadPosition(out buffer, out senseBuffer, SscPositionForms.Short, timeout, out duration);
 
         /// <summary>
         ///     Reports current reading/writing elements position on the medium using 32 bytes response
@@ -535,10 +500,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReadPositionLong(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadPosition(out buffer, out senseBuffer, SscPositionForms.Long, timeout, out duration);
-        }
+        public bool ReadPositionLong(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadPosition(out buffer, out senseBuffer, SscPositionForms.Long, timeout, out duration);
 
         /// <summary>
         ///     Reports current reading/writing elements position on the medium
@@ -622,11 +585,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, uint blocks, uint blockSize, uint timeout,
-                                 out double duration)
-        {
-            return ReadReverse6(out buffer, out senseBuffer, false, false, true, blocks, blockSize, timeout,
-                                out duration);
-        }
+                                 out double duration) =>
+            ReadReverse6(out buffer, out senseBuffer, false, false, true, blocks, blockSize, timeout, out duration);
 
         /// <summary>
         ///     Reads the specified number of bytes or of blocks from the medium, backwards
@@ -640,11 +600,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool ReadReverse6(out byte[] buffer, out byte[] senseBuffer, bool sili, uint transferLen,
                                  uint       blockSize,
-                                 uint       timeout, out double duration)
-        {
-            return ReadReverse6(out buffer, out senseBuffer, false, sili, false, transferLen, blockSize, timeout,
-                                out duration);
-        }
+                                 uint       timeout, out double duration) =>
+            ReadReverse6(out buffer, out senseBuffer, false, sili, false, transferLen, blockSize, timeout,
+                         out duration);
 
         /// <summary>
         ///     Reads the specified number of bytes or of blocks from the medium, backwards
@@ -702,11 +660,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, ulong objectId,
                                   uint       blocks,
-                                  uint       blockSize, uint timeout, out double duration)
-        {
-            return ReadReverse16(out buffer, out senseBuffer, false, sili, false, 0, objectId, blocks, blockSize,
-                                 timeout,    out duration);
-        }
+                                  uint       blockSize, uint timeout, out double duration) =>
+            ReadReverse16(out buffer, out senseBuffer, false, sili, false, 0, objectId, blocks, blockSize, timeout,
+                          out duration);
 
         /// <summary>
         ///     Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
@@ -722,11 +678,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, bool sili, byte partition,
                                   ulong      objectId,
-                                  uint       blocks, uint blockSize, uint timeout, out double duration)
-        {
-            return ReadReverse16(out buffer, out senseBuffer, false, sili, false, partition, objectId, blocks,
-                                 blockSize,  timeout,         out duration);
-        }
+                                  uint       blocks, uint blockSize, uint timeout, out double duration) =>
+            ReadReverse16(out buffer, out senseBuffer, false, sili, false, partition, objectId, blocks, blockSize,
+                          timeout,    out duration);
 
         /// <summary>
         ///     Reads a number of fixed-length blocks starting at specified object, backwards
@@ -739,11 +693,9 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool ReadReverse16(out byte[] buffer,    out byte[] senseBuffer, ulong      objectId, uint blocks,
-                                  uint       blockSize, uint       timeout,     out double duration)
-        {
-            return ReadReverse16(out buffer, out senseBuffer, false, false, true, 0, objectId, blocks, blockSize,
-                                 timeout,    out duration);
-        }
+                                  uint       blockSize, uint       timeout,     out double duration) =>
+            ReadReverse16(out buffer, out senseBuffer, false, false, true, 0, objectId, blocks, blockSize, timeout,
+                          out duration);
 
         /// <summary>
         ///     Reads a number of fixed-length blocks starting at specified block from the specified partition, backwards
@@ -757,11 +709,9 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool ReadReverse16(out byte[] buffer, out byte[] senseBuffer, byte partition, ulong      objectId,
-                                  uint       blocks, uint       blockSize,   uint timeout,   out double duration)
-        {
-            return ReadReverse16(out buffer, out senseBuffer, false, false, true, partition, objectId, blocks,
-                                 blockSize,  timeout,         out duration);
-        }
+                                  uint       blocks, uint       blockSize,   uint timeout,   out double duration) =>
+            ReadReverse16(out buffer, out senseBuffer, false, false, true, partition, objectId, blocks, blockSize,
+                          timeout,    out duration);
 
         /// <summary>
         ///     Reads a number of bytes or objects starting at specified object from the specified partition, backwards
@@ -830,11 +780,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool RecoverBufferedData(out byte[] buffer,  out byte[] senseBuffer, uint blocks, uint blockSize,
-                                        uint       timeout, out double duration)
-        {
-            return RecoverBufferedData(out buffer, out senseBuffer, false, true, blocks, blockSize, timeout,
-                                       out duration);
-        }
+                                        uint       timeout, out double duration) =>
+            RecoverBufferedData(out buffer, out senseBuffer, false, true, blocks, blockSize, timeout, out duration);
 
         /// <summary>
         ///     Reads the specified number of bytes or of blocks from the device's buffer
@@ -847,11 +794,9 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool RecoverBufferedData(out byte[] buffer,    out byte[] senseBuffer, bool       sili, uint transferLen,
-                                        uint       blockSize, uint       timeout,     out double duration)
-        {
-            return RecoverBufferedData(out buffer, out senseBuffer, sili, false, transferLen, blockSize, timeout,
-                                       out duration);
-        }
+                                        uint       blockSize, uint       timeout,     out double duration) =>
+            RecoverBufferedData(out buffer, out senseBuffer, sili, false, transferLen, blockSize, timeout,
+                                out duration);
 
         /// <summary>
         ///     Reads the specified number of bytes or of blocks from the device's buffer
@@ -902,10 +847,9 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReportDensitySupport(out buffer, out senseBuffer, false, false, timeout, out duration);
-        }
+        public bool
+            ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReportDensitySupport(out buffer, out senseBuffer, false, false, timeout, out duration);
 
         /// <summary>
         ///     Requests the device to return descriptors for supported densities or medium types
@@ -916,10 +860,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool ReportDensitySupport(out byte[] buffer, out byte[] senseBuffer, bool currentMedia, uint timeout,
-                                         out double duration)
-        {
-            return ReportDensitySupport(out buffer, out senseBuffer, false, currentMedia, timeout, out duration);
-        }
+                                         out double duration) =>
+            ReportDensitySupport(out buffer, out senseBuffer, false, currentMedia, timeout, out duration);
 
         /// <summary>
         ///     Requests the device to return descriptors for supported densities or medium types
@@ -970,10 +912,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool Rewind(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return Rewind(out senseBuffer, false, timeout, out duration);
-        }
+        public bool Rewind(out byte[] senseBuffer, uint timeout, out double duration) =>
+            Rewind(out senseBuffer, false, timeout, out duration);
 
         /// <summary>
         ///     Positions the reading/writing element to the beginning of current partition

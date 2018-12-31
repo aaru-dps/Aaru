@@ -287,15 +287,9 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
@@ -333,10 +327,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            return ReadSectorsLong(sectorAddress, 1);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {

@@ -43,9 +43,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "amix.adf.lz", "att_unix_svr4v2.1_dsdd.img.lz", "att_unix_svr4v2.1_mf2dd.img.lz",
-            "att_unix_svr4v2.1_mf2hd.img.lz", "scoopenserver_5.0.7hw_dmf.img.lz", "scoopenserver_5.0.7hw_dshd.img.lz",
-            "scoopenserver_5.0.7hw_mf2dd.img.lz", "scoopenserver_5.0.7hw_mf2ed.img.lz",
-            "scoopenserver_5.0.7hw_mf2hd.img.lz"
+            "att_unix_svr4v2.1_mf2hd.img.lz", "scoopenserver_5.0.7hw_dmf.img.lz",
+            "scoopenserver_5.0.7hw_dshd.img.lz", "scoopenserver_5.0.7hw_mf2dd.img.lz",
+            "scoopenserver_5.0.7hw_mf2ed.img.lz", "scoopenserver_5.0.7hw_mf2hd.img.lz"
         };
 
         readonly MediaType[] mediatypes =
@@ -67,7 +67,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] volumeserial = {null, null, null, null, null, null, null, null, null};
 
         readonly string[] type =
-            {"SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs"};
+        {
+            "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs", "SVR4 fs"
+        };
 
         [Test]
         public void Test()
@@ -104,7 +106,9 @@ namespace DiscImageChef.Tests.Filesystems
     public class SysVMbr
     {
         readonly string[] testfiles =
-            {"att_unix_svr4v2.1.vdi.lz", "att_unix_svr4v2.1_2k.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"};
+        {
+            "att_unix_svr4v2.1.vdi.lz", "att_unix_svr4v2.1_2k.vdi.lz", "scoopenserver_5.0.7hw.vdi.lz"
+        };
 
         readonly ulong[] sectors = {1024000, 1024000, 2097152};
 

@@ -138,15 +138,9 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
@@ -209,10 +203,7 @@ namespace DiscImageChef.DiscImages
             return buffer.ToArray();
         }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            return ReadSectorsLong(sectorAddress, 1);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
@@ -231,10 +222,7 @@ namespace DiscImageChef.DiscImages
         }
 
         // TODO: Check tag checkums
-        public bool? VerifySector(ulong sectorAddress)
-        {
-            return null;
-        }
+        public bool? VerifySector(ulong sectorAddress) => null;
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)

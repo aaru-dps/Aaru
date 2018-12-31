@@ -31,9 +31,6 @@ namespace NUnitLite.Tests
         /// </summary>
         /// <remarks>Run with --help for a full list of arguments supported</remarks>
         /// <param name="args"></param>
-        public static int Main(string[] args)
-        {
-            return new AutoRun().Execute(args);
-        }
+        public static int Main(string[] args) => new AutoRun().Execute(args);
     }
 }

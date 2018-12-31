@@ -153,10 +153,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno ReadSystemFile(short fileId, out byte[] buf)
-        {
-            return ReadSystemFile(fileId, out buf, false);
-        }
+        Errno ReadSystemFile(short fileId, out byte[] buf) => ReadSystemFile(fileId, out buf, false);
 
         Errno ReadSystemFile(short fileId, out byte[] buf, bool tags)
         {
@@ -307,10 +304,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             return Errno.NoError;
         }
 
-        Errno ReadFile(short fileId, out byte[] buf)
-        {
-            return ReadFile(fileId, out buf, false);
-        }
+        Errno ReadFile(short fileId, out byte[] buf) => ReadFile(fileId, out buf, false);
 
         Errno ReadFile(short fileId, out byte[] buf, bool tags)
         {

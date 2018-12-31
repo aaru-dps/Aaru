@@ -30,21 +30,11 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Filters;
-using Schemas;
-using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 namespace DiscImageChef.DiscImages
 {
@@ -83,12 +73,5 @@ namespace DiscImageChef.DiscImages
                 DriveFirmwareRevision = null
             };
         }
-
-
-
-
-
-
-
     }
 }

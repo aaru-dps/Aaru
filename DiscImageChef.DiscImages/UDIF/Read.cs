@@ -394,7 +394,8 @@ namespace DiscImageChef.DiscImages
                             decStream = new ZlibStream(cmpMs, CompressionMode.Decompress);
                             break;
                         case CHUNK_TYPE_BZIP:
-                            decStream = new BZip2Stream(cmpMs, SharpCompress.Compressors.CompressionMode.Decompress, false);
+                            decStream = new BZip2Stream(cmpMs, SharpCompress.Compressors.CompressionMode.Decompress,
+                                                        false);
                             break;
                         case CHUNK_TYPE_RLE: break;
                         default:

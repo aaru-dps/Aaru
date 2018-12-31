@@ -88,18 +88,15 @@ namespace DiscImageChef.DiscImages
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                         (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
-                                                         MediaEncoding.MFM, false));
+                                                            (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
+                                                            MediaEncoding.MFM, false));
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
             return true;
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {

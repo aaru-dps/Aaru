@@ -92,9 +92,6 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             return sb.ToString();
         }
 
-        public static string Prettify(byte[] response)
-        {
-            return Prettify(Decode(response));
-        }
+        public static string Prettify(byte[] response) => Prettify(Decode(response));
     }
 }

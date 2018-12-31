@@ -58,10 +58,12 @@ namespace DiscImageChef.Tests.Images
 
         readonly string[] md5S =
         {
-            "1c5387e38e58165c517c059e5d48905d", "a84366658c1c3bd09af4d0d42fbf716e", "919c9eecf1b65b10870f617cb976668a",
-            "02d35af02581afb2e56792dcaba2c1af", "b8c3f858f1a9d300d3e74f36eea04354", "c348bbbaf99fcb8c8e66de157aef62f4",
-            "c3587f7020743067cf948c9d5c5edb27", "a23874a4474334b035a24c6924140744", "bc1ef3236e75cb09575037b884ee9dce",
-            "243036c4617b666a6c886cc23d7274e0", "09bb2ff964a0c5c223a1900f085e3955"
+            "1c5387e38e58165c517c059e5d48905d", "a84366658c1c3bd09af4d0d42fbf716e",
+            "919c9eecf1b65b10870f617cb976668a", "02d35af02581afb2e56792dcaba2c1af",
+            "b8c3f858f1a9d300d3e74f36eea04354", "c348bbbaf99fcb8c8e66de157aef62f4",
+            "c3587f7020743067cf948c9d5c5edb27", "a23874a4474334b035a24c6924140744",
+            "bc1ef3236e75cb09575037b884ee9dce", "243036c4617b666a6c886cc23d7274e0",
+            "09bb2ff964a0c5c223a1900f085e3955"
         };
 
         [Test]

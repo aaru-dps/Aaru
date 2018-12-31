@@ -461,9 +461,6 @@ namespace DiscImageChef.Decoders.Xbox
             return sb.ToString();
         }
 
-        public static string Prettify(byte[] response)
-        {
-            return Prettify(Decode(response));
-        }
+        public static string Prettify(byte[] response) => Prettify(Decode(response));
     }
 }

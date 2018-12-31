@@ -197,9 +197,10 @@ namespace DiscImageChef.DiscImages
                 CreatorVersion =
                     (uint)(((thisVersion.Major & 0xFF) << 24) + ((thisVersion.Minor & 0xFF) << 16) +
                            ((thisVersion.Build & 0xFF) << 8)  + (thisVersion.Revision & 0xFF)),
-                CreatorHostOs = DetectOS.GetRealPlatformID() == PlatformID.MacOSX ? CREATOR_MACINTOSH : CREATOR_WINDOWS,
-                DiskType      = TYPE_FIXED,
-                UniqueId      = Guid.NewGuid(),
+                CreatorHostOs =
+                    DetectOS.GetRealPlatformID() == PlatformID.MacOSX ? CREATOR_MACINTOSH : CREATOR_WINDOWS,
+                DiskType = TYPE_FIXED,
+                UniqueId = Guid.NewGuid(),
                 DiskGeometry =
                     ((imageInfo.Cylinders & 0xFFFF) << 16) + ((imageInfo.Heads & 0xFF) << 8) +
                     (imageInfo.SectorsPerTrack & 0xFF),
@@ -238,10 +239,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            return true;
-        }
+        public bool SetMetadata(ImageInfo metadata) => true;
 
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
         {
@@ -282,16 +280,8 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }

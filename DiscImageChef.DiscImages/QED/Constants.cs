@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constants for Anex86 disk images.
+//     Contains constants for QEMU Enhanced Disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -61,6 +61,5 @@ namespace DiscImageChef.DiscImages
         const uint MAX_CACHED_SECTORS   = MAX_CACHE_SIZE / 512;
         const uint DEFAULT_CLUSTER_SIZE = 65536;
         const uint DEFAULT_TABLE_SIZE   = 4;
-
     }
 }

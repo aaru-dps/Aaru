@@ -43,10 +43,10 @@ namespace DiscImageChef.Tests.Partitions
         {
             "d2_driver.vdi.lz", "hdt_1.8_encrypted1.vdi.lz", "hdt_1.8_encrypted2.vdi.lz", "hdt_1.8_password.vdi.lz",
             "hdt_1.8.vdi.lz", "linux.vdi.lz", "macos_1.1.vdi.lz", "macos_2.0.vdi.lz", "macos_4.2.vdi.lz",
-            "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz", "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz", "macos_6.0.5.vdi.lz",
-            "macos_6.0.7.vdi.lz", "macos_6.0.8.vdi.lz", "macos_6.0.vdi.lz", "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz",
-            "macos_7.5.vdi.lz", "parted.vdi.lz", "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz",
-            "vcpformatter_2.1.1.vdi.lz"
+            "macos_4.3.vdi.lz", "macos_6.0.2.vdi.lz", "macos_6.0.3.vdi.lz", "macos_6.0.4.vdi.lz",
+            "macos_6.0.5.vdi.lz", "macos_6.0.7.vdi.lz", "macos_6.0.8.vdi.lz", "macos_6.0.vdi.lz",
+            "macos_7.0.vdi.lz", "macos_7.1.1.vdi.lz", "macos_7.5.vdi.lz", "parted.vdi.lz",
+            "silverlining_2.2.1.vdi.lz", "speedtools_3.6.vdi.lz", "vcpformatter_2.1.1.vdi.lz"
         };
 
         readonly Partition[][] wanted =

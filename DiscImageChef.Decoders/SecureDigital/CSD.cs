@@ -538,14 +538,8 @@ namespace DiscImageChef.Decoders.SecureDigital
             return sb.ToString();
         }
 
-        public static string PrettifyCSD(uint[] response)
-        {
-            return PrettifyCSD(DecodeCSD(response));
-        }
+        public static string PrettifyCSD(uint[] response) => PrettifyCSD(DecodeCSD(response));
 
-        public static string PrettifyCSD(byte[] response)
-        {
-            return PrettifyCSD(DecodeCSD(response));
-        }
+        public static string PrettifyCSD(byte[] response) => PrettifyCSD(DecodeCSD(response));
     }
 }

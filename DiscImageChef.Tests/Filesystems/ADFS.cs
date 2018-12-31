@@ -63,7 +63,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly uint[] clustersize = {1024, 1024, 1024, 1024, 1024, 256, 256, 256, 256, 256};
 
         readonly string[] volumename =
-            {"ADFSD", "ADFSE     ", null, "ADFSE+    ", null, "$", "$", "$", "VolLablOld", null};
+        {
+            "ADFSD", "ADFSE     ", null, "ADFSE+    ", null, "$", "$", "$", "VolLablOld", null
+        };
 
         readonly string[] volumeserial = {"3E48", "E13A", null, "1142", null, "F20D", "D6CA", "0CA6", "080E", null};
 

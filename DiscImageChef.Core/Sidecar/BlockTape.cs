@@ -52,12 +52,11 @@ namespace DiscImageChef.Core
                 {
                     new BlockMediaType
                     {
-                        Image = new ImageType
- {
-                            format          = "Directory",
-                            offsetSpecified = false,
-                            Value           = folderName
-                        },
+                        Image =
+                            new ImageType
+                            {
+                                format = "Directory", offsetSpecified = false, Value = folderName
+                            },
                         Sequence =
                             new SequenceType {MediaTitle = folderName, MediaSequence = 1, TotalMedia = 1},
                         PhysicalBlockSize = blockSize,

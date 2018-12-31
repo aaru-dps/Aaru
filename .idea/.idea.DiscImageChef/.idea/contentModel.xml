@@ -968,7 +968,6 @@
         </e>
         <e p="QED" t="Include">
           <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
           <e p="Helpers.cs" t="Include" />
           <e p="Identify.cs" t="Include" />
           <e p="Properties.cs" t="Include" />

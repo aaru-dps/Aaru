@@ -63,9 +63,8 @@ namespace DiscImageChef.Decoders.SecureDigital
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Decoders
     {
-        public static OCR DecodeOCR(uint response)
-        {
-            return new OCR
+        public static OCR DecodeOCR(uint response) =>
+            new OCR
             {
                 PowerUp    = (response & 0x80000000) == 0x80000000,
                 CCS        = (response & 0x40000000) == 0x40000000,
@@ -82,12 +81,9 @@ namespace DiscImageChef.Decoders.SecureDigital
                 TwoSeven   = (response & 0x00008000) == 0x00008000,
                 LowPower   = (response & 0x00000080) == 0x00000080
             };
-        }
 
-        public static OCR DecodeOCR(byte[] response)
-        {
-            return response?.Length != 4 ? null : DecodeOCR(BitConverter.ToUInt32(response, 0));
-        }
+        public static OCR DecodeOCR(byte[] response) =>
+            response?.Length != 4 ? null : DecodeOCR(BitConverter.ToUInt32(response, 0));
 
         public static string PrettifyOCR(OCR ocr)
         {
@@ -112,14 +108,8 @@ namespace DiscImageChef.Decoders.SecureDigital
             return sb.ToString();
         }
 
-        public static string PrettifyOCR(byte[] response)
-        {
-            return PrettifyOCR(DecodeOCR(response));
-        }
+        public static string PrettifyOCR(byte[] response) => PrettifyOCR(DecodeOCR(response));
 
-        public static string PrettifyOCR(uint response)
-        {
-            return PrettifyOCR(DecodeOCR(response));
-        }
+        public static string PrettifyOCR(uint response) => PrettifyOCR(DecodeOCR(response));
     }
 }

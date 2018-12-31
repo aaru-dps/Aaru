@@ -46,10 +46,7 @@ namespace DiscImageChef.Filesystems
 {
     public class Register : IPluginRegister
     {
-        public List<Type> GetAllChecksumPlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllChecksumPlugins() => null;
 
         public List<Type> GetAllFilesystemPlugins()
         {
@@ -57,25 +54,13 @@ namespace DiscImageChef.Filesystems
                            .Where(t => t.GetInterfaces().Contains(typeof(IFilesystem))).Where(t => t.IsClass).ToList();
         }
 
-        public List<Type> GetAllFilterPlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllFilterPlugins() => null;
 
-        public List<Type> GetAllFloppyImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllFloppyImagePlugins() => null;
 
-        public List<Type> GetAllMediaImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllMediaImagePlugins() => null;
 
-        public List<Type> GetAllPartitionPlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllPartitionPlugins() => null;
 
         public List<Type> GetAllReadOnlyFilesystemPlugins()
         {
@@ -84,14 +69,8 @@ namespace DiscImageChef.Filesystems
                            .ToList();
         }
 
-        public List<Type> GetAllWritableFloppyImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllWritableFloppyImagePlugins() => null;
 
-        public List<Type> GetAllWritableImagePlugins()
-        {
-            return null;
-        }
+        public List<Type> GetAllWritableImagePlugins() => null;
     }
 }

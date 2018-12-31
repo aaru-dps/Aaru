@@ -199,7 +199,9 @@ namespace DiscImageChef.Tests.Filesystems
     public class BeFsMbr
     {
         readonly string[] testfiles =
-            {"beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz", "haiku_hrev51259.vdi.lz", "syllable_0.6.7.vdi.lz"};
+        {
+            "beos_r3.1.vdi.lz", "beos_r4.5.vdi.lz", "haiku_hrev51259.vdi.lz", "syllable_0.6.7.vdi.lz"
+        };
 
         readonly ulong[] sectors = {1572864, 1572864, 8388608, 2097152};
 

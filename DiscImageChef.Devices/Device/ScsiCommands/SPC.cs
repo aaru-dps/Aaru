@@ -46,10 +46,8 @@ namespace DiscImageChef.Devices
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
-        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer)
-        {
-            return ScsiInquiry(out buffer, out senseBuffer, Timeout);
-        }
+        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer) =>
+            ScsiInquiry(out buffer, out senseBuffer, Timeout);
 
         /// <summary>
         ///     Sends the SPC INQUIRY command to the device using default device timeout.
@@ -58,10 +56,8 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, out double duration)
-        {
-            return ScsiInquiry(out buffer, out senseBuffer, Timeout, out duration);
-        }
+        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, out double duration) =>
+            ScsiInquiry(out buffer, out senseBuffer, Timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC INQUIRY command to the device.
@@ -70,10 +66,8 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
-        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, uint timeout)
-        {
-            return ScsiInquiry(out buffer, out senseBuffer, timeout, out _);
-        }
+        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, uint timeout) =>
+            ScsiInquiry(out buffer, out senseBuffer, timeout, out _);
 
         /// <summary>
         ///     Sends the SPC INQUIRY command to the device.
@@ -117,10 +111,8 @@ namespace DiscImageChef.Devices
         /// <param name="buffer">Buffer where the SCSI INQUIRY response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="page">The Extended Vital Product Data</param>
-        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page)
-        {
-            return ScsiInquiry(out buffer, out senseBuffer, page, Timeout);
-        }
+        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page) =>
+            ScsiInquiry(out buffer, out senseBuffer, page, Timeout);
 
         /// <summary>
         ///     Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page using default device timeout.
@@ -130,10 +122,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="page">The Extended Vital Product Data</param>
-        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, out double duration)
-        {
-            return ScsiInquiry(out buffer, out senseBuffer, page, Timeout, out duration);
-        }
+        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, out double duration) =>
+            ScsiInquiry(out buffer, out senseBuffer, page, Timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page.
@@ -143,10 +133,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="page">The Extended Vital Product Data</param>
-        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, uint timeout)
-        {
-            return ScsiInquiry(out buffer, out senseBuffer, page, timeout, out _);
-        }
+        public bool ScsiInquiry(out byte[] buffer, out byte[] senseBuffer, byte page, uint timeout) =>
+            ScsiInquiry(out buffer, out senseBuffer, page, timeout, out _);
 
         /// <summary>
         ///     Sends the SPC INQUIRY command to the device with an Extended Vital Product Data page.
@@ -217,11 +205,9 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ModeSense(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Current, 0, 0, timeout,
-                              out duration);
-        }
+        public bool ModeSense(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ModeSense6(out buffer, out senseBuffer, false, ScsiModeSensePageControl.Current, 0, 0, timeout,
+                       out duration);
 
         /// <summary>
         ///     Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-2
@@ -236,10 +222,8 @@ namespace DiscImageChef.Devices
         /// <param name="pageCode">Page code.</param>
         public bool ModeSense6(out byte[]               buffer,      out byte[] senseBuffer, bool dbd,
                                ScsiModeSensePageControl pageControl, byte       pageCode,    uint timeout,
-                               out double               duration)
-        {
-            return ModeSense6(out buffer, out senseBuffer, dbd, pageControl, pageCode, 0, timeout, out duration);
-        }
+                               out double               duration) =>
+            ModeSense6(out buffer, out senseBuffer, dbd, pageControl, pageCode, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC MODE SENSE(6) command to the device as introduced in SCSI-3 SPC-3
@@ -303,11 +287,8 @@ namespace DiscImageChef.Devices
         /// <param name="pageCode">Page code.</param>
         public bool ModeSense10(out byte[]               buffer,      out byte[] senseBuffer, bool dbd,
                                 ScsiModeSensePageControl pageControl, byte       pageCode,    uint timeout,
-                                out double               duration)
-        {
-            return ModeSense10(out buffer, out senseBuffer, false, dbd, pageControl, pageCode, 0, timeout,
-                               out duration);
-        }
+                                out double               duration) =>
+            ModeSense10(out buffer, out senseBuffer, false, dbd, pageControl, pageCode, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-2
@@ -321,14 +302,10 @@ namespace DiscImageChef.Devices
         /// <param name="pageControl">Page control.</param>
         /// <param name="pageCode">Page code.</param>
         /// <param name="llbaa">If set means 64-bit LBAs are accepted by the caller.</param>
-        public bool ModeSense10(out byte[]               buffer, out byte[] senseBuffer, bool llbaa,
-                                bool                     dbd,
-                                ScsiModeSensePageControl pageControl, byte pageCode, uint timeout,
-                                out double               duration)
-        {
-            return ModeSense10(out buffer, out senseBuffer, llbaa, dbd, pageControl, pageCode, 0, timeout,
-                               out duration);
-        }
+        public bool ModeSense10(out byte[]               buffer,      out byte[] senseBuffer, bool llbaa, bool dbd,
+                                ScsiModeSensePageControl pageControl, byte       pageCode,    uint timeout,
+                                out double               duration) =>
+            ModeSense10(out buffer, out senseBuffer, llbaa, dbd, pageControl, pageCode, 0, timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC MODE SENSE(10) command to the device as introduced in SCSI-3 SPC-3
@@ -391,10 +368,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool SpcPreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
-        }
+        public bool SpcPreventMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration) =>
+            SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Prevent, timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command to allow medium removal
@@ -403,10 +378,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool SpcAllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
-        }
+        public bool SpcAllowMediumRemoval(out byte[] senseBuffer, uint timeout, out double duration) =>
+            SpcPreventAllowMediumRemoval(out senseBuffer, ScsiPreventAllowMode.Allow, timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC PREVENT ALLOW MEDIUM REMOVAL command
@@ -461,10 +434,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadCapacity(out buffer, out senseBuffer, false, 0, false, timeout, out duration);
-        }
+        public bool ReadCapacity(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadCapacity(out buffer, out senseBuffer, false, 0, false, timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC READ CAPACITY command
@@ -514,10 +485,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
-        public bool ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return ReadCapacity16(out buffer, out senseBuffer, 0, false, timeout, out duration);
-        }
+        public bool ReadCapacity16(out byte[] buffer, out byte[] senseBuffer, uint timeout, out double duration) =>
+            ReadCapacity16(out buffer, out senseBuffer, 0, false, timeout, out duration);
 
         /// <summary>
         ///     Sends the SPC READ CAPACITY(16) command
@@ -625,11 +594,9 @@ namespace DiscImageChef.Devices
         public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action,
                                   byte       partition,
                                   ushort     firstAttribute, bool cache, uint timeout,
-                                  out double duration)
-        {
-            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, cache,
-                                 timeout,    out duration);
-        }
+                                  out double duration) =>
+            ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, cache, timeout,
+                          out duration);
 
         /// <summary>
         ///     Reads an attribute from the medium auxiliary memory
@@ -643,11 +610,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool ReadAttribute(out byte[] buffer,         out byte[] senseBuffer, ScsiAttributeAction action,
                                   ushort     firstAttribute, bool       cache,       uint                timeout,
-                                  out double duration)
-        {
-            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, 0, firstAttribute, cache, timeout,
-                                 out duration);
-        }
+                                  out double duration) =>
+            ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, 0, firstAttribute, cache, timeout,
+                          out duration);
 
         /// <summary>
         ///     Reads an attribute from the medium auxiliary memory
@@ -661,11 +626,9 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action,
                                   byte       partition,
-                                  ushort     firstAttribute, uint timeout, out double duration)
-        {
-            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, false,
-                                 timeout,    out duration);
-        }
+                                  ushort     firstAttribute, uint timeout, out double duration) =>
+            ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, partition, firstAttribute, false, timeout,
+                          out duration);
 
         /// <summary>
         ///     Reads an attribute from the medium auxiliary memory
@@ -677,11 +640,9 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool ReadAttribute(out byte[] buffer,         out byte[] senseBuffer, ScsiAttributeAction action,
-                                  ushort     firstAttribute, uint       timeout,     out double          duration)
-        {
-            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, 0, firstAttribute, false, timeout,
-                                 out duration);
-        }
+                                  ushort     firstAttribute, uint       timeout,     out double          duration) =>
+            ReadAttribute(out buffer, out senseBuffer, action, 0, 0, 0, 0, firstAttribute, false, timeout,
+                          out duration);
 
         /// <summary>
         ///     Reads an attribute from the medium auxiliary memory
@@ -697,11 +658,9 @@ namespace DiscImageChef.Devices
         public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action,
                                   byte       volume,
                                   byte       partition, ushort firstAttribute, uint timeout,
-                                  out double duration)
-        {
-            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, false,
-                                 timeout,    out duration);
-        }
+                                  out double duration) =>
+            ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, false, timeout,
+                          out duration);
 
         /// <summary>
         ///     Reads an attribute from the medium auxiliary memory
@@ -717,12 +676,11 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool ReadAttribute(out byte[] buffer, out byte[] senseBuffer, ScsiAttributeAction action,
                                   byte       volume,
-                                  byte       partition, ushort     firstAttribute, bool cache,
-                                  uint       timeout,   out double duration)
-        {
-            return ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, cache,
-                                 timeout,    out duration);
-        }
+                                  byte       partition, ushort firstAttribute, bool cache,
+                                  uint       timeout,
+                                  out double duration) =>
+            ReadAttribute(out buffer, out senseBuffer, action, 0, 0, volume, partition, firstAttribute, cache, timeout,
+                          out duration);
 
         /// <summary>
         ///     Sends the SPC MODE SELECT(6) command
@@ -812,10 +770,8 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        public bool RequestSense(out byte[] buffer, uint timeout, out double duration)
-        {
-            return RequestSense(false, out buffer, timeout, out duration);
-        }
+        public bool RequestSense(out byte[] buffer, uint timeout, out double duration) =>
+            RequestSense(false, out buffer, timeout, out duration);
 
         public bool RequestSense(bool descriptor, out byte[] buffer, uint timeout, out double duration)
         {

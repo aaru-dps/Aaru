@@ -49,11 +49,8 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout in seconds.</param>
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         public bool PlasmonReadLong(out byte[] buffer,     out byte[] senseBuffer, bool relAddr, uint       address,
-                                    ushort     blockBytes, bool       pba,         uint timeout, out double duration)
-        {
-            return HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout,
-                              out duration);
-        }
+                                    ushort     blockBytes, bool       pba,         uint timeout, out double duration) =>
+            HpReadLong(out buffer, out senseBuffer, relAddr, address, 0, blockBytes, pba, false, timeout, out duration);
 
         /// <summary>
         ///     Sends the Plasmon READ LONG vendor command
@@ -75,11 +72,9 @@ namespace DiscImageChef.Devices
         public bool PlasmonReadLong(out byte[] buffer,      out byte[] senseBuffer, bool relAddr, uint address,
                                     ushort     transferLen, ushort     blockBytes,  bool pba,     bool sectorCount,
                                     uint       timeout,
-                                    out double duration)
-        {
-            return HpReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
-                              timeout,    out duration);
-        }
+                                    out double duration) =>
+            HpReadLong(out buffer, out senseBuffer, relAddr, address, transferLen, blockBytes, pba, sectorCount,
+                       timeout,    out duration);
 
         /// <summary>
         ///     Retrieves the logical or physical block address for the specified <paramref name="address" />

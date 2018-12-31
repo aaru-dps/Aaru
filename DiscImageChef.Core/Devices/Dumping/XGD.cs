@@ -48,7 +48,6 @@ using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
-using DiscImageChef.Filters;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
@@ -746,9 +745,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         pgMmc = new Modes.ModePage_01_MMC {PS = false, ReadRetryCount = 0x20, Parameter = 0x00};
                         currentModePage = new Modes.ModePage
                         {
-                            Page         = 0x01,
-                            Subpage      = 0x00,
-                            PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
+                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01_MMC(pgMmc)
                         };
                     }
 
@@ -825,8 +822,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     Modes.DecodedMode md = new Modes.DecodedMode
                     {
-                        Header = new Modes.ModeHeader(),
-                        Pages  = new[] {currentModePage.Value}
+                        Header = new Modes.ModeHeader(), Pages = new[] {currentModePage.Value}
                     };
                     md6  = Modes.EncodeMode6(md, dev.ScsiType);
                     md10 = Modes.EncodeMode10(md, dev.ScsiType);
@@ -914,9 +910,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 sidecar.OpticalDisc[0].Layers = new LayersType
                 {
-                    type          = LayersTypeType.OTP,
-                    typeSpecified = true,
-                    Sectors       = new SectorsType[1]
+                    type = LayersTypeType.OTP, typeSpecified = true, Sectors = new SectorsType[1]
                 };
                 sidecar.OpticalDisc[0].Layers.Sectors[0] = new SectorsType {Value = (long)layerBreak};
                 sidecar.OpticalDisc[0].Sessions          = 1;

@@ -41,7 +41,6 @@ using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.Xbox;
-using DiscImageChef.Devices;
 using DiscImageChef.Gui.Controls;
 using DiscImageChef.Gui.Forms;
 using DiscImageChef.Gui.Tabs;

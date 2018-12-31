@@ -42,7 +42,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles = {"rid1.img.lz", "rid10.img.lz", "rid66percent.img.lz", "rid266.img.lz"};
 
         readonly MediaType[] mediatypes =
-            {MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD};
+        {
+            MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD, MediaType.DOS_35_HD
+        };
 
         readonly ulong[] sectors = {2880, 2880, 2880, 2880};
 

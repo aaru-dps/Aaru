@@ -206,8 +206,8 @@ namespace DiscImageChef.DiscImages
                                       imageInfo.SectorsPerTrack);
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                         false));
+                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                            false));
 
             imageInfo.ImageSize            = (ulong)stream.Length - headersizes;
             imageInfo.CreationTime         = imageFilter.GetCreationTime();

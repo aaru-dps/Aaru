@@ -39,60 +39,38 @@ namespace DiscImageChef.DiscImages
 {
     public partial class KryoFlux
     {
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSector(ulong sectorAddress, uint track)
-        {
+        public byte[] ReadSector(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
-        {
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-        {
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public List<Track> GetSessionTracks(Session session)
-        {
+        public List<Track> GetSessionTracks(Session session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public List<Track> GetSessionTracks(ushort session)
-        {
+        public List<Track> GetSessionTracks(ushort session) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
+        public bool? VerifySector(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
+                                   out List<ulong> unknownLbas) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
 
-        public bool? VerifyMediaImage()
-        {
+        public bool? VerifyMediaImage() =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        }
     }
 }

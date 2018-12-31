@@ -31,14 +31,12 @@
 // ****************************************************************************/
 
 using System;
-using System.Data.Entity.Migrations;
 using System.Reflection;
 using System.Threading.Tasks;
 using CommandLine;
 using DiscImageChef.Commands;
 using DiscImageChef.Console;
 using DiscImageChef.Database;
-using DiscImageChef.Database.Migrations;
 using DiscImageChef.Gui.Forms;
 using DiscImageChef.Settings;
 using Eto;
@@ -57,7 +55,7 @@ namespace DiscImageChef
             DicConsole.WriteEvent          += System.Console.Write;
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
-            var ctx = new DicContext();
+            DicContext ctx = new DicContext();
             ctx.Database.Migrate();
             ctx.SaveChanges();
 

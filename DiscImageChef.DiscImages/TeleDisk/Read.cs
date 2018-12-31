@@ -519,25 +519,13 @@ namespace DiscImageChef.DiscImages
             return buffer.ToArray();
         }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
-        {
-            return ReadSectors(sectorAddress, length);
-        }
+        public byte[] ReadSectorsLong(ulong sectorAddress, uint length) => ReadSectors(sectorAddress, length);
 
-        public bool? VerifySector(ulong sectorAddress)
-        {
-            return !sectorsWhereCrcHasFailed.Contains(sectorAddress);
-        }
+        public bool? VerifySector(ulong sectorAddress) => !sectorsWhereCrcHasFailed.Contains(sectorAddress);
 
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            return null;
-        }
+        public bool? VerifySector(ulong sectorAddress, uint track) => null;
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
@@ -563,10 +551,7 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
-        public bool? VerifyMediaImage()
-        {
-            return aDiskCrcHasFailed;
-        }
+        public bool? VerifyMediaImage() => aDiskCrcHasFailed;
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {

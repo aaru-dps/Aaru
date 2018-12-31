@@ -44,55 +44,55 @@ namespace DiscImageChef.CommonTypes.Interfaces
     public interface IPluginRegister
     {
         /// <summary>
-        /// Gets all checksum plugins
+        ///     Gets all checksum plugins
         /// </summary>
         /// <returns>List of checksum plugins</returns>
         List<Type> GetAllChecksumPlugins();
 
         /// <summary>
-        /// Gets all filesystem plugins
+        ///     Gets all filesystem plugins
         /// </summary>
         /// <returns>List of filesystem plugins</returns>
         List<Type> GetAllFilesystemPlugins();
 
         /// <summary>
-        /// Gets all filter plugins
+        ///     Gets all filter plugins
         /// </summary>
         /// <returns>List of filter plugins</returns>
         List<Type> GetAllFilterPlugins();
 
         /// <summary>
-        /// Gets all floppy image plugins
+        ///     Gets all floppy image plugins
         /// </summary>
         /// <returns>List of floppy image plugins</returns>
         List<Type> GetAllFloppyImagePlugins();
 
         /// <summary>
-        /// Gets all media image plugins
+        ///     Gets all media image plugins
         /// </summary>
         /// <returns>List of media image plugins</returns>
         List<Type> GetAllMediaImagePlugins();
 
         /// <summary>
-        /// Gets all partition plugins
+        ///     Gets all partition plugins
         /// </summary>
         /// <returns>List of partition plugins</returns>
         List<Type> GetAllPartitionPlugins();
 
         /// <summary>
-        /// Gets all read-only filesystem plugins
+        ///     Gets all read-only filesystem plugins
         /// </summary>
         /// <returns>List of read-only filesystem plugins</returns>
         List<Type> GetAllReadOnlyFilesystemPlugins();
 
         /// <summary>
-        /// Gets all writable floppy image plugins
+        ///     Gets all writable floppy image plugins
         /// </summary>
         /// <returns>List of writable floppy image plugins</returns>
         List<Type> GetAllWritableFloppyImagePlugins();
 
         /// <summary>
-        /// Gets all writable media image plugins
+        ///     Gets all writable media image plugins
         /// </summary>
         /// <returns>List of writable media image plugins</returns>
         List<Type> GetAllWritableImagePlugins();

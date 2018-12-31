@@ -53,7 +53,9 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] volumename = {"Volume label", "Volume label"};
 
         readonly string[] volumeserial =
-            {"f8e1a8bb-626d-11e7-94b5-0900274691e4", "ff4dc664-6276-11e7-983f-090027c41b46"};
+        {
+            "f8e1a8bb-626d-11e7-94b5-0900274691e4", "ff4dc664-6276-11e7-983f-090027c41b46"
+        };
 
         [Test]
         public void Test()

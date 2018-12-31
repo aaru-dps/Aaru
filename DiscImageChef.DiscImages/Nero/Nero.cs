@@ -73,8 +73,7 @@ namespace DiscImageChef.DiscImages
             imageNewFormat = false;
             imageInfo = new ImageInfo
             {
-                ReadableSectorTags = new List<SectorTagType>(),
-                ReadableMediaTags  = new List<MediaTagType>()
+                ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>()
             };
             neroSessions = new Dictionary<ushort, uint>();
             neroTracks   = new Dictionary<uint, NeroTrack>();

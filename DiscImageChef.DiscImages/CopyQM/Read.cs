@@ -155,8 +155,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.SectorSize           = header.sectorSize;
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)header.totalCylinders, (byte)header.heads,
-                                                         header.sectorsPerTrack, (uint)header.sectorSize,
-                                                         MediaEncoding.MFM, false));
+                                                            header.sectorsPerTrack, (uint)header.sectorSize,
+                                                            MediaEncoding.MFM, false));
 
             switch(imageInfo.MediaType)
             {
@@ -187,15 +187,9 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool? VerifyMediaImage()
-        {
-            return calculatedDataCrc == header.crc && headerChecksumOk;
-        }
+        public bool? VerifyMediaImage() => calculatedDataCrc == header.crc && headerChecksumOk;
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {

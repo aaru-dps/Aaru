@@ -29,6 +29,7 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,10 +45,7 @@ namespace DiscImageChef.Server.Controllers
 {
     public class ReportController : Controller
     {
-        public ActionResult Index()
-        {
-            return RedirectToAction("View", "Report", new RouteValueDictionary {{"id", 1}});
-        }
+        public ActionResult Index() => RedirectToAction("View", "Report", new RouteValueDictionary {{"id", 1}});
 
         public ActionResult View(int? id)
         {

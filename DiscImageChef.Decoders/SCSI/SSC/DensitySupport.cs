@@ -115,17 +115,12 @@ namespace DiscImageChef.Decoders.SCSI.SSC
                     duplicate      = (response[offset + 2] & 0x40) == 0x40,
                     defaultDensity = (response[offset + 2] & 0x20) == 0x20,
                     reserved       = (byte)((response[offset + 2] & 0x1E) >> 1),
-                    lenvalid =
-                        (response[offset + 2] &
-                         0x01) == 0x01,
-                    len =
-                        (ushort)((response[offset + 3] << 8) + response[offset + 4]),
+                    lenvalid       = (response[offset                                       + 2] & 0x01) == 0x01,
+                    len            = (ushort)((response[offset + 3] << 8) + response[offset + 4]),
                     bpmm =
                         (uint)((response[offset + 5] << 16) + (response[offset + 6] << 8) + response[offset + 7]),
-                    width =
-                        (ushort)((response[offset + 8] << 8) + response[offset + 9]),
-                    tracks =
-                        (ushort)((response[offset + 10] << 8) + response[offset + 11]),
+                    width  = (ushort)((response[offset + 8]  << 8) + response[offset + 9]),
+                    tracks = (ushort)((response[offset + 10] << 8) + response[offset + 11]),
                     capacity = (uint)((response[offset + 12] << 24) + (response[offset + 13] << 16) +
                                       (response[offset + 14] << 8)  + response[offset + 15])
                 };
@@ -182,10 +177,7 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             return sb.ToString();
         }
 
-        public static string PrettifyDensity(byte[] response)
-        {
-            return PrettifyDensity(DecodeDensity(response));
-        }
+        public static string PrettifyDensity(byte[] response) => PrettifyDensity(DecodeDensity(response));
 
         public static MediaTypeSupportHeader? DecodeMediumType(byte[] response)
         {
@@ -272,9 +264,6 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             return sb.ToString();
         }
 
-        public static string PrettifyMediumType(byte[] response)
-        {
-            return PrettifyMediumType(DecodeMediumType(response));
-        }
+        public static string PrettifyMediumType(byte[] response) => PrettifyMediumType(DecodeMediumType(response));
     }
 }

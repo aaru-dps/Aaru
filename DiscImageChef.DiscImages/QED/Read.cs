@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Reads Anex86 disk images.
+//     Reads QEMU Enhanced Disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -43,7 +43,7 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Qed
     {
-                public bool Open(IFilter imageFilter)
+        public bool Open(IFilter imageFilter)
         {
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
@@ -239,6 +239,5 @@ namespace DiscImageChef.DiscImages
 
             return ms.ToArray();
         }
-
     }
 }

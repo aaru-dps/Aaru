@@ -110,12 +110,16 @@ namespace DiscImageChef.Tests.Filesystems
         };
 
         readonly ulong[] sectors =
-            {1024000, 1024000, 1024000, 1024000, 204800, 204800, 204800, 204800, 2097152, 2097152, 2097152};
+        {
+            1024000, 1024000, 1024000, 1024000, 204800, 204800, 204800, 204800, 2097152, 2097152, 2097152
+        };
 
         readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512};
 
         readonly long[] clusters =
-            {511488, 511488, 511488, 511488, 102368, 102368, 102368, 102368, 1047660, 1038952, 1038952};
+        {
+            511488, 511488, 511488, 511488, 102368, 102368, 102368, 102368, 1047660, 1038952, 1038952
+        };
 
         readonly int[] clustersize = {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024};
 
@@ -170,9 +174,9 @@ namespace DiscImageChef.Tests.Filesystems
             "ffs43/netbsd_7.1.vdi.lz", "ufs1/darwin_1.3.1.vdi.lz", "ufs1/darwin_1.4.1.vdi.lz",
             "ufs1/darwin_6.0.2.vdi.lz", "ufs1/darwin_8.0.1.vdi.lz", "ufs1/dflybsd_1.2.0.vdi.lz",
             "ufs1/dflybsd_3.6.1.vdi.lz", "ufs1/dflybsd_4.0.5.vdi.lz", "ufs1/freebsd_6.1.vdi.lz",
-            "ufs1/freebsd_7.0.vdi.lz", "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz", "ufs1/netbsd_7.1.vdi.lz",
-            "ufs1/solaris_7.vdi.lz", "ufs1/solaris_9.vdi.lz", "ufs2/freebsd_6.1.vdi.lz", "ufs2/freebsd_7.0.vdi.lz",
-            "ufs2/freebsd_8.2.vdi.lz", "ufs2/netbsd_7.1.vdi.lz"
+            "ufs1/freebsd_7.0.vdi.lz", "ufs1/freebsd_8.2.vdi.lz", "ufs1/netbsd_1.6.vdi.lz",
+            "ufs1/netbsd_7.1.vdi.lz", "ufs1/solaris_7.vdi.lz", "ufs1/solaris_9.vdi.lz", "ufs2/freebsd_6.1.vdi.lz",
+            "ufs2/freebsd_7.0.vdi.lz", "ufs2/freebsd_8.2.vdi.lz", "ufs2/netbsd_7.1.vdi.lz"
         };
 
         readonly ulong[] sectors =
@@ -197,8 +201,8 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly int[] clustersize =
         {
-            2048, 2048, 1024, 1024, 1024, 1024, 1024, 2048, 2048, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 2048, 2048,
-            4096, 4096, 2048, 2048, 1024, 1024, 1024, 4096, 4096, 2048, 2048
+            2048, 2048, 1024, 1024, 1024, 1024, 1024, 2048, 2048, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 2048,
+            2048, 4096, 4096, 2048, 2048, 1024, 1024, 1024, 4096, 4096, 2048, 2048
         };
 
         readonly string[] volumename =
@@ -209,14 +213,15 @@ namespace DiscImageChef.Tests.Filesystems
 
         readonly string[] volumeserial =
         {
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null, null, null, null
         };
 
         readonly string[] type =
         {
-            "UFS", "UFS2", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS",
-            "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS2", "UFS2", "UFS2", "UFS2"
+            "UFS", "UFS2", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS",
+            "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS", "UFS2", "UFS2", "UFS2",
+            "UFS2"
         };
 
         [Test]

@@ -29,18 +29,19 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Report
 {
     public partial class DeviceReport
     {
+        bool   debug;
         Device dev;
-        bool debug;
 
         public DeviceReport(Device device, bool debug)
         {
-            this.dev = device;
+            dev        = device;
             this.debug = debug;
         }
     }

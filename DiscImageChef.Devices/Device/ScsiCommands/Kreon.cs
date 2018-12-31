@@ -71,10 +71,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool KreonLock(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return KreonSetLockState(out senseBuffer, KreonLockStates.Locked, timeout, out duration);
-        }
+        public bool KreonLock(out byte[] senseBuffer, uint timeout, out double duration) =>
+            KreonSetLockState(out senseBuffer, KreonLockStates.Locked, timeout, out duration);
 
         /// <summary>
         ///     Sets the drive to the xtreme unlocked state
@@ -83,10 +81,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool KreonUnlockXtreme(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return KreonSetLockState(out senseBuffer, KreonLockStates.Xtreme, timeout, out duration);
-        }
+        public bool KreonUnlockXtreme(out byte[] senseBuffer, uint timeout, out double duration) =>
+            KreonSetLockState(out senseBuffer, KreonLockStates.Xtreme, timeout, out duration);
 
         /// <summary>
         ///     Sets the drive to the wxripper unlocked state
@@ -95,10 +91,8 @@ namespace DiscImageChef.Devices
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool KreonUnlockWxripper(out byte[] senseBuffer, uint timeout, out double duration)
-        {
-            return KreonSetLockState(out senseBuffer, KreonLockStates.Wxripper, timeout, out duration);
-        }
+        public bool KreonUnlockWxripper(out byte[] senseBuffer, uint timeout, out double duration) =>
+            KreonSetLockState(out senseBuffer, KreonLockStates.Wxripper, timeout, out duration);
 
         /// <summary>
         ///     Sets the drive to the specified lock state

@@ -410,9 +410,9 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < toc.TrackDescriptors.Length; i++)
             {
                 long alba = MsfToLba((toc.TrackDescriptors[i].Min, toc.TrackDescriptors[i].Sec,
-                                      toc.TrackDescriptors[i].Frame));
+                                         toc.TrackDescriptors[i].Frame));
                 long plba = MsfToLba((toc.TrackDescriptors[i].PMIN, toc.TrackDescriptors[i].PSEC,
-                                      toc.TrackDescriptors[i].PFRAME));
+                                         toc.TrackDescriptors[i].PFRAME));
 
                 if(alba > 405000) alba = (alba - 405000 + 300) * -1;
                 if(plba > 405000) plba = (plba - 405000 + 300) * -1;
@@ -444,10 +444,7 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool SetMetadata(ImageInfo metadata)
-        {
-            return true;
-        }
+        public bool SetMetadata(ImageInfo metadata) => true;
 
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
         {
@@ -587,16 +584,8 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetDumpHardware(List<DumpHardwareType> dumpHardware) => false;
 
-        public bool SetCicmMetadata(CICMMetadataType metadata)
-        {
-            // Not supported
-            return false;
-        }
+        public bool SetCicmMetadata(CICMMetadataType metadata) => false;
     }
 }

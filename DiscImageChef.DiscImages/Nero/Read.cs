@@ -122,9 +122,7 @@ namespace DiscImageChef.DiscImages
 
                             neroCuesheetV1 = new NeroV1Cuesheet
                             {
-                                ChunkId   = chunkId,
-                                ChunkSize = chunkLength,
-                                Entries   = new List<NeroV1CueEntry>()
+                                ChunkId = chunkId, ChunkSize = chunkLength, Entries = new List<NeroV1CueEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[8];
@@ -168,9 +166,7 @@ namespace DiscImageChef.DiscImages
 
                             neroCuesheetV2 = new NeroV2Cuesheet
                             {
-                                ChunkId   = chunkId,
-                                ChunkSize = chunkLength,
-                                Entries   = new List<NeroV2CueEntry>()
+                                ChunkId = chunkId, ChunkSize = chunkLength, Entries = new List<NeroV2CueEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[8];
@@ -397,9 +393,7 @@ namespace DiscImageChef.DiscImages
 
                             neroCdtxt = new NeroCdText
                             {
-                                ChunkId   = chunkId,
-                                ChunkSize = chunkLength,
-                                Packs     = new List<NeroCdTextPack>()
+                                ChunkId = chunkId, ChunkSize = chunkLength, Packs = new List<NeroCdTextPack>()
                             };
 
                             byte[] tmpbuffer = new byte[18];
@@ -442,9 +436,7 @@ namespace DiscImageChef.DiscImages
 
                             neroTaov1 = new NeroV1Tao
                             {
-                                ChunkId   = chunkId,
-                                ChunkSize = chunkLength,
-                                Tracks    = new List<NeroV1TaoEntry>()
+                                ChunkId = chunkId, ChunkSize = chunkLength, Tracks = new List<NeroV1TaoEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[20];
@@ -507,9 +499,7 @@ namespace DiscImageChef.DiscImages
 
                             neroTaov2 = new NeroV2Tao
                             {
-                                ChunkId   = chunkId,
-                                ChunkSize = chunkLength,
-                                Tracks    = new List<NeroV2TaoEntry>()
+                                ChunkId = chunkId, ChunkSize = chunkLength, Tracks = new List<NeroV2TaoEntry>()
                             };
 
                             byte[] tmpbuffer = new byte[32];
@@ -931,25 +921,14 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        public byte[] ReadSector(ulong sectorAddress)
-        {
-            return ReadSectors(sectorAddress, 1);
-        }
+        public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);
 
-        public byte[] ReadSector(ulong sectorAddress, uint track)
-        {
-            return ReadSectors(sectorAddress, 1, track);
-        }
+        public byte[] ReadSector(ulong sectorAddress, uint track) => ReadSectors(sectorAddress, 1, track);
 
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag)
-        {
-            return ReadSectorsTag(sectorAddress, 1, track, tag);
-        }
+        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
+            ReadSectorsTag(sectorAddress, 1, track, tag);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
         {
@@ -1297,15 +1276,9 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public byte[] ReadSectorLong(ulong sectorAddress)
-        {
-            return ReadSectorsLong(sectorAddress, 1);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectorsLong(sectorAddress, 1);
 
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track)
-        {
-            return ReadSectorsLong(sectorAddress, 1, track);
-        }
+        public byte[] ReadSectorLong(ulong sectorAddress, uint track) => ReadSectorsLong(sectorAddress, 1, track);
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length)
         {
@@ -1394,10 +1367,7 @@ namespace DiscImageChef.DiscImages
             return buffer;
         }
 
-        public List<Track> GetSessionTracks(Session session)
-        {
-            return GetSessionTracks(session.SessionSequence);
-        }
+        public List<Track> GetSessionTracks(Session session) => GetSessionTracks(session.SessionSequence);
 
         public List<Track> GetSessionTracks(ushort session)
         {
@@ -1476,9 +1446,6 @@ namespace DiscImageChef.DiscImages
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifyMediaImage()
-        {
-            return null;
-        }
+        public bool? VerifyMediaImage() => null;
     }
 }

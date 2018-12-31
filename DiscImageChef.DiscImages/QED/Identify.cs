@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies Anex86 disk images.
+//     Identifies QEMU Enhanced Disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -56,6 +56,5 @@ namespace DiscImageChef.DiscImages
 
             return qHdr.magic == QED_MAGIC;
         }
-
     }
 }
