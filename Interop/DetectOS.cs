@@ -63,6 +63,28 @@ namespace DiscImageChef.CommonTypes.Interop
             GetRealPlatformID() == PlatformID.Win32Windows || GetRealPlatformID() == PlatformID.WinCE  ||
             GetRealPlatformID() == PlatformID.WindowsPhone || GetRealPlatformID() == PlatformID.Xbox;
 
+        public static bool IsAdmin
+        {
+            get
+            {
+                if(!IsWindows) return Environment.UserName == "root";
+
+                bool            isAdmin;
+                WindowsIdentity user = null;
+                try
+                {
+                    user = WindowsIdentity.GetCurrent();
+                    WindowsPrincipal principal = new WindowsPrincipal(user);
+                    isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+                }
+                catch(UnauthorizedAccessException ex) { isAdmin = false; }
+                catch(Exception ex) { isAdmin                   = false; }
+                finally { user?.Dispose(); }
+
+                return isAdmin;
+            }
+        }
+
         [DllImport("libc", SetLastError = true)]
         static extern int uname(out utsname name);
 
@@ -273,28 +295,6 @@ namespace DiscImageChef.CommonTypes.Interop
                 case PlatformID.Xbox:         return "Xbox OS";
                 case PlatformID.zOS:          return "z/OS";
                 default:                      return id.ToString();
-            }
-        }
-
-        public static bool IsAdmin
-        {
-            get
-            {
-                if(!IsWindows) return Environment.UserName == "root";
-
-                bool            isAdmin;
-                WindowsIdentity user = null;
-                try
-                {
-                    user = WindowsIdentity.GetCurrent();
-                    WindowsPrincipal principal = new WindowsPrincipal(user);
-                    isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
-                }
-                catch(UnauthorizedAccessException ex) { isAdmin = false; }
-                catch(Exception ex) { isAdmin                   = false; }
-                finally { user?.Dispose(); }
-
-                return isAdmin;
             }
         }
 

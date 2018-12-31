@@ -106,9 +106,6 @@ namespace DiscImageChef.CommonTypes
         ///     Gets all known filters
         /// </summary>
         /// <returns>Known filters</returns>
-        public SortedDictionary<string, IFilter> GetFiltersList()
-        {
-            return Filters;
-        }
+        public SortedDictionary<string, IFilter> GetFiltersList() => Filters;
     }
 }

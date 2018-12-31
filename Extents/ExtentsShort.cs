@@ -228,10 +228,7 @@ namespace DiscImageChef.CommonTypes.Extents
         ///     last element
         /// </summary>
         /// <returns>Array of <see cref="Tuple" /></returns>
-        public Tuple<short, short>[] ToArray()
-        {
-            return backend.ToArray();
-        }
+        public Tuple<short, short>[] ToArray() => backend.ToArray();
 
         /// <summary>
         ///     Gets the first element of the extent that contains the specified item

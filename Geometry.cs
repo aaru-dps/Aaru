@@ -117,21 +117,18 @@ namespace DiscImageChef.CommonTypes
 
         public static MediaType GetMediaType(
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
-                variableSectorsPerTrack) geometry)
-        {
-            return (from geom in KnownGeometries
-                    where geom.cylinders               == geometry.cylinders       && geom.heads == geometry.heads &&
-                          geom.sectorsPerTrack         == geometry.sectorsPerTrack &&
-                          geom.bytesPerSector          == geometry.bytesPerSector  &&
-                          geom.encoding                == geometry.encoding        &&
-                          geom.variableSectorsPerTrack == geometry.variableSectorsPerTrack
-                    select geom.type).FirstOrDefault();
-        }
+                variableSectorsPerTrack) geometry) =>
+            (from geom in KnownGeometries
+             where geom.cylinders               == geometry.cylinders       &&
+                   geom.heads                   == geometry.heads           &&
+                   geom.sectorsPerTrack         == geometry.sectorsPerTrack &&
+                   geom.bytesPerSector          == geometry.bytesPerSector  &&
+                   geom.encoding                == geometry.encoding        &&
+                   geom.variableSectorsPerTrack == geometry.variableSectorsPerTrack
+             select geom.type).FirstOrDefault();
 
         public static (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding
-          , bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType)
-        {
-            return (from geom in KnownGeometries where geom.type == mediaType select geom).FirstOrDefault();
-        }
+          , bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
+            (from geom in KnownGeometries where geom.type == mediaType select geom).FirstOrDefault();
     }
 }
