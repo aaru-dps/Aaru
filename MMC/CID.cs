@@ -181,14 +181,8 @@ namespace DiscImageChef.Decoders.MMC
             return sb.ToString();
         }
 
-        public static string PrettifyCID(uint[] response)
-        {
-            return PrettifyCID(DecodeCID(response));
-        }
+        public static string PrettifyCID(uint[] response) => PrettifyCID(DecodeCID(response));
 
-        public static string PrettifyCID(byte[] response)
-        {
-            return PrettifyCID(DecodeCID(response));
-        }
+        public static string PrettifyCID(byte[] response) => PrettifyCID(DecodeCID(response));
     }
 }

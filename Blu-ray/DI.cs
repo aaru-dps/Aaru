@@ -328,10 +328,7 @@ namespace DiscImageChef.Decoders.Bluray
             return sb.ToString();
         }
 
-        public static string Prettify(byte[] DIResponse)
-        {
-            return Prettify(Decode(DIResponse));
-        }
+        public static string Prettify(byte[] DIResponse) => Prettify(Decode(DIResponse));
         #endregion Public methods
 
         #region Public structures

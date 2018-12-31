@@ -159,14 +159,8 @@ namespace DiscImageChef.Decoders.SecureDigital
             return sb.ToString();
         }
 
-        public static string PrettifySCR(uint[] response)
-        {
-            return PrettifySCR(DecodeSCR(response));
-        }
+        public static string PrettifySCR(uint[] response) => PrettifySCR(DecodeSCR(response));
 
-        public static string PrettifySCR(byte[] response)
-        {
-            return PrettifySCR(DecodeSCR(response));
-        }
+        public static string PrettifySCR(byte[] response) => PrettifySCR(DecodeSCR(response));
     }
 }

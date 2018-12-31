@@ -130,10 +130,8 @@ namespace DiscImageChef.Decoders.SCSI
             return header;
         }
 
-        public static string PrettifyModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
-        {
-            return PrettifyModeHeader(DecodeModeHeader10(modeResponse, deviceType), deviceType);
-        }
+        public static string PrettifyModeHeader10(byte[] modeResponse, PeripheralDeviceTypes deviceType) =>
+            PrettifyModeHeader(DecodeModeHeader10(modeResponse, deviceType), deviceType);
 
         public static DecodedMode? DecodeMode10(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {

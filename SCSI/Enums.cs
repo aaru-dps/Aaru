@@ -317,9 +317,9 @@ namespace DiscImageChef.Decoders.SCSI
     public enum ScsiDefinitions : byte
     {
         Current = 0,
-        SCSI1 = 1,
-        CCS = 2,
-        SCSI2 = 3,
-        SCSI3 = 4
+        SCSI1   = 1,
+        CCS     = 2,
+        SCSI2   = 3,
+        SCSI3   = 4
     }
 }

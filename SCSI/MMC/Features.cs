@@ -4132,12 +4132,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_001D(Feature_001D? feature)
-        {
-            return !feature.HasValue
-                       ? null
-                       : "Drive claims capability to read all CD formats according to OSTA Multi-Read Specification\n";
-        }
+        public static string Prettify_001D(Feature_001D? feature) =>
+            !feature.HasValue
+                ? null
+                : "Drive claims capability to read all CD formats according to OSTA Multi-Read Specification\n";
 
         public static string Prettify_001E(Feature_001E? feature)
         {
@@ -4235,10 +4233,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0022(Feature_0022? feature)
-        {
-            return !feature.HasValue ? null : "Drive supports media that require erasing before writing\n";
-        }
+        public static string Prettify_0022(Feature_0022? feature) =>
+            !feature.HasValue ? null : "Drive supports media that require erasing before writing\n";
 
         public static string Prettify_0023(Feature_0023? feature)
         {
@@ -4294,12 +4290,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0026(Feature_0026? feature)
-        {
-            return !feature.HasValue
-                       ? null
-                       : "Drive shall have the ability to overwrite logical blocks only in fixed sets at a time\n";
-        }
+        public static string Prettify_0026(Feature_0026? feature) =>
+            !feature.HasValue
+                ? null
+                : "Drive shall have the ability to overwrite logical blocks only in fixed sets at a time\n";
 
         public static string Prettify_0027(Feature_0027? feature)
         {
@@ -4510,10 +4504,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0030(Feature_0030? feature)
-        {
-            return !feature.HasValue ? null : "Drive can read DDCDs\n";
-        }
+        public static string Prettify_0030(Feature_0030? feature) =>
+            !feature.HasValue ? null : "Drive can read DDCDs\n";
 
         public static string Prettify_0031(Feature_0031? feature)
         {
@@ -4561,10 +4553,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0035(Feature_0035? feature)
-        {
-            return !feature.HasValue ? null : "Drive can stop a long immediate operation\n";
-        }
+        public static string Prettify_0035(Feature_0035? feature) =>
+            !feature.HasValue ? null : "Drive can stop a long immediate operation\n";
 
         public static string Prettify_0037(Feature_0037? feature)
         {
@@ -4590,10 +4580,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0038(Feature_0038? feature)
-        {
-            return !feature.HasValue ? null : "Drive can write BD-R on Pseudo-OVerwrite SRM mode\n";
-        }
+        public static string Prettify_0038(Feature_0038? feature) =>
+            !feature.HasValue ? null : "Drive can write BD-R on Pseudo-OVerwrite SRM mode\n";
 
         public static string Prettify_003A(Feature_003A? feature)
         {
@@ -4689,12 +4677,10 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0042(Feature_0042? feature)
-        {
-            return !feature.HasValue
-                       ? null
-                       : "Drive is able to detect and report defective writable unit and behave accordinly\n";
-        }
+        public static string Prettify_0042(Feature_0042? feature) =>
+            !feature.HasValue
+                ? null
+                : "Drive is able to detect and report defective writable unit and behave accordinly\n";
 
         public static string Prettify_0050(Feature_0050? feature)
         {
@@ -4749,10 +4735,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0100(Feature_0100? feature)
-        {
-            return !feature.HasValue ? null : "Drive is able to perform host and drive directed power management\n";
-        }
+        public static string Prettify_0100(Feature_0100? feature) =>
+            !feature.HasValue ? null : "Drive is able to perform host and drive directed power management\n";
 
         public static string Prettify_0101(Feature_0101? feature)
         {
@@ -4881,10 +4865,8 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0109(Feature_0109? feature)
-        {
-            return !feature.HasValue ? null : "Drive is able to read media serial number\n";
-        }
+        public static string Prettify_0109(Feature_0109? feature) =>
+            !feature.HasValue ? null : "Drive is able to read media serial number\n";
 
         public static string Prettify_010A(Feature_010A? feature)
         {
@@ -5059,295 +5041,121 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             return sb.ToString();
         }
 
-        public static string Prettify_0000(byte[] feature)
-        {
-            return Prettify_0000(Decode_0000(feature));
-        }
+        public static string Prettify_0000(byte[] feature) => Prettify_0000(Decode_0000(feature));
 
-        public static string Prettify_0001(byte[] feature)
-        {
-            return Prettify_0001(Decode_0001(feature));
-        }
+        public static string Prettify_0001(byte[] feature) => Prettify_0001(Decode_0001(feature));
 
-        public static string Prettify_0002(byte[] feature)
-        {
-            return Prettify_0002(Decode_0002(feature));
-        }
+        public static string Prettify_0002(byte[] feature) => Prettify_0002(Decode_0002(feature));
 
-        public static string Prettify_0003(byte[] feature)
-        {
-            return Prettify_0003(Decode_0003(feature));
-        }
+        public static string Prettify_0003(byte[] feature) => Prettify_0003(Decode_0003(feature));
 
-        public static string Prettify_0004(byte[] feature)
-        {
-            return Prettify_0004(Decode_0004(feature));
-        }
+        public static string Prettify_0004(byte[] feature) => Prettify_0004(Decode_0004(feature));
 
-        public static string Prettify_0010(byte[] feature)
-        {
-            return Prettify_0010(Decode_0010(feature));
-        }
+        public static string Prettify_0010(byte[] feature) => Prettify_0010(Decode_0010(feature));
 
-        public static string Prettify_001D(byte[] feature)
-        {
-            return Prettify_001D(Decode_001D(feature));
-        }
+        public static string Prettify_001D(byte[] feature) => Prettify_001D(Decode_001D(feature));
 
-        public static string Prettify_001E(byte[] feature)
-        {
-            return Prettify_001E(Decode_001E(feature));
-        }
+        public static string Prettify_001E(byte[] feature) => Prettify_001E(Decode_001E(feature));
 
-        public static string Prettify_001F(byte[] feature)
-        {
-            return Prettify_001F(Decode_001F(feature));
-        }
+        public static string Prettify_001F(byte[] feature) => Prettify_001F(Decode_001F(feature));
 
-        public static string Prettify_0020(byte[] feature)
-        {
-            return Prettify_0020(Decode_0020(feature));
-        }
+        public static string Prettify_0020(byte[] feature) => Prettify_0020(Decode_0020(feature));
 
-        public static string Prettify_0021(byte[] feature)
-        {
-            return Prettify_0021(Decode_0021(feature));
-        }
+        public static string Prettify_0021(byte[] feature) => Prettify_0021(Decode_0021(feature));
 
-        public static string Prettify_0022(byte[] feature)
-        {
-            return Prettify_0022(Decode_0022(feature));
-        }
+        public static string Prettify_0022(byte[] feature) => Prettify_0022(Decode_0022(feature));
 
-        public static string Prettify_0023(byte[] feature)
-        {
-            return Prettify_0023(Decode_0023(feature));
-        }
+        public static string Prettify_0023(byte[] feature) => Prettify_0023(Decode_0023(feature));
 
-        public static string Prettify_0024(byte[] feature)
-        {
-            return Prettify_0024(Decode_0024(feature));
-        }
+        public static string Prettify_0024(byte[] feature) => Prettify_0024(Decode_0024(feature));
 
-        public static string Prettify_0025(byte[] feature)
-        {
-            return Prettify_0025(Decode_0025(feature));
-        }
+        public static string Prettify_0025(byte[] feature) => Prettify_0025(Decode_0025(feature));
 
-        public static string Prettify_0026(byte[] feature)
-        {
-            return Prettify_0026(Decode_0026(feature));
-        }
+        public static string Prettify_0026(byte[] feature) => Prettify_0026(Decode_0026(feature));
 
-        public static string Prettify_0027(byte[] feature)
-        {
-            return Prettify_0027(Decode_0027(feature));
-        }
+        public static string Prettify_0027(byte[] feature) => Prettify_0027(Decode_0027(feature));
 
-        public static string Prettify_0028(byte[] feature)
-        {
-            return Prettify_0028(Decode_0028(feature));
-        }
+        public static string Prettify_0028(byte[] feature) => Prettify_0028(Decode_0028(feature));
 
-        public static string Prettify_0029(byte[] feature)
-        {
-            return Prettify_0029(Decode_0029(feature));
-        }
+        public static string Prettify_0029(byte[] feature) => Prettify_0029(Decode_0029(feature));
 
-        public static string Prettify_002A(byte[] feature)
-        {
-            return Prettify_002A(Decode_002A(feature));
-        }
+        public static string Prettify_002A(byte[] feature) => Prettify_002A(Decode_002A(feature));
 
-        public static string Prettify_002B(byte[] feature)
-        {
-            return Prettify_002B(Decode_002B(feature));
-        }
+        public static string Prettify_002B(byte[] feature) => Prettify_002B(Decode_002B(feature));
 
-        public static string Prettify_002C(byte[] feature)
-        {
-            return Prettify_002C(Decode_002C(feature));
-        }
+        public static string Prettify_002C(byte[] feature) => Prettify_002C(Decode_002C(feature));
 
-        public static string Prettify_002D(byte[] feature)
-        {
-            return Prettify_002D(Decode_002D(feature));
-        }
+        public static string Prettify_002D(byte[] feature) => Prettify_002D(Decode_002D(feature));
 
-        public static string Prettify_002E(byte[] feature)
-        {
-            return Prettify_002E(Decode_002E(feature));
-        }
+        public static string Prettify_002E(byte[] feature) => Prettify_002E(Decode_002E(feature));
 
-        public static string Prettify_002F(byte[] feature)
-        {
-            return Prettify_002F(Decode_002F(feature));
-        }
+        public static string Prettify_002F(byte[] feature) => Prettify_002F(Decode_002F(feature));
 
-        public static string Prettify_0030(byte[] feature)
-        {
-            return Prettify_0030(Decode_0030(feature));
-        }
+        public static string Prettify_0030(byte[] feature) => Prettify_0030(Decode_0030(feature));
 
-        public static string Prettify_0031(byte[] feature)
-        {
-            return Prettify_0031(Decode_0031(feature));
-        }
+        public static string Prettify_0031(byte[] feature) => Prettify_0031(Decode_0031(feature));
 
-        public static string Prettify_0032(byte[] feature)
-        {
-            return Prettify_0032(Decode_0032(feature));
-        }
+        public static string Prettify_0032(byte[] feature) => Prettify_0032(Decode_0032(feature));
 
-        public static string Prettify_0033(byte[] feature)
-        {
-            return Prettify_0033(Decode_0033(feature));
-        }
+        public static string Prettify_0033(byte[] feature) => Prettify_0033(Decode_0033(feature));
 
-        public static string Prettify_0035(byte[] feature)
-        {
-            return Prettify_0035(Decode_0035(feature));
-        }
+        public static string Prettify_0035(byte[] feature) => Prettify_0035(Decode_0035(feature));
 
-        public static string Prettify_0037(byte[] feature)
-        {
-            return Prettify_0037(Decode_0037(feature));
-        }
+        public static string Prettify_0037(byte[] feature) => Prettify_0037(Decode_0037(feature));
 
-        public static string Prettify_0038(byte[] feature)
-        {
-            return Prettify_0038(Decode_0038(feature));
-        }
+        public static string Prettify_0038(byte[] feature) => Prettify_0038(Decode_0038(feature));
 
-        public static string Prettify_003A(byte[] feature)
-        {
-            return Prettify_003A(Decode_003A(feature));
-        }
+        public static string Prettify_003A(byte[] feature) => Prettify_003A(Decode_003A(feature));
 
-        public static string Prettify_003B(byte[] feature)
-        {
-            return Prettify_003B(Decode_003B(feature));
-        }
+        public static string Prettify_003B(byte[] feature) => Prettify_003B(Decode_003B(feature));
 
-        public static string Prettify_0040(byte[] feature)
-        {
-            return Prettify_0040(Decode_0040(feature));
-        }
+        public static string Prettify_0040(byte[] feature) => Prettify_0040(Decode_0040(feature));
 
-        public static string Prettify_0041(byte[] feature)
-        {
-            return Prettify_0041(Decode_0041(feature));
-        }
+        public static string Prettify_0041(byte[] feature) => Prettify_0041(Decode_0041(feature));
 
-        public static string Prettify_0042(byte[] feature)
-        {
-            return Prettify_0042(Decode_0042(feature));
-        }
+        public static string Prettify_0042(byte[] feature) => Prettify_0042(Decode_0042(feature));
 
-        public static string Prettify_0050(byte[] feature)
-        {
-            return Prettify_0050(Decode_0050(feature));
-        }
+        public static string Prettify_0050(byte[] feature) => Prettify_0050(Decode_0050(feature));
 
-        public static string Prettify_0051(byte[] feature)
-        {
-            return Prettify_0051(Decode_0051(feature));
-        }
+        public static string Prettify_0051(byte[] feature) => Prettify_0051(Decode_0051(feature));
 
-        public static string Prettify_0080(byte[] feature)
-        {
-            return Prettify_0080(Decode_0080(feature));
-        }
+        public static string Prettify_0080(byte[] feature) => Prettify_0080(Decode_0080(feature));
 
-        public static string Prettify_0100(byte[] feature)
-        {
-            return Prettify_0100(Decode_0100(feature));
-        }
+        public static string Prettify_0100(byte[] feature) => Prettify_0100(Decode_0100(feature));
 
-        public static string Prettify_0101(byte[] feature)
-        {
-            return Prettify_0101(Decode_0101(feature));
-        }
+        public static string Prettify_0101(byte[] feature) => Prettify_0101(Decode_0101(feature));
 
-        public static string Prettify_0102(byte[] feature)
-        {
-            return Prettify_0102(Decode_0102(feature));
-        }
+        public static string Prettify_0102(byte[] feature) => Prettify_0102(Decode_0102(feature));
 
-        public static string Prettify_0103(byte[] feature)
-        {
-            return Prettify_0103(Decode_0103(feature));
-        }
+        public static string Prettify_0103(byte[] feature) => Prettify_0103(Decode_0103(feature));
 
-        public static string Prettify_0104(byte[] feature)
-        {
-            return Prettify_0104(Decode_0104(feature));
-        }
+        public static string Prettify_0104(byte[] feature) => Prettify_0104(Decode_0104(feature));
 
-        public static string Prettify_0105(byte[] feature)
-        {
-            return Prettify_0105(Decode_0105(feature));
-        }
+        public static string Prettify_0105(byte[] feature) => Prettify_0105(Decode_0105(feature));
 
-        public static string Prettify_0106(byte[] feature)
-        {
-            return Prettify_0106(Decode_0106(feature));
-        }
+        public static string Prettify_0106(byte[] feature) => Prettify_0106(Decode_0106(feature));
 
-        public static string Prettify_0107(byte[] feature)
-        {
-            return Prettify_0107(Decode_0107(feature));
-        }
+        public static string Prettify_0107(byte[] feature) => Prettify_0107(Decode_0107(feature));
 
-        public static string Prettify_0108(byte[] feature)
-        {
-            return Prettify_0108(Decode_0108(feature));
-        }
+        public static string Prettify_0108(byte[] feature) => Prettify_0108(Decode_0108(feature));
 
-        public static string Prettify_0109(byte[] feature)
-        {
-            return Prettify_0109(Decode_0109(feature));
-        }
+        public static string Prettify_0109(byte[] feature) => Prettify_0109(Decode_0109(feature));
 
-        public static string Prettify_010A(byte[] feature)
-        {
-            return Prettify_010A(Decode_010A(feature));
-        }
+        public static string Prettify_010A(byte[] feature) => Prettify_010A(Decode_010A(feature));
 
-        public static string Prettify_010B(byte[] feature)
-        {
-            return Prettify_010B(Decode_010B(feature));
-        }
+        public static string Prettify_010B(byte[] feature) => Prettify_010B(Decode_010B(feature));
 
-        public static string Prettify_010C(byte[] feature)
-        {
-            return Prettify_010C(Decode_010C(feature));
-        }
+        public static string Prettify_010C(byte[] feature) => Prettify_010C(Decode_010C(feature));
 
-        public static string Prettify_010D(byte[] feature)
-        {
-            return Prettify_010D(Decode_010D(feature));
-        }
+        public static string Prettify_010D(byte[] feature) => Prettify_010D(Decode_010D(feature));
 
-        public static string Prettify_010E(byte[] feature)
-        {
-            return Prettify_010E(Decode_010E(feature));
-        }
+        public static string Prettify_010E(byte[] feature) => Prettify_010E(Decode_010E(feature));
 
-        public static string Prettify_0110(byte[] feature)
-        {
-            return Prettify_0110(Decode_0110(feature));
-        }
+        public static string Prettify_0110(byte[] feature) => Prettify_0110(Decode_0110(feature));
 
-        public static string Prettify_0113(byte[] feature)
-        {
-            return Prettify_0113(Decode_0113(feature));
-        }
+        public static string Prettify_0113(byte[] feature) => Prettify_0113(Decode_0113(feature));
 
-        public static string Prettify_0142(byte[] feature)
-        {
-            return Prettify_0142(Decode_0142(feature));
-        }
+        public static string Prettify_0142(byte[] feature) => Prettify_0142(Decode_0142(feature));
 
         public static SeparatedFeatures Separate(byte[] response)
         {

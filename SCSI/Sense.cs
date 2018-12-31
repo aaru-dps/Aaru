@@ -279,10 +279,7 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static FixedSense? DecodeFixed(byte[] sense)
-        {
-            return DecodeFixed(sense, out _);
-        }
+        public static FixedSense? DecodeFixed(byte[] sense) => DecodeFixed(sense, out _);
 
         public static FixedSense? DecodeFixed(byte[] sense, out string senseDescription)
         {
@@ -325,10 +322,7 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static DescriptorSense? DecodeDescriptor(byte[] sense)
-        {
-            return DecodeDescriptor(sense, out _);
-        }
+        public static DescriptorSense? DecodeDescriptor(byte[] sense) => DecodeDescriptor(sense, out _);
 
         public static DescriptorSense? DecodeDescriptor(byte[] sense, out string senseDescription)
         {
@@ -586,9 +580,8 @@ namespace DiscImageChef.Decoders.SCSI
             throw new NotImplementedException("Check OSD");
         }
 
-        public static AtaErrorRegistersLba48 DecodeDescriptor09(byte[] descriptor)
-        {
-            return new AtaErrorRegistersLba48
+        public static AtaErrorRegistersLba48 DecodeDescriptor09(byte[] descriptor) =>
+            new AtaErrorRegistersLba48
             {
                 Error       = descriptor[3],
                 SectorCount = (ushort)((descriptor[4]  << 8) + descriptor[5]),
@@ -598,7 +591,6 @@ namespace DiscImageChef.Decoders.SCSI
                 DeviceHead  = descriptor[12],
                 Status      = descriptor[13]
             };
-        }
 
         public static void DecodeDescriptor0B(byte[] descriptor)
         {
@@ -610,15 +602,10 @@ namespace DiscImageChef.Decoders.SCSI
             throw new NotImplementedException("Check SBC-3");
         }
 
-        public static string PrettifyDescriptor00(ulong information)
-        {
-            return $"On logical block {information}\n";
-        }
+        public static string PrettifyDescriptor00(ulong information) => $"On logical block {information}\n";
 
-        public static string PrettifyDescriptor00(byte[] descriptor)
-        {
-            return PrettifyDescriptor00(DecodeDescriptor00(descriptor));
-        }
+        public static string PrettifyDescriptor00(byte[] descriptor) =>
+            PrettifyDescriptor00(DecodeDescriptor00(descriptor));
 
         public static string GetSenseKey(SenseKeys key)
         {

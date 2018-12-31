@@ -115,10 +115,8 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyFujitsuModePage_3E(byte[] pageResponse)
-        {
-            return PrettifyFujitsuModePage_3E(DecodeFujitsuModePage_3E(pageResponse));
-        }
+        public static string PrettifyFujitsuModePage_3E(byte[] pageResponse) =>
+            PrettifyFujitsuModePage_3E(DecodeFujitsuModePage_3E(pageResponse));
 
         public static string PrettifyFujitsuModePage_3E(Fujitsu_ModePage_3E? modePage)
         {

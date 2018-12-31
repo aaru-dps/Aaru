@@ -228,10 +228,7 @@ namespace DiscImageChef.Decoders.Floppy
             // Not Apple Sony GCR?
         }
 
-        public static RawSector MarshalSector(byte[] data, int offset = 0)
-        {
-            return MarshalSector(data, out _, offset);
-        }
+        public static RawSector MarshalSector(byte[] data, int offset = 0) => MarshalSector(data, out _, offset);
 
         public static RawSector MarshalSector(byte[] data, out int endOffset, int offset = 0)
         {
@@ -384,10 +381,7 @@ namespace DiscImageChef.Decoders.Floppy
             return raw.ToArray();
         }
 
-        public static RawTrack MarshalTrack(byte[] data, int offset = 0)
-        {
-            return MarshalTrack(data, out _, offset);
-        }
+        public static RawTrack MarshalTrack(byte[] data, int offset = 0) => MarshalTrack(data, out _, offset);
 
         public static RawTrack MarshalTrack(byte[] data, out int endOffset, int offset = 0)
         {
@@ -453,10 +447,7 @@ namespace DiscImageChef.Decoders.Floppy
             return raw.ToArray();
         }
 
-        public static List<RawTrack> MarshalDisk(byte[] data, int offset = 0)
-        {
-            return MarshalDisk(data, out _, offset);
-        }
+        public static List<RawTrack> MarshalDisk(byte[] data, int offset = 0) => MarshalDisk(data, out _, offset);
 
         public static List<RawTrack> MarshalDisk(byte[] data, out int endOffset, int offset = 0)
         {
@@ -477,10 +468,7 @@ namespace DiscImageChef.Decoders.Floppy
             return tracks;
         }
 
-        public static byte[] MarshalDisk(List<RawTrack> disk)
-        {
-            return MarshalDisk(disk.ToArray());
-        }
+        public static byte[] MarshalDisk(List<RawTrack> disk) => MarshalDisk(disk.ToArray());
 
         public static byte[] MarshalDisk(RawTrack[] disk)
         {

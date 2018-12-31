@@ -3574,7 +3574,7 @@ namespace DiscImageChef.Decoders.ATA
 
         static byte[] ScrambleATAString(string str, int length)
         {
-            byte[] buf   = new byte[length];
+            byte[] buf                             = new byte[length];
             for(int i = 0; i < length; i++) buf[i] = 0x20;
 
             if(str is null) return buf;
@@ -3584,7 +3584,7 @@ namespace DiscImageChef.Decoders.ATA
             if(bytes.Length % 2 != 0)
             {
                 byte[] tmp = new byte[bytes.Length + 1];
-                tmp[tmp.Length - 1] = 0x20;
+                tmp[tmp.Length                     - 1] = 0x20;
                 Array.Copy(bytes, 0, tmp, 0, bytes.Length);
                 bytes = tmp;
             }
@@ -3592,7 +3592,7 @@ namespace DiscImageChef.Decoders.ATA
             for(int i = 0; i < bytes.Length; i += 2)
             {
                 buf[i] = bytes[i + 1];
-                buf[i                      + 1] = bytes[i];
+                buf[i            + 1] = bytes[i];
             }
 
             string test1 = StringHandlers.CToString(buf);

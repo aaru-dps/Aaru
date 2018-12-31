@@ -68,9 +68,8 @@ namespace DiscImageChef.Decoders.MMC
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Decoders
     {
-        public static OCR DecodeOCR(uint response)
-        {
-            return new OCR
+        public static OCR DecodeOCR(uint response) =>
+            new OCR
             {
                 PowerUp    = (response & 0x80000000) == 0x80000000,
                 AccessMode = (byte)((response & 0x60000000) >> 29),
@@ -92,12 +91,9 @@ namespace DiscImageChef.Decoders.MMC
                 TwoZero    = (response & 0x00000100) == 0x00000100,
                 OneSix     = (response & 0x00000080) == 0x00000080
             };
-        }
 
-        public static OCR DecodeOCR(byte[] response)
-        {
-            return response?.Length != 4 ? null : DecodeOCR(BitConverter.ToUInt32(response, 0));
-        }
+        public static OCR DecodeOCR(byte[] response) =>
+            response?.Length != 4 ? null : DecodeOCR(BitConverter.ToUInt32(response, 0));
 
         public static string PrettifyOCR(OCR ocr)
         {
@@ -139,14 +135,8 @@ namespace DiscImageChef.Decoders.MMC
             return sb.ToString();
         }
 
-        public static string PrettifyOCR(byte[] response)
-        {
-            return PrettifyOCR(DecodeOCR(response));
-        }
+        public static string PrettifyOCR(byte[] response) => PrettifyOCR(DecodeOCR(response));
 
-        public static string PrettifyOCR(uint response)
-        {
-            return PrettifyOCR(DecodeOCR(response));
-        }
+        public static string PrettifyOCR(uint response) => PrettifyOCR(DecodeOCR(response));
     }
 }

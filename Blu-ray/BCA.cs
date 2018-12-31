@@ -102,10 +102,7 @@ namespace DiscImageChef.Decoders.Bluray
             return sb.ToString();
         }
 
-        public static string Prettify(byte[] BCAResponse)
-        {
-            return Prettify(Decode(BCAResponse));
-        }
+        public static string Prettify(byte[] BCAResponse) => Prettify(Decode(BCAResponse));
         #endregion Public methods
 
         #region Public structures

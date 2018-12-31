@@ -92,9 +92,8 @@ namespace DiscImageChef.Decoders
             /// <summary>
             ///     Converts this tag to Priam DataTower format
             /// </summary>
-            public PriamTag ToPriam()
-            {
-                return new PriamTag
+            public PriamTag ToPriam() =>
+                new PriamTag
                 {
                     AbsPage   = AbsPage,
                     Checksum  = Checksum,
@@ -110,14 +109,12 @@ namespace DiscImageChef.Decoders
                     Version   = Version,
                     Volume    = Volume
                 };
-            }
 
             /// <summary>
             ///     Converts this tag to Sony format
             /// </summary>
-            public SonyTag ToSony()
-            {
-                return new SonyTag
+            public SonyTag ToSony() =>
+                new SonyTag
                 {
                     FileId    = FileId,
                     IsFirst   = IsFirst,
@@ -129,7 +126,6 @@ namespace DiscImageChef.Decoders
                     Version   = Version,
                     Volume    = Volume
                 };
-            }
 
             /// <summary>
             ///     Gets a byte array representation of this tag
@@ -219,9 +215,8 @@ namespace DiscImageChef.Decoders
             /// <summary>
             ///     Converts this tag to Apple Profile format
             /// </summary>
-            public ProfileTag ToProfile()
-            {
-                return new ProfileTag
+            public ProfileTag ToProfile() =>
+                new ProfileTag
                 {
                     AbsPage   = AbsPage,
                     Checksum  = Checksum,
@@ -237,14 +232,12 @@ namespace DiscImageChef.Decoders
                     Version   = Version,
                     Volume    = Volume
                 };
-            }
 
             /// <summary>
             ///     Converts this tag to Sony format
             /// </summary>
-            public SonyTag ToSony()
-            {
-                return new SonyTag
+            public SonyTag ToSony() =>
+                new SonyTag
                 {
                     FileId    = FileId,
                     IsFirst   = IsFirst,
@@ -256,7 +249,6 @@ namespace DiscImageChef.Decoders
                     Version   = Version,
                     Volume    = Volume
                 };
-            }
 
             /// <summary>
             ///     Gets a byte array representation of this tag
@@ -328,9 +320,8 @@ namespace DiscImageChef.Decoders
             /// <summary>
             ///     Converts this tag to Apple Profile format
             /// </summary>
-            public ProfileTag ToProfile()
-            {
-                return new ProfileTag
+            public ProfileTag ToProfile() =>
+                new ProfileTag
                 {
                     FileId    = FileId,
                     IsFirst   = IsFirst,
@@ -342,14 +333,12 @@ namespace DiscImageChef.Decoders
                     Version   = Version,
                     Volume    = Volume
                 };
-            }
 
             /// <summary>
             ///     Converts this tag to Priam DataTower format
             /// </summary>
-            public PriamTag ToPriam()
-            {
-                return new PriamTag
+            public PriamTag ToPriam() =>
+                new PriamTag
                 {
                     FileId    = FileId,
                     IsFirst   = IsFirst,
@@ -361,7 +350,6 @@ namespace DiscImageChef.Decoders
                     Version   = Version,
                     Volume    = Volume
                 };
-            }
 
             /// <summary>
             ///     Gets a byte array representation of this tag

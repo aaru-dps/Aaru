@@ -68,10 +68,8 @@ namespace DiscImageChef.Decoders.SCSI
             return decoded;
         }
 
-        public static string PrettifyHPModePage_3D(byte[] pageResponse)
-        {
-            return PrettifyHPModePage_3D(DecodeHPModePage_3D(pageResponse));
-        }
+        public static string PrettifyHPModePage_3D(byte[] pageResponse) =>
+            PrettifyHPModePage_3D(DecodeHPModePage_3D(pageResponse));
 
         public static string PrettifyHPModePage_3D(HP_ModePage_3D? modePage)
         {
