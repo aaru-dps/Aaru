@@ -797,7 +797,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
-                case MediaTagType.CD_LeadIn:
+                case MediaTagType.CD_FirstTrackPregap:
                     sidecar.OpticalDisc[0].LeadIn = new[]
                     {
                         new BorderType

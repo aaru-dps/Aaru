@@ -322,7 +322,7 @@ namespace DiscImageChef.DiscImages
                 case DataType.XboxSecuritySector:               return MediaTagType.Xbox_SecuritySector;
                 case DataType.FloppyLeadOut:                    return MediaTagType.Floppy_LeadOut;
                 case DataType.DvdDiscControlBlock:              return MediaTagType.DCB;
-                case DataType.CompactDiscLeadIn:                return MediaTagType.CD_LeadIn;
+                case DataType.CompactDiscFirstTrackPregap:      return MediaTagType.CD_FirstTrackPregap;
                 case DataType.CompactDiscLeadOut:               return MediaTagType.CD_LeadOut;
                 case DataType.ScsiModeSense6:                   return MediaTagType.SCSI_MODESENSE_6;
                 case DataType.ScsiModeSense10:                  return MediaTagType.SCSI_MODESENSE_10;
@@ -330,6 +330,7 @@ namespace DiscImageChef.DiscImages
                 case DataType.XboxDmi:                          return MediaTagType.Xbox_DMI;
                 case DataType.XboxPfi:                          return MediaTagType.Xbox_PFI;
                 case DataType.CompactDiscMediaCatalogueNumber:  return MediaTagType.CD_MCN;
+                case DataType.CompactDiscLeadIn:                return MediaTagType.CD_LeadIn;
                 default:                                        throw new ArgumentOutOfRangeException();
             }
         }
@@ -399,7 +400,7 @@ namespace DiscImageChef.DiscImages
                 case MediaTagType.Xbox_SecuritySector:           return DataType.XboxSecuritySector;
                 case MediaTagType.Floppy_LeadOut:                return DataType.FloppyLeadOut;
                 case MediaTagType.DCB:                           return DataType.DvdDiscControlBlock;
-                case MediaTagType.CD_LeadIn:                     return DataType.CompactDiscLeadIn;
+                case MediaTagType.CD_FirstTrackPregap:           return DataType.CompactDiscFirstTrackPregap;
                 case MediaTagType.CD_LeadOut:                    return DataType.CompactDiscLeadOut;
                 case MediaTagType.SCSI_MODESENSE_6:              return DataType.ScsiModeSense6;
                 case MediaTagType.SCSI_MODESENSE_10:             return DataType.ScsiModeSense10;
@@ -407,6 +408,7 @@ namespace DiscImageChef.DiscImages
                 case MediaTagType.Xbox_DMI:                      return DataType.XboxDmi;
                 case MediaTagType.Xbox_PFI:                      return DataType.XboxPfi;
                 case MediaTagType.CD_MCN:                        return DataType.CompactDiscMediaCatalogueNumber;
+                case MediaTagType.CD_LeadIn:                     return DataType.CompactDiscLeadIn;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tag), tag, null);
             }

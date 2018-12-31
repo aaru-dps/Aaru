@@ -174,8 +174,8 @@ namespace DiscImageChef.DiscImages
             FloppyLeadOut = 60,
             /// <summary>Dvd Disc Control Block</summary>
             DvdDiscControlBlock = 61,
-            /// <summary>CompactDisc Lead-in</summary>
-            CompactDiscLeadIn = 62,
+            /// <summary>CompactDisc First track pregap</summary>
+            CompactDiscFirstTrackPregap = 62,
             /// <summary>CompactDisc Lead-out</summary>
             CompactDiscLeadOut = 63,
             /// <summary>SCSI MODE SENSE (6) response</summary>
@@ -207,7 +207,9 @@ namespace DiscImageChef.DiscImages
             /// <summary>CompactDisc sector suffix (edc, ecc p, ecc q), only incorrect stored</summary>
             CdSectorSuffixCorrected = 77,
             /// <summary>CompactDisc MODE 2 subheader</summary>
-            CompactDiscMode2Subheader = 78
+            CompactDiscMode2Subheader = 78,
+            /// <summary>CompactDisc Lead-in</summary>
+            CompactDiscLeadIn = 79
         }
 
         /// <summary>List of known blocks types</summary>

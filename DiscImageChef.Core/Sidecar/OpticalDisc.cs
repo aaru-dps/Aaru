@@ -277,15 +277,16 @@ namespace DiscImageChef.Core
                             Size      = image.ReadDiskTag(MediaTagType.CD_FullTOC).Length
                         };
                         break;
-                    case MediaTagType.CD_LeadIn:
+                    case MediaTagType.CD_FirstTrackPregap:
                         sidecar.OpticalDisc[0].LeadIn = new[]
                         {
                             new BorderType
                             {
                                 Image = Path.GetFileName(imagePath),
                                 Checksums = Checksum
-                                           .GetChecksums(image.ReadDiskTag(MediaTagType.CD_LeadIn)).ToArray(),
-                                Size = image.ReadDiskTag(MediaTagType.CD_LeadIn).Length
+                                           .GetChecksums(image.ReadDiskTag(MediaTagType.CD_FirstTrackPregap))
+                                           .ToArray(),
+                                Size = image.ReadDiskTag(MediaTagType.CD_FirstTrackPregap).Length
                             }
                         };
                         break;

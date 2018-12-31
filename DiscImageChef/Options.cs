@@ -287,8 +287,9 @@ namespace DiscImageChef
         [Option('m', "resume", Default = true, HelpText = "Create/use resume mapfile.")]
         public bool Resume { get; set; }
 
-        [Option("lead-in", Default = false, HelpText = "Try to read lead-in. Only applicable to CD/DDCD/GD.")]
-        public bool LeadIn { get; set; }
+        [Option("first-pregap", Default = false,
+            HelpText                    = "Try to read first track pregap. Only applicable to CD/DDCD/GD.")]
+        public bool FirstTrackPregap { get; set; }
 
         [Option('e', "encoding", Default = null, HelpText = "Name of character encoding to use.")]
         public string EncodingName { get; set; }

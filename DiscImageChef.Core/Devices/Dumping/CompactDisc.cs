@@ -77,20 +77,21 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <param name="dumpFirstTrackPregap">Try to read and dump as much first track pregap as possible</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <param name="encoding">Encoding to use when analyzing dump</param>
         /// <exception cref="NotImplementedException">If trying to dump scrambled sectors</exception>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         /// <exception cref="ArgumentOutOfRangeException">If the track type is unknown (never)</exception>
-        internal static void Dump(Device                     dev,          string      devicePath,
-                                  IWritableImage             outputPlugin, ushort      retryPasses,
-                                  bool                       force,        bool        dumpRaw,
-                                  bool                       persistent,   bool        stopOnError, ref MediaType dskType,
-                                  ref Resume                 resume,       ref DumpLog dumpLog,
-                                  bool                       dumpLeadIn,   Encoding    encoding,
-                                  string                     outputPrefix, string      outputPath,
+        internal static void Dump(Device                     dev,          string devicePath,
+                                  IWritableImage             outputPlugin, ushort retryPasses,
+                                  bool                       force,        bool   dumpRaw,
+                                  bool                       persistent,   bool   stopOnError,
+                                  ref MediaType              dskType,
+                                  ref Resume                 resume,               ref DumpLog dumpLog,
+                                  bool                       dumpFirstTrackPregap, Encoding    encoding,
+                                  string                     outputPrefix,         string      outputPath,
                                   Dictionary<string, string> formatOptions,
                                   CICMMetadataType           preSidecar, uint skip,
                                   bool                       nometadata, bool notrim)
@@ -764,32 +765,32 @@ namespace DiscImageChef.Core.Devices.Dumping
                 supportsLongSectors = false;
             }
 
-            // Check if something prevents from dumping the Lead-in
-            if(dumpLeadIn && readcd)
+            // Check if something prevents from dumping the first track pregap
+            if(dumpFirstTrackPregap && readcd)
             {
                 if(dev.PlatformId == PlatformID.FreeBSD)
                 {
-                    dumpLog.WriteLine("FreeBSD panics when reading CD Lead-in, see upstream bug #224253. {0}continuing",
+                    dumpLog.WriteLine("FreeBSD panics when reading CD first track pregap, see upstream bug #224253. {0}continuing",
                                       force ? "" : "Not ");
                     DicConsole
-                       .ErrorWriteLine("FreeBSD panics when reading CD Lead-in, see upstream bug #224253. {0}continuing",
+                       .ErrorWriteLine("FreeBSD panics when reading CD first track pregap, see upstream bug #224253. {0}continuing",
                                        force ? "" : "Not ");
 
                     if(!force) return;
 
-                    dumpLeadIn = false;
+                    dumpFirstTrackPregap = false;
                 }
 
-                if(!outputPlugin.SupportedMediaTags.Contains(MediaTagType.CD_LeadIn))
+                if(!outputPlugin.SupportedMediaTags.Contains(MediaTagType.CD_FirstTrackPregap))
                 {
-                    DicConsole.WriteLine("Output format does not support CD Lead-in, {0}continuing...",
+                    DicConsole.WriteLine("Output format does not support CD first track pregap, {0}continuing...",
                                          force ? "" : "not ");
-                    dumpLog.WriteLine("Output format does not support CD Lead-in, {0}continuing...",
+                    dumpLog.WriteLine("Output format does not support CD first track pregap, {0}continuing...",
                                       force ? "" : "not ");
 
                     if(!force) return;
 
-                    dumpLeadIn = false;
+                    dumpFirstTrackPregap = false;
                 }
             }
 
@@ -800,18 +801,19 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(currentTry == null || extents == null)
                 throw new InvalidOperationException("Could not process resume file, not continuing...");
 
-            // Try to read the Lead-in
-            if(dumpLeadIn && readcd)
+            // Try to read the first track pregap
+            if(dumpFirstTrackPregap && readcd)
             {
-                DicConsole.WriteLine("Trying to read Lead-In...");
-                bool         gotLeadIn         = false;
-                int          leadInSectorsGood = 0;
-                MemoryStream leadinMs          = new MemoryStream();
+                DicConsole.WriteLine("Trying to read first track pregap...");
+                bool         gotFirstTrackPregap         = false;
+                int          firstTrackPregapSectorsGood = 0;
+                MemoryStream firstTrackPregapMs          = new MemoryStream();
 
                 readBuffer = null;
 
-                dumpLog.WriteLine("Reading Lead-in");
-                for(int leadInBlock = -150; leadInBlock < 0 && resume.NextBlock == 0; leadInBlock++)
+                dumpLog.WriteLine("Reading first track pregap");
+                for(int firstTrackPregapBlock = -150; firstTrackPregapBlock < 0 && resume.NextBlock == 0;
+                    firstTrackPregapBlock++)
                 {
                     if(aborted)
                     {
@@ -824,37 +826,38 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    DicConsole.Write("\rTrying to read lead-in sector {0} ({1:F3} MiB/sec.)", leadInBlock,
-                                     currentSpeed);
+                    DicConsole.Write("\rTrying to read first track pregap sector {0} ({1:F3} MiB/sec.)",
+                                     firstTrackPregapBlock, currentSpeed);
 
-                    sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)leadInBlock, blockSize, 1,
+                    sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)firstTrackPregapBlock, blockSize, 1,
                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                        true, MmcErrorField.None, supportedSubchannel, dev.Timeout,
                                        out double cmdDuration);
 
                     if(!sense && !dev.Error)
                     {
-                        leadinMs.Write(readBuffer, 0, (int)blockSize);
-                        gotLeadIn = true;
-                        leadInSectorsGood++;
+                        firstTrackPregapMs.Write(readBuffer, 0, (int)blockSize);
+                        gotFirstTrackPregap = true;
+                        firstTrackPregapSectorsGood++;
                     }
                     else
                     {
                         // Write empty data
-                        if(gotLeadIn) leadinMs.Write(new byte[blockSize], 0, (int)blockSize);
+                        if(gotFirstTrackPregap) firstTrackPregapMs.Write(new byte[blockSize], 0, (int)blockSize);
                     }
 
                     double newSpeed                               = blockSize / (double)1048576 / (cmdDuration / 1000);
                     if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                 }
 
-                if(leadInSectorsGood > 0) mediaTags.Add(MediaTagType.CD_LeadIn, leadinMs.ToArray());
+                if(firstTrackPregapSectorsGood > 0)
+                    mediaTags.Add(MediaTagType.CD_FirstTrackPregap, firstTrackPregapMs.ToArray());
 
                 DicConsole.WriteLine();
-                DicConsole.WriteLine("Got {0} lead-in sectors.", leadInSectorsGood);
-                dumpLog.WriteLine("Got {0} Lead-in sectors.", leadInSectorsGood);
+                DicConsole.WriteLine("Got {0} first track pregap sectors.", firstTrackPregapSectorsGood);
+                dumpLog.WriteLine("Got {0} first track pregap sectors.", firstTrackPregapSectorsGood);
 
-                leadinMs.Close();
+                firstTrackPregapMs.Close();
             }
 
             // Try how many blocks are readable at once

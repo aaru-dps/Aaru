@@ -74,7 +74,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}",  options.RetryPasses);
             DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}",    options.Persistent);
             DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}",        options.Resume);
-            DicConsole.DebugWriteLine("Dump-Media command", "--lead-in={0}",       options.LeadIn);
+            DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}",  options.FirstTrackPregap);
             DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}",      options.EncodingName);
             DicConsole.DebugWriteLine("Dump-Media command", "--output={0}",        options.OutputFile);
             DicConsole.DebugWriteLine("Dump-Media command", "--format={0}",        options.OutputFormat);
@@ -234,9 +234,9 @@ namespace DiscImageChef.Commands
                 case DeviceType.SCSI:
                     Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
                               false, /*options.Raw,*/
-                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, options.LeadIn,
-                              encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
-                              options.NoMetadata, options.NoTrim);
+                              options.Persistent, options.StopOnError, ref resume, ref dumpLog,
+                              options.FirstTrackPregap, encoding, outputPrefix, options.OutputFile, parsedOptions,
+                              sidecar, (uint)options.Skip, options.NoMetadata, options.NoTrim);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");

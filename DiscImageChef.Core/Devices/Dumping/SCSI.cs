@@ -66,7 +66,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
         /// <param name="encoding">Encoding to use when analyzing dump</param>
-        /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <param name="dumpFirstTrackPregap">Try to read and dump as much Lead-in as possible</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
@@ -74,7 +74,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 IWritableImage   outputPlugin, ushort                     retryPasses,
                                 bool             force,        bool                       dumpRaw,
                                 bool             persistent,   bool                       stopOnError, ref Resume resume,
-                                ref DumpLog      dumpLog,      bool                       dumpLeadIn,
+                                ref DumpLog      dumpLog,      bool                       dumpFirstTrackPregap,
                                 Encoding         encoding,     string                     outputPrefix,
                                 string           outputPath,   Dictionary<string, string> formatOptions,
                                 CICMMetadataType preSidecar,   uint                       skip, bool nometadata,
@@ -210,8 +210,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     Mmc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
-                             ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                             formatOptions, preSidecar, skip, nometadata, notrim);
+                             ref dskType, ref resume, ref dumpLog, dumpFirstTrackPregap, encoding, outputPrefix,
+                             outputPath, formatOptions, preSidecar, skip, nometadata, notrim);
                     return;
                 default:
                     Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, null,

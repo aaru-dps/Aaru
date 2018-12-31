@@ -617,7 +617,7 @@ enum <ushort> DataType
     XboxSecuritySector               = 59,
     FloppyLeadOut                    = 60,
     DvdDiscControlBlock              = 61,
-    CompactDiscLeadIn                = 62,
+    CompactDiscFirstTrackPregap      = 62,
     CompactDiscLeadOut               = 63,
     ScsiModeSense6                   = 64,
     ScsiModeSense10                  = 65,
@@ -633,7 +633,8 @@ enum <ushort> DataType
     CompactDiscMediaCatalogueNumber  = 75,
     CdSectorPrefixCorrected          = 76,
     CdSectorSuffixCorrected          = 77,
-    CompactDiscMode2Subheader        = 78
+    CompactDiscMode2Subheader        = 78,
+    CompactDiscLeadIn                = 79
 };
 
 enum <uint> BlockType

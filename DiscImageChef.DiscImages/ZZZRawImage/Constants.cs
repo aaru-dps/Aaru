@@ -41,7 +41,7 @@ namespace DiscImageChef.DiscImages
         {
             (MediaTagType.ATA_IDENTIFY, ".identify.bin"), (MediaTagType.BD_DI, ".di.bin"),
             (MediaTagType.CD_ATIP, ".atip.bin"), (MediaTagType.CD_FullTOC, ".toc.bin"),
-            (MediaTagType.CD_LeadIn, ".leadin.bin"), (MediaTagType.CD_PMA, ".pma.bin"),
+            (MediaTagType.CD_FirstTrackPregap, ".leadin.bin"), (MediaTagType.CD_PMA, ".pma.bin"),
             (MediaTagType.CD_TEXT, ".cdtext.bin"), (MediaTagType.DCB, ".dcb.bin"),
             (MediaTagType.DVD_ADIP, ".adip.bin"), (MediaTagType.DVD_BCA, ".bca.bin"),
             (MediaTagType.DVD_CMI, ".cmi.bin"), (MediaTagType.DVD_DMI, ".dmi.bin"),

@@ -179,7 +179,7 @@
 
 ### - Create sidecar
 - Add filesystems only to the appropriate partition and track.
-- Fix CD Lead-in, TOC and XGD tags.
+- Fix CD first track pregap, TOC and XGD tags.
 - Fix diameter setting.
 - Fix SCSI MODE SENSE.
 - Fix USB descriptors.

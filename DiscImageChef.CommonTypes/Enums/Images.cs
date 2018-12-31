@@ -259,8 +259,8 @@ namespace DiscImageChef.CommonTypes.Enums
         Floppy_LeadOut,
         /// <summary>DVD Disc Control Blocks</summary>
         DCB,
-        /// <summary>Compact Disc Lead-in</summary>
-        CD_LeadIn,
+        /// <summary>Compact Disc First Track Pregap</summary>
+        CD_FirstTrackPregap,
         /// <summary>Compact Disc Lead-out</summary>
         CD_LeadOut,
         /// <summary>SCSI MODE SENSE (6)</summary>
@@ -272,7 +272,9 @@ namespace DiscImageChef.CommonTypes.Enums
         /// <summary>XGD unlocked DMI</summary>
         Xbox_DMI,
         /// <summary>XDG unlocked PFI</summary>
-        Xbox_PFI
+        Xbox_PFI,
+        /// <summary>Compact Disc Lead-in</summary>
+        CD_LeadIn
     }
 
     /// <summary>

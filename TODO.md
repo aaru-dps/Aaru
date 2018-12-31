@@ -33,7 +33,7 @@
 * Add support for differencing QCOW images. (https://github.com/claunia/DiscImageChef/issues/143)
 * Add support for differencing QED images. (https://github.com/claunia/DiscImageChef/issues/144)
 * Add support for DiscFerret devices. (https://github.com/claunia/DiscImageChef/issues/140)
-* Add support for dumping CD Lead-In in FreeBSD. (https://github.com/claunia/DiscImageChef/issues/113)
+* Add support for dumping CD First Track Pregap in FreeBSD. (https://github.com/claunia/DiscImageChef/issues/113)
 * Add support for encrypted NDIF images. (https://github.com/claunia/DiscImageChef/issues/149)
 * Add support for encrypted QCOW2 images. (https://github.com/claunia/DiscImageChef/issues/145)
 * Add support for encrypted QCOW images. (https://github.com/claunia/DiscImageChef/issues/146)
