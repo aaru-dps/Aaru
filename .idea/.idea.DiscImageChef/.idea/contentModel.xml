@@ -295,6 +295,9 @@
       </e>
       <e p="DiscImageChef.Database" t="IncludeRecursive">
         <e p="Context.cs" t="Include" />
+        <e p="DTOs" t="Include">
+          <e p="SyncDTO.cs" t="Include" />
+        </e>
         <e p="DiscImageChef.Database.csproj" t="IncludeRecursive" />
         <e p="Migrations" t="Include">
           <e p="20181126222301_DeviceReportV2.Designer.cs" t="Include" />
@@ -1142,6 +1145,25 @@
           </e>
         </e>
       </e>
+      <e p="DiscImageChef.Dto" t="IncludeRecursive">
+        <e p="CdOffsetDto.cs" t="Include" />
+        <e p="DeviceDto.cs" t="Include" />
+        <e p="DiscImageChef.Dto.csproj" t="IncludeRecursive" />
+        <e p="SyncDto.cs" t="Include" />
+        <e p="UsbProductDto.cs" t="Include" />
+        <e p="UsbVendorDto.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netstandard2.0" t="Include">
+              <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
       <e p="DiscImageChef.EntityFramework" t="IncludeRecursive">
         <e p="DiscImageChef.EntityFramework.csproj" t="IncludeRecursive" />
         <e p="Program.cs" t="Include" />
@@ -1795,9 +1817,11 @@
           <e p="HomeController.cs" t="Include" />
           <e p="ReportController.cs" t="Include" />
           <e p="StatsController.cs" t="Include" />
+          <e p="UpdateController.cs" t="Include" />
           <e p="UploadReportController.cs" t="Include" />
           <e p="UploadStatsController.cs" t="Include" />
         </e>
+        <e p="DTOs" t="Include" />
         <e p="DiscImageChef.Server.csproj" t="IncludeRecursive" />
         <e p="Global.asax" t="Include" />
         <e p="Global.asax.cs" t="Include" />

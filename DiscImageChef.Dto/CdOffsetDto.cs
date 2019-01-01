@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : UsbVendor.cs
+// Filename       : CdOffset.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef Server.
+// Component      : Database.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Model for storing USB vendor identifiers in database.
+//     Model for storing Compact Disc read offsets in database.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,35 +30,24 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Newtonsoft.Json;
+using DiscImageChef.CommonTypes.Metadata;
 
-namespace DiscImageChef.Server.Models
+namespace DiscImageChef.Dto
 {
-    public class UsbVendor
+    public class CdOffsetDto : CdOffset
     {
-        public UsbVendor() { }
+        public CdOffsetDto() { }
 
-        public UsbVendor(ushort id, string vendor)
+        public CdOffsetDto(CdOffset offset, int id)
         {
-            VendorId  = id;
-            Vendor    = vendor;
-            AddedWhen = ModifiedWhen = DateTime.UtcNow;
+            Manufacturer = offset.Manufacturer;
+            Model        = offset.Model;
+            Offset       = offset.Offset;
+            Submissions  = offset.Submissions;
+            Agreement    = offset.Agreement;
+            Id           = id;
         }
 
-        [Key]
         public int Id { get; set; }
-        [Index(IsUnique = true)]
-        public int VendorId { get;       set; }
-        public string   Vendor    { get; set; }
-        public DateTime AddedWhen { get; set; }
-        [Index]
-        public DateTime ModifiedWhen { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<UsbProduct> Products { get; set; }
     }
 }

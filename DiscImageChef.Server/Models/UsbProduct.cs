@@ -33,6 +33,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace DiscImageChef.Server.Models
 {
@@ -57,7 +58,8 @@ namespace DiscImageChef.Server.Models
         [Index]
         public DateTime ModifiedWhen { get; set; }
         [Index]
-        public int VendorId { get;             set; }
+        public int VendorId { get; set; }
+        [JsonIgnore]
         public virtual UsbVendor Vendor { get; set; }
     }
 }

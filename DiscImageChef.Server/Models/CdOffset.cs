@@ -51,6 +51,16 @@ namespace DiscImageChef.Server.Models
             AddedWhen    = ModifiedWhen = DateTime.UtcNow;
         }
 
+        public CompactDiscOffset(CdOffset offset)
+        {
+            Manufacturer = offset.Manufacturer;
+            Model        = offset.Model;
+            Offset       = offset.Offset;
+            Submissions  = offset.Submissions;
+            Agreement    = offset.Agreement;
+            AddedWhen    = ModifiedWhen = DateTime.UtcNow;
+        }
+
         public int      Id        { get; set; }
         public DateTime AddedWhen { get; set; }
         [Index]

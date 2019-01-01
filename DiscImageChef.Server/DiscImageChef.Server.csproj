@@ -210,6 +210,7 @@
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\StatsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UpdateController.cs" />
     <Compile Include="Controllers\UploadReportController.cs" />
     <Compile Include="Controllers\UploadStatsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -336,6 +337,10 @@
       <Project>{0beb3088-b634-4289-ae17-cdf2d25d00d5}</Project>
       <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DiscImageChef.Dto\DiscImageChef.Dto.csproj">
+      <Project>{f4399ff5-9bd0-475a-9ea7-3dae45291fe2}</Project>
+      <Name>DiscImageChef.Dto</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{f8bdf57b-1571-4cd0-84b3-b422088d359a}</Project>
       <Name>DiscImageChef.Helpers</Name>
@@ -375,6 +380,9 @@
     <EmbeddedResource Include="Migrations\201812252219066_StoreReadResultsInReportDatabase.resx">
       <DependentUpon>201812252219066_StoreReadResultsInReportDatabase.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DTOs" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

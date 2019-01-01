@@ -49,6 +49,16 @@ namespace DiscImageChef.Database.Models
             AddedWhen    = ModifiedWhen = DateTime.UtcNow;
         }
 
+        public CdOffset(CommonTypes.Metadata.CdOffset offset)
+        {
+            Manufacturer = offset.Manufacturer;
+            Model        = offset.Model;
+            Offset       = offset.Offset;
+            Submissions  = offset.Submissions;
+            Agreement    = offset.Agreement;
+            AddedWhen    = ModifiedWhen = DateTime.UtcNow;
+        }
+
         public int      Id        { get; set; }
         public DateTime AddedWhen { get; set; }
         [Index]

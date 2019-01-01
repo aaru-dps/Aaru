@@ -42,6 +42,7 @@ namespace DiscImageChef.Database.Models
 
         public UsbProduct(ushort vendorId, ushort id, string product)
         {
+            VendorId  = vendorId;
             ProductId = id;
             Product   = product;
             AddedWhen = ModifiedWhen = DateTime.UtcNow;
