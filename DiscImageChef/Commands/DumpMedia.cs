@@ -207,42 +207,49 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
             }
 
-            switch(dev.Type)
-            {
-                case DeviceType.ATA:
-                    Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
-                             false, /*options.Raw,*/
-                             options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                             options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata,
-                             options.NoTrim);
-                    break;
-                case DeviceType.MMC:
-                case DeviceType.SecureDigital:
-                    SecureDigital.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
-                                       false, /*options.Raw,*/ options.Persistent, options.StopOnError, ref resume,
-                                       ref dumpLog, encoding, outputPrefix, options.OutputFile, parsedOptions, sidecar,
-                                       (uint)options.Skip, options.NoMetadata, options.NoTrim);
-                    break;
-                case DeviceType.NVMe:
-                    NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
-                              false, /*options.Raw,*/
-                              options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                              options.OutputFile, parsedOptions, sidecar, (uint)options.Skip, options.NoMetadata,
-                              options.NoTrim);
-                    break;
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
-                              false, /*options.Raw,*/
-                              options.Persistent, options.StopOnError, ref resume, ref dumpLog,
-                              options.FirstTrackPregap, encoding, outputPrefix, options.OutputFile, parsedOptions,
-                              sidecar, (uint)options.Skip, options.NoMetadata, options.NoTrim);
-                    break;
-                default:
-                    dumpLog.WriteLine("Unknown device type.");
-                    dumpLog.Close();
-                    throw new NotSupportedException("Unknown device type.");
-            }
+            if(dev.IsUsb && dev.UsbVendorId == 0x054C &&
+               (dev.UsbProductId == 0x01C8 || dev.UsbProductId == 0x01C9 || dev.UsbProductId == 0x02D2))
+                PlayStationPortable.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
+                                         options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding,
+                                         outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
+                                         options.NoMetadata, options.NoTrim);
+            else
+                switch(dev.Type)
+                {
+                    case DeviceType.ATA:
+                        Ata.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
+                                 false, /*options.Raw,*/
+                                 options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding,
+                                 outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
+                                 options.NoMetadata, options.NoTrim);
+                        break;
+                    case DeviceType.MMC:
+                    case DeviceType.SecureDigital:
+                        SecureDigital.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
+                                           false, /*options.Raw,*/ options.Persistent, options.StopOnError, ref resume,
+                                           ref dumpLog, encoding, outputPrefix, options.OutputFile, parsedOptions,
+                                           sidecar, (uint)options.Skip, options.NoMetadata, options.NoTrim);
+                        break;
+                    case DeviceType.NVMe:
+                        NvMe.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
+                                  false, /*options.Raw,*/
+                                  options.Persistent, options.StopOnError, ref resume, ref dumpLog, encoding,
+                                  outputPrefix, options.OutputFile, parsedOptions, sidecar, (uint)options.Skip,
+                                  options.NoMetadata, options.NoTrim);
+                        break;
+                    case DeviceType.ATAPI:
+                    case DeviceType.SCSI:
+                        Scsi.Dump(dev, options.DevicePath, outputFormat, options.RetryPasses, options.Force,
+                                  false, /*options.Raw,*/
+                                  options.Persistent, options.StopOnError, ref resume, ref dumpLog,
+                                  options.FirstTrackPregap, encoding, outputPrefix, options.OutputFile, parsedOptions,
+                                  sidecar, (uint)options.Skip, options.NoMetadata, options.NoTrim);
+                        break;
+                    default:
+                        dumpLog.WriteLine("Unknown device type.");
+                        dumpLog.Close();
+                        throw new NotSupportedException("Unknown device type.");
+                }
 
             if(resume != null && options.Resume)
             {
