@@ -35,7 +35,7 @@ using DiscImageChef.CommonTypes.Metadata;
 
 // ReSharper disable VirtualMemberCallInConstructor
 
-namespace DiscImageChef.Server.Models
+namespace DiscImageChef.Dto
 {
     public class DeviceDto : DeviceReportV2
     {
