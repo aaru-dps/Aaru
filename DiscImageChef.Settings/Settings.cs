@@ -155,6 +155,8 @@ namespace DiscImageChef.Settings
         /// </summary>
         public static string StatsPath { get; private set; }
 
+        public static string DbPath { get; private set; }
+
         /// <summary>
         ///     Loads settings
         /// </summary>
@@ -163,6 +165,7 @@ namespace DiscImageChef.Settings
             Current = new DicSettings();
             PlatformID ptId     = DetectOS.GetRealPlatformID();
             string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            DbPath = "discimagechef.db";
 
             try
             {
@@ -179,6 +182,8 @@ namespace DiscImageChef.Settings
 
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
+
+                        DbPath = Path.Combine(dicPath, DbPath);
 
                         ReportsPath = Path.Combine(dicPath, "Reports");
                         if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
@@ -201,6 +206,8 @@ namespace DiscImageChef.Settings
 
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
+
+                        DbPath = Path.Combine(dicPath, DbPath);
 
                         ReportsPath = Path.Combine(dicPath, "Reports");
                         if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
@@ -226,6 +233,8 @@ namespace DiscImageChef.Settings
                         }
 
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
+
+                        DbPath = Path.Combine(dicPath, DbPath);
 
                         ReportsPath = Path.Combine(dicPath, "Reports");
                         if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);

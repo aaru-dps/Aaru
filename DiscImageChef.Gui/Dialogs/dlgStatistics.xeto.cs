@@ -41,13 +41,11 @@ namespace DiscImageChef.Gui.Dialogs
 {
     public class dlgStatistics : Dialog
     {
-        DicContext ctx;
-
         public dlgStatistics()
         {
             XamlReader.Load(this);
 
-            ctx = new DicContext();
+            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
 
             if(ctx.Commands.Any())
             {

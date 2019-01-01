@@ -597,7 +597,7 @@ namespace DiscImageChef.Gui.Forms
 
         protected void OnMenuStatistics(object sender, EventArgs e)
         {
-            DicContext ctx = new DicContext();
+            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
 
             if(!ctx.Commands.Any() && !ctx.Filesystems.Any() && !ctx.Filters.Any() && !ctx.MediaFormats.Any() &&
                !ctx.Medias.Any()   && !ctx.Partitions.Any()  && !ctx.SeenDevices.Any())

@@ -55,11 +55,12 @@ namespace DiscImageChef
             DicConsole.WriteEvent          += System.Console.Write;
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
-            DicContext ctx = new DicContext();
+            Settings.Settings.LoadSettings();
+
+            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
             ctx.Database.Migrate();
             ctx.SaveChanges();
 
-            Settings.Settings.LoadSettings();
             if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
                Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel) Configure.DoConfigure(true);
             Statistics.LoadStats();
