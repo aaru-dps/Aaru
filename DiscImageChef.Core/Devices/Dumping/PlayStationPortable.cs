@@ -679,7 +679,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                            CICMMetadataType preSidecar,   uint     skip,       bool                       nometadata,
                            bool             notrim)
         {
-            bool sense = dev.ReadCapacity(out byte[] buffer, out _, dev.Timeout, out _);
+            const ushort SBC_PROFILE   = 0x0001;
+            const uint   BLOCK_SIZE    = 512;
+            double       totalDuration = 0;
+            double       currentSpeed  = 0;
+            double       maxSpeed      = double.MinValue;
+            double       minSpeed      = double.MaxValue;
+            bool         aborted       = false;
+            uint         blocksToRead  = 64;
+            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
+            DateTime  start;
+            DateTime  end;
+            MediaType dskType;
+            bool      sense;
+
+            sense = dev.ReadCapacity(out byte[] readBuffer, out _, dev.Timeout, out _);
 
             if(sense)
             {
@@ -688,20 +702,420 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            uint blocks = (uint)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]);
+            uint blocks = (uint)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+
+            blocks++;
+            DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)", blocks,
+                                 BLOCK_SIZE, blocks * (ulong)BLOCK_SIZE);
+
+            if(blocks == 0)
+            {
+                dumpLog.WriteLine("ERROR: Unable to read medium or empty medium present...");
+                DicConsole.ErrorWriteLine("Unable to read medium or empty medium present...");
+                return;
+            }
+
+            dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).",      blocks, blocks * BLOCK_SIZE);
+            dumpLog.WriteLine("Device can read {0} blocks at a time.",       blocksToRead);
+            dumpLog.WriteLine("Device reports {0} bytes per logical block.", BLOCK_SIZE);
+            dumpLog.WriteLine("SCSI device type: {0}.",                      dev.ScsiType);
 
             if(blocks > 262144)
             {
+                dskType = MediaType.MemoryStickProDuo;
                 DicConsole.WriteLine("Media detected as MemoryStick Pro Duo...");
                 dumpLog.WriteLine("Media detected as MemoryStick Pro Duo...");
             }
             else
             {
+                dskType = MediaType.MemoryStickDuo;
                 DicConsole.WriteLine("Media detected as MemoryStick Duo...");
                 dumpLog.WriteLine("Media detected as MemoryStick Duo...");
             }
 
-            throw new NotImplementedException();
+            bool ret;
+
+            DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+
+            MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, BLOCK_SIZE, blocksToRead);
+            IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", SBC_PROFILE);
+            ret = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, BLOCK_SIZE);
+
+            // Cannot create image
+            if(!ret)
+            {
+                dumpLog.WriteLine("Error creating output image, not continuing.");
+                dumpLog.WriteLine(outputPlugin.ErrorMessage);
+                DicConsole.ErrorWriteLine("Error creating output image, not continuing.");
+                DicConsole.ErrorWriteLine(outputPlugin.ErrorMessage);
+                return;
+            }
+
+            start = DateTime.UtcNow;
+            double imageWriteDuration = 0;
+
+            DumpHardwareType currentTry = null;
+            ExtentsULong     extents    = null;
+            ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
+                                  dev.PlatformId, ref resume, ref currentTry, ref extents);
+            if(currentTry == null || extents == null)
+                throw new InvalidOperationException("Could not process resume file, not continuing...");
+
+            if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
+            bool newTrim = false;
+
+            for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
+            {
+                if(aborted)
+                {
+                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                    dumpLog.WriteLine("Aborted!");
+                    break;
+                }
+
+                if(blocks - i < blocksToRead) blocksToRead = (uint)(blocks - i);
+
+                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+                if(currentSpeed > maxSpeed && currentSpeed != 0) maxSpeed = currentSpeed;
+                if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
+                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+
+                DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
+
+                sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)i, BLOCK_SIZE, 0,
+                                   blocksToRead, false, dev.Timeout, out double cmdDuration);
+                totalDuration += cmdDuration;
+
+                if(!sense && !dev.Error)
+                {
+                    mhddLog.Write(i, cmdDuration);
+                    ibgLog.Write(i, currentSpeed * 1024);
+                    DateTime writeStart = DateTime.Now;
+                    outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    extents.Add(i, blocksToRead, true);
+                }
+                else
+                {
+                    // TODO: Reset device after X errors
+                    if(stopOnError) return; // TODO: Return more cleanly
+
+                    if(i + skip > blocks) skip = (uint)(blocks - i);
+
+                    // Write empty data
+                    DateTime writeStart = DateTime.Now;
+                    outputPlugin.WriteSectors(new byte[BLOCK_SIZE * skip], i, skip);
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                    for(ulong b = i; b < i + skip; b++) resume.BadBlocks.Add(b);
+
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
+
+                    ibgLog.Write(i, 0);
+                    dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
+                    i       += skip - blocksToRead;
+                    newTrim =  true;
+                }
+
+                double newSpeed =
+                    (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
+                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                resume.NextBlock = i + blocksToRead;
+            }
+
+            end = DateTime.UtcNow;
+            DicConsole.WriteLine();
+            mhddLog.Close();
+            ibgLog.Close(dev, blocks, BLOCK_SIZE, (end - start).TotalSeconds, currentSpeed * 1024,
+                         BLOCK_SIZE * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
+                         devicePath);
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
+                              (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+            dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+                              (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / imageWriteDuration);
+
+            #region Trimming
+            if(resume.BadBlocks.Count > 0 && !aborted && !notrim && newTrim)
+            {
+                start = DateTime.UtcNow;
+                dumpLog.WriteLine("Trimming bad sectors");
+
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                foreach(ulong badSector in tmpArray)
+                {
+                    if(aborted)
+                    {
+                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
+                        break;
+                    }
+
+                    DicConsole.Write("\rTrimming sector {0}", badSector);
+
+                    sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)badSector, BLOCK_SIZE,
+                                       0, 1, false, dev.Timeout, out double cmdDuration);
+
+                    if(sense || dev.Error) continue;
+
+                    resume.BadBlocks.Remove(badSector);
+                    extents.Add(badSector);
+                    outputPlugin.WriteSector(readBuffer, badSector);
+                }
+
+                DicConsole.WriteLine();
+                end = DateTime.UtcNow;
+                dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+            }
+            #endregion Trimming
+
+            #region Error handling
+            if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0)
+            {
+                int  pass              = 1;
+                bool forward           = true;
+                bool runningPersistent = false;
+
+                Modes.ModePage? currentModePage = null;
+                byte[]          md6;
+
+                if(persistent)
+                {
+                    Modes.ModePage_01 pg;
+
+                    sense = dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                           dev.Timeout, out _);
+                    if(sense)
+                    {
+                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                                dev.Timeout, out _);
+
+                        if(!sense)
+                        {
+                            Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(readBuffer, dev.ScsiType);
+
+                            if(dcMode10.HasValue)
+                                foreach(Modes.ModePage modePage in dcMode10.Value.Pages)
+                                    if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
+                                        currentModePage = modePage;
+                        }
+                    }
+                    else
+                    {
+                        Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, dev.ScsiType);
+
+                        if(dcMode6.HasValue)
+                            foreach(Modes.ModePage modePage in dcMode6.Value.Pages)
+                                if(modePage.Page == 0x01 && modePage.Subpage == 0x00)
+                                    currentModePage = modePage;
+                    }
+
+                    if(currentModePage == null)
+                    {
+                        pg = new Modes.ModePage_01
+                        {
+                            PS             = false,
+                            AWRE           = true,
+                            ARRE           = true,
+                            TB             = false,
+                            RC             = false,
+                            EER            = true,
+                            PER            = false,
+                            DTE            = true,
+                            DCR            = false,
+                            ReadRetryCount = 32
+                        };
+
+                        currentModePage = new Modes.ModePage
+                        {
+                            Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                        };
+                    }
+
+                    pg = new Modes.ModePage_01
+                    {
+                        PS             = false,
+                        AWRE           = false,
+                        ARRE           = false,
+                        TB             = true,
+                        RC             = false,
+                        EER            = true,
+                        PER            = false,
+                        DTE            = false,
+                        DCR            = false,
+                        ReadRetryCount = 255
+                    };
+                    Modes.DecodedMode md = new Modes.DecodedMode
+                    {
+                        Header = new Modes.ModeHeader(),
+                        Pages = new[]
+                        {
+                            new Modes.ModePage
+                            {
+                                Page = 0x01, Subpage = 0x00, PageResponse = Modes.EncodeModePage_01(pg)
+                            }
+                        }
+                    };
+                    md6 = Modes.EncodeMode6(md, dev.ScsiType);
+
+                    dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+                    sense = dev.ModeSelect(md6, out byte[] senseBuf, true, false, dev.Timeout, out _);
+
+                    if(sense)
+                    {
+                        DicConsole
+                           .WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                        DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                        dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                    }
+                    else runningPersistent = true;
+                }
+
+                repeatRetry:
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                foreach(ulong badSector in tmpArray)
+                {
+                    if(aborted)
+                    {
+                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        dumpLog.WriteLine("Aborted!");
+                        break;
+                    }
+
+                    DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
+                                     forward ? "forward" : "reverse",
+                                     runningPersistent ? "recovering partial data, " : "");
+
+                    sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)badSector, BLOCK_SIZE,
+                                       0, 1, false, dev.Timeout, out double cmdDuration);
+                    totalDuration += cmdDuration;
+
+                    if(!sense && !dev.Error)
+                    {
+                        resume.BadBlocks.Remove(badSector);
+                        extents.Add(badSector);
+                        outputPlugin.WriteSector(readBuffer, badSector);
+                        dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
+                    }
+                    else if(runningPersistent) outputPlugin.WriteSector(readBuffer, badSector);
+                }
+
+                if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
+                {
+                    pass++;
+                    forward = !forward;
+                    resume.BadBlocks.Sort();
+                    resume.BadBlocks.Reverse();
+                    goto repeatRetry;
+                }
+
+                if(runningPersistent && currentModePage.HasValue)
+                {
+                    Modes.DecodedMode md = new Modes.DecodedMode
+                    {
+                        Header = new Modes.ModeHeader(), Pages = new[] {currentModePage.Value}
+                    };
+                    md6 = Modes.EncodeMode6(md, dev.ScsiType);
+
+                    dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
+                    sense = dev.ModeSelect(md6, out _, true, false, dev.Timeout, out _);
+                }
+
+                DicConsole.WriteLine();
+            }
+            #endregion Error handling
+
+            resume.BadBlocks.Sort();
+            foreach(ulong bad in resume.BadBlocks) dumpLog.WriteLine("Sector {0} could not be read.", bad);
+            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+
+            outputPlugin.SetDumpHardware(resume.Tries);
+            if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
+            dumpLog.WriteLine("Closing output file.");
+            DicConsole.WriteLine("Closing output file.");
+            DateTime closeStart = DateTime.Now;
+            outputPlugin.Close();
+            DateTime closeEnd = DateTime.Now;
+            dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
+
+            if(aborted)
+            {
+                dumpLog.WriteLine("Aborted!");
+                return;
+            }
+
+            double totalChkDuration = 0;
+            if(!nometadata)
+            {
+                dumpLog.WriteLine("Creating sidecar.");
+                FiltersList filters     = new FiltersList();
+                IFilter     filter      = filters.GetFilter(outputPath);
+                IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+
+                DateTime         chkStart = DateTime.UtcNow;
+                CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
+                end = DateTime.UtcNow;
+
+                totalChkDuration = (end - chkStart).TotalMilliseconds;
+                dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+                dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                  (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+                if(preSidecar != null)
+                {
+                    preSidecar.BlockMedia = sidecar.BlockMedia;
+                    sidecar               = preSidecar;
+                }
+
+                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                if(sidecar.BlockMedia[0].FileSystemInformation != null)
+                    filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                                         where partition.FileSystems != null
+                                         from fileSystem in partition.FileSystems
+                                         select ((ulong)partition.StartSector, fileSystem.Type));
+
+                if(filesystems.Count > 0)
+                    foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                        dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
+                                                                 out string xmlDskSubTyp);
+                sidecar.BlockMedia[0].DiskType          = xmlDskTyp;
+                sidecar.BlockMedia[0].DiskSubType       = xmlDskSubTyp;
+                sidecar.BlockMedia[0].Interface         = "USB";
+                sidecar.BlockMedia[0].LogicalBlocks     = blocks;
+                sidecar.BlockMedia[0].PhysicalBlockSize = (int)BLOCK_SIZE;
+                sidecar.BlockMedia[0].LogicalBlockSize  = (int)BLOCK_SIZE;
+                sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
+                sidecar.BlockMedia[0].Model             = dev.Model;
+                sidecar.BlockMedia[0].Serial            = dev.Serial;
+                sidecar.BlockMedia[0].Size              = blocks * BLOCK_SIZE;
+
+                if(dev.IsRemovable) sidecar.BlockMedia[0].DumpHardwareArray = resume.Tries.ToArray();
+
+                DicConsole.WriteLine("Writing metadata sidecar");
+
+                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
+
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                xmlSer.Serialize(xmlFs, sidecar);
+                xmlFs.Close();
+            }
+
+            DicConsole.WriteLine();
+            DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing).",
+                                 (end - start).TotalSeconds, totalDuration / 1000,
+                                 totalChkDuration                          / 1000,
+                                 imageWriteDuration, (closeEnd - closeStart).TotalSeconds);
+            DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
+                                 (double)BLOCK_SIZE * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
+            DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
+            DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
+            DicConsole.WriteLine("{0} sectors could not be read.",       resume.BadBlocks.Count);
+            DicConsole.WriteLine();
+
+            Statistics.AddMedia(dskType, true);
         }
     }
 }

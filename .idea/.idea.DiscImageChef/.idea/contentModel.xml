@@ -211,6 +211,7 @@
             <e p="CompactDisc.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
+            <e p="PlayStationPortable.cs" t="Include" />
             <e p="ResumeSupport.cs" t="Include" />
             <e p="SBC.cs" t="Include" />
             <e p="SCSI.cs" t="Include" />
