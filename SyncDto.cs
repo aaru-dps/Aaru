@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DiscImageChef.Server.Models;
 
 namespace DiscImageChef.Dto
 {
