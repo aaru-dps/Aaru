@@ -94,7 +94,7 @@ namespace DiscImageChef.Devices
                     {
                         LastError = Marshal.GetLastWin32Error();
 
-                        if(LastError == 13) // EACCES
+                        if(LastError == 13 || LastError == 30) // EACCES or EROFS
                         {
                             FileHandle = Linux.Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
                             if((int)FileHandle < 0)
