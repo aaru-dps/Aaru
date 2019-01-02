@@ -250,8 +250,7 @@ namespace DiscImageChef.Commands
 
                     if(!Identify.Decode(buffer).HasValue) return;
 
-                    Identify.IdentifyDevice? atapiIdNullable = Identify.Decode(buffer);
-                    report.ATAPI.Identify = buffer;
+                    report.ATAPI = new Ata {Identify = buffer};
 
                     goto case DeviceType.SCSI;
                 case DeviceType.SCSI:
@@ -327,7 +326,12 @@ namespace DiscImageChef.Commands
                                 }
 
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDROM) mediaTypes.Add("DVD-ROM");
-                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM) mediaTypes.Add("DVD-RAM");
+                                if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDRAM)
+                                {
+                                    mediaTypes.Add("DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)");
+                                    mediaTypes.Add("DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)");
+                                }
+
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR) mediaTypes.Add("DVD-R");
                             }
 

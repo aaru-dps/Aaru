@@ -49,10 +49,13 @@ namespace DiscImageChef.Core.Devices.Report
             while(offset + 4 < response.Length)
             {
                 ushort code = (ushort)((response[offset + 0] << 8) + response[offset + 1]);
-
-                if(code != 0x0108) continue;
-
                 byte[] data = new byte[response[offset + 3] + 4];
+
+                if(code != 0x0108)
+                {
+                    offset += (uint)data.Length;
+                    continue;
+                }
 
                 if(data.Length + offset > response.Length) data = new byte[response.Length - offset];
                 Array.Copy(data, 4, response, offset                                       + 4, data.Length - 4);
@@ -608,6 +611,10 @@ namespace DiscImageChef.Core.Devices.Report
                     if(debug) mediaTest.DvdAacsData = buffer;
                     break;
                 case "BD-ROM":
+                case "Ultra HD Blu-ray movie":
+                case "PlayStation 3 game":
+                case "PlayStation 4 game":
+                case "Xbox One game":
                     DicConsole.WriteLine("Querying BD BCA...");
                     mediaTest.CanReadBCA = !dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                   MmcDiscStructureMediaType.Bd, 0, 0,
@@ -616,7 +623,8 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
                     if(debug) mediaTest.BluBcaData = buffer;
                     break;
-                case "DVD-RAM":
+                case "DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)":
+                case "DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)":
                 case "HD DVD-RAM":
                     mediaTest.CanReadDDS = !dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
@@ -715,7 +723,9 @@ namespace DiscImageChef.Core.Devices.Report
                 if(debug) mediaTest.DvdLayerData = buffer;
             }
 
-            if(mediaType.StartsWith("BD-R", StringComparison.Ordinal))
+            if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) || mediaType == "Ultra HD Blu-ray movie" ||
+               mediaType                                                           == "PlayStation 3 game"     ||
+               mediaType                                                           == "PlayStation 4 game"     || mediaType == "Xbox One game")
             {
                 DicConsole.WriteLine("Querying BD Disc Information...");
                 mediaTest.CanReadDiscInformation = !dev.ReadDiscStructure(out buffer, out senseBuffer,
