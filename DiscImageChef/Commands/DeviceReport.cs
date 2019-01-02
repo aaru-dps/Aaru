@@ -317,6 +317,7 @@ namespace DiscImageChef.Commands
                             {
                                 mediaTypes.Add("CD-ROM");
                                 mediaTypes.Add("Audio CD");
+                                mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDR) mediaTypes.Add("CD-R");
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadCDRW)
                                 {
@@ -434,6 +435,8 @@ namespace DiscImageChef.Commands
                                     mediaTypes.Add("CD-RW High Speed (marked between 8x and 12x)");
                                 if(!mediaTypes.Contains("CD-RW (marked 4x or lower)"))
                                     mediaTypes.Add("CD-RW (marked 4x or lower)");
+                                if(!mediaTypes.Contains("Enhanced CD (aka E-CD, CD-Plus or CD+)"))
+                                    mediaTypes.Add("Enhanced CD (aka E-CD, CD-Plus or CD+)");
                             }
 
                             mediaTypes.Sort();
@@ -586,6 +589,8 @@ namespace DiscImageChef.Commands
                                 {
                                     mediaTest = reporter.ReportMmcMedia(mediaType, tryPlextor, tryPioneer, tryNec,
                                                                         tryHldtst);
+
+                                    if(mediaTest is null) continue;
 
                                     if(mediaTest.SupportsReadLong == true &&
                                        mediaTest.LongBlockSize    == mediaTest.BlockSize)

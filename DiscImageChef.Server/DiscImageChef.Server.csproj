@@ -256,6 +256,10 @@
     <Compile Include="Migrations\201812252219066_StoreReadResultsInReportDatabase.Designer.cs">
       <DependentUpon>201812252219066_StoreReadResultsInReportDatabase.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901022133012_AddMultisessionLeadTest.cs" />
+    <Compile Include="Migrations\201901022133012_AddMultisessionLeadTest.Designer.cs">
+      <DependentUpon>201901022133012_AddMultisessionLeadTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
@@ -379,6 +383,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812252219066_StoreReadResultsInReportDatabase.resx">
       <DependentUpon>201812252219066_StoreReadResultsInReportDatabase.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901022133012_AddMultisessionLeadTest.resx">
+      <DependentUpon>201901022133012_AddMultisessionLeadTest.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

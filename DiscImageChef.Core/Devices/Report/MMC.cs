@@ -31,9 +31,11 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
@@ -1209,6 +1211,129 @@ namespace DiscImageChef.Core.Devices.Report
                 mediaTest.SupportsHLDTSTReadRawDVD = !ArrayHelpers.ArrayIsNullOrEmpty(buffer);
 
             if(mediaTest.SupportsHLDTSTReadRawDVD == true && debug) mediaTest.HLDTSTReadRawDVDData = buffer;
+
+            // This is for checking multi-session support, and inter-session lead-in/out reading, as Enhanced CD are
+            if(mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)")
+            {
+                DicConsole.WriteLine("Querying CD Full TOC...");
+                mediaTest.CanReadFullTOC = !dev.ReadRawToc(out buffer, out senseBuffer, 1, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadFullTOC);
+                if(debug) mediaTest.FullTocData = buffer;
+
+                if(mediaTest.CanReadFullTOC == true)
+                {
+                    FullTOC.CDFullTOC? decodedTocNullable = FullTOC.Decode(buffer);
+
+                    mediaTest.CanReadFullTOC = decodedTocNullable.HasValue;
+
+                    if(mediaTest.CanReadFullTOC == true)
+                    {
+                        FullTOC.CDFullTOC decodedToc = decodedTocNullable.Value;
+
+                        if(!decodedToc.TrackDescriptors.Any(t => t.SessionNumber > 1))
+                        {
+                            DicConsole
+                               .ErrorWriteLine("Could not find second session. Have you inserted the correct type of disc?");
+                            return null;
+                        }
+
+                        FullTOC.TrackDataDescriptor firstSessionLeadOutTrack =
+                            decodedToc.TrackDescriptors.FirstOrDefault(t => t.SessionNumber == 1 && t.POINT == 0xA2);
+                        FullTOC.TrackDataDescriptor secondSessionFirstTrack =
+                            decodedToc.TrackDescriptors.FirstOrDefault(t => t.SessionNumber > 1 && t.POINT <= 99);
+
+                        if(firstSessionLeadOutTrack.SessionNumber == 0 || secondSessionFirstTrack.SessionNumber == 0)
+                        {
+                            DicConsole
+                               .ErrorWriteLine("Could not find second session. Have you inserted the correct type of disc?");
+                            return null;
+                        }
+
+                        DicConsole.DebugWriteLine("SCSI Report",
+                                                  "First session Lead-Out starts at {0:D2}:{1:D2}:{2:D2}",
+                                                  firstSessionLeadOutTrack.PMIN, firstSessionLeadOutTrack.PSEC,
+                                                  firstSessionLeadOutTrack.PFRAME);
+                        DicConsole.DebugWriteLine("SCSI Report", "Second session starts at {0:D2}:{1:D2}:{2:D2}",
+                                                  secondSessionFirstTrack.PMIN, secondSessionFirstTrack.PSEC,
+                                                  secondSessionFirstTrack.PFRAME);
+
+                        // Skip Lead-Out pre-gap
+                        uint firstSessionLeadOutLba = (uint)(firstSessionLeadOutTrack.PMIN * 60 * 75 +
+                                                             firstSessionLeadOutTrack.PSEC      * 75 +
+                                                             firstSessionLeadOutTrack.PFRAME         + 150);
+
+                        // Skip second session track pre-gap
+                        uint secondSessionLeadInLba = (uint)(secondSessionFirstTrack.PMIN * 60 * 75 +
+                                                             secondSessionFirstTrack.PSEC      * 75 +
+                                                             secondSessionFirstTrack.PFRAME - 300);
+
+                        DicConsole.WriteLine("Trying SCSI READ CD in first session Lead-Out...");
+                        mediaTest.CanReadingIntersessionLeadOut = !dev.ReadCd(out buffer, out senseBuffer,
+                                                                              firstSessionLeadOutLba, 2448, 1,
+                                                                              MmcSectorTypes.AllTypes, false, false,
+                                                                              false, MmcHeaderCodes.AllHeaders, true,
+                                                                              false, MmcErrorField.None,
+                                                                              MmcSubchannel.Raw, dev.Timeout, out _);
+
+                        if(mediaTest.CanReadingIntersessionLeadOut == false)
+                        {
+                            mediaTest.CanReadingIntersessionLeadOut = !dev.ReadCd(out buffer, out senseBuffer,
+                                                                                  firstSessionLeadOutLba, 2368, 1,
+                                                                                  MmcSectorTypes.AllTypes, false, false,
+                                                                                  false, MmcHeaderCodes.AllHeaders,
+                                                                                  true, false, MmcErrorField.None,
+                                                                                  MmcSubchannel.Q16, dev.Timeout,
+                                                                                  out _);
+
+                            if(mediaTest.CanReadingIntersessionLeadOut == false)
+                                mediaTest.CanReadingIntersessionLeadOut = !dev.ReadCd(out buffer, out senseBuffer,
+                                                                                      firstSessionLeadOutLba, 2352, 1,
+                                                                                      MmcSectorTypes.AllTypes, false,
+                                                                                      false, false,
+                                                                                      MmcHeaderCodes.AllHeaders, true,
+                                                                                      false, MmcErrorField.None,
+                                                                                      MmcSubchannel.None, dev.Timeout,
+                                                                                      out _);
+                        }
+
+                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                  !mediaTest.CanReadingIntersessionLeadOut);
+                        if(debug) mediaTest.IntersessionLeadOutData = buffer;
+
+                        DicConsole.WriteLine("Trying SCSI READ CD in second session Lead-In...");
+                        mediaTest.CanReadingIntersessionLeadIn = !dev.ReadCd(out buffer, out senseBuffer,
+                                                                             secondSessionLeadInLba, 2448, 1,
+                                                                             MmcSectorTypes.AllTypes, false, false,
+                                                                             false, MmcHeaderCodes.AllHeaders, true,
+                                                                             false, MmcErrorField.None,
+                                                                             MmcSubchannel.Raw, dev.Timeout, out _);
+
+                        if(mediaTest.CanReadingIntersessionLeadIn == false)
+                        {
+                            mediaTest.CanReadingIntersessionLeadIn = !dev.ReadCd(out buffer, out senseBuffer,
+                                                                                 secondSessionLeadInLba, 2368, 1,
+                                                                                 MmcSectorTypes.AllTypes, false, false,
+                                                                                 false, MmcHeaderCodes.AllHeaders, true,
+                                                                                 false, MmcErrorField.None,
+                                                                                 MmcSubchannel.Q16, dev.Timeout, out _);
+
+                            if(mediaTest.CanReadingIntersessionLeadIn == false)
+                                mediaTest.CanReadingIntersessionLeadIn = !dev.ReadCd(out buffer, out senseBuffer,
+                                                                                     secondSessionLeadInLba, 2352, 1,
+                                                                                     MmcSectorTypes.AllTypes, false,
+                                                                                     false, false,
+                                                                                     MmcHeaderCodes.AllHeaders, true,
+                                                                                     false, MmcErrorField.None,
+                                                                                     MmcSubchannel.None, dev.Timeout,
+                                                                                     out _);
+                        }
+
+                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                  !mediaTest.CanReadingIntersessionLeadIn);
+                        if(debug) mediaTest.IntersessionLeadInData = buffer;
+                    }
+                }
+            }
 
             return mediaTest;
         }

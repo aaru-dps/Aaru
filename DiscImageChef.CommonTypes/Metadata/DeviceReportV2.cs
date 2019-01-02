@@ -1338,6 +1338,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool? SupportsReadLongRetry { get; set; }
         public bool? SupportsSeek          { get; set; }
 
+        public bool?  CanReadingIntersessionLeadIn  { get; set; }
+        public bool?  CanReadingIntersessionLeadOut { get; set; }
+        public byte[] IntersessionLeadInData        { get; set; }
+        public byte[] IntersessionLeadOutData       { get; set; }
+
         [JsonIgnore]
         public long? BlocksSql
         {

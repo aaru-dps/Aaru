@@ -709,6 +709,10 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<bool?>("CanReadTOC");
 
+                b.Property<bool?>("CanReadingIntersessionLeadIn");
+
+                b.Property<bool?>("CanReadingIntersessionLeadOut");
+
                 b.Property<byte[]>("CmiData");
 
                 b.Property<byte[]>("CorrectedSubchannelData");
@@ -742,6 +746,10 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<byte[]>("HdCmiData");
 
                 b.Property<byte[]>("IdentifyData");
+
+                b.Property<byte[]>("IntersessionLeadInData");
+
+                b.Property<byte[]>("IntersessionLeadOutData");
 
                 b.Property<ulong?>("LBA48Sectors");
 

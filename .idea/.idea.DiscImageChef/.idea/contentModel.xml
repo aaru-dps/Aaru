@@ -330,6 +330,8 @@
           <e p="20181225152947_StoreMmcGetConfigurationResponse.cs" t="Include" />
           <e p="20181225214500_StoreReadResultsInReportDatabase.Designer.cs" t="Include" />
           <e p="20181225214500_StoreReadResultsInReportDatabase.cs" t="Include" />
+          <e p="20190102061236_AddMultisessionLeadTest.Designer.cs" t="Include" />
+          <e p="20190102061236_AddMultisessionLeadTest.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1853,6 +1855,9 @@
           <e p="201812252219066_StoreReadResultsInReportDatabase.Designer.cs" t="Include" />
           <e p="201812252219066_StoreReadResultsInReportDatabase.cs" t="Include" />
           <e p="201812252219066_StoreReadResultsInReportDatabase.resx" t="Include" />
+          <e p="201901022133012_AddMultisessionLeadTest.Designer.cs" t="Include" />
+          <e p="201901022133012_AddMultisessionLeadTest.cs" t="Include" />
+          <e p="201901022133012_AddMultisessionLeadTest.resx" t="Include" />
           <e p="Configuration.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
