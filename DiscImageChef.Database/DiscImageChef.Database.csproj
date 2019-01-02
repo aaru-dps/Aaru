@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Context.cs" />
+    <Compile Include="ContextFactory.cs" />
     <Compile Include="Migrations\20181126222301_DeviceReportV2.cs" />
     <Compile Include="Migrations\20181126222301_DeviceReportV2.Designer.cs" />
     <Compile Include="Migrations\20181127001622_AddDeviceBasicFields.cs" />

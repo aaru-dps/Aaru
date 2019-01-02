@@ -296,6 +296,7 @@
       </e>
       <e p="DiscImageChef.Database" t="IncludeRecursive">
         <e p="Context.cs" t="Include" />
+        <e p="ContextFactory.cs" t="Include" />
         <e p="DiscImageChef.Database.csproj" t="IncludeRecursive" />
         <e p="Migrations" t="Include">
           <e p="20181126222301_DeviceReportV2.Designer.cs" t="Include" />
