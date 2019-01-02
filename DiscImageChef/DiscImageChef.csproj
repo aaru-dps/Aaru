@@ -55,6 +55,7 @@
     <Compile Include="Commands\ConvertImage.cs" />
     <Compile Include="Commands\ImageInfo.cs" />
     <Compile Include="Commands\ListOptions.cs" />
+    <Compile Include="Commands\Update.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Commands\Formats.cs" />

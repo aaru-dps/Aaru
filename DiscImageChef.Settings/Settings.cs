@@ -155,7 +155,8 @@ namespace DiscImageChef.Settings
         /// </summary>
         public static string StatsPath { get; private set; }
 
-        public static string DbPath { get; private set; }
+        public static string LocalDbPath  { get; private set; }
+        public static string MasterDbPath { get; private set; }
 
         /// <summary>
         ///     Loads settings
@@ -165,7 +166,8 @@ namespace DiscImageChef.Settings
             Current = new DicSettings();
             PlatformID ptId     = DetectOS.GetRealPlatformID();
             string     homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            DbPath = "discimagechef.db";
+            LocalDbPath  = "local.db";
+            MasterDbPath = "master.db";
 
             try
             {
@@ -183,7 +185,8 @@ namespace DiscImageChef.Settings
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
 
-                        DbPath = Path.Combine(dicPath, DbPath);
+                        LocalDbPath  = Path.Combine(dicPath, LocalDbPath);
+                        MasterDbPath = Path.Combine(dicPath, MasterDbPath);
 
                         ReportsPath = Path.Combine(dicPath, "Reports");
                         if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
@@ -207,7 +210,8 @@ namespace DiscImageChef.Settings
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
 
-                        DbPath = Path.Combine(dicPath, DbPath);
+                        LocalDbPath  = Path.Combine(dicPath, LocalDbPath);
+                        MasterDbPath = Path.Combine(dicPath, MasterDbPath);
 
                         ReportsPath = Path.Combine(dicPath, "Reports");
                         if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);
@@ -234,7 +238,8 @@ namespace DiscImageChef.Settings
 
                         if(!Directory.Exists(dicPath)) Directory.CreateDirectory(dicPath);
 
-                        DbPath = Path.Combine(dicPath, DbPath);
+                        LocalDbPath  = Path.Combine(dicPath, LocalDbPath);
+                        MasterDbPath = Path.Combine(dicPath, MasterDbPath);
 
                         ReportsPath = Path.Combine(dicPath, "Reports");
                         if(!Directory.Exists(ReportsPath)) Directory.CreateDirectory(ReportsPath);

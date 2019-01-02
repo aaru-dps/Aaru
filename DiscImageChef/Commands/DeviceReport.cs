@@ -924,7 +924,7 @@ namespace DiscImageChef.Commands
 
             Core.Statistics.AddCommand("device-report");
 
-            using(DicContext ctx = DicContext.Create(Settings.Settings.DbPath))
+            using(DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath))
             {
                 ctx.Reports.Add(new Report(report));
                 ctx.SaveChanges();

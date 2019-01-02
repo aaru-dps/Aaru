@@ -71,7 +71,7 @@ namespace DiscImageChef.Server.Controllers
                     Id        = product.Id,
                     Product   = product.Product,
                     ProductId = (ushort)product.ProductId,
-                    VendorId  = (ushort)product.VendorId
+                    VendorId  = (ushort)product.Vendor.VendorId
                 });
 
             sync.Offsets = new List<CdOffsetDto>();

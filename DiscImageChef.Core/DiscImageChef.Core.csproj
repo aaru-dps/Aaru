@@ -112,6 +112,7 @@
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Database\DiscImageChef.Database.csproj" />
+    <ProjectReference Include="..\DiscImageChef.Dto\DiscImageChef.Dto.csproj" />
     <ProjectReference Include="..\DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj">
       <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>
       <Name>DiscImageChef.Filesystems</Name>

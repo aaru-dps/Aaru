@@ -45,7 +45,7 @@ namespace DiscImageChef.Gui.Dialogs
         {
             XamlReader.Load(this);
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
 
             if(ctx.Commands.Any())
             {

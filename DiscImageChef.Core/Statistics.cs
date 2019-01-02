@@ -65,7 +65,7 @@ namespace DiscImageChef.Core
         /// </summary>
         public static void LoadStats()
         {
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
 
             if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
                 try
@@ -444,7 +444,7 @@ namespace DiscImageChef.Core
         /// </summary>
         public static void SaveStats()
         {
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.SaveChanges();
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats) SubmitStats();
         }
@@ -456,7 +456,7 @@ namespace DiscImageChef.Core
         {
             Thread submitThread = new Thread(() =>
             {
-                DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+                DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
 
                 if(ctx.Commands.Any(c => !c.Synchronized)    || ctx.Filesystems.Any(c => !c.Synchronized)      ||
                    ctx.Filters.Any(c => !c.Synchronized)     || ctx.MediaFormats.Any(c => !c.Synchronized)     ||
@@ -878,7 +878,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.DeviceStats) return;
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.Commands.Add(new Command {Name = command, Synchronized = false, Count = 1});
             ctx.SaveChanges();
         }
@@ -893,7 +893,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilesystemStats) return;
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.Filesystems.Add(new Filesystem {Name = filesystem, Synchronized = false, Count = 1});
             ctx.SaveChanges();
         }
@@ -908,7 +908,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.PartitionStats) return;
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.Partitions.Add(new Partition {Name = partition, Synchronized = false, Count = 1});
             ctx.SaveChanges();
         }
@@ -923,7 +923,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.FilterStats) return;
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.Filters.Add(new Filter {Name = filter, Synchronized = false, Count = 1});
             ctx.SaveChanges();
         }
@@ -938,7 +938,7 @@ namespace DiscImageChef.Core
 
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaImageStats) return;
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.MediaFormats.Add(new MediaFormat {Name = format, Synchronized = false, Count = 1});
             ctx.SaveChanges();
         }
@@ -956,7 +956,7 @@ namespace DiscImageChef.Core
             else if(dev.IsFireWire) deviceBus = "FireWire";
             else deviceBus                    = dev.Type.ToString();
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.SeenDevices.Add(new DeviceStat
             {
                 Bus          = deviceBus,
@@ -977,7 +977,7 @@ namespace DiscImageChef.Core
         {
             if(Settings.Settings.Current.Stats == null || !Settings.Settings.Current.Stats.MediaStats) return;
 
-            DicContext ctx = DicContext.Create(Settings.Settings.DbPath);
+            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.Medias.Add(new Database.Models.Media
             {
                 Real = real, Synchronized = false, Type = type.ToString(), Count = 1

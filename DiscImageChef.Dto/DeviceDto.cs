@@ -39,6 +39,8 @@ namespace DiscImageChef.Dto
 {
     public class DeviceDto : DeviceReportV2
     {
+        public DeviceDto() { }
+
         public DeviceDto(DeviceReportV2 report)
         {
             ATA            = report.ATA;

@@ -459,4 +459,7 @@ namespace DiscImageChef
 
     [Verb("gui", HelpText = "Opens the in-progress GUI.")]
     public class GuiOptions : CommonOptions { }
+
+    [Verb("update", HelpText = "Updates the database.")]
+    public class UpdateOptions : CommonOptions { }
 }

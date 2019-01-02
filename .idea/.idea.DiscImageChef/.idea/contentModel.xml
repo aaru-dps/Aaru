@@ -42,6 +42,7 @@
           <e p="MediaScan.cs" t="Include" />
           <e p="PrintHex.cs" t="Include" />
           <e p="Statistics.cs" t="Include" />
+          <e p="Update.cs" t="Include" />
           <e p="Verify.cs" t="Include" />
         </e>
         <e p="DiscImageChef.csproj" t="IncludeRecursive" />
@@ -295,9 +296,6 @@
       </e>
       <e p="DiscImageChef.Database" t="IncludeRecursive">
         <e p="Context.cs" t="Include" />
-        <e p="DTOs" t="Include">
-          <e p="SyncDTO.cs" t="Include" />
-        </e>
         <e p="DiscImageChef.Database.csproj" t="IncludeRecursive" />
         <e p="Migrations" t="Include">
           <e p="20181126222301_DeviceReportV2.Designer.cs" t="Include" />
@@ -1821,7 +1819,6 @@
           <e p="UploadReportController.cs" t="Include" />
           <e p="UploadStatsController.cs" t="Include" />
         </e>
-        <e p="DTOs" t="Include" />
         <e p="DiscImageChef.Server.csproj" t="IncludeRecursive" />
         <e p="Global.asax" t="Include" />
         <e p="Global.asax.cs" t="Include" />
