@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.ComponentModel;
 using DiscImageChef.CommonTypes.Metadata;
 
 namespace DiscImageChef.Database.Models
@@ -61,5 +62,8 @@ namespace DiscImageChef.Database.Models
         }
 
         public DateTime LastSynchronized { get; set; }
+
+        [DefaultValue(0)]
+        public int OptimalMultipleSectorsRead { get; set; }
     }
 }

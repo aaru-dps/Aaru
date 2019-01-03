@@ -344,13 +344,20 @@ namespace DiscImageChef.Core
                         if(existing != null)
                         {
                             modifiedDevices++;
-                            existing = new Device(device) {Id = device.Id};
+                            existing = new Device(device)
+                            {
+                                Id = device.Id, OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead
+                            };
                             mctx.Devices.Update(existing);
                         }
                         else
                         {
                             addedDevices++;
-                            mctx.Devices.Add(new Device(device) {Id = device.Id});
+                            mctx.Devices.Add(new Device(device)
+                            {
+                                Id                         = device.Id,
+                                OptimalMultipleSectorsRead = device.OptimalMultipleSectorsRead
+                            });
                         }
                     }
 

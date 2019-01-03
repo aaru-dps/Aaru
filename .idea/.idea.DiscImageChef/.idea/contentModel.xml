@@ -333,6 +333,8 @@
           <e p="20181225214500_StoreReadResultsInReportDatabase.cs" t="Include" />
           <e p="20190102061236_AddMultisessionLeadTest.Designer.cs" t="Include" />
           <e p="20190102061236_AddMultisessionLeadTest.cs" t="Include" />
+          <e p="20190102230036_AddOptimalReadMultipleCount.Designer.cs" t="Include" />
+          <e p="20190102230036_AddOptimalReadMultipleCount.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1859,6 +1861,9 @@
           <e p="201901022133012_AddMultisessionLeadTest.Designer.cs" t="Include" />
           <e p="201901022133012_AddMultisessionLeadTest.cs" t="Include" />
           <e p="201901022133012_AddMultisessionLeadTest.resx" t="Include" />
+          <e p="201901030344456_AddOptimalReadMultipleCount.Designer.cs" t="Include" />
+          <e p="201901030344456_AddOptimalReadMultipleCount.cs" t="Include" />
+          <e p="201901030344456_AddOptimalReadMultipleCount.resx" t="Include" />
           <e p="Configuration.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

@@ -1078,6 +1078,8 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<int?>("MultiMediaCardId");
 
+                b.Property<int>("OptimalMultipleSectorsRead");
+
                 b.Property<int?>("PCMCIAId");
 
                 b.Property<string>("Revision");

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using DiscImageChef.CommonTypes.Metadata;
 
@@ -66,5 +67,7 @@ namespace DiscImageChef.Server.Models
         [Index]
         public DateTime? ModifiedWhen { get;             set; }
         public virtual CompactDiscOffset CdOffset { get; set; }
+        [DefaultValue(0)]
+        public int OptimalMultipleSectorsRead { get; set; }
     }
 }

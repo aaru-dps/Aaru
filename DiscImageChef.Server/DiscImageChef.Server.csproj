@@ -260,6 +260,10 @@
     <Compile Include="Migrations\201901022133012_AddMultisessionLeadTest.Designer.cs">
       <DependentUpon>201901022133012_AddMultisessionLeadTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201901030344456_AddOptimalReadMultipleCount.cs" />
+    <Compile Include="Migrations\201901030344456_AddOptimalReadMultipleCount.Designer.cs">
+      <DependentUpon>201901030344456_AddOptimalReadMultipleCount.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
@@ -386,6 +390,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201901022133012_AddMultisessionLeadTest.resx">
       <DependentUpon>201901022133012_AddMultisessionLeadTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201901030344456_AddOptimalReadMultipleCount.resx">
+      <DependentUpon>201901030344456_AddOptimalReadMultipleCount.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

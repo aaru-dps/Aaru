@@ -93,6 +93,8 @@
     <Compile Include="Migrations\20181225214500_StoreReadResultsInReportDatabase.Designer.cs" />
     <Compile Include="Migrations\20190102061236_AddMultisessionLeadTest.cs" />
     <Compile Include="Migrations\20190102061236_AddMultisessionLeadTest.Designer.cs" />
+    <Compile Include="Migrations\20190102230036_AddOptimalReadMultipleCount.cs" />
+    <Compile Include="Migrations\20190102230036_AddOptimalReadMultipleCount.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />

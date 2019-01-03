@@ -82,7 +82,7 @@ namespace DiscImageChef.Server.Controllers
             foreach(Device device in ctx.Devices.Where(d => d.ModifiedWhen > lastSync).ToList())
                 sync.Devices.Add(new
                                      DeviceDto(JsonConvert.DeserializeObject<DeviceReportV2>(JsonConvert.SerializeObject(device)),
-                                               device.Id));
+                                               device.Id, device.OptimalMultipleSectorsRead));
 
             JsonSerializer js = JsonSerializer.Create();
             StringWriter   sw = new StringWriter();

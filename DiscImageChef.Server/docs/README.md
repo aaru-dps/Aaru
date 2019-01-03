@@ -2,7 +2,7 @@ DiscImageChef v4.5.99.1693
 
 Disc Image Chef (because "swiss-army-knife" is used too much)
 
-Copyright © 2011-2019 Natalia Portillo <claunia@claunia.com>
+Copyright © 2011-2018 Natalia Portillo <claunia@claunia.com>
 
 [![Build status](https://dev.azure.com/DiscImageChef/DiscImageChef/_apis/build/status/DiscImageChef-.NET%20Desktop-CI)](https://dev.azure.com/DiscImageChef/DiscImageChef/_build/latest?definitionId=4)
 [![Build Status](https://travis-ci.org/claunia/DiscImageChef.svg?branch=master)](https://travis-ci.org/claunia/DiscImageChef)
