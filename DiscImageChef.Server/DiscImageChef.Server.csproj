@@ -326,7 +326,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <None Include="App.config" />
     <None Include="int10h.org\.htaccess" />
     <None Include="int10h.org\vga_squarepx.woff2" />
     <None Include="Reports\.htaccess" />
