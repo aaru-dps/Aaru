@@ -58,7 +58,7 @@ namespace DiscImageChef.Dto
             Type           = report.Type;
         }
 
-        public DeviceDto(DeviceReportV2 report, int id)
+        public DeviceDto(DeviceReportV2 report, int id, int optimalMultipleSectorsRead)
         {
             ATA            = report.ATA;
             ATAPI          = report.ATAPI;
@@ -148,8 +148,11 @@ namespace DiscImageChef.Dto
 
             if(USB != null) USB.Descriptors = null;
 
-            Id = id;
+            Id                         = id;
+            OptimalMultipleSectorsRead = optimalMultipleSectorsRead;
         }
+
+        public int OptimalMultipleSectorsRead { get; set; }
 
         public new int Id { get; set; }
 
