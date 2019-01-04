@@ -1802,7 +1802,6 @@
         </e>
       </e>
       <e p="DiscImageChef.Server" t="IncludeRecursive">
-        <e p="App.config" t="Include" />
         <e p="App_Start" t="Include">
           <e p="Ata.cs" t="Include" />
           <e p="RouteConfig.cs" t="Include" />

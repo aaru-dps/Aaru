@@ -36,6 +36,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Interop;
@@ -609,23 +610,21 @@ namespace DiscImageChef.Core
                             DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading statistics");
                         #endif
 
-                        MemoryStream jsonStream = new MemoryStream();
-                        StreamWriter jsonSw     = new StreamWriter(jsonStream);
-
-                        jsonSw.Write(JsonConvert.SerializeObject(dto, Formatting.Indented,
-                                                                 new JsonSerializerSettings
-                                                                 {
-                                                                     NullValueHandling = NullValueHandling.Ignore
-                                                                 }));
-                        jsonStream.Seek(0, SeekOrigin.Begin);
-                        WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstatsv2");
+                        string json = JsonConvert.SerializeObject(dto, Formatting.Indented,
+                                                                  new JsonSerializerSettings
+                                                                  {
+                                                                      NullValueHandling = NullValueHandling.Ignore
+                                                                  });
+                        byte[]     jsonBytes = Encoding.UTF8.GetBytes(json);
+                        WebRequest request   = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstatsv2");
                         ((HttpWebRequest)request).UserAgent =
                             $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
                         request.Method        = "POST";
-                        request.ContentLength = jsonStream.Length;
+                        request.ContentLength = jsonBytes.Length;
                         request.ContentType   = "application/json";
                         Stream reqStream = request.GetRequestStream();
-                        jsonStream.CopyTo(reqStream);
+                        reqStream.Write(jsonBytes, 0, jsonBytes.Length);
+                        //jsonStream.CopyTo(reqStream);
                         reqStream.Close();
                         WebResponse response = request.GetResponse();
 
@@ -634,11 +633,11 @@ namespace DiscImageChef.Core
                         Stream       data   = response.GetResponseStream();
                         StreamReader reader = new StreamReader(data ?? throw new InvalidOperationException());
 
-                        reader.ReadToEnd();
+                        string result = reader.ReadToEnd();
                         data.Close();
                         response.Close();
-                        jsonSw.Close();
-                        jsonStream.Close();
+
+                        if(result != "ok") return;
 
                         if(ctx.Commands.Any(c => !c.Synchronized))
                             foreach(string nvs in ctx.Commands.Where(c => !c.Synchronized).Select(c => c.Name)

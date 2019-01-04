@@ -36,6 +36,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Metadata;
@@ -126,22 +127,19 @@ namespace DiscImageChef.Core
                     DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
                     #endif
 
-                    MemoryStream jsonStream = new MemoryStream();
-                    StreamWriter jsonSw     = new StreamWriter(jsonStream);
-
-                    jsonSw.Write(JsonConvert.SerializeObject(report, Formatting.Indented,
-                                                             new JsonSerializerSettings
-                                                             {
-                                                                 NullValueHandling = NullValueHandling.Ignore
-                                                             }));
-                    jsonStream.Seek(0, SeekOrigin.Begin);
-                    WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreportv2");
+                    string json = JsonConvert.SerializeObject(report, Formatting.Indented,
+                                                              new JsonSerializerSettings
+                                                              {
+                                                                  NullValueHandling = NullValueHandling.Ignore
+                                                              });
+                    byte[]     jsonBytes = Encoding.UTF8.GetBytes(json);
+                    WebRequest request   = WebRequest.Create("http://discimagechef.claunia.com/api/uploadreportv2");
                     ((HttpWebRequest)request).UserAgent = $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
                     request.Method                      = "POST";
-                    request.ContentLength               = jsonStream.Length;
+                    request.ContentLength               = jsonBytes.Length;
                     request.ContentType                 = "application/json";
                     Stream reqStream = request.GetRequestStream();
-                    jsonStream.CopyTo(reqStream);
+                    reqStream.Write(jsonBytes, 0, jsonBytes.Length);
                     reqStream.Close();
                     WebResponse response = request.GetResponse();
 
@@ -153,8 +151,6 @@ namespace DiscImageChef.Core
                     reader.ReadToEnd();
                     data.Close();
                     response.Close();
-                    jsonSw.Close();
-                    jsonStream.Close();
                 }
                 catch(WebException)
                 {
