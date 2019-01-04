@@ -940,7 +940,7 @@ namespace DiscImageChef.Commands
             }
 
             // TODO:
-            if(Settings.Settings.Current.ShareReports) Remote.SubmitReportV2(report);
+            if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
         }
     }
 }
