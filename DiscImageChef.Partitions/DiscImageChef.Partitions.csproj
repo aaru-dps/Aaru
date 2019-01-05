@@ -18,6 +18,7 @@
     <Title>DiscImageChef.Partitions</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <NoWarn>CS0649</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
