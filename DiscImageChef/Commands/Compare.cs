@@ -46,9 +46,9 @@ namespace DiscImageChef.Commands
 {
     class CompareCommand : Command
     {
-        string InputFile1;
-        string InputFile2;
-        bool   ShowHelp;
+        string inputFile1;
+        string inputFile2;
+        bool   showHelp;
 
         public CompareCommand() : base("compare", "Compares two disc images.")
         {
@@ -60,7 +60,7 @@ namespace DiscImageChef.Commands
                 $"usage: DiscImageChef {Name} imagefile1 imagefile2",
                 "",
                 Help,
-                {"help|h|?", "Show this message and exit.", v => ShowHelp = v != null}
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
             };
         }
 
@@ -68,7 +68,7 @@ namespace DiscImageChef.Commands
         {
             List<string> extra = Options.Parse(arguments);
 
-            if(ShowHelp)
+            if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
                 return (int)ErrorNumber.HelpRequested;
@@ -91,18 +91,18 @@ namespace DiscImageChef.Commands
                 return (int)ErrorNumber.MissingArgument;
             }
 
-            InputFile1 = extra[0];
-            InputFile1 = extra[1];
+            inputFile1 = extra[0];
+            inputFile2 = extra[1];
 
             DicConsole.DebugWriteLine("Compare command", "--debug={0}",   MainClass.Debug);
-            DicConsole.DebugWriteLine("Compare command", "--input1={0}",  InputFile1);
-            DicConsole.DebugWriteLine("Compare command", "--input2={0}",  InputFile2);
+            DicConsole.DebugWriteLine("Compare command", "--input1={0}",  inputFile1);
+            DicConsole.DebugWriteLine("Compare command", "--input2={0}",  inputFile2);
             DicConsole.DebugWriteLine("Compare command", "--verbose={0}", MainClass.Verbose);
 
             FiltersList filtersList  = new FiltersList();
-            IFilter     inputFilter1 = filtersList.GetFilter(InputFile1);
+            IFilter     inputFilter1 = filtersList.GetFilter(inputFile1);
             filtersList = new FiltersList();
-            IFilter inputFilter2 = filtersList.GetFilter(InputFile2);
+            IFilter inputFilter2 = filtersList.GetFilter(inputFile2);
 
             if(inputFilter1 == null)
             {
@@ -157,13 +157,13 @@ namespace DiscImageChef.Commands
             {
                 sb.AppendLine("\tDisc image 1\tDisc image 2");
                 sb.AppendLine("================================");
-                sb.AppendFormat("File\t{0}\t{1}", InputFile1, InputFile2).AppendLine();
+                sb.AppendFormat("File\t{0}\t{1}", inputFile1, inputFile2).AppendLine();
                 sb.AppendFormat("Disc image format\t{0}\t{1}", input1Format.Name, input2Format.Name).AppendLine();
             }
             else
             {
-                sb.AppendFormat("Disc image 1: {0}", InputFile1).AppendLine();
-                sb.AppendFormat("Disc image 2: {0}", InputFile2).AppendLine();
+                sb.AppendFormat("Disc image 1: {0}", inputFile1).AppendLine();
+                sb.AppendFormat("Disc image 2: {0}", inputFile2).AppendLine();
             }
 
             bool imagesDiffer = false;
