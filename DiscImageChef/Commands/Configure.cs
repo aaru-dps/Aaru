@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Settings;
 using Mono.Options;
@@ -65,7 +66,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -75,13 +76,7 @@ namespace DiscImageChef.Commands
             if(extra.Count != 0)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(gdprChange)
@@ -272,7 +267,7 @@ namespace DiscImageChef.Commands
 
             Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
             Settings.Settings.SaveSettings();
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

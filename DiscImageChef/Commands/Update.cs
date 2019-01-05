@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using Mono.Options;
@@ -59,14 +60,14 @@ namespace DiscImageChef.Commands
 
         public override int Invoke(IEnumerable<string> arguments)
         {
-            if(masterDbUpdate) return 0;
+            if(masterDbUpdate) return (int)ErrorNumber.NoError;
 
             List<string> extra = Options.Parse(arguments);
 
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -76,7 +77,7 @@ namespace DiscImageChef.Commands
             if(extra.Count > 0)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             DicConsole.DebugWriteLine("Update command", "--debug={0}",   MainClass.Debug);
@@ -84,7 +85,7 @@ namespace DiscImageChef.Commands
 
             DoUpdate(false);
 
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
 
         internal static void DoUpdate(bool create)

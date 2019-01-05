@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -68,7 +69,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -78,13 +79,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             inputFile = extra[0];
@@ -99,7 +100,7 @@ namespace DiscImageChef.Commands
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return 1;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             try
@@ -109,7 +110,7 @@ namespace DiscImageChef.Commands
                 if(imageFormat == null)
                 {
                     DicConsole.WriteLine("Image format not identified.");
-                    return 2;
+                    return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 DicConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
@@ -121,7 +122,7 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
-                        return 3;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     ImageInfo.PrintImageInfo(imageFormat);
@@ -135,16 +136,18 @@ namespace DiscImageChef.Commands
                     DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     DicConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
             }
             catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 DicConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+                return (int)ErrorNumber.UnexpectedException;
             }
 
             Statistics.AddCommand("image-info");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

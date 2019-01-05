@@ -33,6 +33,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -67,7 +68,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -77,7 +78,7 @@ namespace DiscImageChef.Commands
             if(extra.Count > 0)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             DicConsole.DebugWriteLine("Formats command", "--debug={0}",   MainClass.Debug);
@@ -153,7 +154,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine(kvp.Value.Name);
 
             Statistics.AddCommand("formats");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

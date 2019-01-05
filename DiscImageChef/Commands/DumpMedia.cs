@@ -128,7 +128,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -138,13 +138,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 2)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count <= 1)
             {
                 DicConsole.ErrorWriteLine("Missing paths.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             devicePath = extra[0];
@@ -159,18 +159,18 @@ namespace DiscImageChef.Commands
             Sidecar.EndProgressEvent2    += Progress.EndProgress2;
             Sidecar.UpdateStatusEvent    += Progress.UpdateStatus;
 
-            DicConsole.DebugWriteLine("Dump-Media command", "--cicm-xml={0}",      cicmXml);
-            DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}",         MainClass.Debug);
-            DicConsole.DebugWriteLine("Dump-Media command", "--device={0}",        devicePath);
-            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}",      encodingName);
-            DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}",  firstTrackPregap);
-            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",         force);
-            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",         force);
-            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}",        wanteOutputFormat);
-            DicConsole.DebugWriteLine("Dump-Media command", "--no-metadata={0}",   noMetadata);
-            DicConsole.DebugWriteLine("Dump-Media command", "--options={0}",       Options);
-            DicConsole.DebugWriteLine("Dump-Media command", "--output={0}",        outputFile);
-            DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}",    persistent);
+            DicConsole.DebugWriteLine("Dump-Media command", "--cicm-xml={0}",     cicmXml);
+            DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}",        MainClass.Debug);
+            DicConsole.DebugWriteLine("Dump-Media command", "--device={0}",       devicePath);
+            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}",     encodingName);
+            DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}", firstTrackPregap);
+            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",        force);
+            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}",        force);
+            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}",       wanteOutputFormat);
+            DicConsole.DebugWriteLine("Dump-Media command", "--no-metadata={0}",  noMetadata);
+            DicConsole.DebugWriteLine("Dump-Media command", "--options={0}",      Options);
+            DicConsole.DebugWriteLine("Dump-Media command", "--output={0}",       outputFile);
+            DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}",   persistent);
             // TODO: Disabled temporarily
             //DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
             DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}",        doResume);
@@ -195,7 +195,7 @@ namespace DiscImageChef.Commands
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    return 1;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
@@ -206,7 +206,7 @@ namespace DiscImageChef.Commands
             if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
-                return 2;
+                return (int)ErrorNumber.CannotOpenDevice;
             }
 
             Statistics.AddDevice(dev);
@@ -226,13 +226,13 @@ namespace DiscImageChef.Commands
                 catch
                 {
                     DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
-                    return 3;
+                    return (int)ErrorNumber.InvalidResume;
                 }
 
             if(resume != null && resume.NextBlock > resume.LastBlock && resume.BadBlocks.Count == 0)
             {
                 DicConsole.WriteLine("Media already dumped correctly, not continuing...");
-                return 4;
+                return (int)ErrorNumber.AlreadyDumped;
             }
 
             CICMMetadataType sidecar   = null;
@@ -248,12 +248,12 @@ namespace DiscImageChef.Commands
                     catch
                     {
                         DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
-                        return 5;
+                        return (int)ErrorNumber.InvalidSidecar;
                     }
                 else
                 {
                     DicConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
-                    return 6;
+                    return (int)ErrorNumber.FileNotFound;
                 }
 
             PluginBase           plugins    = GetPluginBase.Instance;
@@ -276,13 +276,13 @@ namespace DiscImageChef.Commands
             if(candidates.Count == 0)
             {
                 DicConsole.WriteLine("No plugin supports requested extension.");
-                return 7;
+                return (int)ErrorNumber.FormatNotFound;
             }
 
             if(candidates.Count > 1)
             {
                 DicConsole.WriteLine("More than one plugin supports requested extension.");
-                return 8;
+                return (int)ErrorNumber.TooManyFormats;
             }
 
             IWritableImage outputFormat = candidates[0];
@@ -354,7 +354,7 @@ namespace DiscImageChef.Commands
             Statistics.AddCommand("dump-media");
 
             dev.Close();
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

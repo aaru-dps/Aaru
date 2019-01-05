@@ -32,6 +32,7 @@
 
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -79,7 +80,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -89,13 +90,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             inputFile = extra[0];
@@ -113,7 +114,7 @@ namespace DiscImageChef.Commands
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return 1;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -121,7 +122,7 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
-                return 2;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             inputFormat.Open(inputFilter);
@@ -153,7 +154,7 @@ namespace DiscImageChef.Commands
             if(!wholeDisc)
             {
                 Statistics.AddCommand("entropy");
-                return 0;
+                return (int)ErrorNumber.NoError;
             }
 
             EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
@@ -164,7 +165,7 @@ namespace DiscImageChef.Commands
                                      (double)entropy.UniqueSectors / (double)entropy.Sectors);
 
             Statistics.AddCommand("entropy");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

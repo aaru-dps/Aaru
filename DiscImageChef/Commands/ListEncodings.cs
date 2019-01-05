@@ -33,6 +33,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using Mono.Options;
@@ -64,7 +65,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -74,7 +75,7 @@ namespace DiscImageChef.Commands
             if(extra.Count > 0)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             DicConsole.DebugWriteLine("List-Encodings command", "--debug={0}",   MainClass.Debug);
@@ -99,7 +100,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
 
             Statistics.AddCommand("list-encodings");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
 
         struct CommonEncodingInfo

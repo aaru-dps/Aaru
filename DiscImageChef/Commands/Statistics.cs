@@ -32,6 +32,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
@@ -65,7 +66,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -75,7 +76,7 @@ namespace DiscImageChef.Commands
             if(extra.Count > 0)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
@@ -84,7 +85,7 @@ namespace DiscImageChef.Commands
                !ctx.Medias.Any()   && !ctx.Partitions.Any()  && !ctx.SeenDevices.Any())
             {
                 DicConsole.WriteLine("There are no statistics.");
-                return 1;
+                return (int)ErrorNumber.NothingFound;
             }
 
             bool thereAreStats = false;
@@ -235,7 +236,7 @@ namespace DiscImageChef.Commands
             }
 
             if(!thereAreStats) DicConsole.WriteLine("There are no statistics.");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

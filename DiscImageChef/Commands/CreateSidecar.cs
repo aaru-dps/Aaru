@@ -37,6 +37,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -85,7 +86,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -95,13 +96,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             inputFile = extra[0];
@@ -132,7 +133,7 @@ namespace DiscImageChef.Commands
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    return 1;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             if(File.Exists(inputFile))
@@ -140,7 +141,7 @@ namespace DiscImageChef.Commands
                 if(tape)
                 {
                     DicConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
-                    return 2;
+                    return (int)ErrorNumber.ExpectedDirectory;
                 }
 
                 FiltersList filtersList = new FiltersList();
@@ -149,7 +150,7 @@ namespace DiscImageChef.Commands
                 if(inputFilter == null)
                 {
                     DicConsole.ErrorWriteLine("Cannot open specified file.");
-                    return 3;
+                    return (int)ErrorNumber.CannotOpenFile;
                 }
 
                 try
@@ -159,7 +160,7 @@ namespace DiscImageChef.Commands
                     if(imageFormat == null)
                     {
                         DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
-                        return 4;
+                        return (int)ErrorNumber.UnrecognizedFormat;
                     }
 
                     if(MainClass.Verbose)
@@ -173,7 +174,7 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.WriteLine("Unable to open image format");
                             DicConsole.WriteLine("No error given");
-                            return 5;
+                            return (int)ErrorNumber.CannotOpenFormat;
                         }
 
                         DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
@@ -182,7 +183,7 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.ErrorWriteLine("Unable to open image format");
                         DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                        return 6;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     Statistics.AddMediaFormat(imageFormat.Format);
@@ -207,6 +208,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                     DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
+                    return (int)ErrorNumber.UnexpectedException;
                 }
             }
             else if(Directory.Exists(inputFile))
@@ -214,7 +216,7 @@ namespace DiscImageChef.Commands
                 if(!tape)
                 {
                     DicConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
-                    return 7;
+                    return (int)ErrorNumber.ExpectedFile;
                 }
 
                 string[]     contents = Directory.GetFiles(inputFile, "*", SearchOption.TopDirectoryOnly);
@@ -239,7 +241,7 @@ namespace DiscImageChef.Commands
             }
             else DicConsole.ErrorWriteLine("The specified input file cannot be found.");
 
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

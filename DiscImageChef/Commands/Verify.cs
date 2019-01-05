@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
@@ -71,7 +72,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -81,13 +82,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             inputFile = extra[0];
@@ -104,7 +105,7 @@ namespace DiscImageChef.Commands
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return 1;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -112,7 +113,7 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
-                return 2;
+                return (int)ErrorNumber.FormatNotFound;
             }
 
             inputFormat.Open(inputFilter);
@@ -120,10 +121,10 @@ namespace DiscImageChef.Commands
             Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
 
-            bool? correctDisc    = null;
+            bool? correctImage   = null;
             long  totalSectors   = 0;
             long  errorSectors   = 0;
-            long  correctSectors = 0;
+            bool? correctSectors = null;
             long  unknownSectors = 0;
 
             if(verifyDisc)
@@ -147,7 +148,7 @@ namespace DiscImageChef.Commands
                         break;
                 }
 
-                correctDisc = discCheckStatus;
+                correctImage = discCheckStatus;
                 DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
             }
 
@@ -288,11 +289,26 @@ namespace DiscImageChef.Commands
                 totalSectors   = (long)inputFormat.Info.Sectors;
                 errorSectors   = failingLbas.Count;
                 unknownSectors = unknownLbas.Count;
-                correctSectors = totalSectors - errorSectors - unknownSectors;
+                if(failingLbas.Count             > 0) correctSectors                        = false;
+                else if((ulong)unknownLbas.Count < inputFormat.Info.Sectors) correctSectors = true;
             }
 
             Statistics.AddCommand("verify");
-            return 0;
+
+            switch(correctImage)
+            {
+                case null when correctSectors is null:   return (int)ErrorNumber.NotVerificable;
+                case null when correctSectors == false:  return (int)ErrorNumber.BadSectorsImageNotVerified;
+                case null when correctSectors == true:   return (int)ErrorNumber.CorrectSectorsImageNotVerified;
+                case false when correctSectors is null:  return (int)ErrorNumber.BadImageSectorsNotVerified;
+                case false when correctSectors == false: return (int)ErrorNumber.BadImageBadSectors;
+                case false when correctSectors == true:  return (int)ErrorNumber.CorrectSectorsBadImage;
+                case true when correctSectors is null:   return (int)ErrorNumber.CorrectImageSectorsNotVerified;
+                case true when correctSectors == false:  return (int)ErrorNumber.CorrectImageBadSectors;
+                case true when correctSectors == true:   return (int)ErrorNumber.NoError;
+            }
+
+            return (int)ErrorNumber.NoError;
         }
     }
 }

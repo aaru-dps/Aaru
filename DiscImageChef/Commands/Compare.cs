@@ -71,7 +71,7 @@ namespace DiscImageChef.Commands
             if(ShowHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -81,13 +81,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 2)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count <= 1)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             InputFile1 = extra[0];
@@ -106,13 +106,13 @@ namespace DiscImageChef.Commands
             if(inputFilter1 == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open input file 1");
-                return 1;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             if(inputFilter2 == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open input file 2");
-                return 2;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage input1Format = ImageFormat.Detect(inputFilter1);
@@ -121,7 +121,7 @@ namespace DiscImageChef.Commands
             if(input1Format == null)
             {
                 DicConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
-                return 3;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(MainClass.Verbose)
@@ -132,7 +132,7 @@ namespace DiscImageChef.Commands
             if(input2Format == null)
             {
                 DicConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
-                return 4;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(MainClass.Verbose)
@@ -399,7 +399,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine(sb.ToString());
 
             Statistics.AddCommand("compare");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

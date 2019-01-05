@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Gui.Forms;
 using Eto;
@@ -65,7 +66,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             if(extra.Count > 0)
@@ -73,11 +74,11 @@ namespace DiscImageChef.Commands
                 MainClass.PrintCopyright();
 
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             new Application(Platform.Detect).Run(new frmMain(MainClass.Debug, MainClass.Verbose));
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

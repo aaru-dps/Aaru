@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
@@ -77,7 +78,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -87,13 +88,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             inputFile = extra[0];
@@ -116,7 +117,7 @@ namespace DiscImageChef.Commands
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return 1;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             Encoding encoding = null;
@@ -130,7 +131,7 @@ namespace DiscImageChef.Commands
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    return 2;
+                    return (int)ErrorNumber.EncodingUnknown;
                 }
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -142,7 +143,7 @@ namespace DiscImageChef.Commands
                 if(imageFormat == null)
                 {
                     DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
-                    return 3;
+                    return (int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 if(MainClass.Verbose)
@@ -156,7 +157,7 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
-                        return 4;
+                        return (int)ErrorNumber.CannotOpenFormat;
                     }
 
                     DicConsole.DebugWriteLine("Ls command", "Correctly opened image file.");
@@ -174,7 +175,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                    return 3;
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
 
                 List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
@@ -350,10 +351,11 @@ namespace DiscImageChef.Commands
             {
                 DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
                 DicConsole.DebugWriteLine("Ls command", ex.StackTrace);
+                return (int)ErrorNumber.UnexpectedException;
             }
 
             Statistics.AddCommand("ls");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

@@ -156,7 +156,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -166,13 +166,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 2)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count <= 1)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             inputFile  = extra[0];
@@ -211,7 +211,7 @@ namespace DiscImageChef.Commands
             if(count == 0)
             {
                 DicConsole.ErrorWriteLine("Need to specify more than 0 sectors to copy at once");
-                return 1;
+                return (int)ErrorNumber.InvalidArgument;
             }
 
             Resume           resume  = null;
@@ -229,12 +229,12 @@ namespace DiscImageChef.Commands
                     catch
                     {
                         DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
-                        return 2;
+                        return (int)ErrorNumber.InvalidSidecar;
                     }
                 else
                 {
                     DicConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
-                    return 3;
+                    return (int)ErrorNumber.FileNotFound;
                 }
 
             xs = new XmlSerializer(typeof(Resume));
@@ -249,12 +249,12 @@ namespace DiscImageChef.Commands
                     catch
                     {
                         DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
-                        return 4;
+                        return (int)ErrorNumber.InvalidResume;
                     }
                 else
                 {
                     DicConsole.ErrorWriteLine("Could not find resume file, not continuing...");
-                    return 5;
+                    return (int)ErrorNumber.FileNotFound;
                 }
 
             FiltersList filtersList = new FiltersList();
@@ -263,13 +263,13 @@ namespace DiscImageChef.Commands
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return 6;
+                return (int)ErrorNumber.CannotOpenFile;
             }
 
             if(File.Exists(outputFile))
             {
                 DicConsole.ErrorWriteLine("Output file already exists, not continuing.");
-                return 8;
+                return (int)ErrorNumber.DestinationExists;
             }
 
             PluginBase  plugins     = GetPluginBase.Instance;
@@ -278,7 +278,7 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.WriteLine("Input image format not identified, not proceeding with conversion.");
-                return 7;
+                return (int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(MainClass.Verbose)
@@ -292,7 +292,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.WriteLine("Unable to open image format");
                     DicConsole.WriteLine("No error given");
-                    return 9;
+                    return (int)ErrorNumber.CannotOpenFormat;
                 }
 
                 DicConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
@@ -311,7 +311,7 @@ namespace DiscImageChef.Commands
                 DicConsole.ErrorWriteLine("Unable to open image format");
                 DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                 DicConsole.DebugWriteLine("Convert-image command", "Stack trace: {0}", ex.StackTrace);
-                return 10;
+                return (int)ErrorNumber.CannotOpenFormat;
             }
 
             List<IWritableImage> candidates = new List<IWritableImage>();
@@ -333,13 +333,13 @@ namespace DiscImageChef.Commands
             if(candidates.Count == 0)
             {
                 DicConsole.WriteLine("No plugin supports requested extension.");
-                return 11;
+                return (int)ErrorNumber.FormatNotFound;
             }
 
             if(candidates.Count > 1)
             {
                 DicConsole.WriteLine("More than one plugin supports requested extension.");
-                return 12;
+                return (int)ErrorNumber.TooManyFormats;
             }
 
             IWritableImage outputFormat = candidates[0];
@@ -351,7 +351,7 @@ namespace DiscImageChef.Commands
             if(!outputFormat.SupportedMediaTypes.Contains(inputFormat.Info.MediaType))
             {
                 DicConsole.ErrorWriteLine("Output format does not support media type, cannot continue...");
-                return 13;
+                return (int)ErrorNumber.UnsupportedMedia;
             }
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
@@ -360,7 +360,7 @@ namespace DiscImageChef.Commands
 
                 DicConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...", mediaTag);
                 DicConsole.ErrorWriteLine("If you don't care, use force option.");
-                return 14;
+                return (int)ErrorNumber.DataWillBeLost;
             }
 
             bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
@@ -379,14 +379,14 @@ namespace DiscImageChef.Commands
                 DicConsole.ErrorWriteLine("Converting image will lose sector tag {0}, not continuing...", sectorTag);
                 DicConsole
                    .ErrorWriteLine("If you don't care, use force option. This will skip all sector tags converting only user data.");
-                return 15;
+                return (int)ErrorNumber.DataWillBeLost;
             }
 
             if(!outputFormat.Create(outputFile, inputFormat.Info.MediaType, parsedOptions, inputFormat.Info.Sectors,
                                     inputFormat.Info.SectorSize))
             {
                 DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
-                return 16;
+                return (int)ErrorNumber.CannotCreateFormat;
             }
 
             ImageInfo metadata = new ImageInfo
@@ -415,7 +415,7 @@ namespace DiscImageChef.Commands
                 if(!force)
                 {
                     DicConsole.ErrorWriteLine("not continuing...");
-                    return 17;
+                    return (int)ErrorNumber.WriteError;
                 }
 
                 DicConsole.ErrorWriteLine("continuing...");
@@ -434,7 +434,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
                                               outputFormat.ErrorMessage);
-                    return 18;
+                    return (int)ErrorNumber.WriteError;
                 }
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
@@ -451,7 +451,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                               outputFormat.ErrorMessage);
-                    return 19;
+                    return (int)ErrorNumber.WriteError;
                 }
             }
 
@@ -515,7 +515,7 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                       outputFormat.ErrorMessage, doneSectors);
-                            return 20;
+                            return (int)ErrorNumber.WriteError;
                         }
 
                     doneSectors += sectorsToDo;
@@ -580,7 +580,7 @@ namespace DiscImageChef.Commands
                             {
                                 DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
-                                return 21;
+                                return (int)ErrorNumber.WriteError;
                             }
 
                         doneSectors += sectorsToDo;
@@ -648,7 +648,7 @@ namespace DiscImageChef.Commands
                             {
                                 DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
-                                return 22;
+                                return (int)ErrorNumber.WriteError;
                             }
 
                         doneSectors += sectorsToDo;
@@ -702,7 +702,7 @@ namespace DiscImageChef.Commands
                                     {
                                         DicConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
                                                                   outputFormat.ErrorMessage);
-                                        return 23;
+                                        return (int)ErrorNumber.WriteError;
                                     }
 
                                 continue;
@@ -743,7 +743,7 @@ namespace DiscImageChef.Commands
                                 {
                                     DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
-                                    return 24;
+                                    return (int)ErrorNumber.WriteError;
                                 }
 
                             doneSectors += sectorsToDo;

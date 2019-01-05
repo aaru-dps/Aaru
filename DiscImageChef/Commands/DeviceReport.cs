@@ -79,7 +79,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -89,13 +89,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing device path.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             devicePath = extra[0];
@@ -109,7 +109,7 @@ namespace DiscImageChef.Commands
                 DicConsole
                    .ErrorWriteLine("Because of the commands sent to a device, device report must be run with administrative privileges.");
                 DicConsole.ErrorWriteLine("Not continuing.");
-                return 1;
+                return (int)ErrorNumber.NotEnoughPermissions;
             }
 
             if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
@@ -120,7 +120,7 @@ namespace DiscImageChef.Commands
             if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
-                return 2;
+                return (int)ErrorNumber.CannotOpenDevice;
             }
 
             Statistics.AddDevice(dev);
@@ -295,9 +295,7 @@ namespace DiscImageChef.Commands
 
                     dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
 
-                    if(!Identify.Decode(buffer).HasValue) return 3;
-
-                    report.ATAPI = new Ata {Identify = buffer};
+                    if(Identify.Decode(buffer).HasValue) report.ATAPI = new Ata {Identify = buffer};
 
                     goto case DeviceType.SCSI;
                 case DeviceType.SCSI:
@@ -989,7 +987,7 @@ namespace DiscImageChef.Commands
 
             // TODO:
             if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

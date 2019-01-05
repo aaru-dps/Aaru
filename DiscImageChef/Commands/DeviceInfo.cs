@@ -74,7 +74,7 @@ namespace DiscImageChef.Commands
             if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return 0;
+                return (int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
@@ -84,13 +84,13 @@ namespace DiscImageChef.Commands
             if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return 1;
+                return (int)ErrorNumber.UnexpectedArgumentCount;
             }
 
             if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing device path.");
-                return 1;
+                return (int)ErrorNumber.MissingArgument;
             }
 
             devicePath = extra[0];
@@ -108,7 +108,7 @@ namespace DiscImageChef.Commands
             if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
-                return 1;
+                return (int)ErrorNumber.CannotOpenDevice;
             }
 
             Statistics.AddDevice(dev);
@@ -911,7 +911,7 @@ namespace DiscImageChef.Commands
 
             dev.Close();
 
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }
