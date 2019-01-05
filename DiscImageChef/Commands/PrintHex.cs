@@ -80,6 +80,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("print-hex");
 
             if(extra.Count > 1)
             {
@@ -155,7 +156,6 @@ namespace DiscImageChef.Commands
                 PrintHex.PrintHexArray(sector, widthBytes);
             }
 
-            Statistics.AddCommand("print-hex");
             return (int)ErrorNumber.NoError;
         }
     }

@@ -83,6 +83,7 @@ namespace DiscImageChef.Commands
 
             DicConsole.DebugWriteLine("List-Options command", "--debug={0}",   MainClass.Debug);
             DicConsole.DebugWriteLine("List-Options command", "--verbose={0}", MainClass.Verbose);
+            Statistics.AddCommand("list-options");
 
             PluginBase plugins = GetPluginBase.Instance;
 

@@ -83,6 +83,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("decode");
 
             if(extra.Count > 1)
             {
@@ -318,7 +319,6 @@ namespace DiscImageChef.Commands
                 // TODO: Not implemented
             }
 
-            Statistics.AddCommand("decode");
             return (int)ErrorNumber.NoError;
         }
     }

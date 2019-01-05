@@ -90,6 +90,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("media-info");
 
             if(extra.Count > 1)
             {
@@ -141,8 +142,6 @@ namespace DiscImageChef.Commands
                     break;
                 default: throw new NotSupportedException("Unknown device type.");
             }
-
-            Statistics.AddCommand("media-info");
 
             return (int)ErrorNumber.NoError;
         }

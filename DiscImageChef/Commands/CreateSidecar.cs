@@ -92,6 +92,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("create-sidecar");
 
             if(extra.Count > 1)
             {
@@ -201,8 +202,6 @@ namespace DiscImageChef.Commands
                     XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                     xmlSer.Serialize(xmlFs, sidecar);
                     xmlFs.Close();
-
-                    Statistics.AddCommand("create-sidecar");
                 }
                 catch(Exception ex)
                 {
@@ -236,8 +235,6 @@ namespace DiscImageChef.Commands
                 XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
-
-                Statistics.AddCommand("create-sidecar");
             }
             else DicConsole.ErrorWriteLine("The specified input file cannot be found.");
 

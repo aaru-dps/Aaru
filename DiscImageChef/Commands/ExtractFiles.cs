@@ -90,6 +90,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("extract-files");
 
             if(extra.Count > 1)
             {
@@ -801,7 +802,6 @@ namespace DiscImageChef.Commands
                 return (int)ErrorNumber.UnexpectedException;
             }
 
-            Statistics.AddCommand("extract-files");
             return (int)ErrorNumber.NoError;
         }
     }

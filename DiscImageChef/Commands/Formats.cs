@@ -74,6 +74,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("formats");
 
             if(extra.Count > 0)
             {
@@ -153,7 +154,6 @@ namespace DiscImageChef.Commands
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
 
-            Statistics.AddCommand("formats");
             return (int)ErrorNumber.NoError;
         }
     }

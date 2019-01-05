@@ -71,6 +71,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("list-encodings");
 
             if(extra.Count > 0)
             {
@@ -99,7 +100,6 @@ namespace DiscImageChef.Commands
             foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
                 DicConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
 
-            Statistics.AddCommand("list-encodings");
             return (int)ErrorNumber.NoError;
         }
 

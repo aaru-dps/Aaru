@@ -73,6 +73,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("benchmark");
 
             if(extra.Count != 0)
             {
@@ -109,7 +110,6 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Max memory used is {0} bytes", results.MaxMemory);
             DicConsole.WriteLine("Min memory used is {0} bytes", results.MinMemory);
 
-            Statistics.AddCommand("benchmark");
             return (int)ErrorNumber.NoError;
         }
     }

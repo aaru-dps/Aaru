@@ -134,6 +134,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("dump-media");
 
             if(extra.Count > 2)
             {
@@ -350,9 +351,6 @@ namespace DiscImageChef.Commands
             }
 
             dumpLog.Close();
-
-            Statistics.AddCommand("dump-media");
-
             dev.Close();
             return (int)ErrorNumber.NoError;
         }

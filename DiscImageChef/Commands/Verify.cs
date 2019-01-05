@@ -78,6 +78,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("verify");
 
             if(extra.Count > 1)
             {
@@ -292,8 +293,6 @@ namespace DiscImageChef.Commands
                 if(failingLbas.Count             > 0) correctSectors                        = false;
                 else if((ulong)unknownLbas.Count < inputFormat.Info.Sectors) correctSectors = true;
             }
-
-            Statistics.AddCommand("verify");
 
             switch(correctImage)
             {

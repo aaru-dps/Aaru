@@ -108,6 +108,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("checksum");
 
             if(extra.Count > 1)
             {
@@ -305,7 +306,6 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
             }
 
-            Statistics.AddCommand("checksum");
             return (int)ErrorNumber.NoError;
         }
     }

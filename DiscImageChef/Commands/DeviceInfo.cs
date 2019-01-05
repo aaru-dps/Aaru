@@ -80,6 +80,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("device-info");
 
             if(extra.Count > 1)
             {
@@ -907,10 +908,7 @@ namespace DiscImageChef.Commands
                     break;
             }
 
-            Statistics.AddCommand("device-info");
-
             dev.Close();
-
             return (int)ErrorNumber.NoError;
         }
     }

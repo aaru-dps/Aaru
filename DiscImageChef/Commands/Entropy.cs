@@ -86,6 +86,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("entropy");
 
             if(extra.Count > 1)
             {
@@ -153,7 +154,6 @@ namespace DiscImageChef.Commands
 
             if(!wholeDisc)
             {
-                Statistics.AddCommand("entropy");
                 return (int)ErrorNumber.NoError;
             }
 
@@ -164,7 +164,6 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
                                      (double)entropy.UniqueSectors / (double)entropy.Sectors);
 
-            Statistics.AddCommand("entropy");
             return (int)ErrorNumber.NoError;
         }
     }

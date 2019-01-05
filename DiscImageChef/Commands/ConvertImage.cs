@@ -162,6 +162,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("convert-image");
 
             if(extra.Count > 2)
             {
@@ -793,8 +794,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Conversion done.");
 
-            Statistics.AddCommand("convert-image");
-            return 0;
+            return (int)ErrorNumber.NoError;
         }
     }
 }

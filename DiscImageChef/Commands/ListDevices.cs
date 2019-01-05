@@ -71,6 +71,7 @@ namespace DiscImageChef.Commands
             MainClass.PrintCopyright();
             if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
             if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+            Statistics.AddCommand("list-devices");
 
             if(extra.Count > 0)
             {
@@ -98,7 +99,6 @@ namespace DiscImageChef.Commands
                                          dev.Model, dev.Serial, dev.Bus, dev.Supported);
             }
 
-            Statistics.AddCommand("list-devices");
             return (int)ErrorNumber.NoError;
         }
     }

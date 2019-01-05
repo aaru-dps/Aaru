@@ -104,6 +104,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Ls command", "--input={0}",    inputFile);
             DicConsole.DebugWriteLine("Ls command", "--options={0}",  pluginOptions);
             DicConsole.DebugWriteLine("Ls command", "--verbose={0}",  MainClass.Verbose);
+            Statistics.AddCommand("ls");
 
             FiltersList filtersList = new FiltersList();
             IFilter     inputFilter = filtersList.GetFilter(inputFile);
@@ -354,7 +355,6 @@ namespace DiscImageChef.Commands
                 return (int)ErrorNumber.UnexpectedException;
             }
 
-            Statistics.AddCommand("ls");
             return (int)ErrorNumber.NoError;
         }
     }
