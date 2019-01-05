@@ -37,41 +37,92 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class Analyze
+    class AnalyzeCommand : Command
     {
-        internal static void DoAnalyze(AnalyzeOptions options)
+        string encodingName;
+        string inputFile;
+        bool searchForFilesystems = true;
+        bool searchForPartitions  = true;
+        bool showHelp;
+
+        public AnalyzeCommand() : base("analyze",
+                                       "Analyzes a disc image and searches for partitions and/or filesystems.")
         {
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",       options.Debug);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}",     options.Verbose);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}",       options.InputFile);
-            DicConsole.DebugWriteLine("Analyze command", "--filesystems={0}", options.SearchForFilesystems);
-            DicConsole.DebugWriteLine("Analyze command", "--partitions={0}",  options.SearchForPartitions);
-            DicConsole.DebugWriteLine("Analyze command", "--encoding={0}",    options.EncodingName);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] imagefile",
+                "",
+                Help,
+                {"encoding|e=", "Name of character encoding to use.", s => encodingName           = s},
+                {"filesystems|f", "Searches and analyzes filesystems.", b => searchForFilesystems = b != null},
+                {"partitions|p", "Searches and interprets partitions.", b => searchForPartitions  = b != null},
+                {"help|h|?", "Show this message and exit.", v => showHelp                         = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile = extra[0];
+
+            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",       MainClass.Debug);
+            DicConsole.DebugWriteLine("Analyze command", "--encoding={0}",    encodingName);
+            DicConsole.DebugWriteLine("Analyze command", "--filesystems={0}", searchForFilesystems);
+            DicConsole.DebugWriteLine("Analyze command", "--input={0}",       inputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--partitions={0}",  searchForPartitions);
+            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}",     MainClass.Verbose);
 
             FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
+                return 2;
             }
 
             Encoding encoding = null;
 
-            if(options.EncodingName != null)
+            if(encodingName != null)
                 try
                 {
-                    encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
-                    if(options.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(encodingName);
+                    if(MainClass.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
                 }
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    return;
+                    return 5;
                 }
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -85,10 +136,10 @@ namespace DiscImageChef.Commands
                 if(imageFormat == null)
                 {
                     DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
-                    return;
+                    return 3;
                 }
 
-                if(options.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                 imageFormat.Id);
                 else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
@@ -100,31 +151,31 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
-                        return;
+                        return 4;
                     }
 
-                    if(options.Verbose)
+                    if(MainClass.Verbose)
                     {
-                        Core.ImageInfo.PrintImageInfo(imageFormat);
+                        ImageInfo.PrintImageInfo(imageFormat);
                         DicConsole.WriteLine();
                     }
 
-                    Core.Statistics.AddMediaFormat(imageFormat.Format);
-                    Core.Statistics.AddMedia(imageFormat.Info.MediaType, false);
-                    Core.Statistics.AddFilter(inputFilter.Name);
+                    Statistics.AddMediaFormat(imageFormat.Format);
+                    Statistics.AddMedia(imageFormat.Info.MediaType, false);
+                    Statistics.AddFilter(inputFilter.Name);
                 }
                 catch(Exception ex)
                 {
                     DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                     DicConsole.DebugWriteLine("Analyze command", "Stack trace: {0}", ex.StackTrace);
-                    return;
+                    return -1;
                 }
 
                 List<string> idPlugins;
                 IFilesystem  plugin;
                 string       information;
-                if(options.SearchForPartitions)
+                if(searchForPartitions)
                 {
                     List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
                     Core.Partitions.AddSchemesToStats(partitions);
@@ -132,10 +183,10 @@ namespace DiscImageChef.Commands
                     if(partitions.Count == 0)
                     {
                         DicConsole.DebugWriteLine("Analyze command", "No partitions found");
-                        if(!options.SearchForFilesystems)
+                        if(!searchForFilesystems)
                         {
                             DicConsole.WriteLine("No partitions founds, not searching for filesystems");
-                            return;
+                            return -2;
                         }
 
                         checkraw = true;
@@ -158,7 +209,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine("Partition description:");
                             DicConsole.WriteLine(partitions[i].Description);
 
-                            if(!options.SearchForFilesystems) continue;
+                            if(!searchForFilesystems) continue;
 
                             DicConsole.WriteLine("Identifying filesystem on partition");
 
@@ -174,7 +225,7 @@ namespace DiscImageChef.Commands
                                         DicConsole.WriteLine($"As identified by {plugin.Name}.");
                                         plugin.GetInformation(imageFormat, partitions[i], out information, encoding);
                                         DicConsole.Write(information);
-                                        Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                        Statistics.AddFilesystem(plugin.XmlFsType.Type);
                                     }
                             }
                             else
@@ -185,7 +236,7 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine($"Identified by {plugin.Name}.");
                                 plugin.GetInformation(imageFormat, partitions[i], out information, encoding);
                                 DicConsole.Write("{0}", information);
-                                Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
                             }
                         }
                     }
@@ -212,7 +263,7 @@ namespace DiscImageChef.Commands
                                 DicConsole.WriteLine($"As identified by {plugin.Name}.");
                                 plugin.GetInformation(imageFormat, wholePart, out information, encoding);
                                 DicConsole.Write(information);
-                                Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                                Statistics.AddFilesystem(plugin.XmlFsType.Type);
                             }
                     }
                     else
@@ -223,7 +274,7 @@ namespace DiscImageChef.Commands
                             DicConsole.WriteLine($"Identified by {plugin.Name}.");
                             plugin.GetInformation(imageFormat, wholePart, out information, encoding);
                             DicConsole.Write(information);
-                            Core.Statistics.AddFilesystem(plugin.XmlFsType.Type);
+                            Statistics.AddFilesystem(plugin.XmlFsType.Type);
                         }
                     }
                 }
@@ -234,7 +285,8 @@ namespace DiscImageChef.Commands
                 DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
             }
 
-            Core.Statistics.AddCommand("analyze");
+            Statistics.AddCommand("analyze");
+            return 0;
         }
     }
 }

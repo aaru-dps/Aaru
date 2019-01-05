@@ -39,33 +39,80 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
+using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
 
 namespace DiscImageChef.Commands
 {
-    static class Compare
+    class CompareCommand : Command
     {
-        internal static void DoCompare(CompareOptions options)
+        string InputFile1;
+        string InputFile2;
+        bool   ShowHelp;
+
+        public CompareCommand() : base("compare", "Compares two disc images.")
         {
-            DicConsole.DebugWriteLine("Compare command", "--debug={0}",   options.Debug);
-            DicConsole.DebugWriteLine("Compare command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Compare command", "--input1={0}",  options.InputFile1);
-            DicConsole.DebugWriteLine("Compare command", "--input2={0}",  options.InputFile2);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} imagefile1 imagefile2",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => ShowHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(ShowHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 2)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count <= 1)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            InputFile1 = extra[0];
+            InputFile1 = extra[1];
+
+            DicConsole.DebugWriteLine("Compare command", "--debug={0}",   MainClass.Debug);
+            DicConsole.DebugWriteLine("Compare command", "--input1={0}",  InputFile1);
+            DicConsole.DebugWriteLine("Compare command", "--input2={0}",  InputFile2);
+            DicConsole.DebugWriteLine("Compare command", "--verbose={0}", MainClass.Verbose);
 
             FiltersList filtersList  = new FiltersList();
-            IFilter     inputFilter1 = filtersList.GetFilter(options.InputFile1);
+            IFilter     inputFilter1 = filtersList.GetFilter(InputFile1);
             filtersList = new FiltersList();
-            IFilter inputFilter2 = filtersList.GetFilter(options.InputFile2);
+            IFilter inputFilter2 = filtersList.GetFilter(InputFile2);
 
             if(inputFilter1 == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open input file 1");
-                return;
+                return 1;
             }
 
             if(inputFilter2 == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open input file 2");
-                return;
+                return 2;
             }
 
             IMediaImage input1Format = ImageFormat.Detect(inputFilter1);
@@ -74,10 +121,10 @@ namespace DiscImageChef.Commands
             if(input1Format == null)
             {
                 DicConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
-                return;
+                return 3;
             }
 
-            if(options.Verbose)
+            if(MainClass.Verbose)
                 DicConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
                                             input1Format.Id);
             else DicConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
@@ -85,10 +132,10 @@ namespace DiscImageChef.Commands
             if(input2Format == null)
             {
                 DicConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
-                return;
+                return 4;
             }
 
-            if(options.Verbose)
+            if(MainClass.Verbose)
                 DicConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
                                             input2Format.Id);
             else DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
@@ -96,32 +143,32 @@ namespace DiscImageChef.Commands
             input1Format.Open(inputFilter1);
             input2Format.Open(inputFilter2);
 
-            Core.Statistics.AddMediaFormat(input1Format.Format);
-            Core.Statistics.AddMediaFormat(input2Format.Format);
-            Core.Statistics.AddMedia(input1Format.Info.MediaType, false);
-            Core.Statistics.AddMedia(input2Format.Info.MediaType, false);
-            Core.Statistics.AddFilter(inputFilter1.Name);
-            Core.Statistics.AddFilter(inputFilter2.Name);
+            Statistics.AddMediaFormat(input1Format.Format);
+            Statistics.AddMediaFormat(input2Format.Format);
+            Statistics.AddMedia(input1Format.Info.MediaType, false);
+            Statistics.AddMedia(input2Format.Info.MediaType, false);
+            Statistics.AddFilter(inputFilter1.Name);
+            Statistics.AddFilter(inputFilter2.Name);
 
             StringBuilder sb = new StringBuilder();
 
-            if(options.Verbose)
+            if(MainClass.Verbose)
             {
                 sb.AppendLine("\tDisc image 1\tDisc image 2");
                 sb.AppendLine("================================");
-                sb.AppendFormat("File\t{0}\t{1}", options.InputFile1, options.InputFile2).AppendLine();
+                sb.AppendFormat("File\t{0}\t{1}", InputFile1, InputFile2).AppendLine();
                 sb.AppendFormat("Disc image format\t{0}\t{1}", input1Format.Name, input2Format.Name).AppendLine();
             }
             else
             {
-                sb.AppendFormat("Disc image 1: {0}", options.InputFile1).AppendLine();
-                sb.AppendFormat("Disc image 2: {0}", options.InputFile2).AppendLine();
+                sb.AppendFormat("Disc image 1: {0}", InputFile1).AppendLine();
+                sb.AppendFormat("Disc image 2: {0}", InputFile2).AppendLine();
             }
 
             bool imagesDiffer = false;
 
-            CommonTypes.Structs.ImageInfo    image1Info     = new CommonTypes.Structs.ImageInfo();
-            CommonTypes.Structs.ImageInfo    image2Info     = new CommonTypes.Structs.ImageInfo();
+            ImageInfo                        image1Info     = new ImageInfo();
+            ImageInfo                        image2Info     = new ImageInfo();
             List<Session>                    image1Sessions = new List<Session>();
             List<Session>                    image2Sessions = new List<Session>();
             Dictionary<MediaTagType, byte[]> image1DiskTags = new Dictionary<MediaTagType, byte[]>();
@@ -221,7 +268,7 @@ namespace DiscImageChef.Commands
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
-            if(options.Verbose)
+            if(MainClass.Verbose)
             {
                 sb.AppendFormat("Has partitions?\t{0}\t{1}", image1Info.HasPartitions, image2Info.HasPartitions)
                   .AppendLine();
@@ -272,31 +319,31 @@ namespace DiscImageChef.Commands
             if(image1Info.HasPartitions != image2Info.HasPartitions)
             {
                 imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image partitioned status differ");
+                if(!MainClass.Verbose) sb.AppendLine("Image partitioned status differ");
             }
 
             if(image1Info.HasSessions != image2Info.HasSessions)
             {
                 imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image session status differ");
+                if(!MainClass.Verbose) sb.AppendLine("Image session status differ");
             }
 
             if(image1Info.Sectors != image2Info.Sectors)
             {
                 imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image sectors differ");
+                if(!MainClass.Verbose) sb.AppendLine("Image sectors differ");
             }
 
             if(image1Info.SectorSize != image2Info.SectorSize)
             {
                 imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Image sector size differ");
+                if(!MainClass.Verbose) sb.AppendLine("Image sector size differ");
             }
 
             if(image1Info.MediaType != image2Info.MediaType)
             {
                 imagesDiffer = true;
-                if(!options.Verbose) sb.AppendLine("Disk type differ");
+                if(!MainClass.Verbose) sb.AppendLine("Disk type differ");
             }
 
             ulong leastSectors;
@@ -304,13 +351,13 @@ namespace DiscImageChef.Commands
             {
                 imagesDiffer = true;
                 leastSectors = image1Info.Sectors;
-                if(!options.Verbose) sb.AppendLine("Image 2 has more sectors");
+                if(!MainClass.Verbose) sb.AppendLine("Image 2 has more sectors");
             }
             else if(image1Info.Sectors > image2Info.Sectors)
             {
                 imagesDiffer = true;
                 leastSectors = image2Info.Sectors;
-                if(!options.Verbose) sb.AppendLine("Image 1 has more sectors");
+                if(!MainClass.Verbose) sb.AppendLine("Image 1 has more sectors");
             }
             else leastSectors = image1Info.Sectors;
 
@@ -351,7 +398,8 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine(sb.ToString());
 
-            Core.Statistics.AddCommand("compare");
+            Statistics.AddCommand("compare");
+            return 0;
         }
     }
 }

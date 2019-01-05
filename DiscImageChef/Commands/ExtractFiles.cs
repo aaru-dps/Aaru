@@ -39,47 +39,106 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    // TODO: Rewrite this, has an insane amount of repeating code ;)
-    static class ExtractFiles
+    class ExtractFilesCommand : Command
     {
-        internal static void DoExtractFiles(ExtractFilesOptions options)
+        string encodingName;
+        bool   extractXattrs;
+        string inputFile;
+        string outputDir;
+        string pluginOptions;
+        bool   showHelp;
+
+        public ExtractFilesCommand() : base("extract-files", "Extracts all files in disc image.")
         {
-            DicConsole.DebugWriteLine("Extract-Files command", "--debug={0}",   options.Debug);
-            DicConsole.DebugWriteLine("Extract-Files command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Extract-Files command", "--input={0}",   options.InputFile);
-            DicConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}",  options.Xattrs);
-            DicConsole.DebugWriteLine("Extract-Files command", "--output={0}",  options.OutputDir);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] imagefile",
+                "",
+                Help,
+                {"encoding|e=", "Name of character encoding to use.", s => encodingName = s},
+                {
+                    "options|O=", "Comma separated name=value pairs of options to pass to filesystem plugin.",
+                    s => pluginOptions = s
+                },
+                {
+                    "output|o=", "Directory where extracted files will be created. Will abort if it exists.",
+                    s => outputDir = s
+                },
+                {"xattrs|x", "Extract extended attributes if present.", b => extractXattrs = b != null},
+                {"help|h|?", "Show this message and exit.", v => showHelp                  = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile = extra[0];
+
+            DicConsole.DebugWriteLine("Extract-Files command", "--debug={0}",    MainClass.Debug);
+            DicConsole.DebugWriteLine("Extract-Files command", "--encoding={0}", encodingName);
+            DicConsole.DebugWriteLine("Extract-Files command", "--input={0}",    inputFile);
+            DicConsole.DebugWriteLine("Extract-Files command", "--options={0}",  pluginOptions);
+            DicConsole.DebugWriteLine("Extract-Files command", "--output={0}",   outputDir);
+            DicConsole.DebugWriteLine("Extract-Files command", "--verbose={0}",  MainClass.Verbose);
+            DicConsole.DebugWriteLine("Extract-Files command", "--xattrs={0}",   extractXattrs);
 
             FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
-            Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(pluginOptions);
             DicConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
                 DicConsole.DebugWriteLine("Extract-Files command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
-            parsedOptions.Add("debug", options.Debug.ToString());
+            parsedOptions.Add("debug", MainClass.Debug.ToString());
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
+                return 0;
             }
 
             Encoding encoding = null;
 
-            if(options.EncodingName != null)
+            if(encodingName != null)
                 try
                 {
-                    encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
-                    if(options.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(encodingName);
+                    if(MainClass.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
                 }
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    return;
+                    return 1;
                 }
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -91,21 +150,21 @@ namespace DiscImageChef.Commands
                 if(imageFormat == null)
                 {
                     DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
-                    return;
+                    return 2;
                 }
 
-                if(options.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                 imageFormat.Id);
                 else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
-                if(Directory.Exists(options.OutputDir) || File.Exists(options.OutputDir))
+                if(Directory.Exists(outputDir) || File.Exists(outputDir))
                 {
                     DicConsole.ErrorWriteLine("Destination exists, aborting.");
-                    return;
+                    return 3;
                 }
 
-                Directory.CreateDirectory(options.OutputDir);
+                Directory.CreateDirectory(outputDir);
 
                 try
                 {
@@ -113,7 +172,7 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
-                        return;
+                        return 4;
                     }
 
                     DicConsole.DebugWriteLine("Extract-Files command", "Correctly opened image file.");
@@ -124,15 +183,15 @@ namespace DiscImageChef.Commands
                     DicConsole.DebugWriteLine("Extract-Files command", "Image identifies disk type as {0}.",
                                               imageFormat.Info.MediaType);
 
-                    Core.Statistics.AddMediaFormat(imageFormat.Format);
-                    Core.Statistics.AddMedia(imageFormat.Info.MediaType, false);
-                    Core.Statistics.AddFilter(inputFilter.Name);
+                    Statistics.AddMediaFormat(imageFormat.Format);
+                    Statistics.AddMedia(imageFormat.Info.MediaType, false);
+                    Statistics.AddFilter(inputFilter.Name);
                 }
                 catch(Exception ex)
                 {
                     DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                    return;
+                    return 5;
                 }
 
                 List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
@@ -185,7 +244,7 @@ namespace DiscImageChef.Commands
                                                 {
                                                     string     outputPath;
                                                     FileStream outputFile;
-                                                    if(options.Xattrs)
+                                                    if(extractXattrs)
                                                     {
                                                         error = fs.ListXAttr(entry, out List<string> xattrs);
                                                         if(error == Errno.NoError)
@@ -195,14 +254,15 @@ namespace DiscImageChef.Commands
                                                                 error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                                 if(error != Errno.NoError) continue;
 
-                                                                Directory
-                                                                   .CreateDirectory(Path.Combine(options.OutputDir,
-                                                                                                 fs.XmlFsType.Type,
-                                                                                                 volumeName, ".xattrs",
-                                                                                                 xattr));
+                                                                Directory.CreateDirectory(Path.Combine(outputDir,
+                                                                                                       fs.XmlFsType
+                                                                                                         .Type,
+                                                                                                       volumeName,
+                                                                                                       ".xattrs",
+                                                                                                       xattr));
 
                                                                 outputPath =
-                                                                    Path.Combine(options.OutputDir, fs.XmlFsType.Type,
+                                                                    Path.Combine(outputDir, fs.XmlFsType.Type,
                                                                                  volumeName, ".xattrs", xattr, entry);
 
                                                                 if(!File.Exists(outputPath))
@@ -245,13 +305,11 @@ namespace DiscImageChef.Commands
                                                             }
                                                     }
 
-                                                    Directory.CreateDirectory(Path.Combine(options.OutputDir,
-                                                                                           fs.XmlFsType.Type,
+                                                    Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type,
                                                                                            volumeName));
 
                                                     outputPath =
-                                                        Path.Combine(options.OutputDir, fs.XmlFsType.Type, volumeName,
-                                                                     entry);
+                                                        Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, entry);
 
                                                     if(!File.Exists(outputPath))
                                                     {
@@ -304,7 +362,7 @@ namespace DiscImageChef.Commands
                                             DicConsole.ErrorWriteLine("Error {0} reading root directory {0}",
                                                                       error.ToString());
 
-                                        Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                        Statistics.AddFilesystem(fs.XmlFsType.Type);
                                     }
                                     else
                                         DicConsole.ErrorWriteLine("Unable to mount device, error {0}",
@@ -335,7 +393,7 @@ namespace DiscImageChef.Commands
                                         {
                                             FileStream outputFile;
                                             string     outputPath;
-                                            if(options.Xattrs)
+                                            if(extractXattrs)
                                             {
                                                 error = fs.ListXAttr(entry, out List<string> xattrs);
                                                 if(error == Errno.NoError)
@@ -345,14 +403,14 @@ namespace DiscImageChef.Commands
                                                         error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                         if(error != Errno.NoError) continue;
 
-                                                        Directory.CreateDirectory(Path.Combine(options.OutputDir,
+                                                        Directory.CreateDirectory(Path.Combine(outputDir,
                                                                                                fs.XmlFsType.Type,
                                                                                                volumeName, ".xattrs",
                                                                                                xattr));
 
                                                         outputPath =
-                                                            Path.Combine(options.OutputDir, fs.XmlFsType.Type,
-                                                                         volumeName, ".xattrs", xattr, entry);
+                                                            Path.Combine(outputDir, fs.XmlFsType.Type, volumeName,
+                                                                         ".xattrs", xattr, entry);
 
                                                         if(!File.Exists(outputPath))
                                                         {
@@ -392,11 +450,10 @@ namespace DiscImageChef.Commands
                                                     }
                                             }
 
-                                            Directory.CreateDirectory(Path.Combine(options.OutputDir, fs.XmlFsType.Type,
+                                            Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type,
                                                                                    volumeName));
 
-                                            outputPath =
-                                                Path.Combine(options.OutputDir, fs.XmlFsType.Type, volumeName, entry);
+                                            outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, entry);
 
                                             if(!File.Exists(outputPath))
                                             {
@@ -447,7 +504,7 @@ namespace DiscImageChef.Commands
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
-                                Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                Statistics.AddFilesystem(fs.XmlFsType.Type);
                             }
                             else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                         }
@@ -491,7 +548,7 @@ namespace DiscImageChef.Commands
                                         {
                                             FileStream outputFile;
                                             string     outputPath;
-                                            if(options.Xattrs)
+                                            if(extractXattrs)
                                             {
                                                 error = fs.ListXAttr(entry, out List<string> xattrs);
                                                 if(error == Errno.NoError)
@@ -501,14 +558,14 @@ namespace DiscImageChef.Commands
                                                         error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                         if(error != Errno.NoError) continue;
 
-                                                        Directory.CreateDirectory(Path.Combine(options.OutputDir,
+                                                        Directory.CreateDirectory(Path.Combine(outputDir,
                                                                                                fs.XmlFsType.Type,
                                                                                                volumeName, ".xattrs",
                                                                                                xattr));
 
                                                         outputPath =
-                                                            Path.Combine(options.OutputDir, fs.XmlFsType.Type,
-                                                                         volumeName, ".xattrs", xattr, entry);
+                                                            Path.Combine(outputDir, fs.XmlFsType.Type, volumeName,
+                                                                         ".xattrs", xattr, entry);
 
                                                         if(!File.Exists(outputPath))
                                                         {
@@ -548,11 +605,10 @@ namespace DiscImageChef.Commands
                                                     }
                                             }
 
-                                            Directory.CreateDirectory(Path.Combine(options.OutputDir, fs.XmlFsType.Type,
+                                            Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type,
                                                                                    volumeName));
 
-                                            outputPath =
-                                                Path.Combine(options.OutputDir, fs.XmlFsType.Type, volumeName, entry);
+                                            outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, entry);
 
                                             if(!File.Exists(outputPath))
                                             {
@@ -603,7 +659,7 @@ namespace DiscImageChef.Commands
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
-                                Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                Statistics.AddFilesystem(fs.XmlFsType.Type);
                             }
                             else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                         }
@@ -630,7 +686,7 @@ namespace DiscImageChef.Commands
                                 {
                                     string     outputPath;
                                     FileStream outputFile;
-                                    if(options.Xattrs)
+                                    if(extractXattrs)
                                     {
                                         error = fs.ListXAttr(entry, out List<string> xattrs);
                                         if(error == Errno.NoError)
@@ -640,13 +696,12 @@ namespace DiscImageChef.Commands
                                                 error = fs.GetXattr(entry, xattr, ref xattrBuf);
                                                 if(error != Errno.NoError) continue;
 
-                                                Directory.CreateDirectory(Path.Combine(options.OutputDir,
-                                                                                       fs.XmlFsType.Type, volumeName,
-                                                                                       ".xattrs", xattr));
+                                                Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type,
+                                                                                       volumeName, ".xattrs", xattr));
 
                                                 outputPath =
-                                                    Path.Combine(options.OutputDir, fs.XmlFsType.Type, volumeName,
-                                                                 ".xattrs", xattr, entry);
+                                                    Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs",
+                                                                 xattr, entry);
 
                                                 if(!File.Exists(outputPath))
                                                 {
@@ -686,10 +741,9 @@ namespace DiscImageChef.Commands
                                             }
                                     }
 
-                                    Directory.CreateDirectory(Path.Combine(options.OutputDir, fs.XmlFsType.Type,
-                                                                           volumeName));
+                                    Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type, volumeName));
 
-                                    outputPath = Path.Combine(options.OutputDir, fs.XmlFsType.Type, volumeName, entry);
+                                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, entry);
 
                                     if(!File.Exists(outputPath))
                                     {
@@ -734,7 +788,7 @@ namespace DiscImageChef.Commands
                             }
                         else DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
-                        Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                        Statistics.AddFilesystem(fs.XmlFsType.Type);
                     }
                     else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                 }
@@ -745,7 +799,8 @@ namespace DiscImageChef.Commands
                 DicConsole.DebugWriteLine("Extract-Files command", ex.StackTrace);
             }
 
-            Core.Statistics.AddCommand("extract-files");
+            Statistics.AddCommand("extract-files");
+            return 0;
         }
     }
 }

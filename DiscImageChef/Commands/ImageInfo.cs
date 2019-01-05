@@ -31,28 +31,75 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class ImageInfo
+    class ImageInfoCommand : Command
     {
-        internal static void GetImageInfo(ImageInfoOptions options)
+        string inputFile;
+
+        bool showHelp;
+
+        public ImageInfoCommand() : base("image-info",
+                                         "Opens a media image and shows information about the media it represents and metadata.")
         {
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",   options.Debug);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}",   options.InputFile);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} imagefile",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile = extra[0];
+
+            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",   MainClass.Debug);
+            DicConsole.DebugWriteLine("Analyze command", "--input={0}",   inputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", MainClass.Verbose);
 
             FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
+                return 1;
             }
 
             try
@@ -62,7 +109,7 @@ namespace DiscImageChef.Commands
                 if(imageFormat == null)
                 {
                     DicConsole.WriteLine("Image format not identified.");
-                    return;
+                    return 2;
                 }
 
                 DicConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
@@ -74,14 +121,14 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
-                        return;
+                        return 3;
                     }
 
-                    Core.ImageInfo.PrintImageInfo(imageFormat);
+                    ImageInfo.PrintImageInfo(imageFormat);
 
-                    Core.Statistics.AddMediaFormat(imageFormat.Format);
-                    Core.Statistics.AddMedia(imageFormat.Info.MediaType, false);
-                    Core.Statistics.AddFilter(inputFilter.Name);
+                    Statistics.AddMediaFormat(imageFormat.Format);
+                    Statistics.AddMedia(imageFormat.Info.MediaType, false);
+                    Statistics.AddFilter(inputFilter.Name);
                 }
                 catch(Exception ex)
                 {
@@ -96,7 +143,8 @@ namespace DiscImageChef.Commands
                 DicConsole.DebugWriteLine("Image-info command", ex.StackTrace);
             }
 
-            Core.Statistics.AddCommand("image-info");
+            Statistics.AddCommand("image-info");
+            return 0;
         }
     }
 }

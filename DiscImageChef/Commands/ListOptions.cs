@@ -37,13 +37,52 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class ListOptions
+    class ListOptionsCommand : Command
     {
-        internal static void DoList()
+        bool showHelp;
+
+        public ListOptionsCommand() : base("list-options",
+                                           "Lists all options supported by read-only filesystems and writable media images.")
         {
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name}",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 0)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            DicConsole.DebugWriteLine("List-Options command", "--debug={0}",   MainClass.Debug);
+            DicConsole.DebugWriteLine("List-Options command", "--verbose={0}", MainClass.Verbose);
+
             PluginBase plugins = GetPluginBase.Instance;
 
             DicConsole.WriteLine("Read-only filesystems options:");
@@ -77,6 +116,8 @@ namespace DiscImageChef.Commands
                                          option.@default, option.description);
                 DicConsole.WriteLine();
             }
+
+            return 0;
         }
 
         static string TypeToString(Type type)

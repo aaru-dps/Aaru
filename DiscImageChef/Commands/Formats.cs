@@ -37,20 +37,59 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Partitions;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class Formats
+    class FormatsCommand : Command
     {
-        internal static void ListFormats(FormatsOptions formatsOptions)
+        bool showHelp;
+
+        public FormatsCommand() : base("formats",
+                                       "Lists all supported disc images, partition schemes and file systems.")
         {
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name}",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 0)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            DicConsole.DebugWriteLine("Formats command", "--debug={0}",   MainClass.Debug);
+            DicConsole.DebugWriteLine("Formats command", "--verbose={0}", MainClass.Verbose);
+
             PluginBase  plugins     = GetPluginBase.Instance;
             FiltersList filtersList = new FiltersList();
 
             DicConsole.WriteLine("Supported filters ({0}):", filtersList.Filters.Count);
-            if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tFilter");
+            if(MainClass.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tFilter");
             foreach(KeyValuePair<string, IFilter> kvp in filtersList.Filters)
-                if(formatsOptions.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
@@ -59,22 +98,22 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Read-only media image formats ({0}):",
                                  plugins.ImagePluginsList.Count(t => !t.Value.GetType().GetInterfaces()
                                                                        .Contains(typeof(IWritableImage))));
-            if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(MainClass.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, IMediaImage> kvp in plugins.ImagePluginsList.Where(t => !t.Value.GetType()
                                                                                                    .GetInterfaces()
                                                                                                    .Contains(typeof(
                                                                                                                  IWritableImage
                                                                                                              ))))
-                if(formatsOptions.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
 
             DicConsole.WriteLine();
             DicConsole.WriteLine("Read/write media image formats ({0}):", plugins.WritableImages.Count);
-            if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(MainClass.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
-                if(formatsOptions.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
@@ -83,13 +122,13 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Supported filesystems for identification and information only ({0}):",
                                  plugins.PluginsList.Count(t => !t.Value.GetType().GetInterfaces()
                                                                   .Contains(typeof(IReadOnlyFilesystem))));
-            if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(MainClass.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, IFilesystem> kvp in plugins.PluginsList.Where(t => !t.Value.GetType()
                                                                                               .GetInterfaces()
                                                                                               .Contains(typeof(
                                                                                                             IReadOnlyFilesystem
                                                                                                         ))))
-                if(formatsOptions.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
@@ -97,23 +136,24 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Supported filesystems that can read their contents ({0}):",
                                  plugins.ReadOnlyFilesystems.Count);
-            if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(MainClass.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
-                if(formatsOptions.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
 
             DicConsole.WriteLine();
             DicConsole.WriteLine("Supported partitioning schemes ({0}):", plugins.PartPluginsList.Count);
-            if(formatsOptions.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
+            if(MainClass.Verbose) DicConsole.VerboseWriteLine("GUID\t\t\t\t\tPlugin");
             foreach(KeyValuePair<string, IPartition> kvp in plugins.PartPluginsList)
-                if(formatsOptions.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("{0}\t{1}", kvp.Value.Id, kvp.Value.Name);
                 else
                     DicConsole.WriteLine(kvp.Value.Name);
 
-            Core.Statistics.AddCommand("formats");
+            Statistics.AddCommand("formats");
+            return 0;
         }
     }
 }

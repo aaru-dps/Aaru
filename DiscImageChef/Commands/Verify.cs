@@ -37,26 +37,74 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class Verify
+    class VerifyCommand : Command
     {
-        internal static void DoVerify(VerifyOptions options)
+        string inputFile;
+        bool   showHelp;
+        bool   verifyDisc    = true;
+        bool   verifySectors = true;
+
+        public VerifyCommand() : base("verify", "Verifies a disc image integrity, and if supported, sector integrity.")
         {
-            DicConsole.DebugWriteLine("Verify command", "--debug={0}",          options.Debug);
-            DicConsole.DebugWriteLine("Verify command", "--verbose={0}",        options.Verbose);
-            DicConsole.DebugWriteLine("Verify command", "--input={0}",          options.InputFile);
-            DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}",    options.VerifyDisc);
-            DicConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", options.VerifySectors);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] imagefile",
+                "",
+                Help,
+                {"verify-disc|w", "Verify disc image if supported.", b => verifyDisc        = b != null},
+                {"verify-sectors|s", "Verify all sectors if supported.", b => verifySectors = b != null},
+                {"help|h|?", "Show this message and exit.", v => showHelp                   = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile = extra[0];
+
+            DicConsole.DebugWriteLine("Verify command", "--debug={0}",          MainClass.Debug);
+            DicConsole.DebugWriteLine("Verify command", "--input={0}",          inputFile);
+            DicConsole.DebugWriteLine("Verify command", "--verbose={0}",        MainClass.Verbose);
+            DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}",    verifyDisc);
+            DicConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", verifySectors);
 
             FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
+                return 1;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -64,13 +112,13 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
-                return;
+                return 2;
             }
 
             inputFormat.Open(inputFilter);
-            Core.Statistics.AddMediaFormat(inputFormat.Format);
-            Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
-            Core.Statistics.AddFilter(inputFilter.Name);
+            Statistics.AddMediaFormat(inputFormat.Format);
+            Statistics.AddMedia(inputFormat.Info.MediaType, false);
+            Statistics.AddFilter(inputFilter.Name);
 
             bool? correctDisc    = null;
             long  totalSectors   = 0;
@@ -78,7 +126,7 @@ namespace DiscImageChef.Commands
             long  correctSectors = 0;
             long  unknownSectors = 0;
 
-            if(options.VerifyDisc)
+            if(verifyDisc)
             {
                 DateTime startCheck      = DateTime.UtcNow;
                 bool?    discCheckStatus = inputFormat.VerifyMediaImage();
@@ -103,7 +151,7 @@ namespace DiscImageChef.Commands
                 DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
             }
 
-            if(options.VerifySectors)
+            if(verifySectors)
             {
                 bool formatHasTracks;
                 try
@@ -215,7 +263,7 @@ namespace DiscImageChef.Commands
 
                 DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
 
-                if(options.Verbose)
+                if(MainClass.Verbose)
                 {
                     DicConsole.VerboseWriteLine("LBAs with error:");
                     if(failingLbas.Count == (int)inputFormat.Info.Sectors)
@@ -243,7 +291,8 @@ namespace DiscImageChef.Commands
                 correctSectors = totalSectors - errorSectors - unknownSectors;
             }
 
-            Core.Statistics.AddCommand("verify");
+            Statistics.AddCommand("verify");
+            return 0;
         }
     }
 }

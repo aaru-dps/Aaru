@@ -43,40 +43,87 @@ using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
+using Mono.Options;
 using Newtonsoft.Json;
+using Command = Mono.Options.Command;
 using Device = DiscImageChef.Devices.Device;
+using DeviceReport = DiscImageChef.Core.Devices.Report.DeviceReport;
 
 namespace DiscImageChef.Commands
 {
-    static class DeviceReport
+    class DeviceReportCommand : Command
     {
-        internal static void DoDeviceReport(DeviceReportOptions options)
+        string devicePath;
+
+        bool showHelp;
+
+        public DeviceReportCommand() : base("device-report",
+                                            "Tests the device capabilities and creates an JSON report of them.")
         {
-            DicConsole.DebugWriteLine("Device-Report command", "--debug={0}",   options.Debug);
-            DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Device-Report command", "--device={0}",  options.DevicePath);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} devicepath",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing device path.");
+                return 1;
+            }
+
+            devicePath = extra[0];
+
+            DicConsole.DebugWriteLine("Device-Report command", "--debug={0}",   MainClass.Debug);
+            DicConsole.DebugWriteLine("Device-Report command", "--device={0}",  devicePath);
+            DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", MainClass.Verbose);
 
             if(!DetectOS.IsAdmin)
             {
                 DicConsole
                    .ErrorWriteLine("Because of the commands sent to a device, device report must be run with administrative privileges.");
                 DicConsole.ErrorWriteLine("Not continuing.");
-                return;
+                return 1;
             }
 
-            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
-               char.IsLetter(options.DevicePath[0]))
-                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
+            if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
+                devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Device dev = new Device(options.DevicePath);
+            Device dev = new Device(devicePath);
 
             if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
-                return;
+                return 2;
             }
 
-            Core.Statistics.AddDevice(dev);
+            Statistics.AddDevice(dev);
 
             DeviceReportV2 report = new DeviceReportV2
             {
@@ -94,7 +141,7 @@ namespace DiscImageChef.Commands
 
             jsonFile = jsonFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 
-            Core.Devices.Report.DeviceReport reporter = new Core.Devices.Report.DeviceReport(dev, options.Debug);
+            DeviceReport reporter = new DeviceReport(dev, MainClass.Debug);
 
             ConsoleKeyInfo pressedKey;
 
@@ -248,7 +295,7 @@ namespace DiscImageChef.Commands
 
                     dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
 
-                    if(!Identify.Decode(buffer).HasValue) return;
+                    if(!Identify.Decode(buffer).HasValue) return 3;
 
                     report.ATAPI = new Ata {Identify = buffer};
 
@@ -448,7 +495,7 @@ namespace DiscImageChef.Commands
                             tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
                             tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
 
-                            if(options.Debug)
+                            if(MainClass.Debug)
                             {
                                 if(!tryPlextor)
                                 {
@@ -614,7 +661,7 @@ namespace DiscImageChef.Commands
                                                                        dev.Timeout, out _);
                                                 if(!sense)
                                                 {
-                                                    if(options.Debug) mediaTest.ReadLong10Data = buffer;
+                                                    if(MainClass.Debug) mediaTest.ReadLong10Data = buffer;
 
                                                     mediaTest.LongBlockSize = i;
                                                     break;
@@ -627,8 +674,8 @@ namespace DiscImageChef.Commands
                                         }
                                     }
 
-                                    if(options.Debug && mediaTest.SupportsReadLong == true &&
-                                       mediaTest.LongBlockSize                     != mediaTest.BlockSize)
+                                    if(MainClass.Debug && mediaTest.SupportsReadLong == true &&
+                                       mediaTest.LongBlockSize                       != mediaTest.BlockSize)
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                                (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
@@ -844,8 +891,8 @@ namespace DiscImageChef.Commands
                                             }
                                         }
 
-                                        if(options.Debug && mediaTest.SupportsReadLong == true &&
-                                           mediaTest.LongBlockSize                     != mediaTest.BlockSize)
+                                        if(MainClass.Debug && mediaTest.SupportsReadLong == true &&
+                                           mediaTest.LongBlockSize                       != mediaTest.BlockSize)
                                         {
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
                                                                    (ushort)mediaTest.LongBlockSize, dev.Timeout, out _);
@@ -889,7 +936,8 @@ namespace DiscImageChef.Commands
                                                                    dev.Timeout, out _);
                                             if(!sense)
                                             {
-                                                if(options.Debug) report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
+                                                if(MainClass.Debug)
+                                                    report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
 
                                                 report.SCSI.ReadCapabilities.LongBlockSize = i;
                                                 break;
@@ -902,7 +950,7 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                if(options.Debug && report.SCSI.ReadCapabilities.SupportsReadLong == true &&
+                                if(MainClass.Debug && report.SCSI.ReadCapabilities.SupportsReadLong == true &&
                                    report.SCSI.ReadCapabilities.LongBlockSize !=
                                    report.SCSI.ReadCapabilities.BlockSize)
                                 {
@@ -931,7 +979,7 @@ namespace DiscImageChef.Commands
             jsonSw.Close();
             jsonFs.Close();
 
-            Core.Statistics.AddCommand("device-report");
+            Statistics.AddCommand("device-report");
 
             using(DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath))
             {
@@ -941,6 +989,7 @@ namespace DiscImageChef.Commands
 
             // TODO:
             if(Settings.Settings.Current.ShareReports) Remote.SubmitReport(report);
+            return 0;
         }
     }
 }

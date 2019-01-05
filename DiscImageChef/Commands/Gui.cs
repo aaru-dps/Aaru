@@ -1,15 +1,15 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : ListDevices.cs
+// Filename       : Gui.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Verbs.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Implements the 'media-info' verb.
+//     Implements the 'gui' verb.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -31,19 +31,20 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using System.Linq;
 using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Devices;
+using DiscImageChef.Gui.Forms;
+using Eto;
+using Eto.Forms;
 using Mono.Options;
+using Command = Mono.Options.Command;
 
 namespace DiscImageChef.Commands
 {
-    class ListDevicesCommand : Command
+    class GuiCommand : Command
     {
         bool showHelp;
 
-        public ListDevicesCommand() : base("list-devices", "Lists all connected devices.")
+        public GuiCommand() : base("gui", "Opens the in-progress GUI.")
         {
             Options = new OptionSet
             {
@@ -67,37 +68,15 @@ namespace DiscImageChef.Commands
                 return 0;
             }
 
-            MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-
             if(extra.Count > 0)
             {
+                MainClass.PrintCopyright();
+
                 DicConsole.ErrorWriteLine("Too many arguments.");
                 return 1;
             }
 
-            DicConsole.DebugWriteLine("List-Devices command", "--debug={0}",   MainClass.Debug);
-            DicConsole.DebugWriteLine("List-Devices command", "--verbose={0}", MainClass.Verbose);
-
-            DeviceInfo[] devices = Device.ListDevices();
-
-            if(devices == null || devices.Length == 0) DicConsole.WriteLine("No known devices attached.");
-            else
-            {
-                devices = devices.OrderBy(d => d.Path).ToArray();
-
-                DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                                     "Serial", "Bus", "Supported?");
-                DicConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
-                                     "----------------", "------------------------", "------------------------",
-                                     "----------", "----------");
-                foreach(DeviceInfo dev in devices)
-                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
-                                         dev.Model, dev.Serial, dev.Bus, dev.Supported);
-            }
-
-            Statistics.AddCommand("list-devices");
+            new Application(Platform.Detect).Run(new frmMain(MainClass.Debug, MainClass.Verbose));
             return 0;
         }
     }

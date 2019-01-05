@@ -33,19 +33,60 @@
 using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class Benchmark
+    class BenchmarkCommand : Command
     {
-        internal static void DoBenchmark(BenchmarkOptions options)
-        {
-            Dictionary<string, double> checksumTimes = new Dictionary<string, double>();
-            Core.Benchmark.InitProgressEvent   += Progress.InitProgress;
-            Core.Benchmark.UpdateProgressEvent += Progress.UpdateProgress;
-            Core.Benchmark.EndProgressEvent    += Progress.EndProgress;
+        int  blockSize  = 512;
+        int  bufferSize = 128;
+        bool showHelp;
 
-            BenchmarkResults results = Core.Benchmark.Do(options.BufferSize * 1024 * 1024, options.BlockSize);
+        public BenchmarkCommand() : base("benchmark", "Benchmarks hashing and entropy calculation.")
+        {
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS]",
+                "",
+                Help,
+                {"block-size|b=", "Block size.", (int                i) => blockSize  = i},
+                {"buffer-size|s=", "Buffer size in mebibytes.", (int i) => bufferSize = i},
+                {"help|h|?", "Show this message and exit.", v => showHelp             = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count != 0)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            DicConsole.DebugWriteLine("Benchmark command", "--debug={0}",   MainClass.Debug);
+            DicConsole.DebugWriteLine("Benchmark command", "--verbose={0}", MainClass.Verbose);
+
+            Benchmark.InitProgressEvent   += Progress.InitProgress;
+            Benchmark.UpdateProgressEvent += Progress.UpdateProgress;
+            Benchmark.EndProgressEvent    += Progress.EndProgress;
+
+            BenchmarkResults results = Benchmark.Do(bufferSize * 1024 * 1024, blockSize);
 
             DicConsole.WriteLine("Took {0} seconds to fill buffer, {1:F3} MiB/sec.", results.FillTime,
                                  results.FillSpeed);
@@ -55,11 +96,8 @@ namespace DiscImageChef.Commands
                                  results.EntropySpeed);
 
             foreach(KeyValuePair<string, BenchmarkEntry> entry in results.Entries)
-            {
-                checksumTimes.Add(entry.Key, entry.Value.TimeSpan);
                 DicConsole.WriteLine("Took {0} seconds to {1} buffer, {2:F3} MiB/sec.", entry.Value.TimeSpan, entry.Key,
                                      entry.Value.Speed);
-            }
 
             DicConsole.WriteLine("Took {0} seconds to do all algorithms at the same time, {1:F3} MiB/sec.",
                                  results.TotalTime, results.TotalSpeed);
@@ -70,7 +108,8 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Max memory used is {0} bytes", results.MaxMemory);
             DicConsole.WriteLine("Min memory used is {0} bytes", results.MinMemory);
 
-            Core.Statistics.AddCommand("benchmark");
+            Statistics.AddCommand("benchmark");
+            return 0;
         }
     }
 }

@@ -31,54 +31,103 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
+using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Devices;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class MediaScan
+    class MediaScanCommand : Command
     {
-        internal static void DoMediaScan(MediaScanOptions options)
+        string devicePath;
+        string ibgLogPath;
+        string mhddLogPath;
+        bool   showHelp;
+
+        public MediaScanCommand() : base("media-scan", "Scans the media inserted on a device.")
         {
-            DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}",    options.Debug);
-            DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}",  options.Verbose);
-            DicConsole.DebugWriteLine("Media-Scan command", "--device={0}",   options.DevicePath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", options.MhddLogPath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}",  options.IbgLogPath);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] devicepath",
+                "",
+                Help,
+                {"mhdd-log|mw=", "Write a log of the scan in the format used by MHDD.", s => mhddLogPath = s},
+                {"ibg-log|b=", "Write a log of the scan in the format used by ImgBurn.", s => ibgLogPath = s},
+                {"help|h|?", "Show this message and exit.", v => showHelp                                = v != null}
+            };
+        }
 
-            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
-               char.IsLetter(options.DevicePath[0]))
-                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
 
-            Device dev = new Device(options.DevicePath);
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing device path.");
+                return 1;
+            }
+
+            devicePath = extra[0];
+
+            DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}",    MainClass.Debug);
+            DicConsole.DebugWriteLine("Media-Scan command", "--device={0}",   devicePath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}",  ibgLogPath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLogPath);
+            DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}",  MainClass.Verbose);
+
+            if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
+                devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
+
+            Device dev = new Device(devicePath);
 
             if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
-                return;
+                return 1;
             }
 
-            Core.Statistics.AddDevice(dev);
+            Statistics.AddDevice(dev);
 
             ScanResults results;
 
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    results = Ata.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
+                    results = Ata.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    results = SecureDigital.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
+                    results = SecureDigital.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
                     break;
                 case DeviceType.NVMe:
-                    results = Nvme.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
+                    results = Nvme.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    results = Scsi.Scan(options.MhddLogPath, options.IbgLogPath, options.DevicePath, dev);
+                    results = Scsi.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
                     break;
                 default: throw new NotSupportedException("Unknown device type.");
             }
@@ -109,9 +158,10 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
 
-            Core.Statistics.AddCommand("media-scan");
+            Statistics.AddCommand("media-scan");
 
             dev.Close();
+            return 0;
         }
     }
 }

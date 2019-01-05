@@ -34,13 +34,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DiscImageChef.Console;
+using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class ListEncodings
+    class ListEncodingsCommand : Command
     {
-        internal static void DoList()
+        bool showHelp;
+
+        public ListEncodingsCommand() : base("list-encodings", "Lists all supported text encodings and code pages.")
         {
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name}",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 0)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            DicConsole.DebugWriteLine("List-Encodings command", "--debug={0}",   MainClass.Debug);
+            DicConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", MainClass.Verbose);
+
             List<CommonEncodingInfo> encodings = Encoding
                                                 .GetEncodings().Select(info => new CommonEncodingInfo
                                                  {
@@ -59,7 +98,8 @@ namespace DiscImageChef.Commands
             foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
                 DicConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
 
-            Core.Statistics.AddCommand("list-encodings");
+            Statistics.AddCommand("list-encodings");
+            return 0;
         }
 
         struct CommonEncodingInfo

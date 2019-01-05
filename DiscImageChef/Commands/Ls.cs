@@ -38,44 +38,99 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class Ls
+    class LsCommand : Command
     {
-        internal static void DoLs(LsOptions options)
+        string encodingName;
+        string inputFile;
+        bool   longFormat;
+        string pluginOptions;
+        bool   showHelp;
+
+        public LsCommand() : base("ls", "Lists files in disc image.")
         {
-            DicConsole.DebugWriteLine("Ls command", "--debug={0}",   options.Debug);
-            DicConsole.DebugWriteLine("Ls command", "--verbose={0}", options.Verbose);
-            DicConsole.DebugWriteLine("Ls command", "--input={0}",   options.InputFile);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] imagefile",
+                "",
+                Help,
+                {"encoding|e=", "Name of character encoding to use.", s => encodingName = s},
+                {"long|l", "Uses long format.", b => longFormat                         = b != null},
+                {
+                    "options|O=", "Comma separated name=value pairs of options to pass to filesystem plugin.",
+                    s => pluginOptions = s
+                },
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile = extra[0];
+
+            DicConsole.DebugWriteLine("Ls command", "--debug={0}",    MainClass.Debug);
+            DicConsole.DebugWriteLine("Ls command", "--encoding={0}", encodingName);
+            DicConsole.DebugWriteLine("Ls command", "--input={0}",    inputFile);
+            DicConsole.DebugWriteLine("Ls command", "--options={0}",  pluginOptions);
+            DicConsole.DebugWriteLine("Ls command", "--verbose={0}",  MainClass.Verbose);
 
             FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
-            Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(pluginOptions);
             DicConsole.DebugWriteLine("Ls command", "Parsed options:");
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
                 DicConsole.DebugWriteLine("Ls command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
-            parsedOptions.Add("debug", options.Debug.ToString());
+            parsedOptions.Add("debug", MainClass.Debug.ToString());
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
+                return 1;
             }
 
             Encoding encoding = null;
 
-            if(options.EncodingName != null)
+            if(encodingName != null)
                 try
                 {
-                    encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
-                    if(options.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(encodingName);
+                    if(MainClass.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
                 }
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    return;
+                    return 2;
                 }
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -87,10 +142,10 @@ namespace DiscImageChef.Commands
                 if(imageFormat == null)
                 {
                     DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
-                    return;
+                    return 3;
                 }
 
-                if(options.Verbose)
+                if(MainClass.Verbose)
                     DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                 imageFormat.Id);
                 else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
@@ -101,7 +156,7 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.WriteLine("Unable to open image format");
                         DicConsole.WriteLine("No error given");
-                        return;
+                        return 4;
                     }
 
                     DicConsole.DebugWriteLine("Ls command", "Correctly opened image file.");
@@ -111,15 +166,15 @@ namespace DiscImageChef.Commands
                     DicConsole.DebugWriteLine("Ls command", "Image identifies disk type as {0}.",
                                               imageFormat.Info.MediaType);
 
-                    Core.Statistics.AddMediaFormat(imageFormat.Format);
-                    Core.Statistics.AddMedia(imageFormat.Info.MediaType, false);
-                    Core.Statistics.AddFilter(inputFilter.Name);
+                    Statistics.AddMediaFormat(imageFormat.Format);
+                    Statistics.AddMedia(imageFormat.Info.MediaType, false);
+                    Statistics.AddFilter(inputFilter.Name);
                 }
                 catch(Exception ex)
                 {
                     DicConsole.ErrorWriteLine("Unable to open image format");
                     DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                    return;
+                    return 3;
                 }
 
                 List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
@@ -168,7 +223,7 @@ namespace DiscImageChef.Commands
                                             DicConsole.ErrorWriteLine("Error {0} reading root directory {0}",
                                                                       error.ToString());
 
-                                        Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                        Statistics.AddFilesystem(fs.XmlFsType.Type);
                                     }
                                     else
                                         DicConsole.ErrorWriteLine("Unable to mount device, error {0}",
@@ -196,7 +251,7 @@ namespace DiscImageChef.Commands
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
-                                Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                Statistics.AddFilesystem(fs.XmlFsType.Type);
                             }
                             else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                         }
@@ -235,7 +290,7 @@ namespace DiscImageChef.Commands
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
-                                Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                Statistics.AddFilesystem(fs.XmlFsType.Type);
                             }
                             else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                         }
@@ -257,7 +312,7 @@ namespace DiscImageChef.Commands
                                 error = fs.ReadDir("/", out List<string> rootDir);
                                 if(error == Errno.NoError)
                                     foreach(string entry in rootDir)
-                                        if(options.Long)
+                                        if(longFormat)
                                         {
                                             error = fs.Stat(entry, out FileEntryInfo stat);
                                             if(error == Errno.NoError)
@@ -284,7 +339,7 @@ namespace DiscImageChef.Commands
                                 else
                                     DicConsole.ErrorWriteLine("Error {0} reading root directory {0}", error.ToString());
 
-                                Core.Statistics.AddFilesystem(fs.XmlFsType.Type);
+                                Statistics.AddFilesystem(fs.XmlFsType.Type);
                             }
                             else DicConsole.ErrorWriteLine("Unable to mount device, error {0}", error.ToString());
                         }
@@ -297,7 +352,8 @@ namespace DiscImageChef.Commands
                 DicConsole.DebugWriteLine("Ls command", ex.StackTrace);
             }
 
-            Core.Statistics.AddCommand("ls");
+            Statistics.AddCommand("ls");
+            return 0;
         }
     }
 }

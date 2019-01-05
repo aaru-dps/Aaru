@@ -33,6 +33,7 @@
           <e p="Entropy.cs" t="Include" />
           <e p="ExtractFiles.cs" t="Include" />
           <e p="Formats.cs" t="Include" />
+          <e p="Gui.cs" t="Include" />
           <e p="ImageInfo.cs" t="Include" />
           <e p="ListDevices.cs" t="Include" />
           <e p="ListEncodings.cs" t="Include" />
@@ -49,7 +50,6 @@
         <e p="Info.plist" t="Include" />
         <e p="MacIcon.icns" t="Include" />
         <e p="Main.cs" t="Include" />
-        <e p="Options.cs" t="Include" />
         <e p="Progress.cs" t="Include" />
         <e p="Properties" t="Include">
           <e p="launchSettings.json" t="Include" />

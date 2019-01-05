@@ -31,15 +31,59 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Settings;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class Configure
+    class ConfigureCommand : Command
     {
-        internal static void DoConfigure(bool gdprChange)
+        readonly bool gdprChange;
+        bool          showHelp;
+
+        public ConfigureCommand(bool gdprChange) : base("configure", "Configures user settings and statistics.")
         {
+            this.gdprChange = gdprChange;
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name}",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count != 0)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
             if(gdprChange)
             {
                 DicConsole.WriteLine("In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n"    +
@@ -228,6 +272,7 @@ namespace DiscImageChef.Commands
 
             Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
             Settings.Settings.SaveSettings();
+            return 0;
         }
     }
 }

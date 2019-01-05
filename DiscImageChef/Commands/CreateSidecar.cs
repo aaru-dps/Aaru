@@ -40,14 +40,79 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 using Schemas;
 
 namespace DiscImageChef.Commands
 {
-    static class CreateSidecar
+    class CreateSidecarCommand : Command
     {
-        internal static void DoSidecar(CreateSidecarOptions options)
+        int    blockSize;
+        string encodingName;
+        string inputFile;
+        bool   showHelp;
+        bool   tape;
+
+        public CreateSidecarCommand() : base("create-sidecar", "Creates CICM Metadata XML sidecar.")
         {
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] input",
+                "",
+                Help,
+                {
+                    "block-size|b=",
+                    "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.",
+                    (int i) => blockSize = i
+                },
+                {"encoding|e=", "Name of character encoding to use.", s => encodingName = s},
+                {
+                    "tape|t",
+                    "When used indicates that input is a folder containing alphabetically sorted files extracted from a linear block-based tape with fixed block size (e.g. a SCSI tape device).",
+                    b => tape = b != null
+                },
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile = extra[0];
+
+            DicConsole.DebugWriteLine("Create sidecar command", "--block-size={0}", blockSize);
+            DicConsole.DebugWriteLine("Create sidecar command", "--debug={0}",      MainClass.Debug);
+            DicConsole.DebugWriteLine("Create sidecar command", "--encoding={0}",   encodingName);
+            DicConsole.DebugWriteLine("Create sidecar command", "--input={0}",      inputFile);
+            DicConsole.DebugWriteLine("Create sidecar command", "--tape={0}",       tape);
+            DicConsole.DebugWriteLine("Create sidecar command", "--verbose={0}",    MainClass.Verbose);
+
             Sidecar.InitProgressEvent    += Progress.InitProgress;
             Sidecar.UpdateProgressEvent  += Progress.UpdateProgress;
             Sidecar.EndProgressEvent     += Progress.EndProgress;
@@ -58,33 +123,33 @@ namespace DiscImageChef.Commands
 
             Encoding encoding = null;
 
-            if(options.EncodingName != null)
+            if(encodingName != null)
                 try
                 {
-                    encoding = Claunia.Encoding.Encoding.GetEncoding(options.EncodingName);
-                    if(options.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(encodingName);
+                    if(MainClass.Verbose) DicConsole.VerboseWriteLine("Using encoding for {0}.", encoding.EncodingName);
                 }
                 catch(ArgumentException)
                 {
                     DicConsole.ErrorWriteLine("Specified encoding is not supported.");
-                    return;
+                    return 1;
                 }
 
-            if(File.Exists(options.InputFile))
+            if(File.Exists(inputFile))
             {
-                if(options.Tape)
+                if(tape)
                 {
                     DicConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
-                    return;
+                    return 2;
                 }
 
                 FiltersList filtersList = new FiltersList();
-                IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+                IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
                 if(inputFilter == null)
                 {
                     DicConsole.ErrorWriteLine("Cannot open specified file.");
-                    return;
+                    return 3;
                 }
 
                 try
@@ -94,10 +159,10 @@ namespace DiscImageChef.Commands
                     if(imageFormat == null)
                     {
                         DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
-                        return;
+                        return 4;
                     }
 
-                    if(options.Verbose)
+                    if(MainClass.Verbose)
                         DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                     imageFormat.Id);
                     else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
@@ -108,7 +173,7 @@ namespace DiscImageChef.Commands
                         {
                             DicConsole.WriteLine("Unable to open image format");
                             DicConsole.WriteLine("No error given");
-                            return;
+                            return 5;
                         }
 
                         DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
@@ -117,26 +182,26 @@ namespace DiscImageChef.Commands
                     {
                         DicConsole.ErrorWriteLine("Unable to open image format");
                         DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                        return;
+                        return 6;
                     }
 
-                    Core.Statistics.AddMediaFormat(imageFormat.Format);
-                    Core.Statistics.AddFilter(inputFilter.Name);
+                    Statistics.AddMediaFormat(imageFormat.Format);
+                    Statistics.AddFilter(inputFilter.Name);
 
-                    CICMMetadataType sidecar = Sidecar.Create(imageFormat, options.InputFile, inputFilter.Id, encoding);
+                    CICMMetadataType sidecar = Sidecar.Create(imageFormat, inputFile, inputFilter.Id, encoding);
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 
                     FileStream xmlFs =
                         new
-                            FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                            FileStream(Path.Combine(Path.GetDirectoryName(inputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(inputFile) + ".cicm.xml"),
                                        FileMode.CreateNew);
 
                     XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                     xmlSer.Serialize(xmlFs, sidecar);
                     xmlFs.Close();
 
-                    Core.Statistics.AddCommand("create-sidecar");
+                    Statistics.AddCommand("create-sidecar");
                 }
                 catch(Exception ex)
                 {
@@ -144,37 +209,37 @@ namespace DiscImageChef.Commands
                     DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
                 }
             }
-            else if(Directory.Exists(options.InputFile))
+            else if(Directory.Exists(inputFile))
             {
-                if(!options.Tape)
+                if(!tape)
                 {
                     DicConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
-                    return;
+                    return 7;
                 }
 
-                string[] contents = Directory.GetFiles(options.InputFile, "*", SearchOption.TopDirectoryOnly);
-                List<string> files = contents.Where(file => new FileInfo(file).Length % options.BlockSize == 0)
-                                             .ToList();
+                string[]     contents = Directory.GetFiles(inputFile, "*", SearchOption.TopDirectoryOnly);
+                List<string> files    = contents.Where(file => new FileInfo(file).Length % blockSize == 0).ToList();
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
-                CICMMetadataType sidecar =
-                    Sidecar.Create(Path.GetFileName(options.InputFile), files, options.BlockSize);
+                CICMMetadataType sidecar = Sidecar.Create(Path.GetFileName(inputFile), files, blockSize);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 
                 FileStream xmlFs =
                     new
-                        FileStream(Path.Combine(Path.GetDirectoryName(options.InputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(options.InputFile) + ".cicm.xml"),
+                        FileStream(Path.Combine(Path.GetDirectoryName(inputFile) ?? throw new InvalidOperationException(), Path.GetFileNameWithoutExtension(inputFile) + ".cicm.xml"),
                                    FileMode.CreateNew);
 
                 XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
                 xmlFs.Close();
 
-                Core.Statistics.AddCommand("create-sidecar");
+                Statistics.AddCommand("create-sidecar");
             }
             else DicConsole.ErrorWriteLine("The specified input file cannot be found.");
+
+            return 0;
         }
     }
 }

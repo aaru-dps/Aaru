@@ -30,24 +30,61 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.Console;
 using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
+using Mono.Options;
+using Command = Mono.Options.Command;
 
 namespace DiscImageChef.Commands
 {
-    static class Statistics
+    class StatisticsCommand : Command
     {
-        internal static void ShowStats()
+        bool showHelp;
+
+        public StatisticsCommand() : base("stats", "Shows statistics.")
         {
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name}",
+                "",
+                Help,
+                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 0)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
             DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
 
             if(!ctx.Commands.Any() && !ctx.Filesystems.Any() && !ctx.Filters.Any() && !ctx.MediaFormats.Any() &&
                !ctx.Medias.Any()   && !ctx.Partitions.Any()  && !ctx.SeenDevices.Any())
             {
                 DicConsole.WriteLine("There are no statistics.");
-                return;
+                return 1;
             }
 
             bool thereAreStats = false;
@@ -198,6 +235,7 @@ namespace DiscImageChef.Commands
             }
 
             if(!thereAreStats) DicConsole.WriteLine("There are no statistics.");
+            return 0;
         }
     }
 }

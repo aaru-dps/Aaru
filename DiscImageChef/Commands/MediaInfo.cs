@@ -44,6 +44,7 @@ using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
+using Mono.Options;
 using BCA = DiscImageChef.Decoders.Bluray.BCA;
 using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
@@ -52,28 +53,75 @@ using Spare = DiscImageChef.Decoders.DVD.Spare;
 
 namespace DiscImageChef.Commands
 {
-    static class MediaInfo
+    class MediaInfoCommand : Command
     {
-        internal static void DoMediaInfo(MediaInfoOptions options)
+        string devicePath;
+        string outputPrefix;
+        bool   showHelp;
+
+        public MediaInfoCommand() : base("media-info", "Gets information about the media inserted on a device.")
         {
-            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}",         options.Debug);
-            DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}",       options.Verbose);
-            DicConsole.DebugWriteLine("Media-Info command", "--device={0}",        options.DevicePath);
-            DicConsole.DebugWriteLine("Media-Info command", "--output-prefix={0}", options.OutputPrefix);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] devicepath",
+                "",
+                Help,
+                {"output-prefix|w=", "Write binary responses from device with that prefix.", s => outputPrefix = s},
+                {
+                    "help|h|?", "Show this message and exit.",
+                    v => showHelp = v != null
+                }
+            };
+        }
 
-            if(options.DevicePath.Length == 2 && options.DevicePath[1] == ':' && options.DevicePath[0] != '/' &&
-               char.IsLetter(options.DevicePath[0]))
-                options.DevicePath = "\\\\.\\" + char.ToUpper(options.DevicePath[0]) + ':';
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
 
-            Device dev = new Device(options.DevicePath);
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing device path.");
+                return 1;
+            }
+
+            devicePath = extra[0];
+
+            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}",         MainClass.Debug);
+            DicConsole.DebugWriteLine("Media-Info command", "--device={0}",        devicePath);
+            DicConsole.DebugWriteLine("Media-Info command", "--output-prefix={0}", outputPrefix);
+            DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}",       MainClass.Verbose);
+
+            if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
+                devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
+
+            Device dev = new Device(devicePath);
 
             if(dev.Error)
             {
                 DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
-                return;
+                return 1;
             }
 
-            Core.Statistics.AddDevice(dev);
+            Statistics.AddDevice(dev);
 
             switch(dev.Type)
             {
@@ -85,16 +133,18 @@ namespace DiscImageChef.Commands
                     DoSdMediaInfo();
                     break;
                 case DeviceType.NVMe:
-                    DoNvmeMediaInfo(options.OutputPrefix, dev);
+                    DoNvmeMediaInfo(outputPrefix, dev);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    DoScsiMediaInfo(options.OutputPrefix, dev);
+                    DoScsiMediaInfo(outputPrefix, dev);
                     break;
                 default: throw new NotSupportedException("Unknown device type.");
             }
 
-            Core.Statistics.AddCommand("media-info");
+            Statistics.AddCommand("media-info");
+
+            return 0;
         }
 
         static void DoAtaMediaInfo()
@@ -451,7 +501,7 @@ namespace DiscImageChef.Commands
             }
 
             DicConsole.WriteLine("Media identified as {0}", scsiInfo.MediaType);
-            Core.Statistics.AddMedia(scsiInfo.MediaType, true);
+            Statistics.AddMedia(scsiInfo.MediaType, true);
 
             dev.Close();
         }

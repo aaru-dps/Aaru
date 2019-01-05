@@ -30,31 +30,90 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    static class Entropy
+    class EntropyCommand : Command
     {
-        internal static void DoEntropy(EntropyOptions options)
+        bool   duplicatedSectors = true;
+        string inputFile;
+        bool   separatedTracks = true;
+
+        bool showHelp;
+        bool wholeDisc = true;
+
+        public EntropyCommand() : base("entropy", "Calculates entropy and/or duplicated sectors of an image.")
         {
-            DicConsole.DebugWriteLine("Entropy command", "--debug={0}",              options.Debug);
-            DicConsole.DebugWriteLine("Entropy command", "--verbose={0}",            options.Verbose);
-            DicConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}",   options.SeparatedTracks);
-            DicConsole.DebugWriteLine("Entropy command", "--whole-disc={0}",         options.WholeDisc);
-            DicConsole.DebugWriteLine("Entropy command", "--input={0}",              options.InputFile);
-            DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", options.DuplicatedSectors);
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] imagefile",
+                "",
+                Help,
+                {
+                    "duplicated-sectors|p",
+                    "Calculates how many sectors are duplicated (have same exact data in user area).",
+                    b => duplicatedSectors = b != null
+                },
+                {
+                    "separated-tracks|t", "Calculates entropy for each track separately.",
+                    b => separatedTracks = b != null
+                },
+                {"whole-disc|w", "Calculates entropy for the whole disc.", b => wholeDisc = b != null},
+                {"help|h|?", "Show this message and exit.", v => showHelp                 = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 1)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count == 0)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile = extra[0];
+
+            DicConsole.DebugWriteLine("Entropy command", "--debug={0}",              MainClass.Debug);
+            DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", duplicatedSectors);
+            DicConsole.DebugWriteLine("Entropy command", "--input={0}",              inputFile);
+            DicConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}",   separatedTracks);
+            DicConsole.DebugWriteLine("Entropy command", "--verbose={0}",            MainClass.Verbose);
+            DicConsole.DebugWriteLine("Entropy command", "--whole-disc={0}",         wholeDisc);
 
             FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
+                return 1;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -62,15 +121,15 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
-                return;
+                return 2;
             }
 
             inputFormat.Open(inputFilter);
-            Core.Statistics.AddMediaFormat(inputFormat.Format);
-            Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
-            Core.Statistics.AddFilter(inputFilter.Name);
+            Statistics.AddMediaFormat(inputFormat.Format);
+            Statistics.AddMedia(inputFormat.Info.MediaType, false);
+            Statistics.AddFilter(inputFilter.Name);
 
-            Core.Entropy entropyCalculator = new Core.Entropy(options.Debug, options.Verbose, inputFormat);
+            Entropy entropyCalculator = new Entropy(MainClass.Debug, MainClass.Verbose, inputFormat);
             entropyCalculator.InitProgressEvent    += Progress.InitProgress;
             entropyCalculator.InitProgress2Event   += Progress.InitProgress2;
             entropyCalculator.UpdateProgressEvent  += Progress.UpdateProgress;
@@ -78,9 +137,9 @@ namespace DiscImageChef.Commands
             entropyCalculator.EndProgressEvent     += Progress.EndProgress;
             entropyCalculator.EndProgress2Event    += Progress.EndProgress2;
 
-            if(options.SeparatedTracks)
+            if(separatedTracks)
             {
-                EntropyResults[] tracksEntropy = entropyCalculator.CalculateTracksEntropy(options.DuplicatedSectors);
+                EntropyResults[] tracksEntropy = entropyCalculator.CalculateTracksEntropy(duplicatedSectors);
                 foreach(EntropyResults trackEntropy in tracksEntropy)
                 {
                     DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
@@ -91,20 +150,21 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if(!options.WholeDisc)
+            if(!wholeDisc)
             {
-                Core.Statistics.AddCommand("entropy");
-                return;
+                Statistics.AddCommand("entropy");
+                return 0;
             }
 
-            EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(options.DuplicatedSectors);
+            EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 
             DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
             if(entropy.UniqueSectors != null)
                 DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
                                      (double)entropy.UniqueSectors / (double)entropy.Sectors);
 
-            Core.Statistics.AddCommand("entropy");
+            Statistics.AddCommand("entropy");
+            return 0;
         }
     }
 }

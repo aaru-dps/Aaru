@@ -42,107 +42,234 @@ using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using Mono.Options;
 using Schemas;
+using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Commands
 {
-    public static class ConvertImage
+    class ConvertImageCommand : Command
     {
-        public static void DoConvert(ConvertImageOptions options)
-        {
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",              options.Debug);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}",            options.Verbose);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}",              options.InputFile);
-            DicConsole.DebugWriteLine("Analyze command", "--output={0}",             options.OutputFile);
-            DicConsole.DebugWriteLine("Analyze command", "--format={0}",             options.OutputFormat);
-            DicConsole.DebugWriteLine("Analyze command", "--count={0}",              options.Count);
-            DicConsole.DebugWriteLine("Analyze command", "--force={0}",              options.Force);
-            DicConsole.DebugWriteLine("Analyze command", "--creator={0}",            options.Creator);
-            DicConsole.DebugWriteLine("Analyze command", "--media-title={0}",        options.MediaTitle);
-            DicConsole.DebugWriteLine("Analyze command", "--comments={0}",           options.Comments);
-            DicConsole.DebugWriteLine("Analyze command", "--media-manufacturer={0}", options.MediaManufacturer);
-            DicConsole.DebugWriteLine("Analyze command", "--media-model={0}",        options.MediaModel);
-            DicConsole.DebugWriteLine("Analyze command", "--media-serial={0}",       options.MediaSerialNumber);
-            DicConsole.DebugWriteLine("Analyze command", "--media-barcode={0}",      options.MediaBarcode);
-            DicConsole.DebugWriteLine("Analyze command", "--media-partnumber={0}",   options.MediaPartNumber);
-            DicConsole.DebugWriteLine("Analyze command", "--media-sequence={0}",     options.MediaSequence);
-            DicConsole.DebugWriteLine("Analyze command", "--media-lastsequence={0}", options.LastMediaSequence);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-manufacturer={0}", options.DriveManufacturer);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-model={0}",        options.DriveModel);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-serial={0}",       options.DriveSerialNumber);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-revision={0}",     options.DriveFirmwareRevision);
-            DicConsole.DebugWriteLine("Analyze command", "--cicm-xml={0}",           options.CicmXml);
-            DicConsole.DebugWriteLine("Analyze command", "--resume-file={0}",        options.ResumeFile);
-            DicConsole.DebugWriteLine("Analyze command", "--options={0}",            options.Options);
+        string cicmXml;
+        string comments;
+        int    count = 64;
+        string creator;
+        string driveFirmwareRevision;
+        string driveManufacturer;
+        string driveModel;
+        string driveSerialNumber;
+        bool   force;
+        string inputFile;
+        int    lastMediaSequence;
+        string mediaBarcode;
+        string mediaManufacturer;
+        string mediaModel;
+        string mediaPartNumber;
+        int    mediaSequence;
+        string mediaSerialNumber;
+        string mediaTitle;
+        string outputFile;
+        string outputOptions;
+        string resumeFile;
+        bool   showHelp;
+        string wantedOutputFormat;
 
-            Dictionary<string, string> parsedOptions = Options.Parse(options.Options);
+        public ConvertImageCommand() : base("convert-image", "Converts one image to another format.")
+        {
+            Options = new OptionSet
+            {
+                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
+                $"{MainClass.AssemblyCopyright}",
+                "",
+                $"usage: DiscImageChef {Name} [OPTIONS] inputimage outputimage",
+                "",
+                Help,
+                {"cicm-xml|x=", "Take metadata from existing CICM XML sidecar.", s => cicmXml = s},
+                {"comments=", "Image comments.", s => comments                                = s},
+                {"count|c=", "How many sectors to convert at once.", (int i) => count         = i},
+                {"creator=", "Who (person) created the image?.", s => creator                 = s},
+                {
+                    "drive-manufacturer=",
+                    "Manufacturer of the drive used to read the media represented by the image.",
+                    s => driveManufacturer = s
+                },
+                {
+                    "drive-model=", "Model of the drive used to read the media represented by the image.",
+                    s => driveModel = s
+                },
+                {
+                    "drive-revision=",
+                    "Firmware revision of the drive used to read the media represented by the image.",
+                    s => driveFirmwareRevision = s
+                },
+                {
+                    "drive-serial=", "Serial number of the drive used to read the media represented by the image.",
+                    s => driveSerialNumber = s
+                },
+                {
+                    "force|f", "Continue conversion even if sector or media tags will be lost in the process.",
+                    b => force = b != null
+                },
+                {
+                    "format|p=",
+                    "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.",
+                    s => wantedOutputFormat = s
+                },
+                {"media-barcode=", "Barcode of the media represented by the image.", s => mediaBarcode = s},
+                {
+                    "media-lastsequence=",
+                    "Last media of the sequence the media represented by the image corresponds to.",
+                    (int i) => lastMediaSequence = i
+                },
+                {
+                    "media-manufacturer=", "Manufacturer of the media represented by the image.",
+                    s => mediaManufacturer = s
+                },
+                {"media-model=", "Model of the media represented by the image.", s => mediaModel = s},
+                {
+                    "media-partnumber=", "Part number of the media represented by the image.",
+                    s => mediaPartNumber = s
+                },
+                {
+                    "media-sequence=", "Number in sequence for the media represented by the image.",
+                    (int i) => mediaSequence = i
+                },
+                {
+                    "media-serial=", "Serial number of the media represented by the image.",
+                    s => mediaSerialNumber = s
+                },
+                {"media-title=", "Title of the media represented by the image.", s => mediaTitle = s},
+                {
+                    "options|O=", "Comma separated name=value pairs of options to pass to output image plugin.",
+                    s => outputOptions = s
+                },
+                {"resume-file|r=", "Take list of dump hardware from existing resume file.", s => resumeFile = s},
+                {"help|h|?", "Show this message and exit.", v => showHelp                                   = v != null}
+            };
+        }
+
+        public override int Invoke(IEnumerable<string> arguments)
+        {
+            List<string> extra = Options.Parse(arguments);
+
+            if(showHelp)
+            {
+                Options.WriteOptionDescriptions(CommandSet.Out);
+                return 0;
+            }
+
+            MainClass.PrintCopyright();
+            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(extra.Count > 2)
+            {
+                DicConsole.ErrorWriteLine("Too many arguments.");
+                return 1;
+            }
+
+            if(extra.Count <= 1)
+            {
+                DicConsole.ErrorWriteLine("Missing input image.");
+                return 1;
+            }
+
+            inputFile  = extra[0];
+            outputFile = extra[1];
+
+            DicConsole.DebugWriteLine("Analyze command", "--cicm-xml={0}",           cicmXml);
+            DicConsole.DebugWriteLine("Analyze command", "--comments={0}",           comments);
+            DicConsole.DebugWriteLine("Analyze command", "--count={0}",              count);
+            DicConsole.DebugWriteLine("Analyze command", "--creator={0}",            creator);
+            DicConsole.DebugWriteLine("Analyze command", "--debug={0}",              MainClass.Debug);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-manufacturer={0}", driveManufacturer);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-model={0}",        driveModel);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-revision={0}",     driveFirmwareRevision);
+            DicConsole.DebugWriteLine("Analyze command", "--drive-serial={0}",       driveSerialNumber);
+            DicConsole.DebugWriteLine("Analyze command", "--force={0}",              force);
+            DicConsole.DebugWriteLine("Analyze command", "--format={0}",             wantedOutputFormat);
+            DicConsole.DebugWriteLine("Analyze command", "--input={0}",              inputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--media-barcode={0}",      mediaBarcode);
+            DicConsole.DebugWriteLine("Analyze command", "--media-lastsequence={0}", lastMediaSequence);
+            DicConsole.DebugWriteLine("Analyze command", "--media-manufacturer={0}", mediaManufacturer);
+            DicConsole.DebugWriteLine("Analyze command", "--media-model={0}",        mediaModel);
+            DicConsole.DebugWriteLine("Analyze command", "--media-partnumber={0}",   mediaPartNumber);
+            DicConsole.DebugWriteLine("Analyze command", "--media-sequence={0}",     mediaSequence);
+            DicConsole.DebugWriteLine("Analyze command", "--media-serial={0}",       mediaSerialNumber);
+            DicConsole.DebugWriteLine("Analyze command", "--media-title={0}",        mediaTitle);
+            DicConsole.DebugWriteLine("Analyze command", "--options={0}",            outputOptions);
+            DicConsole.DebugWriteLine("Analyze command", "--output={0}",             outputFile);
+            DicConsole.DebugWriteLine("Analyze command", "--resume-file={0}",        resumeFile);
+            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}",            MainClass.Verbose);
+
+            Dictionary<string, string> parsedOptions = Core.Options.Parse(outputOptions);
             DicConsole.DebugWriteLine("Analyze command", "Parsed options:");
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
                 DicConsole.DebugWriteLine("Analyze command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
-            if(options.Count == 0)
+            if(count == 0)
             {
                 DicConsole.ErrorWriteLine("Need to specify more than 0 sectors to copy at once");
-                return;
+                return 1;
             }
 
             Resume           resume  = null;
             CICMMetadataType sidecar = null;
 
             XmlSerializer xs = new XmlSerializer(typeof(CICMMetadataType));
-            if(options.CicmXml != null)
-                if(File.Exists(options.CicmXml))
+            if(cicmXml != null)
+                if(File.Exists(cicmXml))
                     try
                     {
-                        StreamReader sr = new StreamReader(options.CicmXml);
+                        StreamReader sr = new StreamReader(cicmXml);
                         sidecar = (CICMMetadataType)xs.Deserialize(sr);
                         sr.Close();
                     }
                     catch
                     {
                         DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
-                        return;
+                        return 2;
                     }
                 else
                 {
                     DicConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
-                    return;
+                    return 3;
                 }
 
             xs = new XmlSerializer(typeof(Resume));
-            if(options.ResumeFile != null)
-                if(File.Exists(options.ResumeFile))
+            if(resumeFile != null)
+                if(File.Exists(resumeFile))
                     try
                     {
-                        StreamReader sr = new StreamReader(options.ResumeFile);
+                        StreamReader sr = new StreamReader(resumeFile);
                         resume = (Resume)xs.Deserialize(sr);
                         sr.Close();
                     }
                     catch
                     {
                         DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
-                        return;
+                        return 4;
                     }
                 else
                 {
                     DicConsole.ErrorWriteLine("Could not find resume file, not continuing...");
-                    return;
+                    return 5;
                 }
 
             FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(options.InputFile);
+            IFilter     inputFilter = filtersList.GetFilter(inputFile);
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return;
+                return 6;
             }
 
-            if(File.Exists(options.OutputFile))
+            if(File.Exists(outputFile))
             {
                 DicConsole.ErrorWriteLine("Output file already exists, not continuing.");
-                return;
+                return 8;
             }
 
             PluginBase  plugins     = GetPluginBase.Instance;
@@ -151,10 +278,10 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.WriteLine("Input image format not identified, not proceeding with conversion.");
-                return;
+                return 7;
             }
 
-            if(options.Verbose)
+            if(MainClass.Verbose)
                 DicConsole.VerboseWriteLine("Input image format identified by {0} ({1}).", inputFormat.Name,
                                             inputFormat.Id);
             else DicConsole.WriteLine("Input image format identified by {0}.", inputFormat.Name);
@@ -165,7 +292,7 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.WriteLine("Unable to open image format");
                     DicConsole.WriteLine("No error given");
-                    return;
+                    return 9;
                 }
 
                 DicConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
@@ -175,66 +302,65 @@ namespace DiscImageChef.Commands
                 DicConsole.DebugWriteLine("Convert-image command", "Image identifies media type as {0}.",
                                           inputFormat.Info.MediaType);
 
-                Core.Statistics.AddMediaFormat(inputFormat.Format);
-                Core.Statistics.AddMedia(inputFormat.Info.MediaType, false);
-                Core.Statistics.AddFilter(inputFilter.Name);
+                Statistics.AddMediaFormat(inputFormat.Format);
+                Statistics.AddMedia(inputFormat.Info.MediaType, false);
+                Statistics.AddFilter(inputFilter.Name);
             }
             catch(Exception ex)
             {
                 DicConsole.ErrorWriteLine("Unable to open image format");
                 DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
                 DicConsole.DebugWriteLine("Convert-image command", "Stack trace: {0}", ex.StackTrace);
-                return;
+                return 10;
             }
 
             List<IWritableImage> candidates = new List<IWritableImage>();
 
             // Try extension
-            if(string.IsNullOrEmpty(options.OutputFormat))
+            if(string.IsNullOrEmpty(wantedOutputFormat))
                 candidates.AddRange(plugins.WritableImages.Values.Where(t =>
                                                                             t.KnownExtensions
-                                                                             .Contains(Path.GetExtension(options
-                                                                                                            .OutputFile))));
+                                                                             .Contains(Path.GetExtension(outputFile))));
             // Try Id
-            else if(Guid.TryParse(options.OutputFormat, out Guid outId))
+            else if(Guid.TryParse(wantedOutputFormat, out Guid outId))
                 candidates.AddRange(plugins.WritableImages.Values.Where(t => t.Id.Equals(outId)));
             // Try name
             else
-                candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, options.OutputFormat,
+                candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, wantedOutputFormat,
                                                                                            StringComparison
                                                                                               .InvariantCultureIgnoreCase)));
 
             if(candidates.Count == 0)
             {
                 DicConsole.WriteLine("No plugin supports requested extension.");
-                return;
+                return 11;
             }
 
             if(candidates.Count > 1)
             {
                 DicConsole.WriteLine("More than one plugin supports requested extension.");
-                return;
+                return 12;
             }
 
             IWritableImage outputFormat = candidates[0];
 
-            if(options.Verbose)
+            if(MainClass.Verbose)
                 DicConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
             else DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
 
             if(!outputFormat.SupportedMediaTypes.Contains(inputFormat.Info.MediaType))
             {
                 DicConsole.ErrorWriteLine("Output format does not support media type, cannot continue...");
-                return;
+                return 13;
             }
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
-                if(outputFormat.SupportedMediaTags.Contains(mediaTag) || options.Force) continue;
+                if(outputFormat.SupportedMediaTags.Contains(mediaTag) || force) continue;
 
                 DicConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...", mediaTag);
                 DicConsole.ErrorWriteLine("If you don't care, use force option.");
-                return;
+                return 14;
             }
 
             bool useLong = inputFormat.Info.ReadableSectorTags.Count != 0;
@@ -243,7 +369,7 @@ namespace DiscImageChef.Commands
             {
                 if(outputFormat.SupportedSectorTags.Contains(sectorTag)) continue;
 
-                if(options.Force)
+                if(force)
                 {
                     if(sectorTag != SectorTagType.CdTrackFlags && sectorTag != SectorTagType.CdTrackIsrc &&
                        sectorTag != SectorTagType.CdSectorSubchannel) useLong = false;
@@ -253,44 +379,43 @@ namespace DiscImageChef.Commands
                 DicConsole.ErrorWriteLine("Converting image will lose sector tag {0}, not continuing...", sectorTag);
                 DicConsole
                    .ErrorWriteLine("If you don't care, use force option. This will skip all sector tags converting only user data.");
-                return;
+                return 15;
             }
 
-            if(!outputFormat.Create(options.OutputFile, inputFormat.Info.MediaType, parsedOptions,
-                                    inputFormat.Info.Sectors, inputFormat.Info.SectorSize))
+            if(!outputFormat.Create(outputFile, inputFormat.Info.MediaType, parsedOptions, inputFormat.Info.Sectors,
+                                    inputFormat.Info.SectorSize))
             {
                 DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
-                return;
+                return 16;
             }
 
-            CommonTypes.Structs.ImageInfo metadata = new CommonTypes.Structs.ImageInfo
+            ImageInfo metadata = new ImageInfo
             {
                 Application           = "DiscImageChef",
                 ApplicationVersion    = Version.GetVersion(),
-                Comments              = options.Comments              ?? inputFormat.Info.Comments,
-                Creator               = options.Creator               ?? inputFormat.Info.Creator,
-                DriveFirmwareRevision = options.DriveFirmwareRevision ?? inputFormat.Info.DriveFirmwareRevision,
-                DriveManufacturer     = options.DriveManufacturer     ?? inputFormat.Info.DriveManufacturer,
-                DriveModel            = options.DriveModel            ?? inputFormat.Info.DriveModel,
-                DriveSerialNumber     = options.DriveSerialNumber     ?? inputFormat.Info.DriveSerialNumber,
-                LastMediaSequence =
-                    options.LastMediaSequence != 0 ? options.LastMediaSequence : inputFormat.Info.LastMediaSequence,
-                MediaBarcode      = options.MediaBarcode      ?? inputFormat.Info.MediaBarcode,
-                MediaManufacturer = options.MediaManufacturer ?? inputFormat.Info.MediaManufacturer,
-                MediaModel        = options.MediaModel        ?? inputFormat.Info.MediaModel,
-                MediaPartNumber   = options.MediaPartNumber   ?? inputFormat.Info.MediaPartNumber,
-                MediaSequence     = options.MediaSequence != 0 ? options.MediaSequence : inputFormat.Info.MediaSequence,
-                MediaSerialNumber = options.MediaSerialNumber ?? inputFormat.Info.MediaSerialNumber,
-                MediaTitle        = options.MediaTitle        ?? inputFormat.Info.MediaTitle
+                Comments              = comments              ?? inputFormat.Info.Comments,
+                Creator               = creator               ?? inputFormat.Info.Creator,
+                DriveFirmwareRevision = driveFirmwareRevision ?? inputFormat.Info.DriveFirmwareRevision,
+                DriveManufacturer     = driveManufacturer     ?? inputFormat.Info.DriveManufacturer,
+                DriveModel            = driveModel            ?? inputFormat.Info.DriveModel,
+                DriveSerialNumber     = driveSerialNumber     ?? inputFormat.Info.DriveSerialNumber,
+                LastMediaSequence     = lastMediaSequence != 0 ? lastMediaSequence : inputFormat.Info.LastMediaSequence,
+                MediaBarcode          = mediaBarcode      ?? inputFormat.Info.MediaBarcode,
+                MediaManufacturer     = mediaManufacturer ?? inputFormat.Info.MediaManufacturer,
+                MediaModel            = mediaModel        ?? inputFormat.Info.MediaModel,
+                MediaPartNumber       = mediaPartNumber   ?? inputFormat.Info.MediaPartNumber,
+                MediaSequence         = mediaSequence != 0 ? mediaSequence : inputFormat.Info.MediaSequence,
+                MediaSerialNumber     = mediaSerialNumber ?? inputFormat.Info.MediaSerialNumber,
+                MediaTitle            = mediaTitle        ?? inputFormat.Info.MediaTitle
             };
 
             if(!outputFormat.SetMetadata(metadata))
             {
                 DicConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
-                if(!options.Force)
+                if(!force)
                 {
                     DicConsole.ErrorWriteLine("not continuing...");
-                    return;
+                    return 17;
                 }
 
                 DicConsole.ErrorWriteLine("continuing...");
@@ -309,24 +434,24 @@ namespace DiscImageChef.Commands
                 {
                     DicConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
                                               outputFormat.ErrorMessage);
-                    return;
+                    return 18;
                 }
 
             foreach(MediaTagType mediaTag in inputFormat.Info.ReadableMediaTags)
             {
-                if(options.Force && !outputFormat.SupportedMediaTags.Contains(mediaTag)) continue;
+                if(force && !outputFormat.SupportedMediaTags.Contains(mediaTag)) continue;
 
                 DicConsole.WriteLine("Converting media tag {0}", mediaTag);
                 byte[] tag = inputFormat.ReadDiskTag(mediaTag);
                 if(outputFormat.WriteMediaTag(tag, mediaTag)) continue;
 
-                if(options.Force)
+                if(force)
                     DicConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
                 else
                 {
                     DicConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                               outputFormat.ErrorMessage);
-                    return;
+                    return 19;
                 }
             }
 
@@ -348,9 +473,10 @@ namespace DiscImageChef.Commands
                     byte[] sector;
 
                     uint sectorsToDo;
-                    if(inputFormat.Info.Sectors - doneSectors >= (ulong)options.Count)
-                        sectorsToDo  = (uint)options.Count;
-                    else sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+                    if(inputFormat.Info.Sectors - doneSectors >= (ulong)count) sectorsToDo = (uint)count;
+                    else
+                        sectorsToDo =
+                            (uint)(inputFormat.Info.Sectors - doneSectors);
 
                     DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", doneSectors,
                                      doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors);
@@ -382,14 +508,14 @@ namespace DiscImageChef.Commands
                     }
 
                     if(!result)
-                        if(options.Force)
+                        if(force)
                             DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                       outputFormat.ErrorMessage, doneSectors);
                         else
                         {
                             DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                       outputFormat.ErrorMessage, doneSectors);
-                            return;
+                            return 20;
                         }
 
                     doneSectors += sectorsToDo;
@@ -417,7 +543,7 @@ namespace DiscImageChef.Commands
                             continue;
                     }
 
-                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
+                    if(force && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
 
                     doneSectors = 0;
                     while(doneSectors < inputFormat.Info.Sectors)
@@ -425,9 +551,10 @@ namespace DiscImageChef.Commands
                         byte[] sector;
 
                         uint sectorsToDo;
-                        if(inputFormat.Info.Sectors - doneSectors >= (ulong)options.Count)
-                            sectorsToDo  = (uint)options.Count;
-                        else sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
+                        if(inputFormat.Info.Sectors - doneSectors >= (ulong)count) sectorsToDo = (uint)count;
+                        else
+                            sectorsToDo =
+                                (uint)(inputFormat.Info.Sectors - doneSectors);
 
                         DicConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)", doneSectors,
                                          doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors,
@@ -446,14 +573,14 @@ namespace DiscImageChef.Commands
                         }
 
                         if(!result)
-                            if(options.Force)
+                            if(force)
                                 DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
                             else
                             {
                                 DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
-                                return;
+                                return 21;
                             }
 
                         doneSectors += sectorsToDo;
@@ -476,10 +603,8 @@ namespace DiscImageChef.Commands
                         byte[] sector;
 
                         uint sectorsToDo;
-                        if(trackSectors - doneSectors >= (ulong)options.Count) sectorsToDo = (uint)options.Count;
-                        else
-                            sectorsToDo =
-                                (uint)(trackSectors - doneSectors);
+                        if(trackSectors - doneSectors >= (ulong)count) sectorsToDo = (uint)count;
+                        else sectorsToDo                                           = (uint)(trackSectors - doneSectors);
 
                         DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
                                          doneSectors               + track.TrackStartSector,
@@ -516,14 +641,14 @@ namespace DiscImageChef.Commands
                         }
 
                         if(!result)
-                            if(options.Force)
+                            if(force)
                                 DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
                             else
                             {
                                 DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
-                                return;
+                                return 22;
                             }
 
                         doneSectors += sectorsToDo;
@@ -552,7 +677,7 @@ namespace DiscImageChef.Commands
                             continue;
                     }
 
-                    if(options.Force && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
+                    if(force && !outputFormat.SupportedSectorTags.Contains(tag)) continue;
 
                     foreach(Track track in tracks)
                     {
@@ -570,14 +695,14 @@ namespace DiscImageChef.Commands
                                 sector = inputFormat.ReadSectorTag(track.TrackStartSector, tag);
                                 result = outputFormat.WriteSectorTag(sector, track.TrackStartSector, tag);
                                 if(!result)
-                                    if(options.Force)
+                                    if(force)
                                         DicConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
                                                                   outputFormat.ErrorMessage);
                                     else
                                     {
                                         DicConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
                                                                   outputFormat.ErrorMessage);
-                                        return;
+                                        return 23;
                                     }
 
                                 continue;
@@ -586,7 +711,7 @@ namespace DiscImageChef.Commands
                         while(doneSectors < trackSectors)
                         {
                             uint sectorsToDo;
-                            if(trackSectors - doneSectors >= (ulong)options.Count) sectorsToDo = (uint)options.Count;
+                            if(trackSectors - doneSectors >= (ulong)count) sectorsToDo = (uint)count;
                             else
                                 sectorsToDo =
                                     (uint)(trackSectors - doneSectors);
@@ -611,14 +736,14 @@ namespace DiscImageChef.Commands
                             }
 
                             if(!result)
-                                if(options.Force)
+                                if(force)
                                     DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
                                 else
                                 {
                                     DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
-                                    return;
+                                    return 24;
                                 }
 
                             doneSectors += sectorsToDo;
@@ -668,7 +793,8 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
             DicConsole.WriteLine("Conversion done.");
 
-            Core.Statistics.AddCommand("convert-image");
+            Statistics.AddCommand("convert-image");
+            return 0;
         }
     }
 }
