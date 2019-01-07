@@ -406,6 +406,8 @@ namespace DiscImageChef.Commands
                                     if(!mediaTypes.Contains("PlayStation 3 game")) mediaTypes.Add("PlayStation 3 game");
                                     if(!mediaTypes.Contains("PlayStation 4 game")) mediaTypes.Add("PlayStation 4 game");
                                     if(!mediaTypes.Contains("Xbox One game")) mediaTypes.Add("Xbox One game");
+                                    if(!mediaTypes.Contains("Nintendo Wii U game"))
+                                        mediaTypes.Add("Nintendo Wii U game");
                                 }
 
                                 if(report.SCSI.MultiMediaDevice.Features.CanReadCD ||
@@ -449,6 +451,9 @@ namespace DiscImageChef.Commands
                                     if(!mediaTypes.Contains("DVD+RW")) mediaTypes.Add("DVD+RW");
                                     if(!mediaTypes.Contains("DVD-R DL")) mediaTypes.Add("DVD-R DL");
                                     if(!mediaTypes.Contains("DVD+R DL")) mediaTypes.Add("DVD+R DL");
+                                    if(!mediaTypes.Contains("Nintendo GameCube game"))
+                                        mediaTypes.Add("Nintendo GameCube game");
+                                    if(!mediaTypes.Contains("Nintendo Wii game")) mediaTypes.Add("Nintendo Wii game");
                                 }
 
                                 if(report.SCSI.MultiMediaDevice.Features.CanReadDVDPlusMRW)
