@@ -562,19 +562,23 @@ namespace DiscImageChef.CommonTypes.Metadata
         public Inquiry.SCSIInquiry? Inquiry => Decoders.SCSI.Inquiry.Decode(InquiryData);
 
         [JsonIgnore]
-        public int Id { get;                                         set; }
-        public         byte[]            InquiryData          { get; set; }
-        public virtual List<ScsiPage>    EVPDPages            { get; set; }
-        public         bool              SupportsModeSense6   { get; set; }
-        public         bool              SupportsModeSense10  { get; set; }
-        public         bool              SupportsModeSubpages { get; set; }
-        public virtual ScsiMode          ModeSense            { get; set; }
-        public virtual Mmc               MultiMediaDevice     { get; set; }
-        public virtual TestedMedia       ReadCapabilities     { get; set; }
-        public virtual List<TestedMedia> RemovableMedias      { get; set; }
-        public virtual Ssc               SequentialDevice     { get; set; }
-        public         byte[]            ModeSense6Data       { get; set; }
-        public         byte[]            ModeSense10Data      { get; set; }
+        public int Id { get;                                              set; }
+        public         byte[]            InquiryData               { get; set; }
+        public virtual List<ScsiPage>    EVPDPages                 { get; set; }
+        public         bool              SupportsModeSense6        { get; set; }
+        public         bool              SupportsModeSense10       { get; set; }
+        public         bool              SupportsModeSubpages      { get; set; }
+        public virtual ScsiMode          ModeSense                 { get; set; }
+        public virtual Mmc               MultiMediaDevice          { get; set; }
+        public virtual TestedMedia       ReadCapabilities          { get; set; }
+        public virtual List<TestedMedia> RemovableMedias           { get; set; }
+        public virtual Ssc               SequentialDevice          { get; set; }
+        public         byte[]            ModeSense6Data            { get; set; }
+        public         byte[]            ModeSense10Data           { get; set; }
+        public         byte[]            ModeSense6CurrentData     { get; set; }
+        public         byte[]            ModeSense10CurrentData    { get; set; }
+        public         byte[]            ModeSense6ChangeableData  { get; set; }
+        public         byte[]            ModeSense10ChangeableData { get; set; }
     }
 
     public class ScsiMode
