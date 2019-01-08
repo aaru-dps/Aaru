@@ -53,7 +53,7 @@ namespace DiscImageChef.Core.Devices.Report
             DicConsole.WriteLine("Querying ATA IDENTIFY...");
             dev.AtaIdentify(out byte[] buffer, out _, dev.Timeout, out _);
 
-            mediaTest.IdentifyData   = buffer;
+            mediaTest.IdentifyData   = ClearIdentify(buffer);
             mediaTest.IdentifyDevice = Identify.Decode(buffer);
 
             if(mediaTest.IdentifyDevice.HasValue)
@@ -584,7 +584,7 @@ namespace DiscImageChef.Core.Devices.Report
             return capabilities;
         }
 
-        static byte[] ClearIdentify(byte[] buffer)
+        public static byte[] ClearIdentify(byte[] buffer)
         {
             byte[] empty = new byte[512];
 

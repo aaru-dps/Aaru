@@ -216,7 +216,7 @@ namespace DiscImageChef.Commands
 
                     if(!Identify.Decode(buffer).HasValue) break;
 
-                    report.ATA = new Ata {Identify = buffer};
+                    report.ATA = new Ata {Identify = DeviceReport.ClearIdentify(buffer)};
 
                     if(report.ATA.IdentifyDevice == null) break;
 
@@ -247,7 +247,7 @@ namespace DiscImageChef.Commands
                         System.Console.ReadKey(true);
                         DicConsole.WriteLine("Querying ATA IDENTIFY...");
                         dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
-                        report.ATA.Identify = buffer;
+                        report.ATA.Identify = DeviceReport.ClearIdentify(buffer);
                         List<TestedMedia> mediaTests = new List<TestedMedia>();
 
                         pressedKey = new ConsoleKeyInfo();
@@ -296,7 +296,8 @@ namespace DiscImageChef.Commands
 
                     dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
 
-                    if(Identify.Decode(buffer).HasValue) report.ATAPI = new Ata {Identify = buffer};
+                    if(Identify.Decode(buffer).HasValue)
+                        report.ATAPI = new Ata {Identify = DeviceReport.ClearIdentify(buffer)};
 
                     goto case DeviceType.SCSI;
                 case DeviceType.SCSI:
