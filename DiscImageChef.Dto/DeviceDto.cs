@@ -109,11 +109,15 @@ namespace DiscImageChef.Dto
 
             if(SCSI != null)
             {
-                SCSI.EVPDPages        = null;
-                SCSI.InquiryData      = null;
-                SCSI.ModeSense6Data   = null;
-                SCSI.ModeSense10Data  = null;
-                SCSI.ReadCapabilities = ClearBinaries(SCSI.ReadCapabilities);
+                SCSI.EVPDPages                 = null;
+                SCSI.InquiryData               = null;
+                SCSI.ModeSense6Data            = null;
+                SCSI.ModeSense10Data           = null;
+                SCSI.ModeSense6CurrentData     = null;
+                SCSI.ModeSense10CurrentData    = null;
+                SCSI.ModeSense6ChangeableData  = null;
+                SCSI.ModeSense10ChangeableData = null;
+                SCSI.ReadCapabilities          = ClearBinaries(SCSI.ReadCapabilities);
 
                 if(SCSI.ModeSense != null)
                 {

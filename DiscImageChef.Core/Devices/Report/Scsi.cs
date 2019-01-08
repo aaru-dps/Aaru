@@ -150,6 +150,10 @@ namespace DiscImageChef.Core.Devices.Report
         {
             Modes.DecodedMode?    decMode = null;
             PeripheralDeviceTypes devType = dev.ScsiType;
+            byte[]                mode10Currentbuffer;
+            byte[]                mode10Changeablebuffer;
+            byte[]                mode6Currentbuffer;
+            byte[]                mode6Changeablebuffer;
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
             bool sense = dev.ModeSense10(out byte[] mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default,
@@ -164,6 +168,15 @@ namespace DiscImageChef.Core.Devices.Report
                     report.SCSI.SupportsModeSense10  = true;
                     report.SCSI.SupportsModeSubpages = false;
                     decMode                          = Modes.DecodeMode10(mode10Buffer, devType);
+                    if(debug)
+                    {
+                        sense = dev.ModeSense10(out mode10Currentbuffer, out _, false, true,
+                                                ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out _);
+                        if(!sense && !dev.Error) report.SCSI.ModeSense10CurrentData = mode10Currentbuffer;
+                        sense = dev.ModeSense10(out mode10Changeablebuffer, out _, false, true,
+                                                ScsiModeSensePageControl.Changeable, 0x3F, 0x00, dev.Timeout, out _);
+                        if(!sense && !dev.Error) report.SCSI.ModeSense10ChangeableData = mode10Changeablebuffer;
+                    }
                 }
             }
             else
@@ -171,6 +184,15 @@ namespace DiscImageChef.Core.Devices.Report
                 report.SCSI.SupportsModeSense10  = true;
                 report.SCSI.SupportsModeSubpages = true;
                 decMode                          = Modes.DecodeMode10(mode10Buffer, devType);
+                if(debug)
+                {
+                    sense = dev.ModeSense10(out mode10Currentbuffer, out _, false, true,
+                                            ScsiModeSensePageControl.Current, 0x3F, 0xFF, dev.Timeout, out _);
+                    if(!sense && !dev.Error) report.SCSI.ModeSense10CurrentData = mode10Currentbuffer;
+                    sense = dev.ModeSense10(out mode10Changeablebuffer, out _, false, true,
+                                            ScsiModeSensePageControl.Changeable, 0x3F, 0xFF, dev.Timeout, out _);
+                    if(!sense && !dev.Error) report.SCSI.ModeSense10ChangeableData = mode10Changeablebuffer;
+                }
             }
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
@@ -186,8 +208,29 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
                     sense = dev.ModeSense(out mode6Buffer, out _, dev.Timeout, out _);
                 }
+                else if(debug)
+                {
+                    sense = dev.ModeSense6(out mode6Currentbuffer, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                           0x00, dev.Timeout, out _);
+                    if(!sense && !dev.Error) report.SCSI.ModeSense6CurrentData = mode6Currentbuffer;
+                    sense = dev.ModeSense6(out mode6Changeablebuffer, out _, false, ScsiModeSensePageControl.Changeable,
+                                           0x3F, 0x00, dev.Timeout, out _);
+                    if(!sense && !dev.Error) report.SCSI.ModeSense6ChangeableData = mode6Changeablebuffer;
+                }
             }
-            else report.SCSI.SupportsModeSubpages = true;
+            else
+            {
+                report.SCSI.SupportsModeSubpages = true;
+                if(debug)
+                {
+                    sense = dev.ModeSense6(out mode6Currentbuffer, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                           0xFF, dev.Timeout, out _);
+                    if(!sense && !dev.Error) report.SCSI.ModeSense6CurrentData = mode6Currentbuffer;
+                    sense = dev.ModeSense6(out mode6Changeablebuffer, out _, false, ScsiModeSensePageControl.Changeable,
+                                           0x3F, 0xFF, dev.Timeout, out _);
+                    if(!sense && !dev.Error) report.SCSI.ModeSense6ChangeableData = mode6Changeablebuffer;
+                }
+            }
 
             if(!sense && !dev.Error && !decMode.HasValue) decMode = Modes.DecodeMode6(mode6Buffer, devType);
 
