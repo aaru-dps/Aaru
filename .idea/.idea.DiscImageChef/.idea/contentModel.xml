@@ -1933,8 +1933,12 @@
           <e p="README.md" t="Include" />
           <e p="TODO.md" t="Include" />
         </e>
-        <e p="int10h.org" t="Include">
+        <e p="fonts" t="Include">
           <e p=".htaccess" t="Include" />
+          <e p="ChicagoFLF.eot" t="Include" />
+          <e p="ChicagoFLF.ttf" t="Include" />
+          <e p="ChicagoFLF.woff" t="Include" />
+          <e p="ChicagoFLF.woff2" t="Include" />
           <e p="vga_squarepx.eot" t="Include" />
           <e p="vga_squarepx.ttf" t="Include" />
           <e p="vga_squarepx.woff" t="Include" />
@@ -1948,16 +1952,29 @@
         <e p="package.json" t="Include" />
         <e p="packages.config" t="Include" />
         <e p="styles" t="Include">
-          <e p="_colors.scss" t="Include" />
-          <e p="_fontstyles.scss" t="Include" />
           <e p="_highcharts.scss" t="Include" />
-          <e p="_vgafont.scss" t="Include" />
-          <e p="dicserver.css" t="Include" />
-          <e p="dicserver.css.map" t="Include" />
-          <e p="dicserver.scss" t="Include" />
-          <e p="dicserver_highcharts.css" t="Include" />
-          <e p="dicserver_highcharts.css.map" t="Include" />
-          <e p="dicserver_highcharts.scss" t="Include" />
+          <e p="dos" t="Include">
+            <e p="_colors.scss" t="Include" />
+            <e p="_font.scss" t="Include" />
+            <e p="_fontstyles.scss" t="Include" />
+            <e p="dicserver.css" t="Include" />
+            <e p="dicserver.css.map" t="Include" />
+            <e p="dicserver.scss" t="Include" />
+            <e p="dicserver_highcharts.css" t="Include" />
+            <e p="dicserver_highcharts.css.map" t="Include" />
+            <e p="dicserver_highcharts.scss" t="Include" />
+          </e>
+          <e p="mac" t="Include">
+            <e p="_colors.scss" t="Include" />
+            <e p="_font.scss" t="Include" />
+            <e p="_fontstyles.scss" t="Include" />
+            <e p="dicserver.css" t="Include" />
+            <e p="dicserver.css.map" t="Include" />
+            <e p="dicserver.scss" t="Include" />
+            <e p="dicserver_highcharts.css" t="Include" />
+            <e p="dicserver_highcharts.css.map" t="Include" />
+            <e p="dicserver_highcharts.scss" t="Include" />
+          </e>
         </e>
       </e>
       <e p="DiscImageChef.Server.Task" t="IncludeRecursive">

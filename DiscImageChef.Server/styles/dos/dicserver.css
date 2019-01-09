@@ -9,8 +9,8 @@
 /* Sets font to VGA square */
 @font-face {
   font-family: "VGAsquarePx";
-  src: url(../int10h.org/vga_squarepx.eot);
-  src: url(../int10h.org/vga_squarepx.eot?#iefix) format("embedded-opentype"), url(../int10h.org/vga_squarepx.woff2) format("woff2"), url(../int10h.org/vga_squarepx.woff) format("woff"), url(../int10h.org/vga_squarepx.ttf) format("truetype");
+  src: url(../../fonts/vga_squarepx.eot);
+  src: url(../../fonts/vga_squarepx.eot?#iefix) format("embedded-opentype"), url(../../fonts/vga_squarepx.woff2) format("woff2"), url(../../fonts/vga_squarepx.woff) format("woff"), url(../../fonts/vga_squarepx.ttf) format("truetype");
   font-weight: normal;
   font-style: normal;
 }

@@ -35,10 +35,22 @@
 <html>
 <meta charset="UTF-8">
 <head>
-    <link href="../../styles/dicserver.css"
-          rel="stylesheet"type="text/css" />
-    <link href="../../styles/dicserver_highcharts.css"
-          rel="stylesheet"type="text/css" />
+    @switch(DateTime.UtcNow.DayOfYear)
+    {
+        // 24th January, Macintosh launch
+        case 24:
+            <link href="../../styles/mac/dicserver.css"
+                  rel="stylesheet"type="text/css" />
+            <link href="../../styles/mac/dicserver_highcharts.css"
+                  rel="stylesheet"type="text/css" />
+            break;
+        default:
+            <link href="../../styles/dos/dicserver.css"
+                  rel="stylesheet"type="text/css" />
+            <link href="../../styles/dos/dicserver_highcharts.css"
+                  rel="stylesheet"type="text/css" />
+            break;
+    }
     <meta charset="utf-8" />
     <title>@ViewBag.Title</title>
     <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -62,11 +74,19 @@
        target="_blank">
         Claunia.com
     </a><br />
-    Fonts are © 2015-2016
-    <a href="http://int10h.org"
-       target="_blank">
-        VileR
-    </a><br />
+    @switch(DateTime.UtcNow.DayOfYear)
+    {
+        // 24th January, Macintosh launch
+        case 24:
+            @Html.Raw("Fonts are © 2014 <a href=\"http://christtrekker.users.sourceforge.net/fnt/chicago.shtml\" target=\"_blank\">Robin Casady</a>")
+            ;
+            break;
+        default:
+            @Html.Raw("Fonts are © 2015 - 2016 <a href=\"http://int10h.org\" target=\"_blank\">VileR</a>")
+            ;
+            break;
+    }
+    <br />
     CSS © 2018-2019
     <a href="https://getbootstrap.com/"
        target="_blank">

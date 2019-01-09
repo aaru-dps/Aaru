@@ -1,0 +1,51 @@
+// /***************************************************************************
+// The Disc Image Chef
+// ----------------------------------------------------------------------------
+//
+// Filename       : _font.scss
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : DiscImageChef Server.
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Sets font for server styling.
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This library is free software; you can redistribute it and/or modify
+//     it under the terms of the GNU Lesser General Public License as
+//     published by the Free Software Foundation; either version 2.1 of the
+//     License, or (at your option) any later version.
+//
+//     This library is distributed in the hope that it will be useful, but
+//     WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//     Lesser General Public License for more details.
+//
+//     You should have received a copy of the GNU Lesser General Public
+//     License along with this library; if not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2011-2019 Natalia Portillo
+// ****************************************************************************/
+
+/* Sets font to VGA square */
+@font-face
+{
+    font-family: 'VGAsquarePx';
+    src: url(../../fonts/vga_squarepx.eot);
+    src: url(../../fonts/vga_squarepx.eot?#iefix) format('embedded-opentype'),
+    url(../../fonts/vga_squarepx.woff2) format('woff2'),
+    url(../../fonts/vga_squarepx.woff) format('woff'),
+    url(../../fonts/vga_squarepx.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+$font-family-sans-serif:      'VGAsquarePx';
+$font-family-monospace:       'VGAsquarePx';
+$font-family-base:            'VGAsquarePx';
+$font-size-base:              1.75rem;
+
+$line-height-base:            1;

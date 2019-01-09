@@ -299,22 +299,43 @@
     <Content Include="docs\PULL_REQUEST_TEMPLATE.md" />
     <Content Include="docs\README.md" />
     <Content Include="docs\TODO.md" />
+    <Content Include="fonts\ChicagoFLF.eot" />
+    <Content Include="fonts\ChicagoFLF.ttf" />
+    <Content Include="fonts\ChicagoFLF.woff" />
+    <Content Include="fonts\ChicagoFLF.woff2" />
     <Content Include="Global.asax" />
-    <Content Include="int10h.org\vga_squarepx.eot" />
-    <Content Include="int10h.org\vga_squarepx.ttf" />
-    <Content Include="int10h.org\vga_squarepx.woff" />
+    <Content Include="fonts\vga_squarepx.eot" />
+    <Content Include="fonts\vga_squarepx.ttf" />
+    <Content Include="fonts\vga_squarepx.woff" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
-    <Content Include="styles\dicserver.css" />
-    <Content Include="styles\dicserver.css.map" />
-    <Content Include="styles\dicserver.scss" />
-    <Content Include="styles\dicserver_highcharts.css" />
-    <Content Include="styles\dicserver_highcharts.css.map" />
-    <Content Include="styles\dicserver_highcharts.scss" />
-    <Content Include="styles\_colors.scss" />
-    <Content Include="styles\_fontstyles.scss" />
+    <Content Include="styles\dos\dicserver.css" />
+    <Content Include="styles\dos\dicserver.css.map" />
+    <Content Include="styles\dos\dicserver.scss" />
+    <Content Include="styles\dos\dicserver_highcharts.css" />
+    <Content Include="styles\dos\dicserver_highcharts.css.map" />
+    <Content Include="styles\dos\dicserver_highcharts.scss" />
+    <Content Include="styles\dos\_colors.scss" />
+    <Content Include="styles\dos\_fontstyles.scss" />
+    <Content Include="styles\dos\_font.scss" />
+    <Content Include="styles\mac\dicserver.css">
+      <DependentUpon>dicserver.scss</DependentUpon>
+    </Content>
+    <Content Include="styles\mac\dicserver.css.map">
+      <DependentUpon>dicserver.css</DependentUpon>
+    </Content>
+    <Content Include="styles\mac\dicserver.scss" />
+    <Content Include="styles\mac\dicserver_highcharts.css">
+      <DependentUpon>dicserver_highcharts.scss</DependentUpon>
+    </Content>
+    <Content Include="styles\mac\dicserver_highcharts.css.map">
+      <DependentUpon>dicserver_highcharts.css</DependentUpon>
+    </Content>
+    <Content Include="styles\mac\dicserver_highcharts.scss" />
+    <Content Include="styles\mac\_colors.scss" />
+    <Content Include="styles\mac\_fontstyles.scss" />
+    <Content Include="styles\mac\_font.scss" />
     <Content Include="styles\_highcharts.scss" />
-    <Content Include="styles\_vgafont.scss" />
     <Content Include="Views\Home\Changelog.cshtml" />
     <Content Include="Views\Home\CODE_OF_CONDUCT.cshtml" />
     <Content Include="Views\Home\CONTRIBUTING.cshtml" />
@@ -331,8 +352,8 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <None Include="int10h.org\.htaccess" />
-    <None Include="int10h.org\vga_squarepx.woff2" />
+    <None Include="fonts\.htaccess" />
+    <None Include="fonts\vga_squarepx.woff2" />
     <None Include="Reports\.htaccess" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Web.config" />

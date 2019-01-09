@@ -1,0 +1,89 @@
+// /***************************************************************************
+// The Disc Image Chef
+// ----------------------------------------------------------------------------
+//
+// Filename       : _colors.scss
+// Author(s)      : Natalia Portillo <claunia@claunia.com>
+//
+// Component      : DiscImageChef Server.
+//
+// --[ Description ] ----------------------------------------------------------
+//
+//     Sets colors for server styling.
+//
+// --[ License ] --------------------------------------------------------------
+//
+//     This library is free software; you can redistribute it and/or modify
+//     it under the terms of the GNU Lesser General Public License as
+//     published by the Free Software Foundation; either version 2.1 of the
+//     License, or (at your option) any later version.
+//
+//     This library is distributed in the hope that it will be useful, but
+//     WITHOUT ANY WARRANTY; without even the implied warranty of
+//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//     Lesser General Public License for more details.
+//
+//     You should have received a copy of the GNU Lesser General Public
+//     License along with this library; if not, see <http://www.gnu.org/licenses/>.
+//
+// ----------------------------------------------------------------------------
+// Copyright © 2011-2019 Natalia Portillo
+// ****************************************************************************/
+
+/* Sets the grayscale for Bootstrap */
+$white:           #FFFFFF;
+$darkgray:        #404040;
+$gray-100:        #C0C0C0;
+$gray-200:        #C0C0C0;
+$gray-300:        #C0C0C0;
+$gray-400:        #808080;
+$gray-500:        #808080;
+$gray-600:        #808080;
+$gray-700:        #404040;
+$gray-800:        #404040;
+$gray-900:        #404040;
+$black:           #000000;
+
+/* Sets color palette, using Macintosh II colors */
+$green: #1FB714;
+$yellow: #FBF305;
+$darkgreen: #006412;
+$orange: #FF6403;
+$brown: #562C05;
+$red: #DD0907;
+$tan:#90713A;
+$magenta:#F20884;
+$purple:#4700A5;
+$blue:#0000D3;
+$cyan:#02ABEA;
+
+/* Bootstrap color aliases */
+$primary:          $blue;
+$secondary:        $gray-600;
+$success:          $green;
+$info:             $cyan;
+$warning:          $yellow;
+$danger:           $red;
+$light:            $gray-100;
+$dark:             $gray-800;
+
+/* Colors for <body> */
+$body-bg:          $white;
+$body-color:       $black;
+
+/* Colors for <a> */
+$link-color:       $cyan;
+$link-hover-color: $magenta;
+
+/* Colors for cards */
+$card-border-color:                 rgba($gray-300, .125);
+$card-cap-bg:                       rgba($gray-300, .03);
+$card-cap-color:                    inherit;
+$card-bg:                           $gray-300;
+
+/* Colors for tables */
+$table-dark-bg:               $gray-300;
+$table-dark-accent-bg:        rgba($white, .05);
+$table-dark-hover-bg:         rgba($white, .075);
+$table-dark-border-color:     lighten($tan, 7.5%);
+$table-dark-color:            $darkgray;

@@ -657,8 +657,21 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 @{
-    string highChartsTitleColor = "#AAAAAA";
-    string highChartsDataLabelColor = "#FFFFFF";
+    string highChartsTitleColor;
+    string highChartsDataLabelColor;
+
+    switch(DateTime.UtcNow.DayOfYear)
+    {
+        // 24th January, Macintosh launch
+        case 24:
+            highChartsTitleColor = "#000000";
+            highChartsDataLabelColor = "#000000";
+            break;
+        default:
+            highChartsTitleColor = "#AAAAAA";
+            highChartsDataLabelColor = "#FFFFFF";
+            break;
+    }
 
     Hashtable highChartsTitleStyle = new Hashtable {{"color", highChartsTitleColor}};
     PlotOptionsPieDataLabelsStyle highChartsDataLabelStyle = new PlotOptionsPieDataLabelsStyle {Color = highChartsDataLabelColor, TextOutline = "0px"};

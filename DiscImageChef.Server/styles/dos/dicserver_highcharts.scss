@@ -31,7 +31,7 @@
 // ****************************************************************************/
 
 @import "_colors";
-@import "_vgafont";
+@import "_font";
 @import "_fontstyles";
 
 $colors: $orange $green $brown $indigo $pink $teal $yellow $purple $cyan $white;
@@ -52,4 +52,4 @@ $tooltip-background: $brightwhite;
 
 $data-label-color: $yellow;
 
-@import "_highcharts";
+@import "../_highcharts";

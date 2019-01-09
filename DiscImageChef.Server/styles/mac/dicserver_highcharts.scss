@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : _vgafont.scss
+// Filename       : dicserver_highcharts.scss
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : DiscImageChef Server.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Sets font for server styling.
+//     Sets style for server's charts.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,22 +30,26 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-/* Sets font to VGA square */
-@font-face
-{
-    font-family: 'VGAsquarePx';
-    src: url(../int10h.org/vga_squarepx.eot);
-    src: url(../int10h.org/vga_squarepx.eot?#iefix) format('embedded-opentype'),
-    url(../int10h.org/vga_squarepx.woff2) format('woff2'),
-    url(../int10h.org/vga_squarepx.woff) format('woff'),
-    url(../int10h.org/vga_squarepx.ttf) format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
+@import "_colors";
+@import "_font";
+@import "_fontstyles";
 
-$font-family-sans-serif:      'VGAsquarePx';
-$font-family-monospace:       'VGAsquarePx';
-$font-family-base:            'VGAsquarePx';
-$font-size-base:              1.75rem;
+$colors: $green $yellow $orange $brown $red $magenta $purple $blue $cyan $tan $darkgreen;
+$background-color: $body-bg;
 
-$line-height-base:            1;
+$neutral-color-100: $black; // Strong text.
+$neutral-color-80: $gray-800; // Main text and some strokes.
+$neutral-color-60: $gray-600; // Axis labels, axis title, connector fallback.
+$neutral-color-40: $gray-400; // Credits text, export menu stroke.
+$neutral-color-20: $gray-200; // Disabled texts, button strokes, crosshair etc.
+$neutral-color-10: $gray-100; // Grid lines etc.
+$neutral-color-5: $gray-100; // Minor grid lines etc.
+$neutral-color-3: $gray-100; // Tooltip backgroud, button fills, map null points.
+
+$font-family:            $font-family-base;
+
+$tooltip-background: $white;
+
+$data-label-color: $yellow;
+
+@import "../_highcharts";
