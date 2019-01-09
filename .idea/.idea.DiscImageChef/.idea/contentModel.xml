@@ -1910,6 +1910,9 @@
           <e p="Report" t="Include">
             <e p="View.cshtml" t="Include" />
           </e>
+          <e p="Shared" t="Include">
+            <e p="_Layout.cshtml" t="Include" />
+          </e>
           <e p="Stats" t="Include">
             <e p="Index.cshtml" t="Include" />
           </e>

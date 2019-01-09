@@ -323,6 +323,7 @@
     <Content Include="Views\Home\PULL_REQUEST_TEMPLATE.cshtml" />
     <Content Include="Views\Home\TODO.cshtml" />
     <Content Include="Views\Report\View.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -1,4 +1,5 @@
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "DiscImageChef";
 }
 @{
@@ -34,64 +35,8 @@
     // Copyright © 2011-2019 Natalia Portillo
     // ****************************************************************************/
 }
-<!DOCTYPE html>
-<html>
-<meta charset="UTF-8">
-<head>
-    <link href="../../styles/dicserver.css"
-          rel="stylesheet"type="text/css" />
-    <link href="../../styles/dicserver_highcharts.css"
-          rel="stylesheet"type="text/css" />
-    <title>@ViewBag.Title</title>
-    <meta charset="utf-8" />
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async
-            src="https://www.googletagmanager.com/gtag/js?id=UA-111466173-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() { dataLayer.push(arguments); }
-
-        gtag('js', new Date());
-
-        gtag('config', 'UA-111466173-1');
-    </script>
-</head>
-<body>
 <p>
     @Html.ActionLink("Return to main page.", "Index")<br />
     How to contribute to DiscImageChef:
 </p>
 <div class="container">@Html.Raw(ViewBag.Markdown)</div>
-<footer class="container-fluid">
-    © 2011-2019
-    <a href="http://www.claunia.com"
-       target="_blank">
-        Claunia.com
-    </a><br />
-    Fonts are © 2015-2016
-    <a href="http://int10h.org"
-       target="_blank">
-        VileR
-    </a><br />
-    CSS © 2018-2019
-    <a href="https://getbootstrap.com/"
-       target="_blank">
-        Bootstrap
-    </a> and
-    <a href="http://www.claunia.com"
-       target="_blank">
-        Claunia.com
-    </a>
-</footer>
-<script crossorigin="anonymous"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script crossorigin="anonymous"
-        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
-<script crossorigin="anonymous"
-        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
-        src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-</body>
-</html>
