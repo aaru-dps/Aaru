@@ -35,12 +35,14 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using DiscImageChef.Commands;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Database;
 using DiscImageChef.Settings;
 using Microsoft.EntityFrameworkCore;
 using Mono.Options;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef
 {
@@ -91,6 +93,8 @@ namespace DiscImageChef
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
                 Task.Run(() => { Statistics.SubmitStats(); });
 
+            PlatformID currentPlatform = DetectOS.GetRealPlatformID();
+
             CommandSet commands = new CommandSet("DiscImageChef")
             {
                 $"{AssemblyTitle} {AssemblyVersion?.InformationalVersion}",
@@ -110,26 +114,41 @@ namespace DiscImageChef
                 new ConfigureCommand(false),
                 new ConvertImageCommand(),
                 new CreateSidecarCommand(),
-                new DecodeCommand(),
-                new DeviceInfoCommand(),
-                new DeviceReportCommand(),
-                new DumpMediaCommand(),
-                new EntropyCommand(),
-                new ExtractFilesCommand(),
-                new FormatsCommand(),
-                new GuiCommand(),
-                new ImageInfoCommand(),
-                new ListDevicesCommand(),
-                new ListEncodingsCommand(),
-                new ListOptionsCommand(),
-                new LsCommand(),
-                new MediaInfoCommand(),
-                new MediaScanCommand(),
-                new PrintHexCommand(),
-                new StatisticsCommand(),
-                new UpdateCommand(masterDbUpdate),
-                new VerifyCommand()
+                new DecodeCommand()
             };
+
+            if(currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
+               currentPlatform == PlatformID.Win32NT)
+            {
+                commands.Add(new DeviceInfoCommand());
+                commands.Add(new DeviceReportCommand());
+                commands.Add(new DumpMediaCommand());
+            }
+
+            commands.Add(new EntropyCommand());
+            commands.Add(new ExtractFilesCommand());
+            commands.Add(new FormatsCommand());
+            commands.Add(new GuiCommand());
+            commands.Add(new ImageInfoCommand());
+
+            if(currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
+               currentPlatform == PlatformID.Win32NT) commands.Add(new ListDevicesCommand());
+
+            commands.Add(new ListEncodingsCommand());
+            commands.Add(new ListOptionsCommand());
+            commands.Add(new LsCommand());
+
+            if(currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
+               currentPlatform == PlatformID.Win32NT)
+            {
+                commands.Add(new MediaInfoCommand());
+                commands.Add(new MediaScanCommand());
+            }
+
+            commands.Add(new PrintHexCommand());
+            commands.Add(new StatisticsCommand());
+            commands.Add(new UpdateCommand(masterDbUpdate));
+            commands.Add(new VerifyCommand());
 
             int ret = commands.Run(args);
 
