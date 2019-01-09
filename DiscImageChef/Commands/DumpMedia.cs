@@ -39,6 +39,7 @@ using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -48,6 +49,7 @@ using DiscImageChef.Devices;
 using Mono.Options;
 using Schemas;
 using Ata = DiscImageChef.Core.Devices.Dumping.Ata;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Scsi = DiscImageChef.Core.Devices.Dumping.Scsi;
 
 namespace DiscImageChef.Commands
@@ -84,41 +86,34 @@ namespace DiscImageChef.Commands
                 "",
                 Help,
                 {"cicm-xml|x=", "Take metadata from existing CICM XML sidecar.", s => cicmXml = s},
-                {"encoding|e=", "Name of character encoding to use.", s => encodingName       = s},
-                {
-                    "first-pregap", "Try to read first track pregap. Only applicable to CD/DDCD/GD.",
-                    b => firstTrackPregap = b != null
-                },
-                {"force|f", "Continue dump whatever happens.", b => force = b != null},
-                {
-                    "format|t=",
-                    "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.",
-                    s => wanteOutputFormat = s
-                },
-                {"no-metadata", "Disables creating CICM XML sidecar.", b => noMetadata     = b != null},
-                {"no-trim", "Disables trimming errored from skipped sectors.", b => noTrim = b != null},
-                {
-                    "options|O=", "Comma separated name=value pairs of options to pass to output image plugin.",
-                    s => outputOptions = s
-                },
-                {"persistent", "Try to recover partial or incorrect data.", b => persistent = b != null},
-                /* TODO: Disabled temporarily
-                 { "raw|r", "Dump sectors with tags included. For optical media, dump scrambled sectors.", (b) => Raw = b != null}, */
-                {
-                    "resume|r", "Create/use resume mapfile.",
-                    b => doResume = b != null
-                },
-                {"retry-passes|p=", "How many retry passes to do.", (ushort                    us) => retryPasses = us},
-                {"skip|k=", "When an unreadable sector is found skip this many sectors.", (int i) => skip         = i},
-                {
-                    "stop-on-error|s", "Stop media dump on first error.",
-                    b => stopOnError = b != null
-                },
-                {
-                    "help|h|?", "Show this message and exit.",
-                    v => showHelp = v != null
-                }
+                {"encoding|e=", "Name of character encoding to use.", s => encodingName       = s}
             };
+
+            if(DetectOS.GetRealPlatformID() != PlatformID.FreeBSD)
+                Options.Add("first-pregap", "Try to read first track pregap. Only applicable to CD/DDCD/GD.",
+                            b => firstTrackPregap = b != null);
+
+            Options.Add("force|f", "Continue dump whatever happens.", b => force = b != null);
+            Options.Add("format|t=",
+                        "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.",
+                        s => wanteOutputFormat = s);
+            Options.Add("no-metadata", "Disables creating CICM XML sidecar.",             b => noMetadata = b != null);
+            Options.Add("no-trim",     "Disables trimming errored from skipped sectors.", b => noTrim     = b != null);
+            Options.Add("options|O=", "Comma separated name=value pairs of options to pass to output image plugin.",
+                        s => outputOptions = s);
+            Options.Add("persistent", "Try to recover partial or incorrect data.", b => persistent = b != null);
+            /* TODO: Disabled temporarily
+            Options.Add("raw|r", "Dump sectors with tags included. For optical media, dump scrambled sectors.", (b) => raw = b != null);*/
+            Options.Add("resume|r", "Create/use resume mapfile.",
+                        b => doResume = b != null);
+            Options.Add("retry-passes|p=", "How many retry passes to do.",
+                        (ushort us) => retryPasses = us);
+            Options.Add("skip|k=", "When an unreadable sector is found skip this many sectors.",
+                        (int i) => skip = i);
+            Options.Add("stop-on-error|s", "Stop media dump on first error.",
+                        b => stopOnError = b != null);
+            Options.Add("help|h|?", "Show this message and exit.",
+                        v => showHelp = v != null);
         }
 
         public override int Invoke(IEnumerable<string> arguments)
