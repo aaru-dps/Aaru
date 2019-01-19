@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
+    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2018.3/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2018.3/system/resharper-host/local/Transient/ReSharperHost/v183/SolutionCaches/_DiscImageChef.73225794.00" t="ExcludeRecursive" />
@@ -51,11 +52,7 @@
         <e p="MacIcon.icns" t="Include" />
         <e p="Main.cs" t="Include" />
         <e p="Progress.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="launchSettings.json" t="Include" />
-        </e>
         <e p="Settings.StyleCop" t="Include" />
-        <e p="StyleCop.Cache" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -1380,12 +1377,10 @@
                 <e p="media-tape.png" t="Include" />
               </e>
               <e p="COPYING" t="Include" />
-              <e p="COPYING.LIB" t="Include" />
             </e>
           </e>
           <e p="Logos" t="Include">
             <e p="Media" t="Include">
-              <e p=".directory" t="Include" />
               <e p="AIT1.png" t="Include" />
               <e p="AIT1.svg" t="Include" />
               <e p="AIT1Turbo.png" t="Include" />
