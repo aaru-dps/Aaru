@@ -42,11 +42,14 @@ namespace DiscImageChef.Commands
     class ConfigureCommand : Command
     {
         readonly bool gdprChange;
+        bool          autoCall;
         bool          showHelp;
 
-        public ConfigureCommand(bool gdprChange) : base("configure", "Configures user settings and statistics.")
+        public ConfigureCommand(bool gdprChange, bool autoCall) : base("configure",
+                                                                       "Configures user settings and statistics.")
         {
             this.gdprChange = gdprChange;
+            this.autoCall   = autoCall;
             Options = new OptionSet
             {
                 $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
@@ -61,22 +64,25 @@ namespace DiscImageChef.Commands
 
         public override int Invoke(IEnumerable<string> arguments)
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
+            if(!autoCall)
             {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int)ErrorNumber.HelpRequested;
-            }
+                List<string> extra = Options.Parse(arguments);
 
-            MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                if(showHelp)
+                {
+                    Options.WriteOptionDescriptions(CommandSet.Out);
+                    return (int)ErrorNumber.HelpRequested;
+                }
 
-            if(extra.Count != 0)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int)ErrorNumber.UnexpectedArgumentCount;
+                MainClass.PrintCopyright();
+                if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
+                if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+                if(extra.Count != 0)
+                {
+                    DicConsole.ErrorWriteLine("Too many arguments.");
+                    return (int)ErrorNumber.UnexpectedArgumentCount;
+                }
             }
 
             if(gdprChange)

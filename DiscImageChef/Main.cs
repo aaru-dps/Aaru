@@ -79,7 +79,7 @@ namespace DiscImageChef
             if(!File.Exists(Settings.Settings.MasterDbPath))
             {
                 masterDbUpdate = true;
-                UpdateCommand.DoUpdate(masterDbUpdate);
+                UpdateCommand.DoUpdate(true);
             }
 
             DicContext mctx = DicContext.Create(Settings.Settings.MasterDbPath);
@@ -88,7 +88,7 @@ namespace DiscImageChef
 
             if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
                Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
-                new ConfigureCommand(true).Invoke(args);
+                new ConfigureCommand(true, true).Invoke(args);
             Statistics.LoadStats();
             if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
                 Task.Run(() => { Statistics.SubmitStats(); });
@@ -111,7 +111,7 @@ namespace DiscImageChef
                 new BenchmarkCommand(),
                 new ChecksumCommand(),
                 new CompareCommand(),
-                new ConfigureCommand(false),
+                new ConfigureCommand(false, false),
                 new ConvertImageCommand(),
                 new CreateSidecarCommand(),
                 new DecodeCommand()
