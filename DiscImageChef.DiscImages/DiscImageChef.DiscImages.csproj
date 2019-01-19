@@ -138,7 +138,7 @@
     <Compile Include="CDRWin\Properties.cs" />
     <Compile Include="CDRWin\Read.cs" />
     <Compile Include="CDRWin\Structs.cs" />
-    <Compile Include="CDRWin\Unsupported.cs" />
+    <Compile Include="CDRWin\Verify.cs" />
     <Compile Include="CDRWin\Write.cs" />
     <Compile Include="CHD\Constants.cs" />
     <Compile Include="CHD\Enums.cs" />
