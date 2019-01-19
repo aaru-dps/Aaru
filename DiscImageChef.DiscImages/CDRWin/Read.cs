@@ -63,28 +63,38 @@ namespace DiscImageChef.DiscImages
                 byte currentsession = 1;
 
                 // Initialize all RegExs
-                Regex regexSession    = new Regex(REGEX_SESSION);
-                Regex regexDiskType   = new Regex(REGEX_MEDIA_TYPE);
-                Regex regexLeadOut    = new Regex(REGEX_LEAD_OUT);
-                Regex regexLba        = new Regex(REGEX_LBA);
-                Regex regexDiskId     = new Regex(REGEX_DISC_ID);
-                Regex regexBarCode    = new Regex(REGEX_BARCODE);
-                Regex regexComment    = new Regex(REGEX_COMMENT);
-                Regex regexCdText     = new Regex(REGEX_CDTEXT);
-                Regex regexMcn        = new Regex(REGEX_MCN);
-                Regex regexTitle      = new Regex(REGEX_TITLE);
-                Regex regexGenre      = new Regex(REGEX_GENRE);
-                Regex regexArranger   = new Regex(REGEX_ARRANGER);
-                Regex regexComposer   = new Regex(REGEX_COMPOSER);
-                Regex regexPerformer  = new Regex(REGEX_PERFORMER);
-                Regex regexSongWriter = new Regex(REGEX_SONGWRITER);
-                Regex regexFile       = new Regex(REGEX_FILE);
-                Regex regexTrack      = new Regex(REGEX_TRACK);
-                Regex regexIsrc       = new Regex(REGEX_ISRC);
-                Regex regexIndex      = new Regex(REGEX_INDEX);
-                Regex regexPregap     = new Regex(REGEX_PREGAP);
-                Regex regexPostgap    = new Regex(REGEX_POSTGAP);
-                Regex regexFlags      = new Regex(REGEX_FLAGS);
+                Regex regexSession                = new Regex(REGEX_SESSION);
+                Regex regexDiskType               = new Regex(REGEX_MEDIA_TYPE);
+                Regex regexLeadOut                = new Regex(REGEX_LEAD_OUT);
+                Regex regexLba                    = new Regex(REGEX_LBA);
+                Regex regexDiskId                 = new Regex(REGEX_DISC_ID);
+                Regex regexBarCode                = new Regex(REGEX_BARCODE);
+                Regex regexComment                = new Regex(REGEX_COMMENT);
+                Regex regexCdText                 = new Regex(REGEX_CDTEXT);
+                Regex regexMcn                    = new Regex(REGEX_MCN);
+                Regex regexTitle                  = new Regex(REGEX_TITLE);
+                Regex regexGenre                  = new Regex(REGEX_GENRE);
+                Regex regexArranger               = new Regex(REGEX_ARRANGER);
+                Regex regexComposer               = new Regex(REGEX_COMPOSER);
+                Regex regexPerformer              = new Regex(REGEX_PERFORMER);
+                Regex regexSongWriter             = new Regex(REGEX_SONGWRITER);
+                Regex regexFile                   = new Regex(REGEX_FILE);
+                Regex regexTrack                  = new Regex(REGEX_TRACK);
+                Regex regexIsrc                   = new Regex(REGEX_ISRC);
+                Regex regexIndex                  = new Regex(REGEX_INDEX);
+                Regex regexPregap                 = new Regex(REGEX_PREGAP);
+                Regex regexPostgap                = new Regex(REGEX_POSTGAP);
+                Regex regexFlags                  = new Regex(REGEX_FLAGS);
+                Regex regexApplication            = new Regex(REGEX_APPLICATION);
+                Regex regexTruripDisc             = new Regex(REGEX_TRURIP_DISC_HASHES);
+                Regex regexTruripDiscCrc32        = new Regex(REGEX_TRURIP_DISC_CRC32);
+                Regex regexTruripDiscMd5          = new Regex(REGEX_TRURIP_DISC_MD5);
+                Regex regexTruripDiscSha1         = new Regex(REGEX_TRURIP_DISC_SHA1);
+                Regex regexTruripTrack            = new Regex(REGEX_TRURIP_TRACK_METHOD);
+                Regex regexTruripTrackCrc32       = new Regex(REGEX_TRURIP_TRACK_CRC32);
+                Regex regexTruripTrackMd5         = new Regex(REGEX_TRURIP_TRACK_MD5);
+                Regex regexTruripTrackSha1        = new Regex(REGEX_TRURIP_TRACK_SHA1);
+                Regex regexTruripTrackUnknownHash = new Regex(REGEX_TRURIP_TRACK_UNKNOWN);
 
                 // Initialize all RegEx matches
                 Match matchTrack;
@@ -92,7 +102,10 @@ namespace DiscImageChef.DiscImages
                 // Initialize disc
                 discimage = new CdrWinDisc
                 {
-                    Sessions = new List<Session>(), Tracks = new List<CdrWinTrack>(), Comment = ""
+                    Sessions   = new List<Session>(),
+                    Tracks     = new List<CdrWinTrack>(),
+                    Comment    = "",
+                    DiscHashes = new Dictionary<string, string>()
                 };
 
                 CdrWinTrack     currenttrack            = new CdrWinTrack {Indexes = new Dictionary<int, ulong>()};
@@ -125,18 +138,99 @@ namespace DiscImageChef.DiscImages
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
                 cueStream = new StreamReader(imageFilter.GetDataForkStream());
 
-                FiltersList filtersList = new FiltersList();
+                FiltersList filtersList       = new FiltersList();
+                bool        inTruripDiscHash  = false;
+                bool        inTruripTrackHash = false;
 
                 while(cueStream.Peek() >= 0)
                 {
                     lineNumber++;
                     string line = cueStream.ReadLine();
 
-                    Match matchSession  = regexSession.Match(line);
-                    Match matchDiskType = regexDiskType.Match(line);
-                    Match matchComment  = regexComment.Match(line);
-                    Match matchLba      = regexLba.Match(line);
-                    Match matchLeadOut  = regexLeadOut.Match(line);
+                    Match matchSession     = regexSession.Match(line);
+                    Match matchDiskType    = regexDiskType.Match(line);
+                    Match matchComment     = regexComment.Match(line);
+                    Match matchLba         = regexLba.Match(line);
+                    Match matchLeadOut     = regexLeadOut.Match(line);
+                    Match matchApplication = regexApplication.Match(line);
+                    Match matchTruripDisc  = regexTruripDisc.Match(line);
+                    Match matchTruripTrack = regexTruripTrack.Match(line);
+
+                    if(inTruripDiscHash)
+                    {
+                        Match matchTruripDiscCrc32 = regexTruripDiscCrc32.Match(line);
+                        Match matchTruripDiscMd5   = regexTruripDiscMd5.Match(line);
+                        Match matchTruripDiscSha1  = regexTruripDiscSha1.Match(line);
+
+                        if(matchTruripDiscCrc32.Success)
+                        {
+                            DicConsole.DebugWriteLine("CDRWin plugin", "Found REM CRC32 at line {0}", lineNumber);
+                            discimage.DiscHashes.Add("crc32", matchTruripDiscCrc32.Groups[1].Value.ToLowerInvariant());
+                            continue;
+                        }
+
+                        if(matchTruripDiscMd5.Success)
+                        {
+                            DicConsole.DebugWriteLine("CDRWin plugin", "Found REM MD5 at line {0}", lineNumber);
+                            discimage.DiscHashes.Add("md5", matchTruripDiscMd5.Groups[1].Value.ToLowerInvariant());
+                            continue;
+                        }
+
+                        if(matchTruripDiscSha1.Success)
+                        {
+                            DicConsole.DebugWriteLine("CDRWin plugin", "Found REM SHA1 at line {0}", lineNumber);
+                            discimage.DiscHashes.Add("sha1", matchTruripDiscSha1.Groups[1].Value.ToLowerInvariant());
+                            continue;
+                        }
+                    }
+                    else if(inTruripTrackHash)
+                    {
+                        Match matchTruripTrackCrc32       = regexTruripTrackCrc32.Match(line);
+                        Match matchTruripTrackMd5         = regexTruripTrackMd5.Match(line);
+                        Match matchTruripTrackSha1        = regexTruripTrackSha1.Match(line);
+                        Match matchTruripTrackUnknownHash = regexTruripTrackUnknownHash.Match(line);
+
+                        if(matchTruripTrackCrc32.Success)
+                        {
+                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
+                                                      lineNumber,
+                                                      matchTruripTrackCrc32.Groups[1].Value == "Trk" ? "track" : "gap",
+                                                      matchTruripTrackCrc32.Groups[2].Value);
+                            continue;
+                        }
+
+                        if(matchTruripTrackMd5.Success)
+                        {
+                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
+                                                      lineNumber,
+                                                      matchTruripTrackMd5.Groups[1].Value == "Trk" ? "track" : "gap",
+                                                      matchTruripTrackMd5.Groups[2].Value);
+                            continue;
+                        }
+
+                        if(matchTruripTrackSha1.Success)
+                        {
+                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
+                                                      lineNumber,
+                                                      matchTruripTrackSha1.Groups[1].Value == "Trk" ? "track" : "gap",
+                                                      matchTruripTrackSha1.Groups[2].Value);
+                            continue;
+                        }
+
+                        if(matchTruripTrackUnknownHash.Success)
+                        {
+                            DicConsole.DebugWriteLine("CDRWin plugin",
+                                                      "Found unknown hash for {1} {2} at line {0}. Please report this disc image.",
+                                                      lineNumber,
+                                                      matchTruripTrackUnknownHash.Groups[1].Value == "Trk"
+                                                          ? "track"
+                                                          : "gap", matchTruripTrackUnknownHash.Groups[2].Value);
+                            continue;
+                        }
+                    }
+
+                    inTruripDiscHash  = false;
+                    inTruripTrackHash = false;
 
                     if(matchDiskType.Success && !intrack)
                     {
@@ -158,6 +252,25 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
                     else if(matchLeadOut.Success)
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", lineNumber);
+                    else if(matchApplication.Success)
+                    {
+                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM Ripping Tool at line {0}", lineNumber);
+                        imageInfo.Application = matchApplication.Groups[1].Value;
+                    }
+                    else if(matchTruripDisc.Success)
+                    {
+                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM DISC HASHES at line {0}", lineNumber);
+                        inTruripDiscHash = true;
+                    }
+                    else if(matchTruripTrack.Success)
+                    {
+                        DicConsole.DebugWriteLine("CDRWin plugin",
+                                                  "Found REM Gap Append Method: {1} [{2}] HASHES at line {0}",
+                                                  lineNumber, matchTruripTrack.Groups[1].Value,
+                                                  matchTruripTrack.Groups[2].Value);
+                        inTruripTrackHash  = true;
+                        discimage.IsTrurip = true;
+                    }
                     else if(matchComment.Success)
                     {
                         DicConsole.DebugWriteLine("CDRWin plugin", "Found REM at line {0}", lineNumber);
@@ -840,7 +953,11 @@ namespace DiscImageChef.DiscImages
                 // Detect ISOBuster extensions
                 if(discimage.Disktypestr    != null || discimage.Comment.ToLower().Contains("isobuster") ||
                    discimage.Sessions.Count > 1) imageInfo.Application = "ISOBuster";
-                else imageInfo.Application                             = "CDRWin";
+                else if(imageInfo.Application is null)
+                {
+                    if(discimage.IsTrurip) imageInfo.Application = "trurip";
+                    else imageInfo.Application                   = "CDRWin";
+                }
 
                 imageInfo.CreationTime         = imageFilter.GetCreationTime();
                 imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();

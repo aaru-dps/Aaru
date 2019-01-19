@@ -157,5 +157,17 @@ namespace DiscImageChef.DiscImages
         const string REGEX_PREGAP     = @"\bPREGAP\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
         const string REGEX_POSTGAP    = @"\bPOSTGAP\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
         const string REGEX_FLAGS      = @"\bFLAGS\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\s*)+$";
+        // Trurip extensions
+        const string REGEX_APPLICATION        = @"\bREM\s+Ripping Tool:\s+(?<application>.+)$";
+        const string REGEX_TRURIP_DISC_HASHES = @"\bREM\s+DISC\s+HASHES$";
+        const string REGEX_TRURIP_DISC_CRC32  = @"\bREM\s+CRC32\s+:\s+(?<hash>[\da-f]{8})$";
+        const string REGEX_TRURIP_DISC_MD5    = @"\bREM\s+MD5\s+:\s+(?<hash>[\da-f]{32})$";
+        const string REGEX_TRURIP_DISC_SHA1   = @"\bREM\s+SHA1\s+:\s+(?<hash>[\da-f]{40})$";
+        const string REGEX_TRURIP_TRACK_METHOD =
+            @"\bREM\s+Gap\s+Append\s+Method:\s+(?<method>Prev|None|Next)\s+\[(?<hash>\w+)\]$";
+        const string REGEX_TRURIP_TRACK_CRC32   = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{8}$";
+        const string REGEX_TRURIP_TRACK_MD5     = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{32}$";
+        const string REGEX_TRURIP_TRACK_SHA1    = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{40}$";
+        const string REGEX_TRURIP_TRACK_UNKNOWN = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{8,}$";
     }
 }

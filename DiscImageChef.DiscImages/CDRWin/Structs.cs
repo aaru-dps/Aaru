@@ -127,6 +127,10 @@ namespace DiscImageChef.DiscImages
             public string Comment;
             /// <summary>File containing CD-Text</summary>
             public string Cdtextfile;
+            /// <summary>Has trurip extensions</summary>
+            public bool IsTrurip;
+            /// <summary>Disc image hashes</summary>
+            public Dictionary<string, string> DiscHashes;
         }
     }
 }
