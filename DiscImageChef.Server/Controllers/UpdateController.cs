@@ -81,7 +81,7 @@ namespace DiscImageChef.Server.Controllers
             sync.Devices = new List<DeviceDto>();
             foreach(Device device in ctx.Devices.Where(d => d.ModifiedWhen > lastSync).ToList())
                 sync.Devices.Add(new
-                                     DeviceDto(JsonConvert.DeserializeObject<DeviceReportV2>(JsonConvert.SerializeObject(device)),
+                                     DeviceDto(JsonConvert.DeserializeObject<DeviceReportV2>(JsonConvert.SerializeObject(device, Formatting.None, new JsonSerializerSettings {ReferenceLoopHandling = ReferenceLoopHandling.Ignore})),
                                                device.Id, device.OptimalMultipleSectorsRead));
 
             JsonSerializer js = JsonSerializer.Create();
