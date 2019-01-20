@@ -135,28 +135,5 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         byte[] ReadSectorsLong(ulong sectorAddress, uint length);
-
-        /// <summary>
-        ///     Verifies a sector.
-        /// </summary>
-        /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
-        /// <param name="sectorAddress">Sector address (LBA).</param>
-        bool? VerifySector(ulong sectorAddress);
-
-        /// <summary>
-        ///     Verifies several sectors.
-        /// </summary>
-        /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
-        /// <param name="sectorAddress">Starting sector address (LBA).</param>
-        /// <param name="length">How many sectors to read.</param>
-        /// <param name="failingLbas">List of incorrect sectors</param>
-        /// <param name="unknownLbas">List of uncheckable sectors</param>
-        bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas, out List<ulong> unknownLbas);
-
-        /// <summary>
-        ///     Verifies media image internal checksum.
-        /// </summary>
-        /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
-        bool? VerifyMediaImage();
     }
 }

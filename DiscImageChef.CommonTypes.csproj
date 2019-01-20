@@ -74,6 +74,8 @@
     <Compile Include="Interfaces\IPartitionableMediaImage.cs" />
     <Compile Include="Interfaces\IPluginRegister.cs" />
     <Compile Include="Interfaces\IReadOnlyFilesystem.cs" />
+    <Compile Include="Interfaces\IVerifiableImage.cs" />
+    <Compile Include="Interfaces\IVerifiableSectorsImage.cs" />
     <Compile Include="Interfaces\IWritableFloppyImage.cs" />
     <Compile Include="Interfaces\IWritableImage.cs" />
     <Compile Include="Interfaces\IWritableOpticalImage.cs" />
