@@ -2,15 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : IMediaImage.cs
+// Filename       : IOpticalMediaImage.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disc image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines interface to be implemented by block addressable disk image
-//     plugins.
+//     Defines interface to be implemented by optical disc image plugins.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -37,126 +36,105 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
-using Schemas;
 
 namespace DiscImageChef.CommonTypes.Interfaces
 {
     /// <summary>
     ///     Abstract class to implement disk image reading plugins.
     /// </summary>
-    public interface IMediaImage
+    public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage
     {
-        /// <summary>Image information</summary>
-        ImageInfo Info { get; }
-        /// <summary>Plugin name.</summary>
-        string Name { get; }
-        /// <summary>Plugin UUID.</summary>
-        Guid Id { get; }
-        /// <summary>Plugin author</summary>
-        string Author { get; }
         /// <summary>
-        ///     Gets the image format.
+        ///     Gets the disc track extents (start, length).
         /// </summary>
-        /// <value>The image format.</value>
-        string Format { get; }
-        /// <summary>List of dump hardware used to create the image from real media</summary>
-        List<DumpHardwareType> DumpHardware { get; }
-        /// <summary>Gets the CICM XML metadata for the image</summary>
-        CICMMetadataType CicmMetadata { get; }
+        /// <value>The track extents.</value>
+        List<Track> Tracks { get; }
+        /// <summary>
+        ///     Gets the sessions (optical discs only).
+        /// </summary>
+        /// <value>The sessions.</value>
+        List<Session> Sessions { get; }
 
         /// <summary>
-        ///     Identifies the image.
-        /// </summary>
-        /// <returns><c>true</c>, if image was identified, <c>false</c> otherwise.</returns>
-        /// <param name="imageFilter">Image filter.</param>
-        bool Identify(IFilter imageFilter);
-
-        /// <summary>
-        ///     Opens the image.
-        /// </summary>
-        /// <returns><c>true</c>, if image was opened, <c>false</c> otherwise.</returns>
-        /// <param name="imageFilter">Image filter.</param>
-        bool Open(IFilter imageFilter);
-
-        /// <summary>
-        ///     Reads a disk tag.
-        /// </summary>
-        /// <returns>Disk tag</returns>
-        /// <param name="tag">Tag type to read.</param>
-        byte[] ReadDiskTag(MediaTagType tag);
-
-        /// <summary>
-        ///     Reads a sector's user data.
+        ///     Reads a sector's user data, relative to track.
         /// </summary>
         /// <returns>The sector's user data.</returns>
-        /// <param name="sectorAddress">Sector address (LBA).</param>
-        byte[] ReadSector(ulong sectorAddress);
+        /// <param name="sectorAddress">Sector address (relative LBA).</param>
+        /// <param name="track">Track.</param>
+        byte[] ReadSector(ulong sectorAddress, uint track);
 
         /// <summary>
-        ///     Reads a sector's tag.
+        ///     Reads a sector's tag, relative to track.
         /// </summary>
         /// <returns>The sector's tag.</returns>
-        /// <param name="sectorAddress">Sector address (LBA).</param>
+        /// <param name="sectorAddress">Sector address (relative LBA).</param>
+        /// <param name="track">Track.</param>
         /// <param name="tag">Tag type.</param>
-        byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag);
+        byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag);
 
         /// <summary>
-        ///     Reads user data from several sectors.
+        ///     Reads user data from several sectors, relative to track.
         /// </summary>
         /// <returns>The sectors user data.</returns>
-        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
-        byte[] ReadSectors(ulong sectorAddress, uint length);
+        /// <param name="track">Track.</param>
+        byte[] ReadSectors(ulong sectorAddress, uint length, uint track);
 
         /// <summary>
-        ///     Reads tag from several sectors.
+        ///     Reads tag from several sectors, relative to track.
         /// </summary>
         /// <returns>The sectors tag.</returns>
-        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
+        /// <param name="track">Track.</param>
         /// <param name="tag">Tag type.</param>
-        byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag);
+        byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag);
 
         /// <summary>
-        ///     Reads a complete sector (user data + all tags).
+        ///     Reads a complete sector (user data + all tags), relative to track.
         /// </summary>
         /// <returns>The complete sector. Format depends on disk type.</returns>
-        /// <param name="sectorAddress">Sector address (LBA).</param>
-        byte[] ReadSectorLong(ulong sectorAddress);
+        /// <param name="sectorAddress">Sector address (relative LBA).</param>
+        /// <param name="track">Track.</param>
+        byte[] ReadSectorLong(ulong sectorAddress, uint track);
 
         /// <summary>
-        ///     Reads several complete sector (user data + all tags).
+        ///     Reads several complete sector (user data + all tags), relative to track.
         /// </summary>
         /// <returns>The complete sectors. Format depends on disk type.</returns>
-        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
-        byte[] ReadSectorsLong(ulong sectorAddress, uint length);
+        /// <param name="track">Track.</param>
+        byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track);
 
         /// <summary>
-        ///     Verifies a sector.
+        ///     Gets the disc track extents for a specified session.
         /// </summary>
-        /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
-        /// <param name="sectorAddress">Sector address (LBA).</param>
-        bool? VerifySector(ulong sectorAddress);
+        /// <returns>The track exents for that session.</returns>
+        /// <param name="session">Session.</param>
+        List<Track> GetSessionTracks(Session session);
 
         /// <summary>
-        ///     Verifies several sectors.
+        ///     Gets the disc track extents for a specified session.
+        /// </summary>
+        /// <returns>The track exents for that session.</returns>
+        /// <param name="session">Session.</param>
+        List<Track> GetSessionTracks(ushort session);
+
+        /// <summary>
+        ///     Verifies several sectors, relative to track.
         /// </summary>
         /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
-        /// <param name="sectorAddress">Starting sector address (LBA).</param>
+        /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
+        /// <param name="track">Track.</param>
         /// <param name="failingLbas">List of incorrect sectors</param>
         /// <param name="unknownLbas">List of uncheckable sectors</param>
-        bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas, out List<ulong> unknownLbas);
-
-        /// <summary>
-        ///     Verifies media image internal checksum.
-        /// </summary>
-        /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
-        bool? VerifyMediaImage();
+        bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                            out List<ulong> unknownLbas);
     }
 }

@@ -132,13 +132,6 @@ namespace DiscImageChef.CommonTypes.Interfaces
         bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length);
 
         /// <summary>
-        ///     Sets tracks for optical media
-        /// </summary>
-        /// <param name="tracks">List of tracks</param>
-        /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
-        bool SetTracks(List<Track> tracks);
-
-        /// <summary>
         ///     Closes and flushes to disk the image
         /// </summary>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
