@@ -33,7 +33,7 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - SLR drive and tapes
 - Sony Hi-MD and media
 - Sony HiFD
-- Sony MD-DATA and media
+- Sony MD-DATA and media (e.g. MDM-111, MDH-10)
 - Sony Professional Disc for DATA
 - Stringy floppy
 - Syquest EZ135 drive and media
