@@ -39,7 +39,5 @@ namespace DiscImageChef.DiscImages
     {
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public bool? VerifyMediaImage() => null;
     }
 }

@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class PartClone : IMediaImage
+    public partial class PartClone : IMediaImage, IVerifiableImage
     {
         // The used block "bitmap" uses one byte per block
         // TODO: Convert on-image bytemap to on-memory bitmap

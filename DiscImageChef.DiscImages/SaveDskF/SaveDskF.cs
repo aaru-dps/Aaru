@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class SaveDskF : IWritableImage
+    public partial class SaveDskF : IWritableImage, IVerifiableImage
     {
         uint           calculatedChk;
         byte[]         decodedDisk;

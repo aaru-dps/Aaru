@@ -41,7 +41,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class Partimage : IMediaImage
+    public partial class Partimage : IMediaImage, IVerifiableImage
     {
         byte[]                    bitmap;
         PartimageMainHeader       cMainHeader;

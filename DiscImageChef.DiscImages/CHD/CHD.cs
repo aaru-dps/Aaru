@@ -40,7 +40,7 @@ using DiscImageChef.CommonTypes.Structs;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Implement PCMCIA support
-    public partial class Chd : IOpticalMediaImage
+    public partial class Chd : IOpticalMediaImage, IVerifiableImage
     {
         /// <summary>"MComprHD"</summary>
         readonly byte[] chdTag = {0x4D, 0x43, 0x6F, 0x6D, 0x70, 0x72, 0x48, 0x44};

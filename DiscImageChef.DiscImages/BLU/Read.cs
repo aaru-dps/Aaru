@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -219,20 +218,6 @@ namespace DiscImageChef.DiscImages
             stream.Read(buffer, 0, buffer.Length);
 
             return buffer;
-        }
-
-        // TODO: Check tag checkums
-        public bool? VerifySector(ulong sectorAddress) => null;
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
-
-            return null;
         }
     }
 }

@@ -64,6 +64,11 @@ namespace DiscImageChef.Gui.Forms
             stkProgress.Visible      = true;
             lblProgress2.Visible     = false;
 
+            chkVerifySectors.Visible = inputFormat as IOpticalMediaImage      != null ||
+                                       inputFormat as IVerifiableSectorsImage != null;
+
+            // TODO: Do not offer the option to use this form if the image does not support any kind of verification
+
             new Thread(DoWork).Start();
         }
 
@@ -76,7 +81,8 @@ namespace DiscImageChef.Gui.Forms
             long  unknownSectors = 0;
             bool  formatHasTracks;
 
-            IOpticalMediaImage inputOptical = inputFormat as IOpticalMediaImage;
+            IOpticalMediaImage      inputOptical           = inputFormat as IOpticalMediaImage;
+            IVerifiableSectorsImage verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
 
             try { formatHasTracks = inputOptical?.Tracks?.Count > 0; }
             catch { formatHasTracks = false; }
@@ -110,46 +116,56 @@ namespace DiscImageChef.Gui.Forms
 
             if(chkVerifyImage.Checked == true)
             {
-                Application.Instance.Invoke(() =>
-                {
-                    lblProgress.Text = "Checking media image...";
-                    if(chkVerifySectors.Checked == true) prgProgress.Value = 1;
-                    else prgProgress.Indeterminate                         = true;
-
-                    prgProgress2.Indeterminate = true;
-                });
-
-                DateTime startCheck      = DateTime.UtcNow;
-                bool?    discCheckStatus = inputFormat.VerifyMediaImage();
-                DateTime endCheck        = DateTime.UtcNow;
-
-                TimeSpan checkTime = endCheck - startCheck;
-
-                Application.Instance.Invoke(() =>
-                {
-                    lblImageResult.Visible = true;
-                    switch(discCheckStatus)
+                if(!(inputFormat is IVerifiableImage verifiableImage))
+                    Application.Instance.Invoke(() =>
                     {
-                        case true:
-                            lblImageResult.Text = "Disc image checksums are correct";
-                            break;
-                        case false:
-                            lblImageResult.Text = "Disc image checksums are incorrect";
-                            break;
-                        case null:
-                            lblImageResult.Text = "Disc image does not contain checksums";
-                            break;
-                    }
-                });
+                        lblImageResult.Visible = true;
+                        lblImageResult.Text    = "Disc image does not support verification.";
+                    });
+                else
+                {
+                    Application.Instance.Invoke(() =>
+                    {
+                        lblProgress.Text = "Checking media image...";
+                        if(chkVerifySectors.Checked == true) prgProgress.Value = 1;
+                        else prgProgress.Indeterminate                         = true;
 
-                correctDisc = discCheckStatus;
-                DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
+                        prgProgress2.Indeterminate = true;
+                    });
+
+                    DateTime startCheck      = DateTime.UtcNow;
+                    bool?    discCheckStatus = verifiableImage.VerifyMediaImage();
+                    DateTime endCheck        = DateTime.UtcNow;
+
+                    TimeSpan checkTime = endCheck - startCheck;
+
+                    Application.Instance.Invoke(() =>
+                    {
+                        lblImageResult.Visible = true;
+                        switch(discCheckStatus)
+                        {
+                            case true:
+                                lblImageResult.Text = "Disc image checksums are correct";
+                                break;
+                            case false:
+                                lblImageResult.Text = "Disc image checksums are incorrect";
+                                break;
+                            case null:
+                                lblImageResult.Text = "Disc image does not contain checksums";
+                                break;
+                        }
+                    });
+
+                    correctDisc = discCheckStatus;
+                    DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds",
+                                                checkTime.TotalSeconds);
+                }
             }
 
             if(chkVerifySectors.Checked == true)
             {
-                DateTime    startCheck;
-                DateTime    endCheck;
+                DateTime    startCheck  = DateTime.Now;
+                DateTime    endCheck    = startCheck;
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
 
@@ -232,7 +248,7 @@ namespace DiscImageChef.Gui.Forms
 
                     endCheck = DateTime.UtcNow;
                 }
-                else
+                else if(!(verifiableSectorsImage is null))
                 {
                     ulong remainingSectors = inputFormat.Info.Sectors;
                     ulong currentSector    = 0;
@@ -262,9 +278,11 @@ namespace DiscImageChef.Gui.Forms
                         List<ulong> tempunknownLbas;
 
                         if(remainingSectors < 512)
-                            inputFormat.VerifySectors(currentSector, (uint)remainingSectors, out tempfailingLbas,
-                                                      out tempunknownLbas);
-                        else inputFormat.VerifySectors(currentSector, 512, out tempfailingLbas, out tempunknownLbas);
+                            verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                                                 out tempfailingLbas, out tempunknownLbas);
+                        else
+                            verifiableSectorsImage.VerifySectors(currentSector, 512, out tempfailingLbas,
+                                                                 out tempunknownLbas);
 
                         failingLbas.AddRange(tempfailingLbas);
 

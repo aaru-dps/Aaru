@@ -1,15 +1,15 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Unsupported.cs
+// Filename       : Verify.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disk image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains features unsupported by cdrdao cuesheets (toc/bin).
+//     Verifies KryoFlux STREAM images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,10 +30,18 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using System;
+using System.Collections.Generic;
+
 namespace DiscImageChef.DiscImages
 {
-    public partial class Cdrdao
+    public partial class KryoFlux
     {
-        public bool? VerifyMediaImage() => null;
+        public bool? VerifySector(ulong sectorAddress) =>
+            throw new NotImplementedException("Flux decoding is not yet implemented.");
+
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas) =>
+            throw new NotImplementedException("Flux decoding is not yet implemented.");
     }
 }

@@ -1,15 +1,15 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Unsupported.cs
+// Filename       : Verify.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disk image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains features unsupported by CloneCD disc images.
+//     Verifies IBM SaveDskF disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -32,8 +32,8 @@
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class CloneCd
+    public partial class SaveDskF
     {
-        public bool? VerifyMediaImage() => null;
+        public bool? VerifyMediaImage() => calculatedChk == header.checksum;
     }
 }

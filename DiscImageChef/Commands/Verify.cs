@@ -128,10 +128,19 @@ namespace DiscImageChef.Commands
             bool? correctSectors = null;
             long  unknownSectors = 0;
 
+            IVerifiableImage        verifiableImage        = inputFormat as IVerifiableImage;
+            IVerifiableSectorsImage verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
+
+            if(verifiableImage is null && verifiableSectorsImage is null)
+            {
+                DicConsole.ErrorWriteLine("The specified image does not support any kind of verification");
+                return (int)ErrorNumber.NotVerificable;
+            }
+
             if(verifyDisc)
             {
                 DateTime startCheck      = DateTime.UtcNow;
-                bool?    discCheckStatus = inputFormat.VerifyMediaImage();
+                bool?    discCheckStatus = verifiableImage.VerifyMediaImage();
                 DateTime endCheck        = DateTime.UtcNow;
 
                 TimeSpan checkTime = endCheck - startCheck;
@@ -155,8 +164,8 @@ namespace DiscImageChef.Commands
 
             if(verifySectors)
             {
-                DateTime    startCheck;
-                DateTime    endCheck;
+                DateTime    startCheck  = DateTime.Now;
+                DateTime    endCheck    = startCheck;
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
 
@@ -208,7 +217,7 @@ namespace DiscImageChef.Commands
 
                     endCheck = DateTime.UtcNow;
                 }
-                else
+                else if(verifiableSectorsImage != null)
                 {
                     ulong remainingSectors = inputFormat.Info.Sectors;
                     ulong currentSector    = 0;
@@ -222,9 +231,11 @@ namespace DiscImageChef.Commands
                         List<ulong> tempunknownLbas;
 
                         if(remainingSectors < 512)
-                            inputFormat.VerifySectors(currentSector, (uint)remainingSectors, out tempfailingLbas,
-                                                      out tempunknownLbas);
-                        else inputFormat.VerifySectors(currentSector, 512, out tempfailingLbas, out tempunknownLbas);
+                            verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                                                 out tempfailingLbas, out tempunknownLbas);
+                        else
+                            verifiableSectorsImage.VerifySectors(currentSector, 512, out tempfailingLbas,
+                                                                 out tempunknownLbas);
 
                         failingLbas.AddRange(tempfailingLbas);
 

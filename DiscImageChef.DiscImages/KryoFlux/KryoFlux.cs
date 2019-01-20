@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes.Structs;
 namespace DiscImageChef.DiscImages
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    public partial class KryoFlux : IMediaImage
+    public partial class KryoFlux : IMediaImage, IVerifiableSectorsImage
     {
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public SortedDictionary<byte, IFilter> tracks;

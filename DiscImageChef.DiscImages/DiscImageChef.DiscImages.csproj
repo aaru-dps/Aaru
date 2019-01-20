@@ -66,6 +66,7 @@
     <Compile Include="Alcohol120\Properties.cs" />
     <Compile Include="Alcohol120\Read.cs" />
     <Compile Include="Alcohol120\Structs.cs" />
+    <Compile Include="Alcohol120\Verify.cs" />
     <Compile Include="Alcohol120\Write.cs" />
     <Compile Include="Anex86\Anex86.cs" />
     <Compile Include="Anex86\Identify.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="BlindWrite4\Properties.cs" />
     <Compile Include="BlindWrite4\Read.cs" />
     <Compile Include="BlindWrite4\Structs.cs" />
+    <Compile Include="BlindWrite4\Verify.cs" />
     <Compile Include="BlindWrite5\Constants.cs" />
     <Compile Include="BlindWrite5\Enums.cs" />
     <Compile Include="BlindWrite5\Helpers.cs" />
@@ -118,11 +120,13 @@
     <Compile Include="BlindWrite5\Properties.cs" />
     <Compile Include="BlindWrite5\Read.cs" />
     <Compile Include="BlindWrite5\Structs.cs" />
+    <Compile Include="BlindWrite5\Verify.cs" />
     <Compile Include="BLU\Constants.cs" />
     <Compile Include="BLU\Identify.cs" />
     <Compile Include="BLU\Properties.cs" />
     <Compile Include="BLU\Read.cs" />
     <Compile Include="BLU\Unsupported.cs" />
+    <Compile Include="BLU\Verify.cs" />
     <Compile Include="BLU\Write.cs" />
     <Compile Include="CDRDAO\Constants.cs" />
     <Compile Include="CDRDAO\Helpers.cs" />
@@ -130,7 +134,7 @@
     <Compile Include="CDRDAO\Properties.cs" />
     <Compile Include="CDRDAO\Read.cs" />
     <Compile Include="CDRDAO\Structs.cs" />
-    <Compile Include="CDRDAO\Unsupported.cs" />
+    <Compile Include="CDRDAO\Verify.cs" />
     <Compile Include="CDRDAO\Write.cs" />
     <Compile Include="CDRWin\Constants.cs" />
     <Compile Include="CDRWin\Helpers.cs" />
@@ -147,6 +151,7 @@
     <Compile Include="CHD\Properties.cs" />
     <Compile Include="CHD\Read.cs" />
     <Compile Include="CHD\Structs.cs" />
+    <Compile Include="CHD\Verify.cs" />
     <Compile Include="CisCopy\Enums.cs" />
     <Compile Include="CisCopy\Identify.cs" />
     <Compile Include="CisCopy\Properties.cs" />
@@ -158,7 +163,7 @@
     <Compile Include="CloneCD\Identify.cs" />
     <Compile Include="CloneCD\Properties.cs" />
     <Compile Include="CloneCD\Read.cs" />
-    <Compile Include="CloneCD\Unsupported.cs" />
+    <Compile Include="CloneCD\Verify.cs" />
     <Compile Include="CloneCD\Write.cs" />
     <Compile Include="CopyQM\Constants.cs" />
     <Compile Include="CopyQM\Identify.cs" />
@@ -198,7 +203,7 @@
     <Compile Include="DiscFerret\Properties.cs" />
     <Compile Include="DiscFerret\Read.cs" />
     <Compile Include="DiscFerret\Structs.cs" />
-    <Compile Include="DiscFerret\Unsupported.cs" />
+    <Compile Include="DiscFerret\Verify.cs" />
     <Compile Include="DiscImageChef\CdEcc.cs" />
     <Compile Include="DiscImageChef\ClauniaSubchannelTransform.cs" />
     <Compile Include="DiscImageChef\Constants.cs" />
@@ -215,6 +220,7 @@
     <Compile Include="DiscJuggler\Identify.cs" />
     <Compile Include="DiscJuggler\Properties.cs" />
     <Compile Include="DiscJuggler\Read.cs" />
+    <Compile Include="DiscJuggler\Verify.cs" />
     <Compile Include="DiskCopy42\Constants.cs" />
     <Compile Include="DiskCopy42\Helpers.cs" />
     <Compile Include="DiskCopy42\Identify.cs" />
@@ -222,6 +228,7 @@
     <Compile Include="DiskCopy42\Read.cs" />
     <Compile Include="DiskCopy42\Structs.cs" />
     <Compile Include="DiskCopy42\Unsupported.cs" />
+    <Compile Include="DiskCopy42\Verify.cs" />
     <Compile Include="DiskCopy42\Write.cs" />
     <Compile Include="DriDiskCopy\Constants.cs" />
     <Compile Include="DriDiskCopy\Enums.cs" />
@@ -237,6 +244,7 @@
     <Compile Include="GDI\Read.cs" />
     <Compile Include="GDI\Structs.cs" />
     <Compile Include="GDI\Unsupported.cs" />
+    <Compile Include="GDI\Verify.cs" />
     <Compile Include="HDCopy\HDCopy.cs" />
     <Compile Include="HDCopy\Helpers.cs" />
     <Compile Include="HDCopy\Identify.cs" />
@@ -260,7 +268,7 @@
     <Compile Include="KryoFlux\Properties.cs" />
     <Compile Include="KryoFlux\Read.cs" />
     <Compile Include="KryoFlux\Structs.cs" />
-    <Compile Include="KryoFlux\Unsupported.cs" />
+    <Compile Include="KryoFlux\Verify.cs" />
     <Compile Include="MaxiDisk\Enums.cs" />
     <Compile Include="MaxiDisk\Identify.cs" />
     <Compile Include="MaxiDisk\Properties.cs" />
@@ -282,6 +290,7 @@
     <Compile Include="Nero\Properties.cs" />
     <Compile Include="Nero\Read.cs" />
     <Compile Include="Nero\Structs.cs" />
+    <Compile Include="Nero\Verify.cs" />
     <Compile Include="NHDr0\Constants.cs" />
     <Compile Include="NHDr0\Identify.cs" />
     <Compile Include="NHDr0\Properties.cs" />
@@ -303,6 +312,7 @@
     <Compile Include="PartClone\Read.cs" />
     <Compile Include="PartClone\Structs.cs" />
     <Compile Include="PartClone\Unsupported.cs" />
+    <Compile Include="PartClone\Verify.cs" />
     <Compile Include="Partimage\Constants.cs" />
     <Compile Include="Partimage\Enums.cs" />
     <Compile Include="Partimage\Helpers.cs" />
@@ -311,6 +321,7 @@
     <Compile Include="Partimage\Read.cs" />
     <Compile Include="Partimage\Structs.cs" />
     <Compile Include="Partimage\Unsupported.cs" />
+    <Compile Include="Partimage\Verify.cs" />
     <Compile Include="QCOW2\Constants.cs" />
     <Compile Include="QCOW2\Identify.cs" />
     <Compile Include="QCOW2\Properties.cs" />
@@ -357,6 +368,7 @@
     <Compile Include="SaveDskF\Read.cs" />
     <Compile Include="SaveDskF\Structs.cs" />
     <Compile Include="SaveDskF\Unsupported.cs" />
+    <Compile Include="SaveDskF\Verify.cs" />
     <Compile Include="SaveDskF\Write.cs" />
     <Compile Include="SuperCardPro\Constants.cs" />
     <Compile Include="SuperCardPro\Enums.cs" />
@@ -366,6 +378,7 @@
     <Compile Include="SuperCardPro\Read.cs" />
     <Compile Include="SuperCardPro\Structs.cs" />
     <Compile Include="SuperCardPro\SuperCardPro.cs" />
+    <Compile Include="SuperCardPro\Verify.cs" />
     <Compile Include="T98\Identify.cs" />
     <Compile Include="T98\Properties.cs" />
     <Compile Include="T98\Read.cs" />
@@ -379,6 +392,7 @@
     <Compile Include="TeleDisk\Structs.cs" />
     <Compile Include="TeleDisk\TeleDisk.cs" />
     <Compile Include="TeleDisk\Unsupported.cs" />
+    <Compile Include="TeleDisk\Verify.cs" />
     <Compile Include="UDIF\Constants.cs" />
     <Compile Include="UDIF\Identify.cs" />
     <Compile Include="UDIF\Properties.cs" />
@@ -443,6 +457,7 @@
     <Compile Include="ZZZRawImage\Identify.cs" />
     <Compile Include="ZZZRawImage\Properties.cs" />
     <Compile Include="ZZZRawImage\Read.cs" />
+    <Compile Include="ZZZRawImage\Verify.cs" />
     <Compile Include="ZZZRawImage\Write.cs" />
     <Compile Include="ZZZRawImage\ZZZRawImage.cs" />
     <Compile Include="CDRDAO\CDRDAO.cs" />

@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class CopyQm : IMediaImage
+    public partial class CopyQm : IMediaImage, IVerifiableImage
     {
         uint         calculatedDataCrc;
         byte[]       decodedDisk;

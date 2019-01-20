@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
@@ -1011,79 +1010,5 @@ namespace DiscImageChef.DiscImages
         {
             return Tracks.Where(track => track.TrackSession == session).ToList();
         }
-
-        public bool? VerifySector(ulong sectorAddress)
-        {
-            byte[] buffer = ReadSectorLong(sectorAddress);
-            return CdChecksums.CheckCdSector(buffer);
-        }
-
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return CdChecksums.CheckCdSector(buffer);
-        }
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            byte[] buffer = ReadSectorsLong(sectorAddress, length);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0) return null;
-
-            return failingLbas.Count <= 0;
-        }
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0) return null;
-
-            return failingLbas.Count <= 0;
-        }
-
-        public bool? VerifyMediaImage() => null;
     }
 }

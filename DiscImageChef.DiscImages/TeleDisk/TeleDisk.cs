@@ -40,7 +40,7 @@ namespace DiscImageChef.DiscImages
 {
     // Created following notes from Dave Dunfield
     // http://www.classiccmp.org/dunfield/img54306/td0notes.txt
-    public partial class TeleDisk : IMediaImage
+    public partial class TeleDisk : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
         bool                       aDiskCrcHasFailed;
         byte[]                     commentBlock;

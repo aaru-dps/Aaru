@@ -37,7 +37,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
@@ -1067,107 +1066,6 @@ namespace DiscImageChef.DiscImages
             if(cis != null) imageInfo.MediaType = MediaType.PCCardTypeI;
 
             return true;
-        }
-
-        public bool? VerifySector(ulong sectorAddress)
-        {
-            if(isHdd) return null;
-
-            byte[] buffer = ReadSectorLong(sectorAddress);
-            return CdChecksums.CheckCdSector(buffer);
-        }
-
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            if(isHdd)
-                throw new FeaturedNotSupportedByDiscImageException("Cannot access optical tracks on a hard disk image");
-
-            return VerifySector(GetAbsoluteSector(sectorAddress, track));
-        }
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            unknownLbas = new List<ulong>();
-            failingLbas = new List<ulong>();
-            if(isHdd) return null;
-
-            byte[] buffer = ReadSectorsLong(sectorAddress, length);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0) return null;
-
-            return failingLbas.Count <= 0;
-        }
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            unknownLbas = new List<ulong>();
-            failingLbas = new List<ulong>();
-            if(isHdd) return null;
-
-            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0) return null;
-
-            return failingLbas.Count <= 0;
-        }
-
-        public bool? VerifyMediaImage()
-        {
-            byte[] calculated;
-            if(mapVersion >= 3)
-            {
-                Sha1Context sha1Ctx = new Sha1Context();
-                for(uint i = 0; i < totalHunks; i++) sha1Ctx.Update(GetHunk(i));
-
-                calculated = sha1Ctx.Final();
-            }
-            else
-            {
-                Md5Context md5Ctx = new Md5Context();
-                for(uint i = 0; i < totalHunks; i++) md5Ctx.Update(GetHunk(i));
-
-                calculated = md5Ctx.Final();
-            }
-
-            return expectedChecksum.SequenceEqual(calculated);
         }
 
         public byte[] ReadSector(ulong sectorAddress)

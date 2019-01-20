@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
@@ -60,8 +59,8 @@ namespace DiscImageChef.DiscImages
             handle.Free();
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads,
-                                                            (ushort)fdihdr.spt, (uint)fdihdr.bps, MediaEncoding.MFM,
-                                                            false));
+                                                         (ushort)fdihdr.spt, (uint)fdihdr.bps, MediaEncoding.MFM,
+                                                         false));
             if(imageInfo.MediaType == MediaType.Unknown) imageInfo.MediaType = MediaType.GENERIC_HDD;
 
             DicConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", imageInfo.MediaType);
@@ -102,19 +101,5 @@ namespace DiscImageChef.DiscImages
 
             return buffer;
         }
-
-        public bool? VerifySector(ulong sectorAddress) => null;
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-            for(ulong i = 0; i < imageInfo.Sectors; i++) unknownLbas.Add(i);
-
-            return null;
-        }
-
-        public bool? VerifyMediaImage() => null;
     }
 }

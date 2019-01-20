@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes.Structs;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Implement track flags
-    public partial class CdrWin : IWritableOpticalImage
+    public partial class CdrWin : IWritableOpticalImage, IVerifiableImage
     {
         IFilter      cdrwinFilter;
         StreamReader cueStream;

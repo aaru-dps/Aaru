@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes.Enums;
@@ -522,23 +521,6 @@ namespace DiscImageChef.DiscImages
         public byte[] ReadSectorLong(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) => ReadSectors(sectorAddress, length);
-
-        public bool? VerifySector(ulong sectorAddress) => !sectorsWhereCrcHasFailed.Contains(sectorAddress);
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++)
-                if(sectorsWhereCrcHasFailed.Contains(sectorAddress))
-                    failingLbas.Add(sectorAddress);
-
-            return failingLbas.Count <= 0;
-        }
-
-        public bool? VerifyMediaImage() => aDiskCrcHasFailed;
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {

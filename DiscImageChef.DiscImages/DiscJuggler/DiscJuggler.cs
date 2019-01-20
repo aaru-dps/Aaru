@@ -40,7 +40,7 @@ namespace DiscImageChef.DiscImages
 {
     // Support separate data files? Never seen a DiscJuggler image using them anyways...
     // TODO: Too many unknowns to make this writable
-    public partial class DiscJuggler : IMediaImage
+    public partial class DiscJuggler : IOpticalMediaImage
     {
         byte[]                  cdtext;
         ImageInfo               imageInfo;

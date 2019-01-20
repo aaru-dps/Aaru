@@ -125,6 +125,8 @@
           <e p="IPartitionableMediaImage.cs" t="Include" />
           <e p="IPluginRegister.cs" t="Include" />
           <e p="IReadOnlyFilesystem.cs" t="Include" />
+          <e p="IVerifiableImage.cs" t="Include" />
+          <e p="IVerifiableSectorsImage.cs" t="Include" />
           <e p="IWritableFloppyImage.cs" t="Include" />
           <e p="IWritableImage.cs" t="Include" />
           <e p="IWritableOpticalImage.cs" t="Include" />
@@ -615,6 +617,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
         <e p="Anex86" t="Include">
@@ -676,6 +679,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
         <e p="BlindWrite4" t="Include">
@@ -686,6 +690,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="BlindWrite5" t="Include">
           <e p="BlindWrite5.cs" t="Include" />
@@ -696,6 +701,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="CDRDAO" t="Include">
           <e p="CDRDAO.cs" t="Include" />
@@ -705,7 +711,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
         <e p="CDRWin" t="Include">
@@ -728,6 +734,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="CPCDSK" t="Include">
           <e p="CPCDSK.cs" t="Include" />
@@ -755,7 +762,7 @@
           <e p="Identify.cs" t="Include" />
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
         <e p="CopyQM" t="Include">
@@ -802,7 +809,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="DiscImageChef" t="Include">
           <e p="CdEcc.cs" t="Include" />
@@ -825,6 +832,7 @@
           <e p="Identify.cs" t="Include" />
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="DiskCopy42" t="Include">
           <e p="Constants.cs" t="Include" />
@@ -835,6 +843,7 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
         <e p="DriDiskCopy" t="Include">
@@ -856,6 +865,7 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="HDCopy" t="Include">
           <e p="HDCopy.cs" t="Include" />
@@ -883,7 +893,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="MaxiDisk" t="Include">
           <e p="Enums.cs" t="Include" />
@@ -923,6 +933,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="Parallels" t="Include">
           <e p="Constants.cs" t="Include" />
@@ -943,6 +954,7 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="Partimage" t="Include">
           <e p="Constants.cs" t="Include" />
@@ -954,6 +966,7 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="QCOW" t="Include">
           <e p="Constants.cs" t="Include" />
@@ -1018,6 +1031,7 @@
           <e p="SaveDskF.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
         <e p="SuperCardPro" t="Include">
@@ -1029,6 +1043,7 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="SuperCardPro.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="T98" t="Include">
           <e p="Identify.cs" t="Include" />
@@ -1047,6 +1062,7 @@
           <e p="Structs.cs" t="Include" />
           <e p="TeleDisk.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
         </e>
         <e p="UDIF" t="Include">
           <e p="Constants.cs" t="Include" />
@@ -1135,6 +1151,7 @@
           <e p="Identify.cs" t="Include" />
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
           <e p="ZZZRawImage.cs" t="Include" />
         </e>

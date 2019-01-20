@@ -247,27 +247,5 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
             throw new NotImplementedException("Flux decoding is not yet implemented.");
-
-        public bool? VerifySector(ulong sectorAddress) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas) =>
-            throw new NotImplementedException("Flux decoding is not yet implemented.");
-
-        public bool? VerifyMediaImage()
-        {
-            if(Header.flags.HasFlag(ScpFlags.Writable)) return null;
-
-            byte[] wholeFile = new byte[scpStream.Length];
-            uint   sum       = 0;
-
-            scpStream.Position = 0;
-            scpStream.Read(wholeFile, 0, wholeFile.Length);
-
-            for(int i = 0x10; i < wholeFile.Length; i++) sum += wholeFile[i];
-
-            return Header.checksum == sum;
-        }
     }
 }

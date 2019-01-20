@@ -37,7 +37,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class DiscFerret : IMediaImage
+    public partial class DiscFerret : IMediaImage, IVerifiableSectorsImage
     {
         ImageInfo imageInfo;
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0

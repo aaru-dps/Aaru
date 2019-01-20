@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 
@@ -45,24 +44,6 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public bool? VerifySector(ulong sectorAddress) => null;
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-            for(ulong i = 0; i < imageInfo.Sectors; i++) unknownLbas.Add(i);
-
-            return null;
-        }
-
-        public bool? VerifyMediaImage() => null;
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
     }
 }

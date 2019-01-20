@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class SuperCardPro : IMediaImage
+    public partial class SuperCardPro : IMediaImage, IVerifiableImage, IVerifiableSectorsImage
     {
         // TODO: These variables have been made public so create-sidecar can access to this information until I define an API >4.0
         public ScpHeader                     Header;

@@ -1,15 +1,15 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Unsupported.cs
+// Filename       : Verify.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disk image plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains features unsupported by DiscFerret flux images.
+//     Verifies SuperCardPro flux images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,13 +30,33 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Exceptions;
+using System;
+using System.Collections.Generic;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class DiscFerret
+    public partial class SuperCardPro
     {
-        public bool? VerifyMediaImage() =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public bool? VerifyMediaImage()
+        {
+            if(Header.flags.HasFlag(ScpFlags.Writable)) return null;
+
+            byte[] wholeFile = new byte[scpStream.Length];
+            uint   sum       = 0;
+
+            scpStream.Position = 0;
+            scpStream.Read(wholeFile, 0, wholeFile.Length);
+
+            for(int i = 0x10; i < wholeFile.Length; i++) sum += wholeFile[i];
+
+            return Header.checksum == sum;
+        }
+
+        public bool? VerifySector(ulong sectorAddress) =>
+            throw new NotImplementedException("Flux decoding is not yet implemented.");
+
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas) =>
+            throw new NotImplementedException("Flux decoding is not yet implemented.");
     }
 }

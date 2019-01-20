@@ -45,7 +45,7 @@ namespace DiscImageChef.CommonTypes.Interfaces
     /// <summary>
     ///     Abstract class to implement disk image reading plugins.
     /// </summary>
-    public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage
+    public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage, IVerifiableSectorsImage
     {
         /// <summary>
         ///     Gets the disc track extents (start, length).

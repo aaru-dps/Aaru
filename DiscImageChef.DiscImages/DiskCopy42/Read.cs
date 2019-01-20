@@ -391,37 +391,6 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool? VerifyMediaImage()
-        {
-            byte[] data    = new byte[header.DataSize];
-            byte[] tags    = new byte[header.TagSize];
-            uint   tagsChk = 0;
-
-            DicConsole.DebugWriteLine("DC42 plugin", "Reading data");
-            Stream datastream = dc42ImageFilter.GetDataForkStream();
-            datastream.Seek(dataOffset, SeekOrigin.Begin);
-            datastream.Read(data, 0, (int)header.DataSize);
-
-            DicConsole.DebugWriteLine("DC42 plugin", "Calculating data checksum");
-            uint dataChk = DC42CheckSum(data);
-            DicConsole.DebugWriteLine("DC42 plugin", "Calculated data checksum = 0x{0:X8}", dataChk);
-            DicConsole.DebugWriteLine("DC42 plugin", "Stored data checksum = 0x{0:X8}",     header.DataChecksum);
-
-            if(header.TagSize <= 0) return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
-
-            DicConsole.DebugWriteLine("DC42 plugin", "Reading tags");
-            Stream tagstream = dc42ImageFilter.GetDataForkStream();
-            tagstream.Seek(tagOffset, SeekOrigin.Begin);
-            tagstream.Read(tags, 0, (int)header.TagSize);
-
-            DicConsole.DebugWriteLine("DC42 plugin", "Calculating tag checksum");
-            tagsChk = DC42CheckSum(tags);
-            DicConsole.DebugWriteLine("DC42 plugin", "Calculated tag checksum = 0x{0:X8}", tagsChk);
-            DicConsole.DebugWriteLine("DC42 plugin", "Stored tag checksum = 0x{0:X8}",     header.TagChecksum);
-
-            return dataChk == header.DataChecksum && tagsChk == header.TagChecksum;
-        }
-
         public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag) => ReadSectorsTag(sectorAddress, 1, tag);

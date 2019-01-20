@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class Blu : IWritableImage
+    public partial class Blu : IWritableImage, IVerifiableSectorsImage
     {
         IFilter    bluImageFilter;
         int        bptag;
