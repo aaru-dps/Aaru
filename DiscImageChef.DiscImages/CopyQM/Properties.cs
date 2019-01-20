@@ -32,8 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -41,17 +39,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class CopyQm
     {
-        public ImageInfo Info   => imageInfo;
-        public string    Name   => "Sydex CopyQM";
-        public Guid      Id     => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
-        public string    Format => "Sydex CopyQM";
-        public string    Author => "Natalia Portillo";
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ImageInfo              Info         => imageInfo;
+        public string                 Name         => "Sydex CopyQM";
+        public Guid                   Id           => new Guid("147E927D-3A92-4E0C-82CD-142F5A4FA76D");
+        public string                 Format       => "Sydex CopyQM";
+        public string                 Author       => "Natalia Portillo";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

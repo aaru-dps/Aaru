@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes.Structs;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Too many unknowns to make this writable
-    public partial class BlindWrite5 : IMediaImage
+    public partial class BlindWrite5 : IOpticalMediaImage
     {
         byte[]                        atip;
         byte[]                        bca;

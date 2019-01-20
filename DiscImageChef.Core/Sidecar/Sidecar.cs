@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Console;
 using Schemas;
 
 namespace DiscImageChef.Core
@@ -102,7 +103,16 @@ namespace DiscImageChef.Core
             switch(image.Info.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc:
-                    OpticalDisc(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);
+                    if(image is IOpticalMediaImage opticalImage)
+                        OpticalDisc(opticalImage, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar,
+                                    encoding);
+                    else
+                    {
+                        DicConsole
+                           .ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
+                        DicConsole.ErrorWriteLine("Please open an issue at Github.");
+                    }
+
                     break;
                 case XmlMediaType.BlockMedia:
                     BlockMedia(image, filterId, imagePath, fi, plugins, imgChecksums, ref sidecar, encoding);

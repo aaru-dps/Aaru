@@ -32,8 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -41,21 +39,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class UkvFdi
     {
-        public string Name   => "Spectrum Floppy Disk Image";
-        public Guid   Id     => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
-        public string Format => "Spectrum floppy disk image";
-        public string Author => "Natalia Portillo";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public ImageInfo Info => imageInfo;
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                 Name         => "Spectrum Floppy Disk Image";
+        public Guid                   Id           => new Guid("DADFC9B2-67C1-42A3-B124-825528163FC0");
+        public string                 Format       => "Spectrum floppy disk image";
+        public string                 Author       => "Natalia Portillo";
+        public ImageInfo              Info         => imageInfo;
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

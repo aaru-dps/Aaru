@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -42,16 +41,10 @@ namespace DiscImageChef.DiscImages
 {
     public partial class CisCopy
     {
-        public string Name   => "CisCopy Disk Image (DC-File)";
-        public Guid   Id     => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
-        public string Format => "CisCopy";
-        public string Author => "Natalia Portillo";
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public string                     Name                => "CisCopy Disk Image (DC-File)";
+        public Guid                       Id                  => new Guid("EDF20CC7-6012-49E2-9E92-663A53E42130");
+        public string                     Format              => "CisCopy";
+        public string                     Author              => "Natalia Portillo";
         public ImageInfo                  Info                => imageInfo;
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;

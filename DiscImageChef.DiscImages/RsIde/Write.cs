@@ -170,12 +170,6 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetTracks(List<Track> tracks)
-        {
-            ErrorMessage = "Unsupported feature";
-            return false;
-        }
-
         public bool Close()
         {
             if(!IsWriting)

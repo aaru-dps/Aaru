@@ -124,9 +124,12 @@ namespace DiscImageChef.Gui.Forms
                 return;
             }
 
+            IOpticalMediaImage    inputOptical  = inputFormat as IOpticalMediaImage;
+            IWritableOpticalImage outputOptical = outputFormat as IWritableOpticalImage;
+
             List<Track> tracks;
 
-            try { tracks = inputFormat.Tracks; }
+            try { tracks = inputOptical?.Tracks; }
             catch(Exception) { tracks = null; }
 
             // Prepare UI
@@ -338,7 +341,7 @@ namespace DiscImageChef.Gui.Forms
                     DicConsole.ErrorWriteLine("continuing...");
                 }
 
-            if(tracks != null && !cancel)
+            if(tracks != null && !cancel && outputOptical != null)
             {
                 Application.Instance.Invoke(() =>
                 {
@@ -348,7 +351,7 @@ namespace DiscImageChef.Gui.Forms
                     prgProgress2.Indeterminate = true;
                 });
 
-                if(!outputFormat.SetTracks(tracks))
+                if(!outputOptical.SetTracks(tracks))
                 {
                     Application.Instance.Invoke(() =>
                     {

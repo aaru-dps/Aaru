@@ -45,7 +45,7 @@ namespace DiscImageChef.DiscImages
 {
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]
-    public partial class Nero : IMediaImage
+    public partial class Nero : IOpticalMediaImage
     {
         bool                        imageNewFormat;
         Stream                      imageStream;

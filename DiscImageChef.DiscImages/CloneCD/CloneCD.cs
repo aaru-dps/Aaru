@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes.Structs;
 namespace DiscImageChef.DiscImages
 {
     // TODO: CloneCD stores subchannel deinterleaved
-    public partial class CloneCd : IWritableImage
+    public partial class CloneCd : IWritableOpticalImage
     {
         string                  catalog; // TODO: Use it
         IFilter                 ccdFilter;

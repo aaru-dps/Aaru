@@ -168,45 +168,13 @@ namespace DiscImageChef.Commands
 
             bool imagesDiffer = false;
 
-            ImageInfo                        image1Info     = new ImageInfo();
-            ImageInfo                        image2Info     = new ImageInfo();
+            ImageInfo                        image1Info     = input1Format.Info;
+            ImageInfo                        image2Info     = input2Format.Info;
             List<Session>                    image1Sessions = new List<Session>();
             List<Session>                    image2Sessions = new List<Session>();
             Dictionary<MediaTagType, byte[]> image1DiskTags = new Dictionary<MediaTagType, byte[]>();
             Dictionary<MediaTagType, byte[]> image2DiskTags = new Dictionary<MediaTagType, byte[]>();
 
-            image1Info.HasPartitions = input1Format.Info.HasPartitions;
-            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-            try { image1Sessions = input1Format.Sessions; }
-            catch
-            {
-                // ignored
-            }
-            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-            image1Info.HasSessions           |= image1Sessions?.Count > 0;
-            image1Info.ImageSize             =  input1Format.Info.ImageSize;
-            image1Info.Sectors               =  input1Format.Info.Sectors;
-            image1Info.SectorSize            =  input1Format.Info.SectorSize;
-            image1Info.CreationTime          =  input1Format.Info.CreationTime;
-            image1Info.LastModificationTime  =  input1Format.Info.LastModificationTime;
-            image1Info.MediaType             =  input1Format.Info.MediaType;
-            image1Info.Version               =  input1Format.Info.Version;
-            image1Info.Application           =  input1Format.Info.Application;
-            image1Info.ApplicationVersion    =  input1Format.Info.ApplicationVersion;
-            image1Info.Creator               =  input1Format.Info.Creator;
-            image1Info.MediaTitle            =  input1Format.Info.MediaTitle;
-            image1Info.Comments              =  input1Format.Info.Comments;
-            image1Info.MediaManufacturer     =  input1Format.Info.MediaManufacturer;
-            image1Info.MediaModel            =  input1Format.Info.MediaModel;
-            image1Info.MediaSerialNumber     =  input1Format.Info.MediaSerialNumber;
-            image1Info.MediaBarcode          =  input1Format.Info.MediaBarcode;
-            image1Info.MediaPartNumber       =  input1Format.Info.MediaPartNumber;
-            image1Info.MediaSequence         =  input1Format.Info.MediaSequence;
-            image1Info.LastMediaSequence     =  input1Format.Info.LastMediaSequence;
-            image1Info.DriveManufacturer     =  input1Format.Info.DriveManufacturer;
-            image1Info.DriveModel            =  input1Format.Info.DriveModel;
-            image1Info.DriveSerialNumber     =  input1Format.Info.DriveSerialNumber;
-            image1Info.DriveFirmwareRevision =  input1Format.Info.DriveFirmwareRevision;
             foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try
@@ -222,38 +190,6 @@ namespace DiscImageChef.Commands
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
-            image2Info.HasPartitions = input2Format.Info.HasPartitions;
-            #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-            try { image2Sessions = input2Format.Sessions; }
-            catch
-            {
-                // ignored
-            }
-            #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-            image2Info.HasSessions           |= image2Sessions?.Count > 0;
-            image2Info.ImageSize             =  input2Format.Info.ImageSize;
-            image2Info.Sectors               =  input2Format.Info.Sectors;
-            image2Info.SectorSize            =  input2Format.Info.SectorSize;
-            image2Info.CreationTime          =  input2Format.Info.CreationTime;
-            image2Info.LastModificationTime  =  input2Format.Info.LastModificationTime;
-            image2Info.MediaType             =  input2Format.Info.MediaType;
-            image2Info.Version               =  input2Format.Info.Version;
-            image2Info.Application           =  input2Format.Info.Application;
-            image2Info.ApplicationVersion    =  input2Format.Info.ApplicationVersion;
-            image2Info.Creator               =  input2Format.Info.Creator;
-            image2Info.MediaTitle            =  input2Format.Info.MediaTitle;
-            image2Info.Comments              =  input2Format.Info.Comments;
-            image2Info.MediaManufacturer     =  input2Format.Info.MediaManufacturer;
-            image2Info.MediaModel            =  input2Format.Info.MediaModel;
-            image2Info.MediaSerialNumber     =  input2Format.Info.MediaSerialNumber;
-            image2Info.MediaBarcode          =  input2Format.Info.MediaBarcode;
-            image2Info.MediaPartNumber       =  input2Format.Info.MediaPartNumber;
-            image2Info.MediaSequence         =  input2Format.Info.MediaSequence;
-            image2Info.LastMediaSequence     =  input2Format.Info.LastMediaSequence;
-            image2Info.DriveManufacturer     =  input2Format.Info.DriveManufacturer;
-            image2Info.DriveModel            =  input2Format.Info.DriveModel;
-            image2Info.DriveSerialNumber     =  input2Format.Info.DriveSerialNumber;
-            image2Info.DriveFirmwareRevision =  input2Format.Info.DriveFirmwareRevision;
             foreach(MediaTagType disktag in Enum.GetValues(typeof(MediaTagType)))
             {
                 try

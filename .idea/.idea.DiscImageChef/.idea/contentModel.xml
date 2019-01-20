@@ -120,11 +120,14 @@
           <e p="IFilter.cs" t="Include" />
           <e p="IFloppyImage.cs" t="Include" />
           <e p="IMediaImage.cs" t="Include" />
+          <e p="IOpticalMediaImage.cs" t="Include" />
           <e p="IPartition.cs" t="Include" />
+          <e p="IPartitionableMediaImage.cs" t="Include" />
           <e p="IPluginRegister.cs" t="Include" />
           <e p="IReadOnlyFilesystem.cs" t="Include" />
           <e p="IWritableFloppyImage.cs" t="Include" />
           <e p="IWritableImage.cs" t="Include" />
+          <e p="IWritableOpticalImage.cs" t="Include" />
         </e>
         <e p="Interop" t="Include">
           <e p="DetectOS.cs" t="Include" />
@@ -1026,7 +1029,6 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="SuperCardPro.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
         </e>
         <e p="T98" t="Include">
           <e p="Identify.cs" t="Include" />

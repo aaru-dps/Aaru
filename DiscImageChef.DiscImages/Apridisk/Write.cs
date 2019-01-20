@@ -143,12 +143,6 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetTracks(List<Track> tracks)
-        {
-            ErrorMessage = "Unsupported feature";
-            return false;
-        }
-
         // TODO: Try if apridisk software supports finding other chunks, to extend metadata support
         public bool Close()
         {

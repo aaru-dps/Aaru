@@ -30,10 +30,8 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
@@ -43,30 +41,6 @@ namespace DiscImageChef.DiscImages
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> GetSessionTracks(Session session) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> GetSessionTracks(ushort session) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSector(ulong sectorAddress, uint track) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
     }
 }

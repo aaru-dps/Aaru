@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -44,20 +43,10 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name   => "VMware disk image";
-        public Guid   Id     => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
-        public string Author => "Natalia Portillo";
-        public string Format => "VMware";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                     Name                => "VMware disk image";
+        public Guid                       Id                  => new Guid("E314DE35-C103-48A3-AD36-990F68523C46");
+        public string                     Author              => "Natalia Portillo";
+        public string                     Format              => "VMware";
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
@@ -73,7 +62,7 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 ("adapter_type", typeof(string),
-                    "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.", "ide"),
+                 "Type of adapter type. Possible values: ide, lsilogic, buslogic, legacyESX.", "ide"),
                 ("hwversion", typeof(uint), "VDMK hardware version.", 4),
                 ("sparse", typeof(bool), "Use sparse extents.", (object)false),
                 ("split", typeof(bool), "Split data file at 2GiB.", (object)false)

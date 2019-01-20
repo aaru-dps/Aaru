@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -52,15 +51,8 @@ namespace DiscImageChef.DiscImages
                 ? "Apple ][ Interleaved Disk Image (ProDOS order)"
                 : "Apple ][ Interleaved Disk Image (DOS order)";
 
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<DumpHardwareType> DumpHardware => null;
-        public CICMMetadataType       CicmMetadata => null;
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public List<DumpHardwareType>     DumpHardware        => null;
+        public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new SectorTagType[] { };
         public IEnumerable<MediaType>     SupportedMediaTypes => new[] {MediaType.Apple33SS};

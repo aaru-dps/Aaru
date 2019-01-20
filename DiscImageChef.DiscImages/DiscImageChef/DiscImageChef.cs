@@ -81,7 +81,7 @@ using SharpCompress.Compressors.LZMA;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class DiscImageChef : IWritableImage
+    public partial class DiscImageChef : IWritableOpticalImage
     {
         bool alreadyWrittenZero;
         /// <summary>Cache of uncompressed blocks.</summary>

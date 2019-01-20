@@ -51,7 +51,9 @@ namespace DiscImageChef.Gui.Forms
             this.inputFormat = inputFormat;
             XamlReader.Load(this);
 
-            if(inputFormat.Tracks != null && inputFormat.Tracks.Count > 0)
+            IOpticalMediaImage inputOptical = inputFormat as IOpticalMediaImage;
+
+            if(inputOptical?.Tracks != null && inputOptical?.Tracks.Count > 0)
             {
                 chkSeparatedTracks.Visible = true;
                 chkWholeDisc.Visible       = true;

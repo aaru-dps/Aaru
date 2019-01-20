@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -42,23 +41,13 @@ namespace DiscImageChef.DiscImages
 {
     public partial class DiskCopy42
     {
-        public ImageInfo              Info         => imageInfo;
-        public string                 Name         => "Apple DiskCopy 4.2";
-        public Guid                   Id           => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-        public string                 Author       => "Natalia Portillo";
-        public List<DumpHardwareType> DumpHardware => null;
-        public CICMMetadataType       CicmMetadata => null;
-        public string                 Format       => "Apple DiskCopy 4.2";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public ImageInfo                  Info                => imageInfo;
+        public string                     Name                => "Apple DiskCopy 4.2";
+        public Guid                       Id                  => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public string                     Author              => "Natalia Portillo";
+        public List<DumpHardwareType>     DumpHardware        => null;
+        public CICMMetadataType           CicmMetadata        => null;
+        public string                     Format              => "Apple DiskCopy 4.2";
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };
         public IEnumerable<SectorTagType> SupportedSectorTags => new[] {SectorTagType.AppleSectorTag};
         public IEnumerable<MediaType> SupportedMediaTypes =>

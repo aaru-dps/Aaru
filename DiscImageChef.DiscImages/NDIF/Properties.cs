@@ -32,8 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -41,21 +39,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Ndif
     {
-        public ImageInfo Info   => imageInfo;
-        public string    Name   => "Apple New Disk Image Format";
-        public Guid      Id     => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
-        public string    Format => "Apple New Disk Image Format";
-        public string    Author => "Natalia Portillo";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public ImageInfo              Info         => imageInfo;
+        public string                 Name         => "Apple New Disk Image Format";
+        public Guid                   Id           => new Guid("5A7FF7D8-491E-458D-8674-5B5EADBECC24");
+        public string                 Format       => "Apple New Disk Image Format";
+        public string                 Author       => "Natalia Portillo";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

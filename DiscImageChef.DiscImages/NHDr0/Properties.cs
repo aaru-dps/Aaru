@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -42,21 +41,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Nhdr0
     {
-        public string    Name   => "T98-Next NHD r0 Disk Image";
-        public Guid      Id     => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
-        public ImageInfo Info   => imageInfo;
-        public string    Author => "Natalia Portillo";
-        public string    Format => "NHDr0 disk image";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                     Name                => "T98-Next NHD r0 Disk Image";
+        public Guid                       Id                  => new Guid("6ECACD0A-8F4D-4465-8815-AEA000D370E3");
+        public ImageInfo                  Info                => imageInfo;
+        public string                     Author              => "Natalia Portillo";
+        public string                     Format              => "NHDr0 disk image";
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };

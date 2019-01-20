@@ -155,22 +155,14 @@ namespace DiscImageChef.Commands
 
             if(verifySectors)
             {
-                bool formatHasTracks;
-                try
-                {
-                    List<Track> inputTracks = inputFormat.Tracks;
-                    formatHasTracks = inputTracks.Count > 0;
-                }
-                catch { formatHasTracks = false; }
-
                 DateTime    startCheck;
                 DateTime    endCheck;
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
 
-                if(formatHasTracks)
+                if(inputFormat is IOpticalMediaImage opticalMediaImage)
                 {
-                    List<Track> inputTracks      = inputFormat.Tracks;
+                    List<Track> inputTracks      = opticalMediaImage.Tracks;
                     ulong       currentSectorAll = 0;
 
                     startCheck = DateTime.UtcNow;
@@ -188,12 +180,12 @@ namespace DiscImageChef.Commands
                             List<ulong> tempunknownLbas;
 
                             if(remainingSectors < 512)
-                                inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
-                                                          currentTrack.TrackSequence, out tempfailingLbas,
-                                                          out tempunknownLbas);
+                                opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
+                                                                currentTrack.TrackSequence, out tempfailingLbas,
+                                                                out tempunknownLbas);
                             else
-                                inputFormat.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
-                                                          out tempfailingLbas, out tempunknownLbas);
+                                opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
+                                                                out tempfailingLbas, out tempunknownLbas);
 
                             failingLbas.AddRange(tempfailingLbas);
 

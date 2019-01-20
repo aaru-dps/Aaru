@@ -32,8 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -41,21 +39,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Imd
     {
-        public string    Name   => "Dunfield's IMD";
-        public Guid      Id     => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
-        public ImageInfo Info   => imageInfo;
-        public string    Author => "Natalia Portillo";
-        public string    Format => "IMageDisk";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                 Name         => "Dunfield's IMD";
+        public Guid                   Id           => new Guid("0D67162E-38A3-407D-9B1A-CF40080A48CB");
+        public ImageInfo              Info         => imageInfo;
+        public string                 Author       => "Natalia Portillo";
+        public string                 Format       => "IMageDisk";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

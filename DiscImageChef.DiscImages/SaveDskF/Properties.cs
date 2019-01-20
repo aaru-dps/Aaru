@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -42,21 +41,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class SaveDskF
     {
-        public string    Name   => "IBM SaveDskF";
-        public Guid      Id     => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
-        public ImageInfo Info   => imageInfo;
-        public string    Author => "Natalia Portillo";
-        public string    Format => "IBM SaveDskF";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                     Name                => "IBM SaveDskF";
+        public Guid                       Id                  => new Guid("288CE058-1A51-4034-8C45-5A256CAE1461");
+        public ImageInfo                  Info                => imageInfo;
+        public string                     Author              => "Natalia Portillo";
+        public string                     Format              => "IBM SaveDskF";
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };

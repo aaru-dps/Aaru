@@ -208,16 +208,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            DumpUmd(dev,        devicePath, outputPlugin, retryPasses, force, persistent, stopOnError,
-                    ref resume, ref dumpLog,
-                    encoding,   outputPrefix, outputPath, formatOptions, preSidecar, skip, nometadata, notrim);
+            if(outputPlugin is IWritableOpticalImage opticalPlugin)
+                DumpUmd(dev, devicePath, opticalPlugin, retryPasses, force, persistent, stopOnError,
+                        ref resume,
+                        ref dumpLog, encoding, outputPrefix, outputPath, formatOptions, preSidecar, skip,
+                        nometadata,
+                        notrim);
+            else DicConsole.ErrorWriteLine("The specified plugin does not support storing optical disc images.");
         }
 
-        static void DumpUmd(Device                     dev,          string      devicePath,
-                            IWritableImage             outputPlugin, ushort      retryPasses, bool force,
-                            bool                       persistent,   bool        stopOnError,
-                            ref Resume                 resume,       ref DumpLog dumpLog,
-                            Encoding                   encoding,     string      outputPrefix,
+        static void DumpUmd(Device                     dev,          string     devicePath,
+                            IWritableOpticalImage      outputPlugin, ushort     retryPasses,
+                            bool                       force,        bool       persistent,
+                            bool                       stopOnError,  ref Resume resume, ref DumpLog dumpLog,
+                            Encoding                   encoding,     string     outputPrefix,
                             string                     outputPath,
                             Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
                             uint                       skip,

@@ -182,7 +182,7 @@ namespace DiscImageChef.Commands
 
             Checksum mediaChecksum = null;
 
-            if(inputFormat.Info.HasPartitions)
+            if(inputFormat is IOpticalMediaImage opticalInput)
                 try
                 {
                     Checksum trackChecksum = null;
@@ -191,7 +191,7 @@ namespace DiscImageChef.Commands
 
                     ulong previousTrackEnd = 0;
 
-                    List<Track> inputTracks = inputFormat.Tracks;
+                    List<Track> inputTracks = opticalInput.Tracks;
                     foreach(Track currentTrack in inputTracks)
                     {
                         if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
@@ -221,16 +221,16 @@ namespace DiscImageChef.Commands
 
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                 currentTrack.TrackSequence);
+                                sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                                  currentTrack.TrackSequence);
                                 DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
                                                  currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
                                 doneSectors += SECTORS_TO_READ;
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                 currentTrack.TrackSequence);
+                                sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                  currentTrack.TrackSequence);
                                 DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
                                                  currentTrack.TrackSequence, doneSectors + (sectors - doneSectors));
                                 doneSectors += sectors - doneSectors;
@@ -252,8 +252,8 @@ namespace DiscImageChef.Commands
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
-                    if(inputFormat.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
-                        for(ulong i = previousTrackEnd + 1; i < inputFormat.Info.Sectors; i++)
+                    if(opticalInput.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
+                        for(ulong i = previousTrackEnd + 1; i < opticalInput.Info.Sectors; i++)
                         {
                             DicConsole.Write("\rHashing track-less sector {0}", i);
 

@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes.Structs;
 namespace DiscImageChef.DiscImages
 {
     // TODO: Too many unknowns, plus a completely unknown footer, to make this writable
-    public partial class BlindWrite4 : IMediaImage
+    public partial class BlindWrite4 : IOpticalMediaImage
     {
         List<Bw4TrackDescriptor> bwTracks;
         IFilter                  dataFilter, subFilter;

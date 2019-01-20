@@ -33,8 +33,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -44,19 +42,10 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name   => "HD-Copy disk image";
-        public Guid   Id     => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
-        public string Author => "Michael Drüing";
-        public string Format => "HD-Copy image";
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                 Name         => "HD-Copy disk image";
+        public Guid                   Id           => new Guid("8D57483F-71A5-42EC-9B87-66AEC439C792");
+        public string                 Author       => "Michael Drüing";
+        public string                 Format       => "HD-Copy image";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -44,20 +43,10 @@ namespace DiscImageChef.DiscImages
     {
         public ImageInfo Info => imageInfo;
 
-        public string Name   => "QEMU Copy-On-Write disk image v2";
-        public Guid   Id     => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
-        public string Author => "Natalia Portillo";
-        public string Format => "QEMU Copy-On-Write";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                     Name                => "QEMU Copy-On-Write disk image v2";
+        public Guid                       Id                  => new Guid("F20107CB-95B3-4398-894B-975261F1E8C5");
+        public string                     Author              => "Natalia Portillo";
+        public string                     Format              => "QEMU Copy-On-Write";
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };

@@ -209,9 +209,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Ssc.Dump(dev, outputPrefix, devicePath, ref resume, ref dumpLog, preSidecar);
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
-                    Mmc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
-                             ref dskType, ref resume, ref dumpLog, dumpFirstTrackPregap, encoding, outputPrefix,
-                             outputPath, formatOptions, preSidecar, skip, nometadata, notrim);
+                    if(outputPlugin is IWritableOpticalImage opticalPlugin)
+                        Mmc.Dump(dev, devicePath, opticalPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
+                                 ref dskType, ref resume, ref dumpLog, dumpFirstTrackPregap, encoding, outputPrefix,
+                                 outputPath, formatOptions, preSidecar, skip, nometadata, notrim);
+                    else
+                        DicConsole.ErrorWriteLine("The specified plugin does not support storing optical disc images.");
                     return;
                 default:
                     Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, null,

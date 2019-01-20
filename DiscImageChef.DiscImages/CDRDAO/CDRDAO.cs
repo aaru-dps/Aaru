@@ -40,7 +40,7 @@ namespace DiscImageChef.DiscImages
 {
     // TODO: Doesn't support compositing from several files
     // TODO: Doesn't support silences that are not in files
-    public partial class Cdrdao : IWritableImage
+    public partial class Cdrdao : IWritableOpticalImage
     {
         IFilter      cdrdaoFilter;
         StreamWriter descriptorStream;

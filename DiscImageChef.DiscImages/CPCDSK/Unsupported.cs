@@ -33,7 +33,6 @@
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
@@ -42,40 +41,13 @@ namespace DiscImageChef.DiscImages
         public byte[] ReadDiskTag(MediaTagType tag) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public byte[] ReadSector(ulong sectorAddress, uint track) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectors(ulong sectorAddress, uint length, uint track) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
         public byte[] ReadSectorLong(ulong sectorAddress) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public byte[] ReadSectorLong(ulong sectorAddress, uint track) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
-        public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> GetSessionTracks(Session session) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> GetSessionTracks(ushort session) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
         public bool? VerifySector(ulong sectorAddress) => null;
-
-        public bool? VerifySector(ulong sectorAddress, uint track) =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
         public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
@@ -87,10 +59,10 @@ namespace DiscImageChef.DiscImages
             return null;
         }
 
+        public bool? VerifyMediaImage() => null;
+
         public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas) =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public bool? VerifyMediaImage() => null;
     }
 }

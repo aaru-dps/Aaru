@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -42,21 +41,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class RsIde
     {
-        public string    Name   => "RS-IDE Hard Disk Image";
-        public Guid      Id     => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
-        public ImageInfo Info   => imageInfo;
-        public string    Author => "Natalia Portillo";
-        public string    Format => "RS-IDE disk image";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public string                     Name                => "RS-IDE Hard Disk Image";
+        public Guid                       Id                  => new Guid("47C3E78D-2BE2-4BA5-AA6B-FEE27C86FC65");
+        public ImageInfo                  Info                => imageInfo;
+        public string                     Author              => "Natalia Portillo";
+        public string                     Format              => "RS-IDE disk image";
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new[] {MediaTagType.ATA_IDENTIFY};

@@ -62,9 +62,11 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void OpticalDisc(IMediaImage        image,        Guid                 filterId, string imagePath,
-                                FileInfo           fi,           PluginBase           plugins,
-                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+        static void OpticalDisc(IOpticalMediaImage   image,     Guid               filterId,
+                                string               imagePath, FileInfo           fi,
+                                PluginBase           plugins,   List<ChecksumType> imgChecksums,
+                                ref CICMMetadataType sidecar,
+                                Encoding             encoding)
         {
             sidecar.OpticalDisc = new[]
             {

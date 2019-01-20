@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -42,20 +41,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Virtual98
     {
-        public ImageInfo Info   => imageInfo;
-        public string    Name   => "Virtual98 Disk Image";
-        public Guid      Id     => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
-        public string    Author => "Natalia Portillo";
-        public string    Format => "Virtual98 disk image";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ImageInfo                  Info                => imageInfo;
+        public string                     Name                => "Virtual98 Disk Image";
+        public Guid                       Id                  => new Guid("C0CDE13D-04D0-4913-8740-AFAA44D0A107");
+        public string                     Author              => "Natalia Portillo";
+        public string                     Format              => "Virtual98 disk image";
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };

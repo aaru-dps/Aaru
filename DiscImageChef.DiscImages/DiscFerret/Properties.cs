@@ -32,8 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -41,17 +39,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class DiscFerret
     {
-        public string    Name   => "DiscFerret";
-        public Guid      Id     => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
-        public ImageInfo Info   => imageInfo;
-        public string    Format => "DiscFerret";
-        public string    Author => "Natalia Portillo";
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public string                 Name         => "DiscFerret";
+        public Guid                   Id           => new Guid("70EA7B9B-5323-42EB-9B40-8DDA37C5EB4D");
+        public ImageInfo              Info         => imageInfo;
+        public string                 Format       => "DiscFerret";
+        public string                 Author       => "Natalia Portillo";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

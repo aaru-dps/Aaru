@@ -32,8 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -41,18 +39,12 @@ namespace DiscImageChef.DiscImages
 {
     public partial class KryoFlux
     {
-        public ImageInfo imageInfo;
-        public ImageInfo Info   => imageInfo;
-        public string    Author => "Natalia Portillo";
-        public string    Name   => "KryoFlux STREAM";
-        public Guid      Id     => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
-        public string    Format => "KryoFlux STREAM";
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public ImageInfo              imageInfo;
+        public ImageInfo              Info         => imageInfo;
+        public string                 Author       => "Natalia Portillo";
+        public string                 Name         => "KryoFlux STREAM";
+        public Guid                   Id           => new Guid("4DBC95E4-93EE-4F7A-9492-919887E60EFE");
+        public string                 Format       => "KryoFlux STREAM";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

@@ -64,9 +64,15 @@ namespace DiscImageChef.Core
         {
             List<EntropyResults> entropyResultses = new List<EntropyResults>();
 
+            if(!(inputFormat is IOpticalMediaImage opticalMediaImage))
+            {
+                DicConsole.ErrorWriteLine("The selected image does not support tracks.");
+                return entropyResultses.ToArray();
+            }
+
             try
             {
-                List<Track> inputTracks = inputFormat.Tracks;
+                List<Track> inputTracks = opticalMediaImage.Tracks;
 
                 InitProgressEvent?.Invoke();
 
@@ -93,7 +99,7 @@ namespace DiscImageChef.Core
                           ?.Invoke($"Entropying sector {i             + 1} of track {currentTrack.TrackSequence}",
                                    (long)(currentTrack.TrackEndSector - (i + 1)),
                                    (long)trackEntropy.Sectors);
-                        byte[] sector = inputFormat.ReadSector(i, currentTrack.TrackSequence);
+                        byte[] sector = opticalMediaImage.ReadSector(i, currentTrack.TrackSequence);
 
                         if(duplicatedSectors)
                         {

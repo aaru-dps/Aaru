@@ -85,7 +85,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         /// <exception cref="ArgumentOutOfRangeException">If the track type is unknown (never)</exception>
         internal static void Dump(Device                     dev,          string devicePath,
-                                  IWritableImage             outputPlugin, ushort retryPasses,
+                                  IWritableOpticalImage      outputPlugin, ushort retryPasses,
                                   bool                       force,        bool   dumpRaw,
                                   bool                       persistent,   bool   stopOnError,
                                   ref MediaType              dskType,

@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class ZZZRawImage : IWritableImage
+    public partial class ZZZRawImage : IWritableOpticalImage
     {
         string                           basepath;
         bool                             differentTrackZeroSize;

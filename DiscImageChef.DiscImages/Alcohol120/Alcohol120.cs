@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
-    public partial class Alcohol120 : IWritableImage
+    public partial class Alcohol120 : IWritableOpticalImage
     {
         AlcoholFooter                                  alcFooter;
         IFilter                                        alcImage;

@@ -366,7 +366,6 @@
     <Compile Include="SuperCardPro\Read.cs" />
     <Compile Include="SuperCardPro\Structs.cs" />
     <Compile Include="SuperCardPro\SuperCardPro.cs" />
-    <Compile Include="SuperCardPro\Unsupported.cs" />
     <Compile Include="T98\Identify.cs" />
     <Compile Include="T98\Properties.cs" />
     <Compile Include="T98\Read.cs" />

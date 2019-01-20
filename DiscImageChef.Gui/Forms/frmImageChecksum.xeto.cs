@@ -54,7 +54,7 @@ namespace DiscImageChef.Gui.Forms
             this.inputFormat = inputFormat;
             XamlReader.Load(this);
             cancel = false;
-            try { chkChecksumTracks.Visible = inputFormat.Tracks?.Count > 0; }
+            try { chkChecksumTracks.Visible = (inputFormat as IOpticalMediaImage)?.Tracks?.Count > 0; }
             catch { chkChecksumTracks.Visible = false; }
 
             chkChecksumTracks.Checked = chkChecksumTracks.Visible;
@@ -92,10 +92,12 @@ namespace DiscImageChef.Gui.Forms
 
         void DoWork()
         {
-            bool formatHasTracks;
+            IOpticalMediaImage opticalMediaImage = inputFormat as IOpticalMediaImage;
+            bool               formatHasTracks   = false;
 
-            try { formatHasTracks = inputFormat.Tracks?.Count > 0; }
-            catch { formatHasTracks = false; }
+            if(opticalMediaImage != null)
+                try { formatHasTracks = opticalMediaImage.Tracks?.Count > 0; }
+                catch { formatHasTracks = false; }
 
             // Setup progress bars
             Application.Instance.Invoke(() =>
@@ -104,8 +106,8 @@ namespace DiscImageChef.Gui.Forms
                 prgProgress.MaxValue  = 1;
                 prgProgress2.MaxValue = (int)(inputFormat.Info.Sectors / SECTORS_TO_READ);
 
-                if(formatHasTracks && chkChecksumTracks.Checked == true)
-                    prgProgress.MaxValue += inputFormat.Tracks.Count;
+                if(formatHasTracks && chkChecksumTracks.Checked == true && opticalMediaImage != null)
+                    prgProgress.MaxValue += opticalMediaImage.Tracks.Count;
                 else
                 {
                     prgProgress.MaxValue = 2;
@@ -137,7 +139,7 @@ namespace DiscImageChef.Gui.Forms
             TreeGridItemCollection trackHashes = new TreeGridItemCollection();
             TreeGridItemCollection mediaHashes = new TreeGridItemCollection();
 
-            if(formatHasTracks)
+            if(opticalMediaImage != null)
                 try
                 {
                     Checksum trackChecksum = null;
@@ -146,12 +148,12 @@ namespace DiscImageChef.Gui.Forms
 
                     ulong previousTrackEnd = 0;
 
-                    foreach(Track currentTrack in inputFormat.Tracks)
+                    foreach(Track currentTrack in opticalMediaImage.Tracks)
                     {
                         Application.Instance.Invoke(() =>
                         {
                             lblProgress.Text =
-                                $"Hashing track {currentTrack.TrackSequence} of {inputFormat.Tracks.Count}";
+                                $"Hashing track {currentTrack.TrackSequence} of {opticalMediaImage.Tracks.Count}";
                             prgProgress.Value++;
                         });
 
@@ -165,7 +167,7 @@ namespace DiscImageChef.Gui.Forms
                                     lblProgress2.Text  = $"Hashing track-less sector {sector}";
                                 });
 
-                                byte[] hiddenSector = inputFormat.ReadSector(i);
+                                byte[] hiddenSector = opticalMediaImage.ReadSector(i);
 
                                 mediaChecksum?.Update(hiddenSector);
                             }
@@ -197,8 +199,8 @@ namespace DiscImageChef.Gui.Forms
 
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                 currentTrack.TrackSequence);
+                                sector = opticalMediaImage.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                                       currentTrack.TrackSequence);
 
                                 ulong doneSectorsToInvoke = doneSectors;
                                 Application.Instance.Invoke(() =>
@@ -212,8 +214,8 @@ namespace DiscImageChef.Gui.Forms
                             }
                             else
                             {
-                                sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                 currentTrack.TrackSequence);
+                                sector = opticalMediaImage.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                       currentTrack.TrackSequence);
 
                                 ulong doneSectorsToInvoke = doneSectors;
                                 Application.Instance.Invoke(() =>
@@ -245,8 +247,8 @@ namespace DiscImageChef.Gui.Forms
                         previousTrackEnd = currentTrack.TrackEndSector;
                     }
 
-                    if(inputFormat.Info.Sectors - previousTrackEnd != 0 && chkChecksumMedia.Checked == true)
-                        for(ulong i = previousTrackEnd + 1; i < inputFormat.Info.Sectors; i++)
+                    if(opticalMediaImage.Info.Sectors - previousTrackEnd != 0 && chkChecksumMedia.Checked == true)
+                        for(ulong i = previousTrackEnd + 1; i < opticalMediaImage.Info.Sectors; i++)
                         {
                             ulong sector = i;
                             Application.Instance.Invoke(() =>
@@ -255,7 +257,7 @@ namespace DiscImageChef.Gui.Forms
                                 lblProgress2.Text  = $"Hashing track-less sector {sector}";
                             });
 
-                            byte[] hiddenSector = inputFormat.ReadSector(i);
+                            byte[] hiddenSector = opticalMediaImage.ReadSector(i);
                             mediaChecksum?.Update(hiddenSector);
                         }
 

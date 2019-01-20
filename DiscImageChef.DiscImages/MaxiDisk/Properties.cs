@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
@@ -42,21 +41,11 @@ namespace DiscImageChef.DiscImages
 {
     public partial class MaxiDisk
     {
-        public ImageInfo Info   => imageInfo;
-        public string    Author => "Natalia Portillo";
-        public string    Name   => "MAXI Disk image";
-        public Guid      Id     => new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");
-        public string    Format => "MAXI Disk";
-
-        public List<Partition> Partitions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Track> Tracks =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
-        public List<Session> Sessions =>
-            throw new FeatureUnsupportedImageException("Feature not supported by image format");
-
+        public ImageInfo                  Info                => imageInfo;
+        public string                     Author              => "Natalia Portillo";
+        public string                     Name                => "MAXI Disk image";
+        public Guid                       Id                  => new Guid("D27D924A-7034-466E-ADE1-B81EF37E469E");
+        public string                     Format              => "MAXI Disk";
         public List<DumpHardwareType>     DumpHardware        => null;
         public CICMMetadataType           CicmMetadata        => null;
         public IEnumerable<MediaTagType>  SupportedMediaTags  => new MediaTagType[] { };

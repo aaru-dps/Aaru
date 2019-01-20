@@ -218,12 +218,6 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetTracks(List<Track> tracks)
-        {
-            ErrorMessage = "Unsupported feature";
-            return false;
-        }
-
         // TODO: Implement sparse and split
         public bool Close()
         {

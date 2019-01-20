@@ -525,8 +525,6 @@ namespace DiscImageChef.DiscImages
 
         public bool? VerifySector(ulong sectorAddress) => !sectorsWhereCrcHasFailed.Contains(sectorAddress);
 
-        public bool? VerifySector(ulong sectorAddress, uint track) => null;
-
         public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
@@ -538,17 +536,6 @@ namespace DiscImageChef.DiscImages
                     failingLbas.Add(sectorAddress);
 
             return failingLbas.Count <= 0;
-        }
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(ulong i = sectorAddress; i < sectorAddress + length; i++) unknownLbas.Add(i);
-
-            return null;
         }
 
         public bool? VerifyMediaImage() => aDiskCrcHasFailed;

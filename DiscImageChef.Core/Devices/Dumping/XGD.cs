@@ -83,7 +83,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     dump
         /// </exception>
         internal static void Dump(Device                           dev,          string        devicePath,
-                                  IWritableImage                   outputPlugin, ushort        retryPasses,
+                                  IWritableOpticalImage            outputPlugin, ushort        retryPasses,
                                   bool                             force,        bool          dumpRaw,
                                   bool                             persistent,   bool          stopOnError,
                                   Dictionary<MediaTagType, byte[]> mediaTags,    ref MediaType dskType,

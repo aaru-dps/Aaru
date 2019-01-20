@@ -283,19 +283,28 @@ namespace DiscImageChef.Core.Devices.Dumping
             double imageWriteDuration = 0;
 
             if(opticalDisc)
-                outputPlugin.SetTracks(new List<Track>
-                {
-                    new Track
+            {
+                if(outputPlugin is IWritableOpticalImage opticalPlugin)
+                    opticalPlugin.SetTracks(new List<Track>
                     {
-                        TrackBytesPerSector    = (int)blockSize,
-                        TrackEndSector         = blocks - 1,
-                        TrackSequence          = 1,
-                        TrackRawBytesPerSector = (int)blockSize,
-                        TrackSubchannelType    = TrackSubchannelType.None,
-                        TrackSession           = 1,
-                        TrackType              = TrackType.Data
-                    }
-                });
+                        new Track
+                        {
+                            TrackBytesPerSector    = (int)blockSize,
+                            TrackEndSector         = blocks - 1,
+                            TrackSequence          = 1,
+                            TrackRawBytesPerSector = (int)blockSize,
+                            TrackSubchannelType    = TrackSubchannelType.None,
+                            TrackSession           = 1,
+                            TrackType              = TrackType.Data
+                        }
+                    });
+                else
+                {
+                    dumpLog.WriteLine("The specified plugin does not support storing optical disc images..");
+                    DicConsole.ErrorWriteLine("The specified plugin does not support storing optical disc images.");
+                    return;
+                }
+            }
             else if(decMode.HasValue)
             {
                 bool setGeometry = false;

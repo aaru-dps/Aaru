@@ -164,12 +164,6 @@ namespace DiscImageChef.DiscImages
             return false;
         }
 
-        public bool SetTracks(List<Track> tracks)
-        {
-            ErrorMessage = "Unsupported feature";
-            return false;
-        }
-
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack) => true;
 
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)

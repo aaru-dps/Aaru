@@ -77,7 +77,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="NotImplementedException">If trying to dump GOD or WOD, or XGDs without a Kreon drive</exception>
         internal static void Dump(Device                     dev,          string      devicePath,
-                                  IWritableImage             outputPlugin, ushort      retryPasses,
+                                  IWritableOpticalImage      outputPlugin, ushort      retryPasses,
                                   bool                       force,        bool        dumpRaw,
                                   bool                       persistent,   bool        stopOnError, ref MediaType dskType,
                                   ref Resume                 resume,       ref DumpLog dumpLog,

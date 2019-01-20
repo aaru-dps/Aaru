@@ -76,7 +76,9 @@ namespace DiscImageChef.Gui.Forms
             long  unknownSectors = 0;
             bool  formatHasTracks;
 
-            try { formatHasTracks = inputFormat.Tracks?.Count > 0; }
+            IOpticalMediaImage inputOptical = inputFormat as IOpticalMediaImage;
+
+            try { formatHasTracks = inputOptical?.Tracks?.Count > 0; }
             catch { formatHasTracks = false; }
 
             // Setup progress bars
@@ -87,7 +89,7 @@ namespace DiscImageChef.Gui.Forms
 
                 if(chkVerifyImage.Checked == true || chkVerifySectors.Checked == true) prgProgress.MaxValue = 1;
 
-                if(formatHasTracks) prgProgress.MaxValue += inputFormat.Tracks.Count;
+                if(formatHasTracks && inputOptical != null) prgProgress.MaxValue += inputOptical.Tracks.Count;
                 else
                 {
                     if(chkVerifySectors.Checked == true)
@@ -161,16 +163,16 @@ namespace DiscImageChef.Gui.Forms
 
                 if(formatHasTracks)
                 {
-                    List<Track> inputTracks      = inputFormat.Tracks;
+                    List<Track> inputTracks      = inputOptical.Tracks;
                     ulong       currentSectorAll = 0;
 
                     startCheck = DateTime.UtcNow;
-                    foreach(Track currentTrack in inputFormat.Tracks)
+                    foreach(Track currentTrack in inputOptical.Tracks)
                     {
                         Application.Instance.Invoke(() =>
                         {
                             lblProgress.Text =
-                                $"Verifying track {currentTrack.TrackSequence} of {inputFormat.Tracks.Count}";
+                                $"Verifying track {currentTrack.TrackSequence} of {inputOptical?.Tracks.Count}";
                             prgProgress.Value++;
                         });
 
@@ -202,12 +204,12 @@ namespace DiscImageChef.Gui.Forms
                             List<ulong> tempunknownLbas;
 
                             if(remainingSectors < 512)
-                                inputFormat.VerifySectors(currentSector, (uint)remainingSectors,
-                                                          currentTrack.TrackSequence, out tempfailingLbas,
-                                                          out tempunknownLbas);
+                                inputOptical.VerifySectors(currentSector, (uint)remainingSectors,
+                                                           currentTrack.TrackSequence, out tempfailingLbas,
+                                                           out tempunknownLbas);
                             else
-                                inputFormat.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
-                                                          out tempfailingLbas, out tempunknownLbas);
+                                inputOptical.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
+                                                           out tempfailingLbas, out tempunknownLbas);
 
                             failingLbas.AddRange(tempfailingLbas);
 
