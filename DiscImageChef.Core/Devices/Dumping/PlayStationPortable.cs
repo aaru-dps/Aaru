@@ -330,6 +330,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
             bool newTrim = false;
 
+            DateTime timeSpeedStart   = DateTime.UtcNow;
+            ulong    sectorSpeedStart = 0;
             for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
             {
                 if(aborted)
@@ -383,10 +385,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     newTrim =  true;
                 }
 
-                double newSpeed =
-                    (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
-                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                resume.NextBlock = i + blocksToRead;
+                sectorSpeedStart += blocksToRead;
+                resume.NextBlock =  i + blocksToRead;
+
+                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                if(elapsed < 1) continue;
+
+                currentSpeed     = sectorSpeedStart * BLOCK_SIZE / (1048576 * elapsed);
+                sectorSpeedStart = 0;
+                timeSpeedStart   = DateTime.UtcNow;
             }
 
             end = DateTime.UtcNow;
@@ -768,6 +775,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
             bool newTrim = false;
 
+            DateTime timeSpeedStart   = DateTime.UtcNow;
+            ulong    sectorSpeedStart = 0;
             for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
             {
                 if(aborted)
@@ -821,10 +830,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     newTrim =  true;
                 }
 
-                double newSpeed =
-                    (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
-                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                resume.NextBlock = i + blocksToRead;
+                sectorSpeedStart += blocksToRead;
+                resume.NextBlock =  i + blocksToRead;
+
+                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                if(elapsed < 1) continue;
+
+                currentSpeed     = sectorSpeedStart * BLOCK_SIZE / (1048576 * elapsed);
+                sectorSpeedStart = 0;
+                timeSpeedStart   = DateTime.UtcNow;
             }
 
             end = DateTime.UtcNow;

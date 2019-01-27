@@ -279,6 +279,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
                 ibgLog  = new IbgLog(ibgLogPath, currentProfile);
+                DateTime timeSpeedStart   = DateTime.UtcNow;
+                ulong    sectorSpeedStart = 0;
 
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
@@ -348,9 +350,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                         }
                     }
 
-                    double newSpeed =
-                        (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
-                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                    sectorSpeedStart += blocksToRead;
+
+                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    if(elapsed < 1) continue;
+
+                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    sectorSpeedStart = 0;
+                    timeSpeedStart   = DateTime.UtcNow;
                 }
 
                 end = DateTime.UtcNow;
@@ -369,6 +376,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
                 ibgLog  = new IbgLog(ibgLogPath, currentProfile);
+                DateTime timeSpeedStart   = DateTime.UtcNow;
+                ulong    sectorSpeedStart = 0;
 
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
@@ -408,9 +417,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                         ibgLog.Write(i, 0);
                     }
 
-                    double newSpeed =
-                        (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
-                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                    sectorSpeedStart += blocksToRead;
+
+                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    if(elapsed < 1) continue;
+
+                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    sectorSpeedStart = 0;
+                    timeSpeedStart   = DateTime.UtcNow;
                 }
 
                 end = DateTime.UtcNow;

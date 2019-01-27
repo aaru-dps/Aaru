@@ -131,6 +131,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
 
                     start = DateTime.UtcNow;
+                    DateTime timeSpeedStart   = DateTime.UtcNow;
+                    ulong    sectorSpeedStart = 0;
                     for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                     {
                         if(aborted) break;
@@ -169,9 +171,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                             ibgLog.Write(i, 0);
                         }
 
-                        double newSpeed =
-                            (double)blockSize * blocksToRead / 1048576 / (duration / 1000);
-                        if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                        sectorSpeedStart += blocksToRead;
+
+                        double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                        if(elapsed < 1) continue;
+
+                        currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                        sectorSpeedStart = 0;
+                        timeSpeedStart   = DateTime.UtcNow;
                     }
 
                     end = DateTime.UtcNow;
@@ -210,6 +217,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     ulong currentBlock = 0;
                     results.Blocks = (ulong)(cylinders * heads * sectors);
                     start          = DateTime.UtcNow;
+                    DateTime timeSpeedStart   = DateTime.UtcNow;
+                    ulong    sectorSpeedStart = 0;
                     for(ushort cy = 0; cy < cylinders; cy++)
                     {
                         for(byte hd = 0; hd < heads; hd++)
@@ -251,11 +260,15 @@ namespace DiscImageChef.Core.Devices.Scanning
                                     ibgLog.Write(currentBlock, 0);
                                 }
 
-                                double newSpeed =
-                                    blockSize / (double)1048576 / (duration / 1000);
-                                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-
+                                sectorSpeedStart++;
                                 currentBlock++;
+
+                                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                                if(elapsed < 1) continue;
+
+                                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                                sectorSpeedStart = 0;
+                                timeSpeedStart   = DateTime.UtcNow;
                             }
                         }
                     }

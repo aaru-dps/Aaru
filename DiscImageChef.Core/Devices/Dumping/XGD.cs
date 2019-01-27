@@ -381,6 +381,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             bool newTrim = false;
 
             dumpLog.WriteLine("Reading game partition.");
+            DateTime timeSpeedStart   = DateTime.UtcNow;
+            ulong    sectorSpeedStart = 0;
             for(int e = 0; e <= 16; e++)
             {
                 if(aborted)
@@ -478,12 +480,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                         newTrim = true;
                     }
 
-                    double newSpeed =
-                        (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
-                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                    blocksToRead     = saveBlocksToRead;
-                    currentSector    = i + 1;
-                    resume.NextBlock = currentSector;
+                    blocksToRead     =  saveBlocksToRead;
+                    currentSector    =  i + 1;
+                    resume.NextBlock =  currentSector;
+                    sectorSpeedStart += blocksToRead;
+
+                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    if(elapsed < 1) continue;
+
+                    currentSpeed     = sectorSpeedStart * BLOCK_SIZE / (1048576 * elapsed);
+                    sectorSpeedStart = 0;
+                    timeSpeedStart   = DateTime.UtcNow;
                 }
 
                 for(ulong i = extentStart; i <= extentEnd; i += blocksToRead)
@@ -617,11 +624,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                     foreach(string senseLine in senseLines) dumpLog.WriteLine(senseLine);
                 }
 
-                double newSpeed =
-                    (double)BLOCK_SIZE * blocksToRead / 1048576 / (cmdDuration / 1000);
-                if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
                 currentSector    += blocksToRead;
                 resume.NextBlock =  currentSector;
+                sectorSpeedStart += blocksToRead;
+
+                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                if(elapsed < 1) continue;
+
+                currentSpeed     = sectorSpeedStart * BLOCK_SIZE / (1048576 * elapsed);
+                sectorSpeedStart = 0;
+                timeSpeedStart   = DateTime.UtcNow;
             }
 
             dumpLog.WriteLine("Unlocking drive (Wxripper).");

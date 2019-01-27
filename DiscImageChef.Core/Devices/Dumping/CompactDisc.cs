@@ -801,6 +801,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(currentTry == null || extents == null)
                 throw new InvalidOperationException("Could not process resume file, not continuing...");
 
+            DateTime timeSpeedStart   = DateTime.UtcNow;
+            ulong    sectorSpeedStart = 0;
+
             // Try to read the first track pregap
             if(dumpFirstTrackPregap && readcd)
             {
@@ -820,11 +823,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         dumpLog.WriteLine("Aborted!");
                         break;
                     }
-
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                    if(currentSpeed > maxSpeed && currentSpeed != 0) maxSpeed = currentSpeed;
-                    if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     DicConsole.Write("\rTrying to read first track pregap sector {0} ({1:F3} MiB/sec.)",
                                      firstTrackPregapBlock, currentSpeed);
@@ -846,8 +844,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(gotFirstTrackPregap) firstTrackPregapMs.Write(new byte[blockSize], 0, (int)blockSize);
                     }
 
-                    double newSpeed                               = blockSize / (double)1048576 / (cmdDuration / 1000);
-                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                    sectorSpeedStart++;
+
+                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    if(elapsed < 1) continue;
+
+                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    sectorSpeedStart = 0;
+                    timeSpeedStart   = DateTime.UtcNow;
                 }
 
                 if(firstTrackPregapSectorsGood > 0)
@@ -1038,7 +1042,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             // Start reading
-            start = DateTime.UtcNow;
+            start            = DateTime.UtcNow;
+            currentSpeed     = 0;
+            sectorSpeedStart = 0;
+            timeSpeedStart   = DateTime.UtcNow;
             for(int t = 0; t < tracks.Length; t++)
             {
                 dumpLog.WriteLine("Reading track {0}", tracks[t].TrackSequence);
@@ -1167,10 +1174,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                         newTrim =  true;
                     }
 
-                    double newSpeed =
-                        (double)blockSize * blocksToRead / 1048576 / (cmdDuration / 1000);
-                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
+                    sectorSpeedStart += blocksToRead;
+
                     resume.NextBlock = i + blocksToRead;
+
+                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                    if(elapsed < 1) continue;
+
+                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    sectorSpeedStart = 0;
+                    timeSpeedStart   = DateTime.UtcNow;
                 }
             }
 

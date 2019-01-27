@@ -416,6 +416,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             aborted                       =  false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
+            DateTime timeSpeedStart   = DateTime.UtcNow;
+            ulong    currentSpeedSize = 0;
 
             while(currentPartition < totalPartitions)
             {
@@ -612,16 +614,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                 double   chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                 totalChkDuration += chkDuration;
 
-                if(currentBlock % 10 == 0)
-                {
-                    double newSpeed                               = blockSize / (double)1048576 / (duration / 1000);
-                    if(!double.IsInfinity(newSpeed)) currentSpeed = newSpeed;
-                }
-
                 currentBlock++;
                 currentSize          += blockSize;
                 currentFileSize      += blockSize;
                 currentPartitionSize += blockSize;
+                currentSpeedSize     += blockSize;
+
+                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+                if(elapsed < 1) continue;
+
+                currentSpeed     = currentSpeedSize / (1048576 * elapsed);
+                currentSpeedSize = 0;
+                timeSpeedStart   = DateTime.UtcNow;
             }
 
             blocks = currentBlock + 1;
