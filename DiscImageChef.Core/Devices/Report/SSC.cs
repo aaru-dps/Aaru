@@ -68,20 +68,21 @@ namespace DiscImageChef.Core.Devices.Report
                 {
                     SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
                     for(int i = 0; i < dsh.Value.descriptors.Length; i++)
-                    {
-                        report.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
-                        report.SupportedDensities[i].Capacity       = dsh.Value.descriptors[i].capacity;
-                        report.SupportedDensities[i].DefaultDensity = dsh.Value.descriptors[i].defaultDensity;
-                        report.SupportedDensities[i].Description    = dsh.Value.descriptors[i].description;
-                        report.SupportedDensities[i].Duplicate      = dsh.Value.descriptors[i].duplicate;
-                        report.SupportedDensities[i].Name           = dsh.Value.descriptors[i].name;
-                        report.SupportedDensities[i].Organization   = dsh.Value.descriptors[i].organization;
-                        report.SupportedDensities[i].PrimaryCode    = dsh.Value.descriptors[i].primaryCode;
-                        report.SupportedDensities[i].SecondaryCode  = dsh.Value.descriptors[i].secondaryCode;
-                        report.SupportedDensities[i].Tracks         = dsh.Value.descriptors[i].tracks;
-                        report.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
-                        report.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
-                    }
+                        array[i] = new SupportedDensity
+                        {
+                            BitsPerMm      = dsh.Value.descriptors[i].bpmm,
+                            Capacity       = dsh.Value.descriptors[i].capacity,
+                            DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
+                            Description    = dsh.Value.descriptors[i].description,
+                            Duplicate      = dsh.Value.descriptors[i].duplicate,
+                            Name           = dsh.Value.descriptors[i].name,
+                            Organization   = dsh.Value.descriptors[i].organization,
+                            PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
+                            SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
+                            Tracks         = dsh.Value.descriptors[i].tracks,
+                            Width          = dsh.Value.descriptors[i].width,
+                            Writable       = dsh.Value.descriptors[i].writable
+                        };
 
                     report.SupportedDensities = array.ToList();
                 }
@@ -97,19 +98,21 @@ namespace DiscImageChef.Core.Devices.Report
             SscSupportedMedia[] array2 = new SscSupportedMedia[mtsh.Value.descriptors.Length];
             for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
             {
-                report.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
-                report.SupportedMediaTypes[i].Length       = mtsh.Value.descriptors[i].length;
-                report.SupportedMediaTypes[i].MediumType   = mtsh.Value.descriptors[i].mediumType;
-                report.SupportedMediaTypes[i].Name         = mtsh.Value.descriptors[i].name;
-                report.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
-                report.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
+                array2[i] = new SscSupportedMedia
+                {
+                    Description  = mtsh.Value.descriptors[i].description,
+                    Length       = mtsh.Value.descriptors[i].length,
+                    MediumType   = mtsh.Value.descriptors[i].mediumType,
+                    Name         = mtsh.Value.descriptors[i].name,
+                    Organization = mtsh.Value.descriptors[i].organization,
+                    Width        = mtsh.Value.descriptors[i].width
+                };
                 if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
                 DensityCode[] array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
                 for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                    report.SupportedMediaTypes[i].DensityCodes[j] =
-                        new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
-                report.SupportedMediaTypes[i].DensityCodes = array3.ToList();
+                    array3[j] = new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
+                array2[i].DensityCodes = array3.ToList();
             }
 
             report.SupportedMediaTypes = array2.ToList();
@@ -156,20 +159,21 @@ namespace DiscImageChef.Core.Devices.Report
                 {
                     SupportedDensity[] array = new SupportedDensity[dsh.Value.descriptors.Length];
                     for(int i = 0; i < dsh.Value.descriptors.Length; i++)
-                    {
-                        seqTest.SupportedDensities[i].BitsPerMm      = dsh.Value.descriptors[i].bpmm;
-                        seqTest.SupportedDensities[i].Capacity       = dsh.Value.descriptors[i].capacity;
-                        seqTest.SupportedDensities[i].DefaultDensity = dsh.Value.descriptors[i].defaultDensity;
-                        seqTest.SupportedDensities[i].Description    = dsh.Value.descriptors[i].description;
-                        seqTest.SupportedDensities[i].Duplicate      = dsh.Value.descriptors[i].duplicate;
-                        seqTest.SupportedDensities[i].Name           = dsh.Value.descriptors[i].name;
-                        seqTest.SupportedDensities[i].Organization   = dsh.Value.descriptors[i].organization;
-                        seqTest.SupportedDensities[i].PrimaryCode    = dsh.Value.descriptors[i].primaryCode;
-                        seqTest.SupportedDensities[i].SecondaryCode  = dsh.Value.descriptors[i].secondaryCode;
-                        seqTest.SupportedDensities[i].Tracks         = dsh.Value.descriptors[i].tracks;
-                        seqTest.SupportedDensities[i].Width          = dsh.Value.descriptors[i].width;
-                        seqTest.SupportedDensities[i].Writable       = dsh.Value.descriptors[i].writable;
-                    }
+                        array[i] = new SupportedDensity
+                        {
+                            BitsPerMm      = dsh.Value.descriptors[i].bpmm,
+                            Capacity       = dsh.Value.descriptors[i].capacity,
+                            DefaultDensity = dsh.Value.descriptors[i].defaultDensity,
+                            Description    = dsh.Value.descriptors[i].description,
+                            Duplicate      = dsh.Value.descriptors[i].duplicate,
+                            Name           = dsh.Value.descriptors[i].name,
+                            Organization   = dsh.Value.descriptors[i].organization,
+                            PrimaryCode    = dsh.Value.descriptors[i].primaryCode,
+                            SecondaryCode  = dsh.Value.descriptors[i].secondaryCode,
+                            Tracks         = dsh.Value.descriptors[i].tracks,
+                            Width          = dsh.Value.descriptors[i].width,
+                            Writable       = dsh.Value.descriptors[i].writable
+                        };
 
                     seqTest.SupportedDensities = array.ToList();
                 }
@@ -185,19 +189,21 @@ namespace DiscImageChef.Core.Devices.Report
                     SscSupportedMedia[] array = new SscSupportedMedia[mtsh.Value.descriptors.Length];
                     for(int i = 0; i < mtsh.Value.descriptors.Length; i++)
                     {
-                        seqTest.SupportedMediaTypes[i].Description  = mtsh.Value.descriptors[i].description;
-                        seqTest.SupportedMediaTypes[i].Length       = mtsh.Value.descriptors[i].length;
-                        seqTest.SupportedMediaTypes[i].MediumType   = mtsh.Value.descriptors[i].mediumType;
-                        seqTest.SupportedMediaTypes[i].Name         = mtsh.Value.descriptors[i].name;
-                        seqTest.SupportedMediaTypes[i].Organization = mtsh.Value.descriptors[i].organization;
-                        seqTest.SupportedMediaTypes[i].Width        = mtsh.Value.descriptors[i].width;
+                        array[i] = new SscSupportedMedia
+                        {
+                            Description  = mtsh.Value.descriptors[i].description,
+                            Length       = mtsh.Value.descriptors[i].length,
+                            MediumType   = mtsh.Value.descriptors[i].mediumType,
+                            Name         = mtsh.Value.descriptors[i].name,
+                            Organization = mtsh.Value.descriptors[i].organization,
+                            Width        = mtsh.Value.descriptors[i].width
+                        };
                         if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
                         DensityCode[] array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
                         for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
-                            seqTest.SupportedMediaTypes[i].DensityCodes[j] =
-                                new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
-                        seqTest.SupportedMediaTypes[i].DensityCodes = array2.ToList();
+                            array2[j] = new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
+                        array[i].DensityCodes = array2.ToList();
                     }
 
                     seqTest.SupportedMediaTypes = array.ToList();
