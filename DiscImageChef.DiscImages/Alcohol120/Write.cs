@@ -109,6 +109,9 @@ namespace DiscImageChef.DiscImages
                 case MediaType.Pippin:
                 case MediaType.FMTOWNS:
                 case MediaType.MilCD:
+                case MediaType.VideoNow:
+                case MediaType.VideoNowColor:
+                case MediaType.VideoNowXp:
                     isDvd = false;
                     break;
                 default:

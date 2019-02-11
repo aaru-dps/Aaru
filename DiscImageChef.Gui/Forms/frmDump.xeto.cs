@@ -59,7 +59,7 @@ namespace DiscImageChef.Gui.Forms
 {
     public class frmDump : Form
     {
-        string           devicePath;
+        readonly string  devicePath;
         string           outputPrefix;
         Resume           resume;
         CICMMetadataType sidecar;
@@ -167,6 +167,9 @@ namespace DiscImageChef.Gui.Forms
                 case MediaType.CD32:
                 case MediaType.Playdia:
                 case MediaType.Pippin:
+                case MediaType.VideoNow:
+                case MediaType.VideoNowColor:
+                case MediaType.VideoNowXp:
                     chkTrack1Pregap.Visible = true;
                     break;
                 default:

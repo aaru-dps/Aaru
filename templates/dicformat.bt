@@ -544,6 +544,10 @@ enum <uint> MediaType
     FD32MB = 732,
     RDX = 733,
     RDX320 = 734,
+
+    VideoNow = 740,
+    VideoNowColor = 741,
+    VideoNowXp = 742
 };
 
 enum <ushort> CompressionType

@@ -211,7 +211,10 @@ namespace DiscImageChef.DiscImages
                 case MediaType.ThreeDO:
                 case MediaType.VCD:
                 case MediaType.VCDHD:
-                case MediaType.MilCD: return CDRWIN_DISK_TYPE_CD;
+                case MediaType.MilCD:
+                case MediaType.VideoNow:
+                case MediaType.VideoNowColor:
+                case MediaType.VideoNowXp: return CDRWIN_DISK_TYPE_CD;
                 case MediaType.CDMRW:    return CDRWIN_DISK_TYPE_CDMRW;
                 case MediaType.CDRW:     return CDRWIN_DISK_TYPE_CDRW;
                 case MediaType.DVDPR:    return CDRWIN_DISK_TYPE_DVDPR;

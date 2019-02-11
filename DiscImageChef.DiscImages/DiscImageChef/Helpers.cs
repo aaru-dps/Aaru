@@ -215,7 +215,10 @@ namespace DiscImageChef.DiscImages
                 case MediaType.Playdia:
                 case MediaType.Pippin:
                 case MediaType.FMTOWNS:
-                case MediaType.MilCD: return XmlMediaType.OpticalDisc;
+                case MediaType.MilCD:
+                case MediaType.VideoNow:
+                case MediaType.VideoNowColor:
+                case MediaType.VideoNowXp: return XmlMediaType.OpticalDisc;
                 default: return XmlMediaType.BlockMedia;
             }
         }

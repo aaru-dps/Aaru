@@ -1861,6 +1861,18 @@ namespace DiscImageChef.CommonTypes.Metadata
                     discType    = "Hard Disk Drive";
                     discSubType = "Microdrive";
                     break;
+                case CommonTypes.MediaType.VideoNow:
+                    discType    = "VideoNow";
+                    discSubType = "VideoNow";
+                    break;
+                case CommonTypes.MediaType.VideoNowColor:
+                    discType    = "VideoNow";
+                    discSubType = "VideoNow Color";
+                    break;
+                case CommonTypes.MediaType.VideoNowXp:
+                    discType    = "VideoNow";
+                    discSubType = "VideoNow XP";
+                    break;
                 default:
                     discType    = "Unknown";
                     discSubType = "Unknown";

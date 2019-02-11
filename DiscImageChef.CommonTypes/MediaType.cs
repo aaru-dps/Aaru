@@ -1049,5 +1049,11 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Imation 320Gb RDX</summary>
         RDX320 = 734,
         #endregion Imation, types 730 to 739
+
+        #region VideoNow, types 740 to 749
+        VideoNow      = 740,
+        VideoNowColor = 741,
+        VideoNowXp    = 742
+        #endregion
     }
 }

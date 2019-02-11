@@ -130,7 +130,10 @@ namespace DiscImageChef.DiscImages
                 case MediaType.Playdia:
                 case MediaType.Pippin:
                 case MediaType.FMTOWNS:
-                case MediaType.MilCD: return AlcoholMediumType.CD;
+                case MediaType.MilCD:
+                case MediaType.VideoNow:
+                case MediaType.VideoNowColor:
+                case MediaType.VideoNowXp: return AlcoholMediumType.CD;
                 case MediaType.CDR: return AlcoholMediumType.CDR;
                 case MediaType.CDRW:
                 case MediaType.CDMRW: return AlcoholMediumType.CDRW;

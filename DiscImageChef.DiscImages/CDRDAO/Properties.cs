@@ -115,7 +115,8 @@ namespace DiscImageChef.DiscImages
                 MediaType.PS1CD, MediaType.PS2CD, MediaType.SuperCDROM2, MediaType.SVCD, MediaType.SATURNCD,
                 MediaType.ThreeDO, MediaType.VCD, MediaType.VCDHD, MediaType.NeoGeoCD, MediaType.PCFX,
                 MediaType.CDTV, MediaType.CD32, MediaType.Nuon, MediaType.Playdia, MediaType.Pippin,
-                MediaType.FMTOWNS
+                MediaType.FMTOWNS, MediaType.MilCD, MediaType.VideoNow, MediaType.VideoNowColor,
+                MediaType.VideoNowXp
             };
         public IEnumerable<(string name, Type type, string description, object @default)> SupportedOptions =>
             new[] {("separate", typeof(bool), "Write each track to a separate file.", (object)false)};
