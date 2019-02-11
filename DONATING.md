@@ -31,7 +31,6 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - Plasmon UDO and UDO2 drives and media
 - SCSI floppy drive (e.g. Teac FD235JS806-U)
 - SLR drive and tapes
-- Sony Hi-MD and media
 - Sony HiFD
 - Sony MD-DATA and media (e.g. MDM-111, MDH-10)
 - Sony Professional Disc for DATA
@@ -62,7 +61,6 @@ This is a list of software whose physical media has some characteristics that ne
 to be investigated to allow correct dumping of such characteristics. Usually those
 are copy protections.
 
-- CD-V
 - CD-i Ready
   - A Christmas Songbook
   - Accelerator
