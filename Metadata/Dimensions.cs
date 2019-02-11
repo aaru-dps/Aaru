@@ -902,6 +902,17 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 1.2;
                     return dmns;
+                case CommonTypes.MediaType.VideoNow:
+                    dmns.Diameter          = 85;
+                    dmns.DiameterSpecified = true;
+                    dmns.Thickness         = 1.2;
+                    return dmns;
+                case CommonTypes.MediaType.VideoNowColor:
+                case CommonTypes.MediaType.VideoNowXp:
+                    dmns.Diameter          = 108;
+                    dmns.DiameterSpecified = true;
+                    dmns.Thickness         = 1.2;
+                    return dmns;
                 #endregion CD/DVD/BD
 
                 #region Apple Hard Disks
