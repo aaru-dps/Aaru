@@ -41,16 +41,16 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor
             {
-                SystemIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.system_id).TrimEnd().Trim('\u0000'),
-                VolumeIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).TrimEnd().Trim('\u0000'),
+                SystemIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.system_id).Replace('\u0000', ' ').TrimEnd(),
+                VolumeIdentifier = Encoding.BigEndianUnicode.GetString(jolietvd.volume_id).Replace('\u0000', ' ').TrimEnd(),
                 VolumeSetIdentifier =
-                    Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).TrimEnd().Trim('\u0000'),
+                    Encoding.BigEndianUnicode.GetString(jolietvd.volume_set_id).Replace('\u0000', ' ').TrimEnd(),
                 PublisherIdentifier =
-                    Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).TrimEnd().Trim('\u0000'),
+                    Encoding.BigEndianUnicode.GetString(jolietvd.publisher_id).Replace('\u0000', ' ').TrimEnd(),
                 DataPreparerIdentifier =
-                    Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).TrimEnd().Trim('\u0000'),
+                    Encoding.BigEndianUnicode.GetString(jolietvd.preparer_id).Replace('\u0000', ' ').TrimEnd(),
                 ApplicationIdentifier =
-                    Encoding.BigEndianUnicode.GetString(jolietvd.application_id).TrimEnd().Trim('\u0000')
+                    Encoding.BigEndianUnicode.GetString(jolietvd.application_id).Replace('\u0000', ' ').TrimEnd()
             };
 
             if(jolietvd.creation_date[0] < 0x31 || jolietvd.creation_date[0] > 0x39)
