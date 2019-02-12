@@ -1253,6 +1253,7 @@ namespace DiscImageChef.Core.Media.Info
             byte[] secondDataSectorNotZero      = null;
             byte[] firstTrackSecondSession      = null;
             byte[] firstTrackSecondSessionAudio = null;
+            byte[] videoNowColorFrame           = null;
 
             if(secondSessionFirstTrack != 0 && DecodedToc.HasValue &&
                DecodedToc.Value.TrackDescriptors.Any(t => t.TrackNumber == secondSessionFirstTrack))
@@ -1289,6 +1290,29 @@ namespace DiscImageChef.Core.Media.Info
 
                     if(!sense && !dev.Error) firstTrackSecondSessionAudio = cmdBuf;
                 }
+            }
+
+            videoNowColorFrame = new byte[9 * 2352];
+            for(int i = 0; i < 9; i++)
+            {
+                sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                   dev.Timeout, out _);
+
+                if(sense || dev.Error)
+                {
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false,
+                                       true, MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                       dev.Timeout, out _);
+
+                    if(sense || !dev.Error)
+                    {
+                        videoNowColorFrame = null;
+                        break;
+                    }
+                }
+
+                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
             }
 
             // Check for hidden data before start of track 1
@@ -1727,6 +1751,10 @@ namespace DiscImageChef.Core.Media.Info
                             Array.Copy(firstTrackSecondSession, 24, milcd, 0, 2048);
                             if(Dreamcast.DecodeIPBin(milcd).HasValue) MediaType = MediaType.MilCD;
                         }
+
+                    // TODO: Detect black and white VideoNow
+                    // TODO: Detect VideoNow XP
+                    if(MMC.IsVideoNowColor(videoNowColorFrame)) MediaType = MediaType.VideoNowColor;
 
                     break;
                 }

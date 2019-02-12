@@ -44,6 +44,7 @@ using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
+using DiscImageChef.Core.Media.Detection;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
@@ -238,6 +239,34 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                 }
             }
+
+            // TODO: Add other detectors here
+            dumpLog.WriteLine("Detecting disc type...");
+            DicConsole.WriteLine("Detecting disc type...");
+            byte[] videoNowColorFrame = new byte[9 * 2352];
+            for(int i = 0; i < 9; i++)
+            {
+                sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                   dev.Timeout, out _);
+
+                if(sense || dev.Error)
+                {
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false,
+                                       true, MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                       dev.Timeout, out _);
+
+                    if(sense || !dev.Error)
+                    {
+                        videoNowColorFrame = null;
+                        break;
+                    }
+                }
+
+                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
+            }
+
+            if(MMC.IsVideoNowColor(videoNowColorFrame)) dskType = MediaType.VideoNowColor;
 
             MmcSubchannel supportedSubchannel = MmcSubchannel.Raw;
             dumpLog.WriteLine("Checking if drive supports full raw subchannel reading...");
