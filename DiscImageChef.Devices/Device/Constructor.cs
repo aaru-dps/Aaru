@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SecureDigital;
 using DiscImageChef.Devices.FreeBSD;
 using DiscImageChef.Devices.Windows;
@@ -692,14 +693,33 @@ namespace DiscImageChef.Devices
                         Serial = UsbSerialString;
             }
 
-            if(!IsFireWire) return;
+            if(IsFireWire)
+            {
+                if(string.IsNullOrEmpty(Manufacturer)) Manufacturer = FireWireVendorName;
+                if(string.IsNullOrEmpty(Model)) Model               = FireWireModelName;
+                if(string.IsNullOrEmpty(Serial)) Serial = $"{firewireGuid:X16}";
+                else
+                    foreach(char c in Serial.Where(char.IsControl))
+                        Serial = $"{firewireGuid:X16}";
+            }
 
-            if(string.IsNullOrEmpty(Manufacturer)) Manufacturer = FireWireVendorName;
-            if(string.IsNullOrEmpty(Model)) Model               = FireWireModelName;
-            if(string.IsNullOrEmpty(Serial)) Serial = $"{firewireGuid:X16}";
-            else
-                foreach(char c in Serial.Where(char.IsControl))
-                    Serial = $"{firewireGuid:X16}";
+            // Some optical drives are not getting the correct serial, and IDENTIFY PACKET DEVICE is blocked without
+            // administrator privileges
+            if(ScsiType != PeripheralDeviceTypes.MultiMediaDevice) return;
+
+            bool featureSense = GetConfiguration(out byte[] featureBuffer, out _, 0x0108, MmcGetConfigurationRt.Single,
+                                                 Timeout,                  out _);
+
+            if(featureSense) return;
+
+            Features.SeparatedFeatures features = Features.Separate(featureBuffer);
+            if(features.Descriptors?.Length != 1 || features.Descriptors[0].Code != 0x0108) return;
+
+            Feature_0108? serialFeature = Features.Decode_0108(features.Descriptors[0].Data);
+
+            if(serialFeature is null) return;
+
+            Serial = serialFeature.Value.Serial;
         }
 
         static int ConvertFromHexAscii(string file, out byte[] outBuf)
