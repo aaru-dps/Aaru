@@ -46,7 +46,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 VolumeSetIdentifier    = StringHandlers.CToString(pvd.volume_set_id).TrimEnd(),
                 PublisherIdentifier    = StringHandlers.CToString(pvd.publisher_id).TrimEnd(),
                 DataPreparerIdentifier = StringHandlers.CToString(pvd.preparer_id).TrimEnd(),
-                ApplicationIdentifier  = StringHandlers.CToString(pvd.application_data).TrimEnd()
+                ApplicationIdentifier  = StringHandlers.CToString(pvd.application_id).TrimEnd()
             };
 
             if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00) decodedVD.CreationTime = DateTime.MinValue;
