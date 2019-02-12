@@ -997,12 +997,12 @@ namespace DiscImageChef.DiscImages
 
                 // JaguarCD stores data in audio tracks. FLAC is too inefficient, use LZMA there.
                 // VideoNow stores video in audio tracks, and LZMA works better too.
-                if((imageInfo.MediaType == MediaType.JaguarCD      || imageInfo.MediaType == MediaType.VideoNow ||
-                    imageInfo.MediaType == MediaType.VideoNowColor || imageInfo.MediaType == MediaType.VideoNowXp) &&
-                   trk.TrackType == TrackType.Audio                                                                &&
-                   !nocompress                                                                                     &&
-                   currentBlockHeader.compression == CompressionType.Flac                                          &&
-                   trk.TrackSession               > 1) currentBlockHeader.compression = CompressionType.Lzma;
+                if((imageInfo.MediaType == MediaType.JaguarCD && trk.TrackSession > 1 ||
+                    imageInfo.MediaType == MediaType.VideoNow                         ||
+                    imageInfo.MediaType == MediaType.VideoNowColor                    ||
+                    imageInfo.MediaType == MediaType.VideoNowXp) && trk.TrackType == TrackType.Audio && !nocompress &&
+                   currentBlockHeader.compression                                 == CompressionType.Flac)
+                    currentBlockHeader.compression = CompressionType.Lzma;
 
                 blockStream        = new MemoryStream();
                 decompressedStream = new MemoryStream();
