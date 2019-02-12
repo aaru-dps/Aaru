@@ -774,12 +774,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(decodedJolietVd.DataPreparerIdentifier == null || decodedVd.DataPreparerIdentifier.Length >
                    decodedJolietVd.DataPreparerIdentifier.Length)
                     XmlFsType.DataPreparerIdentifier  = decodedVd.DataPreparerIdentifier;
-                else XmlFsType.DataPreparerIdentifier = decodedJolietVd.SystemIdentifier;
+                else XmlFsType.DataPreparerIdentifier = decodedJolietVd.DataPreparerIdentifier;
 
                 if(decodedJolietVd.ApplicationIdentifier == null || decodedVd.ApplicationIdentifier.Length >
                    decodedJolietVd.ApplicationIdentifier.Length)
                     XmlFsType.ApplicationIdentifier  = decodedVd.ApplicationIdentifier;
-                else XmlFsType.ApplicationIdentifier = decodedJolietVd.SystemIdentifier;
+                else XmlFsType.ApplicationIdentifier = decodedJolietVd.ApplicationIdentifier;
 
                 XmlFsType.CreationDate          = decodedJolietVd.CreationTime;
                 XmlFsType.CreationDateSpecified = true;
