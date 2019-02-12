@@ -756,30 +756,45 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
-                if(decodedJolietVd.SystemIdentifier  == null ||
+                if(string.IsNullOrEmpty(decodedJolietVd.SystemIdentifier) ||
                    decodedVd.SystemIdentifier.Length > decodedJolietVd.SystemIdentifier.Length)
-                    XmlFsType.SystemIdentifier  = decodedVd.SystemIdentifier;
-                else XmlFsType.SystemIdentifier = decodedJolietVd.SystemIdentifier;
+                    XmlFsType.SystemIdentifier = decodedVd.SystemIdentifier;
+                else
+                    XmlFsType.SystemIdentifier = string.IsNullOrEmpty(decodedJolietVd.SystemIdentifier)
+                                                     ? null
+                                                     : decodedJolietVd.SystemIdentifier;
 
-                if(decodedJolietVd.VolumeSetIdentifier == null || decodedVd.VolumeSetIdentifier.Length >
+                if(string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier) || decodedVd.VolumeSetIdentifier.Length >
                    decodedJolietVd.VolumeSetIdentifier.Length)
-                    XmlFsType.VolumeSetIdentifier  = decodedVd.VolumeSetIdentifier;
-                else XmlFsType.VolumeSetIdentifier = decodedJolietVd.VolumeSetIdentifier;
+                    XmlFsType.VolumeSetIdentifier = decodedVd.VolumeSetIdentifier;
+                else
+                    XmlFsType.VolumeSetIdentifier = string.IsNullOrEmpty(decodedJolietVd.VolumeSetIdentifier)
+                                                        ? null
+                                                        : decodedJolietVd.VolumeSetIdentifier;
 
-                if(decodedJolietVd.PublisherIdentifier == null || decodedVd.PublisherIdentifier.Length >
+                if(string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier) || decodedVd.PublisherIdentifier.Length >
                    decodedJolietVd.PublisherIdentifier.Length)
-                    XmlFsType.PublisherIdentifier  = decodedVd.PublisherIdentifier;
-                else XmlFsType.PublisherIdentifier = decodedJolietVd.PublisherIdentifier;
+                    XmlFsType.PublisherIdentifier = decodedVd.PublisherIdentifier;
+                else
+                    XmlFsType.PublisherIdentifier = string.IsNullOrEmpty(decodedJolietVd.PublisherIdentifier)
+                                                        ? null
+                                                        : decodedJolietVd.PublisherIdentifier;
 
-                if(decodedJolietVd.DataPreparerIdentifier == null || decodedVd.DataPreparerIdentifier.Length >
-                   decodedJolietVd.DataPreparerIdentifier.Length)
-                    XmlFsType.DataPreparerIdentifier  = decodedVd.DataPreparerIdentifier;
-                else XmlFsType.DataPreparerIdentifier = decodedJolietVd.DataPreparerIdentifier;
+                if(string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier) ||
+                   decodedVd.DataPreparerIdentifier.Length > decodedJolietVd.DataPreparerIdentifier.Length)
+                    XmlFsType.DataPreparerIdentifier = decodedVd.DataPreparerIdentifier;
+                else
+                    XmlFsType.DataPreparerIdentifier = string.IsNullOrEmpty(decodedJolietVd.DataPreparerIdentifier)
+                                                           ? null
+                                                           : decodedJolietVd.DataPreparerIdentifier;
 
-                if(decodedJolietVd.ApplicationIdentifier == null || decodedVd.ApplicationIdentifier.Length >
-                   decodedJolietVd.ApplicationIdentifier.Length)
-                    XmlFsType.ApplicationIdentifier  = decodedVd.ApplicationIdentifier;
-                else XmlFsType.ApplicationIdentifier = decodedJolietVd.ApplicationIdentifier;
+                if(string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier) ||
+                   decodedVd.ApplicationIdentifier.Length > decodedJolietVd.ApplicationIdentifier.Length)
+                    XmlFsType.ApplicationIdentifier = decodedVd.ApplicationIdentifier;
+                else
+                    XmlFsType.ApplicationIdentifier = string.IsNullOrEmpty(decodedJolietVd.ApplicationIdentifier)
+                                                          ? null
+                                                          : decodedJolietVd.ApplicationIdentifier;
 
                 XmlFsType.CreationDate          = decodedJolietVd.CreationTime;
                 XmlFsType.CreationDateSpecified = true;

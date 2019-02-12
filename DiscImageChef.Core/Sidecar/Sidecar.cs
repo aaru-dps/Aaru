@@ -64,7 +64,7 @@ namespace DiscImageChef.Core
 
             // For fast debugging, skip checksum
             //goto skipImageChecksum;
-/*
+
             byte[] data;
             long   position = 0;
             InitProgress();
@@ -90,7 +90,7 @@ namespace DiscImageChef.Core
             // For fast debugging, skip checksum
             //skipImageChecksum:
 
-            EndProgress();*/
+            EndProgress();
             fs.Close();
 
             List<ChecksumType> imgChecksums = imgChkWorker.End();
