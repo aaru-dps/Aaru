@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -67,59 +66,57 @@ namespace DiscImageChef
             foreach(FieldInfo fi in fieldInfo)
                 if(fi.FieldType == typeof(short))
                 {
-                    short  int16   = (short)fi.GetValue(str);
-                    byte[] int16_b = BitConverter.GetBytes(int16);
-                    byte[] int16_r = int16_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToInt16(int16_r, 0));
+                    short x = (short)fi.GetValue(str);
+                    fi.SetValue(str, (short)((x << 8) | ((x >> 8) & 0xFF)));
                 }
                 else if(fi.FieldType == typeof(int))
                 {
-                    int    int32   = (int)fi.GetValue(str);
-                    byte[] int32_b = BitConverter.GetBytes(int32);
-                    byte[] int32_r = int32_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToInt32(int32_r, 0));
+                    int x = (int)fi.GetValue(str);
+                    x = (int)(((x                   << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
+                    fi.SetValue(str, (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF)));
                 }
                 else if(fi.FieldType == typeof(long))
                 {
-                    long   int64   = (long)fi.GetValue(str);
-                    byte[] int64_b = BitConverter.GetBytes(int64);
-                    byte[] int64_r = int64_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToInt64(int64_r, 0));
+                    long x = (long)fi.GetValue(str);
+                    x = ((x & 0x00000000FFFFFFFF) << 32) | (long)(((ulong)x & 0xFFFFFFFF00000000) >> 32);
+                    x = ((x & 0x0000FFFF0000FFFF) << 16) | (long)(((ulong)x & 0xFFFF0000FFFF0000) >> 16);
+                    x = ((x & 0x00FF00FF00FF00FF) << 8)  | (long)(((ulong)x & 0xFF00FF00FF00FF00) >> 8);
+
+                    fi.SetValue(str, x);
                 }
                 else if(fi.FieldType == typeof(ushort))
                 {
-                    ushort uint16   = (ushort)fi.GetValue(str);
-                    byte[] uint16_b = BitConverter.GetBytes(uint16);
-                    byte[] uint16_r = uint16_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToUInt16(uint16_r, 0));
+                    ushort x = (ushort)fi.GetValue(str);
+                    fi.SetValue(str, (ushort)((x << 8) | (x >> 8)));
                 }
                 else if(fi.FieldType == typeof(uint))
                 {
-                    uint   uint32   = (uint)fi.GetValue(str);
-                    byte[] uint32_b = BitConverter.GetBytes(uint32);
-                    byte[] uint32_r = uint32_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToUInt32(uint32_r, 0));
+                    uint x = (uint)fi.GetValue(str);
+                    x = ((x             << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
+                    fi.SetValue(str, (x << 16) | (x               >> 16));
                 }
                 else if(fi.FieldType == typeof(ulong))
                 {
-                    ulong  uint64   = (ulong)fi.GetValue(str);
-                    byte[] uint64_b = BitConverter.GetBytes(uint64);
-                    byte[] uint64_r = uint64_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToUInt64(uint64_r, 0));
+                    ulong x = (ulong)fi.GetValue(str);
+                    x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
+                    x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x & 0xFFFF0000FFFF0000) >> 16);
+                    x = ((x & 0x00FF00FF00FF00FF) << 8)  | ((x & 0xFF00FF00FF00FF00) >> 8);
+                    fi.SetValue(str, x);
                 }
                 else if(fi.FieldType == typeof(float))
                 {
                     float  flt   = (float)fi.GetValue(str);
                     byte[] flt_b = BitConverter.GetBytes(flt);
-                    byte[] flt_r = flt_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToSingle(flt_r, 0));
+                    fi.SetValue(str, BitConverter.ToSingle(new[] {flt_b[3], flt_b[2], flt_b[1], flt_b[0]}, 0));
                 }
                 else if(fi.FieldType == typeof(double))
                 {
                     double dbl   = (double)fi.GetValue(str);
                     byte[] dbl_b = BitConverter.GetBytes(dbl);
-                    byte[] dbl_r = dbl_b.Reverse().ToArray();
-                    fi.SetValue(str, BitConverter.ToDouble(dbl_r, 0));
+                    fi.SetValue(str,
+                                BitConverter
+                                   .ToDouble(new[] {dbl_b[7], dbl_b[6], dbl_b[5], dbl_b[4], dbl_b[3], dbl_b[2], dbl_b[1], dbl_b[0]},
+                                             0));
                 }
                 else if(fi.FieldType == typeof(byte) || fi.FieldType == typeof(sbyte))
                 {

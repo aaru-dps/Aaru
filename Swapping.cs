@@ -30,82 +30,13 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Linq;
-
 namespace DiscImageChef
 {
     public static class Swapping
     {
-        public static byte[] SwapTenBytes(byte[] source)
-        {
-            byte[] destination = new byte[8];
-
-            destination[0] = source[9];
-            destination[1] = source[8];
-            destination[2] = source[7];
-            destination[3] = source[6];
-            destination[4] = source[5];
-            destination[5] = source[4];
-            destination[6] = source[3];
-            destination[7] = source[2];
-            destination[8] = source[1];
-            destination[9] = source[0];
-
-            return destination;
-        }
-
-        public static byte[] SwapEightBytes(byte[] source)
-        {
-            byte[] destination = new byte[8];
-
-            destination[0] = source[7];
-            destination[1] = source[6];
-            destination[2] = source[5];
-            destination[3] = source[4];
-            destination[4] = source[3];
-            destination[5] = source[2];
-            destination[6] = source[1];
-            destination[7] = source[0];
-
-            return destination;
-        }
-
-        public static byte[] SwapFourBytes(byte[] source)
-        {
-            byte[] destination = new byte[4];
-
-            destination[0] = source[3];
-            destination[1] = source[2];
-            destination[2] = source[1];
-            destination[3] = source[0];
-
-            return destination;
-        }
-
-        public static byte[] SwapTwoBytes(byte[] source)
-        {
-            byte[] destination = new byte[2];
-
-            destination[0] = source[1];
-            destination[1] = source[0];
-
-            return destination;
-        }
-
         public static uint PDPFromLittleEndian(uint x) => ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
 
         public static uint PDPFromBigEndian(uint x) => ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
-
-        public static ulong Swap(ulong x)
-        {
-            x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
-            x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x & 0xFFFF0000FFFF0000) >> 16);
-            x = ((x & 0x00FF00FF00FF00FF) << 8)  | ((x & 0xFF00FF00FF00FF00) >> 8);
-            return x;
-        }
-
-        public static long Swap(long x) => BitConverter.ToInt64(BitConverter.GetBytes(x).Reverse().ToArray(), 0);
 
         public static ushort Swap(ushort x) => (ushort)((x << 8) | (x >> 8));
 
@@ -121,6 +52,22 @@ namespace DiscImageChef
         {
             x = (int)(((x << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
             return (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
+        }
+
+        public static ulong Swap(ulong x)
+        {
+            x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
+            x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x & 0xFFFF0000FFFF0000) >> 16);
+            x = ((x & 0x00FF00FF00FF00FF) << 8)  | ((x & 0xFF00FF00FF00FF00) >> 8);
+            return x;
+        }
+
+        public static long Swap(long x)
+        {
+            x = ((x & 0x00000000FFFFFFFF) << 32) | (long)(((ulong)x & 0xFFFFFFFF00000000) >> 32);
+            x = ((x & 0x0000FFFF0000FFFF) << 16) | (long)(((ulong)x & 0xFFFF0000FFFF0000) >> 16);
+            x = ((x & 0x00FF00FF00FF00FF) << 8)  | (long)(((ulong)x & 0xFF00FF00FF00FF00) >> 8);
+            return x;
         }
     }
 }
