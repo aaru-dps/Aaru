@@ -49,6 +49,7 @@
     <Compile Include="..\CICMMetadata\dotnet\cicm.cs">
       <Link>Metadata/cicm.cs</Link>
     </Compile>
+    <Compile Include="Enums\BitEndian.cs" />
     <Compile Include="Enums\DeviceType.cs" />
     <Compile Include="Enums\ErrorNumber.cs" />
     <Compile Include="Enums\Images.cs" />
