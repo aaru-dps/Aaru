@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : BitEndian.cs
+// Filename       : MarshallingPropertiesAttribute.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Common types.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Defines enumerations of bit endianness.
+//     Declares properties of structs for marshalling.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -36,16 +36,30 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.CommonTypes.Enums
+using System;
+using DiscImageChef.CommonTypes.Enums;
+
+namespace DiscImageChef.CommonTypes.Attributes
 {
-    /// <summary>Describes the endianness of bits on a data structure</summary>
-    public enum BitEndian
+    /// <summary>
+    ///     Defines properties to help marshalling structs from binary data
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Struct)]
+    public class MarshallingPropertiesAttribute : Attribute
     {
-        /// <summary>Little-endian, or least significant bit</summary>
-        Little,
-        /// <summary>Big-endian, or most significant bit</summary>
-        Big,
-        /// <summary>PDP-11 endian, little endian except for 32-bit integers where the 16 halves are swapped between them</summary>
-        Pdp
+        /// <summary>c</summary>
+        public BitEndian Endian { get; }
+        /// <summary>
+        ///     Tells if the structure, or any nested structure, has any non-value type (e.g. arrays, strings, etc).
+        /// </summary>
+        public bool HasReferences { get; set; }
+
+        /// <summary>Defines properties to help marshalling structs from binary data</summary>
+        /// <param name="endian">Defines properties to help marshalling structs from binary data</param>
+        public MarshallingPropertiesAttribute(BitEndian endian)
+        {
+            Endian        = endian;
+            HasReferences = true;
+        }
     }
 }
