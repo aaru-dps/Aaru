@@ -133,7 +133,7 @@ namespace DiscImageChef.Filters
             basePath         = null;
             creationTime     = DateTime.UtcNow;
             lastWriteTime    = creationTime;
-            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false);
             decompressedSize = innerStream.Length;
             opened           = true;
         }
@@ -144,7 +144,7 @@ namespace DiscImageChef.Filters
             basePath         = null;
             creationTime     = DateTime.UtcNow;
             lastWriteTime    = creationTime;
-            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false);
             decompressedSize = innerStream.Length;
             opened           = true;
         }
@@ -157,7 +157,7 @@ namespace DiscImageChef.Filters
             FileInfo fi = new FileInfo(path);
             creationTime     = fi.CreationTimeUtc;
             lastWriteTime    = fi.LastWriteTimeUtc;
-            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false, false);
+            innerStream      = new ForcedSeekStream<BZip2Stream>(dataStream, CompressionMode.Decompress, false);
             decompressedSize = innerStream.Length;
             opened           = true;
         }
