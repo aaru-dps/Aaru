@@ -110,8 +110,7 @@ namespace DiscImageChef.DiscImages
         {
             get
             {
-                if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc)
-                    throw new FeatureUnsupportedImageException("Feature not supported by image format");
+                if(imageInfo.XmlMediaType != XmlMediaType.OpticalDisc) return null;
 
                 List<Partition> parts = new List<Partition>();
                 Partition part = new Partition
