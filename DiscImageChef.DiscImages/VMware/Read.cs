@@ -59,10 +59,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmEHdrB = new byte[Marshal.SizeOf(vmEHdr)];
                 stream.Read(vmEHdrB, 0, Marshal.SizeOf(vmEHdr));
-                IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmEHdr));
-                Marshal.Copy(vmEHdrB, 0, headerPtr, Marshal.SizeOf(vmEHdr));
-                vmEHdr = (VMwareExtentHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareExtentHeader));
-                Marshal.FreeHGlobal(headerPtr);
+                vmEHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
             }
 
             if(stream.Length > Marshal.SizeOf(vmCHdr))
@@ -70,10 +67,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
                 stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
-                IntPtr cowPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmCHdr));
-                Marshal.Copy(vmCHdrB, 0, cowPtr, Marshal.SizeOf(vmCHdr));
-                vmCHdr = (VMwareCowHeader)Marshal.PtrToStructure(cowPtr, typeof(VMwareCowHeader));
-                Marshal.FreeHGlobal(cowPtr);
+                vmCHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
             }
 
             MemoryStream ddfStream = new MemoryStream();
@@ -142,10 +136,7 @@ namespace DiscImageChef.DiscImages
                         extentStream.Seek(0, SeekOrigin.Begin);
                         byte[] vmCHdrB = new byte[Marshal.SizeOf(extHdrCow)];
                         extentStream.Read(vmCHdrB, 0, Marshal.SizeOf(extHdrCow));
-                        IntPtr cowPtr = Marshal.AllocHGlobal(Marshal.SizeOf(extHdrCow));
-                        Marshal.Copy(vmCHdrB, 0, cowPtr, Marshal.SizeOf(extHdrCow));
-                        extHdrCow = (VMwareCowHeader)Marshal.PtrToStructure(cowPtr, typeof(VMwareCowHeader));
-                        Marshal.FreeHGlobal(cowPtr);
+                        extHdrCow = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
 
                         if(extHdrCow.magic != VMWARE_COW_MAGIC) break;
 
@@ -311,10 +302,7 @@ namespace DiscImageChef.DiscImages
                 VMwareExtentHeader extentHdr  = new VMwareExtentHeader();
                 byte[]             extentHdrB = new byte[Marshal.SizeOf(extentHdr)];
                 extentStream.Read(extentHdrB, 0, Marshal.SizeOf(extentHdr));
-                IntPtr extentHdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(extentHdr));
-                Marshal.Copy(extentHdrB, 0, extentHdrPtr, Marshal.SizeOf(extentHdr));
-                extentHdr = (VMwareExtentHeader)Marshal.PtrToStructure(extentHdrPtr, typeof(VMwareExtentHeader));
-                Marshal.FreeHGlobal(extentHdrPtr);
+                extentHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(extentHdrB);
 
                 if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
                     throw new Exception($"{extent.Filter} is not an VMware extent.");

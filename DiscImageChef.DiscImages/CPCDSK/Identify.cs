@@ -30,12 +30,11 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -50,10 +49,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            IntPtr headerPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(headerB, 0, headerPtr, 256);
-            CpcDiskInfo header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
-            Marshal.FreeHGlobal(headerPtr);
+            CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
 
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                       StringHandlers.CToString(header.magic));

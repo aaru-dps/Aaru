@@ -55,9 +55,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf(nhdhdr)];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            nhdhdr = (Nhdr0Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Nhdr0Header));
-            handle.Free();
+            nhdhdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<Nhdr0Header>(hdrB);
 
             if(!nhdhdr.szFileID.SequenceEqual(signature)) return false;
 

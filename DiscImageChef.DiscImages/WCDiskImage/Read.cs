@@ -33,13 +33,13 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -54,11 +54,7 @@ namespace DiscImageChef.DiscImages
             byte[] header = new byte[32];
             stream.Read(header, 0, 32);
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(32);
-            Marshal.Copy(header, 0, hdrPtr, 32);
-            WCDiskImageFileHeader fheader =
-                (WCDiskImageFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(WCDiskImageFileHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            WCDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WCDiskImageFileHeader>(header);
             DicConsole.DebugWriteLine("d2f plugin",
                                       "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
                                       fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
@@ -76,8 +72,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                            false));
+                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                         false));
 
             /* buffer the entire disk in memory */
             for(int cyl = 0; cyl < imageInfo.Cylinders; cyl++)
@@ -120,11 +116,8 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("d2f plugin", "Comment present, reading");
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
-                IntPtr sectPtr = Marshal.AllocHGlobal(6);
-                Marshal.Copy(sheaderBuffer, 0, sectPtr, 6);
                 WCDiskImageSectorHeader sheader =
-                    (WCDiskImageSectorHeader)Marshal.PtrToStructure(sectPtr, typeof(WCDiskImageSectorHeader));
-                Marshal.FreeHGlobal(sectPtr);
+                    Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Comment)
                     throw new InvalidDataException(string.Format("Invalid sector type '{0}' encountered",
@@ -140,11 +133,8 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("d2f plugin", "Directory listing present, reading");
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
-                IntPtr sectPtr = Marshal.AllocHGlobal(6);
-                Marshal.Copy(sheaderBuffer, 0, sectPtr, 6);
                 WCDiskImageSectorHeader sheader =
-                    (WCDiskImageSectorHeader)Marshal.PtrToStructure(sectPtr, typeof(WCDiskImageSectorHeader));
-                Marshal.FreeHGlobal(sectPtr);
+                    Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
 
                 if(sheader.flag != SectorFlag.Directory)
                     throw new InvalidDataException(string.Format("Invalid sector type '{0}' encountered",
@@ -216,11 +206,8 @@ namespace DiscImageChef.DiscImages
                 /* read the sector header */
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
-                IntPtr sectPtr = Marshal.AllocHGlobal(6);
-                Marshal.Copy(sheaderBuffer, 0, sectPtr, 6);
                 WCDiskImageSectorHeader sheader =
-                    (WCDiskImageSectorHeader)Marshal.PtrToStructure(sectPtr, typeof(WCDiskImageSectorHeader));
-                Marshal.FreeHGlobal(sectPtr);
+                    Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
 
                 /* validate the sector header */
                 if(sheader.cylinder != cyl || sheader.head != head || sheader.sector != sect)

@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -51,11 +50,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmEHdrB = new byte[Marshal.SizeOf(vmEHdr)];
                 stream.Read(vmEHdrB, 0, Marshal.SizeOf(vmEHdr));
-                vmEHdr = new VMwareExtentHeader();
-                IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmEHdr));
-                Marshal.Copy(vmEHdrB, 0, headerPtr, Marshal.SizeOf(vmEHdr));
-                vmEHdr = (VMwareExtentHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareExtentHeader));
-                Marshal.FreeHGlobal(headerPtr);
+                vmEHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
 
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(ddfMagic, 0, 0x15);
@@ -68,10 +63,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(0, SeekOrigin.Begin);
                 byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
                 stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
-                headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vmCHdr));
-                Marshal.Copy(vmCHdrB, 0, headerPtr, Marshal.SizeOf(vmCHdr));
-                vmCHdr = (VMwareCowHeader)Marshal.PtrToStructure(headerPtr, typeof(VMwareCowHeader));
-                Marshal.FreeHGlobal(headerPtr);
+                vmCHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
 
                 return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                        vmCHdr.magic                                          == VMWARE_COW_MAGIC;

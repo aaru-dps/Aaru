@@ -55,11 +55,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr = new PartCloneHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
-            Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
-            pHdr = (PartCloneHeader)Marshal.PtrToStructure(headerPtr, typeof(PartCloneHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            pHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<PartCloneHeader>(pHdrB);
 
             DicConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
             DicConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",

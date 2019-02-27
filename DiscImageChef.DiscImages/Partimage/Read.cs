@@ -54,11 +54,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
             stream.Read(hdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = new PartimageHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
-            Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            cVolumeHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(hdrB);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.magic = {0}",
                                       StringHandlers.CToString(cVolumeHeader.magic));
@@ -75,11 +71,7 @@ namespace DiscImageChef.DiscImages
 
             hdrB = new byte[Marshal.SizeOf(cMainHeader)];
             stream.Read(hdrB, 0, Marshal.SizeOf(cMainHeader));
-            cMainHeader = new PartimageMainHeader();
-            headerPtr   = Marshal.AllocHGlobal(Marshal.SizeOf(cMainHeader));
-            Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(cMainHeader));
-            cMainHeader = (PartimageMainHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageMainHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            cMainHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<PartimageMainHeader>(hdrB);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFileSystem = {0}",
                                       StringHandlers.CToString(cMainHeader.szFileSystem));
@@ -193,10 +185,7 @@ namespace DiscImageChef.DiscImages
 
             hdrB = new byte[Marshal.SizeOf(typeof(CLocalHeader))];
             stream.Read(hdrB, 0, Marshal.SizeOf(typeof(CLocalHeader)));
-            headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CLocalHeader)));
-            Marshal.Copy(hdrB, 0, headerPtr, Marshal.SizeOf(typeof(CLocalHeader)));
-            CLocalHeader localHeader = (CLocalHeader)Marshal.PtrToStructure(headerPtr, typeof(CLocalHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            CLocalHeader localHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<CLocalHeader>(hdrB);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}",  localHeader.qwBlockSize);
             DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwUsedBlocks = {0}", localHeader.qwUsedBlocks);

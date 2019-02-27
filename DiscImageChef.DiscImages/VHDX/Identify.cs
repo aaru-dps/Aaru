@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
@@ -48,11 +47,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf(vhdxId)];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf(vhdxId));
-            vhdxId = new VhdxIdentifier();
-            IntPtr idPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vhdxId));
-            Marshal.Copy(vhdxIdB, 0, idPtr, Marshal.SizeOf(vhdxId));
-            vhdxId = (VhdxIdentifier)Marshal.PtrToStructure(idPtr, typeof(VhdxIdentifier));
-            Marshal.FreeHGlobal(idPtr);
+            vhdxId = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
 
             return vhdxId.signature == VHDX_SIGNATURE;
         }

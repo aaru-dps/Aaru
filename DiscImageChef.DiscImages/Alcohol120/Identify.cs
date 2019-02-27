@@ -30,11 +30,10 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -48,10 +47,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            IntPtr hdrPtr = Marshal.AllocHGlobal(88);
-            Marshal.Copy(hdr, 0, hdrPtr, 88);
-            AlcoholHeader header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            AlcoholHeader header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
 
             return header.signature.SequenceEqual(alcoholSignature);
         }

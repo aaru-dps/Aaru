@@ -53,10 +53,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[Marshal.SizeOf(Header)];
             scpStream.Read(hdr, 0, Marshal.SizeOf(Header));
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(Header));
-            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(Header));
-            Header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            Header = Helpers.Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"",
                                       StringHandlers.CToString(Header.signature));
@@ -107,10 +104,7 @@ namespace DiscImageChef.DiscImages
                     byte[] rev = new byte[Marshal.SizeOf(typeof(TrackEntry))];
                     scpStream.Read(rev, 0, Marshal.SizeOf(typeof(TrackEntry)));
 
-                    IntPtr revPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(TrackEntry)));
-                    Marshal.Copy(rev, 0, revPtr, Marshal.SizeOf(typeof(TrackEntry)));
-                    trk.Entries[r] = (TrackEntry)Marshal.PtrToStructure(revPtr, typeof(TrackEntry));
-                    Marshal.FreeHGlobal(revPtr);
+                    trk.Entries[r] = Helpers.Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
                     // De-relative offsets
                     trk.Entries[r].dataOffset += Header.offsets[t];
                 }
@@ -138,10 +132,7 @@ namespace DiscImageChef.DiscImages
                         byte[] ftr = new byte[Marshal.SizeOf(typeof(ScpFooter))];
                         scpStream.Read(ftr, 0, Marshal.SizeOf(typeof(ScpFooter)));
 
-                        IntPtr ftrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ScpFooter)));
-                        Marshal.Copy(ftr, 0, ftrPtr, Marshal.SizeOf(typeof(ScpFooter)));
-                        ScpFooter footer = (ScpFooter)Marshal.PtrToStructure(ftrPtr, typeof(ScpFooter));
-                        Marshal.FreeHGlobal(ftrPtr);
+                        ScpFooter footer = Helpers.Marshal.ByteArrayToStructureLittleEndian<ScpFooter>(ftr);
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.manufacturerOffset = 0x{0:X8}",
                                                   footer.manufacturerOffset);

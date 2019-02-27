@@ -212,10 +212,7 @@ namespace DiscImageChef.DiscImages
                 header         = new DicHeader();
                 structureBytes = new byte[Marshal.SizeOf(header)];
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(header));
-                header = (DicHeader)Marshal.PtrToStructure(structurePointer, typeof(DicHeader));
-                Marshal.FreeHGlobal(structurePointer);
+                header = Helpers.Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
 
                 if(header.identifier != DIC_MAGIC)
                 {
@@ -267,10 +264,7 @@ namespace DiscImageChef.DiscImages
                 IndexHeader idxHeader = new IndexHeader();
                 structureBytes = new byte[Marshal.SizeOf(idxHeader)];
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(idxHeader));
-                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(idxHeader));
-                idxHeader = (IndexHeader)Marshal.PtrToStructure(structurePointer, typeof(IndexHeader));
-                Marshal.FreeHGlobal(structurePointer);
+                idxHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<IndexHeader>(structureBytes);
 
                 if(idxHeader.identifier != BlockType.Index)
                 {
@@ -286,10 +280,7 @@ namespace DiscImageChef.DiscImages
                     IndexEntry entry = new IndexEntry();
                     structureBytes = new byte[Marshal.SizeOf(entry)];
                     imageStream.Read(structureBytes, 0, structureBytes.Length);
-                    structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(entry));
-                    Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(entry));
-                    entry = (IndexEntry)Marshal.PtrToStructure(structurePointer, typeof(IndexEntry));
-                    Marshal.FreeHGlobal(structurePointer);
+                    entry = Helpers.Marshal.ByteArrayToStructureLittleEndian<IndexEntry>(structureBytes);
                     DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                               "Block type {0} with data type {1} is indexed to be at {2}",
                                               entry.blockType, entry.dataType, entry.offset);
@@ -322,10 +313,8 @@ namespace DiscImageChef.DiscImages
                             BlockHeader blockHeader = new BlockHeader();
                             structureBytes = new byte[Marshal.SizeOf(blockHeader)];
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
-                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(blockHeader));
-                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(blockHeader));
-                            blockHeader = (BlockHeader)Marshal.PtrToStructure(structurePointer, typeof(BlockHeader));
-                            Marshal.FreeHGlobal(structurePointer);
+                            blockHeader =
+                                Helpers.Marshal.ByteArrayToStructureLittleEndian<BlockHeader>(structureBytes);
                             imageInfo.ImageSize += blockHeader.cmpLength;
 
                             if(blockHeader.identifier != entry.blockType)
@@ -418,10 +407,7 @@ namespace DiscImageChef.DiscImages
                                 DdtHeader ddtHeader = new DdtHeader();
                                 structureBytes = new byte[Marshal.SizeOf(ddtHeader)];
                                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
-                                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
-                                ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
-                                Marshal.FreeHGlobal(structurePointer);
+                                ddtHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<DdtHeader>(structureBytes);
 
                                 if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
 
@@ -478,10 +464,7 @@ namespace DiscImageChef.DiscImages
                                 DdtHeader ddtHeader = new DdtHeader();
                                 structureBytes = new byte[Marshal.SizeOf(ddtHeader)];
                                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(ddtHeader));
-                                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(ddtHeader));
-                                ddtHeader = (DdtHeader)Marshal.PtrToStructure(structurePointer, typeof(DdtHeader));
-                                Marshal.FreeHGlobal(structurePointer);
+                                ddtHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<DdtHeader>(structureBytes);
 
                                 if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
 
@@ -544,11 +527,8 @@ namespace DiscImageChef.DiscImages
                             CicmMetadataBlock cicmBlock = new CicmMetadataBlock();
                             structureBytes = new byte[Marshal.SizeOf(cicmBlock)];
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
-                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(cicmBlock));
-                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(cicmBlock));
-                            cicmBlock = (CicmMetadataBlock)Marshal.PtrToStructure(structurePointer,
-                                                                                  typeof(CicmMetadataBlock));
-                            Marshal.FreeHGlobal(structurePointer);
+                            cicmBlock =
+                                Helpers.Marshal.ByteArrayToStructureLittleEndian<CicmMetadataBlock>(structureBytes);
                             if(cicmBlock.identifier != BlockType.CicmBlock) break;
 
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -578,11 +558,8 @@ namespace DiscImageChef.DiscImages
                             DumpHardwareHeader dumpBlock = new DumpHardwareHeader();
                             structureBytes = new byte[Marshal.SizeOf(dumpBlock)];
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
-                            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpBlock));
-                            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(dumpBlock));
-                            dumpBlock = (DumpHardwareHeader)Marshal.PtrToStructure(structurePointer,
-                                                                                   typeof(DumpHardwareHeader));
-                            Marshal.FreeHGlobal(structurePointer);
+                            dumpBlock =
+                                Helpers.Marshal.ByteArrayToStructureLittleEndian<DumpHardwareHeader>(structureBytes);
                             if(dumpBlock.identifier != BlockType.DumpHardwareBlock) break;
 
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -608,11 +585,8 @@ namespace DiscImageChef.DiscImages
                                 DumpHardwareEntry dumpEntry = new DumpHardwareEntry();
                                 structureBytes = new byte[Marshal.SizeOf(dumpEntry)];
                                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                                structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(dumpEntry));
-                                Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(dumpEntry));
-                                dumpEntry = (DumpHardwareEntry)Marshal.PtrToStructure(structurePointer,
-                                                                                      typeof(DumpHardwareEntry));
-                                Marshal.FreeHGlobal(structurePointer);
+                                dumpEntry =
+                                    Helpers.Marshal.ByteArrayToStructureLittleEndian<DumpHardwareEntry>(structureBytes);
 
                                 DumpHardwareType dump = new DumpHardwareType
                                 {

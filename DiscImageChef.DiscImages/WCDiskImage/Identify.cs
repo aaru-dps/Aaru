@@ -31,11 +31,10 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -51,11 +50,7 @@ namespace DiscImageChef.DiscImages
             byte[] header = new byte[32];
             stream.Read(header, 0, 32);
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(32);
-            Marshal.Copy(header, 0, hdrPtr, 32);
-            WCDiskImageFileHeader fheader =
-                (WCDiskImageFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(WCDiskImageFileHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            WCDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WCDiskImageFileHeader>(header);
 
             /* check the signature */
             if(Encoding.ASCII.GetString(fheader.signature).TrimEnd('\x00') != fileSignature) return false;

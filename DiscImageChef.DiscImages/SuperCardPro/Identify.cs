@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -50,10 +49,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[Marshal.SizeOf(Header)];
             stream.Read(hdr, 0, Marshal.SizeOf(Header));
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(Header));
-            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(Header));
-            Header = (ScpHeader)Marshal.PtrToStructure(hdrPtr, typeof(ScpHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            Header = Helpers.Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
             return scpSignature.SequenceEqual(Header.signature);
         }

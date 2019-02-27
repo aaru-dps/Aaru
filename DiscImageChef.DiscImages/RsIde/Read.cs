@@ -52,10 +52,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf(typeof(RsIdeHeader))];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(RsIdeHeader)));
-            Marshal.Copy(hdrB, 0, hdrPtr, Marshal.SizeOf(typeof(RsIdeHeader)));
-            RsIdeHeader hdr = (RsIdeHeader)Marshal.PtrToStructure(hdrPtr, typeof(RsIdeHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            RsIdeHeader hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<RsIdeHeader>(hdrB);
 
             if(!hdr.magic.SequenceEqual(signature)) return false;
 

@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
@@ -44,7 +43,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -111,12 +110,7 @@ namespace DiscImageChef.DiscImages
                         stream.Read(hunkSectorBytes, 0, 512);
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
-                        GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                        HunkSector hunkSector =
-                            (HunkSector)
-                            System.Runtime.InteropServices.Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                                  typeof(HunkSector));
-                        handle.Free();
+                        HunkSector hunkSector = Marshal.ByteArrayToStructureLittleEndian<HunkSector>(hunkSectorBytes);
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
                         if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
@@ -186,12 +180,7 @@ namespace DiscImageChef.DiscImages
                         stream.Read(hunkSectorBytes, 0, 512);
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
-                        GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
-                        HunkSector hunkSector =
-                            (HunkSector)
-                            System.Runtime.InteropServices.Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                                  typeof(HunkSector));
-                        handle.Free();
+                        HunkSector hunkSector = Marshal.ByteArrayToStructureLittleEndian<HunkSector>(hunkSectorBytes);
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
                         if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
@@ -369,12 +358,8 @@ namespace DiscImageChef.DiscImages
                             stream.Read(hunkSectorBytes, 0, 512);
                             // This does the big-endian trick but reverses the order of elements also
                             Array.Reverse(hunkSectorBytes);
-                            GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
                             HunkSectorSmall hunkSector =
-                                (HunkSectorSmall)
-                                System.Runtime.InteropServices.Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                                      typeof(HunkSectorSmall));
-                            handle.Free();
+                                Marshal.ByteArrayToStructureLittleEndian<HunkSectorSmall>(hunkSectorBytes);
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
                             if(hunkTableSmall.Length >= i * 512 / 4 + 512 / 4)

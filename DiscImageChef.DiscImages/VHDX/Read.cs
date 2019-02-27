@@ -54,11 +54,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] vhdxIdB = new byte[Marshal.SizeOf(vhdxId)];
             stream.Read(vhdxIdB, 0, Marshal.SizeOf(vhdxId));
-            vhdxId = new VhdxIdentifier();
-            IntPtr idPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vhdxId));
-            Marshal.Copy(vhdxIdB, 0, idPtr, Marshal.SizeOf(vhdxId));
-            vhdxId = (VhdxIdentifier)Marshal.PtrToStructure(idPtr, typeof(VhdxIdentifier));
-            Marshal.FreeHGlobal(idPtr);
+            vhdxId = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
 
             if(vhdxId.signature != VHDX_SIGNATURE) return false;
 
@@ -67,22 +63,14 @@ namespace DiscImageChef.DiscImages
             stream.Seek(64 * 1024, SeekOrigin.Begin);
             byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
             stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
-            vHdr = new VhdxHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
-            Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
-            vHdr = (VhdxHeader)Marshal.PtrToStructure(headerPtr, typeof(VhdxHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            vHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
 
             if(vHdr.Signature != VHDX_HEADER_SIG)
             {
                 stream.Seek(128 * 1024, SeekOrigin.Begin);
                 vHdrB = new byte[Marshal.SizeOf(vHdr)];
                 stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
-                vHdr      = new VhdxHeader();
-                headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
-                Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
-                vHdr = (VhdxHeader)Marshal.PtrToStructure(headerPtr, typeof(VhdxHeader));
-                Marshal.FreeHGlobal(headerPtr);
+                vHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxHeader>(vHdrB);
 
                 if(vHdr.Signature != VHDX_HEADER_SIG) throw new ImageNotSupportedException("VHDX header not found");
             }
@@ -90,22 +78,14 @@ namespace DiscImageChef.DiscImages
             stream.Seek(192 * 1024, SeekOrigin.Begin);
             byte[] vRegTableB = new byte[Marshal.SizeOf(vRegHdr)];
             stream.Read(vRegTableB, 0, Marshal.SizeOf(vRegHdr));
-            vRegHdr = new VhdxRegionTableHeader();
-            IntPtr vRegTabPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vRegHdr));
-            Marshal.Copy(vRegTableB, 0, vRegTabPtr, Marshal.SizeOf(vRegHdr));
-            vRegHdr = (VhdxRegionTableHeader)Marshal.PtrToStructure(vRegTabPtr, typeof(VhdxRegionTableHeader));
-            Marshal.FreeHGlobal(vRegTabPtr);
+            vRegHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
 
             if(vRegHdr.signature != VHDX_REGION_SIG)
             {
                 stream.Seek(256 * 1024, SeekOrigin.Begin);
                 vRegTableB = new byte[Marshal.SizeOf(vRegHdr)];
                 stream.Read(vRegTableB, 0, Marshal.SizeOf(vRegHdr));
-                vRegHdr    = new VhdxRegionTableHeader();
-                vRegTabPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vRegHdr));
-                Marshal.Copy(vRegTableB, 0, vRegTabPtr, Marshal.SizeOf(vRegHdr));
-                vRegHdr = (VhdxRegionTableHeader)Marshal.PtrToStructure(vRegTabPtr, typeof(VhdxRegionTableHeader));
-                Marshal.FreeHGlobal(vRegTabPtr);
+                vRegHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableHeader>(vRegTableB);
 
                 if(vRegHdr.signature != VHDX_REGION_SIG)
                     throw new ImageNotSupportedException("VHDX region table not found");
@@ -116,11 +96,7 @@ namespace DiscImageChef.DiscImages
             {
                 byte[] vRegB = new byte[Marshal.SizeOf(vRegs[i])];
                 stream.Read(vRegB, 0, Marshal.SizeOf(vRegs[i]));
-                vRegs[i] = new VhdxRegionTableEntry();
-                IntPtr vRegPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vRegs[i]));
-                Marshal.Copy(vRegB, 0, vRegPtr, Marshal.SizeOf(vRegs[i]));
-                vRegs[i] = (VhdxRegionTableEntry)Marshal.PtrToStructure(vRegPtr, typeof(VhdxRegionTableEntry));
-                Marshal.FreeHGlobal(vRegPtr);
+                vRegs[i] = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxRegionTableEntry>(vRegB);
 
                 if(vRegs[i].guid == batGuid)
                     batOffset = (long)vRegs[i].offset;
@@ -140,22 +116,14 @@ namespace DiscImageChef.DiscImages
             stream.Seek(metadataOffset, SeekOrigin.Begin);
             byte[] metTableB = new byte[Marshal.SizeOf(vMetHdr)];
             stream.Read(metTableB, 0, Marshal.SizeOf(vMetHdr));
-            vMetHdr = new VhdxMetadataTableHeader();
-            IntPtr metTablePtr = Marshal.AllocHGlobal(Marshal.SizeOf(vMetHdr));
-            Marshal.Copy(metTableB, 0, metTablePtr, Marshal.SizeOf(vMetHdr));
-            vMetHdr = (VhdxMetadataTableHeader)Marshal.PtrToStructure(metTablePtr, typeof(VhdxMetadataTableHeader));
-            Marshal.FreeHGlobal(metTablePtr);
+            vMetHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableHeader>(metTableB);
 
             vMets = new VhdxMetadataTableEntry[vMetHdr.entries];
             for(int i = 0; i < vMets.Length; i++)
             {
                 byte[] vMetB = new byte[Marshal.SizeOf(vMets[i])];
                 stream.Read(vMetB, 0, Marshal.SizeOf(vMets[i]));
-                vMets[i] = new VhdxMetadataTableEntry();
-                IntPtr vMetPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vMets[i]));
-                Marshal.Copy(vMetB, 0, vMetPtr, Marshal.SizeOf(vMets[i]));
-                vMets[i] = (VhdxMetadataTableEntry)Marshal.PtrToStructure(vMetPtr, typeof(VhdxMetadataTableEntry));
-                Marshal.FreeHGlobal(vMetPtr);
+                vMets[i] = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxMetadataTableEntry>(vMetB);
 
                 if(vMets[i].itemId == fileParametersGuid)
                     fileParamsOff = vMets[i].offset;
@@ -228,11 +196,7 @@ namespace DiscImageChef.DiscImages
                 stream.Seek(parentOff + metadataOffset, SeekOrigin.Begin);
                 byte[] vParHdrB = new byte[Marshal.SizeOf(vMetHdr)];
                 stream.Read(vParHdrB, 0, Marshal.SizeOf(vMetHdr));
-                vParHdr = new VhdxParentLocatorHeader();
-                IntPtr vParHdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vMetHdr));
-                Marshal.Copy(vParHdrB, 0, vParHdrPtr, Marshal.SizeOf(vMetHdr));
-                vParHdr = (VhdxParentLocatorHeader)Marshal.PtrToStructure(vParHdrPtr, typeof(VhdxParentLocatorHeader));
-                Marshal.FreeHGlobal(vParHdrPtr);
+                vParHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorHeader>(vParHdrB);
 
                 if(vParHdr.locatorType != parentTypeVhdxGuid)
                     throw new
@@ -243,11 +207,7 @@ namespace DiscImageChef.DiscImages
                 {
                     byte[] vParB = new byte[Marshal.SizeOf(vPars[i])];
                     stream.Read(vParB, 0, Marshal.SizeOf(vPars[i]));
-                    vPars[i] = new VhdxParentLocatorEntry();
-                    IntPtr vParPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vPars[i]));
-                    Marshal.Copy(vParB, 0, vParPtr, Marshal.SizeOf(vPars[i]));
-                    vPars[i] = (VhdxParentLocatorEntry)Marshal.PtrToStructure(vParPtr, typeof(VhdxParentLocatorEntry));
-                    Marshal.FreeHGlobal(vParPtr);
+                    vPars[i] = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxParentLocatorEntry>(vParB);
                 }
             }
             else if((vFileParms.flags & FILE_FLAGS_HAS_PARENT) == FILE_FLAGS_HAS_PARENT)

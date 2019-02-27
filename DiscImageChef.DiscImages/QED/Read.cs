@@ -33,11 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -52,11 +52,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] qHdrB = new byte[64];
             stream.Read(qHdrB, 0, 64);
-            qHdr = new QedHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(64);
-            Marshal.Copy(qHdrB, 0, headerPtr, 64);
-            qHdr = (QedHeader)Marshal.PtrToStructure(headerPtr, typeof(QedHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            qHdr = Marshal.ByteArrayToStructureLittleEndian<QedHeader>(qHdrB);
 
             DicConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}",          qHdr.magic);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.cluster_size = {0}",        qHdr.cluster_size);

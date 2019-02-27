@@ -50,10 +50,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdrB = new byte[Marshal.SizeOf(hdr)];
             stream.Read(hdrB, 0, hdrB.Length);
-
-            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            hdr = (FdiHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FdiHeader));
-            handle.Free();
+            hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
 
             return hdr.magic.SequenceEqual(signature);
         }

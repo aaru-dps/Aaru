@@ -35,7 +35,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -47,6 +46,7 @@ using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
+using DiscImageChef.Helpers;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using Session = DiscImageChef.CommonTypes.Structs.Session;
 
@@ -62,11 +62,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdr = new byte[260];
             stream.Read(hdr, 0, 260);
-            header = new Bw5Header();
-            IntPtr hdrPtr = Marshal.AllocHGlobal(260);
-            Marshal.Copy(hdr, 0, hdrPtr, 260);
-            header = (Bw5Header)Marshal.PtrToStructure(hdrPtr, typeof(Bw5Header));
-            Marshal.FreeHGlobal(hdrPtr);
+            header = Marshal.ByteArrayToStructureLittleEndian<Bw5Header>(hdr);
 
             DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
                                       StringHandlers.CToString(header.signature));
@@ -328,12 +324,7 @@ namespace DiscImageChef.DiscImages
                 {
                     byte[] trk = new byte[72];
                     stream.Read(trk, 0, 72);
-                    session.Tracks[tSeq] = new Bw5TrackDescriptor();
-                    IntPtr trkPtr = Marshal.AllocHGlobal(72);
-                    Marshal.Copy(trk, 0, trkPtr, 72);
-                    session.Tracks[tSeq] =
-                        (Bw5TrackDescriptor)Marshal.PtrToStructure(trkPtr, typeof(Bw5TrackDescriptor));
-                    Marshal.FreeHGlobal(trkPtr);
+                    session.Tracks[tSeq] = Marshal.ByteArrayToStructureLittleEndian<Bw5TrackDescriptor>(trk);
 
                     if(session.Tracks[tSeq].type == Bw5TrackType.Dvd ||
                        session.Tracks[tSeq].type == Bw5TrackType.NotData)

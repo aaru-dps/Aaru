@@ -55,10 +55,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[Marshal.SizeOf(header)];
             stream.Read(hdr, 0, Marshal.SizeOf(header));
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(header));
-            header = (OobBlock)Marshal.PtrToStructure(hdrPtr, typeof(OobBlock));
-            Marshal.FreeHGlobal(hdrPtr);
+            header = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
             OobBlock footer = new OobBlock();
             stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
@@ -66,10 +63,7 @@ namespace DiscImageChef.DiscImages
             hdr = new byte[Marshal.SizeOf(footer)];
             stream.Read(hdr, 0, Marshal.SizeOf(footer));
 
-            hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(footer));
-            Marshal.Copy(hdr, 0, hdrPtr, Marshal.SizeOf(footer));
-            footer = (OobBlock)Marshal.PtrToStructure(hdrPtr, typeof(OobBlock));
-            Marshal.FreeHGlobal(hdrPtr);
+            footer = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
             if(header.blockId != BlockIds.Oob || header.blockType != OobTypes.KFInfo ||
                footer.blockId != BlockIds.Oob || footer.blockType != OobTypes.EOF    ||
@@ -142,10 +136,7 @@ namespace DiscImageChef.DiscImages
                             byte[] oob = new byte[Marshal.SizeOf(oobBlk)];
                             trackStream.Read(oob, 0, Marshal.SizeOf(oobBlk));
 
-                            IntPtr oobPtr = Marshal.AllocHGlobal(Marshal.SizeOf(oobBlk));
-                            Marshal.Copy(oob, 0, oobPtr, Marshal.SizeOf(oobBlk));
-                            oobBlk = (OobBlock)Marshal.PtrToStructure(oobPtr, typeof(OobBlock));
-                            Marshal.FreeHGlobal(oobPtr);
+                            oobBlk = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
 
                             if(oobBlk.blockType == OobTypes.EOF)
                             {

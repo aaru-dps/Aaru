@@ -32,7 +32,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
@@ -40,6 +39,7 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -423,10 +423,7 @@ namespace DiscImageChef.DiscImages
                     imageStream.Read(batSectorBytes, 0, 512);
                     // This does the big-endian trick but reverses the order of elements also
                     Array.Reverse(batSectorBytes);
-                    GCHandle handle = GCHandle.Alloc(batSectorBytes, GCHandleType.Pinned);
-                    BatSector batSector =
-                        (BatSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BatSector));
-                    handle.Free();
+                    BatSector batSector = Marshal.ByteArrayToStructureLittleEndian<BatSector>(batSectorBytes);
                     // This restores the order of elements
                     Array.Reverse(batSector.blockPointer);
                     if(blockAllocationTable.Length >= i * 512 / 4 + 512 / 4)

@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -44,6 +43,7 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
+using DiscImageChef.Helpers;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using Session = DiscImageChef.CommonTypes.Structs.Session;
 
@@ -60,10 +60,7 @@ namespace DiscImageChef.DiscImages
             isDvd = false;
             byte[] hdr = new byte[88];
             stream.Read(hdr, 0, 88);
-            IntPtr hdrPtr = Marshal.AllocHGlobal(88);
-            Marshal.Copy(hdr, 0, hdrPtr, 88);
-            AlcoholHeader header = (AlcoholHeader)Marshal.PtrToStructure(hdrPtr, typeof(AlcoholHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            AlcoholHeader header = Marshal.ByteArrayToStructureLittleEndian<AlcoholHeader>(hdr);
 
             DicConsole.DebugWriteLine("Alcohol 120% plugin", "header.signature = {0}",
                                       Encoding.ASCII.GetString(header.signature));
@@ -99,10 +96,7 @@ namespace DiscImageChef.DiscImages
             {
                 byte[] sesHdr = new byte[24];
                 stream.Read(sesHdr, 0, 24);
-                IntPtr sesPtr = Marshal.AllocHGlobal(24);
-                Marshal.Copy(sesHdr, 0, sesPtr, 24);
-                AlcoholSession session = (AlcoholSession)Marshal.PtrToStructure(sesPtr, typeof(AlcoholSession));
-                Marshal.FreeHGlobal(sesPtr);
+                AlcoholSession session = Marshal.ByteArrayToStructureLittleEndian<AlcoholSession>(sesHdr);
 
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].sessionStart = {0}",
                                           session.sessionStart, i);
@@ -138,10 +132,7 @@ namespace DiscImageChef.DiscImages
                 {
                     byte[] trkHdr = new byte[80];
                     stream.Read(trkHdr, 0, 80);
-                    IntPtr trkPtr = Marshal.AllocHGlobal(80);
-                    Marshal.Copy(trkHdr, 0, trkPtr, 80);
-                    AlcoholTrack track = (AlcoholTrack)Marshal.PtrToStructure(trkPtr, typeof(AlcoholTrack));
-                    Marshal.FreeHGlobal(trkPtr);
+                    AlcoholTrack track = Marshal.ByteArrayToStructureLittleEndian<AlcoholTrack>(trkHdr);
 
                     if(track.mode == AlcoholTrackMode.Mode2F1Alt || track.mode == AlcoholTrackMode.Mode2F1Alt)
                         oldIncorrectImage = true;
@@ -216,11 +207,7 @@ namespace DiscImageChef.DiscImages
                     byte[] extHdr = new byte[8];
                     stream.Seek(track.extraOffset, SeekOrigin.Begin);
                     stream.Read(extHdr, 0, 8);
-                    IntPtr extPtr = Marshal.AllocHGlobal(8);
-                    Marshal.Copy(extHdr, 0, extPtr, 8);
-                    AlcoholTrackExtra extra =
-                        (AlcoholTrackExtra)Marshal.PtrToStructure(extPtr, typeof(AlcoholTrackExtra));
-                    Marshal.FreeHGlobal(extPtr);
+                    AlcoholTrackExtra extra = Marshal.ByteArrayToStructureLittleEndian<AlcoholTrackExtra>(extHdr);
 
                     DicConsole.DebugWriteLine("Alcohol 120% plugin", "track[{1}].extra.pregap = {0}", extra.pregap,
                                               track.point);
@@ -240,11 +227,7 @@ namespace DiscImageChef.DiscImages
                 byte[] footer = new byte[16];
                 stream.Seek(footerOff, SeekOrigin.Begin);
                 stream.Read(footer, 0, 16);
-                alcFooter = new AlcoholFooter();
-                IntPtr footPtr = Marshal.AllocHGlobal(16);
-                Marshal.Copy(footer, 0, footPtr, 16);
-                alcFooter = (AlcoholFooter)Marshal.PtrToStructure(footPtr, typeof(AlcoholFooter));
-                Marshal.FreeHGlobal(footPtr);
+                alcFooter = Marshal.ByteArrayToStructureLittleEndian<AlcoholFooter>(footer);
 
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filenameOffset = {0}",
                                           alcFooter.filenameOffset);

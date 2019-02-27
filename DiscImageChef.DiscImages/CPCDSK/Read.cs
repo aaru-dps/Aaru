@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -42,6 +41,7 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -56,10 +56,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] headerB = new byte[256];
             stream.Read(headerB, 0, 256);
-            IntPtr headerPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(headerB, 0, headerPtr, 256);
-            CpcDiskInfo header = (CpcDiskInfo)Marshal.PtrToStructure(headerPtr, typeof(CpcDiskInfo));
-            Marshal.FreeHGlobal(headerPtr);
+            CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
 
             if(!cpcdskId.SequenceEqual(header.magic) && !edskId.SequenceEqual(header.magic) &&
                !du54Id.SequenceEqual(header.magic)) return false;
@@ -103,10 +100,7 @@ namespace DiscImageChef.DiscImages
 
                     byte[] trackB = new byte[256];
                     stream.Read(trackB, 0, 256);
-                    IntPtr trackPtr = Marshal.AllocHGlobal(256);
-                    Marshal.Copy(trackB, 0, trackPtr, 256);
-                    CpcTrackInfo trackInfo = (CpcTrackInfo)Marshal.PtrToStructure(trackPtr, typeof(CpcTrackInfo));
-                    Marshal.FreeHGlobal(trackPtr);
+                    CpcTrackInfo trackInfo = Marshal.ByteArrayToStructureLittleEndian<CpcTrackInfo>(trackB);
 
                     if(!trackId.SequenceEqual(trackInfo.magic))
                     {

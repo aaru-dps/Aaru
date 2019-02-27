@@ -52,10 +52,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
-            Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
-            RayHdr header = (RayHdr)Marshal.PtrToStructure(ftrPtr, typeof(RayHdr));
-            Marshal.FreeHGlobal(ftrPtr);
+            RayHdr header = Helpers.Marshal.ByteArrayToStructureLittleEndian<RayHdr>(buffer);
 
             string signature = StringHandlers.CToString(header.signature);
 
@@ -83,8 +80,8 @@ namespace DiscImageChef.DiscImages
             }
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                            false));
+                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                         false));
 
             switch(imageInfo.MediaType)
             {

@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -50,11 +50,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[133];
 
             stream.Read(hdr, 0, 133);
-            header = new CopyQmHeader();
-            IntPtr hdrPtr = Marshal.AllocHGlobal(133);
-            Marshal.Copy(hdr, 0, hdrPtr, 133);
-            header = (CopyQmHeader)Marshal.PtrToStructure(hdrPtr, typeof(CopyQmHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            header = Marshal.ByteArrayToStructureLittleEndian<CopyQmHeader>(hdr);
 
             DicConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}",       header.magic);
             DicConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}",        header.mark);
@@ -155,8 +151,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.SectorSize           = header.sectorSize;
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)header.totalCylinders, (byte)header.heads,
-                                                            header.sectorsPerTrack, (uint)header.sectorSize,
-                                                            MediaEncoding.MFM, false));
+                                                         header.sectorsPerTrack, (uint)header.sectorSize,
+                                                         MediaEncoding.MFM, false));
 
             switch(imageInfo.MediaType)
             {
@@ -187,8 +183,6 @@ namespace DiscImageChef.DiscImages
             return true;
         }
 
-        public bool? VerifyMediaImage() => calculatedDataCrc == header.crc && headerChecksumOk;
-
         public byte[] ReadSector(ulong sectorAddress) => ReadSectors(sectorAddress, 1);
 
         public byte[] ReadSectors(ulong sectorAddress, uint length)
@@ -206,5 +200,7 @@ namespace DiscImageChef.DiscImages
 
             return buffer;
         }
+
+        public bool? VerifyMediaImage() => calculatedDataCrc == header.crc && headerChecksumOk;
     }
 }

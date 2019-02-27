@@ -48,10 +48,7 @@ namespace DiscImageChef.DiscImages
             header         = new DicHeader();
             structureBytes = new byte[Marshal.SizeOf(header)];
             imageStream.Read(structureBytes, 0, structureBytes.Length);
-            structurePointer = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.Copy(structureBytes, 0, structurePointer, Marshal.SizeOf(header));
-            header = (DicHeader)Marshal.PtrToStructure(structurePointer, typeof(DicHeader));
-            Marshal.FreeHGlobal(structurePointer);
+            header = Helpers.Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
 
             return header.identifier == DIC_MAGIC && header.imageMajorVersion <= DICF_VERSION;
         }

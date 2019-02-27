@@ -32,13 +32,13 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -52,11 +52,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[40];
 
             stream.Read(hdr, 0, 40);
-            header = new SaveDskFHeader();
-            IntPtr hdrPtr = Marshal.AllocHGlobal(40);
-            Marshal.Copy(hdr, 0, hdrPtr, 40);
-            header = (SaveDskFHeader)Marshal.PtrToStructure(hdrPtr, typeof(SaveDskFHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
 
             DicConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}",      header.magic);
             DicConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}",  header.mediaType);

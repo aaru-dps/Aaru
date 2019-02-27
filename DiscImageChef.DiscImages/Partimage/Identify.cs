@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -49,11 +48,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = new PartimageHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(cVolumeHeader));
-            Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = (PartimageHeader)Marshal.PtrToStructure(headerPtr, typeof(PartimageHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            cVolumeHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(pHdrB);
 
             return partimageMagic.SequenceEqual(cVolumeHeader.magic);
         }

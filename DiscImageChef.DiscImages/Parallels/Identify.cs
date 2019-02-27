@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -49,11 +48,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr = new ParallelsHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
-            Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
-            pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            pHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
 
             return parallelsMagic.SequenceEqual(pHdr.magic) || parallelsExtMagic.SequenceEqual(pHdr.magic);
         }

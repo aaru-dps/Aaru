@@ -33,11 +33,11 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -51,10 +51,7 @@ namespace DiscImageChef.DiscImages
             byte[] header = new byte[2 + 2 * 82];
             stream.Read(header, 0, 2 + 2 * 82);
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
-            Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
-            HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            HdcpFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<HdcpFileHeader>(header);
             DicConsole.DebugWriteLine("HDCP plugin",
                                       "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
                                       fheader.lastCylinder + 1, fheader.sectorsPerTrack);
@@ -72,8 +69,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, 2,
-                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                            false));
+                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                         false));
 
             // the start offset of the track data
             long currentOffset = 2 + 2 * 82;

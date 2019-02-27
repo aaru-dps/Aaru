@@ -53,11 +53,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
             stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr = new ParallelsHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pHdr));
-            Marshal.Copy(pHdrB, 0, headerPtr, Marshal.SizeOf(pHdr));
-            pHdr = (ParallelsHeader)Marshal.PtrToStructure(headerPtr, typeof(ParallelsHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            pHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
 
             DicConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}",
                                       StringHandlers.CToString(pHdr.magic));

@@ -53,11 +53,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
             stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
-            vHdr = new VdiHeader();
-            IntPtr headerPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vHdr));
-            Marshal.Copy(vHdrB, 0, headerPtr, Marshal.SizeOf(vHdr));
-            vHdr = (VdiHeader)Marshal.PtrToStructure(headerPtr, typeof(VdiHeader));
-            Marshal.FreeHGlobal(headerPtr);
+            vHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VdiHeader>(vHdrB);
 
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", vHdr.creator);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}",   vHdr.magic);

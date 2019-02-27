@@ -31,10 +31,9 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -50,10 +49,7 @@ namespace DiscImageChef.DiscImages
             byte[] header = new byte[2 + 2 * 82];
             stream.Read(header, 0, 2 + 2 * 82);
 
-            IntPtr hdrPtr = Marshal.AllocHGlobal(2 + 2 * 82);
-            Marshal.Copy(header, 0, hdrPtr, 2 + 2 * 82);
-            HdcpFileHeader fheader = (HdcpFileHeader)Marshal.PtrToStructure(hdrPtr, typeof(HdcpFileHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            HdcpFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<HdcpFileHeader>(header);
 
             /* Some sanity checks on the values we just read.
              * We know the image is from a DOS floppy disk, so assume

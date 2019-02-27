@@ -30,10 +30,9 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -48,11 +47,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdr = new byte[40];
             stream.Read(hdr, 0, 40);
 
-            header = new SaveDskFHeader();
-            IntPtr hdrPtr = Marshal.AllocHGlobal(40);
-            Marshal.Copy(hdr, 0, hdrPtr, 40);
-            header = (SaveDskFHeader)Marshal.PtrToStructure(hdrPtr, typeof(SaveDskFHeader));
-            Marshal.FreeHGlobal(hdrPtr);
+            header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
 
             return (header.magic == SDF_MAGIC || header.magic == SDF_MAGIC_COMPRESSED ||
                     header.magic == SDF_MAGIC_OLD) && header.fatCopies <= 2            && header.padding == 0 &&

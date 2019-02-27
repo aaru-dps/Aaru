@@ -55,9 +55,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf(d88Hdr)];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
-            handle.Free();
+            d88Hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
                                       StringHandlers.CToString(d88Hdr.name, shiftjis));

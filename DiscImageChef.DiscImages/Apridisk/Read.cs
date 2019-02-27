@@ -62,10 +62,7 @@ namespace DiscImageChef.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                GCHandle handle = GCHandle.Alloc(recB, GCHandleType.Pinned);
-                ApridiskRecord record =
-                    (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
-                handle.Free();
+                ApridiskRecord record = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
 
                 switch(record.type)
                 {
@@ -152,10 +149,7 @@ namespace DiscImageChef.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                GCHandle handle = GCHandle.Alloc(recB, GCHandleType.Pinned);
-                ApridiskRecord record =
-                    (ApridiskRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ApridiskRecord));
-                handle.Free();
+                ApridiskRecord record = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
 
                 switch(record.type)
                 {
@@ -206,8 +200,8 @@ namespace DiscImageChef.DiscImages
                                       imageInfo.SectorsPerTrack);
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                            (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
-                                                            false));
+                                                         (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
+                                                         false));
 
             imageInfo.ImageSize            = (ulong)stream.Length - headersizes;
             imageInfo.CreationTime         = imageFilter.GetCreationTime();

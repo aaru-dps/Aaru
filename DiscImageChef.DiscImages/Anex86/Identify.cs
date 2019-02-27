@@ -51,9 +51,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf(fdihdr)];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            fdihdr = (Anex86Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Anex86Header));
-            handle.Free();
+            fdihdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<Anex86Header>(hdrB);
 
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}",   fdihdr.unknown);
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}",   fdihdr.hddtype);

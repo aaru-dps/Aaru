@@ -53,11 +53,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            footer = new DriFooter();
-            IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
-            Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
-            footer = (DriFooter)Marshal.PtrToStructure(ftrPtr, typeof(DriFooter));
-            Marshal.FreeHGlobal(ftrPtr);
+            footer = Helpers.Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
 
             string sig = StringHandlers.CToString(footer.signature);
 
@@ -96,8 +92,8 @@ namespace DiscImageChef.DiscImages
             }
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                            (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
-                                                            MediaEncoding.MFM, false));
+                                                         (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
+                                                         MediaEncoding.MFM, false));
 
             switch(imageInfo.MediaType)
             {

@@ -55,9 +55,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf(v98Hdr)];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            v98Hdr = (Virtual98Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Virtual98Header));
-            handle.Free();
+            v98Hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 
             if(!v98Hdr.signature.SequenceEqual(signature)) return false;
 

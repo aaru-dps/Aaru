@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -51,10 +50,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
-            Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
-            RayHdr header = (RayHdr)Marshal.PtrToStructure(ftrPtr, typeof(RayHdr));
-            Marshal.FreeHGlobal(ftrPtr);
+            RayHdr header = Helpers.Marshal.ByteArrayToStructureLittleEndian<RayHdr>(buffer);
 
             string signature = StringHandlers.CToString(header.signature);
 

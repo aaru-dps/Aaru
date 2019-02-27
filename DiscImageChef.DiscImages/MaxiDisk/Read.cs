@@ -32,10 +32,10 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -51,10 +51,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            IntPtr ftrPtr = Marshal.AllocHGlobal(buffer.Length);
-            Marshal.Copy(buffer, 0, ftrPtr, buffer.Length);
-            HdkHeader tmpHeader = (HdkHeader)Marshal.PtrToStructure(ftrPtr, typeof(HdkHeader));
-            Marshal.FreeHGlobal(ftrPtr);
+            HdkHeader tmpHeader = Marshal.ByteArrayToStructureLittleEndian<HdkHeader>(buffer);
 
             // This is hardcoded
             // But its possible values are unknown...
@@ -88,8 +85,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                            (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
-                                                            MediaEncoding.MFM, false));
+                                                         (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
+                                                         MediaEncoding.MFM, false));
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 

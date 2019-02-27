@@ -59,10 +59,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] hdrB = new byte[Marshal.SizeOf(d88Hdr)];
             stream.Read(hdrB, 0, hdrB.Length);
-
-            GCHandle handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            d88Hdr = (D88Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(D88Header));
-            handle.Free();
+            d88Hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
                                       StringHandlers.CToString(d88Hdr.name, shiftjis));
@@ -97,9 +94,7 @@ namespace DiscImageChef.DiscImages
             stream.Seek(d88Hdr.track_table[0], SeekOrigin.Begin);
             stream.Read(hdrB, 0, hdrB.Length);
 
-            handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-            sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
-            handle.Free();
+            sechdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
             DicConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}",            sechdr.c);
             DicConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}",            sechdr.h);
@@ -122,9 +117,7 @@ namespace DiscImageChef.DiscImages
                 stream.Read(hdrB, 0, hdrB.Length);
                 SortedDictionary<byte, byte[]> sectors = new SortedDictionary<byte, byte[]>();
 
-                handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-                sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
-                handle.Free();
+                sechdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
                 if(sechdr.spt != spt || sechdr.n != bps)
                 {
@@ -143,9 +136,7 @@ namespace DiscImageChef.DiscImages
                     sectors.Add(sechdr.r, secB);
                     stream.Read(hdrB, 0, hdrB.Length);
 
-                    handle = GCHandle.Alloc(hdrB, GCHandleType.Pinned);
-                    sechdr = (SectorHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SectorHeader));
-                    handle.Free();
+                    sechdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
                     if(sechdr.spt == spt && sechdr.n == bps) continue;
 
