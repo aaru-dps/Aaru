@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Helpers;
+using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace DiscImageChef.Partitions
 {

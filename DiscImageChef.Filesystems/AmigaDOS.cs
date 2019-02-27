@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -69,14 +70,14 @@ namespace DiscImageChef.Filesystems
             // size for floppies is the sector size, and for RDB is usually is the hard disk sector size,
             // so this is not entirely wrong...
             byte[]    sector = imagePlugin.ReadSectors(0 + partition.Start, 2);
-            BootBlock bblk   = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
+            BootBlock bblk   = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
 
             // AROS boot floppies...
             if(sector.Length              >= 512      && sector[510]                 == 0x55 && sector[511] == 0xAA &&
                (bblk.diskType & FFS_MASK) != FFS_MASK && (bblk.diskType & MUFS_MASK) != MUFS_MASK)
             {
                 sector = imagePlugin.ReadSectors(1 + partition.Start, 2);
-                bblk   = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
+                bblk   = Marshal.ByteArrayToStructureBigEndian<BootBlock>(sector);
             }
 
             // Not FFS or MuFS?
@@ -164,7 +165,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bootBlockSectors = imagePlugin.ReadSectors(0 + partition.Start, 2);
 
-            BootBlock bootBlk = BigEndianMarshal.ByteArrayToStructureBigEndian<BootBlock>(bootBlockSectors);
+            BootBlock bootBlk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bootBlockSectors);
             bootBlk.bootCode = new byte[bootBlockSectors.Length - 12];
             Array.Copy(bootBlockSectors, 12, bootBlk.bootCode, 0, bootBlk.bootCode.Length);
             bootBlockSectors[4] = bootBlockSectors[5] = bootBlockSectors[6] = bootBlockSectors[7] = 0;
@@ -339,7 +340,7 @@ namespace DiscImageChef.Filesystems
             byte[] tmp = new byte[228];
             Array.Copy(block, 0,                  tmp, 0,  24);
             Array.Copy(block, block.Length - 200, tmp, 28, 200);
-            RootBlock root = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(tmp);
+            RootBlock root = Marshal.ByteArrayToStructureBigEndian<RootBlock>(tmp);
             root.hashTable                       = new uint[(block.Length - 224) / 4];
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < root.hashTable.Length; i++)

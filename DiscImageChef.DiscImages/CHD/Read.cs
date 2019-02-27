@@ -44,6 +44,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -75,7 +76,7 @@ namespace DiscImageChef.DiscImages
             {
                 case 1:
                 {
-                    ChdHeaderV1 hdrV1 = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdHeaderV1>(buffer);
+                    ChdHeaderV1 hdrV1 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV1>(buffer);
 
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"",
                                               Encoding.ASCII.GetString(hdrV1.tag));
@@ -112,7 +113,9 @@ namespace DiscImageChef.DiscImages
                         Array.Reverse(hunkSectorBytes);
                         GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
                         HunkSector hunkSector =
-                            (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
+                            (HunkSector)
+                            System.Runtime.InteropServices.Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                                  typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
@@ -146,7 +149,7 @@ namespace DiscImageChef.DiscImages
                 }
                 case 2:
                 {
-                    ChdHeaderV2 hdrV2 = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdHeaderV2>(buffer);
+                    ChdHeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV2>(buffer);
 
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"",
                                               Encoding.ASCII.GetString(hdrV2.tag));
@@ -185,7 +188,9 @@ namespace DiscImageChef.DiscImages
                         Array.Reverse(hunkSectorBytes);
                         GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
                         HunkSector hunkSector =
-                            (HunkSector)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(HunkSector));
+                            (HunkSector)
+                            System.Runtime.InteropServices.Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                                  typeof(HunkSector));
                         handle.Free();
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
@@ -219,7 +224,7 @@ namespace DiscImageChef.DiscImages
                 }
                 case 3:
                 {
-                    ChdHeaderV3 hdrV3 = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdHeaderV3>(buffer);
+                    ChdHeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV3>(buffer);
 
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"",
                                               Encoding.ASCII.GetString(hdrV3.tag));
@@ -268,7 +273,7 @@ namespace DiscImageChef.DiscImages
                 }
                 case 4:
                 {
-                    ChdHeaderV4 hdrV4 = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdHeaderV4>(buffer);
+                    ChdHeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV4>(buffer);
 
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"",
                                               Encoding.ASCII.GetString(hdrV4.tag));
@@ -313,7 +318,7 @@ namespace DiscImageChef.DiscImages
                 }
                 case 5:
                 {
-                    ChdHeaderV5 hdrV5 = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdHeaderV5>(buffer);
+                    ChdHeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV5>(buffer);
 
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"",
                                               Encoding.ASCII.GetString(hdrV5.tag));
@@ -366,8 +371,9 @@ namespace DiscImageChef.DiscImages
                             Array.Reverse(hunkSectorBytes);
                             GCHandle handle = GCHandle.Alloc(hunkSectorBytes, GCHandleType.Pinned);
                             HunkSectorSmall hunkSector =
-                                (HunkSectorSmall)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                        typeof(HunkSectorSmall));
+                                (HunkSectorSmall)
+                                System.Runtime.InteropServices.Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
+                                                                                      typeof(HunkSectorSmall));
                             handle.Free();
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
@@ -419,9 +425,8 @@ namespace DiscImageChef.DiscImages
                     byte[] hdrBytes = new byte[16];
                     stream.Seek((long)nextMetaOff, SeekOrigin.Begin);
                     stream.Read(hdrBytes, 0, hdrBytes.Length);
-                    ChdMetadataHeader header =
-                        BigEndianMarshal.ByteArrayToStructureBigEndian<ChdMetadataHeader>(hdrBytes);
-                    byte[] meta = new byte[header.flagsAndLength & 0xFFFFFF];
+                    ChdMetadataHeader header = Marshal.ByteArrayToStructureBigEndian<ChdMetadataHeader>(hdrBytes);
+                    byte[]            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                     stream.Read(meta, 0, meta.Length);
                     DicConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));

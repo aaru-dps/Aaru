@@ -42,6 +42,7 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Compression;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 using SharpCompress.Compressors.ADC;
 using Version = Resources.Version;
 
@@ -75,7 +76,7 @@ namespace DiscImageChef.DiscImages
             {
                 if(bcem.Length < 128) return false;
 
-                header = BigEndianMarshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
+                header = Marshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
 
                 DicConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}",   header.version);
                 DicConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);

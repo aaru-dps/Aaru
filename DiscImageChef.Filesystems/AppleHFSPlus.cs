@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -159,7 +160,7 @@ namespace DiscImageChef.Filesystems
             Array.Copy(vhSector, 0x400, tmp, 0, 0x400);
             vhSector = tmp;
 
-            vh = BigEndianMarshal.ByteArrayToStructureBigEndian<HfsPlusVolumeHeader>(vhSector);
+            vh = Marshal.ByteArrayToStructureBigEndian<HfsPlusVolumeHeader>(vhSector);
 
             if(vh.version == 4 || vh.version == 5)
             {

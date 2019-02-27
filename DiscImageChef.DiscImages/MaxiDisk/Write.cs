@@ -34,12 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Helpers;
 using Schemas;
+using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace DiscImageChef.DiscImages
 {

@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 #pragma warning disable 169
 #pragma warning disable 649
@@ -59,11 +60,12 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
             if(sector.Length < 512) return false;
 
-            SGILabel dvh = BigEndianMarshal.ByteArrayToStructureBigEndian<SGILabel>(sector);
+            SGILabel dvh = Marshal.ByteArrayToStructureBigEndian<SGILabel>(sector);
             for(int i = 0; i < dvh.volume.Length; i++)
-                dvh.volume[i] = (SGIVolume)BigEndianMarshal.SwapStructureMembersEndian(dvh.volume[i]);
+                dvh.volume[i] = (SGIVolume)Marshal.SwapStructureMembersEndian(dvh.volume[i]);
+
             for(int i = 0; i < dvh.partitions.Length; i++)
-                dvh.partitions[i] = (SGIPartition)BigEndianMarshal.SwapStructureMembersEndian(dvh.partitions[i]);
+                dvh.partitions[i] = (SGIPartition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
             DicConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic,
                                       SGI_MAGIC);

@@ -91,8 +91,8 @@ namespace DiscImageChef.Partitions
             }
             else
             {
-                pd    = BigEndianMarshal.ByteArrayToStructureBigEndian<PDInfo>(pdsector);
-                pdold = BigEndianMarshal.ByteArrayToStructureBigEndian<PDInfoOld>(pdsector);
+                pd    = Helpers.Marshal.ByteArrayToStructureBigEndian<PDInfo>(pdsector);
+                pdold = Helpers.Marshal.ByteArrayToStructureBigEndian<PDInfoOld>(pdsector);
             }
 
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.driveid = {0}", pd.driveid);
@@ -157,7 +157,7 @@ namespace DiscImageChef.Partitions
                 }
                 else
                 {
-                    vtoc = BigEndianMarshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
+                    vtoc = Helpers.Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
                     for(int i = 0; i < vtoc.v_part.Length; i++)
                     {
                         vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);
@@ -186,7 +186,7 @@ namespace DiscImageChef.Partitions
                     }
                     else
                     {
-                        vtocOld = BigEndianMarshal.ByteArrayToStructureBigEndian<vtocold>(vtocsector);
+                        vtocOld = Helpers.Marshal.ByteArrayToStructureBigEndian<vtocold>(vtocsector);
                         for(int i = 0; i < vtocOld.v_part.Length; i++)
                         {
                             vtocOld.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtocOld.v_part[i].p_tag);
@@ -232,7 +232,7 @@ namespace DiscImageChef.Partitions
                     }
                     else
                     {
-                        vtoc = BigEndianMarshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
+                        vtoc = Helpers.Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
                         for(int i = 0; i < vtoc.v_part.Length; i++)
                         {
                             vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);

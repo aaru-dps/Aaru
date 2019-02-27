@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems
                 {
                     Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf(xfsSb));
 
-                    xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
+                    xfsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
                                               location, xfsSb.magicnum, XFS_MAGIC);
@@ -92,7 +92,7 @@ namespace DiscImageChef.Filesystems
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                     if(sector.Length < Marshal.SizeOf(xfsSb)) return false;
 
-                    xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
+                    xfsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
                                               xfsSb.magicnum, XFS_MAGIC);
@@ -127,7 +127,7 @@ namespace DiscImageChef.Filesystems
                 {
                     Array.Copy(sector, location, sbpiece, 0, Marshal.SizeOf(xfsSb));
 
-                    xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
+                    xfsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
                                               location, xfsSb.magicnum, XFS_MAGIC);
@@ -145,7 +145,7 @@ namespace DiscImageChef.Filesystems
                     byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                     if(sector.Length < Marshal.SizeOf(xfsSb)) return;
 
-                    xfsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
+                    xfsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
                     DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
                                               xfsSb.magicnum, XFS_MAGIC);

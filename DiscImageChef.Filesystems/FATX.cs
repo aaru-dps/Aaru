@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -55,7 +56,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
-            FATX_Superblock fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
+            FATX_Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
             return fatxSb.magic == FATX_MAGIC;
         }
@@ -69,7 +70,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
-            FATX_Superblock fatxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
+            FATX_Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
 
             if(fatxSb.magic != FATX_MAGIC) return;
 

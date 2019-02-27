@@ -92,12 +92,8 @@
         </e>
       </e>
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
-        <e p="Attributes" t="Include">
-          <e p="MarshallingPropertiesAttribute.cs" t="Include" />
-        </e>
         <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
         <e p="Enums" t="Include">
-          <e p="BitEndian.cs" t="Include" />
           <e p="DeviceType.cs" t="Include" />
           <e p="ErrorNumber.cs" t="Include" />
           <e p="Images.cs" t="Include" />
@@ -1765,12 +1761,14 @@
         <e p="ArrayFill.cs" t="Include" />
         <e p="ArrayIsEmpty.cs" t="Include" />
         <e p="BigEndianBitConverter.cs" t="Include" />
-        <e p="BigEndianMarshal.cs" t="Include" />
+        <e p="BitEndian.cs" t="Include" />
         <e p="CHS.cs" t="Include" />
         <e p="CompareBytes.cs" t="Include" />
         <e p="CountBits.cs" t="Include" />
         <e p="DateHandlers.cs" t="Include" />
         <e p="DiscImageChef.Helpers.csproj" t="IncludeRecursive" />
+        <e p="Marshal.cs" t="Include" />
+        <e p="MarshallingPropertiesAttribute.cs" t="Include" />
         <e p="PrintHex.cs" t="Include" />
         <e p="StringHandlers.cs" t="Include" />
         <e p="Swapping.cs" t="Include" />

@@ -210,7 +210,7 @@ namespace DiscImageChef.Filesystems
             UFSSuperBlock ufs_sb = (UFSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(UFSSuperBlock));
             Marshal.FreeHGlobal(sbPtr);
 
-            UFSSuperBlock bs_sfu = BigEndianMarshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
+            UFSSuperBlock bs_sfu = Helpers.Marshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
             if(bs_sfu.fs_magic == UFS_MAGIC     && ufs_sb.fs_magic == UFS_CIGAM    ||
                bs_sfu.fs_magic == UFS_MAGIC_BW  && ufs_sb.fs_magic == UFS_CIGAM_BW ||
                bs_sfu.fs_magic == UFS2_MAGIC    && ufs_sb.fs_magic == UFS2_CIGAM   ||

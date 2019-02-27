@@ -35,6 +35,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filters
 {
@@ -148,7 +149,7 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[26];
             Array.Copy(buffer, 0, hdr_b, 0, 26);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
 
             return header.magic == AppleSingleMagic &&
                    (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
@@ -161,7 +162,7 @@ namespace DiscImageChef.Filters
             byte[] hdr_b = new byte[26];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(hdr_b, 0, 26);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
 
             return header.magic == AppleSingleMagic &&
                    (header.version == AppleSingleVersion || header.version == AppleSingleVersion2);
@@ -174,7 +175,7 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[26];
             fstream.Read(hdr_b, 0, 26);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
 
             fstream.Close();
             return header.magic == AppleSingleMagic &&
@@ -190,14 +191,14 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[26];
             ms.Read(hdr_b, 0, 26);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
 
             AppleSingleEntry[] entries = new AppleSingleEntry[header.entries];
             for(int i = 0; i < header.entries; i++)
             {
                 byte[] entry = new byte[12];
                 ms.Read(entry, 0, 12);
-                entries[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
+                entries[i] = Marshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
             creationTime  = DateTime.UtcNow;
@@ -213,7 +214,7 @@ namespace DiscImageChef.Filters
                         byte[] dates_b = new byte[16];
                         ms.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
-                            BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
+                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
                         creationTime  = DateHandlers.UnixUnsignedToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.UnixUnsignedToDateTime(dates.modificationDate);
                         break;
@@ -224,28 +225,28 @@ namespace DiscImageChef.Filters
                         if(MacintoshHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleMacFileInfo macinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
                             creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
                             creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleUNIXFileInfo unixinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
                             creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
@@ -268,14 +269,14 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[26];
             stream.Read(hdr_b, 0, 26);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
 
             AppleSingleEntry[] entries = new AppleSingleEntry[header.entries];
             for(int i = 0; i < header.entries; i++)
             {
                 byte[] entry = new byte[12];
                 stream.Read(entry, 0, 12);
-                entries[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
+                entries[i] = Marshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
             creationTime  = DateTime.UtcNow;
@@ -291,7 +292,7 @@ namespace DiscImageChef.Filters
                         byte[] dates_b = new byte[16];
                         stream.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
-                            BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
+                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
                         creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
                         break;
@@ -302,28 +303,28 @@ namespace DiscImageChef.Filters
                         if(MacintoshHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleMacFileInfo macinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
                             creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
                             creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleUNIXFileInfo unixinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
                             creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }
@@ -347,14 +348,14 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[26];
             fs.Read(hdr_b, 0, 26);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<AppleSingleHeader>(hdr_b);
 
             AppleSingleEntry[] entries = new AppleSingleEntry[header.entries];
             for(int i = 0; i < header.entries; i++)
             {
                 byte[] entry = new byte[12];
                 fs.Read(entry, 0, 12);
-                entries[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
+                entries[i] = Marshal.ByteArrayToStructureBigEndian<AppleSingleEntry>(entry);
             }
 
             creationTime  = DateTime.UtcNow;
@@ -370,7 +371,7 @@ namespace DiscImageChef.Filters
                         byte[] dates_b = new byte[16];
                         fs.Read(dates_b, 0, 16);
                         AppleSingleFileDates dates =
-                            BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
+                            Marshal.ByteArrayToStructureBigEndian<AppleSingleFileDates>(dates_b);
                         creationTime  = DateHandlers.MacToDateTime(dates.creationDate);
                         lastWriteTime = DateHandlers.MacToDateTime(dates.modificationDate);
                         break;
@@ -381,28 +382,28 @@ namespace DiscImageChef.Filters
                         if(MacintoshHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleMacFileInfo macinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleMacFileInfo>(finfo);
                             creationTime  = DateHandlers.MacToDateTime(macinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(macinfo.modificationDate);
                         }
                         else if(ProDOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleProDOSFileInfo prodosinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleProDOSFileInfo>(finfo);
                             creationTime  = DateHandlers.MacToDateTime(prodosinfo.creationDate);
                             lastWriteTime = DateHandlers.MacToDateTime(prodosinfo.modificationDate);
                         }
                         else if(UNIXHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleUNIXFileInfo unixinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleUNIXFileInfo>(finfo);
                             creationTime  = DateHandlers.UnixUnsignedToDateTime(unixinfo.creationDate);
                             lastWriteTime = DateHandlers.UnixUnsignedToDateTime(unixinfo.modificationDate);
                         }
                         else if(DOSHome.SequenceEqual(header.homeFilesystem))
                         {
                             AppleSingleDOSFileInfo dosinfo =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
+                                Marshal.ByteArrayToStructureBigEndian<AppleSingleDOSFileInfo>(finfo);
                             lastWriteTime =
                                 DateHandlers.DosToDateTime(dosinfo.modificationDate, dosinfo.modificationTime);
                         }

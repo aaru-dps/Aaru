@@ -72,8 +72,8 @@ namespace DiscImageChef.Filesystems
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(rbfSb)) return false;
 
-                rbfSb = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
-                RBF_NewIdSector rbf9000Sb = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
+                rbfSb = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
+                RBF_NewIdSector rbf9000Sb = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
                 DicConsole.DebugWriteLine("RBF plugin",
                                           "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
@@ -105,8 +105,8 @@ namespace DiscImageChef.Filesystems
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(rbfSb)) return;
 
-                rbfSb     = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
-                rbf9000Sb = BigEndianMarshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
+                rbfSb     = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
+                rbf9000Sb = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
                 DicConsole.DebugWriteLine("RBF plugin",
                                           "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
@@ -118,7 +118,7 @@ namespace DiscImageChef.Filesystems
             if(rbfSb.dd_sync != RBF_SYNC && rbf9000Sb.rid_sync != RBF_SYNC && rbf9000Sb.rid_sync != RBF_CNYS) return;
 
             if(rbf9000Sb.rid_sync == RBF_CNYS)
-                rbf9000Sb = (RBF_NewIdSector)BigEndianMarshal.SwapStructureMembersEndian(rbf9000Sb);
+                rbf9000Sb = (RBF_NewIdSector)Helpers.Marshal.SwapStructureMembersEndian(rbf9000Sb);
 
             StringBuilder sb = new StringBuilder();
 

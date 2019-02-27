@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -76,14 +77,14 @@ namespace DiscImageChef.Partitions
                 default: return false;
             }
 
-            X68kTable table = BigEndianMarshal.ByteArrayToStructureBigEndian<X68kTable>(sector);
+            X68kTable table = Marshal.ByteArrayToStructureBigEndian<X68kTable>(sector);
 
             DicConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
 
             if(table.magic != X68K_MAGIC) return false;
 
             for(int i = 0; i < table.entries.Length; i++)
-                table.entries[i] = (X68kEntry)BigEndianMarshal.SwapStructureMembersEndian(table.entries[i]);
+                table.entries[i] = (X68kEntry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
             DicConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}",    table.size);
             DicConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}",   table.size2);

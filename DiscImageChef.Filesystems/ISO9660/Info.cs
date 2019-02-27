@@ -179,7 +179,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         }
                         else if(cdi)
                             fsvd =
-                                BigEndianMarshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
+                                Helpers.Marshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
                         else
                         {
                             IntPtr ptr = Marshal.AllocHGlobal(2048);
@@ -295,7 +295,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         if(Marshal.SizeOf(typeof(CdromXa)) + saOff <= saLen)
                         {
-                            CdromXa xa = BigEndianMarshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
+                            CdromXa xa = Helpers.Marshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
                             if(xa.signature == XA_MAGIC)
                             {
                                 xaExtensions =  true;
@@ -360,8 +360,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                         case SUSP_CONTINUATION when saOff + sa[saOff + 2] <= saLen:
                                             byte[] ce = new byte[sa[saOff + 2]];
                                             Array.Copy(sa, saOff, ce, 0, ce.Length);
-                                            ContinuationArea ca = BigEndianMarshal
-                                               .ByteArrayToStructureBigEndian<ContinuationArea>(ce);
+                                            ContinuationArea ca =
+                                                Helpers.Marshal.ByteArrayToStructureBigEndian<ContinuationArea>(ce);
                                             contareas.Add(ca);
                                             break;
                                         case SUSP_REFERENCE when saOff + sa[saOff + 2] <= saLen:
@@ -458,7 +458,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 counter = 1;
                 foreach(byte[] erb in refareas)
                 {
-                    ReferenceArea er = BigEndianMarshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
+                    ReferenceArea er = Helpers.Marshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
                     string extId =
                         Encoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
                     string extDes =

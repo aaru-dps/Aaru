@@ -94,9 +94,9 @@ namespace DiscImageChef.Filesystems
             Marshal.FreeHGlobal(bpbPtr);
 
             MediaInformationBlock mib =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
+                Helpers.Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
             VolumeInformationBlock vib =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
+                Helpers.Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
 
             DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.oem_name = \"{0}\"",
                                       StringHandlers.CToString(bpb.oem_name));

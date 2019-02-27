@@ -38,6 +38,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 // Information learnt from XNU source and testing against real disks
 namespace DiscImageChef.Partitions
@@ -95,10 +96,10 @@ namespace DiscImageChef.Partitions
 
             labelSector = imagePlugin.ReadSectors(labelPosition, sectorsToRead);
 
-            NeXTLabel label    = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTLabel>(labelSector);
+            NeXTLabel label    = Marshal.ByteArrayToStructureBigEndian<NeXTLabel>(labelSector);
             byte[]    disktabB = new byte[498];
             Array.Copy(labelSector, 44, disktabB, 0, 498);
-            label.dl_dt              = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktabB);
+            label.dl_dt              = Marshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktabB);
             label.dl_dt.d_partitions = new NeXTEntry[8];
 
             DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_version = 0x{0:X8}", label.dl_version);
@@ -138,7 +139,7 @@ namespace DiscImageChef.Partitions
             {
                 byte[] partB = new byte[44];
                 Array.Copy(labelSector, 44 + 146 + 44 * i, partB, 0, 44);
-                label.dl_dt.d_partitions[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<NeXTEntry>(partB);
+                label.dl_dt.d_partitions[i] = Marshal.ByteArrayToStructureBigEndian<NeXTEntry>(partB);
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
                                           label.dl_dt.d_partitions[i].p_base);
                 DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,

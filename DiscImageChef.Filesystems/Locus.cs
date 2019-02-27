@@ -137,7 +137,7 @@ namespace DiscImageChef.Filesystems
             // Numerical arrays are not important for information so no need to swap them
             if(locusSb.s_magic == LOCUS_CIGAM || locusSb.s_magic == LOCUS_CIGAM_OLD)
             {
-                locusSb         = BigEndianMarshal.ByteArrayToStructureBigEndian<Locus_Superblock>(sector);
+                locusSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<Locus_Superblock>(sector);
                 locusSb.s_flags = (LocusFlags)Swapping.Swap((ushort)locusSb.s_flags);
             }
 

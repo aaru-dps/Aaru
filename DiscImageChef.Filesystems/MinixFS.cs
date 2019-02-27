@@ -237,7 +237,7 @@ namespace DiscImageChef.Filesystems
                                                                      typeof(Minix3SuperBlock));
                     handle.Free();
                 }
-                else mnxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
+                else mnxSb = Helpers.Marshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
 
                 if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM) mnxSb.s_blocksize = 1024;
 
@@ -274,7 +274,7 @@ namespace DiscImageChef.Filesystems
                                                                     typeof(MinixSuperBlock));
                     handle.Free();
                 }
-                else mnxSb = BigEndianMarshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
+                else mnxSb = Helpers.Marshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();

@@ -32,6 +32,7 @@
 
 using System.IO;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -46,7 +47,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] qHdrB = new byte[48];
             stream.Read(qHdrB, 0, 48);
-            qHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<QCowHeader>(qHdrB);
+            qHdr = Marshal.ByteArrayToStructureBigEndian<QCowHeader>(qHdrB);
 
             return qHdr.magic == QCOW_MAGIC && qHdr.version == QCOW_VERSION;
         }

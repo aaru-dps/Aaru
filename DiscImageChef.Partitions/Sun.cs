@@ -322,55 +322,56 @@ namespace DiscImageChef.Partitions
         static dk_label SwapDiskLabel(dk_label label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label");
-            dk_label lebal = (dk_label)BigEndianMarshal.SwapStructureMembersEndian(label);
+            label = (dk_label)Helpers.Marshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_map.Length; i++)
-                lebal.dkl_map[i] = (dk_map)BigEndianMarshal.SwapStructureMembersEndian(label.dkl_map[i]);
+                label.dkl_map[i] = (dk_map)Helpers.Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
-            return lebal;
+            return label;
         }
 
         static dk_label8 SwapDiskLabel(dk_label8 label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label8");
-            dk_label8 lebal = (dk_label8)BigEndianMarshal.SwapStructureMembersEndian(label);
+            label = (dk_label8)Helpers.Marshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_map.Length; i++)
-                lebal.dkl_map[i] = (dk_map)BigEndianMarshal.SwapStructureMembersEndian(label.dkl_map[i]);
+                label.dkl_map[i] = (dk_map)Helpers.Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
+
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
-                lebal.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
+                label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
             for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
             {
-                lebal.dkl_vtoc.v_part[i].p_flag = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
-                lebal.dkl_vtoc.v_part[i].p_tag  = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
+                label.dkl_vtoc.v_part[i].p_flag = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
+                label.dkl_vtoc.v_part[i].p_tag  = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
             }
 
             for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
-                lebal.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
+                label.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
             for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
-                lebal.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
+                label.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
 
-            return lebal;
+            return label;
         }
 
         static dk_label16 SwapDiskLabel(dk_label16 label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label16");
-            dk_label16 lebal = (dk_label16)BigEndianMarshal.SwapStructureMembersEndian(label);
+            label = (dk_label16)Helpers.Marshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
-                lebal.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
+                label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
             for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)
             {
-                lebal.dkl_vtoc.v_part[i].p_flag  = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
-                lebal.dkl_vtoc.v_part[i].p_tag   = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
-                lebal.dkl_vtoc.v_part[i].p_size  = Swapping.Swap(label.dkl_vtoc.v_part[i].p_size);
-                lebal.dkl_vtoc.v_part[i].p_start = Swapping.Swap(label.dkl_vtoc.v_part[i].p_start);
+                label.dkl_vtoc.v_part[i].p_flag  = (SunFlags)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_flag);
+                label.dkl_vtoc.v_part[i].p_tag   = (SunTag)Swapping.Swap((ushort)label.dkl_vtoc.v_part[i].p_tag);
+                label.dkl_vtoc.v_part[i].p_size  = Swapping.Swap(label.dkl_vtoc.v_part[i].p_size);
+                label.dkl_vtoc.v_part[i].p_start = Swapping.Swap(label.dkl_vtoc.v_part[i].p_start);
             }
 
             for(int i = 0; i < label.dkl_vtoc.v_timestamp.Length; i++)
-                lebal.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
+                label.dkl_vtoc.v_timestamp[i] = Swapping.Swap(label.dkl_vtoc.v_timestamp[i]);
             for(int i = 0; i < label.dkl_vtoc.v_reserved.Length; i++)
-                lebal.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
+                label.dkl_vtoc.v_reserved[i] = Swapping.Swap(label.dkl_vtoc.v_reserved[i]);
 
-            return lebal;
+            return label;
         }
 
         static string SunFlagsToString(SunFlags flags)

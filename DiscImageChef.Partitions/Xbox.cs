@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -75,7 +76,7 @@ namespace DiscImageChef.Partitions
             if(sector.Length < 512) return false;
 
             Xbox360DevKitPartitionTable table =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
+                Marshal.ByteArrayToStructureBigEndian<Xbox360DevKitPartitionTable>(sector);
 
             if(table.magic                             == XBOX360_DEVKIT_MAGIC     &&
                table.contentOff   + table.contentLen   <= imagePlugin.Info.Sectors &&

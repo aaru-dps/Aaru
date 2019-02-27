@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -74,7 +75,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            OperaSuperBlock sb = BigEndianMarshal.ByteArrayToStructureBigEndian<OperaSuperBlock>(sbSector);
+            OperaSuperBlock sb = Marshal.ByteArrayToStructureBigEndian<OperaSuperBlock>(sbSector);
             sb.sync_bytes = new byte[5];
 
             if(sb.record_type != 1 || sb.record_version != 1) return;

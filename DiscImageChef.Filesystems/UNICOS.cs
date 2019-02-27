@@ -74,7 +74,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return false;
 
-            unicosSb = BigEndianMarshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
+            unicosSb = Helpers.Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
             DicConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
                                       UNICOS_MAGIC);
@@ -97,7 +97,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(unicosSb)) return;
 
-            unicosSb = BigEndianMarshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
+            unicosSb = Helpers.Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
             if(unicosSb.s_magic != UNICOS_MAGIC) return;
 

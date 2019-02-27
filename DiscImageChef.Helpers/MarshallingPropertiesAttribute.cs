@@ -37,9 +37,8 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Enums;
 
-namespace DiscImageChef.CommonTypes.Attributes
+namespace DiscImageChef.Helpers
 {
     /// <summary>
     ///     Defines properties to help marshalling structs from binary data

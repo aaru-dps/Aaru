@@ -186,14 +186,14 @@ namespace DiscImageChef.Filesystems
                newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM)
             {
                 if(newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_CIGAM)
-                    newHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<s_spcl>(sector);
+                    newHdr = Helpers.Marshal.ByteArrayToStructureBigEndian<s_spcl>(sector);
             }
             else if(aixHdr.c_magic == XIX_MAGIC || aixHdr.c_magic == XIX_CIGAM)
             {
                 useAix = true;
 
                 if(aixHdr.c_magic == XIX_CIGAM)
-                    aixHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
+                    aixHdr = Helpers.Marshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
             }
             else if(oldHdr.c_magic == OFS_MAGIC)
             {

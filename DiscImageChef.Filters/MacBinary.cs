@@ -35,6 +35,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filters
 {
@@ -123,7 +124,7 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[128];
             Array.Copy(buffer, 0, hdr_b, 0, 128);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0  &&
                    header.filename[0]                                < 64 && header.zero1       == 0 &&
@@ -138,7 +139,7 @@ namespace DiscImageChef.Filters
             byte[] hdr_b = new byte[128];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(hdr_b, 0, 128);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0  &&
                    header.filename[0]                                < 64 && header.zero1       == 0 &&
@@ -153,7 +154,7 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[128];
             fstream.Read(hdr_b, 0, 128);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             fstream.Close();
             return header.magic == MACBINARY_MAGIC || header.version == 0 && header.filename[0] > 0  &&
@@ -171,7 +172,7 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[128];
             ms.Read(hdr_b, 0, 128);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             uint blocks = 1;
             blocks += (uint)(header.secondaryHeaderLength / 128);
@@ -197,7 +198,7 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[128];
             stream.Read(hdr_b, 0, 128);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             uint blocks = 1;
             blocks += (uint)(header.secondaryHeaderLength / 128);
@@ -224,7 +225,7 @@ namespace DiscImageChef.Filters
 
             byte[] hdr_b = new byte[128];
             fs.Read(hdr_b, 0, 128);
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
+            header = Marshal.ByteArrayToStructureBigEndian<MacBinaryHeader>(hdr_b);
 
             uint blocks = 1;
             blocks += (uint)(header.secondaryHeaderLength / 128);

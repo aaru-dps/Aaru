@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems
                                                                     typeof(HammerSuperBlock));
                 handle.Free();
             }
-            else hammerSb = BigEndianMarshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
+            else hammerSb = Helpers.Marshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
 
             sb.AppendLine("HAMMER filesystem");
 

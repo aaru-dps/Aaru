@@ -37,6 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 
@@ -53,7 +54,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] qHdrB = new byte[48];
             stream.Read(qHdrB, 0, 48);
-            qHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<QCowHeader>(qHdrB);
+            qHdr = Marshal.ByteArrayToStructureBigEndian<QCowHeader>(qHdrB);
 
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}",          qHdr.magic);
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}",             qHdr.version);

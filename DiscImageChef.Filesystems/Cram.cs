@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems
                     Marshal.FreeHGlobal(crSbPtr);
                     break;
                 case CRAM_CIGAM:
-                    crSb         = BigEndianMarshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
+                    crSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
                     littleEndian = false;
                     break;
             }

@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -143,9 +144,8 @@ namespace DiscImageChef.Filesystems
                 else return;
             }
 
-            HfsMasterDirectoryBlock mdb =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<HfsMasterDirectoryBlock>(mdbSector);
-            HfsBootBlock bb = BigEndianMarshal.ByteArrayToStructureBigEndian<HfsBootBlock>(bbSector);
+            HfsMasterDirectoryBlock mdb = Marshal.ByteArrayToStructureBigEndian<HfsMasterDirectoryBlock>(mdbSector);
+            HfsBootBlock            bb  = Marshal.ByteArrayToStructureBigEndian<HfsBootBlock>(bbSector);
 
             sb.AppendLine("Apple Hierarchical File System");
             sb.AppendLine();

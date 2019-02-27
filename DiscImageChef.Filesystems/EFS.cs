@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems
 
                 Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf(efsSb));
 
-                efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
+                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                           0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
@@ -89,7 +89,7 @@ namespace DiscImageChef.Filesystems
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
                 if(sector.Length < Marshal.SizeOf(efsSb)) return false;
 
-                efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
+                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                           efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
 
                 Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf(efsSb));
 
-                efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
+                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                           0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
@@ -135,7 +135,7 @@ namespace DiscImageChef.Filesystems
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
                 if(sector.Length < Marshal.SizeOf(efsSb)) return;
 
-                efsSb = BigEndianMarshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
+                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                           efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);

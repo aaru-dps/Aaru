@@ -64,7 +64,7 @@ namespace DiscImageChef.DiscImages
                 DfiBlockHeader blockHeader = new DfiBlockHeader();
                 byte[]         blk         = new byte[Marshal.SizeOf(blockHeader)];
                 stream.Read(blk, 0, Marshal.SizeOf(blockHeader));
-                blockHeader = BigEndianMarshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
+                blockHeader = Helpers.Marshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
 
                 DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
                                           blockHeader.cylinder);

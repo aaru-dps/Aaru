@@ -42,6 +42,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Helpers;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -138,10 +139,10 @@ namespace DiscImageChef.Filesystems
             ("d3e93f8b82ef250db216037d827a4896dc97d2be", "TracerST"), // OEM ID: "TracerST"
             //("b741f85ef40288ccc8887de1f6e849009097e1c9", "Norton Utilities"), // OEM ID: "IBM PNCI", need to confirm
             ("c49b275537ac7237cac64d83f34d2024ae0ca96a",
-                "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
+             "Windows NT (Spanish)"), // Need to check Windows >= 2000 (Spanish)
             //("a48b0e4b696317eed829e960d1aa576562a4f185", "TracerST"), // Unknown OEM ID, apparently Tracer, unconfirmed
             ("fe477972602ba76658ff7143859045b3c4036ca5",
-                "iomega"),                                        // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
+             "iomega"),                                           // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
             ("ef79a1f33e5237827eb812dda548f0e4e916d815", "GEOS"), // OEM ID: "GEOWORKS"
             ("8524587ee91494cc51cc2c9d07453e84be0cdc33", "Hero Soft v1.10"),
             ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00")
@@ -182,8 +183,7 @@ namespace DiscImageChef.Filesystems
             byte[] bpbSector = imagePlugin.ReadSectors(0            + partition.Start, sectorsPerBpb);
             byte[] fatSector = imagePlugin.ReadSector(sectorsPerBpb + partition.Start);
 
-            HumanParameterBlock humanBpb =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
+            HumanParameterBlock humanBpb = Marshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
 
             ulong expectedClusters = humanBpb.bpc > 0 ? partition.Size / humanBpb.bpc : 0;
 
@@ -484,8 +484,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bpbSector = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb);
 
-            HumanParameterBlock humanBpb =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
+            HumanParameterBlock humanBpb = Marshal.ByteArrayToStructureBigEndian<HumanParameterBlock>(bpbSector);
 
             ulong expectedClusters = humanBpb.bpc > 0 ? partition.Size / humanBpb.bpc : 0;
 
@@ -517,24 +516,43 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.Info.SectorSize >= 256 && !useHumanBpb)
             {
-                IntPtr bpbPtr = Marshal.AllocHGlobal(512);
-                Marshal.Copy(bpbSector, 0, bpbPtr, 512);
+                IntPtr bpbPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+                System.Runtime.InteropServices.Marshal.Copy(bpbSector, 0, bpbPtr, 512);
 
-                atariBpb = (AtariParameterBlock)Marshal.PtrToStructure(bpbPtr,  typeof(AtariParameterBlock));
-                msxBpb   = (MsxParameterBlock)Marshal.PtrToStructure(bpbPtr,    typeof(MsxParameterBlock));
-                dos2Bpb  = (BiosParameterBlock2)Marshal.PtrToStructure(bpbPtr,  typeof(BiosParameterBlock2));
-                dos30Bpb = (BiosParameterBlock30)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock30));
-                dos32Bpb = (BiosParameterBlock32)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock32));
-                dos33Bpb = (BiosParameterBlock33)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock33));
+                atariBpb =
+                    (AtariParameterBlock)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(AtariParameterBlock));
+                msxBpb =
+                    (MsxParameterBlock)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(MsxParameterBlock));
+                dos2Bpb =
+                    (BiosParameterBlock2)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock2));
+                dos30Bpb =
+                    (BiosParameterBlock30)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock30));
+                dos32Bpb =
+                    (BiosParameterBlock32)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock32));
+                dos33Bpb =
+                    (BiosParameterBlock33)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock33));
                 shortEbpb =
-                    (BiosParameterBlockShortEbpb)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockShortEbpb));
-                ebpb = (BiosParameterBlockEbpb)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockEbpb));
+                    (BiosParameterBlockShortEbpb)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockShortEbpb));
+                ebpb =
+                    (BiosParameterBlockEbpb)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockEbpb));
                 shortFat32Bpb =
-                    (Fat32ParameterBlockShort)Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlockShort));
-                fat32Bpb   = (Fat32ParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlock));
-                apricotBpb = (ApricotLabel)Marshal.PtrToStructure(bpbPtr,        typeof(ApricotLabel));
+                    (Fat32ParameterBlockShort)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlockShort));
+                fat32Bpb =
+                    (Fat32ParameterBlock)
+                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlock));
+                apricotBpb =
+                    (ApricotLabel)System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(ApricotLabel));
 
-                Marshal.FreeHGlobal(bpbPtr);
+                System.Runtime.InteropServices.Marshal.FreeHGlobal(bpbPtr);
 
                 int bitsInBpsAtari      = CountBits.Count(atariBpb.bps);
                 int bitsInBpsMsx        = CountBits.Count(msxBpb.bps);
@@ -1104,10 +1122,12 @@ namespace DiscImageChef.Filesystems
                 if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
                 {
                     byte[] fsinfoSector = imagePlugin.ReadSector(fat32Bpb.fsinfo_sector + partition.Start);
-                    IntPtr fsinfoPtr    = Marshal.AllocHGlobal(512);
-                    Marshal.Copy(fsinfoSector, 0, fsinfoPtr, 512);
-                    FsInfoSector fsInfo = (FsInfoSector)Marshal.PtrToStructure(fsinfoPtr, typeof(FsInfoSector));
-                    Marshal.FreeHGlobal(fsinfoPtr);
+                    IntPtr fsinfoPtr    = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+                    System.Runtime.InteropServices.Marshal.Copy(fsinfoSector, 0, fsinfoPtr, 512);
+                    FsInfoSector fsInfo =
+                        (FsInfoSector)
+                        System.Runtime.InteropServices.Marshal.PtrToStructure(fsinfoPtr, typeof(FsInfoSector));
+                    System.Runtime.InteropServices.Marshal.FreeHGlobal(fsinfoPtr);
 
                     if(fsInfo.signature1 == FSINFO_SIGNATURE1 && fsInfo.signature2 == FSINFO_SIGNATURE2 &&
                        fsInfo.signature3 == FSINFO_SIGNATURE3)
@@ -1540,10 +1560,12 @@ namespace DiscImageChef.Filesystems
                     // Not a volume label
                     if(rootDirectory[i + 0x0B] != 0x08 && rootDirectory[i + 0x0B] != 0x28) continue;
 
-                    IntPtr entryPtr = Marshal.AllocHGlobal(32);
-                    Marshal.Copy(rootDirectory, i, entryPtr, 32);
-                    DirectoryEntry entry = (DirectoryEntry)Marshal.PtrToStructure(entryPtr, typeof(DirectoryEntry));
-                    Marshal.FreeHGlobal(entryPtr);
+                    IntPtr entryPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(32);
+                    System.Runtime.InteropServices.Marshal.Copy(rootDirectory, i, entryPtr, 32);
+                    DirectoryEntry entry =
+                        (DirectoryEntry)
+                        System.Runtime.InteropServices.Marshal.PtrToStructure(entryPtr, typeof(DirectoryEntry));
+                    System.Runtime.InteropServices.Marshal.FreeHGlobal(entryPtr);
 
                     byte[] fullname = new byte[11];
                     Array.Copy(entry.filename,  0, fullname, 0, 8);
@@ -2137,15 +2159,18 @@ namespace DiscImageChef.Filesystems
             /// <summary>Operating system.</summary>
             public byte operatingSystem;
             /// <summary>Software write protection.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool writeProtected;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool writeProtected;
             /// <summary>Copy protected.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool copyProtected;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool copyProtected;
             /// <summary>Boot type.</summary>
             public byte bootType;
             /// <summary>Partitions.</summary>
             public byte partitionCount;
             /// <summary>Is hard disk?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool winchester;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool winchester;
             /// <summary>Sector size.</summary>
             public ushort sectorSize;
             /// <summary>Sectors per track.</summary>
@@ -2198,15 +2223,18 @@ namespace DiscImageChef.Filesystems
             /// <summary>Major BIOS version.</summary>
             public byte biosMajorVersion;
             /// <summary>Diagnostics enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool diagnosticsFlag;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool diagnosticsFlag;
             /// <summary>Printer device.</summary>
             public byte prnDevice;
             /// <summary>Bell volume.</summary>
             public byte bellVolume;
             /// <summary>Cache enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool enableCache;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableCache;
             /// <summary>Graphics enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool enableGraphics;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableGraphics;
             /// <summary>Length in sectors of DOS.</summary>
             public byte dosLength;
             /// <summary>Length in sectors of FONT file.</summary>
@@ -2222,7 +2250,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>Keyboard click volume.</summary>
             public byte keyboardVolume;
             /// <summary>Auto-repeat enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool autorepeat;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool autorepeat;
             /// <summary>Auto-repeat lead-in.</summary>
             public byte autorepeatLeadIn;
             /// <summary>Auto-repeat interval.</summary>
@@ -2237,7 +2266,8 @@ namespace DiscImageChef.Filesystems
             /// <summary>Screen line width.</summary>
             public byte lineWidth;
             /// <summary>Screen disabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool imageOff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool imageOff;
             /// <summary>Spare area for screen values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
             public byte[] spareScreen;
@@ -2252,13 +2282,16 @@ namespace DiscImageChef.Filesystems
             /// <summary>Stop bits.</summary>
             public byte stopBits;
             /// <summary>Parity enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool parityCheck;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parityCheck;
             /// <summary>Parity type.</summary>
             public byte parityType;
             /// <summary>Xon/Xoff enabled on TX.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool txXonXoff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool txXonXoff;
             /// <summary>Xon/Xoff enabled on RX.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool rxXonXoff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool rxXonXoff;
             /// <summary>Xon character.</summary>
             public byte xonCharacter;
             /// <summary>Xoff character.</summary>
@@ -2266,30 +2299,39 @@ namespace DiscImageChef.Filesystems
             /// <summary>Xon/Xoff buffer on RX.</summary>
             public ushort rxXonXoffBuffer;
             /// <summary>DTR/DSR enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool dtrDsr;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool dtrDsr;
             /// <summary>CTS/RTS enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool ctsRts;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool ctsRts;
             /// <summary>NULLs after CR.</summary>
             public byte nullsAfterCr;
             /// <summary>NULLs after 0xFF.</summary>
             public byte nullsAfterFF;
             /// <summary>Send LF after CR in serial port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool lfAfterCRSerial;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCRSerial;
             /// <summary>BIOS error report in serial port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportSerial;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportSerial;
             /// <summary>Spare area for serial port values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
             public byte[] spareSerial;
             /// <summary>Send LF after CR in parallel port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool lfAfterCrParallel;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCrParallel;
             /// <summary>Select line supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool selectLine;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool selectLine;
             /// <summary>Paper empty supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool paperEmpty;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool paperEmpty;
             /// <summary>Fault line supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool faultLine;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool faultLine;
             /// <summary>BIOS error report in parallel port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportParallel;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportParallel;
             /// <summary>Spare area for parallel port values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
             public byte[] spareParallel;
@@ -2297,9 +2339,11 @@ namespace DiscImageChef.Filesystems
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
             public byte[] spareWinchester;
             /// <summary>Parking enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool parkingEnabled;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parkingEnabled;
             /// <summary>Format protection?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool formatProtection;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool formatProtection;
             /// <summary>Spare area for RAM disk values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] spareRamDisk;

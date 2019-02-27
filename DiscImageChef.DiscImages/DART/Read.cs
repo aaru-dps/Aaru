@@ -59,7 +59,7 @@ namespace DiscImageChef.DiscImages
             byte[] headerB = new byte[Marshal.SizeOf(header)];
 
             stream.Read(headerB, 0, Marshal.SizeOf(header));
-            header = BigEndianMarshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
+            header = Helpers.Marshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
 
             if(header.srcCmp > COMPRESS_NONE) return false;
 

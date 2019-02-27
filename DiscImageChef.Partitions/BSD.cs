@@ -214,14 +214,13 @@ namespace DiscImageChef.Partitions
             return dl;
         }
 
-        static DiskLabel SwapDiskLabel(DiskLabel disklabel)
+        static DiskLabel SwapDiskLabel(DiskLabel dl)
         {
-            DiskLabel dl =
-                (DiskLabel)BigEndianMarshal.SwapStructureMembersEndian(disklabel);
+            dl = (DiskLabel)Helpers.Marshal.SwapStructureMembersEndian(dl);
             for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
             for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i]         = Swapping.Swap(dl.d_spare[i]);
             for(int i = 0; i < dl.d_partitions.Length; i++)
-                dl.d_partitions[i] = (BSDPartition)BigEndianMarshal.SwapStructureMembersEndian(dl.d_partitions[i]);
+                dl.d_partitions[i] = (BSDPartition)Helpers.Marshal.SwapStructureMembersEndian(dl.d_partitions[i]);
 
             return dl;
         }

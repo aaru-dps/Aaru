@@ -133,7 +133,7 @@ namespace DiscImageChef.Filesystems
                 besb = (BeSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BeSuperBlock));
                 handle.Free();
             }
-            else besb = BigEndianMarshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
+            else besb = Helpers.Marshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
 
             sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
 

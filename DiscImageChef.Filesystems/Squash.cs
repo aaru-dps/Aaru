@@ -83,7 +83,7 @@ namespace DiscImageChef.Filesystems
                     Marshal.FreeHGlobal(sqSbPtr);
                     break;
                 case SQUASH_CIGAM:
-                    sqSb         = BigEndianMarshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
+                    sqSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
                     littleEndian = false;
                     break;
             }

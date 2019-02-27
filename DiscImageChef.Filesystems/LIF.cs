@@ -37,6 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -56,7 +57,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.SectorSize < 256) return false;
 
             byte[]         sector = imagePlugin.ReadSector(partition.Start);
-            LifSystemBlock lifSb  = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
+            LifSystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
             DicConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
 
             return lifSb.magic == LIF_MAGIC;
@@ -71,7 +72,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.SectorSize < 256) return;
 
             byte[]         sector = imagePlugin.ReadSector(partition.Start);
-            LifSystemBlock lifSb  = BigEndianMarshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
+            LifSystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
 
             if(lifSb.magic != LIF_MAGIC) return;
 

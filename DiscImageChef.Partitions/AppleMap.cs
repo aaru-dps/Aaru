@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -83,8 +84,7 @@ namespace DiscImageChef.Partitions
             }
             else if(sectorSize < 256) return false;
 
-            AppleDriverDescriptorMap ddm =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
+            AppleDriverDescriptorMap ddm = Marshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
 
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}",  ddm.sbSig);
             DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
@@ -104,7 +104,7 @@ namespace DiscImageChef.Partitions
                     {
                         byte[] tmp = new byte[8];
                         Array.Copy(ddmSector, 18 + i * 8, tmp, 0, 8);
-                        ddm.sbMap[i] = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
+                        ddm.sbMap[i] = Marshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
                         DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}",
                                                   ddm.sbMap[i].ddBlock, i);
                         DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize,
@@ -134,7 +134,7 @@ namespace DiscImageChef.Partitions
 
             byte[] partSector = imagePlugin.ReadSector(1 + sectorOffset);
             AppleOldDevicePartitionMap oldMap =
-                BigEndianMarshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(partSector);
+                Marshal.ByteArrayToStructureBigEndian<AppleOldDevicePartitionMap>(partSector);
 
             // This is the easy one, no sector size mixing
             if(oldMap.pdSig == APM_MAGIC_OLD)
@@ -144,7 +144,7 @@ namespace DiscImageChef.Partitions
                     byte[] tmp = new byte[12];
                     Array.Copy(partSector, i, tmp, 0, 12);
                     AppleMapOldPartitionEntry oldEntry =
-                        BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapOldPartitionEntry>(tmp);
+                        Marshal.ByteArrayToStructureBigEndian<AppleMapOldPartitionEntry>(tmp);
                     DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdStart = {0}", oldEntry.pdStart,
                                               (i - 2) / 12);
                     DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", oldEntry.pdSize,
@@ -189,7 +189,7 @@ namespace DiscImageChef.Partitions
             {
                 byte[] tmp = new byte[512];
                 Array.Copy(ddmSector, 512, tmp, 0, 512);
-                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
+                entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
                 // Check for a partition entry that's 512-byte aligned
                 if(entry.signature == APM_MAGIC)
                 {
@@ -201,7 +201,7 @@ namespace DiscImageChef.Partitions
                 }
                 else
                 {
-                    entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
+                    entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
                     if(entry.signature == APM_MAGIC)
                     {
                         DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
@@ -215,7 +215,7 @@ namespace DiscImageChef.Partitions
             }
             else
             {
-                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
+                entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
                 if(entry.signature == APM_MAGIC)
                 {
                     DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
@@ -241,7 +241,7 @@ namespace DiscImageChef.Partitions
             {
                 byte[] tmp = new byte[entrySize];
                 Array.Copy(entries, i * entrySize, tmp, 0, entrySize);
-                entry = BigEndianMarshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
+                entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
                 if(entry.signature != APM_MAGIC) continue;
 
                 DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);

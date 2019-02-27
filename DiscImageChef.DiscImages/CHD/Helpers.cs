@@ -36,6 +36,7 @@ using System.IO;
 using System.Linq;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 
@@ -93,7 +94,7 @@ namespace DiscImageChef.DiscImages
                 case 3:
                     byte[] entryBytes = new byte[16];
                     Array.Copy(hunkMap, (int)(hunkNo * 16), entryBytes, 0, 16);
-                    ChdMapV3Entry entry = BigEndianMarshal.ByteArrayToStructureBigEndian<ChdMapV3Entry>(entryBytes);
+                    ChdMapV3Entry entry = Marshal.ByteArrayToStructureBigEndian<ChdMapV3Entry>(entryBytes);
                     switch((Chdv3EntryFlags)(entry.flags & 0x0F))
                     {
                         case Chdv3EntryFlags.Invalid: throw new ArgumentException("Invalid hunk found.");

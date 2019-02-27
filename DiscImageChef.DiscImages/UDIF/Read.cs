@@ -62,7 +62,7 @@ namespace DiscImageChef.DiscImages
             byte[] footerB = new byte[Marshal.SizeOf(footer)];
 
             stream.Read(footerB, 0, Marshal.SizeOf(footer));
-            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+            footer = Helpers.Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
             if(footer.signature != UDIF_SIGNATURE)
             {
@@ -70,7 +70,7 @@ namespace DiscImageChef.DiscImages
                 footerB = new byte[Marshal.SizeOf(footer)];
 
                 stream.Read(footerB, 0, Marshal.SizeOf(footer));
-                footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+                footer = Helpers.Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
                 if(footer.signature != UDIF_SIGNATURE) throw new Exception("Unable to find UDIF signature.");
 
@@ -253,7 +253,7 @@ namespace DiscImageChef.DiscImages
                     BlockHeader bHdr  = new BlockHeader();
                     byte[]      bHdrB = new byte[Marshal.SizeOf(bHdr)];
                     Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf(bHdr));
-                    bHdr = BigEndianMarshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
+                    bHdr = Helpers.Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}",  bHdr.signature);
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}",         bHdr.version);
@@ -283,7 +283,7 @@ namespace DiscImageChef.DiscImages
                         byte[]     bChnkB = new byte[Marshal.SizeOf(bChnk)];
                         Array.Copy(blkxBytes, Marshal.SizeOf(bHdr) + Marshal.SizeOf(bChnk) * i, bChnkB, 0,
                                    Marshal.SizeOf(bChnk));
-                        bChnk = BigEndianMarshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
+                        bChnk = Helpers.Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
 
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}",   i, bChnk.comment);

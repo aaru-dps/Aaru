@@ -36,7 +36,7 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.CommonTypes.Enums
+namespace DiscImageChef.Helpers
 {
     /// <summary>Describes the endianness of bits on a data structure</summary>
     public enum BitEndian

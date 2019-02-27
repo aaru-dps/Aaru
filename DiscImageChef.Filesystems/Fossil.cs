@@ -37,6 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +61,7 @@ namespace DiscImageChef.Filesystems
             if(partition.Start + hdrSector > imagePlugin.Info.Sectors) return false;
 
             byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            FossilHeader hdr    = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);
@@ -79,7 +80,7 @@ namespace DiscImageChef.Filesystems
             ulong hdrSector = HEADER_POS / imagePlugin.Info.SectorSize;
 
             byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
-            FossilHeader hdr    = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
+            FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
             DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);
@@ -104,7 +105,7 @@ namespace DiscImageChef.Filesystems
             if(sbLocation <= partition.End)
             {
                 sector = imagePlugin.ReadSector(sbLocation);
-                FossilSuperBlock fsb = BigEndianMarshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
+                FossilSuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
 
                 DicConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
                                           FOSSIL_SB_MAGIC);

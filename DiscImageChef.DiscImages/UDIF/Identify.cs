@@ -48,7 +48,7 @@ namespace DiscImageChef.DiscImages
             byte[] footerB = new byte[Marshal.SizeOf(footer)];
 
             stream.Read(footerB, 0, Marshal.SizeOf(footer));
-            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+            footer = Helpers.Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
             if(footer.signature == UDIF_SIGNATURE) return true;
 
@@ -57,7 +57,7 @@ namespace DiscImageChef.DiscImages
             byte[] headerB = new byte[Marshal.SizeOf(footer)];
 
             stream.Read(headerB, 0, Marshal.SizeOf(footer));
-            footer = BigEndianMarshal.ByteArrayToStructureBigEndian<UdifFooter>(headerB);
+            footer = Helpers.Marshal.ByteArrayToStructureBigEndian<UdifFooter>(headerB);
 
             return footer.signature == UDIF_SIGNATURE;
         }

@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -70,7 +71,7 @@ namespace DiscImageChef.Filesystems
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             byte[]    rootBlockSector = imagePlugin.ReadSector(partition.Start);
-            RootBlock rootBlock       = BigEndianMarshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
+            RootBlock rootBlock       = Marshal.ByteArrayToStructureBigEndian<RootBlock>(rootBlockSector);
 
             StringBuilder sbInformation = new StringBuilder();
 
