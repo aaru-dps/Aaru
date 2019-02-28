@@ -39,8 +39,6 @@ namespace DiscImageChef.Helpers
     /// <summary>Provides methods to marshal binary data into C# structs</summary>
     public static class Marshal
     {
-        static int count;
-
         /// <summary>
         ///     Marshal little-endian binary data to a structure
         /// </summary>
@@ -57,6 +55,20 @@ namespace DiscImageChef.Helpers
         }
 
         /// <summary>
+        ///     Marshal little-endian binary data to a structure
+        /// </summary>
+        /// <param name="bytes">Byte array containing the binary data</param>
+        /// <param name="start">Start on the array where the structure begins</param>
+        /// <param name="length">Length of the structure in bytes</param>
+        /// <typeparam name="T">Type of the structure to marshal</typeparam>
+        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        public static T ByteArrayToStructureLittleEndian<T>(byte[] bytes, int start, int length) where T : struct
+        {
+            Span<byte> span = bytes;
+            return ByteArrayToStructureLittleEndian<T>(span.Slice(start, length).ToArray());
+        }
+
+        /// <summary>
         ///     Marshal big-endian binary data to a structure
         /// </summary>
         /// <param name="bytes">Byte array containing the binary data</param>
@@ -69,6 +81,20 @@ namespace DiscImageChef.Helpers
                 (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
             ptr.Free();
             return (T)SwapStructureMembersEndian(str);
+        }
+
+        /// <summary>
+        ///     Marshal big-endian binary data to a structure
+        /// </summary>
+        /// <param name="bytes">Byte array containing the binary data</param>
+        /// <param name="start">Start on the array where the structure begins</param>
+        /// <param name="length">Length of the structure in bytes</param>
+        /// <typeparam name="T">Type of the structure to marshal</typeparam>
+        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        public static T ByteArrayToStructureBigEndian<T>(byte[] bytes, int start, int length) where T : struct
+        {
+            Span<byte> span = bytes;
+            return ByteArrayToStructureBigEndian<T>(span.Slice(start, length).ToArray());
         }
 
         /// <summary>
@@ -89,6 +115,20 @@ namespace DiscImageChef.Helpers
         }
 
         /// <summary>
+        ///     Marshal PDP-11 binary data to a structure
+        /// </summary>
+        /// <param name="bytes">Byte array containing the binary data</param>
+        /// <param name="start">Start on the array where the structure begins</param>
+        /// <param name="length">Length of the structure in bytes</param>
+        /// <typeparam name="T">Type of the structure to marshal</typeparam>
+        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        public static T ByteArrayToStructurePdpEndian<T>(byte[] bytes, int start, int length) where T : struct
+        {
+            Span<byte> span = bytes;
+            return ByteArrayToStructurePdpEndian<T>(span.Slice(start, length).ToArray());
+        }
+
+        /// <summary>
         ///     Marshal little-endian binary data to a structure. If the structure type contains any non value type, this method
         ///     will crash.
         /// </summary>
@@ -97,6 +137,19 @@ namespace DiscImageChef.Helpers
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
         public static T SpanToStructureLittleEndian<T>(ReadOnlySpan<byte> bytes) where T : struct =>
             MemoryMarshal.Read<T>(bytes);
+
+        /// <summary>
+        ///     Marshal little-endian binary data to a structure. If the structure type contains any non value type, this method
+        ///     will crash.
+        /// </summary>
+        /// <param name="bytes">Byte span containing the binary data</param>
+        /// <param name="start">Start on the span where the structure begins</param>
+        /// <param name="length">Length of the structure in bytes</param>
+        /// <typeparam name="T">Type of the structure to marshal</typeparam>
+        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        public static T SpanToStructureLittleEndian<T>(ReadOnlySpan<byte> bytes, int start, int length)
+            where T : struct =>
+            MemoryMarshal.Read<T>(bytes.Slice(start, length));
 
         /// <summary>
         ///     Marshal big-endian binary data to a structure. If the structure type contains any non value type, this method will
@@ -112,6 +165,21 @@ namespace DiscImageChef.Helpers
         }
 
         /// <summary>
+        ///     Marshal big-endian binary data to a structure. If the structure type contains any non value type, this method will
+        ///     crash.
+        /// </summary>
+        /// <param name="bytes">Byte span containing the binary data</param>
+        /// <param name="start">Start on the span where the structure begins</param>
+        /// <param name="length">Length of the structure in bytes</param>
+        /// <typeparam name="T">Type of the structure to marshal</typeparam>
+        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        public static T SpanToStructureBigEndian<T>(ReadOnlySpan<byte> bytes, int start, int length) where T : struct
+        {
+            T str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
+            return (T)SwapStructureMembersEndian(str);
+        }
+
+        /// <summary>
         ///     Marshal PDP-11 binary data to a structure. If the structure type contains any non value type, this method will
         ///     crash.
         /// </summary>
@@ -121,6 +189,19 @@ namespace DiscImageChef.Helpers
         public static T SpanToStructurePdpEndian<T>(ReadOnlySpan<byte> bytes) where T : struct
         {
             object str = SpanToStructureLittleEndian<T>(bytes);
+            return (T)SwapStructureMembersEndianPdp(str);
+        }
+
+        /// <summary>
+        ///     Marshal PDP-11 binary data to a structure. If the structure type contains any non value type, this method will
+        ///     crash.
+        /// </summary>
+        /// <param name="bytes">Byte array containing the binary data</param>
+        /// <typeparam name="T">Type of the structure to marshal</typeparam>
+        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        public static T SpanToStructurePdpEndian<T>(ReadOnlySpan<byte> bytes, int start, int length) where T : struct
+        {
+            object str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
             return (T)SwapStructureMembersEndianPdp(str);
         }
 
@@ -270,8 +351,6 @@ namespace DiscImageChef.Helpers
                 // TODO: Swap arrays and enums
                 else if(fi.FieldType.IsValueType && !fi.FieldType.IsEnum && !fi.FieldType.IsArray)
                 {
-                    System.Console.WriteLine("PDP {0}", count++);
-
                     object obj  = fi.GetValue(str);
                     object strc = SwapStructureMembersEndianPdp(obj);
                     fi.SetValue(str, strc);
