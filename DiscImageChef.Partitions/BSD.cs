@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -73,7 +74,7 @@ namespace DiscImageChef.Partitions
                 {
                     byte[] sector = new byte[MAX_LABEL_SIZE];
                     Array.Copy(tmp, offset, sector, 0, MAX_LABEL_SIZE);
-                    dl = GetDiskLabel(sector);
+                    dl = Marshal.ByteArrayToStructureLittleEndian<DiskLabel>(sector);
                     DicConsole.DebugWriteLine("BSD plugin",
                                               "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
                                               location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
@@ -206,21 +207,13 @@ namespace DiscImageChef.Partitions
             }
         }
 
-        static DiskLabel GetDiskLabel(byte[] disklabel)
-        {
-            GCHandle  handle = GCHandle.Alloc(disklabel, GCHandleType.Pinned);
-            DiskLabel dl     = (DiskLabel)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DiskLabel));
-            handle.Free();
-            return dl;
-        }
-
         static DiskLabel SwapDiskLabel(DiskLabel dl)
         {
-            dl = (DiskLabel)Helpers.Marshal.SwapStructureMembersEndian(dl);
+            dl = (DiskLabel)Marshal.SwapStructureMembersEndian(dl);
             for(int i = 0; i < dl.d_drivedata.Length; i++) dl.d_drivedata[i] = Swapping.Swap(dl.d_drivedata[i]);
             for(int i = 0; i < dl.d_spare.Length; i++) dl.d_spare[i]         = Swapping.Swap(dl.d_spare[i]);
             for(int i = 0; i < dl.d_partitions.Length; i++)
-                dl.d_partitions[i] = (BSDPartition)Helpers.Marshal.SwapStructureMembersEndian(dl.d_partitions[i]);
+                dl.d_partitions[i] = (BSDPartition)Marshal.SwapStructureMembersEndian(dl.d_partitions[i]);
 
             return dl;
         }

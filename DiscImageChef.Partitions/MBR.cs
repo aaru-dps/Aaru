@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Helpers;
-using Marshal = System.Runtime.InteropServices.Marshal;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -210,24 +210,14 @@ namespace DiscImageChef.Partitions
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
 
-            GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-            MasterBootRecord mbr =
-                (MasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(MasterBootRecord));
-            TimedMasterBootRecord mbrTime =
-                (TimedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                              typeof(TimedMasterBootRecord));
+            MasterBootRecord      mbr     = Marshal.ByteArrayToStructureLittleEndian<MasterBootRecord>(sector);
+            TimedMasterBootRecord mbrTime = Marshal.ByteArrayToStructureLittleEndian<TimedMasterBootRecord>(sector);
             SerializedMasterBootRecord mbrSerial =
-                (SerializedMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                   typeof(SerializedMasterBootRecord));
-            ModernMasterBootRecord mbrModern =
-                (ModernMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                               typeof(ModernMasterBootRecord));
-            NecMasterBootRecord mbrNec =
-                (NecMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(NecMasterBootRecord));
+                Marshal.ByteArrayToStructureLittleEndian<SerializedMasterBootRecord>(sector);
+            ModernMasterBootRecord mbrModern = Marshal.ByteArrayToStructureLittleEndian<ModernMasterBootRecord>(sector);
+            NecMasterBootRecord    mbrNec    = Marshal.ByteArrayToStructureLittleEndian<NecMasterBootRecord>(sector);
             DiskManagerMasterBootRecord mbrOntrack =
-                (DiskManagerMasterBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                    typeof(DiskManagerMasterBootRecord));
-            handle.Free();
+                Marshal.ByteArrayToStructureLittleEndian<DiskManagerMasterBootRecord>(sector);
 
             DicConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}",     imagePlugin.Info.XmlMediaType);
             DicConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
@@ -369,11 +359,7 @@ namespace DiscImageChef.Partitions
                 {
                     sector = imagePlugin.ReadSector(lbaStart);
 
-                    handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                    ExtendedBootRecord ebr =
-                        (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                   typeof(ExtendedBootRecord));
-                    handle.Free();
+                    ExtendedBootRecord ebr = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
                     DicConsole.DebugWriteLine("MBR plugin", "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_MAGIC);
 
@@ -493,10 +479,7 @@ namespace DiscImageChef.Partitions
 
             byte[] sector = imagePlugin.ReadSector(start);
 
-            GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-            ExtendedBootRecord mnx =
-                (ExtendedBootRecord)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ExtendedBootRecord));
-            handle.Free();
+            ExtendedBootRecord mnx = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
             DicConsole.DebugWriteLine("MBR plugin", "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_MAGIC);
 

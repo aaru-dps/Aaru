@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -70,10 +71,7 @@ namespace DiscImageChef.Partitions
 
             if(sector.Length < 512) return false;
 
-            IntPtr bbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sector, 0, bbPtr, 512);
-            AcornBootBlock bootBlock = (AcornBootBlock)Marshal.PtrToStructure(bbPtr, typeof(AcornBootBlock));
-            Marshal.FreeHGlobal(bbPtr);
+            AcornBootBlock bootBlock = Marshal.ByteArrayToStructureLittleEndian<AcornBootBlock>(sector);
 
             int checksum                            = 0;
             for(int i = 0; i < 0x1FF; i++) checksum = (checksum & 0xFF) + (checksum >> 8) + sector[i];
@@ -112,10 +110,7 @@ namespace DiscImageChef.Partitions
             {
                 case TYPE_LINUX:
                 {
-                    IntPtr tablePtr = Marshal.AllocHGlobal(512);
-                    Marshal.Copy(map, 0, tablePtr, 512);
-                    LinuxTable table = (LinuxTable)Marshal.PtrToStructure(tablePtr, typeof(LinuxTable));
-                    Marshal.FreeHGlobal(tablePtr);
+                    LinuxTable table = Marshal.ByteArrayToStructureLittleEndian<LinuxTable>(map);
 
                     foreach(LinuxEntry entry in table.entries)
                     {
@@ -139,10 +134,7 @@ namespace DiscImageChef.Partitions
                 case TYPE_RISCIX_MFM:
                 case TYPE_RISCIX_SCSI:
                 {
-                    IntPtr tablePtr = Marshal.AllocHGlobal(512);
-                    Marshal.Copy(map, 0, tablePtr, 512);
-                    RiscIxTable table = (RiscIxTable)Marshal.PtrToStructure(tablePtr, typeof(RiscIxTable));
-                    Marshal.FreeHGlobal(tablePtr);
+                    RiscIxTable table = Marshal.ByteArrayToStructureLittleEndian<RiscIxTable>(map);
 
                     if(table.magic == RISCIX_MAGIC)
                         foreach(RiscIxEntry entry in table.partitions)

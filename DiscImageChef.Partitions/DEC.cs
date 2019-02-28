@@ -36,6 +36,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -57,10 +58,7 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(31 + sectorOffset);
             if(sector.Length < 512) return false;
 
-            IntPtr tablePtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sector, 0, tablePtr, 512);
-            DECLabel table = (DECLabel)Marshal.PtrToStructure(tablePtr, typeof(DECLabel));
-            Marshal.FreeHGlobal(tablePtr);
+            DECLabel table = Marshal.ByteArrayToStructureLittleEndian<DECLabel>(sector);
 
             if(table.pt_magic != PT_MAGIC || table.pt_valid != PT_VALID) return false;
 

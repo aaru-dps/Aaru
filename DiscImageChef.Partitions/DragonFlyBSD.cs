@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -57,10 +58,7 @@ namespace DiscImageChef.Partitions
             byte[] sectors = imagePlugin.ReadSectors(sectorOffset, nSectors);
             if(sectors.Length < 2048) return false;
 
-            IntPtr labelPtr = Marshal.AllocHGlobal(2048);
-            Marshal.Copy(sectors, 0, labelPtr, 2048);
-            Disklabel64 disklabel = (Disklabel64)Marshal.PtrToStructure(labelPtr, typeof(Disklabel64));
-            Marshal.FreeHGlobal(labelPtr);
+            Disklabel64 disklabel = Marshal.ByteArrayToStructureLittleEndian<Disklabel64>(sectors);
 
             if(disklabel.d_magic != 0xC4464C59) return false;
 

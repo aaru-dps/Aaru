@@ -38,6 +38,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -86,11 +87,9 @@ namespace DiscImageChef.Partitions
 
             byte[] sunSector = imagePlugin.ReadSector(sectorOffset);
 
-            GCHandle   handle = GCHandle.Alloc(sunSector, GCHandleType.Pinned);
-            dk_label   dkl    = (dk_label)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),   typeof(dk_label));
-            dk_label8  dkl8   = (dk_label8)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),  typeof(dk_label8));
-            dk_label16 dkl16  = (dk_label16)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label16));
-            handle.Free();
+            dk_label   dkl   = Marshal.ByteArrayToStructureLittleEndian<dk_label>(sunSector);
+            dk_label8  dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
+            dk_label16 dkl16 = Marshal.ByteArrayToStructureLittleEndian<dk_label16>(sunSector);
 
             DicConsole.DebugWriteLine("Sun plugin", "dkl.dkl_magic = 0x{0:X4}",           dkl.dkl_magic);
             DicConsole.DebugWriteLine("Sun plugin", "dkl8.dkl_vtoc.v_sanity = 0x{0:X8}",  dkl8.dkl_vtoc.v_sanity);
@@ -106,11 +105,9 @@ namespace DiscImageChef.Partitions
             {
                 sunSector = imagePlugin.ReadSector(sectorOffset + 1);
 
-                handle = GCHandle.Alloc(sunSector, GCHandleType.Pinned);
-                dkl    = (dk_label)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),   typeof(dk_label));
-                dkl8   = (dk_label8)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),  typeof(dk_label8));
-                dkl16  = (dk_label16)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(dk_label16));
-                handle.Free();
+                dkl   = Marshal.ByteArrayToStructureLittleEndian<dk_label>(sunSector);
+                dkl8  = Marshal.ByteArrayToStructureLittleEndian<dk_label8>(sunSector);
+                dkl16 = Marshal.ByteArrayToStructureLittleEndian<dk_label16>(sunSector);
 
                 if(dkl.dkl_magic == DKL_MAGIC || dkl.dkl_magic == DKL_CIGAM)
                     if(dkl16.dkl_vtoc.v_sanity == VTOC_SANE || dkl16.dkl_vtoc.v_sanity == VTOC_ENAS)
@@ -322,9 +319,9 @@ namespace DiscImageChef.Partitions
         static dk_label SwapDiskLabel(dk_label label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label");
-            label = (dk_label)Helpers.Marshal.SwapStructureMembersEndian(label);
+            label = (dk_label)Marshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_map.Length; i++)
-                label.dkl_map[i] = (dk_map)Helpers.Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
+                label.dkl_map[i] = (dk_map)Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
             return label;
         }
@@ -332,9 +329,9 @@ namespace DiscImageChef.Partitions
         static dk_label8 SwapDiskLabel(dk_label8 label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label8");
-            label = (dk_label8)Helpers.Marshal.SwapStructureMembersEndian(label);
+            label = (dk_label8)Marshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_map.Length; i++)
-                label.dkl_map[i] = (dk_map)Helpers.Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
+                label.dkl_map[i] = (dk_map)Marshal.SwapStructureMembersEndian(label.dkl_map[i]);
 
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
                 label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
@@ -355,7 +352,7 @@ namespace DiscImageChef.Partitions
         static dk_label16 SwapDiskLabel(dk_label16 label)
         {
             DicConsole.DebugWriteLine("Sun plugin", "Swapping dk_label16");
-            label = (dk_label16)Helpers.Marshal.SwapStructureMembersEndian(label);
+            label = (dk_label16)Marshal.SwapStructureMembersEndian(label);
             for(int i = 0; i < label.dkl_vtoc.v_bootinfo.Length; i++)
                 label.dkl_vtoc.v_bootinfo[i] = Swapping.Swap(label.dkl_vtoc.v_bootinfo[i]);
             for(int i = 0; i < label.dkl_vtoc.v_part.Length; i++)

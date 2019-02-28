@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -80,19 +81,16 @@ namespace DiscImageChef.Partitions
 
             PDInfo    pd;
             PDInfoOld pdold;
-            GCHandle  handle;
 
             if(magic == PD_MAGIC)
             {
-                handle = GCHandle.Alloc(pdsector, GCHandleType.Pinned);
-                pd     = (PDInfo)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),    typeof(PDInfo));
-                pdold  = (PDInfoOld)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(PDInfoOld));
-                handle.Free();
+                pd    = Marshal.ByteArrayToStructureLittleEndian<PDInfo>(pdsector);
+                pdold = Marshal.ByteArrayToStructureLittleEndian<PDInfoOld>(pdsector);
             }
             else
             {
-                pd    = Helpers.Marshal.ByteArrayToStructureBigEndian<PDInfo>(pdsector);
-                pdold = Helpers.Marshal.ByteArrayToStructureBigEndian<PDInfoOld>(pdsector);
+                pd    = Marshal.ByteArrayToStructureBigEndian<PDInfo>(pdsector);
+                pdold = Marshal.ByteArrayToStructureBigEndian<PDInfoOld>(pdsector);
             }
 
             DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.driveid = {0}", pd.driveid);
@@ -149,15 +147,10 @@ namespace DiscImageChef.Partitions
             {
                 magicFound = true;
                 DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found at {0}", pdloc + sectorOffset + 1);
-                if(magic == VTOC_SANE)
-                {
-                    handle = GCHandle.Alloc(vtocsector, GCHandleType.Pinned);
-                    vtoc   = (vtoc)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(vtoc));
-                    handle.Free();
-                }
+                if(magic == VTOC_SANE) vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
                 else
                 {
-                    vtoc = Helpers.Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
+                    vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
                     for(int i = 0; i < vtoc.v_part.Length; i++)
                     {
                         vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);
@@ -178,15 +171,10 @@ namespace DiscImageChef.Partitions
                     magicFound = true;
                     useOld     = true;
                     DicConsole.DebugWriteLine("VTOC plugin", "Old VTOC found at {0}", pdloc + sectorOffset + 1);
-                    if(magic == VTOC_SANE)
-                    {
-                        handle  = GCHandle.Alloc(vtocsector, GCHandleType.Pinned);
-                        vtocOld = (vtocold)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(vtocold));
-                        handle.Free();
-                    }
+                    if(magic == VTOC_SANE) vtocOld = Marshal.ByteArrayToStructureLittleEndian<vtocold>(vtocsector);
                     else
                     {
-                        vtocOld = Helpers.Marshal.ByteArrayToStructureBigEndian<vtocold>(vtocsector);
+                        vtocOld = Marshal.ByteArrayToStructureBigEndian<vtocold>(vtocsector);
                         for(int i = 0; i < vtocOld.v_part.Length; i++)
                         {
                             vtocOld.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtocOld.v_part[i].p_tag);
@@ -224,15 +212,10 @@ namespace DiscImageChef.Partitions
                 {
                     magicFound = true;
                     DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found.");
-                    if(magic == VTOC_SANE)
-                    {
-                        handle = GCHandle.Alloc(vtocsector, GCHandleType.Pinned);
-                        vtoc   = (vtoc)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(vtoc));
-                        handle.Free();
-                    }
+                    if(magic == VTOC_SANE) vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
                     else
                     {
-                        vtoc = Helpers.Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
+                        vtoc = Marshal.ByteArrayToStructureBigEndian<vtoc>(vtocsector);
                         for(int i = 0; i < vtoc.v_part.Length; i++)
                         {
                             vtoc.v_part[i].p_tag   = (pTag)Swapping.Swap((ushort)vtoc.v_part[i].p_tag);

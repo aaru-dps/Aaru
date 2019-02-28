@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Helpers;
-using Marshal = System.Runtime.InteropServices.Marshal;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -61,10 +61,7 @@ namespace DiscImageChef.Partitions
             // Prevent false positives with some FAT BPBs
             if(Encoding.ASCII.GetString(bootSector, 0x36, 3) == "FAT") return false;
 
-            IntPtr tablePtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(sector, 0, tablePtr, 256);
-            PC98Table table = (PC98Table)Marshal.PtrToStructure(tablePtr, typeof(PC98Table));
-            Marshal.FreeHGlobal(tablePtr);
+            PC98Table table = Marshal.ByteArrayToStructureLittleEndian<PC98Table>(sector);
 
             ulong counter = 0;
 

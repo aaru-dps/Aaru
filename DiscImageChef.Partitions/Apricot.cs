@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -73,10 +74,7 @@ namespace DiscImageChef.Partitions
 
             if(sector.Length < 512) return false;
 
-            IntPtr lblPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sector, 0, lblPtr, 512);
-            ApricotLabel label = (ApricotLabel)Marshal.PtrToStructure(lblPtr, typeof(ApricotLabel));
-            Marshal.FreeHGlobal(lblPtr);
+            ApricotLabel label = Marshal.ByteArrayToStructureLittleEndian<ApricotLabel>(sector);
 
             // Not much to check but...
             ulong deviceSectors              = imagePlugin.Info.Sectors;
@@ -273,15 +271,18 @@ namespace DiscImageChef.Partitions
             /// <summary>Operating system.</summary>
             public byte operatingSystem;
             /// <summary>Software write protection.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool writeProtected;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool writeProtected;
             /// <summary>Copy protected.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool copyProtected;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool copyProtected;
             /// <summary>Boot type.</summary>
             public byte bootType;
             /// <summary>Partitions.</summary>
             public byte partitionCount;
             /// <summary>Is hard disk?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool winchester;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool winchester;
             /// <summary>Sector size.</summary>
             public ushort sectorSize;
             /// <summary>Sectors per track.</summary>
@@ -334,15 +335,18 @@ namespace DiscImageChef.Partitions
             /// <summary>Major BIOS version.</summary>
             public byte biosMajorVersion;
             /// <summary>Diagnostics enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool diagnosticsFlag;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool diagnosticsFlag;
             /// <summary>Printer device.</summary>
             public byte prnDevice;
             /// <summary>Bell volume.</summary>
             public byte bellVolume;
             /// <summary>Cache enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool enableCache;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableCache;
             /// <summary>Graphics enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool enableGraphics;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool enableGraphics;
             /// <summary>Length in sectors of DOS.</summary>
             public byte dosLength;
             /// <summary>Length in sectors of FONT file.</summary>
@@ -358,7 +362,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Keyboard click volume.</summary>
             public byte keyboardVolume;
             /// <summary>Auto-repeat enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool autorepeat;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool autorepeat;
             /// <summary>Auto-repeat lead-in.</summary>
             public byte autorepeatLeadIn;
             /// <summary>Auto-repeat interval.</summary>
@@ -373,7 +378,8 @@ namespace DiscImageChef.Partitions
             /// <summary>Screen line width.</summary>
             public byte lineWidth;
             /// <summary>Screen disabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool imageOff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool imageOff;
             /// <summary>Spare area for screen values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
             public byte[] spareScreen;
@@ -388,13 +394,16 @@ namespace DiscImageChef.Partitions
             /// <summary>Stop bits.</summary>
             public byte stopBits;
             /// <summary>Parity enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool parityCheck;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parityCheck;
             /// <summary>Parity type.</summary>
             public byte parityType;
             /// <summary>Xon/Xoff enabled on TX.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool txXonXoff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool txXonXoff;
             /// <summary>Xon/Xoff enabled on RX.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool rxXonXoff;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool rxXonXoff;
             /// <summary>Xon character.</summary>
             public byte xonCharacter;
             /// <summary>Xoff character.</summary>
@@ -402,30 +411,39 @@ namespace DiscImageChef.Partitions
             /// <summary>Xon/Xoff buffer on RX.</summary>
             public ushort rxXonXoffBuffer;
             /// <summary>DTR/DSR enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool dtrDsr;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool dtrDsr;
             /// <summary>CTS/RTS enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool ctsRts;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool ctsRts;
             /// <summary>NULLs after CR.</summary>
             public byte nullsAfterCr;
             /// <summary>NULLs after 0xFF.</summary>
             public byte nullsAfterFF;
             /// <summary>Send LF after CR in serial port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool lfAfterCRSerial;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCRSerial;
             /// <summary>BIOS error report in serial port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportSerial;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportSerial;
             /// <summary>Spare area for serial port values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
             public byte[] spareSerial;
             /// <summary>Send LF after CR in parallel port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool lfAfterCrParallel;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool lfAfterCrParallel;
             /// <summary>Select line supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool selectLine;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool selectLine;
             /// <summary>Paper empty supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool paperEmpty;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool paperEmpty;
             /// <summary>Fault line supported?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool faultLine;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool faultLine;
             /// <summary>BIOS error report in parallel port.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool biosErrorReportParallel;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool biosErrorReportParallel;
             /// <summary>Spare area for parallel port values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
             public byte[] spareParallel;
@@ -433,9 +451,11 @@ namespace DiscImageChef.Partitions
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
             public byte[] spareWinchester;
             /// <summary>Parking enabled?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool parkingEnabled;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool parkingEnabled;
             /// <summary>Format protection?.</summary>
-            [MarshalAs(UnmanagedType.U1)] public bool formatProtection;
+            [MarshalAs(UnmanagedType.U1)]
+            public bool formatProtection;
             /// <summary>Spare area for RAM disk values expansion.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] spareRamDisk;

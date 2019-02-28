@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -60,9 +61,7 @@ namespace DiscImageChef.Partitions
 
             byte[] tblsector = imagePlugin.ReadSector(42 + sectorOffset);
 
-            GCHandle handle = GCHandle.Alloc(tblsector, GCHandleType.Pinned);
-            Partable xnxtbl = (Partable)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Partable));
-            handle.Free();
+            Partable xnxtbl = Marshal.ByteArrayToStructureLittleEndian<Partable>(tblsector);
 
             DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic,
                                       PAMAGIC);

@@ -36,6 +36,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -54,10 +55,7 @@ namespace DiscImageChef.Partitions
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
             if(sector.Length < 512) return false;
 
-            IntPtr tablePtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sector, 0, tablePtr, 512);
-            RioKarmaTable table = (RioKarmaTable)Marshal.PtrToStructure(tablePtr, typeof(RioKarmaTable));
-            Marshal.FreeHGlobal(tablePtr);
+            RioKarmaTable table = Marshal.ByteArrayToStructureLittleEndian<RioKarmaTable>(sector);
 
             if(table.magic != KARMA_MAGIC) return false;
 

@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Partitions
 {
@@ -83,12 +84,7 @@ namespace DiscImageChef.Partitions
                 else
                     return false;
 
-            try
-            {
-                GCHandle handle = GCHandle.Alloc(hdrBytes, GCHandleType.Pinned);
-                hdr = (GptHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(GptHeader));
-                handle.Free();
-            }
+            try { hdr = Marshal.ByteArrayToStructureLittleEndian<GptHeader>(hdrBytes); }
             catch { return false; }
 
             DicConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}",   hdr.revision);
@@ -138,10 +134,7 @@ namespace DiscImageChef.Partitions
                 {
                     byte[] entryBytes = new byte[hdr.entriesSize];
                     Array.Copy(entriesBytes, hdr.entriesSize * i, entryBytes, 0, hdr.entriesSize);
-                    GCHandle handle = GCHandle.Alloc(entryBytes, GCHandleType.Pinned);
-                    GptEntry entry  = (GptEntry)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(GptEntry));
-                    handle.Free();
-                    entries.Add(entry);
+                    entries.Add(Marshal.ByteArrayToStructureLittleEndian<GptEntry>(entryBytes));
                 }
                 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
                 catch
