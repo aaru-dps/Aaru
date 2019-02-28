@@ -36,6 +36,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Decoders.Sega
 {
@@ -109,10 +110,7 @@ namespace DiscImageChef.Decoders.Sega
 
             if(ipbin_sector.Length < 512) return null;
 
-            IntPtr ptr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(ipbin_sector, 0, ptr, 512);
-            IPBin ipbin = (IPBin)Marshal.PtrToStructure(ptr, typeof(IPBin));
-            Marshal.FreeHGlobal(ptr);
+            IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
             DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.maker_id = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.maker_id));

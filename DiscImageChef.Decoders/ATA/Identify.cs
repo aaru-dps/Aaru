@@ -37,6 +37,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Decoders.ATA
 {
@@ -1863,10 +1864,7 @@ namespace DiscImageChef.Decoders.ATA
                 return null;
             }
 
-            IntPtr ptr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(IdentifyDeviceResponse, 0, ptr, 512);
-            IdentifyDevice ATAID = (IdentifyDevice)Marshal.PtrToStructure(ptr, typeof(IdentifyDevice));
-            Marshal.FreeHGlobal(ptr);
+            IdentifyDevice ATAID = Marshal.ByteArrayToStructureLittleEndian<IdentifyDevice>(IdentifyDeviceResponse);
 
             ATAID.WWN          = DescrambleWWN(ATAID.WWN);
             ATAID.WWNExtension = DescrambleWWN(ATAID.WWNExtension);
@@ -1891,10 +1889,10 @@ namespace DiscImageChef.Decoders.ATA
             ataId.WWNExtension = DescrambleWWN(ataId.WWNExtension);
 
             byte[] buf = new byte[512];
-            IntPtr ptr = Marshal.AllocHGlobal(512);
-            Marshal.StructureToPtr(ataId, ptr, false);
-            Marshal.Copy(ptr, buf, 0, 512);
-            Marshal.FreeHGlobal(ptr);
+            IntPtr ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+            System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, false);
+            System.Runtime.InteropServices.Marshal.Copy(ptr, buf, 0, 512);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
 
             byte[] str = ScrambleATAString(ataId.SerialNumber, 20);
             Array.Copy(str, 0, buf, 10 * 2, 20);
