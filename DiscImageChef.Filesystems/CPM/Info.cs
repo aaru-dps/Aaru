@@ -180,11 +180,8 @@ namespace DiscImageChef.Filesystems.CPM
                     if(sig1 == 0x4D2F5043 && sig2 == 0x004B5344 && sig3 == sig1) amsSbOffset = 0x80;
 
                     // Read the superblock
-                    IntPtr amsPtr = Marshal.AllocHGlobal(16);
-                    Marshal.Copy(sector, amsSbOffset, amsPtr, 16);
                     AmstradSuperBlock amsSb =
-                        (AmstradSuperBlock)Marshal.PtrToStructure(amsPtr, typeof(AmstradSuperBlock));
-                    Marshal.FreeHGlobal(amsPtr);
+                        Helpers.Marshal.ByteArrayToStructureLittleEndian<AmstradSuperBlock>(sector, amsSbOffset, 16);
 
                     // Check that format byte and sidedness indicate the same number of sizes
                     if(amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0 ||
@@ -300,11 +297,8 @@ namespace DiscImageChef.Filesystems.CPM
                     if(sum == 0)
                     {
                         // Read the superblock
-                        HardDiskSuperBlock hddSb  = new HardDiskSuperBlock();
-                        IntPtr             hddPtr = Marshal.AllocHGlobal(Marshal.SizeOf(hddSb));
-                        Marshal.Copy(sector, 0, hddPtr, Marshal.SizeOf(hddSb));
-                        hddSb = (HardDiskSuperBlock)Marshal.PtrToStructure(hddPtr, typeof(HardDiskSuperBlock));
-                        Marshal.FreeHGlobal(hddPtr);
+                        HardDiskSuperBlock hddSb =
+                            Helpers.Marshal.ByteArrayToStructureLittleEndian<HardDiskSuperBlock>(sector);
 
                         // Calculate volume size
                         sectorSize = (ulong)(hddSb.recordsPerSector * 128);

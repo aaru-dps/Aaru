@@ -82,10 +82,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] ntfsBpb = imagePlugin.ReadSector(0 + partition.Start);
 
-            IntPtr bpbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(ntfsBpb, 0, bpbPtr, 512);
-            NtfsBootBlock ntfsBb = (NtfsBootBlock)Marshal.PtrToStructure(bpbPtr, typeof(NtfsBootBlock));
-            Marshal.FreeHGlobal(bpbPtr);
+            NtfsBootBlock ntfsBb = Helpers.Marshal.ByteArrayToStructureLittleEndian<NtfsBootBlock>(ntfsBpb);
 
             sb.AppendFormat("{0} bytes per sector", ntfsBb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfsBb.spc, ntfsBb.spc * ntfsBb.bps).AppendLine();

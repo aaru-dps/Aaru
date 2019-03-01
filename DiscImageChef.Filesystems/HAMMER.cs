@@ -93,10 +93,7 @@ namespace DiscImageChef.Filesystems
 
             if(magic == HAMMER_FSBUF_VOLUME)
             {
-                GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
-                hammerSb = (HammerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                    typeof(HammerSuperBlock));
-                handle.Free();
+                hammerSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<HammerSuperBlock>(sbSector);
             }
             else hammerSb = Helpers.Marshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
 

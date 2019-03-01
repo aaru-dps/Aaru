@@ -129,9 +129,7 @@ namespace DiscImageChef.Filesystems
 
             if(littleEndian)
             {
-                GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
-                besb = (BeSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(BeSuperBlock));
-                handle.Free();
+                besb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BeSuperBlock>(sbSector);
             }
             else besb = Helpers.Marshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
 

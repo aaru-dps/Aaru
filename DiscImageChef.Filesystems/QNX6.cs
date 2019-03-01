@@ -62,17 +62,10 @@ namespace DiscImageChef.Filesystems
             byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
             if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return false;
 
-            QNX6_AudiSuperBlock audiSb  = new QNX6_AudiSuperBlock();
-            IntPtr              audiPtr = Marshal.AllocHGlobal(Marshal.SizeOf(audiSb));
-            Marshal.Copy(audiSector, 0, audiPtr, Marshal.SizeOf(audiSb));
-            audiSb = (QNX6_AudiSuperBlock)Marshal.PtrToStructure(audiPtr, typeof(QNX6_AudiSuperBlock));
-            Marshal.FreeHGlobal(audiPtr);
+            QNX6_AudiSuperBlock audiSb =
+                Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
 
-            QNX6_SuperBlock qnxSb = new QNX6_SuperBlock();
-            IntPtr          sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(qnxSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(qnxSb));
-            qnxSb = (QNX6_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(QNX6_SuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            QNX6_SuperBlock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_SuperBlock>(sector);
 
             return qnxSb.magic == QNX6_MAGIC || audiSb.magic == QNX6_MAGIC;
         }
@@ -90,17 +83,10 @@ namespace DiscImageChef.Filesystems
             byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
             if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return;
 
-            QNX6_AudiSuperBlock audiSb  = new QNX6_AudiSuperBlock();
-            IntPtr              audiPtr = Marshal.AllocHGlobal(Marshal.SizeOf(audiSb));
-            Marshal.Copy(audiSector, 0, audiPtr, Marshal.SizeOf(audiSb));
-            audiSb = (QNX6_AudiSuperBlock)Marshal.PtrToStructure(audiPtr, typeof(QNX6_AudiSuperBlock));
-            Marshal.FreeHGlobal(audiPtr);
+            QNX6_AudiSuperBlock audiSb =
+                Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
 
-            QNX6_SuperBlock qnxSb = new QNX6_SuperBlock();
-            IntPtr          sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(qnxSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(qnxSb));
-            qnxSb = (QNX6_SuperBlock)Marshal.PtrToStructure(sbPtr, typeof(QNX6_SuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            QNX6_SuperBlock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_SuperBlock>(sector);
 
             bool audi = audiSb.magic == QNX6_MAGIC;
 

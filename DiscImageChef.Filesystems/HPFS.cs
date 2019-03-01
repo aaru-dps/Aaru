@@ -76,21 +76,12 @@ namespace DiscImageChef.Filesystems
             byte[] hpfsSpSector =
                 imagePlugin.ReadSector(17 + partition.Start); // Seek to spareblock, on logical sector 17
 
-            IntPtr bpbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(hpfsBpbSector, 0, bpbPtr, 512);
             HpfsBiosParameterBlock hpfsBpb =
-                (HpfsBiosParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(HpfsBiosParameterBlock));
-            Marshal.FreeHGlobal(bpbPtr);
+                Helpers.Marshal.ByteArrayToStructureLittleEndian<HpfsBiosParameterBlock>(hpfsBpbSector);
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(hpfsSbSector, 0, sbPtr, 512);
-            HpfsSuperBlock hpfsSb = (HpfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(HpfsSuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            HpfsSuperBlock hpfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<HpfsSuperBlock>(hpfsSbSector);
 
-            IntPtr spPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(hpfsSpSector, 0, spPtr, 512);
-            HpfsSpareBlock hpfsSp = (HpfsSpareBlock)Marshal.PtrToStructure(spPtr, typeof(HpfsSpareBlock));
-            Marshal.FreeHGlobal(spPtr);
+            HpfsSpareBlock hpfsSp = Helpers.Marshal.ByteArrayToStructureLittleEndian<HpfsSpareBlock>(hpfsSpSector);
 
             if(StringHandlers.CToString(hpfsBpb.fs_type) != "HPFS    " || hpfsSb.magic1 != 0xF995E849 ||
                hpfsSb.magic2                             != 0xFA53E9C5 || hpfsSp.magic1 != 0xF9911849 ||

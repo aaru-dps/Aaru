@@ -60,10 +60,7 @@ namespace DiscImageChef.Filesystems
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             if(vbrSector.Length < 512) return false;
 
-            IntPtr vbrPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(vbrSector, 0, vbrPtr, 512);
-            VolumeBootRecord vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
-            Marshal.FreeHGlobal(vbrPtr);
+            VolumeBootRecord vbr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
 
             return signature.SequenceEqual(vbr.signature);
         }
@@ -78,23 +75,14 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType();
 
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
-            IntPtr vbrPtr    = Marshal.AllocHGlobal(512);
-            Marshal.Copy(vbrSector, 0, vbrPtr, 512);
-            VolumeBootRecord vbr = (VolumeBootRecord)Marshal.PtrToStructure(vbrPtr, typeof(VolumeBootRecord));
-            Marshal.FreeHGlobal(vbrPtr);
+            VolumeBootRecord vbr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
 
             byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
-            IntPtr parametersPtr    = Marshal.AllocHGlobal(512);
-            Marshal.Copy(parametersSector, 0, parametersPtr, 512);
             OemParameterTable parametersTable =
-                (OemParameterTable)Marshal.PtrToStructure(parametersPtr, typeof(OemParameterTable));
-            Marshal.FreeHGlobal(parametersPtr);
+                Helpers.Marshal.ByteArrayToStructureLittleEndian<OemParameterTable>(parametersSector);
 
             byte[] chkSector = imagePlugin.ReadSector(11 + partition.Start);
-            IntPtr chkPtr    = Marshal.AllocHGlobal(512);
-            Marshal.Copy(chkSector, 0, chkPtr, 512);
-            ChecksumSector chksector = (ChecksumSector)Marshal.PtrToStructure(chkPtr, typeof(ChecksumSector));
-            Marshal.FreeHGlobal(chkPtr);
+            ChecksumSector chksector = Helpers.Marshal.ByteArrayToStructureLittleEndian<ChecksumSector>(chkSector);
 
             sb.AppendLine("Microsoft exFAT");
             sb.AppendFormat("Partition offset: {0}", vbr.offset).AppendLine();

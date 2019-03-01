@@ -94,10 +94,7 @@ namespace DiscImageChef.Filesystems
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-            GCHandle handle = GCHandle.Alloc(sbSector, GCHandleType.Pinned);
-            AtheosSuperBlock afsSb =
-                (AtheosSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(AtheosSuperBlock));
-            handle.Free();
+            AtheosSuperBlock afsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<AtheosSuperBlock>(sbSector);
 
             sb.AppendLine("Atheos filesystem");
 

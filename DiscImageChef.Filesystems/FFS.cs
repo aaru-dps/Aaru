@@ -205,10 +205,7 @@ namespace DiscImageChef.Filesystems
             // Fun with seeking follows on superblock reading!
             ufs_sb_sectors = imagePlugin.ReadSectors(sb_offset, sb_size_in_sectors);
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(ufs_sb_sectors.Length);
-            Marshal.Copy(ufs_sb_sectors, 0, sbPtr, ufs_sb_sectors.Length);
-            UFSSuperBlock ufs_sb = (UFSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(UFSSuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            UFSSuperBlock ufs_sb = Helpers.Marshal.ByteArrayToStructureLittleEndian<UFSSuperBlock>(ufs_sb_sectors);
 
             UFSSuperBlock bs_sfu = Helpers.Marshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
             if(bs_sfu.fs_magic == UFS_MAGIC     && ufs_sb.fs_magic == UFS_CIGAM    ||

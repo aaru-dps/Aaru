@@ -516,43 +516,17 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.Info.SectorSize >= 256 && !useHumanBpb)
             {
-                IntPtr bpbPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
-                System.Runtime.InteropServices.Marshal.Copy(bpbSector, 0, bpbPtr, 512);
-
-                atariBpb =
-                    (AtariParameterBlock)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(AtariParameterBlock));
-                msxBpb =
-                    (MsxParameterBlock)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(MsxParameterBlock));
-                dos2Bpb =
-                    (BiosParameterBlock2)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock2));
-                dos30Bpb =
-                    (BiosParameterBlock30)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock30));
-                dos32Bpb =
-                    (BiosParameterBlock32)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock32));
-                dos33Bpb =
-                    (BiosParameterBlock33)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock33));
-                shortEbpb =
-                    (BiosParameterBlockShortEbpb)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockShortEbpb));
-                ebpb =
-                    (BiosParameterBlockEbpb)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlockEbpb));
-                shortFat32Bpb =
-                    (Fat32ParameterBlockShort)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlockShort));
-                fat32Bpb =
-                    (Fat32ParameterBlock)
-                    System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(Fat32ParameterBlock));
-                apricotBpb =
-                    (ApricotLabel)System.Runtime.InteropServices.Marshal.PtrToStructure(bpbPtr, typeof(ApricotLabel));
-
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(bpbPtr);
+                atariBpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<AtariParameterBlock>(bpbSector);
+                msxBpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<MsxParameterBlock>(bpbSector);
+                dos2Bpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock2>(bpbSector);
+                dos30Bpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock30>(bpbSector);
+                dos32Bpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock32>(bpbSector);
+                dos33Bpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock33>(bpbSector);
+                shortEbpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlockShortEbpb>(bpbSector);
+                ebpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlockEbpb>(bpbSector);
+                shortFat32Bpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlockShort>(bpbSector);
+                fat32Bpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlock>(bpbSector);
+                apricotBpb = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApricotLabel>(bpbSector);
 
                 int bitsInBpsAtari      = CountBits.Count(atariBpb.bps);
                 int bitsInBpsMsx        = CountBits.Count(msxBpb.bps);
@@ -1122,12 +1096,7 @@ namespace DiscImageChef.Filesystems
                 if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
                 {
                     byte[] fsinfoSector = imagePlugin.ReadSector(fat32Bpb.fsinfo_sector + partition.Start);
-                    IntPtr fsinfoPtr    = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
-                    System.Runtime.InteropServices.Marshal.Copy(fsinfoSector, 0, fsinfoPtr, 512);
-                    FsInfoSector fsInfo =
-                        (FsInfoSector)
-                        System.Runtime.InteropServices.Marshal.PtrToStructure(fsinfoPtr, typeof(FsInfoSector));
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(fsinfoPtr);
+                    FsInfoSector fsInfo = Helpers.Marshal.ByteArrayToStructureLittleEndian<FsInfoSector>(fsinfoSector);
 
                     if(fsInfo.signature1 == FSINFO_SIGNATURE1 && fsInfo.signature2 == FSINFO_SIGNATURE2 &&
                        fsInfo.signature3 == FSINFO_SIGNATURE3)
@@ -1560,12 +1529,8 @@ namespace DiscImageChef.Filesystems
                     // Not a volume label
                     if(rootDirectory[i + 0x0B] != 0x08 && rootDirectory[i + 0x0B] != 0x28) continue;
 
-                    IntPtr entryPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(32);
-                    System.Runtime.InteropServices.Marshal.Copy(rootDirectory, i, entryPtr, 32);
                     DirectoryEntry entry =
-                        (DirectoryEntry)
-                        System.Runtime.InteropServices.Marshal.PtrToStructure(entryPtr, typeof(DirectoryEntry));
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(entryPtr);
+                        Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i, 32);
 
                     byte[] fullname = new byte[11];
                     Array.Copy(entry.filename,  0, fullname, 0, 8);

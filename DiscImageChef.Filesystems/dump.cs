@@ -121,20 +121,9 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return false;
 
-            IntPtr oldPtr = Marshal.AllocHGlobal(Marshal.SizeOf(oldHdr));
-            Marshal.Copy(sector, 0, oldPtr, Marshal.SizeOf(oldHdr));
-            oldHdr = (spcl16)Marshal.PtrToStructure(oldPtr, typeof(spcl16));
-            Marshal.FreeHGlobal(oldPtr);
-
-            IntPtr aixPtr = Marshal.AllocHGlobal(Marshal.SizeOf(aixHdr));
-            Marshal.Copy(sector, 0, aixPtr, Marshal.SizeOf(aixHdr));
-            aixHdr = (spcl_aix)Marshal.PtrToStructure(aixPtr, typeof(spcl_aix));
-            Marshal.FreeHGlobal(aixPtr);
-
-            IntPtr newPtr = Marshal.AllocHGlobal(Marshal.SizeOf(newHdr));
-            Marshal.Copy(sector, 0, newPtr, Marshal.SizeOf(newHdr));
-            newHdr = (s_spcl)Marshal.PtrToStructure(newPtr, typeof(s_spcl));
-            Marshal.FreeHGlobal(newPtr);
+            oldHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
+            aixHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
+            newHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
 
             DicConsole.DebugWriteLine("dump(8) plugin", "old magic = 0x{0:X8}", oldHdr.c_magic);
             DicConsole.DebugWriteLine("dump(8) plugin", "aix magic = 0x{0:X8}", aixHdr.c_magic);
@@ -164,20 +153,9 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(newHdr)) return;
 
-            IntPtr oldPtr = Marshal.AllocHGlobal(Marshal.SizeOf(oldHdr));
-            Marshal.Copy(sector, 0, oldPtr, Marshal.SizeOf(oldHdr));
-            oldHdr = (spcl16)Marshal.PtrToStructure(oldPtr, typeof(spcl16));
-            Marshal.FreeHGlobal(oldPtr);
-
-            IntPtr aixPtr = Marshal.AllocHGlobal(Marshal.SizeOf(aixHdr));
-            Marshal.Copy(sector, 0, aixPtr, Marshal.SizeOf(aixHdr));
-            aixHdr = (spcl_aix)Marshal.PtrToStructure(aixPtr, typeof(spcl_aix));
-            Marshal.FreeHGlobal(aixPtr);
-
-            IntPtr newPtr = Marshal.AllocHGlobal(Marshal.SizeOf(newHdr));
-            Marshal.Copy(sector, 0, newPtr, Marshal.SizeOf(newHdr));
-            newHdr = (s_spcl)Marshal.PtrToStructure(newPtr, typeof(s_spcl));
-            Marshal.FreeHGlobal(newPtr);
+            oldHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
+            aixHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
+            newHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
 
             bool useOld = false;
             bool useAix = false;

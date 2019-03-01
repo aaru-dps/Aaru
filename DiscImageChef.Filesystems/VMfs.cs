@@ -75,11 +75,7 @@ namespace DiscImageChef.Filesystems
             ulong  vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
             byte[] sector       = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
-            VolumeInfo volInfo    = new VolumeInfo();
-            IntPtr     volInfoPtr = Marshal.AllocHGlobal(Marshal.SizeOf(volInfo));
-            Marshal.Copy(sector, 0, volInfoPtr, Marshal.SizeOf(volInfo));
-            volInfo = (VolumeInfo)Marshal.PtrToStructure(volInfoPtr, typeof(VolumeInfo));
-            Marshal.FreeHGlobal(volInfoPtr);
+            VolumeInfo volInfo = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeInfo>(sector);
 
             StringBuilder sbInformation = new StringBuilder();
 

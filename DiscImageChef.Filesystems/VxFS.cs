@@ -73,11 +73,7 @@ namespace DiscImageChef.Filesystems
             ulong  vmfsSuperOff = VXFS_BASE / imagePlugin.Info.SectorSize;
             byte[] sector       = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
-            VxSuperBlock vxSb    = new VxSuperBlock();
-            IntPtr       vxSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vxSb));
-            Marshal.Copy(sector, 0, vxSbPtr, Marshal.SizeOf(vxSb));
-            vxSb = (VxSuperBlock)Marshal.PtrToStructure(vxSbPtr, typeof(VxSuperBlock));
-            Marshal.FreeHGlobal(vxSbPtr);
+            VxSuperBlock vxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<VxSuperBlock>(sector);
 
             StringBuilder sbInformation = new StringBuilder();
 

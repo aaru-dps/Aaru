@@ -209,10 +209,7 @@ namespace DiscImageChef.Filesystems
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
             byte[] sblock   = new byte[sbSizeInBytes];
             Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
-            IntPtr sbPtr = Marshal.AllocHGlobal(sbSizeInBytes);
-            Marshal.Copy(sblock, 0, sbPtr, sbSizeInBytes);
-            ext2FSSuperBlock supblk = (ext2FSSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(ext2FSSuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            ext2FSSuperBlock supblk = Helpers.Marshal.ByteArrayToStructureLittleEndian<ext2FSSuperBlock>(sblock);
 
             XmlFsType = new FileSystemType();
 

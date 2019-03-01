@@ -67,9 +67,7 @@ namespace DiscImageChef.Filesystems
 
             try
             {
-                GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                btrfsSb = (SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SuperBlock));
-                handle.Free();
+                btrfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
             }
             catch { return false; }
 
@@ -94,9 +92,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
 
-            GCHandle   handle  = GCHandle.Alloc(sector, GCHandleType.Pinned);
-            SuperBlock btrfsSb = (SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(SuperBlock));
-            handle.Free();
+            SuperBlock btrfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.checksum = {0}",          btrfsSb.checksum);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.uuid = {0}",              btrfsSb.uuid);

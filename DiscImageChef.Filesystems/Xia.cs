@@ -64,10 +64,7 @@ namespace DiscImageChef.Filesystems
             if(sbSizeInSectors + partition.Start           >= partition.End) return false;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            IntPtr sbPtr    = Marshal.AllocHGlobal(sbSizeInBytes);
-            Marshal.Copy(sbSector, 0, sbPtr, sbSizeInBytes);
-            XiaSuperBlock supblk = (XiaSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(XiaSuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            XiaSuperBlock supblk = Helpers.Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
 
             return supblk.s_magic == XIAFS_SUPER_MAGIC;
         }
@@ -85,10 +82,7 @@ namespace DiscImageChef.Filesystems
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
             byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            IntPtr sbPtr    = Marshal.AllocHGlobal(sbSizeInBytes);
-            Marshal.Copy(sbSector, 0, sbPtr, sbSizeInBytes);
-            XiaSuperBlock supblk = (XiaSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(XiaSuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            XiaSuperBlock supblk = Helpers.Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
 
             sb.AppendFormat("{0} bytes per zone", supblk.s_zone_size).AppendLine();
             sb.AppendFormat("{0} zones in volume ({1} bytes)", supblk.s_nzones, supblk.s_nzones * supblk.s_zone_size)

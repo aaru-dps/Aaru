@@ -99,10 +99,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            GCHandle handle = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
-            OdsHomeBlock homeblock =
-                (OdsHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(OdsHomeBlock));
-            handle.Free();
+            OdsHomeBlock homeblock = Helpers.Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
 
             // Optical disc
             if(imagePlugin.Info.XmlMediaType              == XmlMediaType.OpticalDisc &&
@@ -115,9 +112,7 @@ namespace DiscImageChef.Filesystems
                 hbSector = new byte[0x200];
                 Array.Copy(tmp, 0x200, hbSector, 0, 0x200);
 
-                handle    = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
-                homeblock = (OdsHomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(OdsHomeBlock));
-                handle.Free();
+                homeblock = Helpers.Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
 
                 if(StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
                    StringHandlers.CToString(homeblock.format) != "DECFILE11B  ") return;

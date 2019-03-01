@@ -73,13 +73,7 @@ namespace DiscImageChef.Filesystems
             foreach(ulong position in positions.Where(position => position + partition.Start < partition.End))
             {
                 sector = imagePlugin.ReadSector(position);
-                anchor = new AnchorVolumeDescriptorPointer();
-                IntPtr anchorPtr = Marshal.AllocHGlobal(Marshal.SizeOf(anchor));
-                Marshal.Copy(sector, 0, anchorPtr, Marshal.SizeOf(anchor));
-                anchor =
-                    (AnchorVolumeDescriptorPointer)Marshal.PtrToStructure(anchorPtr,
-                                                                          typeof(AnchorVolumeDescriptorPointer));
-                Marshal.FreeHGlobal(anchorPtr);
+                anchor = Helpers.Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}",
@@ -129,11 +123,8 @@ namespace DiscImageChef.Filesystems
 
                     if(tagId == TagIdentifier.LogicalVolumeDescriptor)
                     {
-                        LogicalVolumeDescriptor lvd    = new LogicalVolumeDescriptor();
-                        IntPtr                  lvdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvd));
-                        Marshal.Copy(sector, 0, lvdPtr, Marshal.SizeOf(lvd));
-                        lvd = (LogicalVolumeDescriptor)Marshal.PtrToStructure(lvdPtr, typeof(LogicalVolumeDescriptor));
-                        Marshal.FreeHGlobal(lvdPtr);
+                        LogicalVolumeDescriptor lvd =
+                            Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeDescriptor>(sector);
 
                         return UDF_Magic.SequenceEqual(lvd.domainIdentifier.identifier);
                     }
@@ -164,13 +155,7 @@ namespace DiscImageChef.Filesystems
             foreach(ulong position in positions)
             {
                 sector = imagePlugin.ReadSector(position);
-                anchor = new AnchorVolumeDescriptorPointer();
-                IntPtr anchorPtr = Marshal.AllocHGlobal(Marshal.SizeOf(anchor));
-                Marshal.Copy(sector, 0, anchorPtr, Marshal.SizeOf(anchor));
-                anchor =
-                    (AnchorVolumeDescriptorPointer)Marshal.PtrToStructure(anchorPtr,
-                                                                          typeof(AnchorVolumeDescriptorPointer));
-                Marshal.FreeHGlobal(anchorPtr);
+                anchor = Helpers.Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 if(anchor.tag.tagIdentifier ==
                    TagIdentifier.AnchorVolumeDescriptorPointer &&
@@ -201,18 +186,10 @@ namespace DiscImageChef.Filesystems
                     switch(tagId)
                     {
                         case TagIdentifier.LogicalVolumeDescriptor:
-                            IntPtr lvdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvd));
-                            Marshal.Copy(sector, 0, lvdPtr, Marshal.SizeOf(lvd));
-                            lvd = (LogicalVolumeDescriptor)
-                                Marshal.PtrToStructure(lvdPtr, typeof(LogicalVolumeDescriptor));
-                            Marshal.FreeHGlobal(lvdPtr);
+                            lvd = Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeDescriptor>(sector);
                             break;
                         case TagIdentifier.PrimaryVolumeDescriptor:
-                            IntPtr pvdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(pvd));
-                            Marshal.Copy(sector, 0, pvdPtr, Marshal.SizeOf(pvd));
-                            pvd = (PrimaryVolumeDescriptor)
-                                Marshal.PtrToStructure(pvdPtr, typeof(PrimaryVolumeDescriptor));
-                            Marshal.FreeHGlobal(pvdPtr);
+                            pvd = Helpers.Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(sector);
                             break;
                     }
                 }
@@ -222,24 +199,18 @@ namespace DiscImageChef.Filesystems
             }
 
             sector = imagePlugin.ReadSector(lvd.integritySequenceExtent.location);
-            IntPtr lvidPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvid));
-            Marshal.Copy(sector, 0, lvidPtr, Marshal.SizeOf(lvid));
-            lvid =
-                (LogicalVolumeIntegrityDescriptor)
-                Marshal.PtrToStructure(lvidPtr, typeof(LogicalVolumeIntegrityDescriptor));
-            Marshal.FreeHGlobal(lvidPtr);
+            lvid = Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
 
             if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor &&
                lvid.tag.tagLocation   == lvd.integritySequenceExtent.location)
             {
-                IntPtr lvidiuPtr = Marshal.AllocHGlobal(Marshal.SizeOf(lvidiu));
-                Marshal.Copy(sector, (int)(lvid.numberOfPartitions * 8 + 80), lvidiuPtr, Marshal.SizeOf(lvidiu));
                 lvidiu =
-                    (LogicalVolumeIntegrityDescriptorImplementationUse)Marshal.PtrToStructure(lvidiuPtr,
-                                                                                              typeof(
-                                                                                                  LogicalVolumeIntegrityDescriptorImplementationUse
-                                                                                              ));
-                Marshal.FreeHGlobal(lvidiuPtr);
+                    Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptorImplementationUse>(sector,
+                                                                                                       (int)(lvid
+                                                                                                                .numberOfPartitions *
+                                                                                                             8 + 80),
+                                                                                                       Marshal
+                                                                                                          .SizeOf(lvidiu));
             }
             else lvid = new LogicalVolumeIntegrityDescriptor();
 

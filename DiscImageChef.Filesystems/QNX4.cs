@@ -60,10 +60,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return false;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sector, 0, sbPtr, 512);
-            QNX4_Superblock qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));
-            Marshal.FreeHGlobal(sbPtr);
+            QNX4_Superblock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
 
             // Check root directory name
             if(!qnx4_rootDir_fname.SequenceEqual(qnxSb.rootDir.di_fname)) return false;
@@ -94,10 +91,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(sector, 0, sbPtr, 512);
-            QNX4_Superblock qnxSb = (QNX4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(QNX4_Superblock));
-            Marshal.FreeHGlobal(sbPtr);
+            QNX4_Superblock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
 
             // Too much useless information
             /*

@@ -58,11 +58,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512) return false;
 
-            JfsSuperBlock jfsSb = new JfsSuperBlock();
-            IntPtr        sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(jfsSb));
-            jfsSb = (JfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JfsSuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            JfsSuperBlock jfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
 
             return jfsSb.s_magic == JFS_MAGIC;
         }
@@ -77,11 +73,7 @@ namespace DiscImageChef.Filesystems
             byte[]        sector      = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512) return;
 
-            JfsSuperBlock jfsSb = new JfsSuperBlock();
-            IntPtr        sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(jfsSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(jfsSb));
-            jfsSb = (JfsSuperBlock)Marshal.PtrToStructure(sbPtr, typeof(JfsSuperBlock));
-            Marshal.FreeHGlobal(sbPtr);
+            JfsSuperBlock jfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
 
             sb.AppendLine("JFS filesystem");
             sb.AppendFormat("Version {0}", jfsSb.s_version).AppendLine();

@@ -67,10 +67,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(nilfsSb)) return false;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(nilfsSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(nilfsSb));
-            nilfsSb = (NILFS2_Superblock)Marshal.PtrToStructure(sbPtr, typeof(NILFS2_Superblock));
-            Marshal.FreeHGlobal(sbPtr);
+            nilfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
 
             return nilfsSb.magic == NILFS2_MAGIC;
         }
@@ -93,10 +90,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(nilfsSb)) return;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(nilfsSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(nilfsSb));
-            nilfsSb = (NILFS2_Superblock)Marshal.PtrToStructure(sbPtr, typeof(NILFS2_Superblock));
-            Marshal.FreeHGlobal(sbPtr);
+            nilfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
 
             if(nilfsSb.magic != NILFS2_MAGIC) return;
 

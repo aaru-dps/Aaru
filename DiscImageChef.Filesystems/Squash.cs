@@ -77,10 +77,7 @@ namespace DiscImageChef.Filesystems
             switch(magic)
             {
                 case SQUASH_MAGIC:
-                    IntPtr sqSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(sqSb));
-                    Marshal.Copy(sector, 0, sqSbPtr, Marshal.SizeOf(sqSb));
-                    sqSb = (SquashSuperBlock)Marshal.PtrToStructure(sqSbPtr, typeof(SquashSuperBlock));
-                    Marshal.FreeHGlobal(sqSbPtr);
+                    sqSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<SquashSuperBlock>(sector);
                     break;
                 case SQUASH_CIGAM:
                     sqSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);

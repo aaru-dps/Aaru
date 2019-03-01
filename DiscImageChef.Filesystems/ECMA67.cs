@@ -60,11 +60,7 @@ namespace DiscImageChef.Filesystems
 
             if(sector.Length != 128) return false;
 
-            VolumeLabel vol    = new VolumeLabel();
-            IntPtr      volPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vol));
-            Marshal.Copy(sector, 0, volPtr, Marshal.SizeOf(vol));
-            vol = (VolumeLabel)Marshal.PtrToStructure(volPtr, typeof(VolumeLabel));
-            Marshal.FreeHGlobal(volPtr);
+            VolumeLabel vol = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
             return ecma67_magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
         }
@@ -77,11 +73,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sbInformation = new StringBuilder();
 
-            VolumeLabel vol    = new VolumeLabel();
-            IntPtr      volPtr = Marshal.AllocHGlobal(Marshal.SizeOf(vol));
-            Marshal.Copy(sector, 0, volPtr, Marshal.SizeOf(vol));
-            vol = (VolumeLabel)Marshal.PtrToStructure(volPtr, typeof(VolumeLabel));
-            Marshal.FreeHGlobal(volPtr);
+            VolumeLabel vol = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
             sbInformation.AppendLine("ECMA-67");
 

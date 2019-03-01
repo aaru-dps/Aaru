@@ -98,10 +98,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 if(debug) catalogMs.Write(catSectorB, 0, catSectorB.Length);
 
                 // Read the catalog sector
-                IntPtr catPtr = Marshal.AllocHGlobal(256);
-                Marshal.Copy(catSectorB, 0, catPtr, 256);
-                CatalogSector catSector = (CatalogSector)Marshal.PtrToStructure(catPtr, typeof(CatalogSector));
-                Marshal.FreeHGlobal(catPtr);
+                CatalogSector catSector = Helpers.Marshal.ByteArrayToStructureLittleEndian<CatalogSector>(catSectorB);
 
                 foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0))
                 {

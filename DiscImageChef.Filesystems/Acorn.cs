@@ -94,22 +94,17 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.SectorSize < 256) return false;
 
             byte[]   sector;
-            GCHandle ptr;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
             if(partition.Start == 0)
             {
                 sector = imagePlugin.ReadSector(0);
                 byte oldChk0 = AcornMapChecksum(sector, 255);
-                ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector0 oldMap0 =
-                    (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
+                OldMapSector0 oldMap0 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
 
                 sector = imagePlugin.ReadSector(1);
                 byte oldChk1 = AcornMapChecksum(sector, 255);
-                ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector1 oldMap1 =
-                    (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                OldMapSector1 oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldMap0.checksum = {0}", oldMap0.checksum);
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldChk0 = {0}",          oldChk0);
@@ -121,8 +116,7 @@ namespace DiscImageChef.Filesystems
                     byte[] tmp = new byte[256];
                     Array.Copy(sector, 256, tmp, 0, 256);
                     oldChk1 = AcornMapChecksum(tmp, 255);
-                    ptr     = GCHandle.Alloc(tmp, GCHandleType.Pinned);
-                    oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                    oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
                 }
 
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldMap1.checksum = {0}", oldMap1.checksum);
@@ -144,9 +138,7 @@ namespace DiscImageChef.Filesystems
                         sector = tmp;
                     }
 
-                    ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                    OldDirectory oldRoot =
-                        (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
+                    OldDirectory oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
                     byte dirChk = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
                     DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x200 = {0}",
@@ -173,8 +165,7 @@ namespace DiscImageChef.Filesystems
                         sector = tmp;
                     }
 
-                    ptr     = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                    oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
+                    oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
                     dirChk  = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
                     DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x400 = {0}",
@@ -212,16 +203,12 @@ namespace DiscImageChef.Filesystems
 
             if(newChk == sector[0] && newChk != 0)
             {
-                ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                NewMap nmap = (NewMap)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(NewMap));
-                ptr.Free();
+                NewMap nmap = Helpers.Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
                 drSb = nmap.discRecord;
             }
             else if(bootChk == bootSector[0x1FF])
             {
-                ptr = GCHandle.Alloc(bootSector, GCHandleType.Pinned);
-                BootBlock bBlock = (BootBlock)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(BootBlock));
-                ptr.Free();
+                BootBlock bBlock = Helpers.Marshal.ByteArrayToStructureLittleEndian<BootBlock>(bootSector);
                 drSb = bBlock.discRecord;
             }
             else return false;
@@ -262,7 +249,6 @@ namespace DiscImageChef.Filesystems
             ulong    sbSector;
             byte[]   sector;
             uint     sectorsToRead;
-            GCHandle ptr;
             ulong    bytes;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
@@ -270,15 +256,11 @@ namespace DiscImageChef.Filesystems
             {
                 sector = imagePlugin.ReadSector(0);
                 byte oldChk0 = AcornMapChecksum(sector, 255);
-                ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector0 oldMap0 =
-                    (OldMapSector0)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector0));
+                OldMapSector0 oldMap0 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
 
                 sector = imagePlugin.ReadSector(1);
                 byte oldChk1 = AcornMapChecksum(sector, 255);
-                ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                OldMapSector1 oldMap1 =
-                    (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                OldMapSector1 oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
                 // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum != oldChk1 && sector.Length >= 512)
@@ -287,8 +269,7 @@ namespace DiscImageChef.Filesystems
                     byte[] tmp = new byte[256];
                     Array.Copy(sector, 256, tmp, 0, 256);
                     oldChk1 = AcornMapChecksum(tmp, 255);
-                    ptr     = GCHandle.Alloc(tmp, GCHandleType.Pinned);
-                    oldMap1 = (OldMapSector1)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldMapSector1));
+                    oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
                 }
 
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum == oldChk1 && oldMap0.checksum != 0 &&
@@ -325,9 +306,7 @@ namespace DiscImageChef.Filesystems
                             sector = tmp;
                         }
 
-                        ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                        OldDirectory oldRoot =
-                            (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(OldDirectory));
+                        OldDirectory oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
 
                         if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
                             namebytes = oldRoot.tail.name;
@@ -348,9 +327,7 @@ namespace DiscImageChef.Filesystems
                                 sector = tmp;
                             }
 
-                            ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                            oldRoot = (OldDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
-                                                                           typeof(OldDirectory));
+                            oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
 
                             if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
                                 namebytes = oldRoot.tail.name;
@@ -366,10 +343,7 @@ namespace DiscImageChef.Filesystems
                                     sector = tmp;
                                 }
 
-                                ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                                NewDirectory newRoot =
-                                    (NewDirectory)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(),
-                                                                         typeof(NewDirectory));
+                                NewDirectory newRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<NewDirectory>(sector);
                                 if(newRoot.header.magic == NEW_DIR_MAGIC && newRoot.tail.magic == NEW_DIR_MAGIC)
                                     namebytes = newRoot.tail.title;
                             }
@@ -418,16 +392,12 @@ namespace DiscImageChef.Filesystems
 
             if(newChk == sector[0] && newChk != 0)
             {
-                ptr = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                NewMap nmap = (NewMap)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(NewMap));
-                ptr.Free();
+                NewMap nmap = Helpers.Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
                 drSb = nmap.discRecord;
             }
             else if(bootChk == bootSector[0x1FF])
             {
-                ptr = GCHandle.Alloc(bootSector, GCHandleType.Pinned);
-                BootBlock bBlock = (BootBlock)Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(BootBlock));
-                ptr.Free();
+                BootBlock bBlock = Helpers.Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
                 drSb = bBlock.discRecord;
             }
             else return;

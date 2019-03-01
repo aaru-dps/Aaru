@@ -77,10 +77,7 @@ namespace DiscImageChef.Filesystems
             switch(magic)
             {
                 case CRAM_MAGIC:
-                    IntPtr crSbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(crSb));
-                    Marshal.Copy(sector, 0, crSbPtr, Marshal.SizeOf(crSb));
-                    crSb = (CramSuperBlock)Marshal.PtrToStructure(crSbPtr, typeof(CramSuperBlock));
-                    Marshal.FreeHGlobal(crSbPtr);
+                    crSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<CramSuperBlock>(sector);
                     break;
                 case CRAM_CIGAM:
                     crSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);

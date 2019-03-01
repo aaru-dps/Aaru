@@ -63,10 +63,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(refsVhdr)) return false;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(refsVhdr));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(refsVhdr));
-            refsVhdr = (RefsVolumeHeader)Marshal.PtrToStructure(sbPtr, typeof(RefsVolumeHeader));
-            Marshal.FreeHGlobal(sbPtr);
+            refsVhdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
 
             return refsVhdr.identifier == FSRS && ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.mustBeZero) &&
                    refsVhdr.signature.SequenceEqual(refsSignature);
@@ -87,10 +84,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
             if(sector.Length < Marshal.SizeOf(refsVhdr)) return;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(refsVhdr));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(refsVhdr));
-            refsVhdr = (RefsVolumeHeader)Marshal.PtrToStructure(sbPtr, typeof(RefsVolumeHeader));
-            Marshal.FreeHGlobal(sbPtr);
+            refsVhdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
 
             DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.jump empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.jump));

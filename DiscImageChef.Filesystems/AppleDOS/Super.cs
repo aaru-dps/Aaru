@@ -77,11 +77,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             // Read the VTOC
             vtocBlocks = device.ReadSector((ulong)(17 * sectorsPerTrack));
-            vtoc       = new Vtoc();
-            IntPtr vtocPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(vtocBlocks, 0, vtocPtr, 256);
-            vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
-            Marshal.FreeHGlobal(vtocPtr);
+            vtoc = Helpers.Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocBlocks);
 
             track1UsedByFiles = false;
             track2UsedByFiles = false;

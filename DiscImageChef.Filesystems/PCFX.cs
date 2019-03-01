@@ -70,11 +70,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             byte[]     sector = imagePlugin.ReadSectors(partition.Start, 2);
-            PcfxHeader header = new PcfxHeader();
-            IntPtr     sbPtr  = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(header));
-            header = (PcfxHeader)Marshal.PtrToStructure(sbPtr, typeof(PcfxHeader));
-            Marshal.FreeHGlobal(sbPtr);
+            PcfxHeader header = Helpers.Marshal.ByteArrayToStructureLittleEndian<PcfxHeader>(sector);
 
             string   date;
             DateTime dateTime = DateTime.MinValue;

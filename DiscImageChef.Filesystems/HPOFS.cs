@@ -65,10 +65,8 @@ namespace DiscImageChef.Filesystems
 
             if(hpofsBpbSector.Length < 512) return false;
 
-            IntPtr bpbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(hpofsBpbSector, 0, bpbPtr, 512);
-            BiosParameterBlock bpb = (BiosParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock));
-            Marshal.FreeHGlobal(bpbPtr);
+            BiosParameterBlock bpb =
+                Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
 
             return bpb.fs_type.SequenceEqual(hpofsType);
         }
@@ -88,11 +86,8 @@ namespace DiscImageChef.Filesystems
             byte[] volInfoSector =
                 imagePlugin.ReadSector(14 + partition.Start); // Seek to volume information block, on logical sector 14
 
-            IntPtr bpbPtr = Marshal.AllocHGlobal(512);
-            Marshal.Copy(hpofsBpbSector, 0, bpbPtr, 512);
-            BiosParameterBlock bpb = (BiosParameterBlock)Marshal.PtrToStructure(bpbPtr, typeof(BiosParameterBlock));
-            Marshal.FreeHGlobal(bpbPtr);
-
+            BiosParameterBlock bpb =
+                Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
             MediaInformationBlock mib =
                 Helpers.Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
             VolumeInformationBlock vib =

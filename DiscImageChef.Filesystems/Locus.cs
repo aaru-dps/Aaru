@@ -89,10 +89,7 @@ namespace DiscImageChef.Filesystems
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(locusSb)) return false;
 
-                IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(locusSb));
-                Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(locusSb));
-                locusSb = (Locus_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Locus_Superblock));
-                Marshal.FreeHGlobal(sbPtr);
+                locusSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("Locus plugin", "magic at {1} = 0x{0:X8}", locusSb.s_magic, location);
 
@@ -121,10 +118,7 @@ namespace DiscImageChef.Filesystems
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
                 if(sector.Length < Marshal.SizeOf(locusSb)) return;
 
-                IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(locusSb));
-                Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(locusSb));
-                locusSb = (Locus_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Locus_Superblock));
-                Marshal.FreeHGlobal(sbPtr);
+                locusSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
 
                 if(locusSb.s_magic == LOCUS_MAGIC     || locusSb.s_magic == LOCUS_CIGAM ||
                    locusSb.s_magic == LOCUS_MAGIC_OLD || locusSb.s_magic == LOCUS_CIGAM_OLD) break;

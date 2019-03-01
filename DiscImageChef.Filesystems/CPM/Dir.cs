@@ -71,10 +71,8 @@ namespace DiscImageChef.Filesystems.CPM
 
                 for(int off = 0; off < directory.Length; off += 32)
                 {
-                    IntPtr dirPtr = Marshal.AllocHGlobal(32);
-                    Marshal.Copy(directory, off, dirPtr, 32);
-                    DirectoryEntry entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));
-                    Marshal.FreeHGlobal(dirPtr);
+                    DirectoryEntry entry =
+                        Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, off, 32);
 
                     if((entry.statusUser & 0x7F) < 0x20)
                     {

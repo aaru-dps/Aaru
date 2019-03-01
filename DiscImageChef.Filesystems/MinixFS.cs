@@ -232,10 +232,7 @@ namespace DiscImageChef.Filesystems
 
                 if(littleEndian)
                 {
-                    GCHandle handle = GCHandle.Alloc(minixSbSector, GCHandleType.Pinned);
-                    mnxSb = (Minix3SuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                     typeof(Minix3SuperBlock));
-                    handle.Free();
+                    mnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Minix3SuperBlock>(minixSbSector);
                 }
                 else mnxSb = Helpers.Marshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
 
@@ -269,11 +266,7 @@ namespace DiscImageChef.Filesystems
 
                 if(littleEndian)
                 {
-                    GCHandle handle = GCHandle.Alloc(minixSbSector, GCHandleType.Pinned);
-                    mnxSb = (MinixSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                    typeof(MinixSuperBlock));
-                    handle.Free();
-                }
+                    mnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<MinixSuperBlock>(minixSbSector);                }
                 else mnxSb = Helpers.Marshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
 
                 sb.AppendLine(minixVersion);

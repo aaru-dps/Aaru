@@ -76,10 +76,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            GCHandle handle = GCHandle.Alloc(hbSector, GCHandleType.Pinned);
-            RT11HomeBlock homeblock =
-                (RT11HomeBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(RT11HomeBlock));
-            handle.Free();
+            RT11HomeBlock homeblock = Helpers.Marshal.ByteArrayToStructureLittleEndian<RT11HomeBlock>(hbSector);
 
             /* TODO: Is this correct?
              * Assembler:

@@ -52,11 +52,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
-            vtoc = new Vtoc();
-            IntPtr vtocPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(vtocB, 0, vtocPtr, 256);
-            vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
-            Marshal.FreeHGlobal(vtocPtr);
+            vtoc = Helpers.Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
             return vtoc.catalogSector   < spt  && vtoc.maxTrackSectorPairsPerSector <= 122 &&
                    vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector               == 256;
@@ -73,11 +69,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
-            vtoc = new Vtoc();
-            IntPtr vtocPtr = Marshal.AllocHGlobal(256);
-            Marshal.Copy(vtocB, 0, vtocPtr, 256);
-            vtoc = (Vtoc)Marshal.PtrToStructure(vtocPtr, typeof(Vtoc));
-            Marshal.FreeHGlobal(vtocPtr);
+            vtoc = Helpers.Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
             sb.AppendLine("Apple DOS File System");
             sb.AppendLine();

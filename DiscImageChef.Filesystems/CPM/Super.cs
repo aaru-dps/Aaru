@@ -216,7 +216,6 @@ namespace DiscImageChef.Filesystems.CPM
             passwordCache     = new Dictionary<string, byte[]>();
 
             DicConsole.DebugWriteLine("CP/M Plugin", "Traversing directory.");
-            IntPtr dirPtr;
 
             // For each directory entry
             for(int dOff = 0; dOff < directory.Length; dOff += 32)
@@ -224,11 +223,8 @@ namespace DiscImageChef.Filesystems.CPM
                 if((directory[dOff] & 0x7F) < 0x10)
                     if(allocationBlocks.Count > 256)
                     {
-                        dirPtr = Marshal.AllocHGlobal(32);
-                        Marshal.Copy(directory, dOff, dirPtr, 32);
                         DirectoryEntry16 entry =
-                            (DirectoryEntry16)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry16));
-                        Marshal.FreeHGlobal(dirPtr);
+                            Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry16>(directory, dOff, 32);
 
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
@@ -314,10 +310,8 @@ namespace DiscImageChef.Filesystems.CPM
                     }
                     else
                     {
-                        dirPtr = Marshal.AllocHGlobal(32);
-                        Marshal.Copy(directory, dOff, dirPtr, 32);
-                        DirectoryEntry entry = (DirectoryEntry)Marshal.PtrToStructure(dirPtr, typeof(DirectoryEntry));
-                        Marshal.FreeHGlobal(dirPtr);
+                        DirectoryEntry entry =
+                            Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, dOff, 32);
 
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
@@ -404,10 +398,8 @@ namespace DiscImageChef.Filesystems.CPM
                 // A password entry (or a file entry in PDOS, but this does not handle that case)
                 else if((directory[dOff] & 0x7F) >= 0x10 && (directory[dOff] & 0x7F) < 0x20)
                 {
-                    dirPtr = Marshal.AllocHGlobal(32);
-                    Marshal.Copy(directory, dOff, dirPtr, 32);
-                    PasswordEntry entry = (PasswordEntry)Marshal.PtrToStructure(dirPtr, typeof(PasswordEntry));
-                    Marshal.FreeHGlobal(dirPtr);
+                    PasswordEntry entry =
+                        Helpers.Marshal.ByteArrayToStructureLittleEndian<PasswordEntry>(directory, dOff, 32);
 
                     int user = entry.userNumber & 0x0F;
 
@@ -450,11 +442,8 @@ namespace DiscImageChef.Filesystems.CPM
                     switch(directory[dOff] & 0x7F)
                     {
                         case 0x20:
-                            LabelEntry labelEntry;
-                            dirPtr = Marshal.AllocHGlobal(32);
-                            Marshal.Copy(directory, dOff, dirPtr, 32);
-                            labelEntry = (LabelEntry)Marshal.PtrToStructure(dirPtr, typeof(LabelEntry));
-                            Marshal.FreeHGlobal(dirPtr);
+                            LabelEntry labelEntry =
+                                Helpers.Marshal.ByteArrayToStructureLittleEndian<LabelEntry>(directory, dOff, 32);
 
                             // The volume label defines if one of the fields in CP/M 3 timestamp is a creation or an
                             // access time
@@ -486,10 +475,8 @@ namespace DiscImageChef.Filesystems.CPM
                             if(directory[dOff + 10] == 0x00 && directory[dOff + 20] == 0x00 &&
                                directory[dOff + 30] == 0x00 && directory[dOff + 31] == 0x00)
                             {
-                                dirPtr = Marshal.AllocHGlobal(32);
-                                Marshal.Copy(directory, dOff, dirPtr, 32);
-                                DateEntry dateEntry = (DateEntry)Marshal.PtrToStructure(dirPtr, typeof(DateEntry));
-                                Marshal.FreeHGlobal(dirPtr);
+                                DateEntry dateEntry =
+                                    Helpers.Marshal.ByteArrayToStructureLittleEndian<DateEntry>(directory, dOff, 32);
 
                                 FileEntryInfo fInfo;
 
@@ -541,11 +528,9 @@ namespace DiscImageChef.Filesystems.CPM
                             // However, if this byte is 0, timestamp is in Z80DOS or DOS+ format
                             else if(directory[dOff + 1] == 0x00)
                             {
-                                dirPtr = Marshal.AllocHGlobal(32);
-                                Marshal.Copy(directory, dOff, dirPtr, 32);
                                 TrdPartyDateEntry trdPartyDateEntry =
-                                    (TrdPartyDateEntry)Marshal.PtrToStructure(dirPtr, typeof(TrdPartyDateEntry));
-                                Marshal.FreeHGlobal(dirPtr);
+                                    Helpers.Marshal.ByteArrayToStructureLittleEndian<TrdPartyDateEntry>(directory, dOff,
+                                                                                                        32);
 
                                 FileEntryInfo fInfo;
 

@@ -63,11 +63,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.Sectors != 800 && imagePlugin.Info.Sectors != 1600) return false;
 
             byte[]          sector = imagePlugin.ReadSector(0);
-            AODOS_BootBlock bb     = new AODOS_BootBlock();
-            IntPtr          bbPtr  = Marshal.AllocHGlobal(Marshal.SizeOf(bb));
-            Marshal.Copy(sector, 0, bbPtr, Marshal.SizeOf(bb));
-            bb = (AODOS_BootBlock)Marshal.PtrToStructure(bbPtr, typeof(AODOS_BootBlock));
-            Marshal.FreeHGlobal(bbPtr);
+            AODOS_BootBlock bb = Helpers.Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
 
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
@@ -77,11 +73,7 @@ namespace DiscImageChef.Filesystems
         {
             Encoding = Encoding.GetEncoding("koi8-r");
             byte[]          sector = imagePlugin.ReadSector(0);
-            AODOS_BootBlock bb     = new AODOS_BootBlock();
-            IntPtr          bbPtr  = Marshal.AllocHGlobal(Marshal.SizeOf(bb));
-            Marshal.Copy(sector, 0, bbPtr, Marshal.SizeOf(bb));
-            bb = (AODOS_BootBlock)Marshal.PtrToStructure(bbPtr, typeof(AODOS_BootBlock));
-            Marshal.FreeHGlobal(bbPtr);
+            AODOS_BootBlock bb = Helpers.Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
 
             StringBuilder sbInformation = new StringBuilder();
 

@@ -72,10 +72,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(reiserSb)) return false;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(reiserSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(reiserSb));
-            reiserSb = (Reiser4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Reiser4_Superblock));
-            Marshal.FreeHGlobal(sbPtr);
+            reiserSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Reiser4_Superblock>(sector);
 
             return reiser4_magic.SequenceEqual(reiserSb.magic);
         }
@@ -98,10 +95,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
             if(sector.Length < Marshal.SizeOf(reiserSb)) return;
 
-            IntPtr sbPtr = Marshal.AllocHGlobal(Marshal.SizeOf(reiserSb));
-            Marshal.Copy(sector, 0, sbPtr, Marshal.SizeOf(reiserSb));
-            reiserSb = (Reiser4_Superblock)Marshal.PtrToStructure(sbPtr, typeof(Reiser4_Superblock));
-            Marshal.FreeHGlobal(sbPtr);
+            reiserSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Reiser4_Superblock>(sector);
 
             if(!reiser4_magic.SequenceEqual(reiserSb.magic)) return;
 

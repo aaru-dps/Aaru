@@ -59,10 +59,7 @@ namespace DiscImageChef.Filesystems
 
             try
             {
-                GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                nxSb = (ApfsContainerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                       typeof(ApfsContainerSuperBlock));
-                handle.Free();
+                nxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
             }
             catch { return false; }
 
@@ -84,10 +81,7 @@ namespace DiscImageChef.Filesystems
 
             try
             {
-                GCHandle handle = GCHandle.Alloc(sector, GCHandleType.Pinned);
-                nxSb = (ApfsContainerSuperBlock)Marshal.PtrToStructure(handle.AddrOfPinnedObject(),
-                                                                       typeof(ApfsContainerSuperBlock));
-                handle.Free();
+                nxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
             }
             catch { return; }
 
