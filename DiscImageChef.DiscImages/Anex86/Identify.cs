@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -44,14 +44,12 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            fdihdr = new Anex86Header();
+            if(stream.Length < Marshal.SizeOf<Anex86Header>()) return false;
 
-            if(stream.Length < Marshal.SizeOf(fdihdr)) return false;
-
-            byte[] hdrB = new byte[Marshal.SizeOf(fdihdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            fdihdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<Anex86Header>(hdrB);
+            fdihdr = Marshal.ByteArrayToStructureLittleEndian<Anex86Header>(hdrB);
 
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}",   fdihdr.unknown);
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}",   fdihdr.hddtype);

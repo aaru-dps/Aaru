@@ -34,12 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Decoders.CD;
+using DiscImageChef.Helpers;
 using Schemas;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
@@ -427,24 +427,24 @@ namespace DiscImageChef.DiscImages
             alcToc         = new Dictionary<int, Dictionary<int, AlcoholTrack>>();
             writingTracks  = writingTracks.OrderBy(t => t.TrackSession).ThenBy(t => t.TrackSequence).ToList();
             alcTrackExtras = new Dictionary<int, AlcoholTrackExtra>();
-            long currentTrackOffset = header.sessionOffset + Marshal.SizeOf(typeof(AlcoholSession)) * sessions;
+            long currentTrackOffset = header.sessionOffset + Marshal.SizeOf<AlcoholSession>() * sessions;
 
             FullTOC.CDFullTOC? decodedToc = FullTOC.Decode(fullToc);
 
             long currentExtraOffset = currentTrackOffset;
             for(int i = 1; i <= sessions; i++)
                 if(decodedToc.HasValue)
-                    currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) *
+                    currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() *
                                           decodedToc.Value.TrackDescriptors.Count(t => t.SessionNumber == i);
                 else
                 {
-                    currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 3;
-                    currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) *
+                    currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() * 3;
+                    currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() *
                                           writingTracks.Count(t => t.TrackSession == i);
-                    if(i < sessions) currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 2;
+                    if(i < sessions) currentExtraOffset += Marshal.SizeOf<AlcoholTrack>() * 2;
                 }
 
-            long footerOffset = currentExtraOffset + Marshal.SizeOf(typeof(AlcoholTrackExtra)) * writingTracks.Count;
+            long footerOffset = currentExtraOffset + Marshal.SizeOf<AlcoholTrackExtra>() * writingTracks.Count;
             if(bca != null)
             {
                 header.bcaOffset =  (uint)footerOffset;
@@ -546,7 +546,7 @@ namespace DiscImageChef.DiscImages
                                                       unknown  = new byte[18],
                                                       unknown2 = new byte[24]
                                                   });
-                            currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack));
+                            currentTrackOffset += Marshal.SizeOf<AlcoholTrack>();
                         }
                     else
                     {
@@ -591,7 +591,7 @@ namespace DiscImageChef.DiscImages
                                                   unknown  = new byte[18],
                                                   unknown2 = new byte[24]
                                               });
-                        currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 3;
+                        currentTrackOffset += Marshal.SizeOf<AlcoholTrack>() * 3;
                     }
 
                     foreach(Track track in writingTracks.Where(t => t.TrackSession == i).OrderBy(t => t.TrackSequence))
@@ -653,8 +653,8 @@ namespace DiscImageChef.DiscImages
 
                         thisSessionTracks.Add((int)track.TrackSequence, alcTrk);
 
-                        currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack));
-                        currentExtraOffset += Marshal.SizeOf(typeof(AlcoholTrackExtra));
+                        currentTrackOffset += Marshal.SizeOf<AlcoholTrack>();
+                        currentExtraOffset += Marshal.SizeOf<AlcoholTrackExtra>();
 
                         AlcoholTrackExtra trkExtra = new AlcoholTrackExtra
                         {
@@ -701,7 +701,7 @@ namespace DiscImageChef.DiscImages
                                                       unknown  = new byte[18],
                                                       unknown2 = new byte[24]
                                                   });
-                            currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack));
+                            currentTrackOffset += Marshal.SizeOf<AlcoholTrack>();
                         }
                     else if(i < sessions)
                     {
@@ -738,7 +738,7 @@ namespace DiscImageChef.DiscImages
                             unknown2 = new byte[24]
                         });
 
-                        currentTrackOffset += Marshal.SizeOf(typeof(AlcoholTrack)) * 2;
+                        currentTrackOffset += Marshal.SizeOf<AlcoholTrack>() * 2;
                     }
 
                     alcToc.Add(i, thisSessionTracks);
@@ -746,7 +746,7 @@ namespace DiscImageChef.DiscImages
 
             alcFooter = new AlcoholFooter
             {
-                filenameOffset = (uint)(footerOffset + Marshal.SizeOf(typeof(AlcoholFooter))), widechar = 1
+                filenameOffset = (uint)(footerOffset + Marshal.SizeOf<AlcoholFooter>()), widechar = 1
             };
 
             byte[] filename = Encoding.Unicode.GetBytes("*.mdf"); // Yup, Alcohol stores no filename but a wildcard.
@@ -755,11 +755,11 @@ namespace DiscImageChef.DiscImages
 
             // Write header
             descriptorStream.Seek(0, SeekOrigin.Begin);
-            byte[] block = new byte[Marshal.SizeOf(header)];
-            blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.StructureToPtr(header, blockPtr, true);
-            Marshal.Copy(blockPtr, block, 0, block.Length);
-            Marshal.FreeHGlobal(blockPtr);
+            byte[] block = new byte[Marshal.SizeOf<AlcoholHeader>()];
+            blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholHeader>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(header, blockPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
             descriptorStream.Write(block, 0, block.Length);
 
             // Write DVD structures if pressent
@@ -788,11 +788,11 @@ namespace DiscImageChef.DiscImages
             descriptorStream.Seek(header.sessionOffset, SeekOrigin.Begin);
             foreach(AlcoholSession session in alcSessions.Values)
             {
-                block    = new byte[Marshal.SizeOf(session)];
-                blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf(session));
-                Marshal.StructureToPtr(session, blockPtr, true);
-                Marshal.Copy(blockPtr, block, 0, block.Length);
-                Marshal.FreeHGlobal(blockPtr);
+                block    = new byte[Marshal.SizeOf<AlcoholSession>()];
+                blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholSession>());
+                System.Runtime.InteropServices.Marshal.StructureToPtr(session, blockPtr, true);
+                System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
+                System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
                 descriptorStream.Write(block, 0, block.Length);
             }
 
@@ -802,11 +802,11 @@ namespace DiscImageChef.DiscImages
                 descriptorStream.Seek(alcSessions.First(t => t.Key == kvp.Key).Value.trackOffset, SeekOrigin.Begin);
                 foreach(AlcoholTrack track in kvp.Value.Values)
                 {
-                    block    = new byte[Marshal.SizeOf(track)];
-                    blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf(track));
-                    Marshal.StructureToPtr(track, blockPtr, true);
-                    Marshal.Copy(blockPtr, block, 0, block.Length);
-                    Marshal.FreeHGlobal(blockPtr);
+                    block    = new byte[Marshal.SizeOf<AlcoholTrack>()];
+                    blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholTrack>());
+                    System.Runtime.InteropServices.Marshal.StructureToPtr(track, blockPtr, true);
+                    System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
+                    System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
                     descriptorStream.Write(block, 0, block.Length);
 
                     if(isDvd) continue;
@@ -816,11 +816,12 @@ namespace DiscImageChef.DiscImages
                     descriptorStream.Seek(track.extraOffset, SeekOrigin.Begin);
                     if(alcTrackExtras.TryGetValue(track.point, out AlcoholTrackExtra extra))
                     {
-                        block    = new byte[Marshal.SizeOf(extra)];
-                        blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf(extra));
-                        Marshal.StructureToPtr(extra, blockPtr, true);
-                        Marshal.Copy(blockPtr, block, 0, block.Length);
-                        Marshal.FreeHGlobal(blockPtr);
+                        block = new byte[Marshal.SizeOf<AlcoholTrackExtra>()];
+                        blockPtr =
+                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholTrackExtra>());
+                        System.Runtime.InteropServices.Marshal.StructureToPtr(extra, blockPtr, true);
+                        System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
+                        System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
                         descriptorStream.Write(block, 0, block.Length);
                     }
 
@@ -837,11 +838,11 @@ namespace DiscImageChef.DiscImages
 
             // Write footer
             descriptorStream.Seek(footerOffset, SeekOrigin.Begin);
-            block    = new byte[Marshal.SizeOf(alcFooter)];
-            blockPtr = Marshal.AllocHGlobal(Marshal.SizeOf(alcFooter));
-            Marshal.StructureToPtr(alcFooter, blockPtr, true);
-            Marshal.Copy(blockPtr, block, 0, block.Length);
-            Marshal.FreeHGlobal(blockPtr);
+            block    = new byte[Marshal.SizeOf<AlcoholFooter>()];
+            blockPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AlcoholFooter>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(alcFooter, blockPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(blockPtr, block, 0, block.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(blockPtr);
             descriptorStream.Write(block, 0, block.Length);
 
             // Write filename

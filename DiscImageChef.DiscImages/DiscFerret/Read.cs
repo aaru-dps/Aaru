@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -61,10 +61,9 @@ namespace DiscImageChef.DiscImages
             {
                 long thisOffset = stream.Position;
 
-                DfiBlockHeader blockHeader = new DfiBlockHeader();
-                byte[]         blk         = new byte[Marshal.SizeOf(blockHeader)];
-                stream.Read(blk, 0, Marshal.SizeOf(blockHeader));
-                blockHeader = Helpers.Marshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
+                byte[] blk = new byte[Marshal.SizeOf<DfiBlockHeader>()];
+                stream.Read(blk, 0, Marshal.SizeOf<DfiBlockHeader>());
+                DfiBlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
 
                 DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
                                           blockHeader.cylinder);

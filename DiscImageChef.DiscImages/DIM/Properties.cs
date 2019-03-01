@@ -41,17 +41,17 @@ namespace DiscImageChef.DiscImages
 {
     public partial class Dim
     {
-        public string    Name   => "DIM Disk Image";
-        public Guid      Id     => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
-        public ImageInfo Info   => imageInfo;
-        public string    Author => "Natalia Portillo";
-        public string    Format => "DIM disk image";
         public List<Partition> Partitions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Track> Tracks =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         public List<Session> Sessions =>
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
+        public string                 Name         => "DIM Disk Image";
+        public Guid                   Id           => new Guid("0240B7B1-E959-4CDC-B0BD-386D6E467B88");
+        public ImageInfo              Info         => imageInfo;
+        public string                 Author       => "Natalia Portillo";
+        public string                 Format       => "DIM disk image";
         public List<DumpHardwareType> DumpHardware => null;
         public CICMMetadataType       CicmMetadata => null;
     }

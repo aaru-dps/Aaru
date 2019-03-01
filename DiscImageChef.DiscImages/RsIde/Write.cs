@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Helpers;
 using Schemas;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
@@ -120,9 +120,8 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream
-               .Seek((long)((ulong)Marshal.SizeOf(typeof(RsIdeHeader)) + sectorAddress * imageInfo.SectorSize),
-                     SeekOrigin.Begin);
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + sectorAddress * imageInfo.SectorSize),
+                               SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
@@ -149,9 +148,8 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream
-               .Seek((long)((ulong)Marshal.SizeOf(typeof(RsIdeHeader)) + sectorAddress * imageInfo.SectorSize),
-                     SeekOrigin.Begin);
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + sectorAddress * imageInfo.SectorSize),
+                               SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
@@ -204,7 +202,7 @@ namespace DiscImageChef.DiscImages
             {
                 magic    = signature,
                 identify = new byte[106],
-                dataOff  = (ushort)Marshal.SizeOf(typeof(RsIdeHeader)),
+                dataOff  = (ushort)Marshal.SizeOf<RsIdeHeader>(),
                 revision = 1,
                 reserved = new byte[11]
             };
@@ -246,11 +244,12 @@ namespace DiscImageChef.DiscImages
                 if(string.IsNullOrEmpty(imageInfo.DriveSerialNumber))
                     imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
 
-                byte[] ataIdBytes = new byte[Marshal.SizeOf(ataId)];
-                IntPtr ptr        = Marshal.AllocHGlobal(512);
-                Marshal.StructureToPtr(ataId, ptr, true);
-                Marshal.Copy(ptr, ataIdBytes, 0, Marshal.SizeOf(ataId));
-                Marshal.FreeHGlobal(ptr);
+                byte[] ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
+                IntPtr ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
+                System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, true);
+                System.Runtime.InteropServices.Marshal.Copy(ptr, ataIdBytes, 0,
+                                                            Marshal.SizeOf<Identify.IdentifyDevice>());
+                System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
 
                 Array.Copy(ScrambleAtaString(imageInfo.DriveManufacturer + " " + imageInfo.DriveModel, 40), 0,
                            ataIdBytes, 27 * 2, 40);
@@ -260,11 +259,11 @@ namespace DiscImageChef.DiscImages
             }
             else Array.Copy(identify, 0, header.identify, 0, 106);
 
-            byte[] hdr    = new byte[Marshal.SizeOf(header)];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.StructureToPtr(header, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr    = new byte[Marshal.SizeOf<RsIdeHeader>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<RsIdeHeader>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

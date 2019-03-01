@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -40,23 +40,21 @@ namespace DiscImageChef.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            OobBlock header = new OobBlock();
-            Stream   stream = imageFilter.GetDataForkStream();
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf(header)) return false;
+            if(stream.Length < Marshal.SizeOf<OobBlock>()) return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf(header)];
-            stream.Read(hdr, 0, Marshal.SizeOf(header));
+            byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
+            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
 
-            header = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+            OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
-            OobBlock footer = new OobBlock();
-            stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
+            stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
 
-            hdr = new byte[Marshal.SizeOf(footer)];
-            stream.Read(hdr, 0, Marshal.SizeOf(footer));
+            hdr = new byte[Marshal.SizeOf<OobBlock>()];
+            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
 
-            footer = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+            OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
             return header.blockId == BlockIds.Oob && header.blockType == OobTypes.KFInfo &&
                    footer.blockId == BlockIds.Oob && footer.blockType == OobTypes.EOF    && footer.length == 0x0D0D;

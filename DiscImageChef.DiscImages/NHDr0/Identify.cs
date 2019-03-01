@@ -32,10 +32,10 @@
 
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -48,14 +48,12 @@ namespace DiscImageChef.DiscImages
             // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            nhdhdr = new Nhdr0Header();
+            if(stream.Length < Marshal.SizeOf<Nhdr0Header>()) return false;
 
-            if(stream.Length < Marshal.SizeOf(nhdhdr)) return false;
-
-            byte[] hdrB = new byte[Marshal.SizeOf(nhdhdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<Nhdr0Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            nhdhdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<Nhdr0Header>(hdrB);
+            nhdhdr = Marshal.ByteArrayToStructureLittleEndian<Nhdr0Header>(hdrB);
 
             if(!nhdhdr.szFileID.SequenceEqual(signature)) return false;
 

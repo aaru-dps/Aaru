@@ -37,6 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -230,11 +231,8 @@ namespace DiscImageChef.Filesystems
             {
                 Minix3SuperBlock mnxSb;
 
-                if(littleEndian)
-                {
-                    mnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Minix3SuperBlock>(minixSbSector);
-                }
-                else mnxSb = Helpers.Marshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
+                if(littleEndian) mnxSb = Marshal.ByteArrayToStructureLittleEndian<Minix3SuperBlock>(minixSbSector);
+                else mnxSb             = Marshal.ByteArrayToStructureBigEndian<Minix3SuperBlock>(minixSbSector);
 
                 if(magic != MINIX3_MAGIC && magic != MINIX3_CIGAM) mnxSb.s_blocksize = 1024;
 
@@ -264,10 +262,8 @@ namespace DiscImageChef.Filesystems
             {
                 MinixSuperBlock mnxSb;
 
-                if(littleEndian)
-                {
-                    mnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<MinixSuperBlock>(minixSbSector);                }
-                else mnxSb = Helpers.Marshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
+                if(littleEndian) mnxSb = Marshal.ByteArrayToStructureLittleEndian<MinixSuperBlock>(minixSbSector);
+                else mnxSb             = Marshal.ByteArrayToStructureBigEndian<MinixSuperBlock>(minixSbSector);
 
                 sb.AppendLine(minixVersion);
                 sb.AppendFormat("{0} chars in filename", filenamesize).AppendLine();

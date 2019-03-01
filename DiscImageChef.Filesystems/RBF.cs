@@ -37,6 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -61,19 +62,18 @@ namespace DiscImageChef.Filesystems
             // I've read OS-9/Apple2 has it on sector 15
             foreach(int i in new[] {0, 4, 15})
             {
-                ulong        location = (ulong)i;
-                RBF_IdSector rbfSb    = new RBF_IdSector();
+                ulong location = (ulong)i;
 
-                uint sbSize = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf(rbfSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf<RBF_IdSector>() / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf<RBF_IdSector>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(rbfSb)) return false;
+                if(sector.Length < Marshal.SizeOf<RBF_IdSector>()) return false;
 
-                rbfSb = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
-                RBF_NewIdSector rbf9000Sb = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
+                RBF_IdSector    rbfSb     = Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
+                RBF_NewIdSector rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
                 DicConsole.DebugWriteLine("RBF plugin",
                                           "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
@@ -99,14 +99,14 @@ namespace DiscImageChef.Filesystems
             foreach(int i in new[] {0, 4, 15})
             {
                 ulong location = (ulong)i;
-                uint  sbSize   = (uint)(Marshal.SizeOf(rbfSb) / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf(rbfSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint  sbSize   = (uint)(Marshal.SizeOf<RBF_IdSector>() / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf<RBF_IdSector>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(rbfSb)) return;
+                if(sector.Length < Marshal.SizeOf<RBF_IdSector>()) return;
 
-                rbfSb     = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
-                rbf9000Sb = Helpers.Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
+                rbfSb     = Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
+                rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
                 DicConsole.DebugWriteLine("RBF plugin",
                                           "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
@@ -118,7 +118,7 @@ namespace DiscImageChef.Filesystems
             if(rbfSb.dd_sync != RBF_SYNC && rbf9000Sb.rid_sync != RBF_SYNC && rbf9000Sb.rid_sync != RBF_CNYS) return;
 
             if(rbf9000Sb.rid_sync == RBF_CNYS)
-                rbf9000Sb = (RBF_NewIdSector)Helpers.Marshal.SwapStructureMembersEndian(rbf9000Sb);
+                rbf9000Sb = (RBF_NewIdSector)Marshal.SwapStructureMembersEndian(rbf9000Sb);
 
             StringBuilder sb = new StringBuilder();
 

@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +61,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return false;
 
-            QNX4_Superblock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
+            QNX4_Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
 
             // Check root directory name
             if(!qnx4_rootDir_fname.SequenceEqual(qnxSb.rootDir.di_fname)) return false;
@@ -91,7 +92,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + 1);
             if(sector.Length < 512) return;
 
-            QNX4_Superblock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
+            QNX4_Superblock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX4_Superblock>(sector);
 
             // Too much useless information
             /*

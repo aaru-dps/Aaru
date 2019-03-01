@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
@@ -128,7 +128,7 @@ namespace DiscImageChef.DiscImages
             if(!string.IsNullOrWhiteSpace(imageInfo.Comments))
             {
                 byte[] commentsBytes = Encoding.GetEncoding("ibm437").GetBytes(imageInfo.Comments);
-                header.commentOffset = (ushort)Marshal.SizeOf(header);
+                header.commentOffset = (ushort)Marshal.SizeOf<SaveDskFHeader>();
                 writingStream.Seek(header.commentOffset, SeekOrigin.Begin);
                 writingStream.Write(commentsBytes, 0,
                                     commentsBytes.Length >= 512 - header.commentOffset
@@ -136,11 +136,11 @@ namespace DiscImageChef.DiscImages
                                         : commentsBytes.Length);
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf(header)];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.StructureToPtr(header, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr    = new byte[Marshal.SizeOf<SaveDskFHeader>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<SaveDskFHeader>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);
@@ -156,11 +156,11 @@ namespace DiscImageChef.DiscImages
             }
             while(b >= 0);
 
-            hdr    = new byte[Marshal.SizeOf(header)];
-            hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.StructureToPtr(header, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            hdr    = new byte[Marshal.SizeOf<SaveDskFHeader>()];
+            hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<SaveDskFHeader>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

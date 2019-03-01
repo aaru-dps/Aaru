@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -127,11 +128,8 @@ namespace DiscImageChef.Filesystems
                 else return;
             }
 
-            if(littleEndian)
-            {
-                besb = Helpers.Marshal.ByteArrayToStructureLittleEndian<BeSuperBlock>(sbSector);
-            }
-            else besb = Helpers.Marshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
+            if(littleEndian) besb = Marshal.ByteArrayToStructureLittleEndian<BeSuperBlock>(sbSector);
+            else besb             = Marshal.ByteArrayToStructureBigEndian<BeSuperBlock>(sbSector);
 
             sb.AppendLine(littleEndian ? "Little-endian BeFS" : "Big-endian BeFS");
 

@@ -33,11 +33,11 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.CPM
@@ -181,7 +181,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                     // Read the superblock
                     AmstradSuperBlock amsSb =
-                        Helpers.Marshal.ByteArrayToStructureLittleEndian<AmstradSuperBlock>(sector, amsSbOffset, 16);
+                        Marshal.ByteArrayToStructureLittleEndian<AmstradSuperBlock>(sector, amsSbOffset, 16);
 
                     // Check that format byte and sidedness indicate the same number of sizes
                     if(amsSb.format == 0 && (amsSb.sidedness & 0x02) == 0 ||
@@ -297,8 +297,7 @@ namespace DiscImageChef.Filesystems.CPM
                     if(sum == 0)
                     {
                         // Read the superblock
-                        HardDiskSuperBlock hddSb =
-                            Helpers.Marshal.ByteArrayToStructureLittleEndian<HardDiskSuperBlock>(sector);
+                        HardDiskSuperBlock hddSb = Marshal.ByteArrayToStructureLittleEndian<HardDiskSuperBlock>(sector);
 
                         // Calculate volume size
                         sectorSize = (ulong)(hddSb.recordsPerSector * 128);

@@ -44,6 +44,7 @@ using daddr_t = System.Int64;
 using dev_t = System.Int64;
 using extent_t = System.Int64;
 using ino_t = System.Int64;
+using Marshal = DiscImageChef.Helpers.Marshal;
 using time_t = System.Int64;
 
 namespace DiscImageChef.Filesystems
@@ -66,15 +67,13 @@ namespace DiscImageChef.Filesystems
         {
             if(imagePlugin.Info.SectorSize < 512) return false;
 
-            UNICOS_Superblock unicosSb = new UNICOS_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(unicosSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<UNICOS_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(unicosSb)) return false;
+            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>()) return false;
 
-            unicosSb = Helpers.Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
+            UNICOS_Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
             DicConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
                                       UNICOS_MAGIC);
@@ -89,15 +88,13 @@ namespace DiscImageChef.Filesystems
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
-            UNICOS_Superblock unicosSb = new UNICOS_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(unicosSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(unicosSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<UNICOS_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<UNICOS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(unicosSb)) return;
+            if(sector.Length < Marshal.SizeOf<UNICOS_Superblock>()) return;
 
-            unicosSb = Helpers.Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
+            UNICOS_Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
             if(unicosSb.s_magic != UNICOS_MAGIC) return;
 

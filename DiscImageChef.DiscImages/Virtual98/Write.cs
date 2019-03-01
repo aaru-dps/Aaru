@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
@@ -202,11 +202,11 @@ namespace DiscImageChef.DiscImages
                 Array.Copy(commentsBytes, 0, v98Hdr.comment, 0,
                            commentsBytes.Length >= 128 ? 128 : commentsBytes.Length);
 
-            byte[] hdr    = new byte[Marshal.SizeOf(v98Hdr)];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(v98Hdr));
-            Marshal.StructureToPtr(v98Hdr, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr    = new byte[Marshal.SizeOf<Virtual98Header>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Virtual98Header>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(v98Hdr, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

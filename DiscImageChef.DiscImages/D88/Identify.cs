@@ -32,10 +32,10 @@
 
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -48,14 +48,12 @@ namespace DiscImageChef.DiscImages
             // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            D88Header d88Hdr = new D88Header();
+            if(stream.Length < Marshal.SizeOf<D88Header>()) return false;
 
-            if(stream.Length < Marshal.SizeOf(d88Hdr)) return false;
-
-            byte[] hdrB = new byte[Marshal.SizeOf(d88Hdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<D88Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            d88Hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
+            D88Header d88Hdr = Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
                                       StringHandlers.CToString(d88Hdr.name, shiftjis));

@@ -36,12 +36,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 using Schemas;
 using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 using FileSystemInfo = DiscImageChef.CommonTypes.Structs.FileSystemInfo;
@@ -224,7 +224,7 @@ namespace DiscImageChef.Filesystems.CPM
                     if(allocationBlocks.Count > 256)
                     {
                         DirectoryEntry16 entry =
-                            Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry16>(directory, dOff, 32);
+                            Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry16>(directory, dOff, 32);
 
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
@@ -311,7 +311,7 @@ namespace DiscImageChef.Filesystems.CPM
                     else
                     {
                         DirectoryEntry entry =
-                            Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, dOff, 32);
+                            Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, dOff, 32);
 
                         bool hidden = (entry.statusUser & 0x80) == 0x80;
                         bool rdOnly = (entry.filename[0] & 0x80) == 0x80 || (entry.extension[0] & 0x80) == 0x80;
@@ -398,8 +398,7 @@ namespace DiscImageChef.Filesystems.CPM
                 // A password entry (or a file entry in PDOS, but this does not handle that case)
                 else if((directory[dOff] & 0x7F) >= 0x10 && (directory[dOff] & 0x7F) < 0x20)
                 {
-                    PasswordEntry entry =
-                        Helpers.Marshal.ByteArrayToStructureLittleEndian<PasswordEntry>(directory, dOff, 32);
+                    PasswordEntry entry = Marshal.ByteArrayToStructureLittleEndian<PasswordEntry>(directory, dOff, 32);
 
                     int user = entry.userNumber & 0x0F;
 
@@ -443,7 +442,7 @@ namespace DiscImageChef.Filesystems.CPM
                     {
                         case 0x20:
                             LabelEntry labelEntry =
-                                Helpers.Marshal.ByteArrayToStructureLittleEndian<LabelEntry>(directory, dOff, 32);
+                                Marshal.ByteArrayToStructureLittleEndian<LabelEntry>(directory, dOff, 32);
 
                             // The volume label defines if one of the fields in CP/M 3 timestamp is a creation or an
                             // access time
@@ -476,7 +475,7 @@ namespace DiscImageChef.Filesystems.CPM
                                directory[dOff + 30] == 0x00 && directory[dOff + 31] == 0x00)
                             {
                                 DateEntry dateEntry =
-                                    Helpers.Marshal.ByteArrayToStructureLittleEndian<DateEntry>(directory, dOff, 32);
+                                    Marshal.ByteArrayToStructureLittleEndian<DateEntry>(directory, dOff, 32);
 
                                 FileEntryInfo fInfo;
 
@@ -529,8 +528,7 @@ namespace DiscImageChef.Filesystems.CPM
                             else if(directory[dOff + 1] == 0x00)
                             {
                                 TrdPartyDateEntry trdPartyDateEntry =
-                                    Helpers.Marshal.ByteArrayToStructureLittleEndian<TrdPartyDateEntry>(directory, dOff,
-                                                                                                        32);
+                                    Marshal.ByteArrayToStructureLittleEndian<TrdPartyDateEntry>(directory, dOff, 32);
 
                                 FileEntryInfo fInfo;
 

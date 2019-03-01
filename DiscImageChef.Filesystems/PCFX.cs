@@ -37,6 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -70,7 +71,7 @@ namespace DiscImageChef.Filesystems
             information = "";
 
             byte[]     sector = imagePlugin.ReadSectors(partition.Start, 2);
-            PcfxHeader header = Helpers.Marshal.ByteArrayToStructureLittleEndian<PcfxHeader>(sector);
+            PcfxHeader header = Marshal.ByteArrayToStructureLittleEndian<PcfxHeader>(sector);
 
             string   date;
             DateTime dateTime = DateTime.MinValue;

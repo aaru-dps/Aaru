@@ -34,8 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
 namespace DiscImageChef.Filesystems.AppleDOS
@@ -179,7 +179,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 if(debug) tsListMs.Write(tsSectorB, 0, tsSectorB.Length);
 
                 // Read the track/sector list sector
-                TrackSectorList tsSector = Helpers.Marshal.ByteArrayToStructureLittleEndian<TrackSectorList>(tsSectorB);
+                TrackSectorList tsSector = Marshal.ByteArrayToStructureLittleEndian<TrackSectorList>(tsSectorB);
 
                 if(tsSector.sectorOffset > expectedBlock)
                 {

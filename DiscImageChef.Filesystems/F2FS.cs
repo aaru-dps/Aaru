@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -62,17 +63,15 @@ namespace DiscImageChef.Filesystems
             uint sbAddr            = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
-            F2FS_Superblock f2fsSb = new F2FS_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(f2fsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<F2FS_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(f2fsSb)) return false;
+            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>()) return false;
 
-            f2fsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
+            F2FS_Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
 
             return f2fsSb.magic == F2FS_MAGIC;
         }
@@ -87,15 +86,13 @@ namespace DiscImageChef.Filesystems
             uint sbAddr            = F2FS_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
-            F2FS_Superblock f2fsSb = new F2FS_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(f2fsSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(f2fsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<F2FS_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<F2FS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(f2fsSb)) return;
+            if(sector.Length < Marshal.SizeOf<F2FS_Superblock>()) return;
 
-            f2fsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
+            F2FS_Superblock f2fsSb = Marshal.ByteArrayToStructureLittleEndian<F2FS_Superblock>(sector);
 
             if(f2fsSb.magic != F2FS_MAGIC) return;
 

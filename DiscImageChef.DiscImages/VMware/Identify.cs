@@ -32,8 +32,8 @@
 
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -45,25 +45,25 @@ namespace DiscImageChef.DiscImages
 
             byte[] ddfMagic = new byte[0x15];
 
-            if(stream.Length > Marshal.SizeOf(vmEHdr))
+            if(stream.Length > Marshal.SizeOf<VMwareExtentHeader>())
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmEHdrB = new byte[Marshal.SizeOf(vmEHdr)];
-                stream.Read(vmEHdrB, 0, Marshal.SizeOf(vmEHdr));
-                vmEHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
+                byte[] vmEHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
+                stream.Read(vmEHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
+                vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
 
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(ddfMagic, 0, 0x15);
 
                 vmCHdr = new VMwareCowHeader();
-                if(stream.Length <= Marshal.SizeOf(vmCHdr))
+                if(stream.Length <= Marshal.SizeOf<VMwareCowHeader>())
                     return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                            vmCHdr.magic                                          == VMWARE_COW_MAGIC;
 
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
-                stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
-                vmCHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
+                stream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
+                vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
 
                 return ddfMagicBytes.SequenceEqual(ddfMagic) || vmEHdr.magic == VMWARE_EXTENT_MAGIC ||
                        vmCHdr.magic                                          == VMWARE_COW_MAGIC;

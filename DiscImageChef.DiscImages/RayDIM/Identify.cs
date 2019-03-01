@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -44,13 +44,13 @@ namespace DiscImageChef.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if(stream.Length < Marshal.SizeOf(typeof(RayHdr))) return false;
+            if(stream.Length < Marshal.SizeOf<RayHdr>()) return false;
 
-            byte[] buffer = new byte[Marshal.SizeOf(typeof(RayHdr))];
+            byte[] buffer = new byte[Marshal.SizeOf<RayHdr>()];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, buffer.Length);
 
-            RayHdr header = Helpers.Marshal.ByteArrayToStructureLittleEndian<RayHdr>(buffer);
+            RayHdr header = Marshal.ByteArrayToStructureLittleEndian<RayHdr>(buffer);
 
             string signature = StringHandlers.CToString(header.signature);
 

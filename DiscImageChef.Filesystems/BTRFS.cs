@@ -37,6 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -65,10 +66,7 @@ namespace DiscImageChef.Filesystems
             byte[]     sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
             SuperBlock btrfsSb;
 
-            try
-            {
-                btrfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
-            }
+            try { btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector); }
             catch { return false; }
 
             DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorOff = {0}",                    sbSectorOff);
@@ -92,7 +90,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSectorSize);
 
-            SuperBlock btrfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
+            SuperBlock btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.checksum = {0}",          btrfsSb.checksum);
             DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.uuid = {0}",              btrfsSb.uuid);

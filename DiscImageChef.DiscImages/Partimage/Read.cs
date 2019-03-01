@@ -33,13 +33,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -52,9 +52,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
-            stream.Read(hdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(hdrB);
+            byte[] hdrB = new byte[Marshal.SizeOf<PartimageHeader>()];
+            stream.Read(hdrB, 0, Marshal.SizeOf<PartimageHeader>());
+            cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(hdrB);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.magic = {0}",
                                       StringHandlers.CToString(cVolumeHeader.magic));
@@ -69,9 +69,9 @@ namespace DiscImageChef.DiscImages
             if(cVolumeHeader.volumeNumber > 0)
                 throw new FeatureSupportedButNotImplementedImageException("Support for multiple volumes not supported");
 
-            hdrB = new byte[Marshal.SizeOf(cMainHeader)];
-            stream.Read(hdrB, 0, Marshal.SizeOf(cMainHeader));
-            cMainHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<PartimageMainHeader>(hdrB);
+            hdrB = new byte[Marshal.SizeOf<PartimageMainHeader>()];
+            stream.Read(hdrB, 0, Marshal.SizeOf<PartimageMainHeader>());
+            cMainHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageMainHeader>(hdrB);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFileSystem = {0}",
                                       StringHandlers.CToString(cMainHeader.szFileSystem));
@@ -183,9 +183,9 @@ namespace DiscImageChef.DiscImages
             magic = StringHandlers.CToString(hdrB);
             if(!magic.Equals(MAGIC_BEGIN_LOCALHEADER)) throw new ImageNotSupportedException("Cannot find local header");
 
-            hdrB = new byte[Marshal.SizeOf(typeof(CLocalHeader))];
-            stream.Read(hdrB, 0, Marshal.SizeOf(typeof(CLocalHeader)));
-            CLocalHeader localHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<CLocalHeader>(hdrB);
+            hdrB = new byte[Marshal.SizeOf<CLocalHeader>()];
+            stream.Read(hdrB, 0, Marshal.SizeOf<CLocalHeader>());
+            CLocalHeader localHeader = Marshal.ByteArrayToStructureLittleEndian<CLocalHeader>(hdrB);
 
             DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}",  localHeader.qwBlockSize);
             DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwUsedBlocks = {0}", localHeader.qwUsedBlocks);
@@ -226,7 +226,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("Partimage plugin", "dataOff = {0}", dataOff);
 
             // Seek to tail
-            stream.Seek(-(Marshal.SizeOf(typeof(CMainTail)) + MAGIC_BEGIN_TAIL.Length), SeekOrigin.End);
+            stream.Seek(-(Marshal.SizeOf<CMainTail>() + MAGIC_BEGIN_TAIL.Length), SeekOrigin.End);
 
             hdrB = new byte[MAGIC_BEGIN_TAIL.Length];
             stream.Read(hdrB, 0, MAGIC_BEGIN_TAIL.Length);
@@ -281,7 +281,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.Version              = StringHandlers.CToString(cMainHeader.szVersion);
             imageInfo.Comments             = StringHandlers.CToString(cMainHeader.szPartDescription);
             imageInfo.ImageSize =
-                (ulong)(stream.Length - (dataOff + Marshal.SizeOf(typeof(CMainTail)) + MAGIC_BEGIN_TAIL.Length));
+                (ulong)(stream.Length - (dataOff + Marshal.SizeOf<CMainTail>() + MAGIC_BEGIN_TAIL.Length));
             imageStream = stream;
 
             return true;
@@ -306,8 +306,7 @@ namespace DiscImageChef.DiscImages
                             // How many stored bytes to skip
                             (long)(blockOff * imageInfo.SectorSize) +
                             // How many bytes of CRC blocks to skip
-                            (long)(blockOff / (CHECK_FREQUENCY / imageInfo.SectorSize)) *
-                            Marshal.SizeOf(typeof(CCheck));
+                            (long)(blockOff / (CHECK_FREQUENCY / imageInfo.SectorSize)) * Marshal.SizeOf<CCheck>();
 
             sector = new byte[imageInfo.SectorSize];
             imageStream.Seek(imageOff, SeekOrigin.Begin);

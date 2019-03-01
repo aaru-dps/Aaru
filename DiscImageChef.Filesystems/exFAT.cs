@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +61,7 @@ namespace DiscImageChef.Filesystems
             byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
             if(vbrSector.Length < 512) return false;
 
-            VolumeBootRecord vbr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
+            VolumeBootRecord vbr = Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
 
             return signature.SequenceEqual(vbr.signature);
         }
@@ -74,15 +75,15 @@ namespace DiscImageChef.Filesystems
             StringBuilder sb = new StringBuilder();
             XmlFsType = new FileSystemType();
 
-            byte[] vbrSector = imagePlugin.ReadSector(0 + partition.Start);
-            VolumeBootRecord vbr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
+            byte[]           vbrSector = imagePlugin.ReadSector(0 + partition.Start);
+            VolumeBootRecord vbr       = Marshal.ByteArrayToStructureLittleEndian<VolumeBootRecord>(vbrSector);
 
             byte[] parametersSector = imagePlugin.ReadSector(9 + partition.Start);
             OemParameterTable parametersTable =
-                Helpers.Marshal.ByteArrayToStructureLittleEndian<OemParameterTable>(parametersSector);
+                Marshal.ByteArrayToStructureLittleEndian<OemParameterTable>(parametersSector);
 
-            byte[] chkSector = imagePlugin.ReadSector(11 + partition.Start);
-            ChecksumSector chksector = Helpers.Marshal.ByteArrayToStructureLittleEndian<ChecksumSector>(chkSector);
+            byte[]         chkSector = imagePlugin.ReadSector(11 + partition.Start);
+            ChecksumSector chksector = Marshal.ByteArrayToStructureLittleEndian<ChecksumSector>(chkSector);
 
             sb.AppendLine("Microsoft exFAT");
             sb.AppendFormat("Partition offset: {0}", vbr.offset).AppendLine();

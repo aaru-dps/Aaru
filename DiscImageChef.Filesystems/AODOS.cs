@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -63,7 +64,7 @@ namespace DiscImageChef.Filesystems
             if(imagePlugin.Info.Sectors != 800 && imagePlugin.Info.Sectors != 1600) return false;
 
             byte[]          sector = imagePlugin.ReadSector(0);
-            AODOS_BootBlock bb = Helpers.Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
+            AODOS_BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
 
             return bb.identifier.SequenceEqual(AODOSIdentifier);
         }
@@ -73,7 +74,7 @@ namespace DiscImageChef.Filesystems
         {
             Encoding = Encoding.GetEncoding("koi8-r");
             byte[]          sector = imagePlugin.ReadSector(0);
-            AODOS_BootBlock bb = Helpers.Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
+            AODOS_BootBlock bb     = Marshal.ByteArrayToStructureLittleEndian<AODOS_BootBlock>(sector);
 
             StringBuilder sbInformation = new StringBuilder();
 

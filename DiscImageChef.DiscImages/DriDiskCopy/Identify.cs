@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -44,13 +44,13 @@ namespace DiscImageChef.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if((stream.Length - Marshal.SizeOf(typeof(DriFooter))) % 512 != 0) return false;
+            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0) return false;
 
-            byte[] buffer = new byte[Marshal.SizeOf(typeof(DriFooter))];
+            byte[] buffer = new byte[Marshal.SizeOf<DriFooter>()];
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            DriFooter tmpFooter = Helpers.Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
+            DriFooter tmpFooter = Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
 
             string sig = StringHandlers.CToString(tmpFooter.signature);
 
@@ -89,7 +89,7 @@ namespace DiscImageChef.DiscImages
             if(tmpFooter.bpb.sptrack * tmpFooter.bpb.cylinders * tmpFooter.bpb.heads != tmpFooter.bpb.sectors)
                 return false;
 
-            return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf(tmpFooter) == stream.Length;
+            return tmpFooter.bpb.sectors * tmpFooter.bpb.bps + Marshal.SizeOf<DriFooter>() == stream.Length;
         }
     }
 }

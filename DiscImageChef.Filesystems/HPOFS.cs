@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -65,8 +66,7 @@ namespace DiscImageChef.Filesystems
 
             if(hpofsBpbSector.Length < 512) return false;
 
-            BiosParameterBlock bpb =
-                Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
+            BiosParameterBlock bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
 
             return bpb.fs_type.SequenceEqual(hpofsType);
         }
@@ -86,12 +86,9 @@ namespace DiscImageChef.Filesystems
             byte[] volInfoSector =
                 imagePlugin.ReadSector(14 + partition.Start); // Seek to volume information block, on logical sector 14
 
-            BiosParameterBlock bpb =
-                Helpers.Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
-            MediaInformationBlock mib =
-                Helpers.Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
-            VolumeInformationBlock vib =
-                Helpers.Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
+            BiosParameterBlock     bpb = Marshal.ByteArrayToStructureLittleEndian<BiosParameterBlock>(hpofsBpbSector);
+            MediaInformationBlock  mib = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
+            VolumeInformationBlock vib = Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
 
             DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.oem_name = \"{0}\"",
                                       StringHandlers.CToString(bpb.oem_name));

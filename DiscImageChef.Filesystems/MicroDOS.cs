@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +61,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
-            MicroDosBlock0 block0 = Helpers.Marshal.ByteArrayToStructureLittleEndian<MicroDosBlock0>(bk0);
+            MicroDosBlock0 block0 = Marshal.ByteArrayToStructureLittleEndian<MicroDosBlock0>(bk0);
 
             return block0.label == MAGIC && block0.mklabel == MAGIC2;
         }
@@ -75,7 +76,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] bk0 = imagePlugin.ReadSector(0 + partition.Start);
 
-            MicroDosBlock0 block0 = Helpers.Marshal.ByteArrayToStructureLittleEndian<MicroDosBlock0>(bk0);
+            MicroDosBlock0 block0 = Marshal.ByteArrayToStructureLittleEndian<MicroDosBlock0>(bk0);
 
             sb.AppendLine("MicroDOS filesystem");
             sb.AppendFormat("Volume has {0} blocks ({1} bytes)", block0.blocks, block0.blocks * 512).AppendLine();

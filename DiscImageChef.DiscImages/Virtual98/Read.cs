@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -49,14 +49,12 @@ namespace DiscImageChef.DiscImages
             // Even if comment is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            v98Hdr = new Virtual98Header();
+            if(stream.Length < Marshal.SizeOf<Virtual98Header>()) return false;
 
-            if(stream.Length < Marshal.SizeOf(v98Hdr)) return false;
-
-            byte[] hdrB = new byte[Marshal.SizeOf(v98Hdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<Virtual98Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            v98Hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
+            v98Hdr = Marshal.ByteArrayToStructureLittleEndian<Virtual98Header>(hdrB);
 
             imageInfo.MediaType = MediaType.GENERIC_HDD;
 

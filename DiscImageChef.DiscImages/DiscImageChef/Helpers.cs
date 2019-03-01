@@ -31,12 +31,12 @@
 // ****************************************************************************/
 
 using System;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SecureDigital;
+using DiscImageChef.Helpers;
 using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
 namespace DiscImageChef.DiscImages
@@ -231,7 +231,7 @@ namespace DiscImageChef.DiscImages
             if(ddtEntryCache.TryGetValue(sectorAddress, out ulong entry)) return entry;
 
             long oldPosition = imageStream.Position;
-            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf(typeof(DdtHeader));
+            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
             imageStream.Position += (long)(sectorAddress * sizeof(ulong));
             byte[] temp = new byte[sizeof(ulong)];
             imageStream.Read(temp, 0, sizeof(ulong));
@@ -254,7 +254,7 @@ namespace DiscImageChef.DiscImages
             }
 
             long oldPosition = imageStream.Position;
-            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf(typeof(DdtHeader));
+            imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
             imageStream.Position += (long)(sectorAddress * sizeof(ulong));
             imageStream.Write(BitConverter.GetBytes(pointer), 0, sizeof(ulong));
             imageStream.Position = oldPosition;

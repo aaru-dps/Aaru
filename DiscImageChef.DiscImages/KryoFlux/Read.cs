@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -47,23 +47,21 @@ namespace DiscImageChef.DiscImages
     {
         public bool Open(IFilter imageFilter)
         {
-            OobBlock header = new OobBlock();
-            Stream   stream = imageFilter.GetDataForkStream();
+            Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf(header)) return false;
+            if(stream.Length < Marshal.SizeOf<OobBlock>()) return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf(header)];
-            stream.Read(hdr, 0, Marshal.SizeOf(header));
+            byte[] hdr = new byte[Marshal.SizeOf<OobBlock>()];
+            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
 
-            header = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+            OobBlock header = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
-            OobBlock footer = new OobBlock();
-            stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
+            stream.Seek(-Marshal.SizeOf<OobBlock>(), SeekOrigin.End);
 
-            hdr = new byte[Marshal.SizeOf(footer)];
-            stream.Read(hdr, 0, Marshal.SizeOf(footer));
+            hdr = new byte[Marshal.SizeOf<OobBlock>()];
+            stream.Read(hdr, 0, Marshal.SizeOf<OobBlock>());
 
-            footer = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
+            OobBlock footer = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(hdr);
 
             if(header.blockId != BlockIds.Oob || header.blockType != OobTypes.KFInfo ||
                footer.blockId != BlockIds.Oob || footer.blockType != OobTypes.EOF    ||
@@ -131,12 +129,11 @@ namespace DiscImageChef.DiscImages
                         case (byte)BlockIds.Oob:
                         {
                             trackStream.Position--;
-                            OobBlock oobBlk = new OobBlock();
 
-                            byte[] oob = new byte[Marshal.SizeOf(oobBlk)];
-                            trackStream.Read(oob, 0, Marshal.SizeOf(oobBlk));
+                            byte[] oob = new byte[Marshal.SizeOf<OobBlock>()];
+                            trackStream.Read(oob, 0, Marshal.SizeOf<OobBlock>());
 
-                            oobBlk = Helpers.Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
+                            OobBlock oobBlk = Marshal.ByteArrayToStructureLittleEndian<OobBlock>(oob);
 
                             if(oobBlk.blockType == OobTypes.EOF)
                             {

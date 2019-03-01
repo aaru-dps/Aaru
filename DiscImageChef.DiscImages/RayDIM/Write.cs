@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
@@ -116,7 +116,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(RayHdr)) + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + sectorAddress * imageInfo.SectorSize),
                                SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
@@ -144,7 +144,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(RayHdr)) + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RayHdr>() + sectorAddress * imageInfo.SectorSize),
                                SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
@@ -202,11 +202,11 @@ namespace DiscImageChef.DiscImages
             };
             header.signature[0x4A] = 0x00;
 
-            byte[] hdr    = new byte[Marshal.SizeOf(header)];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.StructureToPtr(header, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr    = new byte[Marshal.SizeOf<RayHdr>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<RayHdr>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

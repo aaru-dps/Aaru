@@ -37,6 +37,7 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -77,11 +78,11 @@ namespace DiscImageChef.Filesystems
                 imagePlugin.ReadSector(17 + partition.Start); // Seek to spareblock, on logical sector 17
 
             HpfsBiosParameterBlock hpfsBpb =
-                Helpers.Marshal.ByteArrayToStructureLittleEndian<HpfsBiosParameterBlock>(hpfsBpbSector);
+                Marshal.ByteArrayToStructureLittleEndian<HpfsBiosParameterBlock>(hpfsBpbSector);
 
-            HpfsSuperBlock hpfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<HpfsSuperBlock>(hpfsSbSector);
+            HpfsSuperBlock hpfsSb = Marshal.ByteArrayToStructureLittleEndian<HpfsSuperBlock>(hpfsSbSector);
 
-            HpfsSpareBlock hpfsSp = Helpers.Marshal.ByteArrayToStructureLittleEndian<HpfsSpareBlock>(hpfsSpSector);
+            HpfsSpareBlock hpfsSp = Marshal.ByteArrayToStructureLittleEndian<HpfsSpareBlock>(hpfsSpSector);
 
             if(StringHandlers.CToString(hpfsBpb.fs_type) != "HPFS    " || hpfsSb.magic1 != 0xF995E849 ||
                hpfsSb.magic2                             != 0xFA53E9C5 || hpfsSp.magic1 != 0xF9911849 ||

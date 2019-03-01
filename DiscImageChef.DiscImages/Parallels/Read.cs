@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -51,9 +51,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] pHdrB = new byte[Marshal.SizeOf(pHdr)];
-            stream.Read(pHdrB, 0, Marshal.SizeOf(pHdr));
-            pHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
+            byte[] pHdrB = new byte[Marshal.SizeOf<ParallelsHeader>()];
+            stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());
+            pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
 
             DicConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}",
                                       StringHandlers.CToString(pHdr.magic));

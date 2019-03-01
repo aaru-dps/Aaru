@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,7 +61,7 @@ namespace DiscImageChef.Filesystems
 
             if(sector.Length != 128) return false;
 
-            VolumeLabel vol = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
+            VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
             return ecma67_magic.SequenceEqual(vol.labelIdentifier) && vol.labelNumber == 1 && vol.recordLength == 0x31;
         }
@@ -73,7 +74,7 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sbInformation = new StringBuilder();
 
-            VolumeLabel vol = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
+            VolumeLabel vol = Marshal.ByteArrayToStructureLittleEndian<VolumeLabel>(sector);
 
             sbInformation.AppendLine("ECMA-67");
 

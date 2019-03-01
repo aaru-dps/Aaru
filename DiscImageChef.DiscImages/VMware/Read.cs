@@ -34,13 +34,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -54,20 +54,20 @@ namespace DiscImageChef.DiscImages
             vmCHdr = new VMwareCowHeader();
             bool embedded = false;
 
-            if(stream.Length > Marshal.SizeOf(vmEHdr))
+            if(stream.Length > Marshal.SizeOf<VMwareExtentHeader>())
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmEHdrB = new byte[Marshal.SizeOf(vmEHdr)];
-                stream.Read(vmEHdrB, 0, Marshal.SizeOf(vmEHdr));
-                vmEHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
+                byte[] vmEHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
+                stream.Read(vmEHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
+                vmEHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(vmEHdrB);
             }
 
-            if(stream.Length > Marshal.SizeOf(vmCHdr))
+            if(stream.Length > Marshal.SizeOf<VMwareCowHeader>())
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                byte[] vmCHdrB = new byte[Marshal.SizeOf(vmCHdr)];
-                stream.Read(vmCHdrB, 0, Marshal.SizeOf(vmCHdr));
-                vmCHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
+                stream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
+                vmCHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
             }
 
             MemoryStream ddfStream = new MemoryStream();
@@ -130,13 +130,13 @@ namespace DiscImageChef.DiscImages
                     IFilter extentFilter = new FiltersList().GetFilter(curPath);
                     Stream  extentStream = extentFilter.GetDataForkStream();
 
-                    if(stream.Length > Marshal.SizeOf(vmCHdr))
+                    if(stream.Length > Marshal.SizeOf<VMwareCowHeader>())
                     {
                         VMwareCowHeader extHdrCow = new VMwareCowHeader();
                         extentStream.Seek(0, SeekOrigin.Begin);
-                        byte[] vmCHdrB = new byte[Marshal.SizeOf(extHdrCow)];
-                        extentStream.Read(vmCHdrB, 0, Marshal.SizeOf(extHdrCow));
-                        extHdrCow = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
+                        byte[] vmCHdrB = new byte[Marshal.SizeOf<VMwareCowHeader>()];
+                        extentStream.Read(vmCHdrB, 0, Marshal.SizeOf<VMwareCowHeader>());
+                        extHdrCow = Marshal.ByteArrayToStructureLittleEndian<VMwareCowHeader>(vmCHdrB);
 
                         if(extHdrCow.magic != VMWARE_COW_MAGIC) break;
 
@@ -299,10 +299,9 @@ namespace DiscImageChef.DiscImages
 
                 if(extentStream.Length < SECTOR_SIZE) throw new Exception($"Extent {extent.Filename} is too small.");
 
-                VMwareExtentHeader extentHdr  = new VMwareExtentHeader();
-                byte[]             extentHdrB = new byte[Marshal.SizeOf(extentHdr)];
-                extentStream.Read(extentHdrB, 0, Marshal.SizeOf(extentHdr));
-                extentHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(extentHdrB);
+                byte[] extentHdrB = new byte[Marshal.SizeOf<VMwareExtentHeader>()];
+                extentStream.Read(extentHdrB, 0, Marshal.SizeOf<VMwareExtentHeader>());
+                VMwareExtentHeader extentHdr = Marshal.ByteArrayToStructureLittleEndian<VMwareExtentHeader>(extentHdrB);
 
                 if(extentHdr.magic != VMWARE_EXTENT_MAGIC)
                     throw new Exception($"{extent.Filter} is not an VMware extent.");

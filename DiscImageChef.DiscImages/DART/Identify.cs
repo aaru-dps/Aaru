@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -44,12 +44,11 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 84) return false;
 
-            DartHeader header = new DartHeader();
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] headerB = new byte[Marshal.SizeOf(header)];
+            byte[] headerB = new byte[Marshal.SizeOf<DartHeader>()];
 
-            stream.Read(headerB, 0, Marshal.SizeOf(header));
-            header = Helpers.Marshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
+            stream.Read(headerB, 0, Marshal.SizeOf<DartHeader>());
+            DartHeader header = Marshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
 
             if(header.srcCmp > COMPRESS_NONE) return false;
 

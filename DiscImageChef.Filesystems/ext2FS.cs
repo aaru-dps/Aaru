@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -174,7 +175,7 @@ namespace DiscImageChef.Filesystems
 
             if(sbSectorOff + partition.Start >= partition.End) return false;
 
-            int  sbSizeInBytes   = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf<ext2FSSuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
@@ -199,7 +200,7 @@ namespace DiscImageChef.Filesystems
             bool ext3    = false;
             bool ext4    = false;
 
-            int  sbSizeInBytes   = Marshal.SizeOf(typeof(ext2FSSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf<ext2FSSuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
@@ -209,7 +210,7 @@ namespace DiscImageChef.Filesystems
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
             byte[] sblock   = new byte[sbSizeInBytes];
             Array.Copy(sbSector, sbOff, sblock, 0, sbSizeInBytes);
-            ext2FSSuperBlock supblk = Helpers.Marshal.ByteArrayToStructureLittleEndian<ext2FSSuperBlock>(sblock);
+            ext2FSSuperBlock supblk = Marshal.ByteArrayToStructureLittleEndian<ext2FSSuperBlock>(sblock);
 
             XmlFsType = new FileSystemType();
 

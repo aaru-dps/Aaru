@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -49,12 +49,12 @@ namespace DiscImageChef.DiscImages
 
             FdiHeader hdr = new FdiHeader();
 
-            if(stream.Length < Marshal.SizeOf(hdr)) return false;
+            if(stream.Length < Marshal.SizeOf<FdiHeader>()) return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf(hdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<FdiHeader>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
+            hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
 
             DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
             DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}",  hdr.cylinders);

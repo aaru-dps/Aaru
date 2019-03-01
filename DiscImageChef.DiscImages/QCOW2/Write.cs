@@ -34,10 +34,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
@@ -84,7 +84,7 @@ namespace DiscImageChef.DiscImages
                 version       = version3 ? QCOW_VERSION3 : QCOW_VERSION2,
                 size          = sectors * sectorSize,
                 cluster_bits  = 16,
-                header_length = (uint)Marshal.SizeOf(typeof(QCow2Header))
+                header_length = (uint)Marshal.SizeOf<QCow2Header>()
             };
 
             clusterSize    = 1 << (int)qHdr.cluster_bits;

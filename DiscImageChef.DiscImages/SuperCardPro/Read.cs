@@ -34,10 +34,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -48,12 +48,12 @@ namespace DiscImageChef.DiscImages
             Header    = new ScpHeader();
             scpStream = imageFilter.GetDataForkStream();
             scpStream.Seek(0, SeekOrigin.Begin);
-            if(scpStream.Length < Marshal.SizeOf(Header)) return false;
+            if(scpStream.Length < Marshal.SizeOf<ScpHeader>()) return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf(Header)];
-            scpStream.Read(hdr, 0, Marshal.SizeOf(Header));
+            byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+            scpStream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
-            Header = Helpers.Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
+            Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
             DicConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"",
                                       StringHandlers.CToString(Header.signature));
@@ -101,10 +101,10 @@ namespace DiscImageChef.DiscImages
 
                 for(byte r = 0; r < Header.revolutions; r++)
                 {
-                    byte[] rev = new byte[Marshal.SizeOf(typeof(TrackEntry))];
-                    scpStream.Read(rev, 0, Marshal.SizeOf(typeof(TrackEntry)));
+                    byte[] rev = new byte[Marshal.SizeOf<TrackEntry>()];
+                    scpStream.Read(rev, 0, Marshal.SizeOf<TrackEntry>());
 
-                    trk.Entries[r] = Helpers.Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
+                    trk.Entries[r] = Marshal.ByteArrayToStructureLittleEndian<TrackEntry>(rev);
                     // De-relative offsets
                     trk.Entries[r].dataOffset += Header.offsets[t];
                 }
@@ -125,14 +125,14 @@ namespace DiscImageChef.DiscImages
 
                     if(footerMagic == FOOTER_SIGNATURE)
                     {
-                        scpStream.Seek(-Marshal.SizeOf(typeof(ScpFooter)), SeekOrigin.Current);
+                        scpStream.Seek(-Marshal.SizeOf<ScpFooter>(), SeekOrigin.Current);
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", scpStream.Position);
 
-                        byte[] ftr = new byte[Marshal.SizeOf(typeof(ScpFooter))];
-                        scpStream.Read(ftr, 0, Marshal.SizeOf(typeof(ScpFooter)));
+                        byte[] ftr = new byte[Marshal.SizeOf<ScpFooter>()];
+                        scpStream.Read(ftr, 0, Marshal.SizeOf<ScpFooter>());
 
-                        ScpFooter footer = Helpers.Marshal.ByteArrayToStructureLittleEndian<ScpFooter>(ftr);
+                        ScpFooter footer = Marshal.ByteArrayToStructureLittleEndian<ScpFooter>(ftr);
 
                         DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.manufacturerOffset = 0x{0:X8}",
                                                   footer.manufacturerOffset);

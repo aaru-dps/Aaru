@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -53,17 +54,15 @@ namespace DiscImageChef.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            RefsVolumeHeader refsVhdr = new RefsVolumeHeader();
-
-            uint sbSize = (uint)(Marshal.SizeOf(refsVhdr) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(refsVhdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<RefsVolumeHeader>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<RefsVolumeHeader>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbSize >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(refsVhdr)) return false;
+            if(sector.Length < Marshal.SizeOf<RefsVolumeHeader>()) return false;
 
-            refsVhdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
+            RefsVolumeHeader refsVhdr = Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
 
             return refsVhdr.identifier == FSRS && ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.mustBeZero) &&
                    refsVhdr.signature.SequenceEqual(refsSignature);
@@ -74,17 +73,16 @@ namespace DiscImageChef.Filesystems
         {
             Encoding    = Encoding.UTF8;
             information = "";
-            RefsVolumeHeader refsVhdr = new RefsVolumeHeader();
 
-            uint sbSize = (uint)(Marshal.SizeOf(refsVhdr) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(refsVhdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<RefsVolumeHeader>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<RefsVolumeHeader>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbSize >= partition.End) return;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(refsVhdr)) return;
+            if(sector.Length < Marshal.SizeOf<RefsVolumeHeader>()) return;
 
-            refsVhdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
+            RefsVolumeHeader refsVhdr = Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
 
             DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.jump empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.jump));

@@ -48,6 +48,7 @@ using fstore_t = System.Int32;
 using gfs_t = System.Int32;
 // Inode number
 using ino_t = System.Int32;
+using Marshal = DiscImageChef.Helpers.Marshal;
 // Filesystem pack number
 using pckno_t = System.Int16;
 // Timestamp
@@ -79,17 +80,15 @@ namespace DiscImageChef.Filesystems
 
             for(ulong location = 0; location <= 8; location++)
             {
-                Locus_Superblock locusSb = new Locus_Superblock();
-
-                uint sbSize = (uint)(Marshal.SizeOf(locusSb) / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf(locusSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf<Locus_Superblock>() / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 if(partition.Start + location + sbSize >= imagePlugin.Info.Sectors) break;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(locusSb)) return false;
+                if(sector.Length < Marshal.SizeOf<Locus_Superblock>()) return false;
 
-                locusSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
+                Locus_Superblock locusSb = Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("Locus plugin", "magic at {1} = 0x{0:X8}", locusSb.s_magic, location);
 
@@ -112,13 +111,13 @@ namespace DiscImageChef.Filesystems
 
             for(ulong location = 0; location <= 8; location++)
             {
-                uint sbSize = (uint)(Marshal.SizeOf(locusSb) / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf(locusSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf<Locus_Superblock>() / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf<Locus_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 sector = imagePlugin.ReadSectors(partition.Start + location, sbSize);
-                if(sector.Length < Marshal.SizeOf(locusSb)) return;
+                if(sector.Length < Marshal.SizeOf<Locus_Superblock>()) return;
 
-                locusSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
+                locusSb = Marshal.ByteArrayToStructureLittleEndian<Locus_Superblock>(sector);
 
                 if(locusSb.s_magic == LOCUS_MAGIC     || locusSb.s_magic == LOCUS_CIGAM ||
                    locusSb.s_magic == LOCUS_MAGIC_OLD || locusSb.s_magic == LOCUS_CIGAM_OLD) break;
@@ -131,7 +130,7 @@ namespace DiscImageChef.Filesystems
             // Numerical arrays are not important for information so no need to swap them
             if(locusSb.s_magic == LOCUS_CIGAM || locusSb.s_magic == LOCUS_CIGAM_OLD)
             {
-                locusSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<Locus_Superblock>(sector);
+                locusSb         = Marshal.ByteArrayToStructureBigEndian<Locus_Superblock>(sector);
                 locusSb.s_flags = (LocusFlags)Swapping.Swap((ushort)locusSb.s_flags);
             }
 

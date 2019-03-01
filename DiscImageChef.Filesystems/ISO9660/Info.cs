@@ -32,13 +32,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.Sega;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.ISO9660
@@ -148,15 +148,16 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {
                     case 0:
                     {
-                        bvd = Helpers.Marshal.ByteArrayToStructureLittleEndian<BootRecord>(vdSector, hsOff, 2048 - hsOff);
+                        bvd = Marshal.ByteArrayToStructureLittleEndian<BootRecord>(vdSector, hsOff, 2048 - hsOff);
 
                         bootSpec = "Unknown";
 
                         if(Encoding.GetString(bvd.Value.system_id).Substring(0, 23) == "EL TORITO SPECIFICATION")
                         {
                             bootSpec = "El Torito";
-                            torito = Helpers
-                                    .Marshal.ByteArrayToStructureLittleEndian<ElToritoBootRecord>(vdSector, hsOff, 2048 - hsOff);
+                            torito =
+                                Marshal.ByteArrayToStructureLittleEndian<ElToritoBootRecord>(vdSector, hsOff,
+                                                                                             2048 - hsOff);
                         }
 
                         break;
@@ -164,25 +165,18 @@ namespace DiscImageChef.Filesystems.ISO9660
                     case 1:
                     {
                         if(highSierra)
-                        {
-                            hsvd =
-                                Helpers.Marshal
-                                       .ByteArrayToStructureLittleEndian<HighSierraPrimaryVolumeDescriptor>(vdSector);
-                        }
+                            hsvd = Marshal
+                               .ByteArrayToStructureLittleEndian<HighSierraPrimaryVolumeDescriptor>(vdSector);
                         else if(cdi)
-                            fsvd =
-                                Helpers.Marshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
-                        else
-                        {
-                            pvd = Helpers.Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
-                        }
+                            fsvd = Marshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
+                        else pvd = Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
 
                         break;
                     }
                     case 2:
                     {
                         PrimaryVolumeDescriptor svd =
-                            Helpers.Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
+                            Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
 
                         // Check if this is Joliet
                         if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
@@ -257,13 +251,13 @@ namespace DiscImageChef.Filesystems.ISO9660
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             // Walk thru root directory to see system area extensions in use
-            while(rootOff + Marshal.SizeOf(typeof(DirectoryRecord)) < rootDir.Length && !cdi)
+            while(rootOff + Marshal.SizeOf<DirectoryRecord>() < rootDir.Length && !cdi)
             {
                 DirectoryRecord record =
-                    Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(rootDir, rootOff,
-                                                                                      Marshal.SizeOf(typeof(DirectoryRecord)));
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(rootDir, rootOff,
+                                                                              Marshal.SizeOf<DirectoryRecord>());
 
-                int saOff = Marshal.SizeOf(record) + record.name_len;
+                int saOff = Marshal.SizeOf<DirectoryRecord>() + record.name_len;
                 saOff += saOff % 2;
                 int saLen = record.length - saOff;
 
@@ -277,13 +271,13 @@ namespace DiscImageChef.Filesystems.ISO9660
                     {
                         bool noneFound = true;
 
-                        if(Marshal.SizeOf(typeof(CdromXa)) + saOff <= saLen)
+                        if(Marshal.SizeOf<CdromXa>() + saOff <= saLen)
                         {
-                            CdromXa xa = Helpers.Marshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
+                            CdromXa xa = Marshal.ByteArrayToStructureBigEndian<CdromXa>(sa);
                             if(xa.signature == XA_MAGIC)
                             {
                                 xaExtensions =  true;
-                                saOff        += Marshal.SizeOf(typeof(CdromXa));
+                                saOff        += Marshal.SizeOf<CdromXa>();
                                 noneFound    =  false;
                             }
                         }
@@ -309,18 +303,18 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 switch(appleId)
                                 {
                                     case AppleOldId.ProDOS:
-                                        saOff += Marshal.SizeOf(typeof(AppleProDOSOldSystemUse));
+                                        saOff += Marshal.SizeOf<AppleProDOSOldSystemUse>();
                                         break;
                                     case AppleOldId.TypeCreator:
                                     case AppleOldId.TypeCreatorBundle:
-                                        saOff += Marshal.SizeOf(typeof(AppleHFSTypeCreatorSystemUse));
+                                        saOff += Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>();
                                         break;
                                     case AppleOldId.TypeCreatorIcon:
                                     case AppleOldId.TypeCreatorIconBundle:
-                                        saOff += Marshal.SizeOf(typeof(AppleHFSIconSystemUse));
+                                        saOff += Marshal.SizeOf<AppleHFSIconSystemUse>();
                                         break;
                                     case AppleOldId.HFS:
-                                        saOff += Marshal.SizeOf(typeof(AppleHFSOldSystemUse));
+                                        saOff += Marshal.SizeOf<AppleHFSOldSystemUse>();
                                         break;
                                 }
 
@@ -345,7 +339,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                             byte[] ce = new byte[sa[saOff + 2]];
                                             Array.Copy(sa, saOff, ce, 0, ce.Length);
                                             ContinuationArea ca =
-                                                Helpers.Marshal.ByteArrayToStructureBigEndian<ContinuationArea>(ce);
+                                                Marshal.ByteArrayToStructureBigEndian<ContinuationArea>(ce);
                                             contareas.Add(ca);
                                             break;
                                         case SUSP_REFERENCE when saOff + sa[saOff + 2] <= saLen:
@@ -442,13 +436,13 @@ namespace DiscImageChef.Filesystems.ISO9660
                 counter = 1;
                 foreach(byte[] erb in refareas)
                 {
-                    ReferenceArea er = Helpers.Marshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
+                    ReferenceArea er = Marshal.ByteArrayToStructureBigEndian<ReferenceArea>(erb);
                     string extId =
-                        Encoding.GetString(erb, Marshal.SizeOf(er), er.id_len);
+                        Encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>(), er.id_len);
                     string extDes =
-                        Encoding.GetString(erb, Marshal.SizeOf(er) + er.id_len, er.des_len);
-                    string extSrc =
-                        Encoding.GetString(erb, Marshal.SizeOf(er) + er.id_len + er.des_len, er.src_len);
+                        Encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len, er.des_len);
+                    string extSrc = Encoding.GetString(erb, Marshal.SizeOf<ReferenceArea>() + er.id_len + er.des_len,
+                                                       er.src_len);
                     suspInformation.AppendFormat("Extension: {0}", counter).AppendLine();
                     suspInformation.AppendFormat("\tID: {0}, version {1}", extId, er.ext_ver).AppendLine();
                     suspInformation.AppendFormat("\tDescription: {0}", extDes).AppendLine();
@@ -555,16 +549,16 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(vdSector[toritoOff] != 1) goto exit_torito;
 
                 ElToritoValidationEntry valentry =
-                    Helpers.Marshal.ByteArrayToStructureLittleEndian<ElToritoValidationEntry>(vdSector, toritoOff,
-                                                                                              EL_TORITO_ENTRY_SIZE);
+                    Marshal.ByteArrayToStructureLittleEndian<ElToritoValidationEntry>(vdSector, toritoOff,
+                                                                                      EL_TORITO_ENTRY_SIZE);
 
                 if(valentry.signature != EL_TORITO_MAGIC) goto exit_torito;
 
                 toritoOff += EL_TORITO_ENTRY_SIZE;
 
                 ElToritoInitialEntry initialEntry =
-                    Helpers.Marshal.ByteArrayToStructureLittleEndian<ElToritoInitialEntry>(vdSector, toritoOff,
-                                                                                              EL_TORITO_ENTRY_SIZE);
+                    Marshal.ByteArrayToStructureLittleEndian<ElToritoInitialEntry>(vdSector, toritoOff,
+                                                                                   EL_TORITO_ENTRY_SIZE);
 
                 initialEntry.boot_type = (ElToritoEmulation)((byte)initialEntry.boot_type & 0xF);
 
@@ -631,8 +625,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                       vdSector[toritoOff] == (byte)ElToritoIndicator.LastHeader))
                 {
                     ElToritoSectionHeaderEntry sectionHeader =
-                        Helpers.Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionHeaderEntry>(vdSector, toritoOff,
-                                                                                               EL_TORITO_ENTRY_SIZE);
+                        Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionHeaderEntry>(vdSector, toritoOff,
+                                                                                             EL_TORITO_ENTRY_SIZE);
                     toritoOff += EL_TORITO_ENTRY_SIZE;
 
                     isoMetadata.AppendFormat("Boot section {0}:", SECTION_COUNTER);
@@ -643,8 +637,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                         entryCounter++)
                     {
                         ElToritoSectionEntry sectionEntry =
-                            Helpers.Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntry>(vdSector, toritoOff,
-                                                                                                         EL_TORITO_ENTRY_SIZE);
+                            Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntry>(vdSector, toritoOff,
+                                                                                           EL_TORITO_ENTRY_SIZE);
                         toritoOff += EL_TORITO_ENTRY_SIZE;
 
                         isoMetadata.AppendFormat("\tEntry {0}:", entryCounter);
@@ -709,8 +703,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                         while(toritoOff < vdSector.Length)
                         {
                             ElToritoSectionEntryExtension sectionExtension =
-                                Helpers.Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntryExtension>(vdSector, toritoOff,
-                                                                                                       EL_TORITO_ENTRY_SIZE);
+                                Marshal.ByteArrayToStructureLittleEndian<ElToritoSectionEntryExtension>(vdSector,
+                                                                                                        toritoOff,
+                                                                                                        EL_TORITO_ENTRY_SIZE);
                             toritoOff += EL_TORITO_ENTRY_SIZE;
 
                             if(!sectionExtension.extension_flags.HasFlag(ElToritoFlags.Continued)) break;

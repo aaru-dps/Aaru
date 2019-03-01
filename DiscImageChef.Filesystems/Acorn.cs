@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -93,18 +94,18 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.Info.SectorSize < 256) return false;
 
-            byte[]   sector;
+            byte[] sector;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
             if(partition.Start == 0)
             {
                 sector = imagePlugin.ReadSector(0);
-                byte oldChk0 = AcornMapChecksum(sector, 255);
-                OldMapSector0 oldMap0 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
+                byte          oldChk0 = AcornMapChecksum(sector, 255);
+                OldMapSector0 oldMap0 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
 
                 sector = imagePlugin.ReadSector(1);
-                byte oldChk1 = AcornMapChecksum(sector, 255);
-                OldMapSector1 oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
+                byte          oldChk1 = AcornMapChecksum(sector, 255);
+                OldMapSector1 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldMap0.checksum = {0}", oldMap0.checksum);
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldChk0 = {0}",          oldChk0);
@@ -116,7 +117,7 @@ namespace DiscImageChef.Filesystems
                     byte[] tmp = new byte[256];
                     Array.Copy(sector, 256, tmp, 0, 256);
                     oldChk1 = AcornMapChecksum(tmp, 255);
-                    oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
+                    oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
                 }
 
                 DicConsole.DebugWriteLine("ADFS Plugin", "oldMap1.checksum = {0}", oldMap1.checksum);
@@ -138,8 +139,8 @@ namespace DiscImageChef.Filesystems
                         sector = tmp;
                     }
 
-                    OldDirectory oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
-                    byte dirChk = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
+                    OldDirectory oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
+                    byte         dirChk  = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
                     DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x200 = {0}",
                                               oldRoot.header.magic);
@@ -165,7 +166,7 @@ namespace DiscImageChef.Filesystems
                         sector = tmp;
                     }
 
-                    oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
+                    oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
                     dirChk  = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
                     DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x400 = {0}",
@@ -203,12 +204,12 @@ namespace DiscImageChef.Filesystems
 
             if(newChk == sector[0] && newChk != 0)
             {
-                NewMap nmap = Helpers.Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
+                NewMap nmap = Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
                 drSb = nmap.discRecord;
             }
             else if(bootChk == bootSector[0x1FF])
             {
-                BootBlock bBlock = Helpers.Marshal.ByteArrayToStructureLittleEndian<BootBlock>(bootSector);
+                BootBlock bBlock = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(bootSector);
                 drSb = bBlock.discRecord;
             }
             else return false;
@@ -246,21 +247,21 @@ namespace DiscImageChef.Filesystems
             XmlFsType   = new FileSystemType();
             information = "";
 
-            ulong    sbSector;
-            byte[]   sector;
-            uint     sectorsToRead;
-            ulong    bytes;
+            ulong  sbSector;
+            byte[] sector;
+            uint   sectorsToRead;
+            ulong  bytes;
 
             // ADFS-S, ADFS-M, ADFS-L, ADFS-D without partitions
             if(partition.Start == 0)
             {
                 sector = imagePlugin.ReadSector(0);
-                byte oldChk0 = AcornMapChecksum(sector, 255);
-                OldMapSector0 oldMap0 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
+                byte          oldChk0 = AcornMapChecksum(sector, 255);
+                OldMapSector0 oldMap0 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector0>(sector);
 
                 sector = imagePlugin.ReadSector(1);
-                byte oldChk1 = AcornMapChecksum(sector, 255);
-                OldMapSector1 oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
+                byte          oldChk1 = AcornMapChecksum(sector, 255);
+                OldMapSector1 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
                 // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum != oldChk1 && sector.Length >= 512)
@@ -269,7 +270,7 @@ namespace DiscImageChef.Filesystems
                     byte[] tmp = new byte[256];
                     Array.Copy(sector, 256, tmp, 0, 256);
                     oldChk1 = AcornMapChecksum(tmp, 255);
-                    oldMap1 = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
+                    oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
                 }
 
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum == oldChk1 && oldMap0.checksum != 0 &&
@@ -306,7 +307,7 @@ namespace DiscImageChef.Filesystems
                             sector = tmp;
                         }
 
-                        OldDirectory oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
+                        OldDirectory oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
 
                         if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
                             namebytes = oldRoot.tail.name;
@@ -327,7 +328,7 @@ namespace DiscImageChef.Filesystems
                                 sector = tmp;
                             }
 
-                            oldRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
+                            oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
 
                             if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC)
                                 namebytes = oldRoot.tail.name;
@@ -343,7 +344,7 @@ namespace DiscImageChef.Filesystems
                                     sector = tmp;
                                 }
 
-                                NewDirectory newRoot = Helpers.Marshal.ByteArrayToStructureLittleEndian<NewDirectory>(sector);
+                                NewDirectory newRoot = Marshal.ByteArrayToStructureLittleEndian<NewDirectory>(sector);
                                 if(newRoot.header.magic == NEW_DIR_MAGIC && newRoot.tail.magic == NEW_DIR_MAGIC)
                                     namebytes = newRoot.tail.title;
                             }
@@ -392,12 +393,12 @@ namespace DiscImageChef.Filesystems
 
             if(newChk == sector[0] && newChk != 0)
             {
-                NewMap nmap = Helpers.Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
+                NewMap nmap = Marshal.ByteArrayToStructureLittleEndian<NewMap>(sector);
                 drSb = nmap.discRecord;
             }
             else if(bootChk == bootSector[0x1FF])
             {
-                BootBlock bBlock = Helpers.Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
+                BootBlock bBlock = Marshal.ByteArrayToStructureLittleEndian<BootBlock>(sector);
                 drSb = bBlock.discRecord;
             }
             else return;

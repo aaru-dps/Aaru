@@ -32,8 +32,8 @@
 
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -46,9 +46,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] pHdrB = new byte[Marshal.SizeOf(cVolumeHeader)];
-            stream.Read(pHdrB, 0, Marshal.SizeOf(cVolumeHeader));
-            cVolumeHeader = Helpers.Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(pHdrB);
+            byte[] pHdrB = new byte[Marshal.SizeOf<PartimageHeader>()];
+            stream.Read(pHdrB, 0, Marshal.SizeOf<PartimageHeader>());
+            cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(pHdrB);
 
             return partimageMagic.SequenceEqual(cVolumeHeader.magic);
         }

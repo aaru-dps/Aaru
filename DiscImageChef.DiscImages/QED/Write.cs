@@ -34,10 +34,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
@@ -245,11 +245,11 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf(typeof(QedHeader))];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(QedHeader)));
-            Marshal.StructureToPtr(qHdr, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr    = new byte[Marshal.SizeOf<QedHeader>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<QedHeader>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(qHdr, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

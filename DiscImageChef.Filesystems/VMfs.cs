@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -75,7 +76,7 @@ namespace DiscImageChef.Filesystems
             ulong  vmfsSuperOff = VMFS_BASE / imagePlugin.Info.SectorSize;
             byte[] sector       = imagePlugin.ReadSector(partition.Start + vmfsSuperOff);
 
-            VolumeInfo volInfo = Helpers.Marshal.ByteArrayToStructureLittleEndian<VolumeInfo>(sector);
+            VolumeInfo volInfo = Marshal.ByteArrayToStructureLittleEndian<VolumeInfo>(sector);
 
             StringBuilder sbInformation = new StringBuilder();
 

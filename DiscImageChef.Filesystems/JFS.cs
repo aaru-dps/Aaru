@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -58,7 +59,7 @@ namespace DiscImageChef.Filesystems
             byte[] sector = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512) return false;
 
-            JfsSuperBlock jfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
+            JfsSuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
 
             return jfsSb.s_magic == JFS_MAGIC;
         }
@@ -73,7 +74,7 @@ namespace DiscImageChef.Filesystems
             byte[]        sector      = imagePlugin.ReadSector(partition.Start + bootSectors);
             if(sector.Length < 512) return;
 
-            JfsSuperBlock jfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
+            JfsSuperBlock jfsSb = Marshal.ByteArrayToStructureLittleEndian<JfsSuperBlock>(sector);
 
             sb.AppendLine("JFS filesystem");
             sb.AppendFormat("Version {0}", jfsSb.s_version).AppendLine();

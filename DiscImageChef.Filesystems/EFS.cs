@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -60,19 +61,17 @@ namespace DiscImageChef.Filesystems
             // Misaligned
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                EFS_Superblock efsSb = new EFS_Superblock();
-
-                uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x200) / imagePlugin.Info.SectorSize);
-                if((Marshal.SizeOf(efsSb) + 0x200) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)((Marshal.SizeOf<EFS_Superblock>() + 0x200) / imagePlugin.Info.SectorSize);
+                if((Marshal.SizeOf<EFS_Superblock>() + 0x200) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-                if(sector.Length < Marshal.SizeOf(efsSb)) return false;
+                if(sector.Length < Marshal.SizeOf<EFS_Superblock>()) return false;
 
-                byte[] sbpiece = new byte[Marshal.SizeOf(efsSb)];
+                byte[] sbpiece = new byte[Marshal.SizeOf<EFS_Superblock>()];
 
-                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf(efsSb));
+                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<EFS_Superblock>());
 
-                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
+                EFS_Superblock efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                           0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
@@ -81,15 +80,13 @@ namespace DiscImageChef.Filesystems
             }
             else
             {
-                EFS_Superblock efsSb = new EFS_Superblock();
-
-                uint sbSize = (uint)(Marshal.SizeOf(efsSb) / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf(efsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf<EFS_Superblock>() / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf<EFS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
-                if(sector.Length < Marshal.SizeOf(efsSb)) return false;
+                if(sector.Length < Marshal.SizeOf<EFS_Superblock>()) return false;
 
-                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
+                EFS_Superblock efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                           efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
@@ -112,30 +109,30 @@ namespace DiscImageChef.Filesystems
             // Misaligned
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                uint sbSize = (uint)((Marshal.SizeOf(efsSb) + 0x400) / imagePlugin.Info.SectorSize);
-                if((Marshal.SizeOf(efsSb) + 0x400) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)((Marshal.SizeOf<EFS_Superblock>() + 0x400) / imagePlugin.Info.SectorSize);
+                if((Marshal.SizeOf<EFS_Superblock>() + 0x400) % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-                if(sector.Length < Marshal.SizeOf(efsSb)) return;
+                if(sector.Length < Marshal.SizeOf<EFS_Superblock>()) return;
 
-                byte[] sbpiece = new byte[Marshal.SizeOf(efsSb)];
+                byte[] sbpiece = new byte[Marshal.SizeOf<EFS_Superblock>()];
 
-                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf(efsSb));
+                Array.Copy(sector, 0x200, sbpiece, 0, Marshal.SizeOf<EFS_Superblock>());
 
-                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
+                efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                           0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
             }
             else
             {
-                uint sbSize = (uint)(Marshal.SizeOf(efsSb) / imagePlugin.Info.SectorSize);
-                if(Marshal.SizeOf(efsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+                uint sbSize = (uint)(Marshal.SizeOf<EFS_Superblock>() / imagePlugin.Info.SectorSize);
+                if(Marshal.SizeOf<EFS_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
                 byte[] sector = imagePlugin.ReadSectors(partition.Start + 1, sbSize);
-                if(sector.Length < Marshal.SizeOf(efsSb)) return;
+                if(sector.Length < Marshal.SizeOf<EFS_Superblock>()) return;
 
-                efsSb = Helpers.Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
+                efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
                 DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                           efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);

@@ -32,8 +32,8 @@
 
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -46,11 +46,11 @@ namespace DiscImageChef.DiscImages
 
             FdiHeader hdr = new FdiHeader();
 
-            if(stream.Length < Marshal.SizeOf(hdr)) return false;
+            if(stream.Length < Marshal.SizeOf<FdiHeader>()) return false;
 
-            byte[] hdrB = new byte[Marshal.SizeOf(hdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<FdiHeader>()];
             stream.Read(hdrB, 0, hdrB.Length);
-            hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
+            hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
 
             return hdr.magic.SequenceEqual(signature);
         }

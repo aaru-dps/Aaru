@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,17 +58,15 @@ namespace DiscImageChef.Filesystems
             uint sbAddr            = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
-            NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<NILFS2_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(nilfsSb)) return false;
+            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>()) return false;
 
-            nilfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
+            NILFS2_Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
 
             return nilfsSb.magic == NILFS2_MAGIC;
         }
@@ -82,15 +81,13 @@ namespace DiscImageChef.Filesystems
             uint sbAddr            = NILFS2_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
-            NILFS2_Superblock nilfsSb = new NILFS2_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(nilfsSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(nilfsSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<NILFS2_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<NILFS2_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(nilfsSb)) return;
+            if(sector.Length < Marshal.SizeOf<NILFS2_Superblock>()) return;
 
-            nilfsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
+            NILFS2_Superblock nilfsSb = Marshal.ByteArrayToStructureLittleEndian<NILFS2_Superblock>(sector);
 
             if(nilfsSb.magic != NILFS2_MAGIC) return;
 

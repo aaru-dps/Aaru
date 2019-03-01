@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
 using Encoding = System.Text.Encoding;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -76,7 +77,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            RT11HomeBlock homeblock = Helpers.Marshal.ByteArrayToStructureLittleEndian<RT11HomeBlock>(hbSector);
+            RT11HomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<RT11HomeBlock>(hbSector);
 
             /* TODO: Is this correct?
              * Assembler:

@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -77,10 +78,10 @@ namespace DiscImageChef.Filesystems
             switch(magic)
             {
                 case SQUASH_MAGIC:
-                    sqSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<SquashSuperBlock>(sector);
+                    sqSb = Marshal.ByteArrayToStructureLittleEndian<SquashSuperBlock>(sector);
                     break;
                 case SQUASH_CIGAM:
-                    sqSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
+                    sqSb         = Marshal.ByteArrayToStructureBigEndian<SquashSuperBlock>(sector);
                     littleEndian = false;
                     break;
             }

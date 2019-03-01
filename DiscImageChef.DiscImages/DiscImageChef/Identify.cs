@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -43,12 +43,11 @@ namespace DiscImageChef.DiscImages
             imageStream = imageFilter.GetDataForkStream();
             imageStream.Seek(0, SeekOrigin.Begin);
 
-            if(imageStream.Length < Marshal.SizeOf(header)) return false;
+            if(imageStream.Length < Marshal.SizeOf<DicHeader>()) return false;
 
-            header         = new DicHeader();
-            structureBytes = new byte[Marshal.SizeOf(header)];
+            structureBytes = new byte[Marshal.SizeOf<DicHeader>()];
             imageStream.Read(structureBytes, 0, structureBytes.Length);
-            header = Helpers.Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
+            header = Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
 
             return header.identifier == DIC_MAGIC && header.imageMajorVersion <= DICF_VERSION;
         }

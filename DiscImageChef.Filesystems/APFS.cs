@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -57,10 +58,7 @@ namespace DiscImageChef.Filesystems
             byte[]                  sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
-            try
-            {
-                nxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
-            }
+            try { nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector); }
             catch { return false; }
 
             return nxSb.magic == APFS_CONTAINER_MAGIC;
@@ -79,10 +77,7 @@ namespace DiscImageChef.Filesystems
             byte[]                  sector = imagePlugin.ReadSector(partition.Start);
             ApfsContainerSuperBlock nxSb;
 
-            try
-            {
-                nxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector);
-            }
+            try { nxSb = Marshal.ByteArrayToStructureLittleEndian<ApfsContainerSuperBlock>(sector); }
             catch { return; }
 
             if(nxSb.magic != APFS_CONTAINER_MAGIC) return;

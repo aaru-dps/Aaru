@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -99,7 +100,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
 
-            OdsHomeBlock homeblock = Helpers.Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
+            OdsHomeBlock homeblock = Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
 
             // Optical disc
             if(imagePlugin.Info.XmlMediaType              == XmlMediaType.OpticalDisc &&
@@ -112,7 +113,7 @@ namespace DiscImageChef.Filesystems
                 hbSector = new byte[0x200];
                 Array.Copy(tmp, 0x200, hbSector, 0, 0x200);
 
-                homeblock = Helpers.Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
+                homeblock = Marshal.ByteArrayToStructureLittleEndian<OdsHomeBlock>(hbSector);
 
                 if(StringHandlers.CToString(homeblock.format) != "DECFILE11A  " &&
                    StringHandlers.CToString(homeblock.format) != "DECFILE11B  ") return;

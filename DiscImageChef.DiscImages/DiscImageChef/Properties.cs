@@ -61,20 +61,20 @@ namespace DiscImageChef.DiscImages
             new[]
             {
                 ("sectors_per_block", typeof(uint),
-                    "How many sectors to store per block (will be rounded to next power of two)", 4096U),
+                 "How many sectors to store per block (will be rounded to next power of two)", 4096U),
                 ("dictionary", typeof(uint), "Size, in bytes, of the LZMA dictionary", (uint)(1 << 25)),
                 ("max_ddt_size", typeof(uint),
-                    "Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk",
-                    256U),
+                 "Maximum size, in mebibytes, for in-memory DDT. If image needs a bigger one, it will be on-disk",
+                 256U),
                 ("md5", typeof(bool), "Calculate and store MD5 of image's user data", (object)false),
                 ("sha1", typeof(bool), "Calculate and store SHA1 of image's user data", (object)false),
                 ("sha256", typeof(bool), "Calculate and store SHA256 of image's user data", (object)false),
                 ("spamsum", typeof(bool), "Calculate and store SpamSum of image's user data", (object)false),
                 ("deduplicate", typeof(bool),
-                    "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default",
-                    (object)true),
+                 "Store only unique sectors. This consumes more memory and is slower, but it's enabled by default",
+                 (object)true),
                 ("nocompress", typeof(bool),
-                    "Don't compress user data blocks. Other blocks will still be compressed", (object)false)
+                 "Don't compress user data blocks. Other blocks will still be compressed", (object)false)
             };
         public IEnumerable<string> KnownExtensions => new[] {".dicf"};
         public bool                IsWriting       { get; private set; }

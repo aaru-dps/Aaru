@@ -32,9 +32,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Filesystems.CPM
 {
@@ -71,8 +71,7 @@ namespace DiscImageChef.Filesystems.CPM
 
                 for(int off = 0; off < directory.Length; off += 32)
                 {
-                    DirectoryEntry entry =
-                        Helpers.Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, off, 32);
+                    DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directory, off, 32);
 
                     if((entry.statusUser & 0x7F) < 0x20)
                     {

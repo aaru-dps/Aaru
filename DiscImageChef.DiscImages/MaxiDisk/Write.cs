@@ -39,7 +39,6 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Helpers;
 using Schemas;
-using Marshal = System.Runtime.InteropServices.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -128,7 +127,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(HdkHeader)) + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + sectorAddress * imageInfo.SectorSize),
                                SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
@@ -156,7 +155,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf(typeof(HdkHeader)) + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<HdkHeader>() + sectorAddress * imageInfo.SectorSize),
                                SeekOrigin.Begin);
             writingStream.Write(data, 0, data.Length);
 
@@ -198,11 +197,11 @@ namespace DiscImageChef.DiscImages
                 i >>= 1;
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf(header)];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(header));
-            Marshal.StructureToPtr(header, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr    = new byte[Marshal.SizeOf<HdkHeader>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<HdkHeader>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(header, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

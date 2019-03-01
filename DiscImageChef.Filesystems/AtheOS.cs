@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -94,7 +95,7 @@ namespace DiscImageChef.Filesystems
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
-            AtheosSuperBlock afsSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<AtheosSuperBlock>(sbSector);
+            AtheosSuperBlock afsSb = Marshal.ByteArrayToStructureLittleEndian<AtheosSuperBlock>(sbSector);
 
             sb.AppendLine("Atheos filesystem");
 

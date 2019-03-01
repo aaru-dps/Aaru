@@ -33,12 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -51,9 +51,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] vHdrB = new byte[Marshal.SizeOf(vHdr)];
-            stream.Read(vHdrB, 0, Marshal.SizeOf(vHdr));
-            vHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<VdiHeader>(vHdrB);
+            byte[] vHdrB = new byte[Marshal.SizeOf<VdiHeader>()];
+            stream.Read(vHdrB, 0, Marshal.SizeOf<VdiHeader>());
+            vHdr = Marshal.ByteArrayToStructureLittleEndian<VdiHeader>(vHdrB);
 
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", vHdr.creator);
             DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}",   vHdr.magic);

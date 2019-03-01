@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 using ufs_daddr_t = System.Int32;
 
 namespace DiscImageChef.Filesystems
@@ -111,19 +112,15 @@ namespace DiscImageChef.Filesystems
             // It should be start of a tape or floppy or file
             if(partition.Start != 0) return false;
 
-            spcl16   oldHdr = new spcl16();
-            spcl_aix aixHdr = new spcl_aix();
-            s_spcl   newHdr = new s_spcl();
-
-            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(newHdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(newHdr)) return false;
+            if(sector.Length < Marshal.SizeOf<s_spcl>()) return false;
 
-            oldHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
-            aixHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
-            newHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
+            spcl16   oldHdr = Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
+            spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
+            s_spcl   newHdr = Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
 
             DicConsole.DebugWriteLine("dump(8) plugin", "old magic = 0x{0:X8}", oldHdr.c_magic);
             DicConsole.DebugWriteLine("dump(8) plugin", "aix magic = 0x{0:X8}", aixHdr.c_magic);
@@ -143,19 +140,15 @@ namespace DiscImageChef.Filesystems
 
             if(partition.Start != 0) return;
 
-            spcl16   oldHdr = new spcl16();
-            spcl_aix aixHdr = new spcl_aix();
-            s_spcl   newHdr = new s_spcl();
-
-            uint sbSize = (uint)(Marshal.SizeOf(newHdr) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(newHdr) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<s_spcl>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<s_spcl>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start, sbSize);
-            if(sector.Length < Marshal.SizeOf(newHdr)) return;
+            if(sector.Length < Marshal.SizeOf<s_spcl>()) return;
 
-            oldHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
-            aixHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
-            newHdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
+            spcl16   oldHdr = Marshal.ByteArrayToStructureLittleEndian<spcl16>(sector);
+            spcl_aix aixHdr = Marshal.ByteArrayToStructureLittleEndian<spcl_aix>(sector);
+            s_spcl   newHdr = Marshal.ByteArrayToStructureLittleEndian<s_spcl>(sector);
 
             bool useOld = false;
             bool useAix = false;
@@ -164,14 +157,13 @@ namespace DiscImageChef.Filesystems
                newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_MAGIC || newHdr.c_magic == UFS2_CIGAM)
             {
                 if(newHdr.c_magic == OFS_CIGAM || newHdr.c_magic == NFS_CIGAM || newHdr.c_magic == UFS2_CIGAM)
-                    newHdr = Helpers.Marshal.ByteArrayToStructureBigEndian<s_spcl>(sector);
+                    newHdr = Marshal.ByteArrayToStructureBigEndian<s_spcl>(sector);
             }
             else if(aixHdr.c_magic == XIX_MAGIC || aixHdr.c_magic == XIX_CIGAM)
             {
                 useAix = true;
 
-                if(aixHdr.c_magic == XIX_CIGAM)
-                    aixHdr = Helpers.Marshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
+                if(aixHdr.c_magic == XIX_CIGAM) aixHdr = Marshal.ByteArrayToStructureBigEndian<spcl_aix>(sector);
             }
             else if(oldHdr.c_magic == OFS_MAGIC)
             {

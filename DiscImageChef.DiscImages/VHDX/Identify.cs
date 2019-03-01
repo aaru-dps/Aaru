@@ -31,8 +31,8 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -45,9 +45,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] vhdxIdB = new byte[Marshal.SizeOf(vhdxId)];
-            stream.Read(vhdxIdB, 0, Marshal.SizeOf(vhdxId));
-            vhdxId = Helpers.Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
+            byte[] vhdxIdB = new byte[Marshal.SizeOf<VhdxIdentifier>()];
+            stream.Read(vhdxIdB, 0, Marshal.SizeOf<VhdxIdentifier>());
+            vhdxId = Marshal.ByteArrayToStructureLittleEndian<VhdxIdentifier>(vhdxIdB);
 
             return vhdxId.signature == VHDX_SIGNATURE;
         }

@@ -37,6 +37,7 @@ using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -82,7 +83,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] ntfsBpb = imagePlugin.ReadSector(0 + partition.Start);
 
-            NtfsBootBlock ntfsBb = Helpers.Marshal.ByteArrayToStructureLittleEndian<NtfsBootBlock>(ntfsBpb);
+            NtfsBootBlock ntfsBb = Marshal.ByteArrayToStructureLittleEndian<NtfsBootBlock>(ntfsBpb);
 
             sb.AppendFormat("{0} bytes per sector", ntfsBb.bps).AppendLine();
             sb.AppendFormat("{0} sectors per cluster ({1} bytes)", ntfsBb.spc, ntfsBb.spc * ntfsBb.bps).AppendLine();

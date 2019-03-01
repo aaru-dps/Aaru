@@ -30,12 +30,11 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-using System.Runtime.InteropServices;
 using System.Text;
 using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
@@ -52,7 +51,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             int spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
-            vtoc = Helpers.Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
+            vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
             return vtoc.catalogSector   < spt  && vtoc.maxTrackSectorPairsPerSector <= 122 &&
                    vtoc.sectorsPerTrack == spt && vtoc.bytesPerSector               == 256;
@@ -69,7 +68,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             spt = imagePlugin.Info.Sectors == 455 ? 13 : 16;
 
             byte[] vtocB = imagePlugin.ReadSector((ulong)(17 * spt));
-            vtoc = Helpers.Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
+            vtoc = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocB);
 
             sb.AppendLine("Apple DOS File System");
             sb.AppendLine();

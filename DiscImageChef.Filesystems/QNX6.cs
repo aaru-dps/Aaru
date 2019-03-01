@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -62,10 +63,9 @@ namespace DiscImageChef.Filesystems
             byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
             if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return false;
 
-            QNX6_AudiSuperBlock audiSb =
-                Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
+            QNX6_AudiSuperBlock audiSb = Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
 
-            QNX6_SuperBlock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_SuperBlock>(sector);
+            QNX6_SuperBlock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX6_SuperBlock>(sector);
 
             return qnxSb.magic == QNX6_MAGIC || audiSb.magic == QNX6_MAGIC;
         }
@@ -83,10 +83,9 @@ namespace DiscImageChef.Filesystems
             byte[] sector     = imagePlugin.ReadSectors(partition.Start + bootSectors, sectors);
             if(sector.Length < QNX6_SUPER_BLOCK_SIZE) return;
 
-            QNX6_AudiSuperBlock audiSb =
-                Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
+            QNX6_AudiSuperBlock audiSb = Marshal.ByteArrayToStructureLittleEndian<QNX6_AudiSuperBlock>(audiSector);
 
-            QNX6_SuperBlock qnxSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<QNX6_SuperBlock>(sector);
+            QNX6_SuperBlock qnxSb = Marshal.ByteArrayToStructureLittleEndian<QNX6_SuperBlock>(sector);
 
             bool audi = audiSb.magic == QNX6_MAGIC;
 

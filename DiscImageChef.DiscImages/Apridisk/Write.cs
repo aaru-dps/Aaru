@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
@@ -149,8 +149,8 @@ namespace DiscImageChef.DiscImages
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(signature, 0, signature.Length);
 
-            byte[] hdr    = new byte[Marshal.SizeOf(typeof(ApridiskRecord))];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ApridiskRecord)));
+            byte[] hdr    = new byte[Marshal.SizeOf<ApridiskRecord>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ApridiskRecord>());
 
             for(ushort c = 0; c < imageInfo.Cylinders; c++)
             {
@@ -164,15 +164,15 @@ namespace DiscImageChef.DiscImages
                         {
                             type        = RecordType.Sector,
                             compression = CompressType.Uncompresed,
-                            headerSize  = (ushort)Marshal.SizeOf(typeof(ApridiskRecord)),
+                            headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
                             dataSize    = (uint)sectorsData[c][h][s].Length,
                             head        = h,
                             sector      = s,
                             cylinder    = c
                         };
 
-                        Marshal.StructureToPtr(record, hdrPtr, true);
-                        Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+                        System.Runtime.InteropServices.Marshal.StructureToPtr(record, hdrPtr, true);
+                        System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
 
                         writingStream.Write(hdr,                  0, hdr.Length);
                         writingStream.Write(sectorsData[c][h][s], 0, sectorsData[c][h][s].Length);
@@ -187,15 +187,15 @@ namespace DiscImageChef.DiscImages
                 {
                     type        = RecordType.Creator,
                     compression = CompressType.Uncompresed,
-                    headerSize  = (ushort)Marshal.SizeOf(typeof(ApridiskRecord)),
+                    headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
                     dataSize    = (uint)creatorBytes.Length + 1,
                     head        = 0,
                     sector      = 0,
                     cylinder    = 0
                 };
 
-                Marshal.StructureToPtr(creatorRecord, hdrPtr, true);
-                Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+                System.Runtime.InteropServices.Marshal.StructureToPtr(creatorRecord, hdrPtr, true);
+                System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
 
                 writingStream.Write(hdr,          0, hdr.Length);
                 writingStream.Write(creatorBytes, 0, creatorBytes.Length);
@@ -209,22 +209,22 @@ namespace DiscImageChef.DiscImages
                 {
                     type        = RecordType.Comment,
                     compression = CompressType.Uncompresed,
-                    headerSize  = (ushort)Marshal.SizeOf(typeof(ApridiskRecord)),
+                    headerSize  = (ushort)Marshal.SizeOf<ApridiskRecord>(),
                     dataSize    = (uint)commentBytes.Length + 1,
                     head        = 0,
                     sector      = 0,
                     cylinder    = 0
                 };
 
-                Marshal.StructureToPtr(commentRecord, hdrPtr, true);
-                Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+                System.Runtime.InteropServices.Marshal.StructureToPtr(commentRecord, hdrPtr, true);
+                System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
 
                 writingStream.Write(hdr,          0, hdr.Length);
                 writingStream.Write(commentBytes, 0, commentBytes.Length);
                 writingStream.WriteByte(0); // Termination
             }
 
-            Marshal.FreeHGlobal(hdrPtr);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
             writingStream.Flush();
             writingStream.Close();
 

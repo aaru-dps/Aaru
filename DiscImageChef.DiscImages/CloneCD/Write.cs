@@ -410,9 +410,9 @@ namespace DiscImageChef.DiscImages
             for(int i = 0; i < toc.TrackDescriptors.Length; i++)
             {
                 long alba = MsfToLba((toc.TrackDescriptors[i].Min, toc.TrackDescriptors[i].Sec,
-                                         toc.TrackDescriptors[i].Frame));
+                                      toc.TrackDescriptors[i].Frame));
                 long plba = MsfToLba((toc.TrackDescriptors[i].PMIN, toc.TrackDescriptors[i].PSEC,
-                                         toc.TrackDescriptors[i].PFRAME));
+                                      toc.TrackDescriptors[i].PFRAME));
 
                 if(alba > 405000) alba = (alba - 405000 + 300) * -1;
                 if(plba > 405000) plba = (plba - 405000 + 300) * -1;

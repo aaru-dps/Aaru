@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -58,13 +59,13 @@ namespace DiscImageChef.Filesystems
 
         public bool Identify(IMediaImage imagePlugin, Partition partition)
         {
-            int  sbSizeInBytes   = Marshal.SizeOf(typeof(XiaSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf<XiaSuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
             if(sbSizeInSectors + partition.Start           >= partition.End) return false;
 
-            byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            XiaSuperBlock supblk = Helpers.Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
+            byte[]        sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
+            XiaSuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
 
             return supblk.s_magic == XIAFS_SUPER_MAGIC;
         }
@@ -77,12 +78,12 @@ namespace DiscImageChef.Filesystems
 
             StringBuilder sb = new StringBuilder();
 
-            int  sbSizeInBytes   = Marshal.SizeOf(typeof(XiaSuperBlock));
+            int  sbSizeInBytes   = Marshal.SizeOf<XiaSuperBlock>();
             uint sbSizeInSectors = (uint)(sbSizeInBytes / imagePlugin.Info.SectorSize);
             if(sbSizeInBytes % imagePlugin.Info.SectorSize > 0) sbSizeInSectors++;
 
-            byte[] sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
-            XiaSuperBlock supblk = Helpers.Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
+            byte[]        sbSector = imagePlugin.ReadSectors(partition.Start, sbSizeInSectors);
+            XiaSuperBlock supblk   = Marshal.ByteArrayToStructureLittleEndian<XiaSuperBlock>(sbSector);
 
             sb.AppendFormat("{0} bytes per zone", supblk.s_zone_size).AppendLine();
             sb.AppendFormat("{0} zones in volume ({1} bytes)", supblk.s_nzones, supblk.s_nzones * supblk.s_zone_size)

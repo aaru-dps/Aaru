@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 using time_t = System.Int32;
 using ufs_daddr_t = System.Int32;
 
@@ -205,9 +206,9 @@ namespace DiscImageChef.Filesystems
             // Fun with seeking follows on superblock reading!
             ufs_sb_sectors = imagePlugin.ReadSectors(sb_offset, sb_size_in_sectors);
 
-            UFSSuperBlock ufs_sb = Helpers.Marshal.ByteArrayToStructureLittleEndian<UFSSuperBlock>(ufs_sb_sectors);
+            UFSSuperBlock ufs_sb = Marshal.ByteArrayToStructureLittleEndian<UFSSuperBlock>(ufs_sb_sectors);
 
-            UFSSuperBlock bs_sfu = Helpers.Marshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
+            UFSSuperBlock bs_sfu = Marshal.ByteArrayToStructureBigEndian<UFSSuperBlock>(ufs_sb_sectors);
             if(bs_sfu.fs_magic == UFS_MAGIC     && ufs_sb.fs_magic == UFS_CIGAM    ||
                bs_sfu.fs_magic == UFS_MAGIC_BW  && ufs_sb.fs_magic == UFS_CIGAM_BW ||
                bs_sfu.fs_magic == UFS2_MAGIC    && ufs_sb.fs_magic == UFS2_CIGAM   ||

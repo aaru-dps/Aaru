@@ -40,6 +40,7 @@ using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;
 using hammer_tid_t = System.UInt64;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 #pragma warning disable 169
 
@@ -92,10 +93,8 @@ namespace DiscImageChef.Filesystems
             ulong magic = BitConverter.ToUInt64(sbSector, 0);
 
             if(magic == HAMMER_FSBUF_VOLUME)
-            {
-                hammerSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<HammerSuperBlock>(sbSector);
-            }
-            else hammerSb = Helpers.Marshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
+                hammerSb  = Marshal.ByteArrayToStructureLittleEndian<HammerSuperBlock>(sbSector);
+            else hammerSb = Marshal.ByteArrayToStructureBigEndian<HammerSuperBlock>(sbSector);
 
             sb.AppendLine("HAMMER filesystem");
 

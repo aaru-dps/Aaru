@@ -160,8 +160,8 @@ namespace DiscImageChef.DiscImages
                 mediaEncoding = MediaEncoding.FM;
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
-                                                            (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
-                                                            mediaEncoding, false));
+                                                         (ushort)imageInfo.SectorsPerTrack, imageInfo.SectorSize,
+                                                         mediaEncoding, false));
 
             switch(imageInfo.MediaType)
             {

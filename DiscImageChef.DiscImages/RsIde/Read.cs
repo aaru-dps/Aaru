@@ -33,12 +33,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Decoders.ATA;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -49,10 +49,10 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            byte[] hdrB = new byte[Marshal.SizeOf(typeof(RsIdeHeader))];
+            byte[] hdrB = new byte[Marshal.SizeOf<RsIdeHeader>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            RsIdeHeader hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<RsIdeHeader>(hdrB);
+            RsIdeHeader hdr = Marshal.ByteArrayToStructureLittleEndian<RsIdeHeader>(hdrB);
 
             if(!hdr.magic.SequenceEqual(signature)) return false;
 

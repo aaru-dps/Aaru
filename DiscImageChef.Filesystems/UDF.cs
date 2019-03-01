@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -73,7 +74,7 @@ namespace DiscImageChef.Filesystems
             foreach(ulong position in positions.Where(position => position + partition.Start < partition.End))
             {
                 sector = imagePlugin.ReadSector(position);
-                anchor = Helpers.Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
+                anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
                 DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}",
@@ -124,7 +125,7 @@ namespace DiscImageChef.Filesystems
                     if(tagId == TagIdentifier.LogicalVolumeDescriptor)
                     {
                         LogicalVolumeDescriptor lvd =
-                            Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeDescriptor>(sector);
+                            Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeDescriptor>(sector);
 
                         return UDF_Magic.SequenceEqual(lvd.domainIdentifier.identifier);
                     }
@@ -155,7 +156,7 @@ namespace DiscImageChef.Filesystems
             foreach(ulong position in positions)
             {
                 sector = imagePlugin.ReadSector(position);
-                anchor = Helpers.Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
+                anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
                 if(anchor.tag.tagIdentifier ==
                    TagIdentifier.AnchorVolumeDescriptorPointer &&
@@ -186,10 +187,10 @@ namespace DiscImageChef.Filesystems
                     switch(tagId)
                     {
                         case TagIdentifier.LogicalVolumeDescriptor:
-                            lvd = Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeDescriptor>(sector);
+                            lvd = Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeDescriptor>(sector);
                             break;
                         case TagIdentifier.PrimaryVolumeDescriptor:
-                            pvd = Helpers.Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(sector);
+                            pvd = Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(sector);
                             break;
                     }
                 }
@@ -199,19 +200,22 @@ namespace DiscImageChef.Filesystems
             }
 
             sector = imagePlugin.ReadSector(lvd.integritySequenceExtent.location);
-            lvid = Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
+            lvid   = Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptor>(sector);
 
             if(lvid.tag.tagIdentifier == TagIdentifier.LogicalVolumeIntegrityDescriptor &&
                lvid.tag.tagLocation   == lvd.integritySequenceExtent.location)
-            {
                 lvidiu =
-                    Helpers.Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptorImplementationUse>(sector,
-                                                                                                       (int)(lvid
-                                                                                                                .numberOfPartitions *
-                                                                                                             8 + 80),
-                                                                                                       Marshal
-                                                                                                          .SizeOf(lvidiu));
-            }
+                    Marshal.ByteArrayToStructureLittleEndian<LogicalVolumeIntegrityDescriptorImplementationUse>(sector,
+                                                                                                                (int)
+                                                                                                                (lvid
+                                                                                                                    .numberOfPartitions *
+                                                                                                                 8 +
+                                                                                                                 80),
+                                                                                                                System
+                                                                                                                   .Runtime
+                                                                                                                   .InteropServices
+                                                                                                                   .Marshal
+                                                                                                                   .SizeOf(lvidiu));
             else lvid = new LogicalVolumeIntegrityDescriptor();
 
             sbInformation.AppendFormat("Volume is number {0} of {1}", pvd.volumeSequenceNumber,

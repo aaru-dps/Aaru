@@ -32,12 +32,12 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -54,7 +54,7 @@ namespace DiscImageChef.DiscImages
             int totalCylinders = -1;
             int totalHeads     = -1;
             int maxSector      = -1;
-            int recordSize     = Marshal.SizeOf(typeof(ApridiskRecord));
+            int recordSize     = Marshal.SizeOf<ApridiskRecord>();
 
             // Count cylinders
             while(stream.Position < stream.Length)
@@ -62,7 +62,7 @@ namespace DiscImageChef.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                ApridiskRecord record = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
+                ApridiskRecord record = Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
 
                 switch(record.type)
                 {
@@ -149,7 +149,7 @@ namespace DiscImageChef.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                ApridiskRecord record = Helpers.Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
+                ApridiskRecord record = Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
 
                 switch(record.type)
                 {

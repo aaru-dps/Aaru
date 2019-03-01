@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -46,9 +46,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] qHdrB = new byte[Marshal.SizeOf(qHdr)];
-            stream.Read(qHdrB, 0, Marshal.SizeOf(qHdr));
-            qHdr = Helpers.Marshal.ByteArrayToStructureBigEndian<QCow2Header>(qHdrB);
+            byte[] qHdrB = new byte[Marshal.SizeOf<QCow2Header>()];
+            stream.Read(qHdrB, 0, Marshal.SizeOf<QCow2Header>());
+            qHdr = Marshal.ByteArrayToStructureBigEndian<QCow2Header>(qHdrB);
 
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", qHdr.magic);
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}",    qHdr.version);

@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Claunia.PropertyList;
 using Claunia.RsrcFork;
 using DiscImageChef.CommonTypes;
@@ -43,6 +42,7 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Compression;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 using Ionic.Zlib;
 using SharpCompress.Compressors.ADC;
 using SharpCompress.Compressors.BZip2;
@@ -58,19 +58,19 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            stream.Seek(-Marshal.SizeOf(footer), SeekOrigin.End);
-            byte[] footerB = new byte[Marshal.SizeOf(footer)];
+            stream.Seek(-Marshal.SizeOf<UdifFooter>(), SeekOrigin.End);
+            byte[] footerB = new byte[Marshal.SizeOf<UdifFooter>()];
 
-            stream.Read(footerB, 0, Marshal.SizeOf(footer));
-            footer = Helpers.Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+            stream.Read(footerB, 0, Marshal.SizeOf<UdifFooter>());
+            footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
             if(footer.signature != UDIF_SIGNATURE)
             {
                 stream.Seek(0, SeekOrigin.Begin);
-                footerB = new byte[Marshal.SizeOf(footer)];
+                footerB = new byte[Marshal.SizeOf<UdifFooter>()];
 
-                stream.Read(footerB, 0, Marshal.SizeOf(footer));
-                footer = Helpers.Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
+                stream.Read(footerB, 0, Marshal.SizeOf<UdifFooter>());
+                footer = Marshal.ByteArrayToStructureBigEndian<UdifFooter>(footerB);
 
                 if(footer.signature != UDIF_SIGNATURE) throw new Exception("Unable to find UDIF signature.");
 
@@ -251,9 +251,9 @@ namespace DiscImageChef.DiscImages
                 foreach(byte[] blkxBytes in blkxList)
                 {
                     BlockHeader bHdr  = new BlockHeader();
-                    byte[]      bHdrB = new byte[Marshal.SizeOf(bHdr)];
-                    Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf(bHdr));
-                    bHdr = Helpers.Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
+                    byte[]      bHdrB = new byte[Marshal.SizeOf<BlockHeader>()];
+                    Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
+                    bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}",  bHdr.signature);
                     DicConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}",         bHdr.version);
@@ -280,10 +280,10 @@ namespace DiscImageChef.DiscImages
                     for(int i = 0; i < bHdr.chunks; i++)
                     {
                         BlockChunk bChnk  = new BlockChunk();
-                        byte[]     bChnkB = new byte[Marshal.SizeOf(bChnk)];
-                        Array.Copy(blkxBytes, Marshal.SizeOf(bHdr) + Marshal.SizeOf(bChnk) * i, bChnkB, 0,
-                                   Marshal.SizeOf(bChnk));
-                        bChnk = Helpers.Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
+                        byte[]     bChnkB = new byte[Marshal.SizeOf<BlockChunk>()];
+                        Array.Copy(blkxBytes, Marshal.SizeOf<BlockHeader>() + Marshal.SizeOf<BlockChunk>() * i, bChnkB,
+                                   0, Marshal.SizeOf<BlockChunk>());
+                        bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
 
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
                         DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}",   i, bChnk.comment);

@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -61,17 +62,15 @@ namespace DiscImageChef.Filesystems
             uint sbAddr            = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
-            Reiser_Superblock reiserSb = new Reiser_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<Reiser_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<Reiser_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             if(partition.Start + sbAddr + sbSize >= partition.End) return false;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(reiserSb)) return false;
+            if(sector.Length < Marshal.SizeOf<Reiser_Superblock>()) return false;
 
-            reiserSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Reiser_Superblock>(sector);
+            Reiser_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser_Superblock>(sector);
 
             return reiser35_magic.SequenceEqual(reiserSb.magic) || reiser36_magic.SequenceEqual(reiserSb.magic) ||
                    reiserJr_magic.SequenceEqual(reiserSb.magic);
@@ -87,15 +86,13 @@ namespace DiscImageChef.Filesystems
             uint sbAddr            = REISER_SUPER_OFFSET / imagePlugin.Info.SectorSize;
             if(sbAddr == 0) sbAddr = 1;
 
-            Reiser_Superblock reiserSb = new Reiser_Superblock();
-
-            uint sbSize = (uint)(Marshal.SizeOf(reiserSb) / imagePlugin.Info.SectorSize);
-            if(Marshal.SizeOf(reiserSb) % imagePlugin.Info.SectorSize != 0) sbSize++;
+            uint sbSize = (uint)(Marshal.SizeOf<Reiser_Superblock>() / imagePlugin.Info.SectorSize);
+            if(Marshal.SizeOf<Reiser_Superblock>() % imagePlugin.Info.SectorSize != 0) sbSize++;
 
             byte[] sector = imagePlugin.ReadSectors(partition.Start + sbAddr, sbSize);
-            if(sector.Length < Marshal.SizeOf(reiserSb)) return;
+            if(sector.Length < Marshal.SizeOf<Reiser_Superblock>()) return;
 
-            reiserSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<Reiser_Superblock>(sector);
+            Reiser_Superblock reiserSb = Marshal.ByteArrayToStructureLittleEndian<Reiser_Superblock>(sector);
 
             if(!reiser35_magic.SequenceEqual(reiserSb.magic) && !reiser36_magic.SequenceEqual(reiserSb.magic) &&
                !reiserJr_magic.SequenceEqual(reiserSb.magic)) return;

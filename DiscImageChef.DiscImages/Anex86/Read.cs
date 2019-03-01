@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -47,14 +47,12 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            fdihdr = new Anex86Header();
+            if(stream.Length < Marshal.SizeOf<Anex86Header>()) return false;
 
-            if(stream.Length < Marshal.SizeOf(fdihdr)) return false;
-
-            byte[] hdrB = new byte[Marshal.SizeOf(fdihdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            fdihdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<Anex86Header>(hdrB);
+            fdihdr = Marshal.ByteArrayToStructureLittleEndian<Anex86Header>(hdrB);
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads,
                                                          (ushort)fdihdr.spt, (uint)fdihdr.bps, MediaEncoding.MFM,

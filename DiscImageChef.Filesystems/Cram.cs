@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems
 {
@@ -77,10 +78,10 @@ namespace DiscImageChef.Filesystems
             switch(magic)
             {
                 case CRAM_MAGIC:
-                    crSb = Helpers.Marshal.ByteArrayToStructureLittleEndian<CramSuperBlock>(sector);
+                    crSb = Marshal.ByteArrayToStructureLittleEndian<CramSuperBlock>(sector);
                     break;
                 case CRAM_CIGAM:
-                    crSb         = Helpers.Marshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
+                    crSb         = Marshal.ByteArrayToStructureBigEndian<CramSuperBlock>(sector);
                     littleEndian = false;
                     break;
             }

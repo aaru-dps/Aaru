@@ -34,13 +34,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.Floppy;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -53,13 +53,11 @@ namespace DiscImageChef.DiscImages
             // Even if disk name is supposedly ASCII, I'm pretty sure most emulators allow Shift-JIS to be used :p
             Encoding shiftjis = Encoding.GetEncoding("shift_jis");
 
-            D88Header d88Hdr = new D88Header();
+            if(stream.Length < Marshal.SizeOf<D88Header>()) return false;
 
-            if(stream.Length < Marshal.SizeOf(d88Hdr)) return false;
-
-            byte[] hdrB = new byte[Marshal.SizeOf(d88Hdr)];
+            byte[] hdrB = new byte[Marshal.SizeOf<D88Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
-            d88Hdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
+            D88Header d88Hdr = Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
 
             DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
                                       StringHandlers.CToString(d88Hdr.name, shiftjis));
@@ -89,12 +87,11 @@ namespace DiscImageChef.DiscImages
 
             if(trkCounter == 0) return false;
 
-            SectorHeader sechdr = new SectorHeader();
-            hdrB = new byte[Marshal.SizeOf(sechdr)];
+            hdrB = new byte[Marshal.SizeOf<SectorHeader>()];
             stream.Seek(d88Hdr.track_table[0], SeekOrigin.Begin);
             stream.Read(hdrB, 0, hdrB.Length);
 
-            sechdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
+            SectorHeader sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
             DicConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}",            sechdr.c);
             DicConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}",            sechdr.h);
@@ -117,7 +114,7 @@ namespace DiscImageChef.DiscImages
                 stream.Read(hdrB, 0, hdrB.Length);
                 SortedDictionary<byte, byte[]> sectors = new SortedDictionary<byte, byte[]>();
 
-                sechdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
+                sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
                 if(sechdr.spt != spt || sechdr.n != bps)
                 {
@@ -136,7 +133,7 @@ namespace DiscImageChef.DiscImages
                     sectors.Add(sechdr.r, secB);
                     stream.Read(hdrB, 0, hdrB.Length);
 
-                    sechdr = Helpers.Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
+                    sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
                     if(sechdr.spt == spt && sechdr.n == bps) continue;
 

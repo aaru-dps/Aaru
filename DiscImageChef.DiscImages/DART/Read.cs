@@ -32,7 +32,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Claunia.Encoding;
 using Claunia.RsrcFork;
@@ -42,6 +41,7 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Compression;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 using Version = Resources.Version;
 
 namespace DiscImageChef.DiscImages
@@ -54,12 +54,11 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 84) return false;
 
-            DartHeader header = new DartHeader();
             stream.Seek(0, SeekOrigin.Begin);
-            byte[] headerB = new byte[Marshal.SizeOf(header)];
+            byte[] headerB = new byte[Marshal.SizeOf<DartHeader>()];
 
-            stream.Read(headerB, 0, Marshal.SizeOf(header));
-            header = Helpers.Marshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
+            stream.Read(headerB, 0, Marshal.SizeOf<DartHeader>());
+            DartHeader header = Marshal.ByteArrayToStructureBigEndian<DartHeader>(headerB);
 
             if(header.srcCmp > COMPRESS_NONE) return false;
 

@@ -32,12 +32,12 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -47,13 +47,13 @@ namespace DiscImageChef.DiscImages
         {
             Stream stream = imageFilter.GetDataForkStream();
 
-            if((stream.Length - Marshal.SizeOf(typeof(DriFooter))) % 512 != 0) return false;
+            if((stream.Length - Marshal.SizeOf<DriFooter>()) % 512 != 0) return false;
 
-            byte[] buffer = new byte[Marshal.SizeOf(typeof(DriFooter))];
+            byte[] buffer = new byte[Marshal.SizeOf<DriFooter>()];
             stream.Seek(-buffer.Length, SeekOrigin.End);
             stream.Read(buffer, 0, buffer.Length);
 
-            footer = Helpers.Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
+            footer = Marshal.ByteArrayToStructureLittleEndian<DriFooter>(buffer);
 
             string sig = StringHandlers.CToString(footer.signature);
 
@@ -64,7 +64,7 @@ namespace DiscImageChef.DiscImages
 
             if(footer.bpb.sptrack * footer.bpb.cylinders * footer.bpb.heads != footer.bpb.sectors) return false;
 
-            if(footer.bpb.sectors * footer.bpb.bps + Marshal.SizeOf(footer) != stream.Length) return false;
+            if(footer.bpb.sectors * footer.bpb.bps + Marshal.SizeOf<DriFooter>() != stream.Length) return false;
 
             imageInfo.Cylinders          = footer.bpb.cylinders;
             imageInfo.Heads              = footer.bpb.heads;
@@ -75,7 +75,7 @@ namespace DiscImageChef.DiscImages
 
             driImageFilter = imageFilter;
 
-            imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf(footer));
+            imageInfo.ImageSize            = (ulong)(stream.Length - Marshal.SizeOf<DriFooter>());
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 

@@ -30,14 +30,13 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using Claunia.Encoding;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
+using DiscImageChef.Helpers;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
@@ -77,7 +76,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
 
             // Read the VTOC
             vtocBlocks = device.ReadSector((ulong)(17 * sectorsPerTrack));
-            vtoc = Helpers.Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocBlocks);
+            vtoc       = Marshal.ByteArrayToStructureLittleEndian<Vtoc>(vtocBlocks);
 
             track1UsedByFiles = false;
             track2UsedByFiles = false;

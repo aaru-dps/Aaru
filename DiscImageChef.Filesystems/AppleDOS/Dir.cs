@@ -34,8 +34,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Filesystems.AppleDOS
 {
@@ -98,7 +98,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
                 if(debug) catalogMs.Write(catSectorB, 0, catSectorB.Length);
 
                 // Read the catalog sector
-                CatalogSector catSector = Helpers.Marshal.ByteArrayToStructureLittleEndian<CatalogSector>(catSectorB);
+                CatalogSector catSector = Marshal.ByteArrayToStructureLittleEndian<CatalogSector>(catSectorB);
 
                 foreach(FileEntry entry in catSector.entries.Where(entry => entry.extentTrack > 0))
                 {

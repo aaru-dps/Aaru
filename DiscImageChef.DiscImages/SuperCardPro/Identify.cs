@@ -32,8 +32,8 @@
 
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -44,12 +44,12 @@ namespace DiscImageChef.DiscImages
             Header = new ScpHeader();
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
-            if(stream.Length < Marshal.SizeOf(Header)) return false;
+            if(stream.Length < Marshal.SizeOf<ScpHeader>()) return false;
 
-            byte[] hdr = new byte[Marshal.SizeOf(Header)];
-            stream.Read(hdr, 0, Marshal.SizeOf(Header));
+            byte[] hdr = new byte[Marshal.SizeOf<ScpHeader>()];
+            stream.Read(hdr, 0, Marshal.SizeOf<ScpHeader>());
 
-            Header = Helpers.Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
+            Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
             return scpSignature.SequenceEqual(Header.signature);
         }

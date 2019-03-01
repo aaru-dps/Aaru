@@ -40,6 +40,13 @@ namespace DiscImageChef.Helpers
     public static class Marshal
     {
         /// <summary>
+        ///     Returns the size of an unmanaged type in bytes.
+        /// </summary>
+        /// <typeparam name="T">The type whose size is to be returned.</typeparam>
+        /// <returns>The size, in bytes, of the type that is specified by the <see cref="T" /> generic type parameter.</returns>
+        public static int SizeOf<T>() => System.Runtime.InteropServices.Marshal.SizeOf<T>();
+
+        /// <summary>
         ///     Marshal little-endian binary data to a structure
         /// </summary>
         /// <param name="bytes">Byte array containing the binary data</param>

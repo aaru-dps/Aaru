@@ -34,10 +34,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using Schemas;
 
 namespace DiscImageChef.DiscImages
@@ -77,8 +77,8 @@ namespace DiscImageChef.DiscImages
 
             uint batEntries = (uint)(sectors * sectorSize / DEFAULT_CLUSTER_SIZE);
             if(sectors * sectorSize % DEFAULT_CLUSTER_SIZE > 0) batEntries++;
-            uint headerSectors = (uint)Marshal.SizeOf(typeof(ParallelsHeader)) + batEntries * 4;
-            if((uint)Marshal.SizeOf(typeof(ParallelsHeader)) + batEntries % 4 > 0) headerSectors++;
+            uint headerSectors = (uint)Marshal.SizeOf<ParallelsHeader>() + batEntries * 4;
+            if((uint)Marshal.SizeOf<ParallelsHeader>() + batEntries % 4 > 0) headerSectors++;
 
             pHdr = new ParallelsHeader
             {
@@ -227,11 +227,11 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf(typeof(ParallelsHeader))];
-            IntPtr hdrPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(ParallelsHeader)));
-            Marshal.StructureToPtr(pHdr, hdrPtr, true);
-            Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr    = new byte[Marshal.SizeOf<ParallelsHeader>()];
+            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ParallelsHeader>());
+            System.Runtime.InteropServices.Marshal.StructureToPtr(pHdr, hdrPtr, true);
+            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

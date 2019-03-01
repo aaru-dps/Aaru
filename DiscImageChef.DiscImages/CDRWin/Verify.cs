@@ -42,78 +42,6 @@ namespace DiscImageChef.DiscImages
 {
     public partial class CdrWin
     {
-        public bool? VerifySector(ulong sectorAddress)
-        {
-            byte[] buffer = ReadSectorLong(sectorAddress);
-            return CdChecksums.CheckCdSector(buffer);
-        }
-
-        public bool? VerifySector(ulong sectorAddress, uint track)
-        {
-            byte[] buffer = ReadSectorLong(sectorAddress, track);
-            return CdChecksums.CheckCdSector(buffer);
-        }
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            byte[] buffer = ReadSectorsLong(sectorAddress, length);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0) return null;
-
-            return failingLbas.Count <= 0;
-        }
-
-        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
-                                   out List<ulong> unknownLbas)
-        {
-            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
-            int    bps    = (int)(buffer.Length / length);
-            byte[] sector = new byte[bps];
-            failingLbas = new List<ulong>();
-            unknownLbas = new List<ulong>();
-
-            for(int i = 0; i < length; i++)
-            {
-                Array.Copy(buffer, i * bps, sector, 0, bps);
-                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
-
-                switch(sectorStatus)
-                {
-                    case null:
-                        unknownLbas.Add((ulong)i + sectorAddress);
-                        break;
-                    case false:
-                        failingLbas.Add((ulong)i + sectorAddress);
-                        break;
-                }
-            }
-
-            if(unknownLbas.Count > 0) return null;
-
-            return failingLbas.Count <= 0;
-        }
-
         public bool? VerifyMediaImage()
         {
             if(discimage.DiscHashes.Count == 0) return null;
@@ -217,6 +145,78 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("CDRWin plugin", "Found unsupported hash {0}", hash);
 
             return null;
+        }
+
+        public bool? VerifySector(ulong sectorAddress)
+        {
+            byte[] buffer = ReadSectorLong(sectorAddress);
+            return CdChecksums.CheckCdSector(buffer);
+        }
+
+        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
+        {
+            byte[] buffer = ReadSectorsLong(sectorAddress, length);
+            int    bps    = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+
+            for(int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+
+                switch(sectorStatus)
+                {
+                    case null:
+                        unknownLbas.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        failingLbas.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if(unknownLbas.Count > 0) return null;
+
+            return failingLbas.Count <= 0;
+        }
+
+        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+                                   out List<ulong> unknownLbas)
+        {
+            byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
+            int    bps    = (int)(buffer.Length / length);
+            byte[] sector = new byte[bps];
+            failingLbas = new List<ulong>();
+            unknownLbas = new List<ulong>();
+
+            for(int i = 0; i < length; i++)
+            {
+                Array.Copy(buffer, i * bps, sector, 0, bps);
+                bool? sectorStatus = CdChecksums.CheckCdSector(sector);
+
+                switch(sectorStatus)
+                {
+                    case null:
+                        unknownLbas.Add((ulong)i + sectorAddress);
+                        break;
+                    case false:
+                        failingLbas.Add((ulong)i + sectorAddress);
+                        break;
+                }
+            }
+
+            if(unknownLbas.Count > 0) return null;
+
+            return failingLbas.Count <= 0;
+        }
+
+        public bool? VerifySector(ulong sectorAddress, uint track)
+        {
+            byte[] buffer = ReadSectorLong(sectorAddress, track);
+            return CdChecksums.CheckCdSector(buffer);
         }
     }
 }
