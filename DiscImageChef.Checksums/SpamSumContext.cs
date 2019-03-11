@@ -421,16 +421,18 @@ namespace DiscImageChef.Checksums
         // Converts an ASCII null-terminated string to .NET string
         static string CToString(byte[] cString)
         {
-            StringBuilder sb = new StringBuilder();
+            int count = 0;
 
-            for(int i = 0; i < cString.Length; i++)
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            // LINQ is six times slower
+            foreach(byte c in cString)
             {
-                if(cString[i] == 0) break;
+                if(c == 0) break;
 
-                sb.Append(Encoding.ASCII.GetString(cString, i, 1));
+                count++;
             }
 
-            return sb.ToString();
+            return Encoding.ASCII.GetString(cString, 0, count);
         }
 
         struct RollState
