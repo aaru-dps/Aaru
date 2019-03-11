@@ -32,6 +32,7 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Helpers
@@ -44,6 +45,7 @@ namespace DiscImageChef.Helpers
         /// </summary>
         /// <typeparam name="T">The type whose size is to be returned.</typeparam>
         /// <returns>The size, in bytes, of the type that is specified by the <see cref="T" /> generic type parameter.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int SizeOf<T>() => System.Runtime.InteropServices.Marshal.SizeOf<T>();
 
         /// <summary>
@@ -52,6 +54,7 @@ namespace DiscImageChef.Helpers
         /// <param name="bytes">Byte array containing the binary data</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructureLittleEndian<T>(byte[] bytes) where T : struct
         {
             GCHandle ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
@@ -69,6 +72,7 @@ namespace DiscImageChef.Helpers
         /// <param name="length">Length of the structure in bytes</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructureLittleEndian<T>(byte[] bytes, int start, int length) where T : struct
         {
             Span<byte> span = bytes;
@@ -81,6 +85,7 @@ namespace DiscImageChef.Helpers
         /// <param name="bytes">Byte array containing the binary data</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructureBigEndian<T>(byte[] bytes) where T : struct
         {
             GCHandle ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
@@ -98,6 +103,7 @@ namespace DiscImageChef.Helpers
         /// <param name="length">Length of the structure in bytes</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructureBigEndian<T>(byte[] bytes, int start, int length) where T : struct
         {
             Span<byte> span = bytes;
@@ -110,6 +116,7 @@ namespace DiscImageChef.Helpers
         /// <param name="bytes">Byte array containing the binary data</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructurePdpEndian<T>(byte[] bytes) where T : struct
         {
             {
@@ -129,6 +136,7 @@ namespace DiscImageChef.Helpers
         /// <param name="length">Length of the structure in bytes</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructurePdpEndian<T>(byte[] bytes, int start, int length) where T : struct
         {
             Span<byte> span = bytes;
@@ -142,6 +150,7 @@ namespace DiscImageChef.Helpers
         /// <param name="bytes">Byte array containing the binary data</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructureLittleEndian<T>(ReadOnlySpan<byte> bytes) where T : struct =>
             MemoryMarshal.Read<T>(bytes);
 
@@ -154,6 +163,7 @@ namespace DiscImageChef.Helpers
         /// <param name="length">Length of the structure in bytes</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructureLittleEndian<T>(ReadOnlySpan<byte> bytes, int start, int length)
             where T : struct =>
             MemoryMarshal.Read<T>(bytes.Slice(start, length));
@@ -165,6 +175,7 @@ namespace DiscImageChef.Helpers
         /// <param name="bytes">Byte array containing the binary data</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructureBigEndian<T>(ReadOnlySpan<byte> bytes) where T : struct
         {
             T str = SpanToStructureLittleEndian<T>(bytes);
@@ -180,6 +191,7 @@ namespace DiscImageChef.Helpers
         /// <param name="length">Length of the structure in bytes</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructureBigEndian<T>(ReadOnlySpan<byte> bytes, int start, int length) where T : struct
         {
             T str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
@@ -193,6 +205,7 @@ namespace DiscImageChef.Helpers
         /// <param name="bytes">Byte array containing the binary data</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructurePdpEndian<T>(ReadOnlySpan<byte> bytes) where T : struct
         {
             object str = SpanToStructureLittleEndian<T>(bytes);
@@ -206,6 +219,7 @@ namespace DiscImageChef.Helpers
         /// <param name="bytes">Byte array containing the binary data</param>
         /// <typeparam name="T">Type of the structure to marshal</typeparam>
         /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructurePdpEndian<T>(ReadOnlySpan<byte> bytes, int start, int length) where T : struct
         {
             object str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
@@ -223,6 +237,7 @@ namespace DiscImageChef.Helpers
         ///     The <see cref="MarshallingPropertiesAttribute" /> contains an unsupported
         ///     endian
         /// </exception>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T MarshalStructure<T>(byte[] bytes) where T : struct
         {
             if(!(typeof(T).GetCustomAttribute(typeof(MarshallingPropertiesAttribute)) is MarshallingPropertiesAttribute
@@ -256,6 +271,7 @@ namespace DiscImageChef.Helpers
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object SwapStructureMembersEndian(object str)
         {
             Type        t         = str.GetType();
@@ -334,6 +350,7 @@ namespace DiscImageChef.Helpers
             return str;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object SwapStructureMembersEndianPdp(object str)
         {
             Type        t         = str.GetType();
