@@ -142,34 +142,41 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class ChecksumStats
     {
-        [XmlAttribute] public string algorithm;
-        [XmlText]      public double Value;
+        [XmlAttribute]
+        public string algorithm;
+        [XmlText]
+        public double Value;
     }
 
     public class BenchmarkStats
     {
-        public                          double              All;
-        [XmlElement("Checksum")] public List<ChecksumStats> Checksum;
-        public                          double              Entropy;
-        public                          long                MaxMemory;
-        public                          long                MinMemory;
-        public                          double              Sequential;
+        public double All;
+        [XmlElement("Checksum")]
+        public List<ChecksumStats> Checksum;
+        public double Entropy;
+        public long   MaxMemory;
+        public long   MinMemory;
+        public double Sequential;
     }
 
     public class MediaStats
     {
-        [XmlAttribute] public bool   real;
-        [XmlAttribute] public string type;
-        [XmlText]      public long   Value;
+        [XmlAttribute]
+        public bool real;
+        [XmlAttribute]
+        public string type;
+        [XmlText]
+        public long Value;
     }
 
     public class DeviceStats
     {
-        [XmlIgnore] public bool   ManufacturerSpecified;
-        public             string Manufacturer { get; set; }
-        public             string Model        { get; set; }
-        public             string Revision     { get; set; }
-        public             string Bus          { get; set; }
+        [XmlIgnore]
+        public bool ManufacturerSpecified;
+        public string Manufacturer { get; set; }
+        public string Model        { get; set; }
+        public string Revision     { get; set; }
+        public string Bus          { get; set; }
     }
 
     public class NameValueStats

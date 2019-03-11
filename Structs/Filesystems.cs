@@ -247,13 +247,19 @@ namespace DiscImageChef.CommonTypes.Structs
     [StructLayout(LayoutKind.Explicit)]
     public struct FileSystemId
     {
-        [FieldOffset(0)] public bool IsInt;
-        [FieldOffset(1)] public bool IsLong;
-        [FieldOffset(2)] public bool IsGuid;
+        [FieldOffset(0)]
+        public bool IsInt;
+        [FieldOffset(1)]
+        public bool IsLong;
+        [FieldOffset(2)]
+        public bool IsGuid;
 
-        [FieldOffset(3)] public uint  Serial32;
-        [FieldOffset(3)] public ulong Serial64;
-        [FieldOffset(3)] public Guid  uuid;
+        [FieldOffset(3)]
+        public uint Serial32;
+        [FieldOffset(3)]
+        public ulong Serial64;
+        [FieldOffset(3)]
+        public Guid uuid;
     }
 
     /// <summary>
