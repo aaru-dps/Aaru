@@ -812,7 +812,6 @@ namespace DiscImageChef.Core
                     #endif
                 }
 
-
                 IEnumerable<string> statsFiles =
                     Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml",
                                              SearchOption.TopDirectoryOnly);

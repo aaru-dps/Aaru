@@ -3473,7 +3473,8 @@ namespace DiscImageChef.Devices
         ///     Reads data stream from device, starting at given address, until a <see cref="StopTransmission" /> follows (ADTC,
         ///     R1)
         /// </summary>
-        [Obsolete] ReadDatUntilStop = 11,
+        [Obsolete]
+        ReadDatUntilStop = 11,
         /// <summary>
         ///     Terminates a read/write stream/multiple block operation (AC, R1 / R1b)
         /// </summary>
@@ -3521,7 +3522,8 @@ namespace DiscImageChef.Devices
         /// <summary>
         ///     Writes data stream from host until a <see cref="StopTransmission" /> follows (ADTC, R1)
         /// </summary>
-        [Obsolete] WriteDatUntilStop = 20,
+        [Obsolete]
+        WriteDatUntilStop = 20,
         #endregion Class 3 MMC Commands (Stream write)
 
         #region Class 4 MMC Commands (Block-oriented write)

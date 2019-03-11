@@ -41,18 +41,19 @@ namespace DiscImageChef.Devices.Windows
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct ScsiPassThroughDirect
     {
-        public                               ushort             Length;
-        public                               byte               ScsiStatus;
-        public                               byte               PathId;
-        public                               byte               TargetId;
-        public                               byte               Lun;
-        public                               byte               CdbLength;
-        public                               byte               SenseInfoLength;
-        [MarshalAs(UnmanagedType.U1)] public ScsiIoctlDirection DataIn;
-        public                               uint               DataTransferLength;
-        public                               uint               TimeOutValue;
-        public                               IntPtr             DataBuffer;
-        public                               uint               SenseInfoOffset;
+        public ushort Length;
+        public byte   ScsiStatus;
+        public byte   PathId;
+        public byte   TargetId;
+        public byte   Lun;
+        public byte   CdbLength;
+        public byte   SenseInfoLength;
+        [MarshalAs(UnmanagedType.U1)]
+        public ScsiIoctlDirection DataIn;
+        public uint   DataTransferLength;
+        public uint   TimeOutValue;
+        public IntPtr DataBuffer;
+        public uint   SenseInfoOffset;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public byte[] Cdb;
     }
@@ -76,7 +77,8 @@ namespace DiscImageChef.Devices.Windows
         /// <summary>
         ///     Indicates transfer direction and kind of operation
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)] public AtaFlags AtaFlags;
+        [MarshalAs(UnmanagedType.U2)]
+        public AtaFlags AtaFlags;
         /// <summary>
         ///     Indicates IDE port or bus, set by driver
         /// </summary>
@@ -134,27 +136,39 @@ namespace DiscImageChef.Devices.Windows
     struct AtaTaskFile
     {
         // Fields for commands sent
-        [FieldOffset(0)] public byte Features;
-        [FieldOffset(6)] public byte Command;
+        [FieldOffset(0)]
+        public byte Features;
+        [FieldOffset(6)]
+        public byte Command;
 
         // Fields on command return
-        [FieldOffset(0)] public byte Error;
-        [FieldOffset(6)] public byte Status;
+        [FieldOffset(0)]
+        public byte Error;
+        [FieldOffset(6)]
+        public byte Status;
 
         // Common fields
-        [FieldOffset(1)] public byte SectorCount;
-        [FieldOffset(2)] public byte SectorNumber;
-        [FieldOffset(3)] public byte CylinderLow;
-        [FieldOffset(4)] public byte CylinderHigh;
-        [FieldOffset(5)] public byte DeviceHead;
-        [FieldOffset(7)] public byte Reserved;
+        [FieldOffset(1)]
+        public byte SectorCount;
+        [FieldOffset(2)]
+        public byte SectorNumber;
+        [FieldOffset(3)]
+        public byte CylinderLow;
+        [FieldOffset(4)]
+        public byte CylinderHigh;
+        [FieldOffset(5)]
+        public byte DeviceHead;
+        [FieldOffset(7)]
+        public byte Reserved;
     }
 
     [StructLayout(LayoutKind.Sequential)]
     struct StoragePropertyQuery
     {
-        [MarshalAs(UnmanagedType.U4)] public StoragePropertyId PropertyId;
-        [MarshalAs(UnmanagedType.U4)] public StorageQueryType  QueryType;
+        [MarshalAs(UnmanagedType.U4)]
+        public StoragePropertyId PropertyId;
+        [MarshalAs(UnmanagedType.U4)]
+        public StorageQueryType QueryType;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
         public byte[] AdditionalParameters;
     }
@@ -170,19 +184,21 @@ namespace DiscImageChef.Devices.Windows
     [StructLayout(LayoutKind.Sequential)]
     struct StorageDeviceDescriptor
     {
-        public                               uint           Version;
-        public                               uint           Size;
-        public                               byte           DeviceType;
-        public                               byte           DeviceTypeModifier;
-        [MarshalAs(UnmanagedType.U1)] public bool           RemovableMedia;
-        [MarshalAs(UnmanagedType.U1)] public bool           CommandQueueing;
-        public                               int            VendorIdOffset;
-        public                               int            ProductIdOffset;
-        public                               int            ProductRevisionOffset;
-        public                               int            SerialNumberOffset;
-        public                               StorageBusType BusType;
-        public                               uint           RawPropertiesLength;
-        public                               byte[]         RawDeviceProperties;
+        public uint Version;
+        public uint Size;
+        public byte DeviceType;
+        public byte DeviceTypeModifier;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool RemovableMedia;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool CommandQueueing;
+        public int            VendorIdOffset;
+        public int            ProductIdOffset;
+        public int            ProductRevisionOffset;
+        public int            SerialNumberOffset;
+        public StorageBusType BusType;
+        public uint           RawPropertiesLength;
+        public byte[]         RawDeviceProperties;
     }
 
     [StructLayout(LayoutKind.Sequential)]

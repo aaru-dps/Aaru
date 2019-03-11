@@ -126,9 +126,8 @@ namespace DiscImageChef.Filters
             dataStream.Read(tmp, 0, 8);
             decompressedSize = BitConverter.ToInt64(tmp, 0);
             dataStream.Seek(0, SeekOrigin.Begin);
-            innerStream =
-                new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
-            opened = true;
+            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            opened      = true;
         }
 
         public void Open(string path)
@@ -144,9 +143,8 @@ namespace DiscImageChef.Filters
             dataStream.Read(tmp, 0, 8);
             decompressedSize = BitConverter.ToInt64(tmp, 0);
             dataStream.Seek(0, SeekOrigin.Begin);
-            innerStream =
-                new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
-            opened = true;
+            innerStream = new ForcedSeekStream<LZipStream>(decompressedSize, dataStream, CompressionMode.Decompress);
+            opened      = true;
         }
 
         public DateTime GetCreationTime() => creationTime;

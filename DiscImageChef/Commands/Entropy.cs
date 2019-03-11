@@ -152,10 +152,7 @@ namespace DiscImageChef.Commands
                 }
             }
 
-            if(!wholeDisc)
-            {
-                return (int)ErrorNumber.NoError;
-            }
+            if(!wholeDisc) return (int)ErrorNumber.NoError;
 
             EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 

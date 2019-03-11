@@ -140,10 +140,14 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct CamqEntry
     {
-        [FieldOffset(0)] public ListEntry   le;
-        [FieldOffset(0)] public SlistEntry  sle;
-        [FieldOffset(0)] public TailqEntry  tqe;
-        [FieldOffset(0)] public StailqEntry stqe;
+        [FieldOffset(0)]
+        public ListEntry le;
+        [FieldOffset(0)]
+        public SlistEntry sle;
+        [FieldOffset(0)]
+        public TailqEntry tqe;
+        [FieldOffset(0)]
+        public StailqEntry stqe;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -540,8 +544,10 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct DeviceMatchPatternData
     {
-        [FieldOffset(0)] public ScsiStaticInquiryPattern inq_pat;
-        [FieldOffset(0)] public DeviceIdMatchPattern     devid_pat;
+        [FieldOffset(0)]
+        public ScsiStaticInquiryPattern inq_pat;
+        [FieldOffset(0)]
+        public DeviceIdMatchPattern devid_pat;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -573,9 +579,12 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct MatchPattern
     {
-        [FieldOffset(0)] public PeriphMatchPattern periph_pattern;
-        [FieldOffset(0)] public DeviceMatchPattern device_pattern;
-        [FieldOffset(0)] public BusMatchPattern    bus_pattern;
+        [FieldOffset(0)]
+        public PeriphMatchPattern periph_pattern;
+        [FieldOffset(0)]
+        public DeviceMatchPattern device_pattern;
+        [FieldOffset(0)]
+        public BusMatchPattern bus_pattern;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -695,9 +704,12 @@ namespace DiscImageChef.Devices.FreeBSD
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     struct MatchResult
     {
-        [FieldOffset(0)] public PeriphMatchResult periph_result;
-        [FieldOffset(0)] public DeviceMatchResult device_result;
-        [FieldOffset(0)] public BusMatchResult    bus_result;
+        [FieldOffset(0)]
+        public PeriphMatchResult periph_result;
+        [FieldOffset(0)]
+        public DeviceMatchResult device_result;
+        [FieldOffset(0)]
+        public BusMatchResult bus_result;
     }
 
     [StructLayout(LayoutKind.Sequential)]

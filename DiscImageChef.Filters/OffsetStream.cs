@@ -33,6 +33,7 @@
 using System;
 using System.IO;
 using Microsoft.Win32.SafeHandles;
+
 #if !NETSTANDARD2_0
 using System.Security.AccessControl;
 #endif
@@ -386,7 +387,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd   = end;
+            streamEnd = end;
 
             baseStream = new FileStream(path, mode, rights, share, bufferSize, options);
 
@@ -402,7 +403,7 @@ namespace DiscImageChef.Filters
             if(end < 0) throw new ArgumentOutOfRangeException(nameof(end), "End can't be a negative number.");
 
             streamStart = start;
-            streamEnd   = end;
+            streamEnd = end;
 
             baseStream = new FileStream(path, mode, rights, share, bufferSize, options, fileSecurity);
 
