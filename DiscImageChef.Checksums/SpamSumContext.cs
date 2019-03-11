@@ -40,6 +40,7 @@
 //      http://ssdeep.sf.net/
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
 
@@ -122,6 +123,7 @@ namespace DiscImageChef.Checksums
             return CToString(result);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void roll_init()
         {
             self.Roll = new RollState {Window = new byte[ROLLING_WINDOW]};
@@ -137,6 +139,7 @@ namespace DiscImageChef.Checksums
          * h3 is a shift/xor based rolling hash, and is mostly needed to ensure that
          * we can cope with large blocksize values
          */
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void roll_hash(byte c)
         {
             self.Roll.H2 -= self.Roll.H1;
@@ -155,13 +158,17 @@ namespace DiscImageChef.Checksums
             self.Roll.H3 ^=  c;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         uint roll_sum() => self.Roll.H1 + self.Roll.H2 + self.Roll.H3;
 
         /* A simple non-rolling hash, based on the FNV hash. */
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static uint sum_hash(byte c, uint h) => (h * HASH_PRIME) ^ c;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static uint SSDEEP_BS(uint index) => MIN_BLOCKSIZE << (int)index;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void fuzzy_try_fork_blockhash()
         {
             if(self.Bhend >= NUM_BLOCKHASHES) return;
@@ -179,6 +186,7 @@ namespace DiscImageChef.Checksums
             ++self.Bhend;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void fuzzy_try_reduce_blockhash()
         {
             if(self.Bhstart >= self.Bhend) throw new Exception("Assertion failed");
@@ -196,6 +204,7 @@ namespace DiscImageChef.Checksums
             ++self.Bhstart;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void fuzzy_engine_step(byte c)
         {
             uint i;
@@ -245,6 +254,7 @@ namespace DiscImageChef.Checksums
         }
 
         // CLAUNIA: Flags seems to never be used in ssdeep, so I just removed it for code simplicity
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         uint FuzzyDigest(out byte[] result)
         {
             StringBuilder sb     = new StringBuilder();
@@ -419,6 +429,7 @@ namespace DiscImageChef.Checksums
         public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
 
         // Converts an ASCII null-terminated string to .NET string
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static string CToString(byte[] cString)
         {
             int count = 0;
