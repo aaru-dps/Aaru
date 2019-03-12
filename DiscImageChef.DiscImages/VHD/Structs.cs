@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Runtime.InteropServices;
 
 namespace DiscImageChef.DiscImages
 {
@@ -188,13 +187,6 @@ namespace DiscImageChef.DiscImages
             ///     Offset 0x300, 256 reserved bytes
             /// </summary>
             public byte[] Reserved2;
-        }
-
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct BatSector
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public uint[] blockPointer;
         }
     }
 }
