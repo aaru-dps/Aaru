@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes;
@@ -39,7 +40,6 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -399,51 +399,23 @@ namespace DiscImageChef.DiscImages
 
                 blockAllocationTable = new uint[thisDynamic.MaxTableEntries];
 
-                // Safe and slow code. It takes 76,572 ms to fill a 30720 entries BAT
-                /*
-                byte[] bat = new byte[thisDynamic.maxTableEntries * 4];
-                imageStream.Seek((long)thisDynamic.tableOffset, SeekOrigin.Begin);
-                imageStream.Read(bat, 0, (int)(thisDynamic.maxTableEntries * 4));
-                for (int i = 0; i < thisDynamic.maxTableEntries; i++)
-                    blockAllocationTable[i] = BigEndianBitConverter.ToUInt32(bat, 4 * i);
-
-                DateTime endTime = DateTime.UtcNow;
-                DicConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds", (endTime-startTime).TotalSeconds);
-                */
-
                 // How many sectors uses the BAT
-                uint batSectorCount = (uint)Math.Ceiling((double)thisDynamic.MaxTableEntries * 4 / 512);
+                int batSectorCount = (int)Math.Ceiling((double)thisDynamic.MaxTableEntries * 4 / 512);
 
-                byte[] batSectorBytes = new byte[512];
+                byte[] bat = new byte[thisDynamic.MaxTableEntries * 4];
+                imageStream.Seek((long)thisDynamic.TableOffset, SeekOrigin.Begin);
+                imageStream.Read(bat, 0, batSectorCount);
 
-                // Unsafe and fast code. It takes 4 ms to fill a 30720 entries BAT
-                for(int i = 0; i < batSectorCount; i++)
-                {
-                    imageStream.Seek((long)thisDynamic.TableOffset + i * 512, SeekOrigin.Begin);
-                    imageStream.Read(batSectorBytes, 0, 512);
-                    // This does the big-endian trick but reverses the order of elements also
-                    Array.Reverse(batSectorBytes);
-                    BatSector batSector = Marshal.ByteArrayToStructureLittleEndian<BatSector>(batSectorBytes);
-                    // This restores the order of elements
-                    Array.Reverse(batSector.blockPointer);
-                    if(blockAllocationTable.Length >= i * 512 / 4 + 512 / 4)
-                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, i * 512 / 4, 512 / 4);
-                    else
-                        Array.Copy(batSector.blockPointer, 0, blockAllocationTable, i * 512 / 4,
-                                   blockAllocationTable.Length - i * 512              / 4);
-                }
+                ReadOnlySpan<byte> span = bat;
+                blockAllocationTable =
+                    MemoryMarshal.Cast<byte, uint>(span).Slice(0, (int)thisDynamic.MaxTableEntries).ToArray();
+                for(int i = 0; i < blockAllocationTable.Length; i++)
+                    blockAllocationTable[i] = Swapping.Swap(blockAllocationTable[i]);
 
                 DateTime endTime = DateTime.UtcNow;
                 DicConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds",
                                           (endTime - startTime).TotalSeconds);
 
-                // Too noisy
-                /*
-                    for (int i = 0; i < thisDynamic.maxTableEntries; i++)
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "blockAllocationTable[{0}] = {1}", i, blockAllocationTable[i]);
-                */
-
-                // Get the roundest number of sectors needed to store the block bitmap
                 bitmapSize = (uint)Math.Ceiling((double)thisDynamic.BlockSize / 512
                                                                                 // 1 bit per sector on the bitmap
                                                                               / 8
