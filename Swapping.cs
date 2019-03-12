@@ -30,30 +30,39 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using System.Runtime.CompilerServices;
+
 namespace DiscImageChef
 {
     public static class Swapping
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PDPFromLittleEndian(uint x) => ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PDPFromBigEndian(uint x) => ((x & 0xff00ff) << 8) | ((x & 0xff00ff00) >> 8);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ushort Swap(ushort x) => (ushort)((x << 8) | (x >> 8));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static short Swap(short x) => (short)((x << 8) | ((x >> 8) & 0xFF));
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Swap(uint x)
         {
             x = ((x << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
             return (x << 16) | (x >> 16);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Swap(int x)
         {
             x = (int)(((x << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
             return (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Swap(ulong x)
         {
             x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
@@ -62,6 +71,7 @@ namespace DiscImageChef
             return x;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long Swap(long x)
         {
             x = ((x & 0x00000000FFFFFFFF) << 32) | (long)(((ulong)x & 0xFFFFFFFF00000000) >> 32);
