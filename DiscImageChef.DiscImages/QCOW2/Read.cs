@@ -56,7 +56,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] qHdrB = new byte[Marshal.SizeOf<QCow2Header>()];
             stream.Read(qHdrB, 0, Marshal.SizeOf<QCow2Header>());
-            qHdr = Marshal.ByteArrayToStructureBigEndian<QCow2Header>(qHdrB);
+            qHdr = Marshal.SpanToStructureBigEndian<QCow2Header>(qHdrB);
 
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}",            qHdr.magic);
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}",               qHdr.version);
