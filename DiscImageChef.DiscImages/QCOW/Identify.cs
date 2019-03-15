@@ -47,7 +47,7 @@ namespace DiscImageChef.DiscImages
 
             byte[] qHdrB = new byte[48];
             stream.Read(qHdrB, 0, 48);
-            qHdr = Marshal.ByteArrayToStructureBigEndian<QCowHeader>(qHdrB);
+            qHdr = Marshal.SpanToStructureBigEndian<QCowHeader>(qHdrB);
 
             return qHdr.magic == QCOW_MAGIC && qHdr.version == QCOW_VERSION;
         }
