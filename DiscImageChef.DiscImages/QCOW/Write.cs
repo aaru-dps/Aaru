@@ -34,11 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -271,8 +272,10 @@ namespace DiscImageChef.DiscImages
             writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.l1_table_offset), 0, 8);
 
             writingStream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
-            for(long i = 0; i < l1Table.LongLength; i++)
-                writingStream.Write(BigEndianBitConverter.GetBytes(l1Table[i]), 0, 8);
+            for(long i = 0; i < l1Table.LongLength; i++) l1Table[i] = Swapping.Swap(l1Table[i]);
+            byte[] l1TableB =
+                MemoryMarshal.Cast<ulong, byte>(l1Table).ToArray();
+            writingStream.Write(l1TableB, 0, l1TableB.Length);
 
             writingStream.Flush();
             writingStream.Close();
