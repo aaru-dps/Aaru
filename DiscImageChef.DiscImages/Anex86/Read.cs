@@ -52,7 +52,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            fdihdr = Marshal.ByteArrayToStructureLittleEndian<Anex86Header>(hdrB);
+            fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)fdihdr.cylinders, (byte)fdihdr.heads,
                                                          (ushort)fdihdr.spt, (uint)fdihdr.bps, MediaEncoding.MFM,

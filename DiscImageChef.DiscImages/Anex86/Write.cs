@@ -30,15 +30,15 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -187,11 +187,8 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<Anex86Header>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<Anex86Header>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(fdihdr, hdrPtr, true);
-            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr = new byte[Marshal.SizeOf<Anex86Header>()];
+            MemoryMarshal.Write(hdr, ref fdihdr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);

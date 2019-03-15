@@ -49,7 +49,7 @@ namespace DiscImageChef.DiscImages
             byte[] hdrB = new byte[Marshal.SizeOf<Anex86Header>()];
             stream.Read(hdrB, 0, hdrB.Length);
 
-            fdihdr = Marshal.ByteArrayToStructureLittleEndian<Anex86Header>(hdrB);
+            fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
 
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}",   fdihdr.unknown);
             DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}",   fdihdr.hddtype);
