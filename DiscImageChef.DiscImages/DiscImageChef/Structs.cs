@@ -290,14 +290,6 @@ namespace DiscImageChef.DiscImages
             public uint extents;
         }
 
-        /// <summary>Dump hardware extent, first and last sector dumped, both inclusive</summary>
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct DumpHardwareExtent
-        {
-            public ulong start;
-            public ulong end;
-        }
-
         /// <summary>
         ///     Checksum block, contains a checksum of all user data sectors (except for optical discs that is 2352 bytes raw
         ///     sector if available

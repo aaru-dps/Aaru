@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -47,9 +48,9 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders;
-using DiscImageChef.Helpers;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
+using Marshal = DiscImageChef.Helpers.Marshal;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 namespace DiscImageChef.DiscImages
@@ -262,7 +263,7 @@ namespace DiscImageChef.DiscImages
                 imageStream.Position = (long)header.indexOffset;
                 structureBytes       = new byte[Marshal.SizeOf<IndexHeader>()];
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                IndexHeader idxHeader = Marshal.ByteArrayToStructureLittleEndian<IndexHeader>(structureBytes);
+                IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(structureBytes);
 
                 if(idxHeader.identifier != BlockType.Index)
                 {
@@ -277,7 +278,7 @@ namespace DiscImageChef.DiscImages
                 {
                     structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
                     imageStream.Read(structureBytes, 0, structureBytes.Length);
-                    IndexEntry entry = Marshal.ByteArrayToStructureLittleEndian<IndexEntry>(structureBytes);
+                    IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
                     DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                               "Block type {0} with data type {1} is indexed to be at {2}",
                                               entry.blockType, entry.dataType, entry.offset);
@@ -309,8 +310,7 @@ namespace DiscImageChef.DiscImages
 
                             structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
-                            BlockHeader blockHeader =
-                                Marshal.ByteArrayToStructureLittleEndian<BlockHeader>(structureBytes);
+                            BlockHeader blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(structureBytes);
                             imageInfo.ImageSize += blockHeader.cmpLength;
 
                             if(blockHeader.identifier != entry.blockType)
@@ -433,10 +433,7 @@ namespace DiscImageChef.DiscImages
                                         lzmaDdt.Read(decompressedDdt, 0, (int)ddtHeader.length);
                                         lzmaDdt.Close();
                                         compressedDdtMs.Close();
-                                        userDataDdt = new ulong[ddtHeader.entries];
-                                        for(ulong i = 0; i < ddtHeader.entries; i++)
-                                            userDataDdt[i] =
-                                                BitConverter.ToUInt64(decompressedDdt, (int)(i * sizeof(ulong)));
+                                        userDataDdt = MemoryMarshal.Cast<byte, ulong>(decompressedDdt).ToArray();
                                         DateTime ddtEnd = DateTime.UtcNow;
                                         inMemoryDdt = true;
                                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -472,7 +469,6 @@ namespace DiscImageChef.DiscImages
                                 }
 
                                 byte[] decompressedDdt = new byte[ddtHeader.length];
-                                uint[] cdDdt           = new uint[ddtHeader.entries];
 
                                 switch(ddtHeader.compression)
                                 {
@@ -503,8 +499,7 @@ namespace DiscImageChef.DiscImages
                                             ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
                                 }
 
-                                for(ulong i = 0; i < ddtHeader.entries; i++)
-                                    cdDdt[i] = BitConverter.ToUInt32(decompressedDdt, (int)(i * sizeof(uint)));
+                                uint[] cdDdt = MemoryMarshal.Cast<byte, uint>(decompressedDdt).ToArray();
 
                                 switch(entry.dataType)
                                 {
@@ -523,7 +518,7 @@ namespace DiscImageChef.DiscImages
                             structureBytes = new byte[Marshal.SizeOf<CicmMetadataBlock>()];
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
                             CicmMetadataBlock cicmBlock =
-                                Marshal.ByteArrayToStructureLittleEndian<CicmMetadataBlock>(structureBytes);
+                                Marshal.SpanToStructureLittleEndian<CicmMetadataBlock>(structureBytes);
                             if(cicmBlock.identifier != BlockType.CicmBlock) break;
 
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -553,7 +548,7 @@ namespace DiscImageChef.DiscImages
                             structureBytes = new byte[Marshal.SizeOf<DumpHardwareHeader>()];
                             imageStream.Read(structureBytes, 0, structureBytes.Length);
                             DumpHardwareHeader dumpBlock =
-                                Marshal.ByteArrayToStructureLittleEndian<DumpHardwareHeader>(structureBytes);
+                                Marshal.SpanToStructureLittleEndian<DumpHardwareHeader>(structureBytes);
                             if(dumpBlock.identifier != BlockType.DumpHardwareBlock) break;
 
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
@@ -579,7 +574,7 @@ namespace DiscImageChef.DiscImages
                                 structureBytes = new byte[Marshal.SizeOf<DumpHardwareEntry>()];
                                 imageStream.Read(structureBytes, 0, structureBytes.Length);
                                 DumpHardwareEntry dumpEntry =
-                                    Marshal.ByteArrayToStructureLittleEndian<DumpHardwareEntry>(structureBytes);
+                                    Marshal.SpanToStructureLittleEndian<DumpHardwareEntry>(structureBytes);
 
                                 DumpHardwareType dump = new DumpHardwareType
                                 {
@@ -717,12 +712,8 @@ namespace DiscImageChef.DiscImages
                         length      = sectors * sizeof(ulong)
                     };
 
-                    structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DdtHeader>());
-                    structureBytes   = new byte[Marshal.SizeOf<DdtHeader>()];
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(ddtHeader, structurePointer, true);
-                    System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                structureBytes.Length);
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                    structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
+                    MemoryMarshal.Write(structureBytes, ref ddtHeader);
                     imageStream.Write(structureBytes, 0, structureBytes.Length);
                     structureBytes = null;
 
@@ -932,11 +923,8 @@ namespace DiscImageChef.DiscImages
                     offset    = (ulong)imageStream.Position
                 });
 
-                structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
-                structureBytes   = new byte[Marshal.SizeOf<BlockHeader>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(currentBlockHeader, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
+                MemoryMarshal.Write(structureBytes, ref currentBlockHeader);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
                 if(currentBlockHeader.compression == CompressionType.Lzma)
@@ -1524,11 +1512,8 @@ namespace DiscImageChef.DiscImages
                     offset    = (ulong)imageStream.Position
                 });
 
-                structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
-                structureBytes   = new byte[Marshal.SizeOf<BlockHeader>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(currentBlockHeader, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
+                MemoryMarshal.Write(structureBytes, ref currentBlockHeader);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
                 if(currentBlockHeader.compression == CompressionType.Lzma)
@@ -1596,11 +1581,8 @@ namespace DiscImageChef.DiscImages
                 blockStream.Close();
                 blockStream = null;
 
-                structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
-                structureBytes   = new byte[Marshal.SizeOf<BlockHeader>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(tagBlock, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
+                MemoryMarshal.Write(structureBytes, ref tagBlock);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 if(tagBlock.compression == CompressionType.Lzma)
                     imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
@@ -1624,11 +1606,8 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing geometry block to position {0}",
                                           idxEntry.offset);
 
-                structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<GeometryBlock>());
-                structureBytes   = new byte[Marshal.SizeOf<GeometryBlock>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(geometryBlock, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                structureBytes = new byte[Marshal.SizeOf<GeometryBlock>()];
+                MemoryMarshal.Write(structureBytes, ref geometryBlock);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
 
                 index.RemoveAll(t => t.blockType == BlockType.GeometryBlock && t.dataType == DataType.NoData);
@@ -1680,13 +1659,8 @@ namespace DiscImageChef.DiscImages
                         extents                       = (uint)dump.Extents.Length
                     };
 
-                    structurePointer =
-                        System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DumpHardwareEntry>());
                     structureBytes = new byte[Marshal.SizeOf<DumpHardwareEntry>()];
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(dumpEntry, structurePointer, true);
-                    System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                structureBytes.Length);
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                    MemoryMarshal.Write(structureBytes, ref dumpEntry);
                     dumpMs.Write(structureBytes, 0, structureBytes.Length);
 
                     if(dumpManufacturer != null)
@@ -1763,12 +1737,8 @@ namespace DiscImageChef.DiscImages
                     length     = (uint)dumpMs.Length
                 };
 
-                structurePointer =
-                    System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DumpHardwareHeader>());
                 structureBytes = new byte[Marshal.SizeOf<DumpHardwareHeader>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(dumpBlock, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                MemoryMarshal.Write(structureBytes, ref dumpBlock);
                 imageStream.Write(structureBytes,   0, structureBytes.Length);
                 imageStream.Write(dumpMs.ToArray(), 0, (int)dumpMs.Length);
 
@@ -1796,12 +1766,8 @@ namespace DiscImageChef.DiscImages
 
                 CicmMetadataBlock cicmBlock =
                     new CicmMetadataBlock {identifier = BlockType.CicmBlock, length = (uint)cicmMs.Length};
-                structurePointer =
-                    System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<CicmMetadataBlock>());
                 structureBytes = new byte[Marshal.SizeOf<CicmMetadataBlock>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(cicmBlock, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                MemoryMarshal.Write(structureBytes, ref cicmBlock);
                 imageStream.Write(structureBytes,   0, structureBytes.Length);
                 imageStream.Write(cicmMs.ToArray(), 0, (int)cicmMs.Length);
 
@@ -1821,13 +1787,8 @@ namespace DiscImageChef.DiscImages
                     byte[] md5 = md5Provider.Final();
                     ChecksumEntry md5Entry =
                         new ChecksumEntry {type = ChecksumAlgorithm.Md5, length = (uint)md5.Length};
-                    structurePointer =
-                        System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ChecksumEntry>());
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(md5Entry, structurePointer, true);
-                    System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                structureBytes.Length);
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                    MemoryMarshal.Write(structureBytes, ref md5Entry);
                     chkMs.Write(structureBytes, 0, structureBytes.Length);
                     chkMs.Write(md5,            0, md5.Length);
                     chkHeader.entries++;
@@ -1838,13 +1799,8 @@ namespace DiscImageChef.DiscImages
                     byte[] sha1 = sha1Provider.Final();
                     ChecksumEntry sha1Entry =
                         new ChecksumEntry {type = ChecksumAlgorithm.Sha1, length = (uint)sha1.Length};
-                    structurePointer =
-                        System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ChecksumEntry>());
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(sha1Entry, structurePointer, true);
-                    System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                structureBytes.Length);
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                    MemoryMarshal.Write(structureBytes, ref sha1Entry);
                     chkMs.Write(structureBytes, 0, structureBytes.Length);
                     chkMs.Write(sha1,           0, sha1.Length);
                     chkHeader.entries++;
@@ -1855,13 +1811,8 @@ namespace DiscImageChef.DiscImages
                     byte[] sha256 = sha256Provider.Final();
                     ChecksumEntry sha256Entry =
                         new ChecksumEntry {type = ChecksumAlgorithm.Sha256, length = (uint)sha256.Length};
-                    structurePointer =
-                        System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ChecksumEntry>());
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(sha256Entry, structurePointer, true);
-                    System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                structureBytes.Length);
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                    MemoryMarshal.Write(structureBytes, ref sha256Entry);
                     chkMs.Write(structureBytes, 0, structureBytes.Length);
                     chkMs.Write(sha256,         0, sha256.Length);
                     chkHeader.entries++;
@@ -1872,13 +1823,8 @@ namespace DiscImageChef.DiscImages
                     byte[] spamsum = Encoding.ASCII.GetBytes(spamsumProvider.End());
                     ChecksumEntry spamsumEntry =
                         new ChecksumEntry {type = ChecksumAlgorithm.SpamSum, length = (uint)spamsum.Length};
-                    structurePointer =
-                        System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ChecksumEntry>());
                     structureBytes = new byte[Marshal.SizeOf<ChecksumEntry>()];
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(spamsumEntry, structurePointer, true);
-                    System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                structureBytes.Length);
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                    MemoryMarshal.Write(structureBytes, ref spamsumEntry);
                     chkMs.Write(structureBytes, 0, structureBytes.Length);
                     chkMs.Write(spamsum,        0, spamsum.Length);
                     chkHeader.entries++;
@@ -1897,13 +1843,8 @@ namespace DiscImageChef.DiscImages
                     DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing checksum block to position {0}",
                                               idxEntry.offset);
 
-                    structurePointer =
-                        System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<ChecksumHeader>());
                     structureBytes = new byte[Marshal.SizeOf<ChecksumHeader>()];
-                    System.Runtime.InteropServices.Marshal.StructureToPtr(chkHeader, structurePointer, true);
-                    System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                structureBytes.Length);
-                    System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                    MemoryMarshal.Write(structureBytes, ref chkHeader);
                     imageStream.Write(structureBytes,  0, structureBytes.Length);
                     imageStream.Write(chkMs.ToArray(), 0, (int)chkMs.Length);
 
@@ -1939,12 +1880,9 @@ namespace DiscImageChef.DiscImages
                 blockStream = new MemoryStream();
                 MemoryStream userDataDdtStream = new MemoryStream();
                 crc64 = new Crc64Context();
-                for(ulong i = 0; i < (ulong)userDataDdt.LongLength; i++)
-                {
-                    byte[] ddtEntry = BitConverter.GetBytes(userDataDdt[i]);
-                    crc64.Update(ddtEntry);
-                    userDataDdtStream.Write(ddtEntry, 0, ddtEntry.Length);
-                }
+                byte[] ddtEntries = MemoryMarshal.Cast<ulong, byte>(userDataDdt).ToArray();
+                crc64.Update(ddtEntries);
+                userDataDdtStream.Write(ddtEntries, 0, ddtEntries.Length);
 
                 byte[] lzmaProperties =
                     CompressDataToStreamWithLZMA(userDataDdtStream.ToArray(), lzmaEncoderProperties, blockStream,
@@ -1956,11 +1894,8 @@ namespace DiscImageChef.DiscImages
                 cmpCrc64Context.Update(blockStream.ToArray());
                 ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
-                structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DdtHeader>());
-                structureBytes   = new byte[Marshal.SizeOf<DdtHeader>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(ddtHeader, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
+                MemoryMarshal.Write(structureBytes, ref ddtHeader);
                 imageStream.Write(structureBytes, 0, structureBytes.Length);
                 structureBytes = null;
                 imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
@@ -2033,13 +1968,8 @@ namespace DiscImageChef.DiscImages
                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(prefixBlock, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref prefixBlock);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         if(prefixBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
@@ -2101,13 +2031,8 @@ namespace DiscImageChef.DiscImages
                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(prefixBlock, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref prefixBlock);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         if(prefixBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
@@ -2194,12 +2119,9 @@ namespace DiscImageChef.DiscImages
                         blockStream = new MemoryStream();
                         MemoryStream sectorPrefixDdtStream = new MemoryStream();
                         crc64 = new Crc64Context();
-                        for(ulong i = 0; i < (ulong)sectorPrefixDdt.LongLength; i++)
-                        {
-                            byte[] ddtEntry = BitConverter.GetBytes(sectorPrefixDdt[i]);
-                            crc64.Update(ddtEntry);
-                            sectorPrefixDdtStream.Write(ddtEntry, 0, ddtEntry.Length);
-                        }
+                        byte[] ddtEntries = MemoryMarshal.Cast<uint, byte>(sectorPrefixDdt).ToArray();
+                        crc64.Update(ddtEntries);
+                        sectorPrefixDdtStream.Write(ddtEntries, 0, ddtEntries.Length);
 
                         byte[] lzmaProperties =
                             CompressDataToStreamWithLZMA(sectorPrefixDdtStream.ToArray(), lzmaEncoderProperties,
@@ -2211,13 +2133,8 @@ namespace DiscImageChef.DiscImages
                         cmpCrc64Context.Update(blockStream.ToArray());
                         ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DdtHeader>());
                         structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(ddtHeader, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref ddtHeader);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         structureBytes = null;
                         imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
@@ -2252,13 +2169,10 @@ namespace DiscImageChef.DiscImages
 
                         blockStream = new MemoryStream();
                         MemoryStream sectorSuffixDdtStream = new MemoryStream();
-                        crc64 = new Crc64Context();
-                        for(ulong i = 0; i < (ulong)sectorSuffixDdt.LongLength; i++)
-                        {
-                            byte[] ddtEntry = BitConverter.GetBytes(sectorSuffixDdt[i]);
-                            crc64.Update(ddtEntry);
-                            sectorSuffixDdtStream.Write(ddtEntry, 0, ddtEntry.Length);
-                        }
+                        crc64      = new Crc64Context();
+                        ddtEntries = MemoryMarshal.Cast<uint, byte>(sectorSuffixDdt).ToArray();
+                        crc64.Update(ddtEntries);
+                        sectorSuffixDdtStream.Write(ddtEntries, 0, ddtEntries.Length);
 
                         lzmaProperties =
                             CompressDataToStreamWithLZMA(sectorSuffixDdtStream.ToArray(), lzmaEncoderProperties,
@@ -2269,13 +2183,8 @@ namespace DiscImageChef.DiscImages
                         cmpCrc64Context.Update(blockStream.ToArray());
                         ddtHeader.cmpCrc64 = BitConverter.ToUInt64(cmpCrc64Context.Final(), 0);
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DdtHeader>());
                         structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(ddtHeader, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref ddtHeader);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         structureBytes = null;
                         imageStream.Write(lzmaProperties,        0, lzmaProperties.Length);
@@ -2341,13 +2250,8 @@ namespace DiscImageChef.DiscImages
                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(prefixBlock, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref prefixBlock);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         if(prefixBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
@@ -2413,13 +2317,8 @@ namespace DiscImageChef.DiscImages
                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(suffixBlock, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref suffixBlock);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         if(suffixBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
@@ -2487,13 +2386,8 @@ namespace DiscImageChef.DiscImages
                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(subheaderBlock, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref subheaderBlock);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         if(subheaderBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
@@ -2562,13 +2456,8 @@ namespace DiscImageChef.DiscImages
                                                       (endCompress - startCompress).TotalSeconds);
                         }
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref subchannelBlock);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         if(subchannelBlock.compression == CompressionType.Lzma || subchannelBlock.compression ==
                            CompressionType.LzmaClauniaSubchannelTransform)
@@ -2642,13 +2531,8 @@ namespace DiscImageChef.DiscImages
                             offset    = (ulong)imageStream.Position
                         });
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<TracksHeader>());
                         structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(trkHeader, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref trkHeader);
                         imageStream.Write(structureBytes,        0, structureBytes.Length);
                         imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
                         blockStream.Close();
@@ -2743,13 +2627,8 @@ namespace DiscImageChef.DiscImages
                             subchannelBlock.compression = CompressionType.Lzma;
                         }
 
-                        structurePointer =
-                            System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<BlockHeader>());
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
-                        System.Runtime.InteropServices.Marshal.StructureToPtr(subchannelBlock, structurePointer, true);
-                        System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0,
-                                                                    structureBytes.Length);
-                        System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                        MemoryMarshal.Write(structureBytes, ref subchannelBlock);
                         imageStream.Write(structureBytes, 0, structureBytes.Length);
                         if(subchannelBlock.compression == CompressionType.Lzma)
                             imageStream.Write(lzmaProperties, 0, lzmaProperties.Length);
@@ -2905,12 +2784,8 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing metadata to position {0}",
                                           imageStream.Position);
                 metadataBlock.blockSize = (uint)blockStream.Length;
-                structurePointer =
-                    System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<MetadataBlock>());
-                structureBytes = new byte[Marshal.SizeOf<MetadataBlock>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(metadataBlock, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                structureBytes          = new byte[Marshal.SizeOf<MetadataBlock>()];
+                MemoryMarshal.Write(structureBytes, ref metadataBlock);
                 blockStream.Position = 0;
                 blockStream.Write(structureBytes, 0, structureBytes.Length);
                 index.RemoveAll(t => t.blockType == BlockType.MetadataBlock && t.dataType == DataType.NoData);
@@ -2935,11 +2810,9 @@ namespace DiscImageChef.DiscImages
             // Write index to memory
             foreach(IndexEntry entry in index)
             {
-                structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<IndexEntry>());
-                structureBytes   = new byte[Marshal.SizeOf<IndexEntry>()];
-                System.Runtime.InteropServices.Marshal.StructureToPtr(entry, structurePointer, true);
-                System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-                System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+                structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
+                IndexEntry indexEntry = entry;
+                MemoryMarshal.Write(structureBytes, ref indexEntry);
                 blockStream.Write(structureBytes, 0, structureBytes.Length);
             }
 
@@ -2953,11 +2826,8 @@ namespace DiscImageChef.DiscImages
             };
 
             // Write index to disk
-            structurePointer = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<IndexHeader>());
-            structureBytes   = new byte[Marshal.SizeOf<IndexHeader>()];
-            System.Runtime.InteropServices.Marshal.StructureToPtr(idxHeader, structurePointer, true);
-            System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);
+            structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
+            MemoryMarshal.Write(structureBytes, ref idxHeader);
             imageStream.Write(structureBytes,        0, structureBytes.Length);
             imageStream.Write(blockStream.ToArray(), 0, (int)blockStream.Length);
             blockStream.Close();

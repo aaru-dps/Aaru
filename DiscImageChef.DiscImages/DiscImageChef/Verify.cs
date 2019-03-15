@@ -50,7 +50,7 @@ namespace DiscImageChef.DiscImages
 
             structureBytes = new byte[Marshal.SizeOf<IndexHeader>()];
             imageStream.Read(structureBytes, 0, structureBytes.Length);
-            IndexHeader idxHeader = Marshal.ByteArrayToStructureLittleEndian<IndexHeader>(structureBytes);
+            IndexHeader idxHeader = Marshal.SpanToStructureLittleEndian<IndexHeader>(structureBytes);
 
             if(idxHeader.identifier != BlockType.Index)
             {
@@ -79,7 +79,7 @@ namespace DiscImageChef.DiscImages
             {
                 structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                IndexEntry entry = Marshal.ByteArrayToStructureLittleEndian<IndexEntry>(structureBytes);
+                IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
                 DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                           "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
                                           entry.dataType, entry.offset);
@@ -101,7 +101,7 @@ namespace DiscImageChef.DiscImages
                     case BlockType.DataBlock:
                         structureBytes = new byte[Marshal.SizeOf<BlockHeader>()];
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
-                        BlockHeader blockHeader = Marshal.ByteArrayToStructureLittleEndian<BlockHeader>(structureBytes);
+                        BlockHeader blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(structureBytes);
 
                         crcVerify = new Crc64Context();
                         readBytes = 0;
@@ -136,7 +136,7 @@ namespace DiscImageChef.DiscImages
                     case BlockType.DeDuplicationTable:
                         structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
-                        DdtHeader ddtHeader = Marshal.ByteArrayToStructureLittleEndian<DdtHeader>(structureBytes);
+                        DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(structureBytes);
 
                         crcVerify = new Crc64Context();
                         readBytes = 0;
@@ -171,7 +171,7 @@ namespace DiscImageChef.DiscImages
                     case BlockType.TracksBlock:
                         structureBytes = new byte[Marshal.SizeOf<TracksHeader>()];
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
-                        TracksHeader trkHeader = Marshal.ByteArrayToStructureLittleEndian<TracksHeader>(structureBytes);
+                        TracksHeader trkHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(structureBytes);
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                                   "Track block at {0} contains {1} entries", header.indexOffset,
