@@ -96,7 +96,7 @@ namespace DiscImageChef.DiscImages
             {
                 byte[] sesHdr = new byte[24];
                 stream.Read(sesHdr, 0, 24);
-                AlcoholSession session = Marshal.ByteArrayToStructureLittleEndian<AlcoholSession>(sesHdr);
+                AlcoholSession session = Marshal.SpanToStructureLittleEndian<AlcoholSession>(sesHdr);
 
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "session[{1}].sessionStart = {0}",
                                           session.sessionStart, i);
@@ -207,7 +207,7 @@ namespace DiscImageChef.DiscImages
                     byte[] extHdr = new byte[8];
                     stream.Seek(track.extraOffset, SeekOrigin.Begin);
                     stream.Read(extHdr, 0, 8);
-                    AlcoholTrackExtra extra = Marshal.ByteArrayToStructureLittleEndian<AlcoholTrackExtra>(extHdr);
+                    AlcoholTrackExtra extra = Marshal.SpanToStructureLittleEndian<AlcoholTrackExtra>(extHdr);
 
                     DicConsole.DebugWriteLine("Alcohol 120% plugin", "track[{1}].extra.pregap = {0}", extra.pregap,
                                               track.point);
@@ -227,7 +227,7 @@ namespace DiscImageChef.DiscImages
                 byte[] footer = new byte[16];
                 stream.Seek(footerOff, SeekOrigin.Begin);
                 stream.Read(footer, 0, 16);
-                alcFooter = Marshal.ByteArrayToStructureLittleEndian<AlcoholFooter>(footer);
+                alcFooter = Marshal.SpanToStructureLittleEndian<AlcoholFooter>(footer);
 
                 DicConsole.DebugWriteLine("Alcohol 120% plugin", "footer.filenameOffset = {0}",
                                           alcFooter.filenameOffset);
