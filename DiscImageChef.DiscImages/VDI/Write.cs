@@ -34,11 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -251,7 +252,7 @@ namespace DiscImageChef.DiscImages
             writingStream.Write(hdr, 0, hdr.Length);
 
             writingStream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
-            for(long i = 0; i < ibm.LongLength; i++) writingStream.Write(BitConverter.GetBytes(ibm[i]), 0, 4);
+            writingStream.Write(MemoryMarshal.Cast<uint, byte>(ibm).ToArray(), 0, 4 * ibm.Length);
 
             writingStream.Flush();
             writingStream.Close();

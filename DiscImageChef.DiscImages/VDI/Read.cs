@@ -33,12 +33,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -83,12 +84,15 @@ namespace DiscImageChef.DiscImages
                 throw new
                     FeatureSupportedButNotImplementedImageException($"Support for image type {vHdr.imageType} not yet implemented");
 
+            DateTime start = DateTime.UtcNow;
             DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
             stream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
-            ibm = new uint[vHdr.blocks];
             byte[] ibmB = new byte[vHdr.blocks * 4];
             stream.Read(ibmB, 0, ibmB.Length);
-            for(int i = 0; i < ibm.Length; i++) ibm[i] = BitConverter.ToUInt32(ibmB, i * 4);
+            ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
+            DateTime end = DateTime.UtcNow;
+            DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map took {0} ms",
+                                      (end - start).TotalMilliseconds);
 
             sectorCache = new Dictionary<ulong, byte[]>();
 
@@ -146,7 +150,7 @@ namespace DiscImageChef.DiscImages
             ulong index  = sectorAddress * vHdr.sectorSize / vHdr.blockSize;
             ulong secOff = sectorAddress * vHdr.sectorSize % vHdr.blockSize;
 
-            uint ibmOff = ibm[index];
+            uint ibmOff = ibm[(int)index];
 
             if(ibmOff == VDI_EMPTY) return new byte[vHdr.sectorSize];
 
