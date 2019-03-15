@@ -30,9 +30,9 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -48,28 +48,23 @@ namespace DiscImageChef.DiscImages
             byte[] header = new byte[64];
             stream.Read(header, 0, 64);
 
-            uint magic = BitConverter.ToUInt32(header, 0x00);
-            if(magic != MAGIC) return false;
+            A2ImgHeader hdr = Marshal.SpanToStructureLittleEndian<A2ImgHeader>(header);
 
-            uint dataoff = BitConverter.ToUInt32(header, 0x18);
-            if(dataoff > stream.Length) return false;
+            if(hdr.Magic != MAGIC) return false;
 
-            uint datasize = BitConverter.ToUInt32(header, 0x1C);
+            if(hdr.DataOffset > stream.Length) return false;
+
             // There seems to be incorrect endian in some images on the wild
-            if(datasize           == 0x00800C00) datasize = 0x000C8000;
-            if(dataoff + datasize > stream.Length) return false;
+            if(hdr.DataSize                  == 0x00800C00) hdr.DataSize = 0x000C8000;
+            if(hdr.DataOffset + hdr.DataSize > stream.Length) return false;
 
-            uint commentoff = BitConverter.ToUInt32(header, 0x20);
-            if(commentoff > stream.Length) return false;
+            if(hdr.CommentOffset > stream.Length) return false;
 
-            uint commentsize = BitConverter.ToUInt32(header, 0x24);
-            if(commentoff + commentsize > stream.Length) return false;
+            if(hdr.CommentOffset + hdr.CommentSize > stream.Length) return false;
 
-            uint creatoroff = BitConverter.ToUInt32(header, 0x28);
-            if(creatoroff > stream.Length) return false;
+            if(hdr.CreatorSpecificOffset > stream.Length) return false;
 
-            uint creatorsize = BitConverter.ToUInt32(header, 0x2C);
-            return creatoroff + creatorsize <= stream.Length;
+            return hdr.CreatorSpecificOffset + hdr.CreatorSpecificSize <= stream.Length;
         }
     }
 }

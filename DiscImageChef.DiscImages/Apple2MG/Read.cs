@@ -38,6 +38,7 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Filters;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
 {
@@ -58,23 +59,7 @@ namespace DiscImageChef.DiscImages
             Array.Copy(header, 0, magic,   0, 4);
             Array.Copy(header, 4, creator, 0, 4);
 
-            imageHeader.Magic                 = BitConverter.ToUInt32(header, 0x00);
-            imageHeader.Creator               = BitConverter.ToUInt32(header, 0x04);
-            imageHeader.HeaderSize            = BitConverter.ToUInt16(header, 0x08);
-            imageHeader.Version               = BitConverter.ToUInt16(header, 0x0A);
-            imageHeader.ImageFormat           = (SectorOrder)BitConverter.ToUInt32(header, 0x0C);
-            imageHeader.Flags                 = BitConverter.ToUInt32(header, 0x10);
-            imageHeader.Blocks                = BitConverter.ToUInt32(header, 0x14);
-            imageHeader.DataOffset            = BitConverter.ToUInt32(header, 0x18);
-            imageHeader.DataSize              = BitConverter.ToUInt32(header, 0x1C);
-            imageHeader.CommentOffset         = BitConverter.ToUInt32(header, 0x20);
-            imageHeader.CommentSize           = BitConverter.ToUInt32(header, 0x24);
-            imageHeader.CreatorSpecificOffset = BitConverter.ToUInt32(header, 0x28);
-            imageHeader.CreatorSpecificSize   = BitConverter.ToUInt32(header, 0x2C);
-            imageHeader.Reserved1             = BitConverter.ToUInt32(header, 0x30);
-            imageHeader.Reserved2             = BitConverter.ToUInt32(header, 0x34);
-            imageHeader.Reserved3             = BitConverter.ToUInt32(header, 0x38);
-            imageHeader.Reserved4             = BitConverter.ToUInt32(header, 0x3C);
+            imageHeader = Marshal.SpanToStructureLittleEndian<A2ImgHeader>(header);
 
             if(imageHeader.DataSize == 0x00800C00)
             {
