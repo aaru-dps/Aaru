@@ -62,7 +62,7 @@ namespace DiscImageChef.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                ApridiskRecord record = Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
+                ApridiskRecord record = Marshal.SpanToStructureLittleEndian<ApridiskRecord>(recB);
 
                 switch(record.type)
                 {
@@ -149,7 +149,7 @@ namespace DiscImageChef.DiscImages
                 byte[] recB = new byte[recordSize];
                 stream.Read(recB, 0, recordSize);
 
-                ApridiskRecord record = Marshal.ByteArrayToStructureLittleEndian<ApridiskRecord>(recB);
+                ApridiskRecord record = Marshal.SpanToStructureLittleEndian<ApridiskRecord>(recB);
 
                 switch(record.type)
                 {
