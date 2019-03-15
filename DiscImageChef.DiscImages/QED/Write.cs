@@ -34,11 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
 using Schemas;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -245,17 +246,15 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            byte[] hdr    = new byte[Marshal.SizeOf<QedHeader>()];
-            IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<QedHeader>());
-            System.Runtime.InteropServices.Marshal.StructureToPtr(qHdr, hdrPtr, true);
-            System.Runtime.InteropServices.Marshal.Copy(hdrPtr, hdr, 0, hdr.Length);
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(hdrPtr);
+            byte[] hdr = new byte[Marshal.SizeOf<QedHeader>()];
+            MemoryMarshal.Write(hdr, ref qHdr);
 
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(hdr, 0, hdr.Length);
 
             writingStream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
-            for(long i = 0; i < l1Table.LongLength; i++) writingStream.Write(BitConverter.GetBytes(l1Table[i]), 0, 8);
+            byte[] l1TableB = MemoryMarshal.Cast<ulong, byte>(l1Table).ToArray();
+            writingStream.Write(l1TableB, 0, l1TableB.Length);
 
             writingStream.Flush();
             writingStream.Close();

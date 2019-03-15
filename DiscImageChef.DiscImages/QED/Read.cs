@@ -33,11 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -50,9 +51,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] qHdrB = new byte[64];
-            stream.Read(qHdrB, 0, 64);
-            qHdr = Marshal.ByteArrayToStructureLittleEndian<QedHeader>(qHdrB);
+            byte[] qHdrB = new byte[68];
+            stream.Read(qHdrB, 0, 68);
+            qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
             DicConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}",          qHdr.magic);
             DicConsole.DebugWriteLine("QED plugin", "qHdr.cluster_size = {0}",        qHdr.cluster_size);
@@ -99,9 +100,8 @@ namespace DiscImageChef.DiscImages
             byte[] l1TableB = new byte[tableSize * 8];
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
             stream.Read(l1TableB, 0, (int)tableSize * 8);
-            l1Table = new ulong[tableSize];
             DicConsole.DebugWriteLine("QED plugin", "Reading L1 table");
-            for(long i = 0; i < l1Table.LongLength; i++) l1Table[i] = BitConverter.ToUInt64(l1TableB, (int)(i * 8));
+            l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
 
             l1Mask = 0;
             int c = 0;
@@ -175,12 +175,11 @@ namespace DiscImageChef.DiscImages
 
             if(!l2TableCache.TryGetValue(l1Off, out ulong[] l2Table))
             {
-                l2Table = new ulong[tableSize];
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
                 byte[] l2TableB = new byte[tableSize * 8];
                 imageStream.Read(l2TableB, 0, (int)tableSize * 8);
                 DicConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
-                for(long i = 0; i < l2Table.LongLength; i++) l2Table[i] = BitConverter.ToUInt64(l2TableB, (int)(i * 8));
+                l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
                 if(l2TableCache.Count >= maxL2TableCache) l2TableCache.Clear();
 

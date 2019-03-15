@@ -45,9 +45,9 @@ namespace DiscImageChef.DiscImages
 
             if(stream.Length < 512) return false;
 
-            byte[] qHdrB = new byte[64];
-            stream.Read(qHdrB, 0, 64);
-            qHdr = Marshal.ByteArrayToStructureLittleEndian<QedHeader>(qHdrB);
+            byte[] qHdrB = new byte[68];
+            stream.Read(qHdrB, 0, 68);
+            qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
             return qHdr.magic == QED_MAGIC;
         }
