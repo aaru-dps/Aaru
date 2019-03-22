@@ -34,13 +34,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.DiscImages
 {
@@ -410,10 +411,9 @@ namespace DiscImageChef.DiscImages
                 gdStream.Seek(gdOffset * SECTOR_SIZE, SeekOrigin.Begin);
 
                 DicConsole.DebugWriteLine("VMware plugin", "Reading grain directory");
-                uint[] gd      = new uint[gdEntries];
                 byte[] gdBytes = new byte[gdEntries * 4];
                 gdStream.Read(gdBytes, 0, gdBytes.Length);
-                for(int i = 0; i < gdEntries; i++) gd[i] = BitConverter.ToUInt32(gdBytes, i * 4);
+                Span<uint> gd = MemoryMarshal.Cast<byte, uint>(gdBytes);
 
                 DicConsole.DebugWriteLine("VMware plugin", "Reading grain tables");
                 uint currentGrain = 0;
@@ -423,11 +423,19 @@ namespace DiscImageChef.DiscImages
                     byte[] gtBytes = new byte[gtEsPerGt * 4];
                     gdStream.Seek(gtOff * SECTOR_SIZE, SeekOrigin.Begin);
                     gdStream.Read(gtBytes, 0, gtBytes.Length);
+
+                    uint[] currentGt = MemoryMarshal.Cast<byte, uint>(gtBytes).ToArray();
+                    Array.Copy(currentGt, 0, gTable, currentGrain, gtEsPerGt);
+                    currentGrain += gtEsPerGt;
+
+                    // TODO: Check speed here
+                    /*
                     for(int i = 0; i < gtEsPerGt; i++)
                     {
                         gTable[currentGrain] = BitConverter.ToUInt32(gtBytes, i * 4);
                         currentGrain++;
                     }
+                */
                 }
 
                 maxCachedGrains = (uint)(MAX_CACHE_SIZE / (grainSize * SECTOR_SIZE));
