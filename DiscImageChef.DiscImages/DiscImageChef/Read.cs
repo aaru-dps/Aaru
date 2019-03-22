@@ -58,7 +58,8 @@ namespace DiscImageChef.DiscImages
     {
         public bool Open(IFilter imageFilter)
         {
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
             imageStream = imageFilter.GetDataForkStream();
             imageStream.Seek(0, SeekOrigin.Begin);
 
@@ -75,7 +76,8 @@ namespace DiscImageChef.DiscImages
             imageInfo.ApplicationVersion = $"{header.applicationMajorVersion}.{header.applicationMinorVersion}";
             imageInfo.Version            = $"{header.imageMajorVersion}.{header.imageMinorVersion}";
             imageInfo.MediaType          = header.mediaType;
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
 
             // Read the index header
             imageStream.Position = (long)header.indexOffset;
@@ -87,7 +89,8 @@ namespace DiscImageChef.DiscImages
 
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Index at {0} contains {1} entries",
                                       header.indexOffset, idxHeader.entries);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
 
             // Fill in-memory index
             index = new List<IndexEntry>();
@@ -101,7 +104,9 @@ namespace DiscImageChef.DiscImages
                                           entry.dataType, entry.offset);
                 index.Add(entry);
             }
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
 
             imageInfo.ImageSize = 0;
 
@@ -152,7 +157,8 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                                   "Found data block type {0} at position {1}", entry.dataType,
                                                   entry.offset);
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                  GC.GetTotalMemory(false));
 
                         // Decompress media tag
                         if(blockHeader.compression == CompressionType.Lzma || blockHeader.compression ==
@@ -186,13 +192,15 @@ namespace DiscImageChef.DiscImages
                             DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                                       "Took {0} seconds to decompress block",
                                                       (endDecompress - startDecompress).TotalSeconds);
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                      GC.GetTotalMemory(false));
                         }
                         else if(blockHeader.compression == CompressionType.None)
                         {
                             data = new byte[blockHeader.length];
                             imageStream.Read(data, 0, (int)blockHeader.length);
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                      GC.GetTotalMemory(false));
                         }
                         else
                         {
@@ -228,7 +236,8 @@ namespace DiscImageChef.DiscImages
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                          GC.GetTotalMemory(false));
                                 break;
                             case DataType.CdSectorSuffix:
                             case DataType.CdSectorSuffixCorrected:
@@ -249,13 +258,15 @@ namespace DiscImageChef.DiscImages
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                          GC.GetTotalMemory(false));
                                 break;
                             case DataType.CdSectorSubchannel:
                                 sectorSubchannel = data;
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                          GC.GetTotalMemory(false));
                                 break;
                             case DataType.AppleProfileTag:
                             case DataType.AppleSonyTag:
@@ -263,11 +274,13 @@ namespace DiscImageChef.DiscImages
                                 sectorSubchannel = data;
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                          GC.GetTotalMemory(false));
                                 break;
                             case DataType.CompactDiscMode2Subheader:
                                 mode2Subheaders = data;
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                          GC.GetTotalMemory(false));
                                 break;
                             default:
                                 MediaTagType mediaTagType = GetMediaTagTypeForDataType(blockHeader.type);
@@ -282,25 +295,26 @@ namespace DiscImageChef.DiscImages
                                 }
 
                                 mediaTags.Add(mediaTagType, data);
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                          GC.GetTotalMemory(false));
                                 break;
                         }
 
                         break;
                     case BlockType.DeDuplicationTable:
-                        // Only user data deduplication tables are used right now
+                        structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(structureBytes);
+                        imageInfo.ImageSize += ddtHeader.cmpLength;
+
+                        if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
+
                         if(entry.dataType == DataType.UserData)
                         {
-                            structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                            imageStream.Read(structureBytes, 0, structureBytes.Length);
-                            DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(structureBytes);
-                            imageInfo.ImageSize += ddtHeader.cmpLength;
-
-                            if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
-
                             imageInfo.Sectors = ddtHeader.entries;
                             shift             = ddtHeader.shift;
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                      GC.GetTotalMemory(false));
 
                             // Check for DDT compression
                             switch(ddtHeader.compression)
@@ -324,12 +338,14 @@ namespace DiscImageChef.DiscImages
                                     DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                                               "Took {0} seconds to decompress DDT",
                                                               (ddtEnd - ddtStart).TotalSeconds);
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
                                     break;
                                 case CompressionType.None:
                                     inMemoryDdt          = false;
                                     outMemoryDdtPosition = (long)entry.offset;
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
                                     break;
                                 default:
                                     throw new
@@ -341,16 +357,10 @@ namespace DiscImageChef.DiscImages
                         else if(entry.dataType == DataType.CdSectorPrefixCorrected ||
                                 entry.dataType == DataType.CdSectorSuffixCorrected)
                         {
-                            structureBytes = new byte[Marshal.SizeOf<DdtHeader>()];
-                            imageStream.Read(structureBytes, 0, structureBytes.Length);
-                            DdtHeader ddtHeader = Marshal.SpanToStructureLittleEndian<DdtHeader>(structureBytes);
-                            imageInfo.ImageSize += ddtHeader.cmpLength;
-
-                            if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
-
                             uint[] cdDdt           = new uint[ddtHeader.entries];
                             byte[] decompressedDdt = new byte[ddtHeader.length];
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                      GC.GetTotalMemory(false));
 
                             // Check for DDT compression
                             switch(ddtHeader.compression)
@@ -371,11 +381,13 @@ namespace DiscImageChef.DiscImages
                                     DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                                               "Took {0} seconds to decompress DDT",
                                                               (ddtEnd - ddtStart).TotalSeconds);
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
                                     break;
                                 case CompressionType.None:
                                     imageStream.Read(decompressedDdt, 0, decompressedDdt.Length);
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                              "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
                                     break;
                                 default:
                                     throw new
@@ -386,7 +398,8 @@ namespace DiscImageChef.DiscImages
 
                             if(entry.dataType      == DataType.CdSectorPrefixCorrected) sectorPrefixDdt = cdDdt;
                             else if(entry.dataType == DataType.CdSectorSuffixCorrected) sectorSuffixDdt = cdDdt;
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                      GC.GetTotalMemory(false));
                         }
 
                         break;
@@ -404,7 +417,8 @@ namespace DiscImageChef.DiscImages
                             imageInfo.Cylinders       = geometryBlock.cylinders;
                             imageInfo.Heads           = geometryBlock.heads;
                             imageInfo.SectorsPerTrack = geometryBlock.sectorsPerTrack;
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                      GC.GetTotalMemory(false));
                         }
 
                         break;
@@ -575,7 +589,8 @@ namespace DiscImageChef.DiscImages
                                                       imageInfo.DriveFirmwareRevision);
                         }
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                  GC.GetTotalMemory(false));
                         break;
                     // Optical disc tracks block
                     case BlockType.TracksBlock:
@@ -636,7 +651,8 @@ namespace DiscImageChef.DiscImages
 
                         imageInfo.HasPartitions = true;
                         imageInfo.HasSessions   = true;
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                  GC.GetTotalMemory(false));
                         break;
                     // CICM XML metadata block
                     case BlockType.CicmBlock:
@@ -648,7 +664,8 @@ namespace DiscImageChef.DiscImages
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                                   "Found CICM XML metadata block at position {0}", entry.offset);
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                  GC.GetTotalMemory(false));
 
                         byte[] cicmBytes = new byte[cicmBlock.length];
                         imageStream.Read(cicmBytes, 0, cicmBytes.Length);
@@ -667,7 +684,8 @@ namespace DiscImageChef.DiscImages
                             CicmMetadata = null;
                         }
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                  GC.GetTotalMemory(false));
                         break;
                     // Dump hardware block
                     case BlockType.DumpHardwareBlock:
@@ -679,7 +697,8 @@ namespace DiscImageChef.DiscImages
 
                         DicConsole.DebugWriteLine("DiscImageChef format plugin",
                                                   "Found dump hardware block at position {0}", entry.offset);
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                  GC.GetTotalMemory(false));
 
                         structureBytes = new byte[dumpBlock.length];
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
@@ -789,7 +808,8 @@ namespace DiscImageChef.DiscImages
                         }
 
                         if(DumpHardware.Count == 0) DumpHardware = null;
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                                  GC.GetTotalMemory(false));
                         break;
                 }
             }
@@ -802,6 +822,8 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image last written on {0}",
                                       imageInfo.LastModificationTime);
 
+            imageInfo.XmlMediaType = GetXmlMediaType(header.mediaType);
+
             if(geometryBlock.identifier != BlockType.GeometryBlock && imageInfo.XmlMediaType == XmlMediaType.BlockMedia)
             {
                 imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
@@ -809,21 +831,23 @@ namespace DiscImageChef.DiscImages
                 imageInfo.SectorsPerTrack = 63;
             }
 
-            imageInfo.XmlMediaType = GetXmlMediaType(header.mediaType);
             imageInfo.ReadableMediaTags.AddRange(mediaTags.Keys);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
 
             // Initialize caches
             blockCache       = new Dictionary<ulong, byte[]>();
             blockHeaderCache = new Dictionary<ulong, BlockHeader>();
             currentCacheSize = 0;
             if(!inMemoryDdt) ddtEntryCache = new Dictionary<ulong, ulong>();
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
 
             // Initialize tracks, sessions and partitions
             if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                          GC.GetTotalMemory(false));
                 if(Tracks == null || Tracks.Count == 0)
                 {
                     Tracks = new List<Track>
@@ -846,7 +870,9 @@ namespace DiscImageChef.DiscImages
                     trackFlags = new Dictionary<byte, byte> {{1, (byte)CdFlags.DataTrack}};
                     trackIsrcs = new Dictionary<byte, string>();
                 }
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                          GC.GetTotalMemory(false));
 
                 Sessions = new List<Session>();
                 for(int i = 1; i <= Tracks.Max(t => t.TrackSession); i++)
@@ -859,7 +885,8 @@ namespace DiscImageChef.DiscImages
                             Tracks.Where(t => t.TrackSession == i).Min(t => t.TrackStartSector),
                         EndSector = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackEndSector)
                     });
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                          GC.GetTotalMemory(false));
 
                 ulong currentTrackOffset = 0;
                 Partitions = new List<Partition>();
@@ -880,7 +907,9 @@ namespace DiscImageChef.DiscImages
                     currentTrackOffset += (track.TrackEndSector - track.TrackStartSector + 1) *
                                           (ulong)track.TrackBytesPerSector;
                 }
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                          GC.GetTotalMemory(false));
 
                 Track[] tracks = Tracks.ToArray();
                 for(int i = 0; i < tracks.Length; i++)
@@ -899,10 +928,13 @@ namespace DiscImageChef.DiscImages
                     tracks[i].TrackSubchannelFilter = tracks[i].TrackFilter;
                     tracks[i].TrackSubchannelType   = TrackSubchannelType.Raw;
                 }
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                          GC.GetTotalMemory(false));
 
                 Tracks = tracks.ToList();
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                          GC.GetTotalMemory(false));
             }
             else
             {
@@ -915,7 +947,8 @@ namespace DiscImageChef.DiscImages
 
             if(sectorSuffixDdt != null) EccInit();
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
             return true;
         }
 
@@ -958,13 +991,15 @@ namespace DiscImageChef.DiscImages
             blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(structureBytes);
 
             // Decompress block
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
             switch(blockHeader.compression)
             {
                 case CompressionType.None:
                     block = new byte[blockHeader.length];
                     imageStream.Read(block, 0, (int)blockHeader.length);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                              GC.GetTotalMemory(false));
                     break;
                 case CompressionType.Lzma:
                     byte[] compressedBlock = new byte[blockHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
@@ -977,7 +1012,8 @@ namespace DiscImageChef.DiscImages
                     lzmaBlock.Read(block, 0, (int)blockHeader.length);
                     lzmaBlock.Close();
                     compressedBlockMs.Close();
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                              GC.GetTotalMemory(false));
                     break;
                 case CompressionType.Flac:
                     byte[] flacBlock = new byte[blockHeader.cmpLength];
@@ -990,7 +1026,8 @@ namespace DiscImageChef.DiscImages
                     flakeReader.Read(audioBuffer, samples);
                     flakeReader.Close();
                     flacMs.Close();
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                              GC.GetTotalMemory(false));
                     break;
                 default:
                     throw new
@@ -1012,7 +1049,8 @@ namespace DiscImageChef.DiscImages
 
             sector = new byte[blockHeader.sectorSize];
             Array.Copy(block, (long)(offset * blockHeader.sectorSize), sector, 0, blockHeader.sectorSize);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
+            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                      GC.GetTotalMemory(false));
             return sector;
         }
 
