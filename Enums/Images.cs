@@ -285,19 +285,19 @@ namespace DiscImageChef.CommonTypes.Enums
         /// <summary>
         ///     Purely optical discs
         /// </summary>
-        OpticalDisc,
+        OpticalDisc = 0,
         /// <summary>
         ///     Media that is physically block-based or abstracted like that
         /// </summary>
-        BlockMedia,
+        BlockMedia = 1,
         /// <summary>
         ///     Media that can be accessed by-byte or by-bit, like chips
         /// </summary>
-        LinearMedia,
+        LinearMedia = 2,
         /// <summary>
         ///     Media that can only store data when it is modulated to audio
         /// </summary>
-        AudioMedia
+        AudioMedia = 3
     }
 
     /// <summary> CD flags bitmask</summary>
