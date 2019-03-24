@@ -1374,7 +1374,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorSuffixMs.Position =
                                         ((sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
-                                    sectorSuffixMs.Read(sector, 0, 288);
+                                    sectorSuffixMs.Read(sector, 2064, 288);
                                 }
                             }
                             else throw new InvalidProgramException("Should not have arrived here");
