@@ -42,8 +42,10 @@ namespace DiscImageChef.Filesystems
 {
     public class FATX : IFilesystem
     {
-        const uint FATX_MAGIC = 0x58544146;
-
+        const  uint           FATX_MAGIC       = 0x58544146;
+        const  byte           UNUSED_DIRENTRY  = 0x00;
+        const  byte           DELETED_DIRENTRY = 0xE5;
+        const  byte           MAX_FILENAME     = 42;
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "FATX Filesystem Plugin";
@@ -56,9 +58,9 @@ namespace DiscImageChef.Filesystems
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
-            FATX_Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
+            Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            return fatxSb.magic == FATX_MAGIC;
+            return sb.magic == FATX_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -70,7 +72,7 @@ namespace DiscImageChef.Filesystems
 
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
-            FATX_Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<FATX_Superblock>(sector);
+            Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
             if(fatxSb.magic != FATX_MAGIC) return;
 
@@ -94,12 +96,40 @@ namespace DiscImageChef.Filesystems
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct FATX_Superblock
+        struct Superblock
         {
             public uint magic;
             public uint id;
             public uint sectorsPerCluster;
             public uint rootDirectoryCluster;
+            public ushort unknown;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct DirectoryEntry
+        {
+            public byte       filenameSize;
+            public Attributes attributes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_FILENAME)]
+            public byte[] filename;
+            public uint   firstCluster;
+            public uint   length;
+            public ushort lastWrittenTime;
+            public ushort lastWrittenDate;
+            public ushort creationTime;
+            public ushort creationDate;
+            public ushort lastAccessTime;
+            public ushort lastAccessDate;
+        }
+
+        [Flags]
+        enum Attributes : byte
+        {
+            ReadOnly  = 0x01,
+            Hidden    = 0x02,
+            System    = 0x04,
+            Directory = 0x10,
+            Archive   = 0x20
         }
     }
 }
