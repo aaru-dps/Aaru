@@ -62,36 +62,36 @@ namespace DiscImageChef.CommonTypes.Enums
     /// <summary>
     ///     Type of subchannel in track
     /// </summary>
-    public enum TrackSubchannelType
+    public enum TrackSubchannelType : byte
     {
         /// <summary>
         ///     Track does not has subchannel dumped, or it's not a CD
         /// </summary>
-        None,
+        None = 0,
         /// <summary>
         ///     Subchannel is packed and error corrected
         /// </summary>
-        Packed,
+        Packed = 1,
         /// <summary>
         ///     Subchannel is interleaved
         /// </summary>
-        Raw,
+        Raw = 2,
         /// <summary>
         ///     Subchannel is packed and comes interleaved with main channel in same file
         /// </summary>
-        PackedInterleaved,
+        PackedInterleaved = 3,
         /// <summary>
         ///     Subchannel is interleaved and comes interleaved with main channel in same file
         /// </summary>
-        RawInterleaved,
+        RawInterleaved = 4,
         /// <summary>
         ///     Only Q subchannel is stored as 16 bytes
         /// </summary>
-        Q16,
+        Q16 = 5,
         /// <summary>
         ///     Only Q subchannel is stored as 16 bytes and comes interleaved with main channel in same file
         /// </summary>
-        Q16Interleaved
+        Q16Interleaved = 6
     }
 
     /// <summary>
@@ -100,33 +100,33 @@ namespace DiscImageChef.CommonTypes.Enums
     public enum SectorTagType
     {
         /// <summary>Apple's GCR sector tags, 12 bytes</summary>
-        AppleSectorTag,
+        AppleSectorTag = 0,
         /// <summary>Sync frame from CD sector, 12 bytes</summary>
-        CdSectorSync,
+        CdSectorSync = 1,
         /// <summary>CD sector header, 4 bytes</summary>
-        CdSectorHeader,
+        CdSectorHeader = 2,
         /// <summary>CD mode 2 sector subheader</summary>
-        CdSectorSubHeader,
+        CdSectorSubHeader = 3,
         /// <summary>CD sector EDC, 4 bytes</summary>
-        CdSectorEdc,
+        CdSectorEdc = 4,
         /// <summary>CD sector ECC P, 172 bytes</summary>
-        CdSectorEccP,
+        CdSectorEccP = 5,
         /// <summary>CD sector ECC Q, 104 bytes</summary>
-        CdSectorEccQ,
+        CdSectorEccQ = 6,
         /// <summary>CD sector ECC (P and Q), 276 bytes</summary>
-        CdSectorEcc,
+        CdSectorEcc = 7,
         /// <summary>CD sector subchannel, 96 bytes</summary>
-        CdSectorSubchannel,
+        CdSectorSubchannel = 8,
         /// <summary>CD track ISRC, string, 12 bytes</summary>
-        CdTrackIsrc,
+        CdTrackIsrc = 9,
         /// <summary>CD track text, string, 13 bytes</summary>
-        CdTrackText,
+        CdTrackText = 10,
         /// <summary>CD track flags, 1 byte</summary>
-        CdTrackFlags,
+        CdTrackFlags = 11,
         /// <summary>DVD sector copyright information</summary>
-        DvdCmi,
+        DvdCmi = 12,
         /// <summary>Floppy address mark (contents depend on underlying floppy format)</summary>
-        FloppyAddressMark
+        FloppyAddressMark = 13
     }
 
     /// <summary>
@@ -135,152 +135,152 @@ namespace DiscImageChef.CommonTypes.Enums
     public enum MediaTagType
     {
         /// <summary>CD table of contents</summary>
-        CD_TOC,
+        CD_TOC = 0,
         /// <summary>CD session information</summary>
-        CD_SessionInfo,
+        CD_SessionInfo = 1,
         /// <summary>CD full table of contents</summary>
-        CD_FullTOC,
+        CD_FullTOC = 2,
         /// <summary>CD PMA</summary>
-        CD_PMA,
+        CD_PMA = 3,
         /// <summary>CD Adress-Time-In-Pregroove</summary>
-        CD_ATIP,
+        CD_ATIP = 4,
         /// <summary>CD-Text</summary>
-        CD_TEXT,
+        CD_TEXT = 5,
         /// <summary>CD Media Catalogue Number</summary>
-        CD_MCN,
+        CD_MCN = 6,
         /// <summary>DVD/HD DVD Physical Format Information</summary>
-        DVD_PFI,
+        DVD_PFI = 7,
         /// <summary>DVD Lead-in Copyright Management Information</summary>
-        DVD_CMI,
+        DVD_CMI = 8,
         /// <summary>DVD disc key</summary>
-        DVD_DiscKey,
+        DVD_DiscKey = 9,
         /// <summary>DVD/HD DVD Burst Cutting Area</summary>
-        DVD_BCA,
+        DVD_BCA = 10,
         /// <summary>DVD/HD DVD Lead-in Disc Manufacturer Information</summary>
-        DVD_DMI,
+        DVD_DMI = 11,
         /// <summary>Media identifier</summary>
-        DVD_MediaIdentifier,
+        DVD_MediaIdentifier = 12,
         /// <summary>Media key block</summary>
-        DVD_MKB,
+        DVD_MKB = 13,
         /// <summary>DVD-RAM/HD DVD-RAM DDS information</summary>
-        DVDRAM_DDS,
+        DVDRAM_DDS = 14,
         /// <summary>DVD-RAM/HD DVD-RAM Medium status</summary>
-        DVDRAM_MediumStatus,
+        DVDRAM_MediumStatus = 15,
         /// <summary>DVD-RAM/HD DVD-RAM Spare area information</summary>
-        DVDRAM_SpareArea,
+        DVDRAM_SpareArea = 16,
         /// <summary>DVD-R/-RW/HD DVD-R RMD in last border-out</summary>
-        DVDR_RMD,
+        DVDR_RMD = 17,
         /// <summary>Pre-recorded information from DVD-R/-RW lead-in</summary>
-        DVDR_PreRecordedInfo,
+        DVDR_PreRecordedInfo = 18,
         /// <summary>DVD-R/-RW/HD DVD-R media identifier</summary>
-        DVDR_MediaIdentifier,
+        DVDR_MediaIdentifier = 19,
         /// <summary>DVD-R/-RW/HD DVD-R physical format information</summary>
-        DVDR_PFI,
+        DVDR_PFI = 20,
         /// <summary>ADIP information</summary>
-        DVD_ADIP,
+        DVD_ADIP = 21,
         /// <summary>HD DVD Lead-in copyright protection information</summary>
-        HDDVD_CPI,
+        HDDVD_CPI = 22,
         /// <summary>HD DVD-R Medium Status</summary>
-        HDDVD_MediumStatus,
+        HDDVD_MediumStatus = 23,
         /// <summary>DVD+/-R DL Layer capacity</summary>
-        DVDDL_LayerCapacity,
+        DVDDL_LayerCapacity = 24,
         /// <summary>DVD-R DL Middle Zone start address</summary>
-        DVDDL_MiddleZoneAddress,
+        DVDDL_MiddleZoneAddress = 25,
         /// <summary>DVD-R DL Jump Interval Size</summary>
-        DVDDL_JumpIntervalSize,
+        DVDDL_JumpIntervalSize = 26,
         /// <summary>DVD-R DL Start LBA of the manual layer jump</summary>
-        DVDDL_ManualLayerJumpLBA,
+        DVDDL_ManualLayerJumpLBA = 27,
         /// <summary>Blu-ray Disc Information</summary>
-        BD_DI,
+        BD_DI = 28,
         /// <summary>Blu-ray Burst Cutting Area</summary>
-        BD_BCA,
+        BD_BCA = 29,
         /// <summary>Blu-ray Disc Definition Structure</summary>
-        BD_DDS,
+        BD_DDS = 30,
         /// <summary>Blu-ray Cartridge Status</summary>
-        BD_CartridgeStatus,
+        BD_CartridgeStatus = 31,
         /// <summary>Blu-ray Status of Spare Area</summary>
-        BD_SpareArea,
+        BD_SpareArea = 32,
         /// <summary>AACS volume identifier</summary>
-        AACS_VolumeIdentifier,
+        AACS_VolumeIdentifier = 33,
         /// <summary>AACS pre-recorded media serial number</summary>
-        AACS_SerialNumber,
+        AACS_SerialNumber = 34,
         /// <summary>AACS media identifier</summary>
-        AACS_MediaIdentifier,
+        AACS_MediaIdentifier = 35,
         /// <summary>Lead-in AACS media key block</summary>
-        AACS_MKB,
+        AACS_MKB = 36,
         /// <summary>AACS data keys</summary>
-        AACS_DataKeys,
+        AACS_DataKeys = 37,
         /// <summary>LBA extents flagged for bus encryption by AACS</summary>
-        AACS_LBAExtents,
+        AACS_LBAExtents = 38,
         /// <summary>CPRM media key block in Lead-in</summary>
-        AACS_CPRM_MKB,
+        AACS_CPRM_MKB = 39,
         /// <summary>Recognized layer formats in hybrid discs</summary>
-        Hybrid_RecognizedLayers,
+        Hybrid_RecognizedLayers = 40,
         /// <summary>Disc write protection status</summary>
-        MMC_WriteProtection,
+        MMC_WriteProtection = 41,
         /// <summary>Disc standard information</summary>
-        MMC_DiscInformation,
+        MMC_DiscInformation = 42,
         /// <summary>Disc track resources information</summary>
-        MMC_TrackResourcesInformation,
+        MMC_TrackResourcesInformation = 43,
         /// <summary>BD-R Pseudo-overwrite information</summary>
-        MMC_POWResourcesInformation,
+        MMC_POWResourcesInformation = 44,
         /// <summary>SCSI INQUIRY response</summary>
-        SCSI_INQUIRY,
+        SCSI_INQUIRY = 45,
         /// <summary>SCSI MODE PAGE 2Ah</summary>
-        SCSI_MODEPAGE_2A,
+        SCSI_MODEPAGE_2A = 46,
         /// <summary>ATA IDENTIFY DEVICE response</summary>
-        ATA_IDENTIFY,
+        ATA_IDENTIFY = 47,
         /// <summary>ATA IDENTIFY PACKET DEVICE response</summary>
-        ATAPI_IDENTIFY,
+        ATAPI_IDENTIFY = 48,
         /// <summary>PCMCIA/CardBus Card Information Structure</summary>
-        PCMCIA_CIS,
+        PCMCIA_CIS = 49,
         /// <summary>SecureDigital CID</summary>
-        SD_CID,
+        SD_CID = 50,
         /// <summary>SecureDigital CSD</summary>
-        SD_CSD,
+        SD_CSD = 51,
         /// <summary>SecureDigital SCR</summary>
-        SD_SCR,
+        SD_SCR = 52,
         /// <summary>SecureDigital OCR</summary>
-        SD_OCR,
+        SD_OCR = 53,
         /// <summary>MultiMediaCard CID</summary>
-        MMC_CID,
+        MMC_CID = 54,
         /// <summary>MultiMediaCard CSD</summary>
-        MMC_CSD,
+        MMC_CSD = 55,
         /// <summary>MultiMediaCard OCR</summary>
-        MMC_OCR,
+        MMC_OCR = 56,
         /// <summary>MultiMediaCard Extended CSD</summary>
-        MMC_ExtendedCSD,
+        MMC_ExtendedCSD = 57,
         /// <summary>Xbox Security Sector</summary>
-        Xbox_SecuritySector,
+        Xbox_SecuritySector = 58,
         /// <summary>
         ///     On floppy disks, data in last cylinder usually in a different format that contains duplication or
         ///     manufacturing information
         /// </summary>
-        Floppy_LeadOut,
+        Floppy_LeadOut = 59,
         /// <summary>DVD Disc Control Blocks</summary>
-        DCB,
+        DCB = 60,
         /// <summary>Compact Disc First Track Pregap</summary>
-        CD_FirstTrackPregap,
+        CD_FirstTrackPregap = 61,
         /// <summary>Compact Disc Lead-out</summary>
-        CD_LeadOut,
+        CD_LeadOut = 62,
         /// <summary>SCSI MODE SENSE (6)</summary>
-        SCSI_MODESENSE_6,
+        SCSI_MODESENSE_6 = 63,
         /// <summary>SCSI MODE SENSE (10)</summary>
-        SCSI_MODESENSE_10,
+        SCSI_MODESENSE_10 = 64,
         /// <summary>USB descriptors</summary>
-        USB_Descriptors,
+        USB_Descriptors = 65,
         /// <summary>XGD unlocked DMI</summary>
-        Xbox_DMI,
+        Xbox_DMI = 66,
         /// <summary>XDG unlocked PFI</summary>
-        Xbox_PFI,
+        Xbox_PFI = 67,
         /// <summary>Compact Disc Lead-in</summary>
-        CD_LeadIn
+        CD_LeadIn = 68
     }
 
     /// <summary>
     ///     Enumeration of media types defined in CICM metadata
     /// </summary>
-    public enum XmlMediaType
+    public enum XmlMediaType : byte
     {
         /// <summary>
         ///     Purely optical discs
