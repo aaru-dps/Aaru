@@ -48,7 +48,7 @@ namespace DiscImageChef.Filesystems.FATX
 
             Superblock sb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            return sb.magic == FATX_MAGIC;
+            return sb.magic == FATX_MAGIC || sb.magic == FATX_CIGAM;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -61,6 +61,8 @@ namespace DiscImageChef.Filesystems.FATX
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
+
+            if(fatxSb.magic == FATX_CIGAM) fatxSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
 
             if(fatxSb.magic != FATX_MAGIC) return;
 

@@ -37,6 +37,7 @@ namespace DiscImageChef.Filesystems.FATX
     public partial class XboxFatPlugin
     {
         const uint FATX_MAGIC       = 0x58544146;
+        const uint FATX_CIGAM       = 0x46415458;
         const byte UNUSED_DIRENTRY  = 0x00;
         const byte DELETED_DIRENTRY = 0xE5;
         const byte MAX_FILENAME     = 42;
