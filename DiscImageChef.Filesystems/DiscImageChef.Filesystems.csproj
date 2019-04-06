@@ -53,6 +53,13 @@
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FATX\Consts.cs" />
+    <Compile Include="FATX\Dir.cs" />
+    <Compile Include="FATX\FATX.cs" />
+    <Compile Include="FATX\File.cs" />
+    <Compile Include="FATX\Info.cs" />
+    <Compile Include="FATX\Structs.cs" />
+    <Compile Include="FATX\Super.cs" />
     <Compile Include="HPOFS.cs" />
     <Compile Include="PCFX.cs" />
     <Compile Include="AmigaDOS.cs" />
@@ -131,7 +138,6 @@
     <Compile Include="CBM.cs" />
     <Compile Include="UDF.cs" />
     <Compile Include="ECMA67.cs" />
-    <Compile Include="FATX.cs" />
     <Compile Include="Xia.cs" />
     <Compile Include="ZFS.cs" />
     <Compile Include="AppleDOS\Dir.cs" />

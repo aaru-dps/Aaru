@@ -1246,7 +1246,15 @@
         <e p="EFS.cs" t="Include" />
         <e p="F2FS.cs" t="Include" />
         <e p="FAT.cs" t="Include" />
-        <e p="FATX.cs" t="Include" />
+        <e p="FATX" t="Include">
+          <e p="Consts.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="FATX.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Super.cs" t="Include" />
+        </e>
         <e p="FFS.cs" t="Include" />
         <e p="Fossil.cs" t="Include" />
         <e p="HAMMER.cs" t="Include" />
