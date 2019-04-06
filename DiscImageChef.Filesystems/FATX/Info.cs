@@ -58,11 +58,17 @@ namespace DiscImageChef.Filesystems.FATX
             information = "";
             if(imagePlugin.Info.SectorSize < 512) return;
 
+            bool bigEndian = true;
+
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             Superblock fatxSb = Marshal.ByteArrayToStructureBigEndian<Superblock>(sector);
 
-            if(fatxSb.magic == FATX_CIGAM) fatxSb = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
+            if(fatxSb.magic == FATX_CIGAM)
+            {
+                fatxSb    = Marshal.ByteArrayToStructureLittleEndian<Superblock>(sector);
+                bigEndian = false;
+            }
 
             if(fatxSb.magic != FATX_MAGIC) return;
 
@@ -79,12 +85,21 @@ namespace DiscImageChef.Filesystems.FATX
               .AppendLine();
             sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
 
+            string volumeLabel = StringHandlers.CToString(fatxSb.volumeLabel,
+                                                          bigEndian ? Encoding.BigEndianUnicode : Encoding.Unicode,
+                                                          true);
+
+            sb.AppendFormat("Volume label: {0}", volumeLabel).AppendLine();
+
             information = sb.ToString();
 
             XmlFsType = new FileSystemType
             {
-                Type        = "FATX filesystem",
-                ClusterSize = (int)(fatxSb.sectorsPerCluster * imagePlugin.Info.SectorSize)
+                Type = "FATX filesystem",
+                ClusterSize =
+                    (int)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
+                          imagePlugin.Info.SectorSize),
+                VolumeName = volumeLabel
             };
             XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
                                         (ulong)XmlFsType.ClusterSize);

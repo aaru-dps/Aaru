@@ -39,11 +39,13 @@ namespace DiscImageChef.Filesystems.FATX
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Superblock
         {
-            public uint   magic;
-            public uint   id;
-            public uint   sectorsPerCluster;
-            public uint   rootDirectoryCluster;
-            public ushort unknown;
+            public uint magic;
+            public uint id;
+            public uint sectorsPerCluster;
+            public uint rootDirectoryCluster;
+            // TODO: Undetermined size
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public byte[] volumeLabel;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
