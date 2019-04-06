@@ -66,12 +66,17 @@ namespace DiscImageChef.Filesystems.FATX
 
             if(fatxSb.magic != FATX_MAGIC) return;
 
+            int logicalSectorsPerPhysicalSectors = partition.Offset == 0 ? 8 : 1;
+
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("FATX filesystem");
             sb.AppendFormat("Filesystem id {0}", fatxSb.id).AppendLine();
+            sb.AppendFormat("{0} logical sectors ({1} bytes) per physical sector", logicalSectorsPerPhysicalSectors,
+                            logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).AppendLine();
             sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
-                            fatxSb.sectorsPerCluster * imagePlugin.Info.SectorSize).AppendLine();
+                            fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize)
+              .AppendLine();
             sb.AppendFormat("Root directory starts on cluster {0}", fatxSb.rootDirectoryCluster).AppendLine();
 
             information = sb.ToString();
