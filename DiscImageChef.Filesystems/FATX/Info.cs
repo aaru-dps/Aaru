@@ -77,7 +77,6 @@ namespace DiscImageChef.Filesystems.FATX
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine("FATX filesystem");
-            sb.AppendFormat("Filesystem id {0}", fatxSb.id).AppendLine();
             sb.AppendFormat("{0} logical sectors ({1} bytes) per physical sector", logicalSectorsPerPhysicalSectors,
                             logicalSectorsPerPhysicalSectors * imagePlugin.Info.SectorSize).AppendLine();
             sb.AppendFormat("{0} sectors ({1} bytes) per cluster", fatxSb.sectorsPerCluster,
@@ -90,6 +89,7 @@ namespace DiscImageChef.Filesystems.FATX
                                                           true);
 
             sb.AppendFormat("Volume label: {0}", volumeLabel).AppendLine();
+            sb.AppendFormat("Volume serial: {0:X8}", fatxSb.id).AppendLine();
 
             information = sb.ToString();
 
@@ -99,7 +99,8 @@ namespace DiscImageChef.Filesystems.FATX
                 ClusterSize =
                     (int)(fatxSb.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
                           imagePlugin.Info.SectorSize),
-                VolumeName = volumeLabel
+                VolumeName   = volumeLabel,
+                VolumeSerial = $"{fatxSb.id:X8}"
             };
             XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
                                         (ulong)XmlFsType.ClusterSize);
