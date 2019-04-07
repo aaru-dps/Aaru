@@ -38,6 +38,12 @@ namespace DiscImageChef.Filesystems.FATX
 {
     public partial class XboxFatPlugin
     {
-        public Errno ReadDir(string path, out List<string> contents) => throw new NotImplementedException();
+        public Errno ReadDir(string path, out List<string> contents)
+        {
+            contents = null;
+            if(!mounted) return Errno.AccessDenied;
+
+            throw new NotImplementedException();
+        }
     }
 }

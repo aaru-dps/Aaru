@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
@@ -41,6 +42,18 @@ namespace DiscImageChef.Filesystems.FATX
 {
     public partial class XboxFatPlugin : IReadOnlyFilesystem
     {
+        ushort[]       fat16;
+        uint[]         fat32;
+        ulong          fatStartSector;
+        ulong          firstClusterSector;
+        IMediaImage    imagePlugin;
+        bool           littleEndian;
+        bool           mounted;
+        Partition      partition;
+        uint           sectorsPerCluster;
+        FileSystemInfo stat;
+
+        Superblock            superblock;
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "FATX Filesystem Plugin";
