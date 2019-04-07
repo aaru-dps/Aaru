@@ -159,11 +159,55 @@ namespace DiscImageChef.Filesystems.FATX
             this.partition     = partition;
             this.imagePlugin   = imagePlugin;
             firstClusterSector = fatStartSector + fatSize;
+            bytesPerCluster    = sectorsPerCluster * imagePlugin.Info.SectorSize;
 
             DicConsole.DebugWriteLine("Xbox FAT plugin", "sectorsPerCluster = {0}",  sectorsPerCluster);
+            DicConsole.DebugWriteLine("Xbox FAT plugin", "bytesPerCluster = {0}",    bytesPerCluster);
             DicConsole.DebugWriteLine("Xbox FAT plugin", "firstClusterSector = {0}", firstClusterSector);
 
-            throw new NotImplementedException();
+            uint[] rootDirectoryClusters = GetClusters(superblock.rootDirectoryCluster);
+
+            if(rootDirectoryClusters is null) return Errno.InvalidArgument;
+
+            byte[] rootDirectoryBuffer = new byte[bytesPerCluster * rootDirectoryClusters.Length];
+
+            DicConsole.DebugWriteLine("Xbox FAT plugin", "Reading root directory");
+            for(int i = 0; i < rootDirectoryClusters.Length; i++)
+            {
+                buffer =
+                    imagePlugin.ReadSectors(firstClusterSector + (rootDirectoryClusters[i] - 1) * sectorsPerCluster,
+                                            sectorsPerCluster);
+                Array.Copy(buffer, 0, rootDirectoryBuffer, i * bytesPerCluster, bytesPerCluster);
+            }
+
+            rootDirectory = new Dictionary<string, DirectoryEntry>();
+
+            int pos = 0;
+            while(pos < rootDirectoryBuffer.Length)
+            {
+                DirectoryEntry entry = littleEndian
+                                           ? Marshal
+                                              .ByteArrayToStructureLittleEndian<DirectoryEntry
+                                               >(rootDirectoryBuffer, pos, Marshal.SizeOf<DirectoryEntry>())
+                                           : Marshal.ByteArrayToStructureBigEndian<DirectoryEntry>(rootDirectoryBuffer,
+                                                                                                   pos,
+                                                                                                   Marshal
+                                                                                                      .SizeOf<
+                                                                                                           DirectoryEntry
+                                                                                                       >());
+
+                pos += Marshal.SizeOf<DirectoryEntry>();
+
+                if(entry.filenameSize == UNUSED_DIRENTRY || entry.filenameSize == FINISHED_DIRENTRY) break;
+
+                if(entry.filenameSize == DELETED_DIRENTRY || entry.filenameSize > MAX_FILENAME) continue;
+
+                string filename = Encoding.GetString(entry.filename, 0, entry.filenameSize);
+
+                rootDirectory.Add(filename, entry);
+            }
+
+            return Errno.NoError;
         }
 
         public Errno Unmount()

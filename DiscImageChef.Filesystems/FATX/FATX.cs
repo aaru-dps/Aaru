@@ -42,16 +42,18 @@ namespace DiscImageChef.Filesystems.FATX
 {
     public partial class XboxFatPlugin : IReadOnlyFilesystem
     {
-        ushort[]       fat16;
-        uint[]         fat32;
-        ulong          fatStartSector;
-        ulong          firstClusterSector;
-        IMediaImage    imagePlugin;
-        bool           littleEndian;
-        bool           mounted;
-        Partition      partition;
-        uint           sectorsPerCluster;
-        FileSystemInfo stat;
+        uint                               bytesPerCluster;
+        ushort[]                           fat16;
+        uint[]                             fat32;
+        ulong                              fatStartSector;
+        ulong                              firstClusterSector;
+        IMediaImage                        imagePlugin;
+        bool                               littleEndian;
+        bool                               mounted;
+        Partition                          partition;
+        Dictionary<string, DirectoryEntry> rootDirectory;
+        uint                               sectorsPerCluster;
+        FileSystemInfo                     stat;
 
         Superblock            superblock;
         public FileSystemType XmlFsType { get; private set; }

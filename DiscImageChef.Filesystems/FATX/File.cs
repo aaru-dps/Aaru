@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.Filesystems.FATX
@@ -66,6 +67,36 @@ namespace DiscImageChef.Filesystems.FATX
             if(!mounted) return Errno.AccessDenied;
 
             throw new NotImplementedException();
+        }
+
+        uint[] GetClusters(uint startCluster)
+        {
+            if(startCluster == 0) return null;
+
+            if(fat16 is null)
+            {
+                if(startCluster >= fat32.Length) return null;
+            }
+            else if(startCluster >= fat16.Length) return null;
+
+            List<uint> clusters = new List<uint>();
+
+            uint nextCluster = startCluster;
+
+            if(fat16 is null)
+                while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_BAD)
+                {
+                    clusters.Add(nextCluster);
+                    nextCluster = fat32[nextCluster];
+                }
+            else
+                while(nextCluster > 0 && nextCluster <= FAT16_BAD)
+                {
+                    clusters.Add(nextCluster);
+                    nextCluster = fat16[nextCluster];
+                }
+
+            return clusters.ToArray();
         }
     }
 }
