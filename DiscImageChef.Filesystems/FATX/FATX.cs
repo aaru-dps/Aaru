@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using Schemas;
@@ -45,6 +44,7 @@ namespace DiscImageChef.Filesystems.FATX
     {
         uint                                                   bytesPerCluster;
         CultureInfo                                            cultureInfo;
+        bool                                                   debug;
         Dictionary<string, Dictionary<string, DirectoryEntry>> directoryCache;
         ushort[]                                               fat16;
         uint[]                                                 fat32;
@@ -53,7 +53,6 @@ namespace DiscImageChef.Filesystems.FATX
         IMediaImage                                            imagePlugin;
         bool                                                   littleEndian;
         bool                                                   mounted;
-        Partition                                              partition;
         Dictionary<string, DirectoryEntry>                     rootDirectory;
         uint                                                   sectorsPerCluster;
         FileSystemInfo                                         stat;

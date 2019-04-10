@@ -51,6 +51,8 @@ namespace DiscImageChef.Filesystems.FATX
         {
             Encoding     = Encoding.GetEncoding("iso-8859-15");
             littleEndian = true;
+            if(options == null) options = GetDefaultOptions();
+            if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
 
             if(imagePlugin.Info.SectorSize < 512) return Errno.InvalidArgument;
 
@@ -157,7 +159,6 @@ namespace DiscImageChef.Filesystems.FATX
             }
 
             sectorsPerCluster  = (uint)(superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors);
-            this.partition     = partition;
             this.imagePlugin   = imagePlugin;
             firstClusterSector = fatStartSector + fatSize;
             bytesPerCluster    = sectorsPerCluster * imagePlugin.Info.SectorSize;
@@ -221,7 +222,6 @@ namespace DiscImageChef.Filesystems.FATX
             fat16       = null;
             fat32       = null;
             imagePlugin = null;
-            partition   = new Partition();
             mounted     = false;
 
             return Errno.NoError;

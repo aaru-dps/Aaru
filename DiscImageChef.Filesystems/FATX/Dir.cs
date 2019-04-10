@@ -59,7 +59,7 @@ namespace DiscImageChef.Filesystems.FATX
                 return Errno.NoError;
             }
 
-            string[] pieces = cutPath.Split('/');
+            string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, DirectoryEntry> entry =
                 rootDirectory.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[0]);
