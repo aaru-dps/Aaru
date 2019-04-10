@@ -229,9 +229,12 @@ namespace DiscImageChef.Filesystems.FATX
 
         public Errno StatFs(out FileSystemInfo stat)
         {
+            stat = null;
+            if(!mounted) return Errno.AccessDenied;
+
             stat = this.stat;
 
-            return !mounted ? Errno.AccessDenied : Errno.NoError;
+            return Errno.NoError;
         }
     }
 }
