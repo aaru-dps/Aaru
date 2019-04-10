@@ -55,9 +55,9 @@ namespace DiscImageChef.Filesystems.FATX
         bool                                                   mounted;
         Dictionary<string, DirectoryEntry>                     rootDirectory;
         uint                                                   sectorsPerCluster;
-        FileSystemInfo                                         stat;
+        FileSystemInfo                                         statfs;
+        Superblock                                             superblock;
 
-        Superblock            superblock;
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "FATX Filesystem Plugin";

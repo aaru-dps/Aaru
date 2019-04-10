@@ -51,7 +51,7 @@ namespace DiscImageChef.Filesystems.FATX
                 return Errno.NoError;
             }
 
-            string cutPath = path.StartsWith("/") ? path.Substring(0).ToLower(cultureInfo) : path.ToLower(cultureInfo);
+            string cutPath = path.StartsWith("/") ? path.Substring(1).ToLower(cultureInfo) : path.ToLower(cultureInfo);
 
             if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
             {
@@ -83,18 +83,7 @@ namespace DiscImageChef.Filesystems.FATX
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
                 uint currentCluster = entry.Value.firstCluster;
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
-                {
-                    if(p == pieces.Length - 1) break;
-
-                    entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[p]);
-
-                    if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
-
-                    if(!entry.Value.attributes.HasFlag(Attributes.Directory)) return Errno.NotDirectory;
-
-                    continue;
-                }
+                if(directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
                 uint[] clusters = GetClusters(currentCluster);
 
