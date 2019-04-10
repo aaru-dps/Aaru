@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
@@ -42,18 +43,20 @@ namespace DiscImageChef.Filesystems.FATX
 {
     public partial class XboxFatPlugin : IReadOnlyFilesystem
     {
-        uint                               bytesPerCluster;
-        ushort[]                           fat16;
-        uint[]                             fat32;
-        ulong                              fatStartSector;
-        ulong                              firstClusterSector;
-        IMediaImage                        imagePlugin;
-        bool                               littleEndian;
-        bool                               mounted;
-        Partition                          partition;
-        Dictionary<string, DirectoryEntry> rootDirectory;
-        uint                               sectorsPerCluster;
-        FileSystemInfo                     stat;
+        uint                                                   bytesPerCluster;
+        CultureInfo                                            cultureInfo;
+        Dictionary<string, Dictionary<string, DirectoryEntry>> directoryCache;
+        ushort[]                                               fat16;
+        uint[]                                                 fat32;
+        ulong                                                  fatStartSector;
+        ulong                                                  firstClusterSector;
+        IMediaImage                                            imagePlugin;
+        bool                                                   littleEndian;
+        bool                                                   mounted;
+        Partition                                              partition;
+        Dictionary<string, DirectoryEntry>                     rootDirectory;
+        uint                                                   sectorsPerCluster;
+        FileSystemInfo                                         stat;
 
         Superblock            superblock;
         public FileSystemType XmlFsType { get; private set; }

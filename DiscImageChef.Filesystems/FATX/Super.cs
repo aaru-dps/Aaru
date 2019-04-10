@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -206,6 +207,9 @@ namespace DiscImageChef.Filesystems.FATX
 
                 rootDirectory.Add(filename, entry);
             }
+
+            cultureInfo    = new CultureInfo("en-US", false);
+            directoryCache = new Dictionary<string, Dictionary<string, DirectoryEntry>>();
 
             return Errno.NoError;
         }
