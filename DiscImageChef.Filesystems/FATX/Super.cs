@@ -93,7 +93,7 @@ namespace DiscImageChef.Filesystems.FATX
             XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
                                         (ulong)XmlFsType.ClusterSize);
 
-            stat = new FileSystemInfo
+            statfs = new FileSystemInfo
             {
                 Blocks         = XmlFsType.Clusters,
                 FilenameLength = MAX_FILENAME,
@@ -108,10 +108,10 @@ namespace DiscImageChef.Filesystems.FATX
             DicConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.ClusterSize",  XmlFsType.ClusterSize);
             DicConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeName",   XmlFsType.VolumeName);
             DicConsole.DebugWriteLine("Xbox FAT plugin", "XmlFsType.VolumeSerial", XmlFsType.VolumeSerial);
-            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.Blocks",            stat.Blocks);
-            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.FilenameLength",    stat.FilenameLength);
-            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.Id",                stat.Id);
-            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.Type",              stat.Type);
+            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.Blocks",            statfs.Blocks);
+            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.FilenameLength",    statfs.FilenameLength);
+            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.Id",                statfs.Id);
+            DicConsole.DebugWriteLine("Xbox FAT plugin", "stat.Type",              statfs.Type);
 
             byte[] buffer;
             fatStartSector = FAT_START / imagePlugin.Info.SectorSize + partition.Start;
@@ -119,12 +119,12 @@ namespace DiscImageChef.Filesystems.FATX
 
             DicConsole.DebugWriteLine("Xbox FAT plugin", "fatStartSector", fatStartSector);
 
-            if(stat.Blocks > MAX_XFAT16_CLUSTERS)
+            if(statfs.Blocks > MAX_XFAT16_CLUSTERS)
             {
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT32");
 
-                fatSize = (uint)(stat.Blocks * sizeof(uint) / imagePlugin.Info.SectorSize);
-                if((uint)(stat.Blocks        * sizeof(uint) % imagePlugin.Info.SectorSize) > 0) fatSize++;
+                fatSize = (uint)(statfs.Blocks * sizeof(uint) / imagePlugin.Info.SectorSize);
+                if((uint)(statfs.Blocks        * sizeof(uint) % imagePlugin.Info.SectorSize) > 0) fatSize++;
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 
                 buffer = imagePlugin.ReadSectors(fatStartSector, fatSize);
@@ -142,8 +142,8 @@ namespace DiscImageChef.Filesystems.FATX
             {
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT16");
 
-                fatSize = (uint)(stat.Blocks * sizeof(ushort) / imagePlugin.Info.SectorSize);
-                if((uint)(stat.Blocks        * sizeof(ushort) % imagePlugin.Info.SectorSize) > 0) fatSize++;
+                fatSize = (uint)(statfs.Blocks * sizeof(ushort) / imagePlugin.Info.SectorSize);
+                if((uint)(statfs.Blocks        * sizeof(ushort) % imagePlugin.Info.SectorSize) > 0) fatSize++;
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 
                 buffer = imagePlugin.ReadSectors(fatStartSector, fatSize);
@@ -232,7 +232,7 @@ namespace DiscImageChef.Filesystems.FATX
             stat = null;
             if(!mounted) return Errno.AccessDenied;
 
-            stat = this.stat;
+            stat = statfs;
 
             return Errno.NoError;
         }
