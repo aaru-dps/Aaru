@@ -143,6 +143,7 @@ Supported file systems for read-only operations
 * Apple Macintosh File System (MFS)
 * CP/M file system
 * U.C.S.D Pascal file system
+* Xbox filesystems
 
 Supported file systems for identification and information only
 ==============================================================
@@ -212,7 +213,6 @@ Supported file systems for identification and information only
 * UnixWare boot file system
 * Veritas file system
 * VMware file system (VMFS)
-* Xbox filesystems
 * Xenix file system
 * Xia filesystem
 * Zettabyte File System (ZFS)
