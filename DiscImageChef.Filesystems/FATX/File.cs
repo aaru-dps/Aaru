@@ -32,8 +32,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DiscImageChef.CommonTypes.Structs;
+using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
 namespace DiscImageChef.Filesystems.FATX
 {
@@ -65,7 +67,39 @@ namespace DiscImageChef.Filesystems.FATX
         {
             if(!mounted) return Errno.AccessDenied;
 
-            throw new NotImplementedException();
+            Errno err = Stat(path, out FileEntryInfo stat);
+
+            if(err != Errno.NoError) return err;
+
+            if(offset >= stat.Length) return Errno.InvalidArgument;
+
+            if(size + offset >= stat.Length) size = stat.Length - offset;
+
+            uint[] clusters = GetClusters((uint)stat.Inode);
+
+            long firstCluster    = offset                   / bytesPerCluster;
+            long offsetInCluster = offset                   % bytesPerCluster;
+            long sizeInClusters  = (size + offsetInCluster) / bytesPerCluster;
+            if((size + offsetInCluster) % bytesPerCluster > 0) sizeInClusters++;
+
+            MemoryStream ms = new MemoryStream();
+
+            for(int i = 0; i < sizeInClusters; i++)
+            {
+                if(i + firstCluster >= clusters.Length) return Errno.InvalidArgument;
+
+                byte[] buffer =
+                    imagePlugin.ReadSectors(firstClusterSector + (clusters[i + firstCluster] - 1) * sectorsPerCluster,
+                                            sectorsPerCluster);
+
+                ms.Write(buffer, 0, buffer.Length);
+            }
+
+            ms.Position = offsetInCluster;
+            buf         = new byte[size];
+            ms.Read(buf, 0, (int)size);
+
+            return Errno.NoError;
         }
 
         public Errno Stat(string path, out FileEntryInfo stat)
@@ -163,7 +197,7 @@ namespace DiscImageChef.Filesystems.FATX
             entry = new DirectoryEntry();
 
             string cutPath =
-                path.StartsWith("/") ? path.Substring(0).ToLower(cultureInfo) : path.ToLower(cultureInfo);
+                path.StartsWith("/") ? path.Substring(1).ToLower(cultureInfo) : path.ToLower(cultureInfo);
             string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
             if(pieces.Length == 0) return Errno.InvalidArgument;
