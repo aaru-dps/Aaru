@@ -68,15 +68,14 @@ namespace DiscImageChef
                             len++;
                             break;
                         }
-
-                        //                      if((i + 1) == CString.Length)
-                        //                            break;
                     }
                     else
                         break;
 
                 len++;
             }
+
+            if(twoBytes && len % 2 > 0) len--;
 
             byte[] dest = new byte[len];
             Array.Copy(CString, start, dest, 0, len);
