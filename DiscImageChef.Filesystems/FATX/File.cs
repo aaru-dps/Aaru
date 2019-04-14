@@ -147,6 +147,8 @@ namespace DiscImageChef.Filesystems.FATX
                                             .AddYears(20)
             };
 
+            if(entry.length % bytesPerCluster > 0) stat.Blocks++;
+
             if(entry.attributes.HasFlag(Attributes.Directory))
             {
                 stat.Attributes |= FileAttributes.Directory;
