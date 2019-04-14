@@ -41,6 +41,7 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using Mono.Options;
+using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
 namespace DiscImageChef.Commands
 {
@@ -335,6 +336,8 @@ namespace DiscImageChef.Commands
 
         void ExtractFilesInDir(string path, IReadOnlyFilesystem fs, string volumeName)
         {
+            if(path.StartsWith("/")) path = path.Substring(1);
+
             Errno error = fs.ReadDir(path, out List<string> directory);
             if(error != Errno.NoError)
             {
@@ -344,26 +347,64 @@ namespace DiscImageChef.Commands
 
             foreach(string entry in directory)
             {
-                error = fs.Stat(entry, out FileEntryInfo stat);
+                error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
                 if(error == Errno.NoError)
                 {
-                    string     outputPath;
+                    string outputPath;
+
+                    if(stat.Attributes.HasFlag(FileAttributes.Directory))
+                    {
+                        Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type, volumeName));
+
+                        outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
+
+                        Directory.CreateDirectory(outputPath);
+
+                        DicConsole.WriteLine("Created subdirectory at {0}", outputPath);
+
+                        ExtractFilesInDir(path + "/" + entry, fs, volumeName);
+
+                        DirectoryInfo di = new DirectoryInfo(outputPath);
+
+                        #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                        try { di.CreationTimeUtc = stat.CreationTimeUtc; }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        try { di.LastWriteTimeUtc = stat.LastWriteTimeUtc; }
+                        catch
+                        {
+                            // ignored
+                        }
+
+                        try { di.LastAccessTimeUtc = stat.AccessTimeUtc; }
+                        catch
+                        {
+                            // ignored
+                        }
+                        #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+
+                        continue;
+                    }
+
                     FileStream outputFile;
                     if(extractXattrs)
                     {
-                        error = fs.ListXAttr(entry, out List<string> xattrs);
+                        error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
                         if(error == Errno.NoError)
                             foreach(string xattr in xattrs)
                             {
                                 byte[] xattrBuf = new byte[0];
-                                error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                                error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
                                 if(error != Errno.NoError) continue;
 
                                 Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type, volumeName,
                                                                        ".xattrs", xattr));
 
                                 outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, ".xattrs", xattr,
-                                                          entry);
+                                                          path, entry);
 
                                 if(!File.Exists(outputPath))
                                 {
@@ -402,13 +443,13 @@ namespace DiscImageChef.Commands
 
                     Directory.CreateDirectory(Path.Combine(outputDir, fs.XmlFsType.Type, volumeName));
 
-                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, entry);
+                    outputPath = Path.Combine(outputDir, fs.XmlFsType.Type, volumeName, path, entry);
 
                     if(!File.Exists(outputPath))
                     {
                         byte[] outBuf = new byte[0];
 
-                        error = fs.Read(entry, 0, stat.Length, ref outBuf);
+                        error = fs.Read(path + "/" + entry, 0, stat.Length, ref outBuf);
 
                         if(error == Errno.NoError)
                         {
