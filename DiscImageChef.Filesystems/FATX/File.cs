@@ -81,6 +81,8 @@ namespace DiscImageChef.Filesystems.FATX
 
             if(err != Errno.NoError) return err;
 
+            if(stat.Attributes.HasFlag(FileAttributes.Directory) && !debug) return Errno.IsDirectory;
+
             if(offset >= stat.Length) return Errno.InvalidArgument;
 
             if(size + offset >= stat.Length) size = stat.Length - offset;
