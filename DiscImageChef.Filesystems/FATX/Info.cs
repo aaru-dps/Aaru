@@ -72,7 +72,7 @@ namespace DiscImageChef.Filesystems.FATX
 
             if(fatxSb.magic != FATX_MAGIC) return;
 
-            int logicalSectorsPerPhysicalSectors = partition.Offset == 0 ? 8 : 1;
+            int logicalSectorsPerPhysicalSectors = partition.Offset == 0 && !bigEndian ? 8 : 1;
 
             StringBuilder sb = new StringBuilder();
 
