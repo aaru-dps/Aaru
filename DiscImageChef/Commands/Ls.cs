@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -318,9 +319,9 @@ namespace DiscImageChef.Commands
         {
             if(path.StartsWith("/")) path = path.Substring(1);
 
-            DicConsole.WriteLine("Directory: {0}", path);
+            DicConsole.WriteLine(string.IsNullOrEmpty(path) ? "Root directory" : $"Directory: {path}");
 
-            Errno error = fs.ReadDir(path, out List<string> rootDir);
+            Errno error = fs.ReadDir(path, out List<string> directory);
 
             if(error != Errno.NoError)
             {
@@ -328,40 +329,54 @@ namespace DiscImageChef.Commands
                 return;
             }
 
-            List<string> subdirectories = new List<string>();
+            Dictionary<string, FileEntryInfo> stats = new Dictionary<string, FileEntryInfo>();
 
-            foreach(string entry in rootDir)
+            foreach(string entry in directory)
             {
-                error = fs.Stat(path + "/" + entry,
-                                out FileEntryInfo stat);
-                if(stat.Attributes.HasFlag(FileAttributes.Directory)) subdirectories.Add(path + "/" + entry);
+                error = fs.Stat(path + "/" + entry, out FileEntryInfo stat);
 
+                stats.Add(entry, stat);
+            }
+
+            foreach(KeyValuePair<string, FileEntryInfo> entry in
+                stats.OrderBy(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == false))
                 if(longFormat)
                 {
-                    if(error == Errno.NoError)
+                    if(entry.Value != null)
                     {
-                        DicConsole.WriteLine("{0}\t{1}\t{2} bytes\t{3}", stat.CreationTimeUtc, stat.Inode, stat.Length,
-                                             entry);
+                        if(entry.Value.Attributes.HasFlag(FileAttributes.Directory))
+                            DicConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, -20}  {2}", entry.Value.CreationTimeUtc,
+                                                 "<DIR>", entry.Key);
+                        else
+                            DicConsole.WriteLine("{0, 10:d} {0, 12:T}  {1, 6}{2, 14:##,#}  {3}",
+                                                 entry.Value.CreationTimeUtc, entry.Value.Inode, entry.Value.Length,
+                                                 entry.Key);
 
-                        error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
+                        error = fs.ListXAttr(path + "/" + entry.Key, out List<string> xattrs);
                         if(error != Errno.NoError) continue;
 
                         foreach(string xattr in xattrs)
                         {
                             byte[] xattrBuf = new byte[0];
-                            error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
+                            error = fs.GetXattr(path + "/" + entry.Key, xattr, ref xattrBuf);
                             if(error == Errno.NoError)
-                                DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr, xattrBuf.Length);
+                                DicConsole.WriteLine("\t\t{0}\t{1:##,#}", xattr, xattrBuf.Length);
                         }
                     }
-                    else DicConsole.WriteLine("{0}", entry);
+                    else DicConsole.WriteLine("{0, 47}{1}", string.Empty, entry.Key);
                 }
-                else DicConsole.WriteLine("{0}", entry);
-            }
+                else
+                {
+                    if(entry.Value != null && entry.Value.Attributes.HasFlag(FileAttributes.Directory))
+                        DicConsole.WriteLine("{0}/", entry.Key);
+                    else DicConsole.WriteLine("{0}", entry.Key);
+                }
 
             DicConsole.WriteLine();
 
-            foreach(string subdirectory in subdirectories) ListFilesInDir(subdirectory, fs);
+            foreach(KeyValuePair<string, FileEntryInfo> subdirectory in
+                stats.Where(e => e.Value?.Attributes.HasFlag(FileAttributes.Directory) == true))
+                ListFilesInDir(path + "/" + subdirectory.Key, fs);
         }
     }
 }
