@@ -211,6 +211,7 @@ namespace DiscImageChef.Filesystems.FATX
 
             cultureInfo    = new CultureInfo("en-US", false);
             directoryCache = new Dictionary<string, Dictionary<string, DirectoryEntry>>();
+            mounted        = true;
 
             return Errno.NoError;
         }
