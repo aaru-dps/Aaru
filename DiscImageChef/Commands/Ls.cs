@@ -318,6 +318,8 @@ namespace DiscImageChef.Commands
         {
             if(path.StartsWith("/")) path = path.Substring(1);
 
+            DicConsole.WriteLine("Directory: {0}", path);
+
             Errno error = fs.ReadDir(path, out List<string> rootDir);
 
             if(error != Errno.NoError)
@@ -326,31 +328,40 @@ namespace DiscImageChef.Commands
                 return;
             }
 
+            List<string> subdirectories = new List<string>();
+
             foreach(string entry in rootDir)
+            {
+                error = fs.Stat(path + "/" + entry,
+                                out FileEntryInfo stat);
+                if(stat.Attributes.HasFlag(FileAttributes.Directory)) subdirectories.Add(path + "/" + entry);
+
                 if(longFormat)
                 {
-                    error = fs.Stat(entry, out FileEntryInfo stat);
                     if(error == Errno.NoError)
                     {
-                        DicConsole.WriteLine("{0}\t{1}\t{2} bytes\t{3}", stat.CreationTimeUtc,
-                                             stat.Inode, stat.Length, entry);
+                        DicConsole.WriteLine("{0}\t{1}\t{2} bytes\t{3}", stat.CreationTimeUtc, stat.Inode, stat.Length,
+                                             entry);
 
-                        error = fs.ListXAttr(entry, out List<string> xattrs);
+                        error = fs.ListXAttr(path + "/" + entry, out List<string> xattrs);
                         if(error != Errno.NoError) continue;
 
                         foreach(string xattr in xattrs)
                         {
                             byte[] xattrBuf = new byte[0];
-                            error = fs.GetXattr(entry, xattr, ref xattrBuf);
+                            error = fs.GetXattr(path + "/" + entry, xattr, ref xattrBuf);
                             if(error == Errno.NoError)
-                                DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr,
-                                                     xattrBuf.Length);
+                                DicConsole.WriteLine("\t\t{0}\t{1} bytes", xattr, xattrBuf.Length);
                         }
                     }
                     else DicConsole.WriteLine("{0}", entry);
                 }
-                else
-                    DicConsole.WriteLine("{0}", entry);
+                else DicConsole.WriteLine("{0}", entry);
+            }
+
+            DicConsole.WriteLine();
+
+            foreach(string subdirectory in subdirectories) ListFilesInDir(subdirectory, fs);
         }
     }
 }
