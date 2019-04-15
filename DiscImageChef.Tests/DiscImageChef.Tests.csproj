@@ -144,6 +144,7 @@
     <Compile Include="Images\D88.cs" />
     <Compile Include="Images\DART.cs" />
     <Compile Include="Images\DiskCopy42.cs" />
+    <Compile Include="Partitions\Xbox.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
