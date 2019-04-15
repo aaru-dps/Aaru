@@ -2062,6 +2062,7 @@
           <e p="FAT12.cs" t="Include" />
           <e p="FAT16.cs" t="Include" />
           <e p="FAT32.cs" t="Include" />
+          <e p="FATX.cs" t="Include" />
           <e p="HAMMER.cs" t="Include" />
           <e p="HFS.cs" t="Include" />
           <e p="HFSPlus.cs" t="Include" />

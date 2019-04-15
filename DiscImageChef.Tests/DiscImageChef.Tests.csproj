@@ -55,6 +55,7 @@
     <Compile Include="Checksums\SpamSum.cs" />
     <Compile Include="Checksums\SHA512.cs" />
     <Compile Include="Checksums\Adler32.cs" />
+    <Compile Include="Filesystems\FATX.cs" />
     <Compile Include="Filesystems\HPOFS.cs" />
     <Compile Include="Filesystems\Xia.cs" />
     <Compile Include="Filters\GZip.cs" />
