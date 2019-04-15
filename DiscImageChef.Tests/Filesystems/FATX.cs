@@ -359,48 +359,47 @@ namespace DiscImageChef.Tests.Filesystems
             Assert.AreEqual(Errno.InvalidArgument, error);
         }
 
-        // TODO: The dates look incorrect
         [Test]
         public void Stat()
         {
             Errno error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000", out FileEntryInfo stat);
-            Assert.AreEqual(Errno.NoError,                                          error);
-            Assert.AreEqual(new DateTime(2055, 1, 23, 8, 25, 50, DateTimeKind.Utc), stat.AccessTimeUtc);
-            Assert.AreEqual(FileAttributes.Directory,                               stat.Attributes);
-            Assert.AreEqual(DateTime.MinValue,                                      stat.BackupTimeUtc);
-            Assert.AreEqual(1,                                                      stat.Blocks);
-            Assert.AreEqual(16384,                                                  stat.BlockSize);
-            Assert.AreEqual(new DateTime(2055, 1, 23, 8, 25, 50, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(0,                                                      stat.DeviceNo);
-            Assert.AreEqual(0,                                                      stat.GID);
-            Assert.AreEqual(12,                                                     stat.Inode);
-            Assert.AreEqual(new DateTime(2055, 1, 23, 8, 25, 50, DateTimeKind.Utc), stat.LastWriteTimeUtc);
-            Assert.AreEqual(16384,                                                  stat.Length);
-            Assert.AreEqual(1,                                                      stat.Links);
-            Assert.AreEqual(365,                                                    stat.Mode);
-            Assert.AreEqual(DateTime.MinValue,                                      stat.StatusChangeTimeUtc);
-            Assert.AreEqual(0,                                                      stat.UID);
+            Assert.AreEqual(Errno.NoError,                                           error);
+            Assert.AreEqual(new DateTime(2013, 9, 25, 12, 49, 46, DateTimeKind.Utc), stat.AccessTimeUtc);
+            Assert.AreEqual(FileAttributes.Directory,                                stat.Attributes);
+            Assert.AreEqual(DateTime.MinValue,                                       stat.BackupTimeUtc);
+            Assert.AreEqual(1,                                                       stat.Blocks);
+            Assert.AreEqual(16384,                                                   stat.BlockSize);
+            Assert.AreEqual(new DateTime(2013, 9, 25, 12, 49, 46, DateTimeKind.Utc), stat.CreationTimeUtc);
+            Assert.AreEqual(0,                                                       stat.DeviceNo);
+            Assert.AreEqual(0,                                                       stat.GID);
+            Assert.AreEqual(12,                                                      stat.Inode);
+            Assert.AreEqual(new DateTime(2013, 9, 25, 12, 49, 46, DateTimeKind.Utc), stat.LastWriteTimeUtc);
+            Assert.AreEqual(16384,                                                   stat.Length);
+            Assert.AreEqual(1,                                                       stat.Links);
+            Assert.AreEqual(365,                                                     stat.Mode);
+            Assert.AreEqual(DateTime.MinValue,                                       stat.StatusChangeTimeUtc);
+            Assert.AreEqual(0,                                                       stat.UID);
 
             error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache", out stat);
             Assert.AreEqual(Errno.NoSuchFile, error);
 
             error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", out stat);
-            Assert.AreEqual(Errno.NoError,                                          error);
-            Assert.AreEqual(new DateTime(2082, 2, 24, 9, 11, 36, DateTimeKind.Utc), stat.AccessTimeUtc);
-            Assert.AreEqual(FileAttributes.None,                                    stat.Attributes);
-            Assert.AreEqual(DateTime.MinValue,                                      stat.BackupTimeUtc);
-            Assert.AreEqual(6,                                                      stat.Blocks);
-            Assert.AreEqual(16384,                                                  stat.BlockSize);
-            Assert.AreEqual(new DateTime(2082, 2, 24, 9, 11, 36, DateTimeKind.Utc), stat.CreationTimeUtc);
-            Assert.AreEqual(0,                                                      stat.DeviceNo);
-            Assert.AreEqual(0,                                                      stat.GID);
-            Assert.AreEqual(18,                                                     stat.Inode);
-            Assert.AreEqual(new DateTime(2082, 2, 24, 9, 11, 36, DateTimeKind.Utc), stat.LastWriteTimeUtc);
-            Assert.AreEqual(86016,                                                  stat.Length);
-            Assert.AreEqual(1,                                                      stat.Links);
-            Assert.AreEqual(292,                                                    stat.Mode);
-            Assert.AreEqual(DateTime.MinValue,                                      stat.StatusChangeTimeUtc);
-            Assert.AreEqual(0,                                                      stat.UID);
+            Assert.AreEqual(Errno.NoError,                                            error);
+            Assert.AreEqual(new DateTime(2016, 11, 18, 20, 34, 48, DateTimeKind.Utc), stat.AccessTimeUtc);
+            Assert.AreEqual(FileAttributes.None,                                      stat.Attributes);
+            Assert.AreEqual(DateTime.MinValue,                                        stat.BackupTimeUtc);
+            Assert.AreEqual(6,                                                        stat.Blocks);
+            Assert.AreEqual(16384,                                                    stat.BlockSize);
+            Assert.AreEqual(new DateTime(2016, 11, 18, 20, 34, 48, DateTimeKind.Utc), stat.CreationTimeUtc);
+            Assert.AreEqual(0,                                                        stat.DeviceNo);
+            Assert.AreEqual(0,                                                        stat.GID);
+            Assert.AreEqual(18,                                                       stat.Inode);
+            Assert.AreEqual(new DateTime(2016, 11, 18, 20, 34, 48, DateTimeKind.Utc), stat.LastWriteTimeUtc);
+            Assert.AreEqual(86016,                                                    stat.Length);
+            Assert.AreEqual(1,                                                        stat.Links);
+            Assert.AreEqual(292,                                                      stat.Mode);
+            Assert.AreEqual(DateTime.MinValue,                                        stat.StatusChangeTimeUtc);
+            Assert.AreEqual(0,                                                        stat.UID);
         }
 
         [Test]

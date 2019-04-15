@@ -145,20 +145,28 @@ namespace DiscImageChef.Filesystems.FATX
 
             stat = new FileEntryInfo
             {
-                Attributes   = new FileAttributes(),
-                Blocks       = entry.length / bytesPerCluster,
-                BlockSize    = bytesPerCluster,
-                DeviceNo     = 0,
-                GID          = 0,
-                Length       = entry.length,
-                Inode        = entry.firstCluster,
-                Links        = 1,
-                Mode         = (uint)(entry.attributes.HasFlag(Attributes.Directory) ? 0x16D : 0x124),
-                UID          = 0,
-                CreationTime = DateHandlers.DosToDateTime(entry.creationDate, entry.creationTime).AddYears(20),
-                AccessTime   = DateHandlers.DosToDateTime(entry.lastAccessDate, entry.lastAccessTime).AddYears(20),
-                LastWriteTime = DateHandlers.DosToDateTime(entry.lastWrittenDate, entry.lastWrittenTime)
-                                            .AddYears(20)
+                Attributes = new FileAttributes(),
+                Blocks     = entry.length / bytesPerCluster,
+                BlockSize  = bytesPerCluster,
+                DeviceNo   = 0,
+                GID        = 0,
+                Length     = entry.length,
+                Inode      = entry.firstCluster,
+                Links      = 1,
+                Mode       = (uint)(entry.attributes.HasFlag(Attributes.Directory) ? 0x16D : 0x124),
+                UID        = 0,
+                CreationTime =
+                    littleEndian
+                        ? DateHandlers.DosToDateTime(entry.creationDate, entry.creationTime).AddYears(20)
+                        : DateHandlers.DosToDateTime(entry.creationTime, entry.creationDate),
+                AccessTime =
+                    littleEndian
+                        ? DateHandlers.DosToDateTime(entry.lastAccessDate, entry.lastAccessTime).AddYears(20)
+                        : DateHandlers.DosToDateTime(entry.lastAccessTime, entry.lastAccessDate),
+                LastWriteTime = littleEndian
+                                    ? DateHandlers
+                                     .DosToDateTime(entry.lastWrittenDate, entry.lastWrittenTime).AddYears(20)
+                                    : DateHandlers.DosToDateTime(entry.lastWrittenTime, entry.lastWrittenDate)
             };
 
             if(entry.length % bytesPerCluster > 0) stat.Blocks++;
