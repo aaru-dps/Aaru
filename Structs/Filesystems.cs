@@ -48,6 +48,8 @@ namespace DiscImageChef.CommonTypes.Structs
     [Flags]
     public enum FileAttributes : ulong
     {
+        /// <summary>File has no attributes</summary>
+        None = 0,
         /// <summary>File is an alias (Mac OS)</summary>
         Alias = 0x01,
         /// <summary>Indicates that the file can only be writable appended</summary>
