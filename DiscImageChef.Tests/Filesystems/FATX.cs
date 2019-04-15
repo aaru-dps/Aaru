@@ -247,4 +247,199 @@ namespace DiscImageChef.Tests.Filesystems
             fs = null;
         }
     }
+
+    [TestFixture]
+    public class Xbox360Fat
+    {
+        string              location;
+        IFilter             filter;
+        IMediaImage         image;
+        IReadOnlyFilesystem fs;
+        Partition           dataPartition;
+
+        [SetUp]
+        public void Init()
+        {
+            location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fatx16", "be", "microsoft256mb.img.lz");
+            filter   = new LZip();
+            filter.Open(location);
+            image = new ZZZRawImage();
+            Assert.AreEqual(true, image.Open(filter));
+            fs = new XboxFatPlugin();
+            List<Partition> partitions = Core.Partitions.GetAll(image);
+            Assert.AreEqual(2, partitions.Count);
+            dataPartition = partitions[1];
+            Errno error = fs.Mount(image, dataPartition, null, null);
+            Assert.AreEqual(Errno.NoError, error);
+        }
+
+        [Test]
+        public void Information()
+        {
+            Assert.AreEqual(491520,            image.Info.Sectors);
+            Assert.AreEqual(14848,             fs.XmlFsType.Clusters);
+            Assert.AreEqual(16384,             fs.XmlFsType.ClusterSize);
+            Assert.AreEqual("FATX filesystem", fs.XmlFsType.Type);
+            Assert.AreEqual(string.Empty,      fs.XmlFsType.VolumeName);
+            Assert.AreEqual("66C2E9D0",        fs.XmlFsType.VolumeSerial);
+        }
+
+        [Test]
+        public void RootDirectory()
+        {
+            Errno error = fs.ReadDir("", out List<string> directory);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(2,             directory.Count);
+
+            Assert.AreEqual(true, directory.Contains("name.txt"));
+            Assert.AreEqual(true, directory.Contains("Content"));
+
+            Assert.AreEqual(false, directory.Contains("name"));
+            Assert.AreEqual(false, directory.Contains("content"));
+        }
+
+        [Test]
+        public void SubDirectory()
+        {
+            Errno error = fs.ReadDir("Content", out List<string> directory);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(2,             directory.Count);
+
+            Assert.AreEqual(true, directory.Contains("0000000000000000"));
+            Assert.AreEqual(true, directory.Contains("EBA4FD1C82295965"));
+
+            Assert.AreEqual(false, directory.Contains("000000000000000"));
+            Assert.AreEqual(false, directory.Contains("eba4FD1C82295965"));
+
+            error = fs.ReadDir("Content/EBA4FD1C82295965/454108CF/00000001", out directory);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(3,             directory.Count);
+
+            Assert.AreEqual(true, directory.Contains("DICP1-ES-PROFILE000000000000000"));
+            Assert.AreEqual(true, directory.Contains("DI1-ES-117218325276118302153627"));
+            Assert.AreEqual(true, directory.Contains("DI1-ES-120060617014626142312477"));
+
+            Assert.AreEqual(false, directory.Contains("DICP1-es-PROFILE000000000000000"));
+            Assert.AreEqual(false, directory.Contains("di1-ES-117218325276118302153627"));
+            Assert.AreEqual(false, directory.Contains("DI1ES120060617014626142312477"));
+        }
+
+        [Test]
+        public void Statfs()
+        {
+            Errno error = fs.StatFs(out FileSystemInfo stat);
+            Assert.AreEqual(Errno.NoError,  error);
+            Assert.AreEqual(14848,          stat.Blocks);
+            Assert.AreEqual(42,             stat.FilenameLength);
+            Assert.AreEqual(0,              stat.Files);
+            Assert.AreEqual(0,              stat.FreeBlocks);
+            Assert.AreEqual(0,              stat.FreeFiles);
+            Assert.AreEqual(0x58544146,     stat.Id.Serial32);
+            Assert.AreEqual("Xbox 360 FAT", stat.Type);
+        }
+
+        [Test]
+        public void MapBlock()
+        {
+            Errno error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000", 0, out long block);
+            Assert.AreEqual(Errno.IsDirectory, error);
+
+            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache", 0, out block);
+            Assert.AreEqual(Errno.NoSuchFile, error);
+
+            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 0, out block);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(16992,         block);
+
+            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 2, out block);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(17056,         block);
+
+            error = fs.MapBlock("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 2000000, out block);
+            Assert.AreEqual(Errno.InvalidArgument, error);
+        }
+
+        // TODO: The dates look incorrect
+        [Test]
+        public void Stat()
+        {
+            Errno error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000", out FileEntryInfo stat);
+            Assert.AreEqual(Errno.NoError,                                          error);
+            Assert.AreEqual(new DateTime(2055, 1, 23, 8, 25, 50, DateTimeKind.Utc), stat.AccessTimeUtc);
+            Assert.AreEqual(FileAttributes.Directory,                               stat.Attributes);
+            Assert.AreEqual(DateTime.MinValue,                                      stat.BackupTimeUtc);
+            Assert.AreEqual(1,                                                      stat.Blocks);
+            Assert.AreEqual(16384,                                                  stat.BlockSize);
+            Assert.AreEqual(new DateTime(2055, 1, 23, 8, 25, 50, DateTimeKind.Utc), stat.CreationTimeUtc);
+            Assert.AreEqual(0,                                                      stat.DeviceNo);
+            Assert.AreEqual(0,                                                      stat.GID);
+            Assert.AreEqual(12,                                                     stat.Inode);
+            Assert.AreEqual(new DateTime(2055, 1, 23, 8, 25, 50, DateTimeKind.Utc), stat.LastWriteTimeUtc);
+            Assert.AreEqual(16384,                                                  stat.Length);
+            Assert.AreEqual(1,                                                      stat.Links);
+            Assert.AreEqual(365,                                                    stat.Mode);
+            Assert.AreEqual(DateTime.MinValue,                                      stat.StatusChangeTimeUtc);
+            Assert.AreEqual(0,                                                      stat.UID);
+
+            error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache", out stat);
+            Assert.AreEqual(Errno.NoSuchFile, error);
+
+            error = fs.Stat("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", out stat);
+            Assert.AreEqual(Errno.NoError,                                          error);
+            Assert.AreEqual(new DateTime(2082, 2, 24, 9, 11, 36, DateTimeKind.Utc), stat.AccessTimeUtc);
+            Assert.AreEqual(FileAttributes.None,                                    stat.Attributes);
+            Assert.AreEqual(DateTime.MinValue,                                      stat.BackupTimeUtc);
+            Assert.AreEqual(6,                                                      stat.Blocks);
+            Assert.AreEqual(16384,                                                  stat.BlockSize);
+            Assert.AreEqual(new DateTime(2082, 2, 24, 9, 11, 36, DateTimeKind.Utc), stat.CreationTimeUtc);
+            Assert.AreEqual(0,                                                      stat.DeviceNo);
+            Assert.AreEqual(0,                                                      stat.GID);
+            Assert.AreEqual(18,                                                     stat.Inode);
+            Assert.AreEqual(new DateTime(2082, 2, 24, 9, 11, 36, DateTimeKind.Utc), stat.LastWriteTimeUtc);
+            Assert.AreEqual(86016,                                                  stat.Length);
+            Assert.AreEqual(1,                                                      stat.Links);
+            Assert.AreEqual(292,                                                    stat.Mode);
+            Assert.AreEqual(DateTime.MinValue,                                      stat.StatusChangeTimeUtc);
+            Assert.AreEqual(0,                                                      stat.UID);
+        }
+
+        [Test]
+        public void Read()
+        {
+            byte[] buffer = new byte[0];
+            Errno  error  = fs.Read("Content/0000000000000000/FFFE07DF/00040000", 0, 0, ref buffer);
+            Assert.AreEqual(Errno.IsDirectory, error);
+
+            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache", 0, 0, ref buffer);
+            Assert.AreEqual(Errno.NoSuchFile, error);
+
+            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 0, 0, ref buffer);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(0,             buffer.Length);
+            Assert.AreEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                            Sha256Context.Data(buffer, out _));
+
+            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 1, 16, ref buffer);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(16,            buffer.Length);
+            Assert.AreEqual("f73a941675b8df16b0fc908f242c3c51382c5b159e709e0f9ffc1e5aac35f77d",
+                            Sha256Context.Data(buffer, out _));
+
+            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 248, 131072, ref buffer);
+            Assert.AreEqual(Errno.NoError, error);
+            Assert.AreEqual(85768,         buffer.Length);
+            Assert.AreEqual("19caf1365e1b7d5446ca0c2518d15e94c3ab0faaf2f8f3b31c9e1656dff57bd9",
+                            Sha256Context.Data(buffer, out _));
+
+            error = fs.Read("Content/0000000000000000/FFFE07DF/00040000/ContentCache.pkg", 131072, 0, ref buffer);
+            Assert.AreEqual(Errno.InvalidArgument, error);
+        }
+
+        [TearDown]
+        public void Destroy()
+        {
+            fs?.Unmount();
+            fs = null;
+        }
+    }
 }

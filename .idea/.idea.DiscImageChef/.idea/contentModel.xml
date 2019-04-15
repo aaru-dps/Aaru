@@ -2140,6 +2140,7 @@
           <e p="SGI.cs" t="Include" />
           <e p="Sun.cs" t="Include" />
           <e p="VTOC.cs" t="Include" />
+          <e p="Xbox.cs" t="Include" />
         </e>
         <e p="Program.cs" t="Include" />
         <e p="TestResult.xml" t="Include" />
