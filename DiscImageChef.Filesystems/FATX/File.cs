@@ -50,6 +50,8 @@ namespace DiscImageChef.Filesystems.FATX
 
             if(err != Errno.NoError) return err;
 
+            if(stat.Attributes.HasFlag(FileAttributes.Directory) && !debug) return Errno.IsDirectory;
+
             uint[] clusters = GetClusters((uint)stat.Inode);
 
             if(fileBlock >= clusters.Length) return Errno.InvalidArgument;
