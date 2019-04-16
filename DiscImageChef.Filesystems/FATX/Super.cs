@@ -123,15 +123,12 @@ namespace DiscImageChef.Filesystems.FATX
             {
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT32");
 
-                fatSize = (uint)(statfs.Blocks * sizeof(uint) / imagePlugin.Info.SectorSize);
-                if((uint)(statfs.Blocks        * sizeof(uint) % imagePlugin.Info.SectorSize) > 0) fatSize++;
+                fatSize = (uint)((statfs.Blocks + 1) * sizeof(uint) / imagePlugin.Info.SectorSize);
+                if((uint)((statfs.Blocks        + 1) * sizeof(uint) % imagePlugin.Info.SectorSize) > 0) fatSize++;
 
-                if(!littleEndian)
-                {
-                    long fatClusters = fatSize * imagePlugin.Info.SectorSize / XmlFsType.ClusterSize;
-                    if(fatSize * imagePlugin.Info.SectorSize % XmlFsType.ClusterSize > 0) fatClusters++;
-                    fatSize = (uint)(fatClusters * XmlFsType.ClusterSize / imagePlugin.Info.SectorSize);
-                }
+                long fatClusters = fatSize * imagePlugin.Info.SectorSize / 4096;
+                if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0) fatClusters++;
+                fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 
@@ -150,15 +147,12 @@ namespace DiscImageChef.Filesystems.FATX
             {
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "Reading FAT16");
 
-                fatSize = (uint)(statfs.Blocks * sizeof(ushort) / imagePlugin.Info.SectorSize);
-                if((uint)(statfs.Blocks        * sizeof(ushort) % imagePlugin.Info.SectorSize) > 0) fatSize++;
+                fatSize = (uint)((statfs.Blocks + 1) * sizeof(ushort) / imagePlugin.Info.SectorSize);
+                if((uint)((statfs.Blocks        + 1) * sizeof(ushort) % imagePlugin.Info.SectorSize) > 0) fatSize++;
 
-                if(!littleEndian)
-                {
-                    long fatClusters = fatSize * imagePlugin.Info.SectorSize / XmlFsType.ClusterSize;
-                    if(fatSize * imagePlugin.Info.SectorSize % XmlFsType.ClusterSize > 0) fatClusters++;
-                    fatSize = (uint)(fatClusters * XmlFsType.ClusterSize / imagePlugin.Info.SectorSize);
-                }
+                long fatClusters = fatSize * imagePlugin.Info.SectorSize / 4096;
+                if(fatSize * imagePlugin.Info.SectorSize % 4096 > 0) fatClusters++;
+                fatSize = (uint)(fatClusters * 4096 / imagePlugin.Info.SectorSize);
 
                 DicConsole.DebugWriteLine("Xbox FAT plugin", "FAT is {0} sectors", fatSize);
 
