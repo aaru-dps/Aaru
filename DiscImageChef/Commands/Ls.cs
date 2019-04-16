@@ -49,6 +49,7 @@ namespace DiscImageChef.Commands
         string encodingName;
         string inputFile;
         bool   longFormat;
+        string @namespace;
         string pluginOptions;
         bool   showHelp;
 
@@ -68,7 +69,8 @@ namespace DiscImageChef.Commands
                     "options|O=", "Comma separated name=value pairs of options to pass to filesystem plugin.",
                     s => pluginOptions = s
                 },
-                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+                {"namespace|n=", "Namespace to use for filenames.", s => @namespace = s},
+                {"help|h|?", "Show this message and exit.", v => showHelp           = v != null}
             };
         }
 
@@ -215,7 +217,7 @@ namespace DiscImageChef.Commands
 
                                     if(fs == null) continue;
 
-                                    error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
+                                    error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions, @namespace);
                                     if(error == Errno.NoError)
                                     {
                                         ListFilesInDir("/", fs);
@@ -238,7 +240,7 @@ namespace DiscImageChef.Commands
                                                                         ?.Invoke(new object[] { });
                             if(fs == null) continue;
 
-                            error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
+                            error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions, @namespace);
                             if(error == Errno.NoError)
                             {
                                 ListFilesInDir("/", fs);
@@ -272,7 +274,7 @@ namespace DiscImageChef.Commands
                                                                         ?.Invoke(new object[] { });
                             if(fs == null) continue;
 
-                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
+                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions, @namespace);
                             if(error == Errno.NoError)
                             {
                                 ListFilesInDir("/", fs);
@@ -293,7 +295,7 @@ namespace DiscImageChef.Commands
                                                 .GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
                         if(fs != null)
                         {
-                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
+                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions, @namespace);
                             if(error == Errno.NoError)
                             {
                                 ListFilesInDir("/", fs);

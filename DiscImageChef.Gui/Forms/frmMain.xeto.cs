@@ -336,7 +336,7 @@ namespace DiscImageChef.Gui.Forms
                                             {
                                                 Errno error =
                                                     fsPlugin.Mount(imageFormat, partition, null,
-                                                                   new Dictionary<string, string>());
+                                                                   new Dictionary<string, string>(), null);
 
                                                 if(error != Errno.NoError) fsPlugin = null;
                                             }
@@ -395,9 +395,8 @@ namespace DiscImageChef.Gui.Forms
 
                                     if(fsPlugin != null)
                                     {
-                                        Errno error =
-                                            fsPlugin.Mount(imageFormat, wholePart, null,
-                                                           new Dictionary<string, string>());
+                                        Errno error = fsPlugin.Mount(imageFormat, wholePart, null,
+                                                                     new Dictionary<string, string>(), null);
 
                                         if(error != Errno.NoError) fsPlugin = null;
                                     }

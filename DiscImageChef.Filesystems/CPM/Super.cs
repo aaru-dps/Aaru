@@ -51,7 +51,7 @@ namespace DiscImageChef.Filesystems.CPM
     partial class CPM
     {
         public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options)
+                           Dictionary<string, string> options,     string    @namespace)
         {
             device         = imagePlugin;
             this.partition = partition;

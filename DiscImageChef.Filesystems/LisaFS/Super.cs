@@ -50,7 +50,7 @@ namespace DiscImageChef.Filesystems.LisaFS
         ///     Mounts an Apple Lisa filesystem
         /// </summary>
         public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options)
+                           Dictionary<string, string> options,     string    @namespace)
         {
             try
             {

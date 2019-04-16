@@ -61,6 +61,13 @@ namespace DiscImageChef.Filesystems.LisaFS
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
+        public Dictionary<string, string> Namespaces =>
+            new Dictionary<string, string>
+            {
+                {"workshop", "Filenames as shown by the Lisa Pascal Workshop (default)"},
+                {"office", "Filenames as shown by the Lisa Office System (not yet implemented)"}
+            };
+
         static Dictionary<string, string> GetDefaultOptions() =>
             new Dictionary<string, string> {{"debug", false.ToString()}};
 

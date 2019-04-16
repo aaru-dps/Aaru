@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
     public partial class PascalPlugin
     {
         public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options)
+                           Dictionary<string, string> options,     string    @namespace)
         {
             device   = imagePlugin;
             Encoding = encoding ?? new Apple2();

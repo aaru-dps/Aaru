@@ -67,7 +67,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Size   = image.Info.Sectors * image.Info.SectorSize
             };
 
-            Errno error = fs.Mount(image, wholePart, null, null);
+            Errno error = fs.Mount(image, wholePart, null, null, null);
             Assert.AreEqual(Errno.NoError, error);
         }
 
@@ -269,7 +269,7 @@ namespace DiscImageChef.Tests.Filesystems
             List<Partition> partitions = Core.Partitions.GetAll(image);
             Assert.AreEqual(2, partitions.Count);
             dataPartition = partitions[1];
-            Errno error = fs.Mount(image, dataPartition, null, null);
+            Errno error = fs.Mount(image, dataPartition, null, null, null);
             Assert.AreEqual(Errno.NoError, error);
         }
 

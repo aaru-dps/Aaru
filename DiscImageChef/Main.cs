@@ -135,6 +135,7 @@ namespace DiscImageChef
                currentPlatform == PlatformID.Win32NT) commands.Add(new ListDevicesCommand());
 
             commands.Add(new ListEncodingsCommand());
+            commands.Add(new ListNamespacesCommand());
             commands.Add(new ListOptionsCommand());
             commands.Add(new LsCommand());
 

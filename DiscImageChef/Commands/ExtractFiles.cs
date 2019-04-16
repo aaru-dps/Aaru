@@ -50,6 +50,7 @@ namespace DiscImageChef.Commands
         string encodingName;
         bool   extractXattrs;
         string inputFile;
+        string @namespace;
         string outputDir;
         string pluginOptions;
         bool   showHelp;
@@ -74,6 +75,7 @@ namespace DiscImageChef.Commands
                     s => outputDir = s
                 },
                 {"xattrs|x", "Extract extended attributes if present.", b => extractXattrs = b != null},
+                {"namespace|n=", "Namespace to use for filenames.", s => @namespace        = s},
                 {"help|h|?", "Show this message and exit.", v => showHelp                  = v != null}
             };
         }
@@ -230,7 +232,7 @@ namespace DiscImageChef.Commands
                                                                                  .GetConstructor(Type.EmptyTypes)
                                                                                 ?.Invoke(new object[] { });
 
-                                    error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
+                                    error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions, @namespace);
                                     if(error == Errno.NoError)
                                     {
                                         string volumeName =
@@ -254,7 +256,7 @@ namespace DiscImageChef.Commands
                             IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                                                          .GetType().GetConstructor(Type.EmptyTypes)
                                                                         ?.Invoke(new object[] { });
-                            error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions);
+                            error = fs.Mount(imageFormat, partitions[i], encoding, parsedOptions, @namespace);
                             if(error == Errno.NoError)
                             {
                                 string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName)
@@ -290,7 +292,7 @@ namespace DiscImageChef.Commands
                             IReadOnlyFilesystem fs = (IReadOnlyFilesystem)plugin
                                                                          .GetType().GetConstructor(Type.EmptyTypes)
                                                                         ?.Invoke(new object[] { });
-                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
+                            error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions, @namespace);
                             if(error == Errno.NoError)
                             {
                                 string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName)
@@ -310,7 +312,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine($"Identified by {plugin.Name}.");
                     IReadOnlyFilesystem fs =
                         (IReadOnlyFilesystem)plugin.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                    error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions);
+                    error = fs.Mount(imageFormat, wholePart, encoding, parsedOptions, @namespace);
                     if(error == Errno.NoError)
                     {
                         string volumeName = string.IsNullOrEmpty(fs.XmlFsType.VolumeName)

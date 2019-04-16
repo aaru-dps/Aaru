@@ -77,6 +77,8 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
+        public Dictionary<string, string> Namespaces => null;
+
         static Dictionary<string, string> GetDefaultOptions() =>
             new Dictionary<string, string> {{"debug", false.ToString()}};
     }
