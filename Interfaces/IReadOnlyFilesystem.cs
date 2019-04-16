@@ -54,6 +54,8 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// </summary>
         IEnumerable<(string name, Type type, string description)> SupportedOptions { get; }
 
+        Dictionary<string, string> Namespaces { get; }
+
         /// <summary>
         ///     Initializates whatever internal structures the filesystem plugin needs to be able to read files and directories
         ///     from the filesystem.
@@ -62,8 +64,9 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <param name="partition"></param>
         /// <param name="encoding">Which encoding to use for this filesystem.</param>
         /// <param name="options">Dictionary of key=value pairs containing options to pass to the filesystem</param>
-        Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                    Dictionary<string, string> options);
+        /// <param name="namespace">Filename namespace</param>
+        Errno Mount(IMediaImage imagePlugin, Partition partition, Encoding encoding, Dictionary<string, string> options,
+                    string      @namespace);
 
         /// <summary>
         ///     Frees all internal structures created by
