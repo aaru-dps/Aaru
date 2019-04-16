@@ -446,7 +446,8 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("{0} sectors to convert", inputFormat.Info.Sectors);
             ulong doneSectors = 0;
 
-            if(inputFormat is IOpticalMediaImage inputOptical && outputFormat is IWritableOpticalImage outputOptical)
+            if(inputFormat is IOpticalMediaImage inputOptical && outputFormat is IWritableOpticalImage outputOptical &&
+               inputOptical.Tracks != null)
             {
                 if(!outputOptical.SetTracks(inputOptical.Tracks))
                 {
