@@ -643,7 +643,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming).",
                                  (end - start).TotalSeconds, totalDuration / 1000, totalChkDuration / 1000);
-            DicConsole.WriteLine("Avegare speed: {0:F3} MiB/sec.",
+            DicConsole.WriteLine("Average speed: {0:F3} MiB/sec.",
                                  (double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
             DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
             DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
