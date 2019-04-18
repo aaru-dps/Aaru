@@ -24,6 +24,9 @@ To see list of pending things to do, check the [TODO list](TODO.md).
 
 If you want to contribute in any way please read the [contributing guide](CONTRIBUTING.md).
 
+Stable releases in [Github](https://github.com/discimagechef/DiscImageChef/releases).
+CI beta builds [here](https://goo.gl/6dZPMq).  
+
 System requirements
 ===================
 DiscImageChef should work under any operating system where there is [Mono](http://www.mono-project.com/)
@@ -45,11 +48,19 @@ Features
 * Analyzes a disk image getting information about the disk itself and analyzes partitions and filesystems inside them
 * Can checksum the disks (and if optical disc, separate tracks) user-data (tags and metadata coming soon)
 * Can compare two disk images, even different formats, for different sectors and/or metadata
-* Can list and extract contents from filesystems that support that
+* Can list and extract contents from supported filesystems
 * Can read several disk image formats.
 * Can read several known sector by sector formats with variable bytes per sector.
 * Can read standard sector by sector copies for optical and magnetic discs with constant bytes per sector.
 * Can verify sectors or disk images if supported by the underlying format
+* Can dump media from ATA, ATAPI, SCSI, USB, FireWire and SDHCI drives (magnetic disks, optical discs, magnetoptical disks, flash devices, memory cards and tapes) to several supported image formats.
+* Can convert between image formats.
+* Include an opensource archival image format with compression and deduplication.
+* Can create standard open XML metadata from existing images.
+* Can measure readability and speed of media (same that can be dumped, MHDD style)
+* Has an online database with drive capabilities, and can report the capabilities of any drive.
+* Works on any operating system and architecture where Mono or .NET Framework is supported (drive access requires Windows, Linux or FreeBSD).
+* Has a graphical interface (work in progress)
 
 Supported disk image formats (read-only)
 ========================================
