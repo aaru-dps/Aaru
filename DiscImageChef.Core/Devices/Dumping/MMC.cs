@@ -258,7 +258,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
 
                             PFI.PhysicalFormatInformation decPfi = PFI.Decode(cmdBuf).Value;
-                            DicConsole.WriteLine("PFI:\n{0}", PFI.Prettify(decPfi));
+                            UpdateStatus?.Invoke($"PFI:\n{PFI.Prettify(decPfi)}");
 
                             // False book types
                             if(dskType == MediaType.DVDROM)
