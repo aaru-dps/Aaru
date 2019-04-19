@@ -39,19 +39,20 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using Schemas;
 
+// ReSharper disable InconsistentNaming
+
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    public static class NvMe
+    public partial class Dump
     {
-        public static void Dump(Device                     dev,           string           devicePath,
-                                IWritableImage             outputPlugin,  ushort           retryPasses,
-                                bool                       force,         bool             dumpRaw,
-                                bool                       persistent,    bool             stopOnError, ref Resume resume,
-                                ref DumpLog                dumpLog,       Encoding         encoding,
-                                string                     outputPrefix,  string           outputPath,
-                                Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
-                                uint                       skip,
-                                bool                       nometadata, bool notrim)
+        public void NVMe(Device                     dev,          string     devicePath,
+                         IWritableImage             outputPlugin, ushort     retryPasses, bool force,
+                         bool                       dumpRaw,      bool       persistent,
+                         bool                       stopOnError,  ref Resume resume, ref DumpLog dumpLog,
+                         Encoding                   encoding,     string     outputPrefix,
+                         string                     outputPath,
+                         Dictionary<string, string> formatOptions, CICMMetadataType preSidecar, uint skip,
+                         bool                       nometadata,    bool             notrim)
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }

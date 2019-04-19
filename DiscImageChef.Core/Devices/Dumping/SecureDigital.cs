@@ -53,7 +53,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implements dumping a MultiMediaCard or SecureDigital flash card
     /// </summary>
-    public class SecureDigital
+    public partial class Dump
     {
         /// <summary>
         ///     Dumps a MultiMediaCard or SecureDigital flash card
@@ -73,15 +73,15 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public static void Dump(Device                     dev,           string           devicePath,
-                                IWritableImage             outputPlugin,  ushort           retryPasses,
-                                bool                       force,         bool             dumpRaw,
-                                bool                       persistent,    bool             stopOnError, ref Resume resume,
-                                ref DumpLog                dumpLog,       Encoding         encoding,
-                                string                     outputPrefix,  string           outputPath,
-                                Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
-                                uint                       skip,
-                                bool                       nometadata, bool notrim)
+        public void SecureDigital(Device                     dev,           string           devicePath,
+                                  IWritableImage             outputPlugin,  ushort           retryPasses,
+                                  bool                       force,         bool             dumpRaw,
+                                  bool                       persistent,    bool             stopOnError, ref Resume resume,
+                                  ref DumpLog                dumpLog,       Encoding         encoding,
+                                  string                     outputPrefix,  string           outputPath,
+                                  Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
+                                  uint                       skip,
+                                  bool                       nometadata, bool notrim)
         {
             bool aborted;
 
@@ -156,6 +156,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     break;
                 }
+
                 case DeviceType.SecureDigital:
                 {
                     dumpLog.WriteLine("Reading CSD");

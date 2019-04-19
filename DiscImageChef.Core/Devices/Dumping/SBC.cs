@@ -55,7 +55,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implements dumping SCSI Block Commands and Reduced Block Commands devices
     /// </summary>
-    static class Sbc
+    partial class Dump
     {
         /// <summary>
         ///     Dumps a SCSI Block Commands device or a Reduced Block Commands devices
@@ -78,17 +78,16 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
-        internal static void Dump(Device                           dev,          string        devicePath,
-                                  IWritableImage                   outputPlugin, ushort        retryPasses,
-                                  bool                             force,        bool          dumpRaw,
-                                  bool                             persistent,   bool          stopOnError,
-                                  Dictionary<MediaTagType, byte[]> mediaTags,    ref MediaType dskType,
-                                  bool                             opticalDisc,
-                                  ref Resume                       resume,     ref DumpLog                dumpLog,
-                                  Encoding                         encoding,   string                     outputPrefix,
-                                  string                           outputPath, Dictionary<string, string> formatOptions,
-                                  CICMMetadataType                 preSidecar, uint                       skip,
-                                  bool                             nometadata, bool                       notrim)
+        internal void Sbc(Device                     dev,          string                           devicePath,
+                          IWritableImage             outputPlugin, ushort                           retryPasses, bool force,
+                          bool                       dumpRaw,      bool                             persistent,
+                          bool                       stopOnError,  Dictionary<MediaTagType, byte[]> mediaTags,
+                          ref MediaType              dskType,      bool                             opticalDisc,
+                          ref Resume                 resume,       ref DumpLog                      dumpLog,
+                          Encoding                   encoding,     string                           outputPrefix,
+                          string                     outputPath,
+                          Dictionary<string, string> formatOptions, CICMMetadataType preSidecar, uint skip,
+                          bool                       nometadata,    bool             notrim)
         {
             bool         sense;
             byte         scsiMediumType     = 0;
@@ -827,7 +826,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                         if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
-                            Mmc.AddMediaTagToSidecar(outputPath, tag, ref sidecar);
+                            AddMediaTagToSidecar(outputPath, tag, ref sidecar);
                 }
                 else
                 {
@@ -974,11 +973,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
                     // TODO: Implement device firmware revision
                     if(!dev.IsRemovable || dev.IsUsb)
-                        if(dev.Type == DeviceType.ATAPI)
-                            sidecar.BlockMedia[0].Interface                     = "ATAPI";
-                        else if(dev.IsUsb) sidecar.BlockMedia[0].Interface      = "USB";
-                        else if(dev.IsFireWire) sidecar.BlockMedia[0].Interface = "FireWire";
-                        else sidecar.BlockMedia[0].Interface                    = "SCSI";
+                        if(dev.Type == DeviceType.ATAPI) sidecar.BlockMedia[0].Interface = "ATAPI";
+                        else if(dev.IsUsb) sidecar.BlockMedia[0].Interface               = "USB";
+                        else if(dev.IsFireWire) sidecar.BlockMedia[0].Interface          = "FireWire";
+                        else sidecar.BlockMedia[0].Interface                             = "SCSI";
                     sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
                     sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalBlockSize;
                     sidecar.BlockMedia[0].LogicalBlockSize  = (int)logicalBlockSize;

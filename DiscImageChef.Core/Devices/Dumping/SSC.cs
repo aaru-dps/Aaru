@@ -48,7 +48,7 @@ using Version = DiscImageChef.CommonTypes.Metadata.Version;
 namespace DiscImageChef.Core.Devices.Dumping
 {
     // TODO: Add support for images
-    static class Ssc
+    partial class Dump
     {
         /// <summary>
         ///     Dumps the tape from a SCSI Streaming device
@@ -58,9 +58,9 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPrefix">Prefix for output data files</param>
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
-        internal static void Dump(Device      dev, string outputPrefix, string devicePath,
-                                  ref Resume  resume,
-                                  ref DumpLog dumpLog, CICMMetadataType preSidecar)
+        internal void Ssc(Device           dev, string outputPrefix, string devicePath, ref Resume resume,
+                          ref DumpLog      dumpLog,
+                          CICMMetadataType preSidecar)
         {
             FixedSense?      fxSense;
             bool             aborted;
@@ -506,8 +506,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         DicConsole.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
                         dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
 
-                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout,
-                                                   out duration);
+                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
                         totalDuration += duration;
 
                         if(sense)

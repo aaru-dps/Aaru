@@ -52,7 +52,6 @@ using Eto.Serialization.Xaml;
 using Schemas;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Scsi = DiscImageChef.Core.Devices.Dumping.Scsi;
 
 namespace DiscImageChef.Gui.Forms
 {
@@ -459,30 +458,30 @@ namespace DiscImageChef.Gui.Forms
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:
-                    SecureDigital.Dump(dev, devicePath, outputFormat, (ushort)stpRetries.Value,
-                                       chkForce.Checked      == true, false, /*options.Raw,*/
-                                       chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume,
-                                       ref dumpLog, encoding, outputPrefix, txtDestination.Text, parsedOptions, sidecar,
-                                       (uint)stpSkipped.Value, chkExistingMetadata.Checked == false,
-                                       chkTrim.Checked                                     == false);
+                    dumper.SecureDigital(dev, devicePath, outputFormat, (ushort)stpRetries.Value,
+                                         chkForce.Checked      == true, false, /*options.Raw,*/
+                                         chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume,
+                                         ref dumpLog, encoding, outputPrefix, txtDestination.Text, parsedOptions,
+                                         sidecar, (uint)stpSkipped.Value, chkExistingMetadata.Checked == false,
+                                         chkTrim.Checked                                              == false);
                     break;
                 case DeviceType.NVMe:
-                    NvMe.Dump(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
-                              false, /*options.Raw,*/
-                              chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume, ref dumpLog,
-                              encoding, outputPrefix, txtDestination.Text, parsedOptions, sidecar,
-                              (uint)stpSkipped.Value, chkExistingMetadata.Checked == false, chkTrim.Checked == false);
+                    dumper.NVMe(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
+                                false, /*options.Raw,*/
+                                chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume, ref dumpLog,
+                                encoding, outputPrefix, txtDestination.Text, parsedOptions, sidecar,
+                                (uint)stpSkipped.Value, chkExistingMetadata.Checked == false, chkTrim.Checked == false);
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    Scsi.Dump(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
-                              false, /*options.Raw,*/
-                              chkPersistent.Checked   == true,
-                              chkStopOnError.Checked  == true, ref resume, ref dumpLog,
-                              chkTrack1Pregap.Checked == true,
-                              encoding, outputPrefix, txtDestination.Text,
-                              parsedOptions, sidecar, (uint)stpSkipped.Value, chkExistingMetadata.Checked == false,
-                              chkTrim.Checked                                                             == false);
+                    dumper.Scsi(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
+                                false, /*options.Raw,*/
+                                chkPersistent.Checked   == true,
+                                chkStopOnError.Checked  == true, ref resume, ref dumpLog,
+                                chkTrack1Pregap.Checked == true,
+                                encoding, outputPrefix, txtDestination.Text,
+                                parsedOptions, sidecar, (uint)stpSkipped.Value, chkExistingMetadata.Checked == false,
+                                chkTrim.Checked                                                             == false);
                     break;
                 default:
                     dumpLog.WriteLine("Unknown device type.");

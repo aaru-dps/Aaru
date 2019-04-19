@@ -49,7 +49,6 @@ using DiscImageChef.Devices;
 using Mono.Options;
 using Schemas;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using Scsi = DiscImageChef.Core.Devices.Dumping.Scsi;
 
 namespace DiscImageChef.Commands
 {
@@ -306,9 +305,9 @@ namespace DiscImageChef.Commands
 
             if(dev.IsUsb && dev.UsbVendorId == 0x054C &&
                (dev.UsbProductId == 0x01C8 || dev.UsbProductId == 0x01C9 || dev.UsbProductId == 0x02D2))
-                PlayStationPortable.Dump(dev, devicePath, outputFormat, retryPasses, force, persistent, stopOnError,
-                                         ref resume, ref dumpLog, encoding, outputPrefix, outputFile, parsedOptions,
-                                         sidecar, (uint)skip, noMetadata, noTrim);
+                dumper.PlayStationPortable(dev, devicePath, outputFormat, retryPasses, force, persistent, stopOnError,
+                                           ref resume, ref dumpLog, encoding, outputPrefix, outputFile, parsedOptions,
+                                           sidecar, (uint)skip, noMetadata, noTrim);
             else
                 switch(dev.Type)
                 {
@@ -319,20 +318,20 @@ namespace DiscImageChef.Commands
                         break;
                     case DeviceType.MMC:
                     case DeviceType.SecureDigital:
-                        SecureDigital.Dump(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                           persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                                           outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
+                        dumper.SecureDigital(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
+                                             persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
+                                             outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
                         break;
                     case DeviceType.NVMe:
-                        NvMe.Dump(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                  persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix, outputFile,
-                                  parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
+                        dumper.NVMe(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
+                                    persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
+                                    outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
                         break;
                     case DeviceType.ATAPI:
                     case DeviceType.SCSI:
-                        Scsi.Dump(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                  persistent, stopOnError, ref resume, ref dumpLog, firstTrackPregap, encoding,
-                                  outputPrefix, outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
+                        dumper.Scsi(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
+                                    persistent, stopOnError, ref resume, ref dumpLog, firstTrackPregap, encoding,
+                                    outputPrefix, outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
                         break;
                     default:
                         dumpLog.WriteLine("Unknown device type.");

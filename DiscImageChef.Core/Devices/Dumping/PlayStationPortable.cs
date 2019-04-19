@@ -21,7 +21,7 @@ using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    public static class PlayStationPortable
+    public partial class Dump
     {
         static readonly byte[] FatSignature = {0x46, 0x41, 0x54, 0x31, 0x36, 0x20, 0x20, 0x20};
         static readonly byte[] IsoExtension = {0x49, 0x53, 0x4F};
@@ -47,15 +47,15 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="nometadata">Don't create metadata sidecar</param>
         /// <param name="notrim">Don't trim errors</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public static void Dump(Device                     dev,          string     devicePath,
-                                IWritableImage             outputPlugin, ushort     retryPasses,
-                                bool                       force,        bool       persistent,
-                                bool                       stopOnError,  ref Resume resume, ref DumpLog dumpLog,
-                                Encoding                   encoding,     string     outputPrefix,
-                                string                     outputPath,
-                                Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
-                                uint                       skip,
-                                bool                       nometadata, bool notrim)
+        public void PlayStationPortable(Device                     dev,           string           devicePath,
+                                        IWritableImage             outputPlugin,  ushort           retryPasses,
+                                        bool                       force,         bool             persistent,
+                                        bool                       stopOnError,   ref Resume       resume,
+                                        ref DumpLog                dumpLog,       Encoding         encoding,
+                                        string                     outputPrefix,  string           outputPath,
+                                        Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
+                                        uint                       skip,          bool             nometadata,
+                                        bool                       notrim)
         {
             if(!outputPlugin.SupportedMediaTypes.Contains(MediaType.MemoryStickDuo)    &&
                !outputPlugin.SupportedMediaTypes.Contains(MediaType.MemoryStickProDuo) &&
@@ -217,15 +217,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             else DicConsole.ErrorWriteLine("The specified plugin does not support storing optical disc images.");
         }
 
-        static void DumpUmd(Device                     dev,          string     devicePath,
-                            IWritableOpticalImage      outputPlugin, ushort     retryPasses,
-                            bool                       force,        bool       persistent,
-                            bool                       stopOnError,  ref Resume resume, ref DumpLog dumpLog,
-                            Encoding                   encoding,     string     outputPrefix,
-                            string                     outputPath,
-                            Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
-                            uint                       skip,
-                            bool                       nometadata, bool notrim)
+        void DumpUmd(Device           dev,          string   devicePath, IWritableOpticalImage outputPlugin,
+                     ushort           retryPasses,  bool     force,
+                     bool             persistent,   bool     stopOnError, ref Resume resume,
+                     ref DumpLog      dumpLog,      Encoding encoding,
+                     string           outputPrefix, string   outputPath, Dictionary<string, string> formatOptions,
+                     CICMMetadataType preSidecar,   uint     skip,       bool                       nometadata,
+                     bool             notrim)
         {
             const uint      BLOCK_SIZE    = 2048;
             const MediaType DSK_TYPE      = MediaType.UMD;
@@ -682,13 +680,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             Statistics.AddMedia(DSK_TYPE, true);
         }
 
-        static void DumpMs(Device           dev,          string   devicePath, IWritableImage outputPlugin,
-                           ushort           retryPasses,  bool     force,
-                           bool             persistent,   bool     stopOnError, ref Resume resume,
-                           ref DumpLog      dumpLog,      Encoding encoding,
-                           string           outputPrefix, string   outputPath, Dictionary<string, string> formatOptions,
-                           CICMMetadataType preSidecar,   uint     skip,       bool                       nometadata,
-                           bool             notrim)
+        void DumpMs(Device           dev,          string   devicePath, IWritableImage outputPlugin,
+                    ushort           retryPasses,  bool     force,
+                    bool             persistent,   bool     stopOnError, ref Resume resume,
+                    ref DumpLog      dumpLog,      Encoding encoding,
+                    string           outputPrefix, string   outputPath, Dictionary<string, string> formatOptions,
+                    CICMMetadataType preSidecar,   uint     skip,       bool                       nometadata,
+                    bool             notrim)
         {
             const ushort SBC_PROFILE   = 0x0001;
             const uint   BLOCK_SIZE    = 512;

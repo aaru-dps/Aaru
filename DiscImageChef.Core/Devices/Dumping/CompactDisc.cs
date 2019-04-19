@@ -61,7 +61,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     ///     Implement dumping Compact Discs
     /// </summary>
     // TODO: Barcode and pregaps
-    static class CompactDisc
+    partial class Dump
     {
         /// <summary>
         ///     Dumps a compact disc
@@ -85,7 +85,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <exception cref="NotImplementedException">If trying to dump scrambled sectors</exception>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         /// <exception cref="ArgumentOutOfRangeException">If the track type is unknown (never)</exception>
-        internal static void Dump(Device                     dev,          string devicePath,
+        internal void CompactDisc(Device                     dev,          string devicePath,
                                   IWritableOpticalImage      outputPlugin, ushort retryPasses,
                                   bool                       force,        bool   dumpRaw,
                                   bool                       persistent,   bool   stopOnError,
@@ -1826,7 +1826,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                     if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
-                        Mmc.AddMediaTagToSidecar(outputPath, tag, ref sidecar);
+                        AddMediaTagToSidecar(outputPath, tag, ref sidecar);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 

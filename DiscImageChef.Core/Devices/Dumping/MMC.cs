@@ -54,7 +54,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implement dumping optical discs from MultiMedia devices
     /// </summary>
-    static class Mmc
+    partial class Dump
     {
         /// <summary>
         ///     Dumps an optical disc
@@ -76,16 +76,16 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="NotImplementedException">If trying to dump GOD or WOD, or XGDs without a Kreon drive</exception>
-        internal static void Dump(Device                     dev,          string      devicePath,
-                                  IWritableOpticalImage      outputPlugin, ushort      retryPasses,
-                                  bool                       force,        bool        dumpRaw,
-                                  bool                       persistent,   bool        stopOnError, ref MediaType dskType,
-                                  ref Resume                 resume,       ref DumpLog dumpLog,
-                                  bool                       dumpLeadIn,   Encoding    encoding,
-                                  string                     outputPrefix, string      outputPath,
-                                  Dictionary<string, string> formatOptions,
-                                  CICMMetadataType           preSidecar, uint skip,
-                                  bool                       nometadata, bool notrim)
+        internal void Mmc(Device                     dev,          string        devicePath,
+                          IWritableOpticalImage      outputPlugin, ushort        retryPasses,
+                          bool                       force,        bool          dumpRaw, bool persistent,
+                          bool                       stopOnError,  ref MediaType dskType,
+                          ref Resume                 resume,       ref DumpLog   dumpLog, bool dumpLeadIn,
+                          Encoding                   encoding,
+                          string                     outputPrefix, string outputPath,
+                          Dictionary<string, string> formatOptions,
+                          CICMMetadataType           preSidecar, uint skip, bool nometadata,
+                          bool                       notrim)
         {
             bool   sense;
             byte[] tmpBuf;
@@ -197,9 +197,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
-                                 ref dskType, ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                                 formatOptions, preSidecar, skip, nometadata, notrim);
+                CompactDisc(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent,
+                            stopOnError,
+                            ref dskType,   ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
+                            formatOptions, preSidecar, skip,        nometadata, notrim);
                 return;
             }
 
@@ -599,15 +600,18 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(isXbox)
             {
-                Xgd.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
-                         ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                         preSidecar, skip, nometadata, notrim);
+                Xgd(dev,         devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent,
+                    stopOnError, mediaTags,
+                    ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
+                    preSidecar,
+                    skip, nometadata, notrim);
                 return;
             }
 
-            Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, mediaTags,
-                     ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                     preSidecar, skip, nometadata, notrim);
+            Sbc(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
+                mediaTags,
+                ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
+                preSidecar,  skip, nometadata, notrim);
         }
 
         internal static void AddMediaTagToSidecar(string                             outputPath,

@@ -57,7 +57,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implements dumping an Xbox Game Disc using a Kreon drive
     /// </summary>
-    static class Xgd
+    partial class Dump
     {
         /// <summary>
         ///     Dumps an Xbox Game Disc using a Kreon drive
@@ -82,17 +82,17 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     If the provided resume does not correspond with the current in progress
         ///     dump
         /// </exception>
-        internal static void Dump(Device                           dev,          string        devicePath,
-                                  IWritableOpticalImage            outputPlugin, ushort        retryPasses,
-                                  bool                             force,        bool          dumpRaw,
-                                  bool                             persistent,   bool          stopOnError,
-                                  Dictionary<MediaTagType, byte[]> mediaTags,    ref MediaType dskType,
-                                  ref Resume                       resume,
-                                  ref DumpLog                      dumpLog,       Encoding         encoding,
-                                  string                           outputPrefix,  string           outputPath,
-                                  Dictionary<string, string>       formatOptions, CICMMetadataType preSidecar,
-                                  uint                             skip,
-                                  bool                             nometadata, bool notrim)
+        internal void Xgd(Device                           dev,          string        devicePath,
+                          IWritableOpticalImage            outputPlugin, ushort        retryPasses,
+                          bool                             force,        bool          dumpRaw,
+                          bool                             persistent,   bool          stopOnError,
+                          Dictionary<MediaTagType, byte[]> mediaTags,    ref MediaType dskType,
+                          ref Resume                       resume,
+                          ref DumpLog                      dumpLog,       Encoding         encoding,
+                          string                           outputPrefix,  string           outputPath,
+                          Dictionary<string, string>       formatOptions, CICMMetadataType preSidecar,
+                          uint                             skip,
+                          bool                             nometadata, bool notrim)
         {
             bool       sense;
             const uint BLOCK_SIZE   = 2048;
@@ -905,7 +905,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                   (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
-                    Mmc.AddMediaTagToSidecar(outputPath, tag, ref sidecar);
+                    AddMediaTagToSidecar(outputPath, tag, ref sidecar);
 
                 List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
                 if(sidecar.OpticalDisc[0].Track != null)
@@ -934,7 +934,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                     if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
-                        Mmc.AddMediaTagToSidecar(outputPath, tag, ref sidecar);
+                        AddMediaTagToSidecar(outputPath, tag, ref sidecar);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 

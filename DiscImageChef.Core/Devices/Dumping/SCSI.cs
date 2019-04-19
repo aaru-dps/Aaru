@@ -48,7 +48,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implements dumping SCSI and ATAPI devices
     /// </summary>
-    public static class Scsi
+    public partial class Dump
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
         /// <summary>
@@ -70,15 +70,15 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public static void Dump(Device           dev,          string                     devicePath,
-                                IWritableImage   outputPlugin, ushort                     retryPasses,
-                                bool             force,        bool                       dumpRaw,
-                                bool             persistent,   bool                       stopOnError, ref Resume resume,
-                                ref DumpLog      dumpLog,      bool                       dumpFirstTrackPregap,
-                                Encoding         encoding,     string                     outputPrefix,
-                                string           outputPath,   Dictionary<string, string> formatOptions,
-                                CICMMetadataType preSidecar,   uint                       skip, bool nometadata,
-                                bool             notrim)
+        public void Scsi(Device                     dev,                  string           devicePath,
+                         IWritableImage             outputPlugin,         ushort           retryPasses, bool force,
+                         bool                       dumpRaw,              bool             persistent,
+                         bool                       stopOnError,          ref Resume       resume, ref DumpLog dumpLog,
+                         bool                       dumpFirstTrackPregap, Encoding         encoding,
+                         string                     outputPrefix,         string           outputPath,
+                         Dictionary<string, string> formatOptions,        CICMMetadataType preSidecar,
+                         uint                       skip,
+                         bool                       nometadata, bool notrim)
         {
             MediaType dskType = MediaType.Unknown;
             int       resets  = 0;
@@ -206,20 +206,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 case PeripheralDeviceTypes.SequentialAccess:
                     if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
 
-                    Ssc.Dump(dev, outputPrefix, devicePath, ref resume, ref dumpLog, preSidecar);
+                    Ssc(dev, outputPrefix, devicePath, ref resume, ref dumpLog, preSidecar);
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     if(outputPlugin is IWritableOpticalImage opticalPlugin)
-                        Mmc.Dump(dev, devicePath, opticalPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
-                                 ref dskType, ref resume, ref dumpLog, dumpFirstTrackPregap, encoding, outputPrefix,
-                                 outputPath, formatOptions, preSidecar, skip, nometadata, notrim);
+                        Mmc(dev,         devicePath, opticalPlugin, retryPasses, force, dumpRaw,
+                            persistent,  stopOnError,
+                            ref dskType, ref resume,    ref dumpLog, dumpFirstTrackPregap, encoding,   outputPrefix,
+                            outputPath,  formatOptions, preSidecar,  skip,                 nometadata, notrim);
                     else
                         DicConsole.ErrorWriteLine("The specified plugin does not support storing optical disc images.");
                     return;
                 default:
-                    Sbc.Dump(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError, null,
-                             ref dskType, false, ref resume, ref dumpLog, encoding, outputPrefix, outputPath,
-                             formatOptions, preSidecar, skip, nometadata, notrim);
+                    Sbc(dev,         devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent,
+                        stopOnError, null,
+                        ref dskType, false, ref resume, ref dumpLog, encoding, outputPrefix, outputPath,
+                        formatOptions,
+                        preSidecar, skip, nometadata, notrim);
                     break;
             }
         }
