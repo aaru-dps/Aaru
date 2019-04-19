@@ -207,6 +207,7 @@
           <e p="Dumping" t="Include">
             <e p="ATA.cs" t="Include" />
             <e p="CompactDisc.cs" t="Include" />
+            <e p="Dump.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
             <e p="PlayStationPortable.cs" t="Include" />
