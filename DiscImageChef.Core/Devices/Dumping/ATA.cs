@@ -41,7 +41,6 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
@@ -257,6 +256,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         start = DateTime.UtcNow;
                         DateTime timeSpeedStart   = DateTime.UtcNow;
                         ulong    sectorSpeedStart = 0;
+                        InitProgress?.Invoke();
                         for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
                         {
                             if(aborted)
@@ -317,7 +317,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
                         end = DateTime.Now;
-                        DicConsole.WriteLine();
+                        EndProgress?.Invoke();
                         mhddLog.Close();
                         ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                                      blockSize * (double)(blocks + 1) / 1024 /
@@ -342,6 +342,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             dumpLog.WriteLine("Trimming bad sectors");
 
                             ulong[] tmpArray = resume.BadBlocks.ToArray();
+                            InitProgress?.Invoke();
                             foreach(ulong badSector in tmpArray)
                             {
                                 if(aborted)
@@ -365,7 +366,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 outputPlugin.WriteSector(cmdBuf, badSector);
                             }
 
-                            DicConsole.WriteLine();
+                            EndProgress?.Invoke();
                             end = DateTime.UtcNow;
                             UpdateStatus?.Invoke($"Trimmming finished in {(end - start).TotalSeconds} seconds.");
                             dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
@@ -380,6 +381,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             repeatRetryLba:
                             ulong[] tmpArray = resume.BadBlocks.ToArray();
+                            InitProgress?.Invoke();
                             foreach(ulong badSector in tmpArray)
                             {
                                 if(aborted)
@@ -417,7 +419,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 goto repeatRetryLba;
                             }
 
-                            DicConsole.WriteLine();
+                            EndProgress?.Invoke();
                         }
                         #endregion Error handling LBA
 
@@ -433,6 +435,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         start  = DateTime.UtcNow;
                         DateTime timeSpeedStart   = DateTime.UtcNow;
                         ulong    sectorSpeedStart = 0;
+                        InitProgress?.Invoke();
                         for(ushort cy = 0; cy < cylinders; cy++)
                         {
                             for(byte hd = 0; hd < heads; hd++)
@@ -497,7 +500,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
                         end = DateTime.Now;
-                        DicConsole.WriteLine();
+                        EndProgress?.Invoke();
                         mhddLog.Close();
                         ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                                      blockSize * (double)(blocks + 1) / 1024 /
@@ -665,7 +668,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   filesystem.start);
                             }
 
-                        DicConsole.WriteLine();
                         string xmlDskTyp, xmlDskSubTyp;
                         if(dev.IsCompactFlash)
                             CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash, out xmlDskTyp,

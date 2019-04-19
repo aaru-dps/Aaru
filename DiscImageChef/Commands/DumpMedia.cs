@@ -301,6 +301,8 @@ namespace DiscImageChef.Commands
             dumper.StoppingErrorMessage += Progress.ErrorMessage;
             dumper.UpdateProgress       += Progress.UpdateProgress;
             dumper.PulseProgress        += Progress.PulseProgress;
+            dumper.InitProgress         += Progress.InitProgress;
+            dumper.EndProgress          += Progress.EndProgress;
 
             if(dev.IsUsb && dev.UsbVendorId == 0x054C &&
                (dev.UsbProductId == 0x01C8 || dev.UsbProductId == 0x01C9 || dev.UsbProductId == 0x02D2))
