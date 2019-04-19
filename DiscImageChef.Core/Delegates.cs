@@ -97,4 +97,9 @@ namespace DiscImageChef.Core
     ///     Updates a status indicator
     /// </summary>
     public delegate void UpdateStatusHandler(string text);
+
+    /// <summary>
+    ///     Shows an error message
+    /// </summary>
+    public delegate void ErrorMessageHandler(string text);
 }

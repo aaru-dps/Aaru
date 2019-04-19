@@ -77,5 +77,10 @@ namespace DiscImageChef
         {
             DicConsole.WriteLine(text);
         }
+
+        internal static void ErrorMessage(string text)
+        {
+            DicConsole.ErrorWriteLine(text);
+        }
     }
 }

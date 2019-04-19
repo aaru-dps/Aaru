@@ -88,12 +88,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dumpRaw)
             {
-                DicConsole.ErrorWriteLine("Raw dumping not yet supported in ATA devices.");
-
-                if(force) DicConsole.ErrorWriteLine("Continuing...");
+                if(force) ErrorMessage?.Invoke("Raw dumping not yet supported in ATA devices, continuing...");
                 else
                 {
-                    DicConsole.ErrorWriteLine("Aborting...");
+                    DicConsole.ErrorWriteLine("Raw dumping not yet supported in ATA devices, aborting...");
                     return;
                 }
             }
@@ -135,7 +133,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(ataReader.GetBlockSize())
                     {
                         dumpLog.WriteLine("ERROR: Cannot get block size: {0}.", ataReader.ErrorMessage);
-                        DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                        ErrorMessage(ataReader.ErrorMessage);
                         return;
                     }
 
@@ -144,7 +142,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(ataReader.FindReadCommand())
                     {
                         dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", ataReader.ErrorMessage);
-                        DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                        ErrorMessage(ataReader.ErrorMessage);
                         return;
                     }
 
@@ -152,7 +150,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(ataReader.GetBlocksToRead())
                     {
                         dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", ataReader.ErrorMessage);
-                        DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                        ErrorMessage(ataReader.ErrorMessage);
                         return;
                     }
 
@@ -193,7 +191,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         ret = false;
                         dumpLog.WriteLine("Output format does not support USB descriptors.");
-                        DicConsole.ErrorWriteLine("Output format does not support USB descriptors.");
+                        ErrorMessage("Output format does not support USB descriptors.");
                     }
 
                     if(dev.IsPcmcia && dev.Cis != null &&
@@ -201,22 +199,28 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         ret = false;
                         dumpLog.WriteLine("Output format does not support PCMCIA CIS descriptors.");
-                        DicConsole.ErrorWriteLine("Output format does not support PCMCIA CIS descriptors.");
+                        ErrorMessage("Output format does not support PCMCIA CIS descriptors.");
                     }
 
                     if(!outputPlugin.SupportedMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
                     {
                         ret = false;
                         dumpLog.WriteLine("Output format does not support ATA IDENTIFY.");
-                        DicConsole.ErrorWriteLine("Output format does not support ATA IDENTIFY.");
+                        ErrorMessage("Output format does not support ATA IDENTIFY.");
                     }
 
                     if(!ret)
                     {
                         dumpLog.WriteLine("Several media tags not supported, {0}continuing...", force ? "" : "not ");
-                        DicConsole.ErrorWriteLine("Several media tags not supported, {0}continuing...",
-                                                  force ? "" : "not ");
-                        if(!force) return;
+                        if(force)
+                        {
+                            ErrorMessage("Several media tags not supported, continuing...");
+                        }
+                        else
+                        {
+                            DicConsole.ErrorWriteLine("Several media tags not supported, not continuing...");
+                            return;
+                        }
                     }
 
                     ret = outputPlugin.Create(outputPath,
