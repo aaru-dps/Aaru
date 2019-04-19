@@ -91,19 +91,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(force) ErrorMessage?.Invoke("Raw dumping not yet supported in ATA devices, continuing...");
                 else
                 {
-                    DicConsole.ErrorWriteLine("Raw dumping not yet supported in ATA devices, aborting...");
+                    StoppingErrorMessage?.Invoke("Raw dumping not yet supported in ATA devices, aborting...");
                     return;
                 }
             }
 
-            bool         sense;
             const ushort ATA_PROFILE        = 0x0001;
             const uint   TIMEOUT            = 5;
             double       imageWriteDuration = 0;
 
             UpdateStatus?.Invoke("Requesting ATA IDENTIFY DEVICE.");
             dumpLog.WriteLine("Requesting ATA IDENTIFY DEVICE.");
-            sense = dev.AtaIdentify(out byte[] cmdBuf, out _);
+            bool sense = dev.AtaIdentify(out byte[] cmdBuf, out _);
             if(!sense && Identify.Decode(cmdBuf).HasValue)
             {
                 Identify.IdentifyDevice? ataIdNullable = Identify.Decode(cmdBuf);
@@ -160,7 +159,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     byte   sectors      = ataReader.Sectors;
 
                     UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
-                    UpdateStatus?.Invoke($"Device reports {cylinders} cylinders {heads} heads {sectors} sectors per track.");
+                    UpdateStatus
+                      ?.Invoke($"Device reports {cylinders} cylinders {heads} heads {sectors} sectors per track.");
                     UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
                     UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
                     UpdateStatus?.Invoke($"Device reports {physicalsectorsize} bytes per physical block.");
@@ -212,13 +212,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!ret)
                     {
                         dumpLog.WriteLine("Several media tags not supported, {0}continuing...", force ? "" : "not ");
-                        if(force)
-                        {
-                            ErrorMessage("Several media tags not supported, continuing...");
-                        }
+                        if(force) ErrorMessage("Several media tags not supported, continuing...");
                         else
                         {
-                            DicConsole.ErrorWriteLine("Several media tags not supported, not continuing...");
+                            StoppingErrorMessage?.Invoke("Several media tags not supported, not continuing...");
                             return;
                         }
                     }
@@ -232,8 +229,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         dumpLog.WriteLine("Error creating output image, not continuing.");
                         dumpLog.WriteLine(outputPlugin.ErrorMessage);
-                        DicConsole.ErrorWriteLine("Error creating output image, not continuing.");
-                        DicConsole.ErrorWriteLine(outputPlugin.ErrorMessage);
+                        StoppingErrorMessage?.Invoke("Error creating output image, not continuing." +
+                                                     Environment.NewLine                            +
+                                                     outputPlugin.ErrorMessage);
                         return;
                     }
 
@@ -325,8 +323,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                      (totalDuration / 1000), devicePath);
 
                         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
-                        UpdateStatus?.Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
-                        UpdateStatus?.Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                        UpdateStatus
+                          ?.Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                        UpdateStatus
+                          ?.Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
                         dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
                         dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
@@ -502,8 +502,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                      blockSize * (double)(blocks + 1) / 1024 /
                                      (totalDuration / 1000), devicePath);
                         UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
-                        UpdateStatus?.Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
-                        UpdateStatus?.Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / (imageWriteDuration / 1000):F3} KiB/sec.");
+                        UpdateStatus
+                          ?.Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                        UpdateStatus
+                          ?.Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / (imageWriteDuration / 1000):F3} KiB/sec.");
                         dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
                         dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
@@ -640,7 +642,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         totalChkDuration = (chkEnd - chkStart).TotalMilliseconds;
                         UpdateStatus?.Invoke($"Sidecar created in {(chkEnd - chkStart).TotalSeconds} seconds.");
-                        UpdateStatus?.Invoke($"Average checksum speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                        UpdateStatus
+                          ?.Invoke($"Average checksum speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
                         dumpLog.WriteLine("Sidecar created in {0} seconds.", (chkEnd - chkStart).TotalSeconds);
                         dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                           (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
@@ -655,7 +658,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(filesystems.Count > 0)
                             foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
                             {
-                                UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
+                                UpdateStatus
+                                  ?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
                                 dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type,
                                                   filesystem.start);
                             }
@@ -701,8 +705,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     UpdateStatus?.Invoke("");
-                    UpdateStatus?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
-                    UpdateStatus?.Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                    UpdateStatus
+                      ?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+                    UpdateStatus
+                      ?.Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
                     UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
                     UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
                     UpdateStatus?.Invoke($"{resume.BadBlocks.Count} sectors could not be read.");
@@ -714,7 +720,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 else if(dev.IsPcmcia) Statistics.AddMedia(MediaType.PCCardTypeI,   true);
                 else Statistics.AddMedia(MediaType.GENERIC_HDD,                    true);
             }
-            else DicConsole.ErrorWriteLine("Unable to communicate with ATA device.");
+            else StoppingErrorMessage?.Invoke("Unable to communicate with ATA device.");
         }
     }
 }

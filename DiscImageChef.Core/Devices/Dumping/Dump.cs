@@ -4,5 +4,6 @@ namespace DiscImageChef.Core.Devices.Dumping
     {
         public event UpdateStatusHandler UpdateStatus;
         public event ErrorMessageHandler ErrorMessage;
+        public event ErrorMessageHandler StoppingErrorMessage;
     }
 }
