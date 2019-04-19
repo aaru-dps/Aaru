@@ -274,7 +274,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                             #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                            DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed);
+                            UpdateProgress?.Invoke($"\rReading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
+                                                   (long)i, (long)blocks);
 
                             bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration);
 
