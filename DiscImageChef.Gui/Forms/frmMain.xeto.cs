@@ -662,6 +662,36 @@ namespace DiscImageChef.Gui.Forms
                                                           ? "/"
                                                           : selectedItem.Values[4] as string);
                     break;
+                case null when selectedItem.Values.Length >= 5 && selectedItem.Values[4] is string dirPath &&
+                               selectedItem.Values[2] is IReadOnlyFilesystem fsPlugin:
+                    Errno errno = fsPlugin.ReadDir(dirPath, out List<string> dirents);
+
+                    if(errno != Errno.NoError)
+                    {
+                        MessageBox.Show($"Error {errno} trying to read \"{dirPath}\" of chosen filesystem",
+                                        MessageBoxType.Error);
+                        break;
+                    }
+
+                    Dictionary<string, FileEntryInfo> filesNew = new Dictionary<string, FileEntryInfo>();
+
+                    foreach(string dirent in dirents)
+                    {
+                        errno = fsPlugin.Stat(dirPath + "/" + dirent, out FileEntryInfo stat);
+
+                        if(errno != Errno.NoError)
+                        {
+                            DicConsole
+                               .ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
+                            continue;
+                        }
+
+                        if(!stat.Attributes.HasFlag(FileAttributes.Directory)) filesNew.Add(dirent, stat);
+                    }
+
+                    selectedItem.Values[3] = filesNew;
+                    splMain.Panel2         = new pnlListFiles(fsPlugin, filesNew, dirPath);
+                    break;
             }
         }
 
@@ -756,8 +786,7 @@ namespace DiscImageChef.Gui.Forms
                         return;
                     }
 
-                    Dictionary<string, FileEntryInfo> files       = new Dictionary<string, FileEntryInfo>();
-                    List<string>                      directories = new List<string>();
+                    List<string> directories = new List<string>();
 
                     foreach(string dirent in dirents)
                     {
@@ -771,7 +800,6 @@ namespace DiscImageChef.Gui.Forms
                         }
 
                         if(stat.Attributes.HasFlag(FileAttributes.Directory)) directories.Add(dirent);
-                        else files.Add(dirent, stat);
                     }
 
                     foreach(string directory in directories)
