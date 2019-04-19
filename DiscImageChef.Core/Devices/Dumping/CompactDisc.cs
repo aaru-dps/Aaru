@@ -1562,10 +1562,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     else runningPersistent = true;
                 }
 
+                InitProgress?.Invoke();
                 cdRepeatRetry:
                 ulong[]     tmpArray              = resume.BadBlocks.ToArray();
                 List<ulong> sectorsNotEvenPartial = new List<ulong>();
-                InitProgress?.Invoke();
                 foreach(ulong badSector in tmpArray)
                 {
                     if(aborted)

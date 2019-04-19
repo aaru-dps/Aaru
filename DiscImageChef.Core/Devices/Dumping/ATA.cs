@@ -379,9 +379,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                             int  pass    = 1;
                             bool forward = true;
 
+                            InitProgress?.Invoke();
                             repeatRetryLba:
                             ulong[] tmpArray = resume.BadBlocks.ToArray();
-                            InitProgress?.Invoke();
                             foreach(ulong badSector in tmpArray)
                             {
                                 if(aborted)
