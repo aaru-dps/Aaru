@@ -50,7 +50,6 @@ using DiscImageChef.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
-using Ata = DiscImageChef.Core.Devices.Dumping.Ata;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Scsi = DiscImageChef.Core.Devices.Dumping.Scsi;
@@ -447,14 +446,16 @@ namespace DiscImageChef.Gui.Forms
                     parsedOptions.Add(key, value);
                 }
 
+            Dump dumper = new Dump();
+
             switch(dev.Type)
             {
                 case DeviceType.ATA:
-                    Ata.Dump(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
-                             false, /*options.Raw,*/
-                             chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume, ref dumpLog,
-                             encoding, outputPrefix, txtDestination.Text, parsedOptions, sidecar,
-                             (uint)stpSkipped.Value, chkExistingMetadata.Checked == false, chkTrim.Checked == false);
+                    dumper.Ata(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
+                               false, /*options.Raw,*/
+                               chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume, ref dumpLog,
+                               encoding, outputPrefix, txtDestination.Text, parsedOptions, sidecar,
+                               (uint)stpSkipped.Value, chkExistingMetadata.Checked == false, chkTrim.Checked == false);
                     break;
                 case DeviceType.MMC:
                 case DeviceType.SecureDigital:

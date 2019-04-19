@@ -55,7 +55,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>
     ///     Implements dumping ATA devices
     /// </summary>
-    public static class Ata
+    public partial class Dump
     {
         /// <summary>
         ///     Dumps an ATA device
@@ -75,15 +75,14 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
-        public static void Dump(Device                     dev,           string           devicePath,
-                                IWritableImage             outputPlugin,  ushort           retryPasses,
-                                bool                       force,         bool             dumpRaw,
-                                bool                       persistent,    bool             stopOnError, ref Resume resume,
-                                ref DumpLog                dumpLog,       Encoding         encoding,
-                                string                     outputPrefix,  string           outputPath,
-                                Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
-                                uint                       skip,
-                                bool                       nometadata, bool notrim)
+        public void Ata(Device                     dev,          string     devicePath,
+                        IWritableImage             outputPlugin, ushort     retryPasses, bool force,
+                        bool                       dumpRaw,      bool       persistent,
+                        bool                       stopOnError,  ref Resume resume, ref DumpLog dumpLog,
+                        Encoding                   encoding,     string     outputPrefix,
+                        string                     outputPath,
+                        Dictionary<string, string> formatOptions, CICMMetadataType preSidecar, uint skip,
+                        bool                       nometadata,    bool             notrim)
         {
             bool aborted;
 

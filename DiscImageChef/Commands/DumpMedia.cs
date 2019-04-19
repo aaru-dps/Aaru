@@ -48,7 +48,6 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using Mono.Options;
 using Schemas;
-using Ata = DiscImageChef.Core.Devices.Dumping.Ata;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Scsi = DiscImageChef.Core.Devices.Dumping.Scsi;
 
@@ -296,6 +295,8 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
             }
 
+            Dump dumper = new Dump();
+
             if(dev.IsUsb && dev.UsbVendorId == 0x054C &&
                (dev.UsbProductId == 0x01C8 || dev.UsbProductId == 0x01C9 || dev.UsbProductId == 0x02D2))
                 PlayStationPortable.Dump(dev, devicePath, outputFormat, retryPasses, force, persistent, stopOnError,
@@ -305,9 +306,9 @@ namespace DiscImageChef.Commands
                 switch(dev.Type)
                 {
                     case DeviceType.ATA:
-                        Ata.Dump(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                 persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix, outputFile,
-                                 parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
+                        dumper.Ata(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
+                                   persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix, outputFile,
+                                   parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
                         break;
                     case DeviceType.MMC:
                     case DeviceType.SecureDigital:
