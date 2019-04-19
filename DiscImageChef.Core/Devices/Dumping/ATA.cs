@@ -352,7 +352,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     break;
                                 }
 
-                                DicConsole.Write("\rTrimming sector {0}", badSector);
+                                PulseProgress?.Invoke($"\rTrimming sector {badSector}");
 
                                 bool error = ataReader.ReadBlock(out cmdBuf, badSector, out duration);
 
@@ -390,9 +390,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     break;
                                 }
 
-                                DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                 forward ? "forward" : "reverse",
-                                                 persistent ? "recovering partial data, " : "");
+                                PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}",
+                                                                    badSector, pass, forward ? "forward" : "reverse",
+                                                                    persistent ? "recovering partial data, " : ""));
 
                                 bool error = ataReader.ReadBlock(out cmdBuf, badSector, out duration);
 
@@ -452,8 +452,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                                    DicConsole.Write("\rReading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.)", cy,
-                                                     hd, sc, currentSpeed);
+                                    PulseProgress
+                                      ?.Invoke($"\rReading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
 
                                     bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration);
 

@@ -6,5 +6,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         public event ErrorMessageHandler   ErrorMessage;
         public event ErrorMessageHandler   StoppingErrorMessage;
         public event UpdateProgressHandler UpdateProgress;
+        public event PulseProgressHandler  PulseProgress;
     }
 }

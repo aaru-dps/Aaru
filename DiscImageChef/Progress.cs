@@ -48,6 +48,11 @@ namespace DiscImageChef
             DicConsole.Write("\r" + text);
         }
 
+        internal static void PulseProgress(string text)
+        {
+            DicConsole.Write("\r" + text);
+        }
+
         internal static void InitProgress2() { }
 
         internal static void EndProgress2()
