@@ -250,7 +250,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     blocksToRead = (uint)(longBlockSize == 37856 ? 16 : 1);
                     UpdateStatus
                       ?.Invoke($"Reading {longBlockSize} raw bytes ({blockSize * blocksToRead} cooked bytes) per sector.");
-                    DicConsole.WriteLine();
                     physicalBlockSize = longBlockSize;
                     blockSize         = longBlockSize;
                 }
@@ -1056,7 +1055,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 UpdateStatus?.Invoke("Writing metadata sidecar");
-                DicConsole.WriteLine("Writing metadata sidecar");
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
