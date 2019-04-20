@@ -829,16 +829,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 DateTime chkStart = DateTime.UtcNow;
-                sidecarClass = new Sidecar(inputPlugin, outputPath, filter.Id, encoding)
-                {
-                    InitProgressEvent += InitProgress,
-                    UpdateProgressEvent += UpdateProgress,
-                    EndProgressEvent += EndProgress,
-                    InitProgressEvent2 += InitProgress2,
-                    UpdateProgressEvent2 += UpdateProgress2,
-                    EndProgressEvent2 += EndProgress2,
-                    UpdateStatusEvent += UpdateStatus
-                };
+                sidecarClass                      =  new Sidecar(inputPlugin, outputPath, filter.Id, encoding);
+                sidecarClass.InitProgressEvent    += InitProgress;
+                sidecarClass.UpdateProgressEvent  += UpdateProgress;
+                sidecarClass.EndProgressEvent     += EndProgress;
+                sidecarClass.InitProgressEvent2   += InitProgress2;
+                sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
+                sidecarClass.EndProgressEvent2    += EndProgress2;
+                sidecarClass.UpdateStatusEvent    += UpdateStatus;
                 CICMMetadataType sidecar = sidecarClass.Create();
                 end = DateTime.UtcNow;
 
