@@ -37,6 +37,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -353,8 +354,8 @@ namespace DiscImageChef.Gui.Forms
 
         void CheckResumeFile()
         {
-            Resume        resume = null;
-            XmlSerializer xs     = new XmlSerializer(typeof(Resume));
+            resume = null;
+            XmlSerializer xs = new XmlSerializer(typeof(Resume));
             try
             {
                 StreamReader sr = new StreamReader(outputPrefix + ".resume.xml");
@@ -375,18 +376,34 @@ namespace DiscImageChef.Gui.Forms
             chkResume.Checked = false;
         }
 
-        void OnBtnCancelClick(object sender, EventArgs e)
+        void OnBtnCloseClick(object sender, EventArgs e)
         {
             Close();
         }
 
-        void OnBtnAbortClick(object sender, EventArgs e)
+        void OnBtnStopClick(object sender, EventArgs e)
         {
+            btnStop.Enabled = false;
             dumper.Abort();
         }
 
         void OnBtnDumpClick(object sender, EventArgs e)
         {
+            txtLog.Text            = "";
+            btnClose.Visible       = false;
+            btnStart.Visible       = false;
+            btnStop.Visible        = true;
+            btnStop.Enabled        = true;
+            stkProgress.Visible    = true;
+            btnDestination.Visible = false;
+            stkOptions.Visible     = false;
+
+            new Thread(DoWork).Start();
+        }
+
+        void DoWork()
+        {
+            UpdateStatus("Opening device...");
             Device dev;
             try
             {
@@ -394,13 +411,13 @@ namespace DiscImageChef.Gui.Forms
 
                 if(dev.Error)
                 {
-                    MessageBox.Show($"Error {dev.LastError} opening device.", MessageBoxType.Error);
+                    StoppingErrorMessage($"Error {dev.LastError} opening device.");
                     return;
                 }
             }
             catch(Exception exception)
             {
-                MessageBox.Show($"Exception {exception.Message} opening device.", MessageBoxType.Error);
+                StoppingErrorMessage($"Exception {exception.Message} opening device.");
                 return;
             }
 
@@ -409,7 +426,7 @@ namespace DiscImageChef.Gui.Forms
 
             if(!(cmbFormat.SelectedValue is IWritableImage outputFormat))
             {
-                MessageBox.Show("Cannot open output plugin.", MessageBoxType.Error);
+                StoppingErrorMessage("Cannot open output plugin.");
                 return;
             }
 
@@ -419,7 +436,7 @@ namespace DiscImageChef.Gui.Forms
                 try { encoding = Claunia.Encoding.Encoding.GetEncoding(encodingInfo.Name); }
                 catch(ArgumentException)
                 {
-                    MessageBox.Show("Specified encoding is not supported.", MessageBoxType.Error);
+                    StoppingErrorMessage("Specified encoding is not supported.");
                     return;
                 }
 
@@ -429,8 +446,8 @@ namespace DiscImageChef.Gui.Forms
 
             Dictionary<string, string> parsedOptions = new Dictionary<string, string>();
 
-            if(grpOptions.Content is StackLayout stkOptions)
-                foreach(Control option in stkOptions.Children)
+            if(grpOptions.Content is StackLayout stkFormatOptions)
+                foreach(Control option in stkFormatOptions.Children)
                 {
                     string value;
 
@@ -460,17 +477,122 @@ namespace DiscImageChef.Gui.Forms
                               chkExistingMetadata.Checked == false, chkTrim.Checked == false,
                               chkTrack1Pregap.Checked     == true);
 
-            /*dumper.UpdateStatus         += Progress.UpdateStatus;
-            dumper.ErrorMessage         += Progress.ErrorMessage;
-            dumper.StoppingErrorMessage += Progress.ErrorMessage;
-            dumper.UpdateProgress       += Progress.UpdateProgress;
-            dumper.PulseProgress        += Progress.PulseProgress;
-            dumper.InitProgress         += Progress.InitProgress;
-            dumper.EndProgress          += Progress.EndProgress;*/
+            dumper.UpdateStatus         += UpdateStatus;
+            dumper.ErrorMessage         += ErrorMessage;
+            dumper.StoppingErrorMessage += StoppingErrorMessage;
+            dumper.PulseProgress        += PulseProgress;
+            dumper.InitProgress         += InitProgress;
+            dumper.UpdateProgress       += UpdateProgress;
+            dumper.EndProgress          += EndProgress;
+            dumper.InitProgress2        += InitProgress2;
+            dumper.UpdateProgress2      += UpdateProgress2;
+            dumper.EndProgress2         += EndProgress2;
 
             dumper.Start();
 
             dev.Close();
+
+            WorkFinished();
+        }
+
+        void WorkFinished()
+        {
+            Application.Instance.Invoke(() =>
+            {
+                btnClose.Visible     = true;
+                btnStop.Visible      = false;
+                stkProgress1.Visible = false;
+                stkProgress2.Visible = false;
+            });
+        }
+
+        void EndProgress2()
+        {
+            Application.Instance.Invoke(() => { stkProgress2.Visible = false; });
+        }
+
+        void UpdateProgress2(string text, long current, long maximum)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress2.Text          = text;
+                prgProgress2.Indeterminate = false;
+                prgProgress2.MinValue      = 0;
+                if(maximum > int.MaxValue)
+                {
+                    prgProgress2.MaxValue = (int)(maximum / int.MaxValue);
+                    prgProgress2.Value    = (int)(current / int.MaxValue);
+                }
+                else
+                {
+                    prgProgress2.MaxValue = (int)maximum;
+                    prgProgress2.Value    = (int)current;
+                }
+            });
+        }
+
+        void InitProgress2()
+        {
+            Application.Instance.Invoke(() => { stkProgress2.Visible = true; });
+        }
+
+        void EndProgress()
+        {
+            Application.Instance.Invoke(() => { stkProgress1.Visible = false; });
+        }
+
+        void UpdateProgress(string text, long current, long maximum)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress.Text          = text;
+                prgProgress.Indeterminate = false;
+                prgProgress.MinValue      = 0;
+                if(maximum > int.MaxValue)
+                {
+                    prgProgress.MaxValue = (int)(maximum / int.MaxValue);
+                    prgProgress.Value    = (int)(current / int.MaxValue);
+                }
+                else
+                {
+                    prgProgress.MaxValue = (int)maximum;
+                    prgProgress.Value    = (int)current;
+                }
+            });
+        }
+
+        void InitProgress()
+        {
+            Application.Instance.Invoke(() => { stkProgress1.Visible = true; });
+        }
+
+        void PulseProgress(string text)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress.Text          = text;
+                prgProgress.Indeterminate = true;
+            });
+        }
+
+        void StoppingErrorMessage(string text)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                ErrorMessage(text);
+                MessageBox.Show(text, MessageBoxType.Error);
+                WorkFinished();
+            });
+        }
+
+        void ErrorMessage(string text)
+        {
+            Application.Instance.Invoke(() => { txtLog.Append(text + Environment.NewLine, true); });
+        }
+
+        void UpdateStatus(string text)
+        {
+            Application.Instance.Invoke(() => { txtLog.Append(text + Environment.NewLine, true); });
         }
 
         class CommonEncodingInfo
@@ -496,8 +618,20 @@ namespace DiscImageChef.Gui.Forms
         NumericStepper stpRetries;
         NumericStepper stpSkipped;
         Label          lblEncoding;
-        Button         btnCancel;
-        Button         btnDump;
+        Button         btnClose;
+        Button         btnStart;
+        Button         btnStop;
+        StackLayout    stkProgress;
+        Label          lblDestinationLabel;
+        Label          lblDestination;
+        TextArea       txtLog;
+        StackLayout    stkProgress1;
+        Label          lblProgress;
+        ProgressBar    prgProgress;
+        StackLayout    stkProgress2;
+        Label          lblProgress2;
+        ProgressBar    prgProgress2;
+        StackLayout    stkOptions;
         #endregion
     }
 }

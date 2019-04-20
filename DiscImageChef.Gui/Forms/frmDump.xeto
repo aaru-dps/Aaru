@@ -34,6 +34,8 @@
 <Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="DiscImageChef" ClientSize="600, 450" Padding="10">
     <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+    <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                 ID="stkOptions">
         <Label Text="Output format"/>
         <ComboBox ID="cmbFormat" ReadOnly="True" SelectedIndexChanged="OnCmbFormatSelectedIndexChanged"/>
         <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
@@ -62,13 +64,45 @@
         <Label ID="lblEncoding" Text="Encoding to use on metadata sidecar creation"/>
         <ComboBox ID="cmbEncoding" ReadOnly="True"/>
         <GroupBox ID="grpOptions" Text="Options" Visible="False"/>
-        <StackLayout Orientation="Horizontal">
-            <StackLayoutItem HorizontalAlignment="Right">
-                <Button ID="btnCancel" Click="OnBtnCancelClick" Text="Cancel"/>
+    </StackLayout>
+        <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                     ID="stkProgress" Visible="False">
+            <StackLayoutItem HorizontalAlignment="Left" Expand="True">
+                <StackLayout Orientation="Horizontal">
+                    <Label ID="lblDestinationLabel">Writing image to:</Label>
+                    <Label ID="lblDestination"/>
+                </StackLayout>
             </StackLayoutItem>
-            <StackLayoutItem HorizontalAlignment="Right">
-                <Button ID="btnDump" Click="OnBtnDumpClick" Text="Dump"/>
+            <StackLayoutItem Expand="True">
+            <GroupBox Text="Log">
+                            <TextArea ID="txtLog" ReadOnly="True"/>
+            </GroupBox>
             </StackLayoutItem>
+            <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                         ID="stkProgress1" Visible="False">
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <Label ID="lblProgress"/>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <ProgressBar ID="prgProgress"/>
+                </StackLayoutItem>
+            </StackLayout>
+            <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                         ID="stkProgress2" Visible="False">
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <Label ID="lblProgress2"/>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <ProgressBar ID="prgProgress2"/>
+                </StackLayoutItem>
+            </StackLayout>
         </StackLayout>
+        <StackLayoutItem HorizontalAlignment="Right" Expand="True">
+            <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom">
+                <Button ID="btnStart" Text="Start" Click="OnBtnDumpClick"/>
+                <Button ID="btnClose" Text="Close" Click="OnBtnCloseClick"/>
+                <Button ID="btnStop" Text="Stop" Visible="False" Click="OnBtnStopClick"/>
+            </StackLayout>
+        </StackLayoutItem>
     </StackLayout>
 </Form>
