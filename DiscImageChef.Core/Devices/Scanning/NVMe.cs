@@ -30,12 +30,14 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Core.Devices.Scanning
 {
     public partial class MediaScan
     {
-        public ScanResults Nvme() => throw new NotImplementedException("NVMe devices not yet supported.");
+        public ScanResults Nvme()
+        {
+            StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
+            return default;
+        }
     }
 }

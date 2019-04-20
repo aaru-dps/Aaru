@@ -32,7 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.ATA;
 
@@ -65,14 +64,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                 results.Blocks = ataReader.GetDeviceBlocks();
                 if(ataReader.FindReadCommand())
                 {
-                    DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                    StoppingErrorMessage?.Invoke(ataReader.ErrorMessage);
                     return results;
                 }
 
                 // Check block sizes
                 if(ataReader.GetBlockSize())
                 {
-                    DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                    StoppingErrorMessage?.Invoke(ataReader.ErrorMessage);
                     return results;
                 }
 
@@ -80,7 +79,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 // Check how many blocks to read, if error show and return
                 if(ataReader.GetBlocksToRead())
                 {
-                    DicConsole.ErrorWriteLine(ataReader.ErrorMessage);
+                    StoppingErrorMessage?.Invoke(ataReader.ErrorMessage);
                     return results;
                 }
 
@@ -120,7 +119,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 double  duration;
                 if(ataReader.IsLba)
                 {
-                    DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+                    UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                     mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
                     ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
@@ -128,6 +127,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     start = DateTime.UtcNow;
                     DateTime timeSpeedStart   = DateTime.UtcNow;
                     ulong    sectorSpeedStart = 0;
+                    InitProgress?.Invoke();
                     for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                     {
                         if(aborted) break;
@@ -139,8 +139,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                         if(currentSpeed < results.MinSpeed && currentSpeed != 0) results.MinSpeed = currentSpeed;
                         #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                        DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks,
-                                         currentSpeed);
+                        UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
+                                               (long)i, (long)results.Blocks);
 
                         bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration);
 
@@ -177,13 +177,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                     }
 
                     end = DateTime.UtcNow;
-                    DicConsole.WriteLine();
+                    EndProgress?.Invoke();
                     mhddLog.Close();
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                                  blockSize * (double)(results.Blocks + 1) / 1024 /
                                  (results.ProcessingTime / 1000),
                                  devicePath);
 
+                    InitProgress?.Invoke();
                     if(ataReader.CanSeekLba)
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
@@ -191,7 +192,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                             uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
-                            DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
+                            PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
                             ataReader.Seek(seekPos, out seekCur);
 
@@ -203,6 +204,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                             results.SeekTotal += seekCur;
                             GC.Collect();
                         }
+
+                    EndProgress?.Invoke();
                 }
                 else
                 {
@@ -214,6 +217,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     start          = DateTime.UtcNow;
                     DateTime timeSpeedStart   = DateTime.UtcNow;
                     ulong    sectorSpeedStart = 0;
+                    InitProgress?.Invoke();
                     for(ushort cy = 0; cy < cylinders; cy++)
                     {
                         for(byte hd = 0; hd < heads; hd++)
@@ -229,8 +233,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                                     results.MinSpeed = currentSpeed;
                                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                                DicConsole.Write("\rReading cylinder {0} head {1} sector {2} ({3:F3} MiB/sec.)", cy, hd,
-                                                 sc, currentSpeed);
+                                PulseProgress
+                                  ?.Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
 
                                 bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration);
 
@@ -269,13 +273,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                     }
 
                     end = DateTime.UtcNow;
-                    DicConsole.WriteLine();
+                    EndProgress?.Invoke();
                     mhddLog.Close();
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                                  blockSize * (double)(results.Blocks + 1) / 1024 /
                                  (results.ProcessingTime / 1000),
                                  devicePath);
 
+                    InitProgress?.Invoke();
                     if(ataReader.CanSeek)
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
@@ -285,8 +290,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                             byte   seekHd = (byte)rnd.Next(heads);
                             byte   seekSc = (byte)rnd.Next(sectors);
 
-                            DicConsole.Write("\rSeeking to cylinder {0}, head {1}, sector {2}...\t\t", seekCy, seekHd,
-                                             seekSc);
+                            PulseProgress
+                              ?.Invoke($"\rSeeking to cylinder {seekCy}, head {seekHd}, sector {seekSc}...\t\t");
 
                             ataReader.SeekChs(seekCy, seekHd, seekSc, out seekCur);
 
@@ -298,9 +303,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                             results.SeekTotal += seekCur;
                             GC.Collect();
                         }
-                }
 
-                DicConsole.WriteLine();
+                    EndProgress?.Invoke();
+                }
 
                 results.ProcessingTime /= 1000;
                 results.TotalTime      =  (end - start).TotalSeconds;
@@ -310,7 +315,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 return results;
             }
 
-            DicConsole.ErrorWriteLine("Unable to communicate with ATA device.");
+            StoppingErrorMessage?.Invoke("Unable to communicate with ATA device.");
             return results;
         }
     }

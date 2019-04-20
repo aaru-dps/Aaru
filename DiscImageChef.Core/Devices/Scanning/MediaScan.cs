@@ -36,5 +36,34 @@ namespace DiscImageChef.Core.Devices.Scanning
                 default: throw new NotSupportedException("Unknown device type.");
             }
         }
+
+        /// <summary>
+        ///     Event raised when the progress bar is not longer needed
+        /// </summary>
+        public event EndProgressHandler EndProgress;
+        /// <summary>
+        ///     Event raised when a progress bar is needed
+        /// </summary>
+        public event InitProgressHandler InitProgress;
+        /// <summary>
+        ///     Event raised to report status updates
+        /// </summary>
+        public event UpdateStatusHandler UpdateStatus;
+        /// <summary>
+        ///     Event raised to report a non-fatal error
+        /// </summary>
+        public event ErrorMessageHandler ErrorMessage;
+        /// <summary>
+        ///     Event raised to report a fatal error that stops the dumping operation and should call user's attention
+        /// </summary>
+        public event ErrorMessageHandler StoppingErrorMessage;
+        /// <summary>
+        ///     Event raised to update the values of a determinate progress bar
+        /// </summary>
+        public event UpdateProgressHandler UpdateProgress;
+        /// <summary>
+        ///     Event raised to update the status of an undeterminate progress bar
+        /// </summary>
+        public event PulseProgressHandler PulseProgress;
     }
 }

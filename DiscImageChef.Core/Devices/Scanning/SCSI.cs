@@ -64,6 +64,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                 if(sense)
                 {
+                    InitProgress?.Invoke();
                     FixedSense? decSense = Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                         if(decSense.Value.ASC == 0x3A)
@@ -71,7 +72,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             int leftRetries = 5;
                             while(leftRetries > 0)
                             {
-                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
@@ -81,7 +82,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Please insert media in drive");
+                                StoppingErrorMessage?.Invoke("Please insert media in drive");
                                 return results;
                             }
                         }
@@ -90,7 +91,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             int leftRetries = 10;
                             while(leftRetries > 0)
                             {
-                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
@@ -100,8 +101,8 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                          Sense.PrettifySense(senseBuf));
+                                StoppingErrorMessage
+                                  ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
                                 return results;
                             }
                         }
@@ -111,7 +112,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             int leftRetries = 10;
                             while(leftRetries > 0)
                             {
-                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
@@ -121,22 +122,24 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                          Sense.PrettifySense(senseBuf));
+                                StoppingErrorMessage
+                                  ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
                                 return results;
                             }
                         }
                         else
                         {
-                            DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                      Sense.PrettifySense(senseBuf));
+                            StoppingErrorMessage
+                              ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
                             return results;
                         }
                     else
                     {
-                        DicConsole.ErrorWriteLine("Unknown testing unit was ready.");
+                        StoppingErrorMessage?.Invoke("Unknown testing unit was ready.");
                         return results;
                     }
+
+                    EndProgress?.Invoke();
                 }
             }
 
@@ -154,7 +157,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     results.Blocks = scsiReader.GetDeviceBlocks();
                     if(scsiReader.FindReadCommand())
                     {
-                        DicConsole.ErrorWriteLine("Unable to read medium.");
+                        StoppingErrorMessage?.Invoke("Unable to read medium.");
                         return results;
                     }
 
@@ -163,20 +166,21 @@ namespace DiscImageChef.Core.Devices.Scanning
                     if(results.Blocks != 0 && blockSize != 0)
                     {
                         results.Blocks++;
-                        DicConsole.WriteLine("Media has {0} blocks of {1} bytes/each. (for a total of {2} bytes)",
-                                             results.Blocks, blockSize, results.Blocks * (ulong)blockSize);
+                        UpdateStatus
+                          ?.Invoke($"Media has {results.Blocks} blocks of {blockSize} bytes/each. (for a total of {results.Blocks * (ulong)blockSize} bytes)");
                     }
 
                     break;
                 case PeripheralDeviceTypes.SequentialAccess:
-                    DicConsole.WriteLine("Scanning will never be supported on SCSI Streaming Devices.");
-                    DicConsole.WriteLine("It has no sense to do it, and it will put too much strain on the tape.");
+                    StoppingErrorMessage?.Invoke("Scanning will never be supported on SCSI Streaming Devices." +
+                                                 Environment.NewLine                                           +
+                                                 "It has no sense to do it, and it will put too much strain on the tape.");
                     return results;
             }
 
             if(results.Blocks == 0)
             {
-                DicConsole.ErrorWriteLine("Unable to read medium or empty medium present...");
+                StoppingErrorMessage?.Invoke("Unable to read medium or empty medium present...");
                 return results;
             }
 
@@ -244,7 +248,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             {
                 if(toc == null)
                 {
-                    DicConsole.ErrorWriteLine("Error trying to decode TOC...");
+                    StoppingErrorMessage?.Invoke("Error trying to decode TOC...");
                     return results;
                 }
 
@@ -252,7 +256,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
                                           dev.Timeout, out _);
 
-                if(readcd) DicConsole.WriteLine("Using MMC READ CD command.");
+                if(readcd) UpdateStatus?.Invoke("Using MMC READ CD command.");
 
                 start = DateTime.UtcNow;
 
@@ -271,17 +275,19 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 if(dev.Error)
                 {
-                    DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+                    StoppingErrorMessage
+                      ?.Invoke($"Device error {dev.LastError} trying to guess ideal transfer length.");
                     return results;
                 }
 
-                DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                 mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
                 ibgLog  = new IbgLog(ibgLogPath, currentProfile);
                 DateTime timeSpeedStart   = DateTime.UtcNow;
                 ulong    sectorSpeedStart = 0;
 
+                InitProgress?.Invoke();
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
                     if(aborted) break;
@@ -295,7 +301,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     if(currentSpeed < results.MinSpeed && currentSpeed != 0) results.MinSpeed = currentSpeed;
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks, currentSpeed);
+                    UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
+                                           (long)i, (long)results.Blocks);
 
                     if(readcd)
                     {
@@ -361,7 +368,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
 
                 end = DateTime.UtcNow;
-                DicConsole.WriteLine();
+                EndProgress?.Invoke();
                 mhddLog.Close();
                 ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                              blockSize * (double)(results.Blocks + 1) / 1024 /
@@ -372,13 +379,14 @@ namespace DiscImageChef.Core.Devices.Scanning
             {
                 start = DateTime.UtcNow;
 
-                DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+                UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
                 mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
                 ibgLog  = new IbgLog(ibgLogPath, currentProfile);
                 DateTime timeSpeedStart   = DateTime.UtcNow;
                 ulong    sectorSpeedStart = 0;
 
+                InitProgress?.Invoke();
                 for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                 {
                     if(aborted) break;
@@ -390,7 +398,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     if(currentSpeed < results.MinSpeed && currentSpeed != 0) results.MinSpeed = currentSpeed;
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks, currentSpeed);
+                    UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
+                                           (long)i, (long)results.Blocks);
 
                     sense                  =  scsiReader.ReadBlocks(out _, i, blocksToRead, out double cmdDuration);
                     results.ProcessingTime += cmdDuration;
@@ -428,7 +437,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
 
                 end = DateTime.UtcNow;
-                DicConsole.WriteLine();
+                EndProgress?.Invoke();
                 mhddLog.Close();
                 ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                              blockSize * (double)(results.Blocks + 1) / 1024 /
@@ -443,13 +452,14 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             Random rnd = new Random();
 
+            InitProgress?.Invoke();
             for(int i = 0; i < SEEK_TIMES; i++)
             {
                 if(aborted) break;
 
                 uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
-                DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
+                PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
                 double seekCur;
                 if(scsiReader.CanSeek) scsiReader.Seek(seekPos, out seekCur);
@@ -464,7 +474,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 GC.Collect();
             }
 
-            DicConsole.WriteLine();
+            EndProgress?.Invoke();
 
             results.ProcessingTime /= 1000;
             results.TotalTime      =  (end - start).TotalSeconds;

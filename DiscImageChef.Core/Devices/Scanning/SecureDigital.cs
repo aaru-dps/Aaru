@@ -33,7 +33,6 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.MMC;
 
@@ -107,7 +106,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             if(results.Blocks == 0)
             {
-                DicConsole.ErrorWriteLine("Unable to get device size.");
+                StoppingErrorMessage?.Invoke("Unable to get device size.");
                 return results;
             }
 
@@ -122,7 +121,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             if(sense)
             {
-                DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+                StoppingErrorMessage?.Invoke($"Device error {dev.LastError} trying to guess ideal transfer length.");
                 return results;
             }
 
@@ -150,7 +149,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             aborted                       =  false;
             System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
-            DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
             MhddLog mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(ibgLogPath, SD_PROFILE);
@@ -158,6 +157,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             start = DateTime.UtcNow;
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    sectorSpeedStart = 0;
+            InitProgress?.Invoke();
             for(ulong i = 0; i < results.Blocks; i += blocksToRead)
             {
                 if(aborted) break;
@@ -169,7 +169,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                 if(currentSpeed < results.MinSpeed && currentSpeed != 0) results.MinSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, results.Blocks, currentSpeed);
+                UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                                       (long)results.Blocks);
 
                 bool error = dev.Read(out cmdBuf, out _, (uint)i, blockSize, blocksToRead, byteAddressed, TIMEOUT,
                                       out duration);
@@ -207,19 +208,20 @@ namespace DiscImageChef.Core.Devices.Scanning
             }
 
             end = DateTime.UtcNow;
-            DicConsole.WriteLine();
+            EndProgress?.Invoke();
             mhddLog.Close();
             ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
                          blockSize * (double)(results.Blocks + 1) / 1024 /
                          (results.ProcessingTime / 1000), devicePath);
 
+            InitProgress?.Invoke();
             for(int i = 0; i < SEEK_TIMES; i++)
             {
                 if(aborted) break;
 
                 uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
-                DicConsole.Write("\rSeeking to sector {0}...\t\t", seekPos);
+                PulseProgress?.Invoke($"Seeking to sector {seekPos}...\t\t");
 
                 dev.Read(out cmdBuf, out _, seekPos, blockSize, blocksToRead, byteAddressed, TIMEOUT,
                          out double seekCur);
@@ -233,7 +235,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 GC.Collect();
             }
 
-            DicConsole.WriteLine();
+            EndProgress?.Invoke();
 
             results.ProcessingTime /= 1000;
             results.TotalTime      =  (end - start).TotalSeconds;

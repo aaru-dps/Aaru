@@ -111,7 +111,14 @@ namespace DiscImageChef.Commands
 
             Statistics.AddDevice(dev);
 
-            MediaScan   scanner = new MediaScan(mhddLogPath, ibgLogPath, devicePath, dev);
+            MediaScan scanner = new MediaScan(mhddLogPath, ibgLogPath, devicePath, dev);
+            scanner.UpdateStatus         += Progress.UpdateStatus;
+            scanner.ErrorMessage         += Progress.ErrorMessage;
+            scanner.StoppingErrorMessage += Progress.ErrorMessage;
+            scanner.UpdateProgress       += Progress.UpdateProgress;
+            scanner.PulseProgress        += Progress.PulseProgress;
+            scanner.InitProgress         += Progress.InitProgress;
+            scanner.EndProgress          += Progress.EndProgress;
             ScanResults results = scanner.Scan();
 
             DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
