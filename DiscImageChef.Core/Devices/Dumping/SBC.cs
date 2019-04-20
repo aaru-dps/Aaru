@@ -64,20 +64,18 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in SCSI or MMC layer</param>
         internal void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType, bool opticalDisc)
         {
-            bool         sense;
-            byte         scsiMediumType     = 0;
-            byte         scsiDensityCode    = 0;
-            bool         containsFloppyPage = false;
-            const ushort SBC_PROFILE        = 0x0001;
-            DateTime     start;
-            DateTime     end;
-            double       totalDuration = 0;
-            double       currentSpeed  = 0;
-            double       maxSpeed      = double.MinValue;
-            double       minSpeed      = double.MaxValue;
-            byte[]       readBuffer;
-            bool         aborted = false;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
+            bool               sense;
+            byte               scsiMediumType     = 0;
+            byte               scsiDensityCode    = 0;
+            bool               containsFloppyPage = false;
+            const ushort       SBC_PROFILE        = 0x0001;
+            DateTime           start;
+            DateTime           end;
+            double             totalDuration = 0;
+            double             currentSpeed  = 0;
+            double             maxSpeed      = double.MinValue;
+            double             minSpeed      = double.MaxValue;
+            byte[]             readBuffer;
             Modes.DecodedMode? decMode = null;
 
             dumpLog.WriteLine("Initializing reader.");

@@ -69,22 +69,20 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDisc(ref MediaType dskType)
         {
-            uint               subSize;
-            DateTime           start;
-            DateTime           end;
-            bool               readcd;
-            bool               read6         = false, read10 = false, read12 = false, read16 = false;
-            bool               sense         = false;
-            const uint         SECTOR_SIZE   = 2352;
-            FullTOC.CDFullTOC? toc           = null;
-            double             totalDuration = 0;
-            double             currentSpeed  = 0;
-            double             maxSpeed      = double.MinValue;
-            double             minSpeed      = double.MaxValue;
-            uint               blocksToRead  = 64;
-            bool               aborted       = false;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
-            Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
+            uint                             subSize;
+            DateTime                         start;
+            DateTime                         end;
+            bool                             readcd;
+            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
+            bool                             sense         = false;
+            const uint                       SECTOR_SIZE   = 2352;
+            FullTOC.CDFullTOC?               toc           = null;
+            double                           totalDuration = 0;
+            double                           currentSpeed  = 0;
+            double                           maxSpeed      = double.MinValue;
+            double                           minSpeed      = double.MaxValue;
+            uint                             blocksToRead  = 64;
+            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
 
             if(dumpRaw)
             {

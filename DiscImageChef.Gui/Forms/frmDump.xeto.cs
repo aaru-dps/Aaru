@@ -57,7 +57,9 @@ namespace DiscImageChef.Gui.Forms
 {
     public class frmDump : Form
     {
-        readonly string  devicePath;
+        readonly string devicePath;
+
+        Dump             dumper;
         string           outputPrefix;
         Resume           resume;
         CICMMetadataType sidecar;
@@ -378,6 +380,11 @@ namespace DiscImageChef.Gui.Forms
             Close();
         }
 
+        void OnBtnAbortClick(object sender, EventArgs e)
+        {
+            dumper.Abort();
+        }
+
         void OnBtnDumpClick(object sender, EventArgs e)
         {
             Device dev;
@@ -446,13 +453,12 @@ namespace DiscImageChef.Gui.Forms
                     parsedOptions.Add(key, value);
                 }
 
-            Dump dumper = new Dump(chkResume.Checked == true, dev, devicePath, outputFormat,
-                                   (ushort)stpRetries.Value,
-                                   chkForce.Checked       == true, false, chkPersistent.Checked == true,
-                                   chkStopOnError.Checked == true, resume, dumpLog, encoding, outputPrefix,
-                                   txtDestination.Text, parsedOptions, sidecar, (uint)stpSkipped.Value,
-                                   chkExistingMetadata.Checked == false, chkTrim.Checked == false,
-                                   chkTrack1Pregap.Checked     == true);
+            dumper = new Dump(chkResume.Checked      == true, dev, devicePath, outputFormat, (ushort)stpRetries.Value,
+                              chkForce.Checked       == true, false, chkPersistent.Checked == true,
+                              chkStopOnError.Checked == true, resume, dumpLog, encoding, outputPrefix,
+                              txtDestination.Text, parsedOptions, sidecar, (uint)stpSkipped.Value,
+                              chkExistingMetadata.Checked == false, chkTrim.Checked == false,
+                              chkTrack1Pregap.Checked     == true);
 
             /*dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

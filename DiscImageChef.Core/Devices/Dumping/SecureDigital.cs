@@ -57,8 +57,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// </summary>
         public void SecureDigital()
         {
-            bool aborted;
-
             if(dumpRaw)
             {
                 if(force)
@@ -181,9 +179,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             double   currentSpeed  = 0;
             double   maxSpeed      = double.MinValue;
             double   minSpeed      = double.MaxValue;
-
-            aborted                       =  false;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             if(blocks == 0)
             {

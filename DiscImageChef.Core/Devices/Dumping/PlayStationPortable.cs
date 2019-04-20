@@ -180,10 +180,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             double          currentSpeed  = 0;
             double          maxSpeed      = double.MinValue;
             double          minSpeed      = double.MaxValue;
-            bool            aborted       = false;
             DateTime        start;
             DateTime        end;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             bool sense = dev.Read12(out byte[] readBuffer, out _, 0, false, true, false, false, 0, 512, 0, 1, false,
                                     dev.Timeout, out _);
@@ -667,13 +665,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             double       currentSpeed  = 0;
             double       maxSpeed      = double.MinValue;
             double       minSpeed      = double.MaxValue;
-            bool         aborted       = false;
             uint         blocksToRead  = 64;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
-            DateTime  start;
-            DateTime  end;
-            MediaType dskType;
-            bool      sense;
+            DateTime     start;
+            DateTime     end;
+            MediaType    dskType;
+            bool         sense;
 
             sense = dev.ReadCapacity(out byte[] readBuffer, out _, dev.Timeout, out _);
 

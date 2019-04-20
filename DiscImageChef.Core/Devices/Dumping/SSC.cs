@@ -55,7 +55,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         internal void Ssc()
         {
             FixedSense?      fxSense;
-            bool             aborted;
             bool             sense;
             ulong            blocks = 0;
             uint             blockSize;
@@ -403,8 +402,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             };
             Checksum partitionChk = new Checksum();
 
-            aborted                       =  false;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    currentSpeedSize = 0;
 

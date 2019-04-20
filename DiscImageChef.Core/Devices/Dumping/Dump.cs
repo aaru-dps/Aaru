@@ -31,6 +31,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly CICMMetadataType           preSidecar;
         readonly ushort                     retryPasses;
         readonly bool                       stopOnError;
+        bool                                aborted;
         bool                                dumpFirstTrackPregap;
         Resume                              resume;
         uint                                skip;
@@ -87,6 +88,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             this.nometadata           = nometadata;
             this.notrim               = notrim;
             this.dumpFirstTrackPregap = dumpFirstTrackPregap;
+            aborted                   = false;
         }
 
         /// <summary>
@@ -134,6 +136,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             XmlSerializer xs = new XmlSerializer(resume.GetType());
             xs.Serialize(fs, resume);
             fs.Close();
+        }
+
+        public void Abort()
+        {
+            aborted = true;
         }
 
         /// <summary>

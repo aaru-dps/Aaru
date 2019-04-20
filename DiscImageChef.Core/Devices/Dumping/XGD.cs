@@ -74,8 +74,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             double     currentSpeed  = 0;
             double     maxSpeed      = double.MinValue;
             double     minSpeed      = double.MaxValue;
-            bool       aborted       = false;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             if(mediaTags.ContainsKey(MediaTagType.DVD_PFI)) mediaTags.Remove(MediaTagType.DVD_PFI);
             if(mediaTags.ContainsKey(MediaTagType.DVD_DMI)) mediaTags.Remove(MediaTagType.DVD_DMI);

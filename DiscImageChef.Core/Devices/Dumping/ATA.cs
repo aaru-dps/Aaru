@@ -57,8 +57,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// </summary>
         public void Ata()
         {
-            bool aborted;
-
             if(dumpRaw)
             {
                 if(force) ErrorMessage?.Invoke("Raw dumping not yet supported in ATA devices, continuing...");
@@ -91,9 +89,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     double   currentSpeed  = 0;
                     double   maxSpeed      = double.MinValue;
                     double   minSpeed      = double.MaxValue;
-
-                    aborted                       =  false;
-                    System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
                     // Initializate reader
                     UpdateStatus?.Invoke("Initializing reader.");
