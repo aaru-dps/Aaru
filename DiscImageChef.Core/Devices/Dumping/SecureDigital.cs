@@ -479,9 +479,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(!inputPlugin.Open(filter)) StoppingErrorMessage?.Invoke("Could not open created image.");
 
                 DateTime chkStart = DateTime.UtcNow;
-                Sidecar sidecarClass = new Sidecar(inputPlugin, outputPath, filter.Id, encoding)
+                sidecarClass = new Sidecar(inputPlugin, outputPath, filter.Id, encoding)
                 {
-                    // TODO: Be able to cancel hashing
                     InitProgressEvent += InitProgress,
                     UpdateProgressEvent += UpdateProgress,
                     EndProgressEvent += EndProgress,

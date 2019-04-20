@@ -47,17 +47,19 @@ namespace DiscImageChef.Core
         readonly Encoding    encoding;
         readonly FileInfo    fi;
         readonly Guid        filterId;
-        FileStream           fs;
         readonly IMediaImage image;
         readonly string      imagePath;
         readonly Checksum    imgChkWorker;
         readonly PluginBase  plugins;
+        bool                 aborted;
+        FileStream           fs;
         CICMMetadataType     sidecar;
 
         public Sidecar()
         {
             plugins      = GetPluginBase.Instance;
             imgChkWorker = new Checksum();
+            aborted      = false;
         }
 
         /// <param name="image">Image</param>
@@ -78,6 +80,7 @@ namespace DiscImageChef.Core
             fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
 
             imgChkWorker = new Checksum();
+            aborted      = false;
         }
 
         /// <summary>
@@ -94,6 +97,8 @@ namespace DiscImageChef.Core
             InitProgress();
             while(position < fi.Length - 1048576)
             {
+                if(aborted) return sidecar;
+
                 data = new byte[1048576];
                 fs.Read(data, 0, 1048576);
 
@@ -124,6 +129,8 @@ namespace DiscImageChef.Core
             sidecar.AudioMedia  = null;
             sidecar.LinearMedia = null;
 
+            if(aborted) return sidecar;
+
             switch(image.Info.XmlMediaType)
             {
                 case XmlMediaType.OpticalDisc:
@@ -150,6 +157,11 @@ namespace DiscImageChef.Core
             }
 
             return sidecar;
+        }
+
+        public void Abort()
+        {
+            aborted = true;
         }
     }
 }

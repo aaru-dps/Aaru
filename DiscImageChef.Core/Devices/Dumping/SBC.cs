@@ -829,9 +829,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 DateTime chkStart = DateTime.UtcNow;
-                Sidecar sidecarClass = new Sidecar(inputPlugin, outputPath, filter.Id, encoding)
+                sidecarClass = new Sidecar(inputPlugin, outputPath, filter.Id, encoding)
                 {
-                    // TODO: Be able to cancel hashing
                     InitProgressEvent += InitProgress,
                     UpdateProgressEvent += UpdateProgress,
                     EndProgressEvent += EndProgress,

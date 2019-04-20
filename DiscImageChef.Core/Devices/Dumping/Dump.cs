@@ -34,6 +34,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         bool                                aborted;
         bool                                dumpFirstTrackPregap;
         Resume                              resume;
+        Sidecar                             sidecarClass;
         uint                                skip;
 
         /// <summary>
@@ -141,6 +142,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         public void Abort()
         {
             aborted = true;
+            sidecarClass?.Abort();
         }
 
         /// <summary>

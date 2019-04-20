@@ -68,6 +68,8 @@ namespace DiscImageChef.Gui.Forms
             new Thread(DoWork).Start();
         }
 
+        Sidecar sidecarClass;
+
         void DoWork()
         {
             // Prepare UI
@@ -81,7 +83,7 @@ namespace DiscImageChef.Gui.Forms
                 btnDestination.Visible = false;
             });
 
-            Sidecar          sidecarClass = new Sidecar(inputFormat, imageSource, filterId, encoding);
+            sidecarClass = new Sidecar(inputFormat, imageSource, filterId, encoding);
             CICMMetadataType sidecar      = sidecarClass.Create();
 
             DicConsole.WriteLine("Writing metadata sidecar");
@@ -109,7 +111,7 @@ namespace DiscImageChef.Gui.Forms
 
         protected void OnBtnStop(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            sidecarClass.Abort();
         }
 
         void OnBtnDestinationClick(object sender, EventArgs e)

@@ -66,6 +66,8 @@ namespace DiscImageChef.Core
                         PluginBase         plugins,
                         List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
+            if(aborted) return;
+
             sidecar.BlockMedia = new[]
             {
                 new BlockMediaType
@@ -95,6 +97,9 @@ namespace DiscImageChef.Core
             }
 
             foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
+            {
+                if(aborted) return;
+
                 switch(tagType)
                 {
                     case MediaTagType.ATAPI_IDENTIFY:
@@ -276,6 +281,7 @@ namespace DiscImageChef.Core
                         };
                         break;
                 }
+            }
 
             // If there is only one track, and it's the same as the image file (e.g. ".iso" files), don't re-checksum.
             if(image.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000") &&
@@ -295,6 +301,12 @@ namespace DiscImageChef.Core
                 InitProgress2();
                 while(doneSectors < sectors)
                 {
+                    if(aborted)
+                    {
+                        EndProgress2();
+                        return;
+                    }
+
                     byte[] sector;
 
                     if(sectors - doneSectors >= sectorsToRead)
@@ -337,6 +349,8 @@ namespace DiscImageChef.Core
 
             UpdateStatus("Checking filesystems...");
 
+            if(aborted) return;
+
             List<Partition> partitions = Partitions.GetAll(image);
             Partitions.AddSchemesToStats(partitions);
 
@@ -346,6 +360,8 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].FileSystemInformation = new PartitionType[partitions.Count];
                 for(int i = 0; i < partitions.Count; i++)
                 {
+                    if(aborted) return;
+
                     sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType
                     {
                         Description = partitions[i].Description,
@@ -360,6 +376,8 @@ namespace DiscImageChef.Core
                     foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
                         {
+                            if(aborted) return;
+
                             if(!plugin.Identify(image, partitions[i])) continue;
 
                             plugin.GetInformation(image, partitions[i], out _, encoding);
@@ -378,6 +396,8 @@ namespace DiscImageChef.Core
             }
             else
             {
+                if(aborted) return;
+
                 sidecar.BlockMedia[0].FileSystemInformation[0] =
                     new PartitionType {StartSector = 0, EndSector = (int)(image.Info.Sectors - 1)};
 
@@ -393,6 +413,8 @@ namespace DiscImageChef.Core
                 foreach(IFilesystem plugin in plugins.PluginsList.Values)
                     try
                     {
+                        if(aborted) return;
+
                         if(!plugin.Identify(image, wholePart)) continue;
 
                         plugin.GetInformation(image, wholePart, out _, encoding);
@@ -565,6 +587,8 @@ namespace DiscImageChef.Core
             string scpFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                               Path.GetFileNameWithoutExtension(imagePath) + ".scp");
 
+            if(aborted) return;
+
             if(File.Exists(scpFilePath))
             {
                 SuperCardPro scpImage  = new SuperCardPro();
@@ -586,6 +610,8 @@ namespace DiscImageChef.Core
 
                             for(byte t = scpImage.Header.start; t <= scpImage.Header.end; t++)
                             {
+                                if(aborted) return;
+
                                 BlockTrackType scpBlockTrackType = new BlockTrackType
                                 {
                                     Cylinder = t / image.Info.Heads,
@@ -642,6 +668,7 @@ namespace DiscImageChef.Core
             string basename = Path.Combine(Path.GetDirectoryName(imagePath),
                                            Path.GetFileNameWithoutExtension(imagePath));
             bool kfDir = false;
+            if(aborted) return;
 
             if(Directory.Exists(basename))
             {
@@ -674,6 +701,8 @@ namespace DiscImageChef.Core
 
                             foreach(KeyValuePair<byte, IFilter> kvp in kfImage.tracks)
                             {
+                                if(aborted) return;
+
                                 BlockTrackType kfBlockTrackType = new BlockTrackType
                                 {
                                     Cylinder = kvp.Key / image.Info.Heads,
@@ -729,6 +758,7 @@ namespace DiscImageChef.Core
             string dfiFilePath = Path.Combine(Path.GetDirectoryName(imagePath),
                                               Path.GetFileNameWithoutExtension(imagePath) + ".dfi");
 
+            if(aborted) return;
             if(!File.Exists(dfiFilePath)) return;
 
             DiscFerret  dfiImage  = new DiscFerret();
@@ -749,6 +779,8 @@ namespace DiscImageChef.Core
 
                     foreach(int t in dfiImage.TrackOffsets.Keys)
                     {
+                        if(aborted) return;
+
                         BlockTrackType dfiBlockTrackType = new BlockTrackType
                         {
                             Cylinder = t / image.Info.Heads,

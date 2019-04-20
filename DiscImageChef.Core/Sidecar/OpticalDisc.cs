@@ -66,6 +66,8 @@ namespace DiscImageChef.Core
                          FileInfo           fi,           PluginBase           plugins,
                          List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
+            if(aborted) return;
+
             sidecar.OpticalDisc = new[]
             {
                 new OpticalDiscType
@@ -97,6 +99,9 @@ namespace DiscImageChef.Core
             MediaType dskType = image.Info.MediaType;
 
             foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
+            {
+                if(aborted) return;
+
                 switch(tagType)
                 {
                     case MediaTagType.CD_ATIP:
@@ -332,6 +337,7 @@ namespace DiscImageChef.Core
                         };
                         break;
                 }
+            }
 
             try
             {
@@ -352,6 +358,8 @@ namespace DiscImageChef.Core
             if(sidecar.OpticalDisc[0].Dimensions == null && image.Info.MediaType != MediaType.Unknown)
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
 
+            if(aborted) return;
+
             InitProgress();
 
             UpdateStatus("Checking filesystems");
@@ -360,6 +368,12 @@ namespace DiscImageChef.Core
 
             foreach(Track trk in tracks)
             {
+                if(aborted)
+                {
+                    EndProgress();
+                    return;
+                }
+
                 TrackType xmlTrk = new TrackType();
                 switch(trk.TrackType)
                 {
@@ -457,6 +471,13 @@ namespace DiscImageChef.Core
                     InitProgress2();
                     while(doneSectors < sectors)
                     {
+                        if(aborted)
+                        {
+                            EndProgress();
+                            EndProgress2();
+                            return;
+                        }
+
                         byte[] sector;
 
                         if(sectors - doneSectors >= sectorsToRead)
@@ -525,6 +546,13 @@ namespace DiscImageChef.Core
                     InitProgress2();
                     while(doneSectors < sectors)
                     {
+                        if(aborted)
+                        {
+                            EndProgress();
+                            EndProgress2();
+                            return;
+                        }
+
                         byte[] sector;
 
                         if(sectors - doneSectors >= sectorsToRead)
@@ -582,6 +610,12 @@ namespace DiscImageChef.Core
                         foreach(IFilesystem plugin in plugins.PluginsList.Values)
                             try
                             {
+                                if(aborted)
+                                {
+                                    EndProgress();
+                                    return;
+                                }
+
                                 if(!plugin.Identify(image, trkPartitions[i])) continue;
 
                                 plugin.GetInformation(image, trkPartitions[i], out _, encoding);
@@ -633,6 +667,12 @@ namespace DiscImageChef.Core
                     foreach(IFilesystem plugin in plugins.PluginsList.Values)
                         try
                         {
+                            if(aborted)
+                            {
+                                EndProgress();
+                                return;
+                            }
+
                             if(!plugin.Identify(image, xmlPart)) continue;
 
                             plugin.GetInformation(image, xmlPart, out _, encoding);

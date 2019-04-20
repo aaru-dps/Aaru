@@ -190,6 +190,11 @@ namespace DiscImageChef.Commands
                     sidecarClass.UpdateProgressEvent2 += Progress.UpdateProgress2;
                     sidecarClass.EndProgressEvent2    += Progress.EndProgress2;
                     sidecarClass.UpdateStatusEvent    += Progress.UpdateStatus;
+                    System.Console.CancelKeyPress += (sender, e) =>
+                    {
+                        e.Cancel = true;
+                        sidecarClass.Abort();
+                    };
                     CICMMetadataType sidecar = sidecarClass.Create();
 
                     DicConsole.WriteLine("Writing metadata sidecar");

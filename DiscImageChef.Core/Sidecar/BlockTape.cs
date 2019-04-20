@@ -77,6 +77,8 @@ namespace DiscImageChef.Core
                 }
             };
 
+            if(aborted) return sidecar;
+
             long               currentBlock = 0;
             long               totalSize    = 0;
             Checksum           tapeWorker   = new Checksum();
@@ -84,6 +86,8 @@ namespace DiscImageChef.Core
 
             for(int i = 0; i < files.Count; i++)
             {
+                if(aborted) return sidecar;
+
                 fs = new FileStream(files[i], FileMode.Open, FileAccess.Read);
                 Checksum fileWorker = new Checksum();
                 TapeFileType tapeFile = new TapeFileType
@@ -107,6 +111,12 @@ namespace DiscImageChef.Core
                 InitProgress2();
                 while(doneSectors < sectors)
                 {
+                    if(aborted)
+                    {
+                        EndProgress2();
+                        return sidecar;
+                    }
+
                     byte[] sector;
 
                     if(sectors - doneSectors >= SECTORS_TO_READ)
