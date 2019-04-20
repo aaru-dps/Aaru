@@ -553,9 +553,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                                        forward ? "forward" : "reverse",
-                                                        runningPersistent ? "recovering partial data, " : ""));
+                    PulseProgress
+                      ?.Invoke($"\rRetrying sector {badSector}, pass {pass}, {(runningPersistent ? "recovering partial data, " : "")}{(forward ? "forward" : "reverse")}");
 
                     sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false,
                                        (uint)(umdStart + badSector * 4), 512, 0, 4, false, dev.Timeout,
@@ -567,6 +566,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
                         outputPlugin.WriteSector(readBuffer, badSector);
+                        UpdateStatus?.Invoke(string.Format("Correctly retried block {0} in pass {1}.", badSector,
+                                                           pass));
                         dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
                     else if(runningPersistent) outputPlugin.WriteSector(readBuffer, badSector);
@@ -1045,6 +1046,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
                         outputPlugin.WriteSector(readBuffer, badSector);
+                        UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
                         dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
                     else if(runningPersistent) outputPlugin.WriteSector(readBuffer, badSector);

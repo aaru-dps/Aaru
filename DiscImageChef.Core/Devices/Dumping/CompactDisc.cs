@@ -1604,6 +1604,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
+                        UpdateStatus?.Invoke($"Correctly retried sector {badSector} in pass {pass}.");
                         dumpLog.WriteLine("Correctly retried sector {0} in pass {1}.", badSector, pass);
                         sectorsNotEvenPartial.Remove(badSector);
                     }

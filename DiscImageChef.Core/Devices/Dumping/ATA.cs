@@ -405,6 +405,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     resume.BadBlocks.Remove(badSector);
                                     extents.Add(badSector);
                                     outputPlugin.WriteSector(cmdBuf, badSector);
+                                    UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
                                     dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                                 }
                                 else if(persistent) outputPlugin.WriteSector(cmdBuf, badSector);
