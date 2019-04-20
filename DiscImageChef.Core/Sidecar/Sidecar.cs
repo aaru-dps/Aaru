@@ -94,6 +94,7 @@ namespace DiscImageChef.Core
 
             byte[] data;
             long   position = 0;
+            UpdateStatus("Hashing image file...");
             InitProgress();
             while(position < fi.Length - 1048576)
             {
@@ -161,6 +162,7 @@ namespace DiscImageChef.Core
 
         public void Abort()
         {
+            UpdateStatus("Aborting...");
             aborted = true;
         }
     }

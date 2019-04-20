@@ -98,6 +98,7 @@ namespace DiscImageChef.Core
 
             MediaType dskType = image.Info.MediaType;
 
+            UpdateStatus("Hashing media tags...");
             foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
             {
                 if(aborted) return;
@@ -366,6 +367,7 @@ namespace DiscImageChef.Core
             List<Partition> partitions = Partitions.GetAll(image);
             Partitions.AddSchemesToStats(partitions);
 
+            UpdateStatus("Hashing tracks...");
             foreach(Track trk in tracks)
             {
                 if(aborted)

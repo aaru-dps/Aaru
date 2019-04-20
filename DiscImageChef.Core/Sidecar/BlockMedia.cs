@@ -96,6 +96,7 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].Sequence.TotalMedia    = 1;
             }
 
+            UpdateStatus("Hashing media tags...");
             foreach(MediaTagType tagType in image.Info.ReadableMediaTags)
             {
                 if(aborted) return;
@@ -289,6 +290,8 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].ContentChecksums = sidecar.BlockMedia[0].Checksums;
             else
             {
+                UpdateStatus("Hashing sectors...");
+
                 Checksum contentChkWorker = new Checksum();
 
                 // For fast debugging, skip checksum
@@ -430,6 +433,8 @@ namespace DiscImageChef.Core
 
                 if(lstFs.Count > 0) sidecar.BlockMedia[0].FileSystemInformation[0].FileSystems = lstFs.ToArray();
             }
+
+            UpdateStatus("Saving metadata...");
 
             if(image.Info.Cylinders > 0 && image.Info.Heads > 0 && image.Info.SectorsPerTrack > 0)
             {
@@ -591,6 +596,7 @@ namespace DiscImageChef.Core
 
             if(File.Exists(scpFilePath))
             {
+                UpdateStatus("Hashing SuperCardPro image...");
                 SuperCardPro scpImage  = new SuperCardPro();
                 ZZZNoFilter  scpFilter = new ZZZNoFilter();
                 scpFilter.Open(scpFilePath);
@@ -684,6 +690,8 @@ namespace DiscImageChef.Core
 
             if(kfFile != null)
             {
+                UpdateStatus("Hashing KryoFlux images...");
+
                 KryoFlux    kfImage  = new KryoFlux();
                 ZZZNoFilter kfFilter = new ZZZNoFilter();
                 kfFilter.Open(kfFile);
@@ -769,6 +777,8 @@ namespace DiscImageChef.Core
 
             try { dfiImage.Open(dfiFilter); }
             catch(NotImplementedException) { }
+
+            UpdateStatus("Hashing DiscFerret image...");
 
             if(image.Info.Heads == dfiImage.Info.Heads)
                 if(dfiImage.Info.Cylinders >= image.Info.Cylinders)

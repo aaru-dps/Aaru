@@ -84,6 +84,7 @@ namespace DiscImageChef.Core
             Checksum           tapeWorker   = new Checksum();
             List<TapeFileType> tapeFiles    = new List<TapeFileType>();
 
+            UpdateStatus("Hashing files...");
             for(int i = 0; i < files.Count; i++)
             {
                 if(aborted) return sidecar;
@@ -149,6 +150,7 @@ namespace DiscImageChef.Core
                 EndProgress2();
             }
 
+            UpdateStatus("Setting metadata...");
             sidecar.BlockMedia[0].Checksums                    = tapeWorker.End().ToArray();
             sidecar.BlockMedia[0].ContentChecksums             = sidecar.BlockMedia[0].Checksums;
             sidecar.BlockMedia[0].Size                         = totalSize;
