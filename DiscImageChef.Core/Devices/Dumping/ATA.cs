@@ -34,19 +34,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
-using DiscImageChef.Devices;
 using Schemas;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core.Devices.Dumping
@@ -59,29 +55,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>
         ///     Dumps an ATA device
         /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="devicePath">Path to the device</param>
-        /// <param name="outputPrefix">Prefix for output log files</param>
-        /// <param name="outputPlugin">Plugin for output file</param>
-        /// <param name="retryPasses">How many times to retry</param>
-        /// <param name="force">Force to continue dump whenever possible</param>
-        /// <param name="dumpRaw">Dump long sectors</param>
-        /// <param name="persistent">Store whatever data the drive returned on error</param>
-        /// <param name="stopOnError">Stop dump on first error</param>
-        /// <param name="resume">Information for dump resuming</param>
-        /// <param name="dumpLog">Dump logger</param>
-        /// <param name="encoding">Encoding to use when analyzing dump</param>
-        /// <param name="outputPath">Path to output file</param>
-        /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
-        public void Ata(Device                     dev,          string     devicePath,
-                        IWritableImage             outputPlugin, ushort     retryPasses, bool force,
-                        bool                       dumpRaw,      bool       persistent,
-                        bool                       stopOnError,  ref Resume resume, ref DumpLog dumpLog,
-                        Encoding                   encoding,     string     outputPrefix,
-                        string                     outputPath,
-                        Dictionary<string, string> formatOptions, CICMMetadataType preSidecar, uint skip,
-                        bool                       nometadata,    bool             notrim)
+        public void Ata()
         {
             bool aborted;
 

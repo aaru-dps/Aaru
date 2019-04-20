@@ -57,9 +57,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPrefix">Prefix for output data files</param>
         /// <param name="resume">Information for dump resuming</param>
         /// <param name="dumpLog">Dump logger</param>
-        internal void Ssc(Device           dev, string outputPrefix, string devicePath, ref Resume resume,
-                          ref DumpLog      dumpLog,
-                          CICMMetadataType preSidecar)
+        internal void Ssc()
         {
             FixedSense?      fxSense;
             bool             aborted;

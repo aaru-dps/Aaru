@@ -31,13 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Devices;
-using Schemas;
 
 // ReSharper disable InconsistentNaming
 
@@ -45,14 +38,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public partial class Dump
     {
-        public void NVMe(Device                     dev,          string     devicePath,
-                         IWritableImage             outputPlugin, ushort     retryPasses, bool force,
-                         bool                       dumpRaw,      bool       persistent,
-                         bool                       stopOnError,  ref Resume resume, ref DumpLog dumpLog,
-                         Encoding                   encoding,     string     outputPrefix,
-                         string                     outputPath,
-                         Dictionary<string, string> formatOptions, CICMMetadataType preSidecar, uint skip,
-                         bool                       nometadata,    bool             notrim)
+        public void NVMe()
         {
             throw new NotImplementedException("NVMe devices not yet supported.");
         }

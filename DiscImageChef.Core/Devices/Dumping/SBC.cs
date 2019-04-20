@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -78,16 +77,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
-        internal void Sbc(Device                     dev,          string                           devicePath,
-                          IWritableImage             outputPlugin, ushort                           retryPasses, bool force,
-                          bool                       dumpRaw,      bool                             persistent,
-                          bool                       stopOnError,  Dictionary<MediaTagType, byte[]> mediaTags,
-                          ref MediaType              dskType,      bool                             opticalDisc,
-                          ref Resume                 resume,       ref DumpLog                      dumpLog,
-                          Encoding                   encoding,     string                           outputPrefix,
-                          string                     outputPath,
-                          Dictionary<string, string> formatOptions, CICMMetadataType preSidecar, uint skip,
-                          bool                       nometadata,    bool             notrim)
+        internal void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType, bool opticalDisc)
         {
             bool         sense;
             byte         scsiMediumType     = 0;

@@ -294,7 +294,9 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
             }
 
-            Dump dumper = new Dump();
+            Dump dumper = new Dump(doResume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
+                                   stopOnError, resume, dumpLog, encoding, outputPrefix, outputFile, parsedOptions,
+                                   sidecar, (uint)skip, noMetadata, noTrim, firstTrackPregap);
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;
             dumper.StoppingErrorMessage += Progress.ErrorMessage;
@@ -303,56 +305,8 @@ namespace DiscImageChef.Commands
             dumper.InitProgress         += Progress.InitProgress;
             dumper.EndProgress          += Progress.EndProgress;
 
-            if(dev.IsUsb && dev.UsbVendorId == 0x054C &&
-               (dev.UsbProductId == 0x01C8 || dev.UsbProductId == 0x01C9 || dev.UsbProductId == 0x02D2))
-                dumper.PlayStationPortable(dev, devicePath, outputFormat, retryPasses, force, persistent, stopOnError,
-                                           ref resume, ref dumpLog, encoding, outputPrefix, outputFile, parsedOptions,
-                                           sidecar, (uint)skip, noMetadata, noTrim);
-            else
-                switch(dev.Type)
-                {
-                    case DeviceType.ATA:
-                        dumper.Ata(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                   persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix, outputFile,
-                                   parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
-                        break;
-                    case DeviceType.MMC:
-                    case DeviceType.SecureDigital:
-                        dumper.SecureDigital(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                             persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                                             outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
-                        break;
-                    case DeviceType.NVMe:
-                        dumper.NVMe(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                    persistent, stopOnError, ref resume, ref dumpLog, encoding, outputPrefix,
-                                    outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
-                        break;
-                    case DeviceType.ATAPI:
-                    case DeviceType.SCSI:
-                        dumper.Scsi(dev, devicePath, outputFormat, retryPasses, force, false, /*raw,*/
-                                    persistent, stopOnError, ref resume, ref dumpLog, firstTrackPregap, encoding,
-                                    outputPrefix, outputFile, parsedOptions, sidecar, (uint)skip, noMetadata, noTrim);
-                        break;
-                    default:
-                        dumpLog.WriteLine("Unknown device type.");
-                        dumpLog.Close();
-                        throw new NotSupportedException("Unknown device type.");
-                }
+            dumper.Start();
 
-            if(resume != null && doResume)
-            {
-                resume.LastWriteDate = DateTime.UtcNow;
-                resume.BadBlocks.Sort();
-
-                if(File.Exists(outputPrefix + ".resume.xml")) File.Delete(outputPrefix + ".resume.xml");
-
-                FileStream fs = new FileStream(outputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
-                xs = new XmlSerializer(resume.GetType());
-                xs.Serialize(fs, resume);
-                fs.Close();
-            }
-
-            dumpLog.Close();
             dev.Close();
             return (int)ErrorNumber.NoError;
         }

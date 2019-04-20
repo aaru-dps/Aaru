@@ -398,6 +398,7 @@ namespace DiscImageChef.Gui.Forms
             }
 
             Statistics.AddDevice(dev);
+            Statistics.AddCommand("dump-media");
 
             if(!(cmbFormat.SelectedValue is IWritableImage outputFormat))
             {
@@ -445,67 +446,23 @@ namespace DiscImageChef.Gui.Forms
                     parsedOptions.Add(key, value);
                 }
 
-            Dump dumper = new Dump();
+            Dump dumper = new Dump(chkResume.Checked == true, dev, devicePath, outputFormat,
+                                   (ushort)stpRetries.Value,
+                                   chkForce.Checked       == true, false, chkPersistent.Checked == true,
+                                   chkStopOnError.Checked == true, resume, dumpLog, encoding, outputPrefix,
+                                   txtDestination.Text, parsedOptions, sidecar, (uint)stpSkipped.Value,
+                                   chkExistingMetadata.Checked == false, chkTrim.Checked == false,
+                                   chkTrack1Pregap.Checked     == true);
 
-            switch(dev.Type)
-            {
-                case DeviceType.ATA:
-                    dumper.Ata(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
-                               false, /*options.Raw,*/
-                               chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume, ref dumpLog,
-                               encoding, outputPrefix, txtDestination.Text, parsedOptions, sidecar,
-                               (uint)stpSkipped.Value, chkExistingMetadata.Checked == false, chkTrim.Checked == false);
-                    break;
-                case DeviceType.MMC:
-                case DeviceType.SecureDigital:
-                    dumper.SecureDigital(dev, devicePath, outputFormat, (ushort)stpRetries.Value,
-                                         chkForce.Checked      == true, false, /*options.Raw,*/
-                                         chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume,
-                                         ref dumpLog, encoding, outputPrefix, txtDestination.Text, parsedOptions,
-                                         sidecar, (uint)stpSkipped.Value, chkExistingMetadata.Checked == false,
-                                         chkTrim.Checked                                              == false);
-                    break;
-                case DeviceType.NVMe:
-                    dumper.NVMe(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
-                                false, /*options.Raw,*/
-                                chkPersistent.Checked == true, chkStopOnError.Checked == true, ref resume, ref dumpLog,
-                                encoding, outputPrefix, txtDestination.Text, parsedOptions, sidecar,
-                                (uint)stpSkipped.Value, chkExistingMetadata.Checked == false, chkTrim.Checked == false);
-                    break;
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    dumper.Scsi(dev, devicePath, outputFormat, (ushort)stpRetries.Value, chkForce.Checked == true,
-                                false, /*options.Raw,*/
-                                chkPersistent.Checked   == true,
-                                chkStopOnError.Checked  == true, ref resume, ref dumpLog,
-                                chkTrack1Pregap.Checked == true,
-                                encoding, outputPrefix, txtDestination.Text,
-                                parsedOptions, sidecar, (uint)stpSkipped.Value, chkExistingMetadata.Checked == false,
-                                chkTrim.Checked                                                             == false);
-                    break;
-                default:
-                    dumpLog.WriteLine("Unknown device type.");
-                    dumpLog.Close();
-                    MessageBox.Show("Unknown device type.", MessageBoxType.Error);
-                    return;
-            }
+            /*dumper.UpdateStatus         += Progress.UpdateStatus;
+            dumper.ErrorMessage         += Progress.ErrorMessage;
+            dumper.StoppingErrorMessage += Progress.ErrorMessage;
+            dumper.UpdateProgress       += Progress.UpdateProgress;
+            dumper.PulseProgress        += Progress.PulseProgress;
+            dumper.InitProgress         += Progress.InitProgress;
+            dumper.EndProgress          += Progress.EndProgress;*/
 
-            if(resume != null && chkResume.Checked == true)
-            {
-                resume.LastWriteDate = DateTime.UtcNow;
-                resume.BadBlocks.Sort();
-
-                if(File.Exists(outputPrefix + ".resume.xml")) File.Delete(outputPrefix + ".resume.xml");
-
-                FileStream    fs = new FileStream(outputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
-                XmlSerializer xs = new XmlSerializer(resume.GetType());
-                xs.Serialize(fs, resume);
-                fs.Close();
-            }
-
-            dumpLog.Close();
-
-            Statistics.AddCommand("dump-media");
+            dumper.Start();
 
             dev.Close();
         }

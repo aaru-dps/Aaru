@@ -32,12 +32,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
-using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.Bluray;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
@@ -46,7 +43,6 @@ using DiscImageChef.Devices;
 using Schemas;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Spare = DiscImageChef.Decoders.DVD.Spare;
 
 namespace DiscImageChef.Core.Devices.Dumping
@@ -76,16 +72,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="NotImplementedException">If trying to dump GOD or WOD, or XGDs without a Kreon drive</exception>
-        internal void Mmc(Device                     dev,          string        devicePath,
-                          IWritableOpticalImage      outputPlugin, ushort        retryPasses,
-                          bool                       force,        bool          dumpRaw, bool persistent,
-                          bool                       stopOnError,  ref MediaType dskType,
-                          ref Resume                 resume,       ref DumpLog   dumpLog, bool dumpLeadIn,
-                          Encoding                   encoding,
-                          string                     outputPrefix, string outputPath,
-                          Dictionary<string, string> formatOptions,
-                          CICMMetadataType           preSidecar, uint skip, bool nometadata,
-                          bool                       notrim)
+        internal void Mmc(ref MediaType dskType, bool dumpLeadIn)
         {
             bool   sense;
             byte[] tmpBuf;
@@ -197,10 +184,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent,
-                            stopOnError,
-                            ref dskType,   ref resume, ref dumpLog, dumpLeadIn, encoding, outputPrefix, outputPath,
-                            formatOptions, preSidecar, skip,        nometadata, notrim);
+                CompactDisc(ref dskType, dumpLeadIn);
                 return;
             }
 
@@ -600,18 +584,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(isXbox)
             {
-                Xgd(dev,         devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent,
-                    stopOnError, mediaTags,
-                    ref dskType, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                    preSidecar,
-                    skip, nometadata, notrim);
+                Xgd(mediaTags, ref dskType);
                 return;
             }
 
-            Sbc(dev, devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent, stopOnError,
-                mediaTags,
-                ref dskType, true, ref resume, ref dumpLog, encoding, outputPrefix, outputPath, formatOptions,
-                preSidecar,  skip, nometadata, notrim);
+            Sbc(mediaTags, ref dskType, true);
         }
 
         internal static void AddMediaTagToSidecar(string                             outputPath,

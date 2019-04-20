@@ -66,36 +66,11 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>
         ///     Dumps a compact disc
         /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="devicePath">Path to the device</param>
-        /// <param name="outputPrefix">Prefix for output data files</param>
-        /// <param name="outputPlugin">Plugin for output file</param>
-        /// <param name="retryPasses">How many times to retry</param>
-        /// <param name="force">Force to continue dump whenever possible</param>
-        /// <param name="dumpRaw">Dump scrambled sectors</param>
-        /// <param name="persistent">Store whatever data the drive returned on error</param>
-        /// <param name="stopOnError">Stop dump on first error</param>
-        /// <param name="resume">Information for dump resuming</param>
-        /// <param name="dumpLog">Dump logger</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        /// <param name="dumpFirstTrackPregap">Try to read and dump as much first track pregap as possible</param>
-        /// <param name="outputPath">Path to output file</param>
-        /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        /// <param name="encoding">Encoding to use when analyzing dump</param>
         /// <exception cref="NotImplementedException">If trying to dump scrambled sectors</exception>
         /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         /// <exception cref="ArgumentOutOfRangeException">If the track type is unknown (never)</exception>
-        internal void CompactDisc(Device                     dev,          string devicePath,
-                                  IWritableOpticalImage      outputPlugin, ushort retryPasses,
-                                  bool                       force,        bool   dumpRaw,
-                                  bool                       persistent,   bool   stopOnError,
-                                  ref MediaType              dskType,
-                                  ref Resume                 resume,               ref DumpLog dumpLog,
-                                  bool                       dumpFirstTrackPregap, Encoding    encoding,
-                                  string                     outputPrefix,         string      outputPath,
-                                  Dictionary<string, string> formatOptions,
-                                  CICMMetadataType           preSidecar, uint skip,
-                                  bool                       nometadata, bool notrim)
+        internal void CompactDisc(ref MediaType dskType, bool dumpFirstTrackPregap)
         {
             uint               subSize;
             DateTime           start;
@@ -1002,7 +977,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             // Send tracklist to output plugin. This may fail if subchannel is set but unsupported.
-            ret = outputPlugin.SetTracks(tracks.ToList());
+            ret = (outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
             if(!ret && supportedSubchannel == MmcSubchannel.None)
             {
                 dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
@@ -1048,7 +1023,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     subSize             = 0;
                     blockSize           = SECTOR_SIZE + subSize;
                     for(int t = 0; t < tracks.Length; t++) tracks[t].TrackSubchannelType = TrackSubchannelType.None;
-                    ret = outputPlugin.SetTracks(tracks.ToList());
+                    ret = (outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
                     if(!ret)
                     {
                         dumpLog.WriteLine("Error sending tracks to output image, not continuing.");

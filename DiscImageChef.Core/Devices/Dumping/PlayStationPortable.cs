@@ -29,33 +29,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>
         ///     Dumps a CFW PlayStation Portable UMD
         /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="devicePath">Path to the device</param>
-        /// <param name="outputPrefix">Prefix for output data files</param>
-        /// <param name="outputPlugin">Plugin for output file</param>
-        /// <param name="retryPasses">How many times to retry</param>
-        /// <param name="force">Force to continue dump whenever possible</param>
-        /// <param name="persistent">Store whatever data the drive returned on error</param>
-        /// <param name="stopOnError">Stop dump on first error</param>
-        /// <param name="resume">Information for dump resuming</param>
-        /// <param name="dumpLog">Dump logger</param>
-        /// <param name="encoding">Encoding to use when analyzing dump</param>
-        /// <param name="outputPath">Path to output file</param>
-        /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        /// <param name="preSidecar">Existing sidecar</param>
-        /// <param name="skip">How many sectors to skip on errors</param>
-        /// <param name="nometadata">Don't create metadata sidecar</param>
-        /// <param name="notrim">Don't trim errors</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public void PlayStationPortable(Device                     dev,           string           devicePath,
-                                        IWritableImage             outputPlugin,  ushort           retryPasses,
-                                        bool                       force,         bool             persistent,
-                                        bool                       stopOnError,   ref Resume       resume,
-                                        ref DumpLog                dumpLog,       Encoding         encoding,
-                                        string                     outputPrefix,  string           outputPath,
-                                        Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
-                                        uint                       skip,          bool             nometadata,
-                                        bool                       notrim)
+        void PlayStationPortable()
         {
             if(!outputPlugin.SupportedMediaTypes.Contains(MediaType.MemoryStickDuo)    &&
                !outputPlugin.SupportedMediaTypes.Contains(MediaType.MemoryStickProDuo) &&
@@ -92,11 +67,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // UMDs are always write protected
             if(!decoded.Value.Header.WriteProtected)
             {
-                DumpMs(dev, devicePath, outputPlugin, retryPasses, force, persistent, stopOnError,
-                       ref resume,
-                       ref dumpLog, encoding, outputPrefix, outputPath, formatOptions, preSidecar, skip,
-                       nometadata,
-                       notrim);
+                DumpMs();
                 return;
             }
 
@@ -117,11 +88,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // UMDs are stored inside a FAT16 volume
             if(!tmp.SequenceEqual(FatSignature))
             {
-                DumpMs(dev, devicePath, outputPlugin, retryPasses, force, persistent, stopOnError,
-                       ref resume,
-                       ref dumpLog, encoding, outputPrefix, outputPath, formatOptions, preSidecar, skip,
-                       nometadata,
-                       notrim);
+                DumpMs();
                 return;
             }
 
@@ -147,11 +114,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(!tmp.SequenceEqual(IsoExtension))
             {
-                DumpMs(dev, devicePath, outputPlugin, retryPasses, force, persistent, stopOnError,
-                       ref resume,
-                       ref dumpLog, encoding, outputPrefix, outputPath, formatOptions, preSidecar, skip,
-                       nometadata,
-                       notrim);
+                DumpMs();
                 return;
             }
 
@@ -201,30 +164,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(nextCluster == 0xFFFF) break;
 
-                DumpMs(dev, devicePath, outputPlugin, retryPasses, force, persistent, stopOnError,
-                       ref resume,
-                       ref dumpLog, encoding, outputPrefix, outputPath, formatOptions, preSidecar, skip,
-                       nometadata,
-                       notrim);
+                DumpMs();
                 return;
             }
 
-            if(outputPlugin is IWritableOpticalImage opticalPlugin)
-                DumpUmd(dev, devicePath, opticalPlugin, retryPasses, force, persistent, stopOnError,
-                        ref resume,
-                        ref dumpLog, encoding, outputPrefix, outputPath, formatOptions, preSidecar, skip,
-                        nometadata,
-                        notrim);
+            if(outputPlugin is IWritableOpticalImage) DumpUmd();
             else StoppingErrorMessage?.Invoke("The specified plugin does not support storing optical disc images.");
         }
 
-        void DumpUmd(Device           dev,          string   devicePath, IWritableOpticalImage outputPlugin,
-                     ushort           retryPasses,  bool     force,
-                     bool             persistent,   bool     stopOnError, ref Resume resume,
-                     ref DumpLog      dumpLog,      Encoding encoding,
-                     string           outputPrefix, string   outputPath, Dictionary<string, string> formatOptions,
-                     CICMMetadataType preSidecar,   uint     skip,       bool                       nometadata,
-                     bool             notrim)
+        void DumpUmd()
         {
             const uint      BLOCK_SIZE    = 2048;
             const MediaType DSK_TYPE      = MediaType.UMD;
@@ -308,7 +256,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             start = DateTime.UtcNow;
             double imageWriteDuration = 0;
 
-            outputPlugin.SetTracks(new List<Track>
+            (outputPlugin as IWritableOpticalImage).SetTracks(new List<Track>
             {
                 new Track
                 {
@@ -316,9 +264,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     TrackEndSector         = blocks - 1,
                     TrackSequence          = 1,
                     TrackRawBytesPerSector = (int)BLOCK_SIZE,
-                    TrackSubchannelType    = TrackSubchannelType.None,
-                    TrackSession           = 1,
-                    TrackType              = TrackType.Data
+                    TrackSubchannelType =
+                        TrackSubchannelType.None,
+                    TrackSession = 1,
+                    TrackType    = TrackType.Data
                 }
             });
 
@@ -704,13 +653,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             Statistics.AddMedia(DSK_TYPE, true);
         }
 
-        void DumpMs(Device           dev,          string   devicePath, IWritableImage outputPlugin,
-                    ushort           retryPasses,  bool     force,
-                    bool             persistent,   bool     stopOnError, ref Resume resume,
-                    ref DumpLog      dumpLog,      Encoding encoding,
-                    string           outputPrefix, string   outputPath, Dictionary<string, string> formatOptions,
-                    CICMMetadataType preSidecar,   uint     skip,       bool                       nometadata,
-                    bool             notrim)
+        void DumpMs()
         {
             const ushort SBC_PROFILE   = 0x0001;
             const uint   BLOCK_SIZE    = 512;

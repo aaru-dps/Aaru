@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -43,7 +42,6 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.MMC;
-using DiscImageChef.Devices;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 
@@ -72,15 +70,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
         /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
-        public void SecureDigital(Device                     dev,           string           devicePath,
-                                  IWritableImage             outputPlugin,  ushort           retryPasses,
-                                  bool                       force,         bool             dumpRaw,
-                                  bool                       persistent,    bool             stopOnError, ref Resume resume,
-                                  ref DumpLog                dumpLog,       Encoding         encoding,
-                                  string                     outputPrefix,  string           outputPath,
-                                  Dictionary<string, string> formatOptions, CICMMetadataType preSidecar,
-                                  uint                       skip,
-                                  bool                       nometadata, bool notrim)
+        public void SecureDigital()
         {
             bool aborted;
 

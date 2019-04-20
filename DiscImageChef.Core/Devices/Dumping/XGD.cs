@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
@@ -82,17 +81,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     If the provided resume does not correspond with the current in progress
         ///     dump
         /// </exception>
-        internal void Xgd(Device                           dev,          string        devicePath,
-                          IWritableOpticalImage            outputPlugin, ushort        retryPasses,
-                          bool                             force,        bool          dumpRaw,
-                          bool                             persistent,   bool          stopOnError,
-                          Dictionary<MediaTagType, byte[]> mediaTags,    ref MediaType dskType,
-                          ref Resume                       resume,
-                          ref DumpLog                      dumpLog,       Encoding         encoding,
-                          string                           outputPrefix,  string           outputPath,
-                          Dictionary<string, string>       formatOptions, CICMMetadataType preSidecar,
-                          uint                             skip,
-                          bool                             nometadata, bool notrim)
+        internal void Xgd(Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType)
         {
             bool       sense;
             const uint BLOCK_SIZE   = 2048;
@@ -382,7 +371,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(currentTry == null || extents == null)
                 throw new NotImplementedException("Could not process resume file, not continuing...");
 
-            outputPlugin.SetTracks(new List<Track>
+            (outputPlugin as IWritableOpticalImage).SetTracks(new List<Track>
             {
                 new Track
                 {
@@ -390,9 +379,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     TrackEndSector         = blocks - 1,
                     TrackSequence          = 1,
                     TrackRawBytesPerSector = (int)BLOCK_SIZE,
-                    TrackSubchannelType    = TrackSubchannelType.None,
-                    TrackSession           = 1,
-                    TrackType              = TrackType.Data
+                    TrackSubchannelType =
+                        TrackSubchannelType.None,
+                    TrackSession = 1,
+                    TrackType    = TrackType.Data
                 }
             });
 
