@@ -36,7 +36,6 @@ using System.Text;
 using System.Threading;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
@@ -85,6 +84,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dev.IsRemovable)
             {
+                InitProgress?.Invoke();
                 deviceGotReset:
                 bool sense = dev.ScsiTestUnitReady(out byte[] senseBuf, dev.Timeout, out _);
                 if(sense)
@@ -92,6 +92,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     FixedSense? decSense = Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                     {
+                        UpdateStatus
+                          ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
                         dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                           decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
@@ -107,21 +109,26 @@ namespace DiscImageChef.Core.Devices.Dumping
                             int leftRetries = 5;
                             while(leftRetries > 0)
                             {
-                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
+                                {
+                                    UpdateStatus
+                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
                                     dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                }
+
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Please insert media in drive");
+                                StoppingErrorMessage?.Invoke("Please insert media in drive");
                                 return;
                             }
                         }
@@ -130,22 +137,27 @@ namespace DiscImageChef.Core.Devices.Dumping
                             int leftRetries = 10;
                             while(leftRetries > 0)
                             {
-                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
+                                {
+                                    UpdateStatus
+                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
                                     dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                }
+
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                          Sense.PrettifySense(senseBuf));
+                                StoppingErrorMessage
+                                  ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
                                 return;
                             }
                         }
@@ -154,11 +166,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if (!deviceReset)
                             {
                                 deviceReset = true;
-                                DicConsole.ErrorWriteLine("Device did reset, retrying...");
+                                ErrorMessage?.Invoke("Device did reset, retrying...");
                                 goto retryTestReady;
                             }
 
-                            DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}", Decoders.SCSI.Sense.PrettifySense(senseBuf));
+                            StoppingErrorMessage?.Invoke(string.Format("Error testing unit was ready:\n{0}",
+                                                         Decoders.SCSI.Sense.PrettifySense(senseBuf)));
                             return;
                         }*/
                         // These should be trapped by the OS but seems in some cases they're not
@@ -167,38 +180,45 @@ namespace DiscImageChef.Core.Devices.Dumping
                             int leftRetries = 10;
                             while(leftRetries > 0)
                             {
-                                DicConsole.WriteLine("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("\rWaiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
+                                {
+                                    UpdateStatus
+                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
                                     dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                }
+
                                 leftRetries--;
                             }
 
                             if(sense)
                             {
-                                DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                          Sense.PrettifySense(senseBuf));
+                                StoppingErrorMessage
+                                  ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
                                 return;
                             }
                         }
                         else
                         {
-                            DicConsole.ErrorWriteLine("Error testing unit was ready:\n{0}",
-                                                      Sense.PrettifySense(senseBuf));
+                            StoppingErrorMessage
+                              ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
                             return;
                         }
                     }
                     else
                     {
-                        DicConsole.ErrorWriteLine("Unknown testing unit was ready.");
+                        StoppingErrorMessage?.Invoke("Unknown testing unit was ready.");
                         return;
                     }
                 }
+
+                EndProgress?.Invoke();
             }
 
             switch(dev.ScsiType)
@@ -215,7 +235,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             ref dskType, ref resume,    ref dumpLog, dumpFirstTrackPregap, encoding,   outputPrefix,
                             outputPath,  formatOptions, preSidecar,  skip,                 nometadata, notrim);
                     else
-                        DicConsole.ErrorWriteLine("The specified plugin does not support storing optical disc images.");
+                        StoppingErrorMessage
+                          ?.Invoke("The specified plugin does not support storing optical disc images.");
                     return;
                 default:
                     Sbc(dev,         devicePath, outputPlugin, retryPasses, force, dumpRaw, persistent,
