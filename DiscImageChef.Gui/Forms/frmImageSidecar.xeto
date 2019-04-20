@@ -65,7 +65,7 @@
             <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Right" VerticalContentAlignment="Bottom">
                 <Button ID="btnStart" Text="Start" Click="OnBtnStart"/>
                 <Button ID="btnClose" Text="Close" Click="OnBtnClose"/>
-                <Button ID="btnStop" Text="Stop" Enabled="False" Visible="False" Click="OnBtnStop"/>
+                <Button ID="btnStop" Text="Stop" Visible="False" Click="OnBtnStop"/>
             </StackLayout>
         </StackLayoutItem>
     </StackLayout>

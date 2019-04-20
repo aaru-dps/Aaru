@@ -51,6 +51,8 @@ namespace DiscImageChef.Gui.Forms
         readonly string      imageSource;
         readonly IMediaImage inputFormat;
 
+        Sidecar sidecarClass;
+
         public frmImageSidecar(IMediaImage inputFormat, string imageSource, Guid filterId, Encoding encoding)
         {
             this.inputFormat = inputFormat;
@@ -68,8 +70,6 @@ namespace DiscImageChef.Gui.Forms
             new Thread(DoWork).Start();
         }
 
-        Sidecar sidecarClass;
-
         void DoWork()
         {
             // Prepare UI
@@ -78,13 +78,13 @@ namespace DiscImageChef.Gui.Forms
                 btnClose.Visible       = false;
                 btnStart.Visible       = false;
                 btnStop.Visible        = true;
-                stkProgress.Visible    = false;
-                btnStop.Enabled        = false;
+                btnStop.Enabled        = true;
+                stkProgress.Visible    = true;
                 btnDestination.Visible = false;
             });
 
             sidecarClass = new Sidecar(inputFormat, imageSource, filterId, encoding);
-            CICMMetadataType sidecar      = sidecarClass.Create();
+            CICMMetadataType sidecar = sidecarClass.Create();
 
             DicConsole.WriteLine("Writing metadata sidecar");
 
@@ -111,6 +111,8 @@ namespace DiscImageChef.Gui.Forms
 
         protected void OnBtnStop(object sender, EventArgs e)
         {
+            lblProgress.Text = "Aborting...";
+            btnStop.Enabled  = false;
             sidecarClass.Abort();
         }
 
