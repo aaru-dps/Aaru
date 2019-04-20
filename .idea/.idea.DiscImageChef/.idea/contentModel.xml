@@ -240,6 +240,7 @@
           </e>
           <e p="Scanning" t="Include">
             <e p="ATA.cs" t="Include" />
+            <e p="MediaScan.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
             <e p="SCSI.cs" t="Include" />
             <e p="ScanResults.cs" t="Include" />

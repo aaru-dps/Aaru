@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
@@ -112,26 +111,8 @@ namespace DiscImageChef.Commands
 
             Statistics.AddDevice(dev);
 
-            ScanResults results;
-
-            switch(dev.Type)
-            {
-                case DeviceType.ATA:
-                    results = Ata.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
-                    break;
-                case DeviceType.MMC:
-                case DeviceType.SecureDigital:
-                    results = SecureDigital.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
-                    break;
-                case DeviceType.NVMe:
-                    results = Nvme.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
-                    break;
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    results = Scsi.Scan(mhddLogPath, ibgLogPath, devicePath, dev);
-                    break;
-                default: throw new NotSupportedException("Unknown device type.");
-            }
+            MediaScan   scanner = new MediaScan(mhddLogPath, ibgLogPath, devicePath, dev);
+            ScanResults results = scanner.Scan();
 
             DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
                                  results.ProcessingTime);

@@ -55,6 +55,7 @@
     <Compile Include="Devices\Report\Scsi.cs" />
     <Compile Include="Devices\Report\MMC.cs" />
     <Compile Include="Devices\Report\SSC.cs" />
+    <Compile Include="Devices\Scanning\MediaScan.cs" />
     <Compile Include="Entropy.cs" />
     <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />

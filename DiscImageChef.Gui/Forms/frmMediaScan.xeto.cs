@@ -32,7 +32,6 @@
 
 using System;
 using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Core.Media.Info;
@@ -90,26 +89,8 @@ namespace DiscImageChef.Gui.Forms
 
             Statistics.AddDevice(dev);
 
-            ScanResults results;
-
-            switch(dev.Type)
-            {
-                case DeviceType.ATA:
-                    results = Ata.Scan(null, null, devicePath, dev);
-                    break;
-                case DeviceType.MMC:
-                case DeviceType.SecureDigital:
-                    results = SecureDigital.Scan(null, null, devicePath, dev);
-                    break;
-                case DeviceType.NVMe:
-                    results = Nvme.Scan(null, null, devicePath, dev);
-                    break;
-                case DeviceType.ATAPI:
-                case DeviceType.SCSI:
-                    results = Scsi.Scan(null, null, devicePath, dev);
-                    break;
-                default: throw new NotSupportedException("Unknown device type.");
-            }
+            MediaScan   scanner = new MediaScan(null, null, devicePath, dev);
+            ScanResults results = scanner.Scan();
 
             lblTotalTime.Text = lblTotalTime.Text =
                                     $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";

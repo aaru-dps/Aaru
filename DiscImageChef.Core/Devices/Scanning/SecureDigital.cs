@@ -36,16 +36,15 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.MMC;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
     /// <summary>
     ///     Implements scanning a SecureDigital or MultiMediaCard flash card
     /// </summary>
-    public static class SecureDigital
+    public partial class MediaScan
     {
-        public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)
+        public ScanResults SecureDigital()
         {
             ScanResults results = new ScanResults();
             bool        aborted;
@@ -87,6 +86,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                     break;
                 }
+
                 case DeviceType.SecureDigital:
                 {
                     sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);

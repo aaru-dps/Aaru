@@ -45,9 +45,9 @@ namespace DiscImageChef.Core.Devices.Scanning
     /// <summary>
     ///     Implements scanning the media from an SCSI device
     /// </summary>
-    public static class Scsi
+    public partial class MediaScan
     {
-        public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)
+        public ScanResults Scsi()
         {
             ScanResults results = new ScanResults();
             bool        aborted;

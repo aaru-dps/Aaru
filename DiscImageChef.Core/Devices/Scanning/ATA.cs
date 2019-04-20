@@ -35,24 +35,19 @@ using System.Collections.Generic;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
     /// <summary>
     ///     Implements scanning the media from an ATA device
     /// </summary>
-    public static class Ata
+    public partial class MediaScan
     {
         /// <summary>
         ///     Scans the media from an ATA device
         /// </summary>
-        /// <param name="mhddLogPath">Path to a MHDD log file</param>
-        /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
-        /// <param name="devicePath">Device path</param>
-        /// <param name="dev">Device</param>
         /// <returns>Scanning results</returns>
-        public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev)
+        public ScanResults Ata()
         {
             ScanResults results = new ScanResults();
             bool        aborted;

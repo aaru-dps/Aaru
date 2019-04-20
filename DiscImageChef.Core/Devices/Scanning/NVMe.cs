@@ -31,13 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
-    public static class Nvme
+    public partial class MediaScan
     {
-        public static ScanResults Scan(string mhddLogPath, string ibgLogPath, string devicePath, Device dev) =>
-            throw new NotImplementedException("NVMe devices not yet supported.");
+        public ScanResults Nvme() => throw new NotImplementedException("NVMe devices not yet supported.");
     }
 }
