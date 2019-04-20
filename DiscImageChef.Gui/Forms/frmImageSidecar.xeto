@@ -42,8 +42,11 @@
         </StackLayout>
         <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                      ID="stkProgress" Visible="False">
+            <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                <Label ID="lblStatus" Visible="False"/>
+            </StackLayoutItem>
             <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                         ID="stkProgress1">
+                         ID="stkProgress1" Visible="False">
                 <StackLayoutItem HorizontalAlignment="Center" Expand="True">
                     <Label ID="lblProgress"/>
                 </StackLayoutItem>
@@ -52,7 +55,7 @@
                 </StackLayoutItem>
             </StackLayout>
             <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                         ID="stkProgress2">
+                         ID="stkProgress2" Visible="False">
                 <StackLayoutItem HorizontalAlignment="Center" Expand="True">
                     <Label ID="lblProgress2"/>
                 </StackLayoutItem>

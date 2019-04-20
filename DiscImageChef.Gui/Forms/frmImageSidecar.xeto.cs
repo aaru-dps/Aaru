@@ -81,9 +81,17 @@ namespace DiscImageChef.Gui.Forms
                 btnStop.Enabled        = true;
                 stkProgress.Visible    = true;
                 btnDestination.Visible = false;
+                lblStatus.Visible      = true;
             });
 
-            sidecarClass = new Sidecar(inputFormat, imageSource, filterId, encoding);
+            sidecarClass                      =  new Sidecar(inputFormat, imageSource, filterId, encoding);
+            sidecarClass.UpdateStatusEvent    += UpdateStatus;
+            sidecarClass.InitProgressEvent    += InitProgress;
+            sidecarClass.UpdateProgressEvent  += UpdateProgress;
+            sidecarClass.EndProgressEvent     += EndProgress;
+            sidecarClass.InitProgressEvent2   += InitProgress2;
+            sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
+            sidecarClass.EndProgressEvent2    += EndProgress2;
             CICMMetadataType sidecar = sidecarClass.Create();
 
             DicConsole.WriteLine("Writing metadata sidecar");
@@ -99,9 +107,75 @@ namespace DiscImageChef.Gui.Forms
                 btnClose.Visible    = true;
                 btnStop.Visible     = false;
                 stkProgress.Visible = false;
+                lblStatus.Visible   = false;
             });
 
             Statistics.AddCommand("create-sidecar");
+        }
+
+        void EndProgress2()
+        {
+            Application.Instance.Invoke(() => { stkProgress2.Visible = false; });
+        }
+
+        void UpdateProgress2(string text, long current, long maximum)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress2.Text          = text;
+                prgProgress2.Indeterminate = false;
+                prgProgress2.MinValue      = 0;
+                if(maximum > int.MaxValue)
+                {
+                    prgProgress2.MaxValue = (int)(maximum / int.MaxValue);
+                    prgProgress2.Value    = (int)(current / int.MaxValue);
+                }
+                else
+                {
+                    prgProgress2.MaxValue = (int)maximum;
+                    prgProgress2.Value    = (int)current;
+                }
+            });
+        }
+
+        void InitProgress2()
+        {
+            Application.Instance.Invoke(() => { stkProgress2.Visible = true; });
+        }
+
+        void EndProgress()
+        {
+            Application.Instance.Invoke(() => { stkProgress1.Visible = false; });
+        }
+
+        void UpdateProgress(string text, long current, long maximum)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress.Text          = text;
+                prgProgress.Indeterminate = false;
+                prgProgress.MinValue      = 0;
+                if(maximum > int.MaxValue)
+                {
+                    prgProgress.MaxValue = (int)(maximum / int.MaxValue);
+                    prgProgress.Value    = (int)(current / int.MaxValue);
+                }
+                else
+                {
+                    prgProgress.MaxValue = (int)maximum;
+                    prgProgress.Value    = (int)current;
+                }
+            });
+        }
+
+        void InitProgress()
+        {
+            Application.Instance.Invoke(() => { stkProgress1.Visible = true; });
+        }
+
+        void UpdateStatus(string text)
+        {
+            Application.Instance.Invoke(() => { lblStatus.Text = text; });
         }
 
         protected void OnBtnClose(object sender, EventArgs e)
@@ -147,6 +221,7 @@ namespace DiscImageChef.Gui.Forms
         Button      btnStart;
         Button      btnClose;
         Button      btnStop;
+        Label       lblStatus;
         #endregion
     }
 }
