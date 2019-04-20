@@ -67,10 +67,10 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dumpLog">Dump logger</param>
         /// <param name="encoding">Encoding to use when analyzing dump</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
+        /// <param name="dumpFirstTrackPregap">Try to read and dump as much Lead-in as possible</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        internal void Mmc(ref MediaType dskType, bool dumpLeadIn)
+        internal void Mmc(ref MediaType dskType)
         {
             bool   sense;
             byte[] tmpBuf;
@@ -182,7 +182,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc(ref dskType, dumpLeadIn);
+                CompactDisc(ref dskType);
                 return;
             }
 

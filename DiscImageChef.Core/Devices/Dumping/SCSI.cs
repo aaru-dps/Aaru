@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Threading;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
@@ -62,7 +61,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dumpFirstTrackPregap">Try to read and dump as much Lead-in as possible</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
         public void Scsi()
         {
             MediaType dskType = MediaType.Unknown;
@@ -219,7 +217,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Ssc();
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
-                    if(outputPlugin is IWritableOpticalImage opticalPlugin) Mmc(ref dskType, dumpFirstTrackPregap);
+                    if(outputPlugin is IWritableOpticalImage opticalPlugin) Mmc(ref dskType);
                     else
                         StoppingErrorMessage
                           ?.Invoke("The specified plugin does not support storing optical disc images.");

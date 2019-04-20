@@ -18,7 +18,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly string devicePath;
 
         readonly bool                       doResume;
-        readonly bool                       dumpFirstTrackPregap;
         readonly DumpLog                    dumpLog;
         readonly bool                       dumpRaw;
         readonly Encoding                   encoding;
@@ -33,6 +32,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly CICMMetadataType           preSidecar;
         readonly ushort                     retryPasses;
         readonly bool                       stopOnError;
+        bool                                dumpFirstTrackPregap;
         Resume                              resume;
         uint                                skip;
 

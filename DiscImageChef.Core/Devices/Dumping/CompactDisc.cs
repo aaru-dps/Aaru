@@ -67,7 +67,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     Dumps a compact disc
         /// </summary>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        internal void CompactDisc(ref MediaType dskType, bool dumpFirstTrackPregap)
+        internal void CompactDisc(ref MediaType dskType)
         {
             uint               subSize;
             DateTime           start;
