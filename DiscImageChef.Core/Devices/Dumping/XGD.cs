@@ -109,21 +109,23 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(mediaTags.ContainsKey(MediaTagType.DVD_PFI)) mediaTags.Remove(MediaTagType.DVD_PFI);
             if(mediaTags.ContainsKey(MediaTagType.DVD_DMI)) mediaTags.Remove(MediaTagType.DVD_DMI);
 
+            UpdateStatus?.Invoke("Reading Xbox Security Sector.");
             dumpLog.WriteLine("Reading Xbox Security Sector.");
             sense = dev.KreonExtractSs(out byte[] ssBuf, out byte[] senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get Xbox Security Sector, not continuing.");
-                DicConsole.ErrorWriteLine("Cannot get Xbox Security Sector, not continuing.");
+                StoppingErrorMessage?.Invoke("Cannot get Xbox Security Sector, not continuing.");
                 return;
             }
 
             dumpLog.WriteLine("Decoding Xbox Security Sector.");
+            UpdateStatus?.Invoke("Decoding Xbox Security Sector.");
             SS.SecuritySector? xboxSs = SS.Decode(ssBuf);
             if(!xboxSs.HasValue)
             {
                 dumpLog.WriteLine("Cannot decode Xbox Security Sector, not continuing.");
-                DicConsole.ErrorWriteLine("Cannot decode Xbox Security Sector, not continuing.");
+                StoppingErrorMessage?.Invoke("Cannot decode Xbox Security Sector, not continuing.");
                 return;
             }
 
@@ -133,33 +135,36 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // Get video partition size
             DicConsole.DebugWriteLine("Dump-media command", "Getting video partition size");
+            UpdateStatus?.Invoke("Locking drive.");
             dumpLog.WriteLine("Locking drive.");
             sense = dev.KreonLock(out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot lock drive, not continuing.");
-                DicConsole.ErrorWriteLine("Cannot lock drive, not continuing.");
+                StoppingErrorMessage?.Invoke("Cannot lock drive, not continuing.");
                 return;
             }
 
+            UpdateStatus?.Invoke("Getting video partition size.");
             dumpLog.WriteLine("Getting video partition size.");
             sense = dev.ReadCapacity(out byte[] readBuffer, out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get disc capacity.");
-                DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                StoppingErrorMessage?.Invoke("Cannot get disc capacity.");
                 return;
             }
 
             ulong totalSize =
                 (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+            UpdateStatus?.Invoke("Reading Physical Format Information.");
             dumpLog.WriteLine("Reading Physical Format Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get PFI.");
-                DicConsole.ErrorWriteLine("Cannot get PFI.");
+                StoppingErrorMessage?.Invoke("Cannot get PFI.");
                 return;
             }
 
@@ -170,13 +175,14 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong l0Video = PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN +
                             1;
             ulong l1Video = totalSize - l0Video + 1;
+            UpdateStatus?.Invoke("Reading Disc Manufacturing Information.");
             dumpLog.WriteLine("Reading Disc Manufacturing Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.DiscManufacturingInformation, 0, 0, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get DMI.");
-                DicConsole.ErrorWriteLine("Cannot get DMI.");
+                StoppingErrorMessage?.Invoke("Cannot get DMI.");
                 return;
             }
 
@@ -186,21 +192,23 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // Get game partition size
             DicConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
+            UpdateStatus?.Invoke("Unlocking drive (Xtreme).");
             dumpLog.WriteLine("Unlocking drive (Xtreme).");
             sense = dev.KreonUnlockXtreme(out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot unlock drive, not continuing.");
-                DicConsole.ErrorWriteLine("Cannot unlock drive, not continuing.");
+                StoppingErrorMessage?.Invoke("Cannot unlock drive, not continuing.");
                 return;
             }
 
+            UpdateStatus?.Invoke("Getting game partition size.");
             dumpLog.WriteLine("Getting game partition size.");
             sense = dev.ReadCapacity(out readBuffer, out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get disc capacity.");
-                DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                StoppingErrorMessage?.Invoke("Cannot get disc capacity.");
                 return;
             }
 
@@ -210,32 +218,35 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // Get middle zone size
             DicConsole.DebugWriteLine("Dump-media command", "Getting middle zone size");
+            UpdateStatus?.Invoke("Unlocking drive (Wxripper).");
             dumpLog.WriteLine("Unlocking drive (Wxripper).");
             sense = dev.KreonUnlockWxripper(out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot unlock drive, not continuing.");
-                DicConsole.ErrorWriteLine("Cannot unlock drive, not continuing.");
+                StoppingErrorMessage?.Invoke("Cannot unlock drive, not continuing.");
                 return;
             }
 
+            UpdateStatus?.Invoke("Getting disc size.");
             dumpLog.WriteLine("Getting disc size.");
             sense = dev.ReadCapacity(out readBuffer, out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get disc capacity.");
-                DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                StoppingErrorMessage?.Invoke("Cannot get disc capacity.");
                 return;
             }
 
             totalSize = (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]);
+            UpdateStatus?.Invoke("Reading Physical Format Information.");
             dumpLog.WriteLine("Reading Physical Format Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get PFI.");
-                DicConsole.ErrorWriteLine("Cannot get PFI.");
+                StoppingErrorMessage?.Invoke("Cannot get PFI.");
                 return;
             }
 
@@ -250,13 +261,14 @@ namespace DiscImageChef.Core.Devices.Dumping
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.Xbox_PFI, tmpBuf);
 
+            UpdateStatus?.Invoke("Reading Disc Manufacturing Information.");
             dumpLog.WriteLine("Reading Disc Manufacturing Information.");
             sense = dev.ReadDiscStructure(out readBuffer, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                           MmcDiscStructureFormat.DiscManufacturingInformation, 0, 0, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot get DMI.");
-                DicConsole.ErrorWriteLine("Cannot get DMI.");
+                StoppingErrorMessage?.Invoke("Cannot get DMI.");
                 return;
             }
 
@@ -267,13 +279,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             totalSize = l0Video + l1Video + middleZone * 2 + gameSize;
             ulong layerBreak = l0Video + middleZone + gameSize / 2;
 
-            DicConsole.WriteLine("Video layer 0 size: {0} sectors", l0Video);
-            DicConsole.WriteLine("Video layer 1 size: {0} sectors", l1Video);
-            DicConsole.WriteLine("Middle zone size: {0} sectors",   middleZone);
-            DicConsole.WriteLine("Game data size: {0} sectors",     gameSize);
-            DicConsole.WriteLine("Total size: {0} sectors",         totalSize);
-            DicConsole.WriteLine("Real layer break: {0}",           layerBreak);
-            DicConsole.WriteLine();
+            UpdateStatus?.Invoke($"Video layer 0 size: {l0Video} sectors");
+            UpdateStatus?.Invoke($"Video layer 1 size: {l1Video} sectors");
+            UpdateStatus?.Invoke($"Middle zone size: {middleZone} sectors");
+            UpdateStatus?.Invoke($"Game data size: {gameSize} sectors");
+            UpdateStatus?.Invoke($"Total size: {totalSize} sectors");
+            UpdateStatus?.Invoke($"Real layer break: {layerBreak}");
+            UpdateStatus?.Invoke("");
 
             dumpLog.WriteLine("Video layer 0 size: {0} sectors", l0Video);
             dumpLog.WriteLine("Video layer 1 size: {0} sectors", l1Video);
@@ -287,12 +299,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(!read12)
             {
                 dumpLog.WriteLine("Cannot read medium, aborting scan...");
-                DicConsole.ErrorWriteLine("Cannot read medium, aborting scan...");
+                StoppingErrorMessage?.Invoke("Cannot read medium, aborting scan...");
                 return;
             }
 
             dumpLog.WriteLine("Using SCSI READ (12) command.");
-            DicConsole.WriteLine("Using SCSI READ (12) command.");
+            UpdateStatus?.Invoke("Using SCSI READ (12) command.");
 
             while(true)
             {
@@ -309,7 +321,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(dev.Error)
             {
                 dumpLog.WriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
-                DicConsole.ErrorWriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
+                StoppingErrorMessage?.Invoke($"Device error {dev.LastError} trying to guess ideal transfer length.");
                 return;
             }
 
@@ -323,18 +335,26 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 ret = false;
                 dumpLog.WriteLine($"Output format does not support {tag}.");
-                DicConsole.ErrorWriteLine($"Output format does not support {tag}.");
+                ErrorMessage?.Invoke($"Output format does not support {tag}.");
             }
 
             if(!ret)
             {
-                dumpLog.WriteLine("Several media tags not supported, {0}continuing...", force ? "" : "not ");
-                DicConsole.ErrorWriteLine("Several media tags not supported, {0}continuing...", force ? "" : "not ");
-                if(!force) return;
+                if(force)
+                {
+                    dumpLog.WriteLine("Several media tags not supported, continuing...");
+                    ErrorMessage?.Invoke("Several media tags not supported, continuing...");
+                }
+                else
+                {
+                    dumpLog.WriteLine("Several media tags not supported, not continuing...");
+                    StoppingErrorMessage?.Invoke("Several media tags not supported, not continuing...");
+                    return;
+                }
             }
 
             dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
-            DicConsole.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, BLOCK_SIZE, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0010);
@@ -345,8 +365,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 dumpLog.WriteLine("Error creating output image, not continuing.");
                 dumpLog.WriteLine(outputPlugin.ErrorMessage);
-                DicConsole.ErrorWriteLine("Error creating output image, not continuing.");
-                DicConsole.ErrorWriteLine(outputPlugin.ErrorMessage);
+                StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
+                                             outputPlugin.ErrorMessage);
                 return;
             }
 
@@ -377,18 +397,26 @@ namespace DiscImageChef.Core.Devices.Dumping
             });
 
             ulong currentSector = resume.NextBlock;
-            if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
+            if(resume.NextBlock > 0)
+            {
+                UpdateStatus?.Invoke($"Resuming from block {resume.NextBlock}.");
+                dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
+            }
+
             bool newTrim = false;
 
             dumpLog.WriteLine("Reading game partition.");
+            UpdateStatus?.Invoke("Reading game partition.");
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    sectorSpeedStart = 0;
+            InitProgress?.Invoke();
             for(int e = 0; e <= 16; e++)
             {
                 if(aborted)
                 {
                     resume.NextBlock   = currentSector;
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                    UpdateStatus?.Invoke("Aborted!");
                     dumpLog.WriteLine("Aborted!");
                     break;
                 }
@@ -426,6 +454,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(aborted)
                     {
                         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        UpdateStatus?.Invoke("Aborted!");
                         dumpLog.WriteLine("Aborted!");
                         break;
                     }
@@ -437,7 +466,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", i, totalSize, currentSpeed);
+                    UpdateProgress?.Invoke($"\rReading sector {i} of {totalSize} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                                           (long)totalSize);
 
                     sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, BLOCK_SIZE,
                                        0, blocksToRead, false, dev.Timeout, out cmdDuration);
@@ -499,6 +529,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(aborted)
                     {
                         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        UpdateStatus?.Invoke("Aborted!");
                         dumpLog.WriteLine("Aborted!");
                         break;
                     }
@@ -520,21 +551,27 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(!aborted) currentSector = extentEnd + 1;
             }
 
+            EndProgress?.Invoke();
+
             // Middle Zone D
+            UpdateStatus?.Invoke("Writing Middle Zone D (empty).");
             dumpLog.WriteLine("Writing Middle Zone D (empty).");
+            InitProgress?.Invoke();
             for(ulong middle = currentSector - blocks - 1; middle < middleZone - 1; middle += blocksToRead)
             {
                 if(aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                    UpdateStatus?.Invoke("Aborted!");
                     dumpLog.WriteLine("Aborted!");
                     break;
                 }
 
                 if(middleZone - 1 - middle < blocksToRead) blocksToRead = (uint)(middleZone - 1 - middle);
 
-                DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", middle + currentSector, totalSize,
-                                 currentSpeed);
+                UpdateProgress
+                  ?.Invoke($"\rReading sector {middle + currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
+                           (long)(middle              + currentSector), (long)totalSize);
 
                 mhddLog.Write(middle + currentSector, cmdDuration);
                 ibgLog.Write(middle  + currentSector, currentSpeed * 1024);
@@ -548,31 +585,37 @@ namespace DiscImageChef.Core.Devices.Dumping
                 resume.NextBlock =  currentSector;
             }
 
+            EndProgress?.Invoke();
+
             blocksToRead = saveBlocksToRead;
 
+            UpdateStatus?.Invoke("Locking drive.");
             dumpLog.WriteLine("Locking drive.");
             sense = dev.KreonLock(out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot lock drive, not continuing.");
-                DicConsole.ErrorWriteLine("Cannot lock drive, not continuing.");
+                StoppingErrorMessage?.Invoke("Cannot lock drive, not continuing.");
                 return;
             }
 
             sense = dev.ReadCapacity(out readBuffer, out senseBuf, dev.Timeout, out _);
             if(sense)
             {
-                DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                StoppingErrorMessage?.Invoke("Cannot get disc capacity.");
                 return;
             }
 
             // Video Layer 1
             dumpLog.WriteLine("Reading Video Layer 1.");
+            UpdateStatus?.Invoke("Reading Video Layer 1.");
+            InitProgress?.Invoke();
             for(ulong l1 = currentSector - blocks - middleZone + l0Video; l1 < l0Video + l1Video; l1 += blocksToRead)
             {
                 if(aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                    UpdateStatus?.Invoke("Aborted!");
                     dumpLog.WriteLine("Aborted!");
                     break;
                 }
@@ -584,8 +627,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                DicConsole.Write("\rReading sector {0} of {1} ({2:F3} MiB/sec.)", currentSector, totalSize,
-                                 currentSpeed);
+                UpdateProgress?.Invoke($"\rReading sector {currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
+                                       (long)currentSector, (long)totalSize);
 
                 sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)l1, BLOCK_SIZE, 0,
                                    blocksToRead, false, dev.Timeout, out cmdDuration);
@@ -636,19 +679,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                 timeSpeedStart   = DateTime.UtcNow;
             }
 
+            EndProgress?.Invoke();
+
+            UpdateStatus?.Invoke("Unlocking drive (Wxripper).");
             dumpLog.WriteLine("Unlocking drive (Wxripper).");
             sense = dev.KreonUnlockWxripper(out senseBuf, dev.Timeout, out _);
             if(sense)
             {
                 dumpLog.WriteLine("Cannot unlock drive, not continuing.");
-                DicConsole.ErrorWriteLine("Cannot unlock drive, not continuing.");
+                StoppingErrorMessage?.Invoke("Cannot unlock drive, not continuing.");
                 return;
             }
 
             sense = dev.ReadCapacity(out readBuffer, out senseBuf, dev.Timeout, out _);
             if(sense)
             {
-                DicConsole.ErrorWriteLine("Cannot get disc capacity.");
+                StoppingErrorMessage?.Invoke("Cannot get disc capacity.");
                 return;
             }
 
@@ -658,6 +704,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             ibgLog.Close(dev, blocks, BLOCK_SIZE, (end - start).TotalSeconds, currentSpeed * 1024,
                          BLOCK_SIZE * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
                          devicePath);
+            UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
+            UpdateStatus
+              ?.Invoke($"Average dump speed {(double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+            UpdateStatus
+              ?.Invoke($"Average write speed {(double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
@@ -668,9 +719,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(resume.BadBlocks.Count > 0 && !aborted && !notrim && newTrim)
             {
                 start = DateTime.UtcNow;
+                UpdateStatus?.Invoke("Trimming bad sectors");
                 dumpLog.WriteLine("Trimming bad sectors");
 
                 ulong[] tmpArray = resume.BadBlocks.ToArray();
+                InitProgress?.Invoke();
                 foreach(ulong badSector in tmpArray)
                 {
                     if(aborted)
@@ -680,7 +733,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    DicConsole.Write("\rTrimming sector {0}", badSector);
+                    PulseProgress?.Invoke($"\rTrimming sector {badSector}");
 
                     sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)badSector,
                                        BLOCK_SIZE, 0, 1, false, dev.Timeout, out cmdDuration);
@@ -693,8 +746,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     outputPlugin.WriteSector(readBuffer, badSector);
                 }
 
-                DicConsole.WriteLine();
+                EndProgress?.Invoke();
                 end = DateTime.UtcNow;
+                UpdateStatus?.Invoke($"Trimmming finished in {(end - start).TotalSeconds} seconds.");
                 dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
             }
             #endregion Trimming
@@ -778,20 +832,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                     md6  = Modes.EncodeMode6(md, dev.ScsiType);
                     md10 = Modes.EncodeMode10(md, dev.ScsiType);
 
+                    UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
                     dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
                     if(sense) sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
 
                     if(sense)
                     {
-                        DicConsole
-                           .WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+                        UpdateStatus
+                          ?.Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
+
                         DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
                         dumpLog.WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
                     }
                     else runningPersistent = true;
                 }
 
+                InitProgress?.Invoke();
                 repeatRetry:
                 ulong[] tmpArray = resume.BadBlocks.ToArray();
                 foreach(ulong badSector in tmpArray)
@@ -799,13 +856,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(aborted)
                     {
                         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        UpdateStatus?.Invoke("Aborted!");
                         dumpLog.WriteLine("Aborted!");
                         break;
                     }
 
-                    DicConsole.Write("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
-                                     forward ? "forward" : "reverse",
-                                     runningPersistent ? "recovering partial data, " : "");
+                    PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
+                                                        forward ? "forward" : "reverse",
+                                                        runningPersistent ? "recovering partial data, " : ""));
 
                     sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)badSector,
                                        BLOCK_SIZE, 0, 1, false, dev.Timeout, out cmdDuration);
@@ -816,6 +874,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
                         outputPlugin.WriteSector(readBuffer, badSector);
+                        UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
                         dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
                     else if(runningPersistent) outputPlugin.WriteSector(readBuffer, badSector);
@@ -839,12 +898,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     md6  = Modes.EncodeMode6(md, dev.ScsiType);
                     md10 = Modes.EncodeMode10(md, dev.ScsiType);
 
+                    UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
                     dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
                     sense = dev.ModeSelect(md6, out senseBuf, true, false, dev.Timeout, out _);
                     if(sense) dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
                 }
 
-                DicConsole.WriteLine();
+                EndProgress?.Invoke();
             }
             #endregion Error handling
 
@@ -857,6 +917,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(ret || force) continue;
 
                 // Cannot write tag to image
+                StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
                 dumpLog.WriteLine($"Cannot write tag {tag.Key}.");
                 throw new ArgumentException(outputPlugin.ErrorMessage);
             }
@@ -868,14 +929,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             outputPlugin.SetDumpHardware(resume.Tries);
             if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
-            DicConsole.WriteLine("Closing output file.");
+            UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
             outputPlugin.Close();
             DateTime closeEnd = DateTime.Now;
+            UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
             dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
 
             if(aborted)
             {
+                UpdateStatus?.Invoke("Aborted!");
                 dumpLog.WriteLine("Aborted!");
                 return;
             }
@@ -883,6 +946,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double totalChkDuration = 0;
             if(!nometadata)
             {
+                UpdateStatus?.Invoke("Creating sidecar.");
                 dumpLog.WriteLine("Creating sidecar.");
                 FiltersList filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(outputPath);
@@ -900,6 +964,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 totalChkDuration = (end - chkStart).TotalMilliseconds;
+                UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
+                UpdateStatus
+                  ?.Invoke($"Average checksum speed {(double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
                 dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
                 dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
                                   (double)BLOCK_SIZE * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
@@ -918,7 +985,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(filesystems.Count > 0)
                     foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                    {
+                        UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
                         dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                    }
 
                 sidecar.OpticalDisc[0].Layers = new LayersType
                 {
@@ -936,7 +1006,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
                         AddMediaTagToSidecar(outputPath, tag, ref sidecar);
 
-                DicConsole.WriteLine("Writing metadata sidecar");
+                UpdateStatus?.Invoke("Writing metadata sidecar");
 
                 FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
 
@@ -945,17 +1015,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                 xmlFs.Close();
             }
 
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Took a total of {0:F3} seconds ({1:F3} processing commands, {2:F3} checksumming, {3:F3} writing, {4:F3} closing).",
-                                 (end - start).TotalSeconds, totalDuration / 1000,
-                                 totalChkDuration                          / 1000,
-                                 imageWriteDuration, (closeEnd - closeStart).TotalSeconds);
-            DicConsole.WriteLine("Average speed: {0:F3} MiB/sec.",
-                                 (double)BLOCK_SIZE * (double)(blocks + 1) / 1048576 / (totalDuration / 1000));
-            DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", maxSpeed);
-            DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", minSpeed);
-            DicConsole.WriteLine("{0} sectors could not be read.",       resume.BadBlocks.Count);
-            DicConsole.WriteLine();
+            UpdateStatus?.Invoke("");
+            UpdateStatus
+              ?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+            UpdateStatus
+              ?.Invoke($"Average speed: {(double)BLOCK_SIZE * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+            UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke($"{resume.BadBlocks.Count} sectors could not be read.");
+            UpdateStatus?.Invoke("");
 
             Statistics.AddMedia(dskType, true);
         }
