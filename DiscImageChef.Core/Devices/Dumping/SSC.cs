@@ -94,7 +94,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // TODO: Pause?
                 do
                 {
-                    PulseProgress?.Invoke("\rRewinding, please wait...");
+                    PulseProgress?.Invoke("Rewinding, please wait...");
                     dev.RequestSense(out senseBuf, dev.Timeout, out duration);
                     fxSense = Sense.DecodeFixed(senseBuf, out strSense);
                 }
@@ -164,7 +164,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     do
                     {
                         Thread.Sleep(1000);
-                        PulseProgress?.Invoke("\rRewinding, please wait...");
+                        PulseProgress?.Invoke("Rewinding, please wait...");
                         dev.RequestSense(out senseBuf, dev.Timeout, out duration);
                         fxSense = Sense.DecodeFixed(senseBuf, out strSense);
                     }
@@ -473,7 +473,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                PulseProgress?.Invoke($"\rReading block {currentBlock} ({currentSpeed:F3} MiB/sec.)");
+                PulseProgress?.Invoke($"Reading block {currentBlock} ({currentSpeed:F3} MiB/sec.)");
 
                 sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, dev.Timeout,
                                   out duration);

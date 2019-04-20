@@ -861,7 +861,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     PulseProgress
-                      ?.Invoke($"\rTrying to read first track pregap sector {firstTrackPregapBlock} ({currentSpeed:F3} MiB/sec.)");
+                      ?.Invoke($"Trying to read first track pregap sector {firstTrackPregapBlock} ({currentSpeed:F3} MiB/sec.)");
 
                     sense = dev.ReadCd(out readBuffer, out senseBuf, (uint)firstTrackPregapBlock, blockSize, 1,
                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
@@ -1124,7 +1124,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                     UpdateProgress
-                      ?.Invoke(string.Format("\rReading sector {0} of {1} at track {3} ({2:F3} MiB/sec.)", i, blocks, currentSpeed, tracks[t].TrackSequence),
+                      ?.Invoke(string.Format("Reading sector {0} of {1} at track {3} ({2:F3} MiB/sec.)", i, blocks, currentSpeed, tracks[t].TrackSequence),
                                (long)i, (long)blocks);
 
                     if(readcd)
@@ -1268,7 +1268,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    PulseProgress?.Invoke(string.Format("\rReading sector {0} at lead-out ({1:F3} MiB/sec.)", i, blocks,
+                    PulseProgress?.Invoke(string.Format("Reading sector {0} at lead-out ({1:F3} MiB/sec.)", i, blocks,
                                      currentSpeed));
 
                     if(readcd)
@@ -1385,7 +1385,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke($"\rTrimming sector {badSector}");
+                    PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     double cmdDuration = 0;
 
@@ -1548,7 +1548,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
+                    PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 
@@ -1644,7 +1644,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 break;
                             }
 
-                            PulseProgress?.Invoke($"\rTrying to get partial data for sector {badSector}");
+                            PulseProgress?.Invoke($"Trying to get partial data for sector {badSector}");
 
                             if(readcd)
                             {
@@ -1699,7 +1699,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                             #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                            PulseProgress?.Invoke(string.Format("\rReading sector {0} at lead-out ({1:F3} MiB/sec.)", i,
+                            PulseProgress?.Invoke(string.Format("Reading sector {0} at lead-out ({1:F3} MiB/sec.)", i,
                                                   blocks, currentSpeed));
 
                             if(readcd)

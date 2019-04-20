@@ -246,7 +246,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                             #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                            UpdateProgress?.Invoke($"\rReading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
+                            UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)",
                                                    (long)i, (long)blocks);
 
                             bool error = ataReader.ReadBlocks(out cmdBuf, i, blocksToRead, out duration);
@@ -325,7 +325,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     break;
                                 }
 
-                                PulseProgress?.Invoke($"\rTrimming sector {badSector}");
+                                PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                                 bool error = ataReader.ReadBlock(out cmdBuf, badSector, out duration);
 
@@ -364,8 +364,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     break;
                                 }
 
-                                PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}",
-                                                                    badSector, pass, forward ? "forward" : "reverse",
+                                PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector,
+                                                                    pass, forward ? "forward" : "reverse",
                                                                     persistent ? "recovering partial data, " : ""));
 
                                 bool error = ataReader.ReadBlock(out cmdBuf, badSector, out duration);
@@ -429,7 +429,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                                     PulseProgress
-                                      ?.Invoke($"\rReading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
+                                      ?.Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
 
                                     bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration);
 

@@ -78,7 +78,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             int leftRetries = 5;
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
@@ -106,7 +106,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             int leftRetries = 10;
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;
@@ -149,7 +149,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             int leftRetries = 10;
                             while(leftRetries > 0)
                             {
-                                PulseProgress?.Invoke("\rWaiting for drive to become ready");
+                                PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
                                 sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
                                 if(!sense) break;

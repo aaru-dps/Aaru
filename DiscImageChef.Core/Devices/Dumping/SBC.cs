@@ -369,7 +369,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                UpdateProgress?.Invoke($"\rReading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
                 sense         =  scsiReader.ReadBlocks(out readBuffer, i, blocksToRead, out double cmdDuration);
@@ -453,7 +453,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke($"\rTrimming sector {badSector}");
+                    PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     sense = scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration);
 
@@ -624,7 +624,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
+                    PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 

@@ -301,7 +301,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                UpdateProgress?.Invoke($"\rReading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                        (long)blocks);
 
                 sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)(umdStart + i * 4), 512,
@@ -384,7 +384,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke($"\rTrimming sector {badSector}");
+                    PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false,
                                        (uint)(umdStart + badSector * 4), 512, 0, 4, false, dev.Timeout,
@@ -503,7 +503,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     PulseProgress
-                      ?.Invoke($"\rRetrying sector {badSector}, pass {pass}, {(runningPersistent ? "recovering partial data, " : "")}{(forward ? "forward" : "reverse")}");
+                      ?.Invoke($"Retrying sector {badSector}, pass {pass}, {(runningPersistent ? "recovering partial data, " : "")}{(forward ? "forward" : "reverse")}");
 
                     sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false,
                                        (uint)(umdStart + badSector * 4), 512, 0, 4, false, dev.Timeout,
@@ -771,8 +771,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                UpdateProgress?.Invoke($"\rReading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
-                                       blocks);
+                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i, blocks);
 
                 sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)i, BLOCK_SIZE, 0,
                                    blocksToRead, false, dev.Timeout, out double cmdDuration);
@@ -856,7 +855,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke($"\rTrimming sector {badSector}");
+                    PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     sense = dev.Read12(out readBuffer, out _, 0, false, true, false, false, (uint)badSector, BLOCK_SIZE,
                                        0, 1, false, dev.Timeout, out double cmdDuration);
@@ -989,7 +988,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
+                    PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 

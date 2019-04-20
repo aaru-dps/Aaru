@@ -436,7 +436,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                     #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                    UpdateProgress?.Invoke($"\rReading sector {i} of {totalSize} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                    UpdateProgress?.Invoke($"Reading sector {i} of {totalSize} ({currentSpeed:F3} MiB/sec.)", (long)i,
                                            (long)totalSize);
 
                     sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)i, BLOCK_SIZE,
@@ -540,8 +540,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(middleZone - 1 - middle < blocksToRead) blocksToRead = (uint)(middleZone - 1 - middle);
 
                 UpdateProgress
-                  ?.Invoke($"\rReading sector {middle + currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
-                           (long)(middle              + currentSector), (long)totalSize);
+                  ?.Invoke($"Reading sector {middle + currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
+                           (long)(middle            + currentSector), (long)totalSize);
 
                 mhddLog.Write(middle + currentSector, cmdDuration);
                 ibgLog.Write(middle  + currentSector, currentSpeed * 1024);
@@ -597,7 +597,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(currentSpeed < minSpeed && currentSpeed != 0) minSpeed = currentSpeed;
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                UpdateProgress?.Invoke($"\rReading sector {currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
+                UpdateProgress?.Invoke($"Reading sector {currentSector} of {totalSize} ({currentSpeed:F3} MiB/sec.)",
                                        (long)currentSector, (long)totalSize);
 
                 sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)l1, BLOCK_SIZE, 0,
@@ -703,7 +703,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke($"\rTrimming sector {badSector}");
+                    PulseProgress?.Invoke($"Trimming sector {badSector}");
 
                     sense = dev.Read12(out readBuffer, out senseBuf, 0, false, false, false, false, (uint)badSector,
                                        BLOCK_SIZE, 0, 1, false, dev.Timeout, out cmdDuration);
@@ -831,7 +831,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                     }
 
-                    PulseProgress?.Invoke(string.Format("\rRetrying sector {0}, pass {1}, {3}{2}", badSector, pass,
+                    PulseProgress?.Invoke(string.Format("Retrying sector {0}, pass {1}, {3}{2}", badSector, pass,
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 
