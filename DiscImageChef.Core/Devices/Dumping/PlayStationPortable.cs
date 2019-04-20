@@ -29,7 +29,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>
         ///     Dumps a CFW PlayStation Portable UMD
         /// </summary>
-        /// <exception cref="ArgumentException">If you asked to dump long sectors from a SCSI Streaming device</exception>
         void PlayStationPortable()
         {
             if(!outputPlugin.SupportedMediaTypes.Contains(MediaType.MemoryStickDuo)    &&
@@ -276,7 +275,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
                                   dev.PlatformId, ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new InvalidOperationException("Could not process resume file, not continuing...");
+            {
+                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+                return;
+            }
 
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
             bool newTrim = false;
@@ -587,7 +589,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 FiltersList filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
-                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+                if(!inputPlugin.Open(filter))
+                {
+                    StoppingErrorMessage?.Invoke("Could not open created image.");
+                    return;
+                }
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
@@ -733,7 +739,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
                                   dev.PlatformId, ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new InvalidOperationException("Could not process resume file, not continuing...");
+            {
+                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+                return;
+            }
 
             if(resume.NextBlock > 0) dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
             bool newTrim = false;
@@ -1050,7 +1059,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 FiltersList filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
-                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+                if(!inputPlugin.Open(filter))
+                {
+                    StoppingErrorMessage?.Invoke("Could not open created image.");
+                    return;
+                }
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);

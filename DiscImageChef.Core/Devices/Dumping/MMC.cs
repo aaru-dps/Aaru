@@ -34,7 +34,6 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
 using DiscImageChef.Decoders.Bluray;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
@@ -71,7 +70,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dumpLeadIn">Try to read and dump as much Lead-in as possible</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        /// <exception cref="NotImplementedException">If trying to dump GOD or WOD, or XGDs without a Kreon drive</exception>
         internal void Mmc(ref MediaType dskType, bool dumpLeadIn)
         {
             bool   sense;
@@ -208,8 +206,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                nintendoPfi.Value.PartVersion  == 15)
                             {
                                 dumpLog.WriteLine("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
-                                throw new
-                                    NotImplementedException("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
+                                StoppingErrorMessage
+                                  ?.Invoke("Dumping Nintendo GameCube or Wii discs is not yet implemented.");
+                                return;
                             }
                     }
 
@@ -319,14 +318,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                                !Inquiry.Decode(inqBuf).Value.KreonPresent)
                             {
                                 dumpLog.WriteLine("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
-                                throw new
-                                    NotImplementedException("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
+                                StoppingErrorMessage
+                                  ?.Invoke("Dumping Xbox Game Discs requires a drive with Kreon firmware.");
+                                return;
                             }
 
                             if(dumpRaw && !force)
                             {
-                                DicConsole
-                                   .ErrorWriteLine("Not continuing. If you want to continue reading cooked data when raw is not available use the force option.");
+                                StoppingErrorMessage
+                                  ?.Invoke("Not continuing. If you want to continue reading cooked data when raw is not available use the force option.");
                                 // TODO: Exit more gracefully
                                 return;
                             }

@@ -210,7 +210,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             switch(dev.ScsiType)
             {
                 case PeripheralDeviceTypes.SequentialAccess:
-                    if(dumpRaw) throw new ArgumentException("Tapes cannot be dumped raw.");
+                    if(dumpRaw)
+                    {
+                        StoppingErrorMessage?.Invoke("Tapes cannot be dumped raw.");
+                        return;
+                    }
 
                     Ssc();
                     return;

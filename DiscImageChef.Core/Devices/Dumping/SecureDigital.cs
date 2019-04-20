@@ -239,7 +239,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, false, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
                                   ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new InvalidOperationException("Could not process resume file, not continuing...");
+            {
+                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+                return;
+            }
 
             bool ret = true;
 
@@ -493,7 +496,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 FiltersList filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
-                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+                if(!inputPlugin.Open(filter)) StoppingErrorMessage?.Invoke("Could not open created image.");
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
@@ -535,8 +538,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!ret && !force)
                     {
                         dumpLog.WriteLine("Cannot write CID to output image.");
-                        StoppingErrorMessage?.Invoke("Cannot write CID to output image.");
-                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                        StoppingErrorMessage?.Invoke("Cannot write CID to output image." + Environment.NewLine +
+                                                     outputPlugin.ErrorMessage);
+                        return;
                     }
                 }
 
@@ -557,8 +561,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!ret && !force)
                     {
                         dumpLog.WriteLine("Cannot write CSD to output image.");
-                        StoppingErrorMessage?.Invoke("Cannot write CSD to output image.");
-                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                        StoppingErrorMessage?.Invoke("Cannot write CSD to output image." + Environment.NewLine +
+                                                     outputPlugin.ErrorMessage);
+                        return;
                     }
                 }
 
@@ -575,8 +580,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!ret && !force)
                     {
                         dumpLog.WriteLine("Cannot write Extended CSD to output image.");
-                        StoppingErrorMessage?.Invoke("Cannot write Extended CSD to output image.");
-                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                        StoppingErrorMessage?.Invoke("Cannot write Extended CSD to output image." +
+                                                     Environment.NewLine                          +
+                                                     outputPlugin.ErrorMessage);
+                        return;
                     }
                 }
 
@@ -597,8 +604,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!ret && !force)
                     {
                         dumpLog.WriteLine("Cannot write OCR to output image.");
-                        StoppingErrorMessage?.Invoke("Cannot write OCR to output image.");
-                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                        StoppingErrorMessage?.Invoke("Cannot write OCR to output image." + Environment.NewLine +
+                                                     outputPlugin.ErrorMessage);
+                        return;
                     }
                 }
 
@@ -615,8 +623,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(!ret && !force)
                     {
                         dumpLog.WriteLine("Cannot write SCR to output image.");
-                        StoppingErrorMessage?.Invoke("Cannot write SCR to output image.");
-                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                        StoppingErrorMessage?.Invoke("Cannot write SCR to output image." + Environment.NewLine +
+                                                     outputPlugin.ErrorMessage);
+                        return;
                     }
                 }
 

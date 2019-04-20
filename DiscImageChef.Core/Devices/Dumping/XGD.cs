@@ -77,10 +77,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        /// <exception cref="InvalidOperationException">
-        ///     If the provided resume does not correspond with the current in progress
-        ///     dump
-        /// </exception>
         internal void Xgd(Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType)
         {
             bool       sense;
@@ -369,7 +365,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, true, totalSize, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
                                   ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new NotImplementedException("Could not process resume file, not continuing...");
+                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
 
             (outputPlugin as IWritableOpticalImage).SetTracks(new List<Track>
             {
@@ -907,9 +903,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(ret || force) continue;
 
                 // Cannot write tag to image
-                StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
                 dumpLog.WriteLine($"Cannot write tag {tag.Key}.");
-                throw new ArgumentException(outputPlugin.ErrorMessage);
+                StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}." + Environment.NewLine +
+                                             outputPlugin.ErrorMessage);
+                return;
             }
 
             resume.BadBlocks.Sort();
@@ -941,7 +938,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 FiltersList filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
-                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+                if(!inputPlugin.Open(filter))
+                {
+                    StoppingErrorMessage?.Invoke("Could not open created image.");
+                    return;
+                }
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);

@@ -30,7 +30,7 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+
 
 // ReSharper disable InconsistentNaming
 
@@ -40,7 +40,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     {
         public void NVMe()
         {
-            throw new NotImplementedException("NVMe devices not yet supported.");
+            StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
         }
     }
 }

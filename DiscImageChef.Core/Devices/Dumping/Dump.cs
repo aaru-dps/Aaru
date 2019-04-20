@@ -109,7 +109,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     default:
                         dumpLog.WriteLine("Unknown device type.");
                         dumpLog.Close();
-                        throw new NotSupportedException("Unknown device type.");
+                        StoppingErrorMessage?.Invoke("Unknown device type.");
+                        return;
                 }
 
             dumpLog.Close();

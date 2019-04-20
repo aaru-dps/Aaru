@@ -76,7 +76,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in SCSI or MMC layer</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         internal void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType, bool opticalDisc)
         {
             bool         sense;
@@ -354,7 +353,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
                                   dev.PlatformId, ref resume, ref currentTry, ref extents);
             if(currentTry == null || extents == null)
-                throw new InvalidOperationException("Could not process resume file, not continuing...");
+            {
+                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+                return;
+            }
 
             if(resume.NextBlock > 0)
             {
@@ -694,8 +696,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         // Cannot write tag to image
                         StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
-                        dumpLog.WriteLine($"Cannot write tag {tag.Key}.");
-                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                        dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine +
+                                          outputPlugin.ErrorMessage);
+                        return;
                     }
                 else
                 {
@@ -710,8 +713,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(!ret && !force)
                             {
                                 dumpLog.WriteLine("Cannot write USB descriptors.");
-                                StoppingErrorMessage?.Invoke("Cannot write USB descriptors.");
-                                throw new ArgumentException(outputPlugin.ErrorMessage);
+                                StoppingErrorMessage?.Invoke("Cannot write USB descriptors." + Environment.NewLine +
+                                                             outputPlugin.ErrorMessage);
+                                return;
                             }
                         }
 
@@ -728,8 +732,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 if(!ret && !force)
                                 {
                                     dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
-                                    StoppingErrorMessage?.Invoke("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
-                                    throw new ArgumentException(outputPlugin.ErrorMessage);
+                                    StoppingErrorMessage?.Invoke("Cannot write ATAPI IDENTIFY PACKET DEVICE." +
+                                                                 Environment.NewLine                          +
+                                                                 outputPlugin.ErrorMessage);
+                                    return;
                                 }
                             }
                         }
@@ -744,8 +750,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(!ret && !force)
                             {
                                 StoppingErrorMessage?.Invoke("Cannot write SCSI INQUIRY.");
-                                dumpLog.WriteLine("Cannot write SCSI INQUIRY.");
-                                throw new ArgumentException(outputPlugin.ErrorMessage);
+                                dumpLog.WriteLine("Cannot write SCSI INQUIRY." + Environment.NewLine +
+                                                  outputPlugin.ErrorMessage);
+                                return;
                             }
 
                             UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
@@ -767,8 +774,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     if(!ret && !force)
                                     {
                                         dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
-                                        StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (10).");
-                                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                                        StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (10)." +
+                                                                     Environment.NewLine                  +
+                                                                     outputPlugin.ErrorMessage);
+                                        return;
                                     }
                                 }
 
@@ -790,8 +799,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     if(!ret && !force)
                                     {
                                         dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
-                                        StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6).");
-                                        throw new ArgumentException(outputPlugin.ErrorMessage);
+                                        StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." +
+                                                                     Environment.NewLine                 +
+                                                                     outputPlugin.ErrorMessage);
+                                        return;
                                     }
                                 }
                         }
@@ -827,7 +838,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 FiltersList filters     = new FiltersList();
                 IFilter     filter      = filters.GetFilter(outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
-                if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+                if(!inputPlugin.Open(filter))
+                {
+                    StoppingErrorMessage?.Invoke("Could not open created image.");
+                    return;
+                }
 
                 DateTime         chkStart = DateTime.UtcNow;
                 CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);

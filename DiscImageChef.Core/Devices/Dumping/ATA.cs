@@ -55,7 +55,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>
         ///     Dumps an ATA device
         /// </summary>
-        /// <exception cref="InvalidOperationException">If the resume file is invalid</exception>
         public void Ata()
         {
             bool aborted;
@@ -152,7 +151,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     ResumeSupport.Process(ataReader.IsLba, removable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
                                           dev.PlatformId, ref resume, ref currentTry, ref extents);
                     if(currentTry == null || extents == null)
-                        throw new InvalidOperationException("Could not process resume file, not continuing...");
+                    {
+                        StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+                        return;
+                    }
 
                     MhddLog mhddLog;
                     IbgLog  ibgLog;
@@ -520,7 +522,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                         FiltersList filters     = new FiltersList();
                         IFilter     filter      = filters.GetFilter(outputPath);
                         IMediaImage inputPlugin = ImageFormat.Detect(filter);
-                        if(!inputPlugin.Open(filter)) throw new ArgumentException("Could not open created image.");
+                        if(!inputPlugin.Open(filter))
+                        {
+                            StoppingErrorMessage?.Invoke("Could not open created image.");
+                            return;
+                        }
 
                         DateTime         chkStart = DateTime.UtcNow;
                         CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
