@@ -49,7 +49,6 @@ namespace DiscImageChef.Core.Devices.Scanning
         public ScanResults Ata()
         {
             ScanResults results = new ScanResults();
-            bool        aborted;
             bool        sense;
             results.Blocks = 0;
             const ushort ATA_PROFILE = 0x0001;
@@ -110,9 +109,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                 double seekCur;
 
                 Random rnd = new Random();
-
-                aborted                       =  false;
-                System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
                 MhddLog mhddLog;
                 IbgLog  ibgLog;

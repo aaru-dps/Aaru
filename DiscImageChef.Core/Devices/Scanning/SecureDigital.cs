@@ -46,7 +46,6 @@ namespace DiscImageChef.Core.Devices.Scanning
         public ScanResults SecureDigital()
         {
             ScanResults results = new ScanResults();
-            bool        aborted;
             byte[]      cmdBuf;
             bool        sense;
             results.Blocks = 0;
@@ -145,9 +144,6 @@ namespace DiscImageChef.Core.Devices.Scanning
             const int SEEK_TIMES = 1000;
 
             Random rnd = new Random();
-
-            aborted                       =  false;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 

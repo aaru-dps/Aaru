@@ -46,6 +46,8 @@ namespace DiscImageChef.Gui.Forms
     {
         string devicePath;
 
+        MediaScan scanner;
+
         public frmMediaScan(string devicePath, DeviceInfo deviceInfo, ScsiInfo scsiInfo = null)
         {
             MediaType mediaType;
@@ -62,7 +64,7 @@ namespace DiscImageChef.Gui.Forms
 
         void OnBtnStopClick(object sender, EventArgs e)
         {
-            // TODO: Stop
+            scanner.Abort();
         }
 
         // TODO: Allow to save MHDD and ImgBurn log files
@@ -89,7 +91,7 @@ namespace DiscImageChef.Gui.Forms
 
             Statistics.AddDevice(dev);
 
-            MediaScan   scanner = new MediaScan(null, null, devicePath, dev);
+            scanner = new MediaScan(null, null, devicePath, dev);
             ScanResults results = scanner.Scan();
 
             lblTotalTime.Text = lblTotalTime.Text =

@@ -10,6 +10,7 @@ namespace DiscImageChef.Core.Devices.Scanning
         readonly string devicePath;
         readonly string ibgLogPath;
         readonly string mhddLogPath;
+        bool            aborted;
 
         /// <param name="mhddLogPath">Path to a MHDD log file</param>
         /// <param name="ibgLogPath">Path to a IMGBurn log file</param>
@@ -21,6 +22,7 @@ namespace DiscImageChef.Core.Devices.Scanning
             this.ibgLogPath  = ibgLogPath;
             this.devicePath  = devicePath;
             this.dev         = dev;
+            aborted          = false;
         }
 
         public ScanResults Scan()
@@ -35,6 +37,11 @@ namespace DiscImageChef.Core.Devices.Scanning
                 case DeviceType.SCSI: return Scsi();
                 default: throw new NotSupportedException("Unknown device type.");
             }
+        }
+
+        public void Abort()
+        {
+            aborted = true;
         }
 
         /// <summary>

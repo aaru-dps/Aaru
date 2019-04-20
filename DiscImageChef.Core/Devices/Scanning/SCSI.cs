@@ -50,7 +50,6 @@ namespace DiscImageChef.Core.Devices.Scanning
         public ScanResults Scsi()
         {
             ScanResults results = new ScanResults();
-            bool        aborted;
             MhddLog     mhddLog;
             IbgLog      ibgLog;
             byte[]      senseBuf;
@@ -240,9 +239,6 @@ namespace DiscImageChef.Core.Devices.Scanning
             results.MaxSpeed          = double.MinValue;
             results.MinSpeed          = double.MaxValue;
             results.UnreadableSectors = new List<ulong>();
-
-            aborted                       =  false;
-            System.Console.CancelKeyPress += (sender, e) => e.Cancel = aborted = true;
 
             if(compactDisc)
             {

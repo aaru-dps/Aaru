@@ -119,6 +119,11 @@ namespace DiscImageChef.Commands
             scanner.PulseProgress        += Progress.PulseProgress;
             scanner.InitProgress         += Progress.InitProgress;
             scanner.EndProgress          += Progress.EndProgress;
+            System.Console.CancelKeyPress += (sender, e) =>
+            {
+                e.Cancel = true;
+                scanner.Abort();
+            };
             ScanResults results = scanner.Scan();
 
             DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
