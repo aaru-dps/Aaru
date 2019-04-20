@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
         // TODO: Complete it
         /// <summary>

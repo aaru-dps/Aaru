@@ -171,5 +171,17 @@ namespace DiscImageChef.Core.Devices.Dumping
         ///     Event raised to update the status of an undeterminate progress bar
         /// </summary>
         public event PulseProgressHandler PulseProgress;
+        /// <summary>
+        ///     Event raised when the progress bar is not longer needed
+        /// </summary>
+        public event EndProgressHandler2 EndProgress2;
+        /// <summary>
+        ///     Event raised when a progress bar is needed
+        /// </summary>
+        public event InitProgressHandler2 InitProgress2;
+        /// <summary>
+        ///     Event raised to update the values of a determinate progress bar
+        /// </summary>
+        public event UpdateProgressHandler2 UpdateProgress2;
     }
 }

@@ -115,14 +115,6 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Create sidecar command", "--tape={0}",       tape);
             DicConsole.DebugWriteLine("Create sidecar command", "--verbose={0}",    MainClass.Verbose);
 
-            Sidecar.InitProgressEvent    += Progress.InitProgress;
-            Sidecar.UpdateProgressEvent  += Progress.UpdateProgress;
-            Sidecar.EndProgressEvent     += Progress.EndProgress;
-            Sidecar.InitProgressEvent2   += Progress.InitProgress2;
-            Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
-            Sidecar.EndProgressEvent2    += Progress.EndProgress2;
-            Sidecar.UpdateStatusEvent    += Progress.UpdateStatus;
-
             Encoding encoding = null;
 
             if(encodingName != null)
@@ -190,7 +182,15 @@ namespace DiscImageChef.Commands
                     Statistics.AddMediaFormat(imageFormat.Format);
                     Statistics.AddFilter(inputFilter.Name);
 
-                    CICMMetadataType sidecar = Sidecar.Create(imageFormat, inputFile, inputFilter.Id, encoding);
+                    Sidecar sidecarClass = new Sidecar(imageFormat, inputFile, inputFilter.Id, encoding);
+                    sidecarClass.InitProgressEvent    += Progress.InitProgress;
+                    sidecarClass.UpdateProgressEvent  += Progress.UpdateProgress;
+                    sidecarClass.EndProgressEvent     += Progress.EndProgress;
+                    sidecarClass.InitProgressEvent2   += Progress.InitProgress2;
+                    sidecarClass.UpdateProgressEvent2 += Progress.UpdateProgress2;
+                    sidecarClass.EndProgressEvent2    += Progress.EndProgress2;
+                    sidecarClass.UpdateStatusEvent    += Progress.UpdateStatus;
+                    CICMMetadataType sidecar = sidecarClass.Create();
 
                     DicConsole.WriteLine("Writing metadata sidecar");
 
@@ -223,7 +223,15 @@ namespace DiscImageChef.Commands
 
                 files.Sort(StringComparer.CurrentCultureIgnoreCase);
 
-                CICMMetadataType sidecar = Sidecar.Create(Path.GetFileName(inputFile), files, blockSize);
+                Sidecar sidecarClass = new Sidecar();
+                sidecarClass.InitProgressEvent    += Progress.InitProgress;
+                sidecarClass.UpdateProgressEvent  += Progress.UpdateProgress;
+                sidecarClass.EndProgressEvent     += Progress.EndProgress;
+                sidecarClass.InitProgressEvent2   += Progress.InitProgress2;
+                sidecarClass.UpdateProgressEvent2 += Progress.UpdateProgress2;
+                sidecarClass.EndProgressEvent2    += Progress.EndProgress2;
+                sidecarClass.UpdateStatusEvent    += Progress.UpdateStatus;
+                CICMMetadataType sidecar = sidecarClass.BlockTape(Path.GetFileName(inputFile), files, blockSize);
 
                 DicConsole.WriteLine("Writing metadata sidecar");
 

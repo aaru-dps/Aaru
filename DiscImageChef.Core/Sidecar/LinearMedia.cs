@@ -40,7 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
         // TODO: Complete it
         /// <summary>
@@ -53,9 +53,9 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void LinearMedia(IMediaImage        image,        Guid                 filterId, string imagePath,
-                                FileInfo           fi,           PluginBase           plugins,
-                                List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+        void LinearMedia(IMediaImage        image,        Guid                 filterId, string imagePath,
+                         FileInfo           fi,           PluginBase           plugins,
+                         List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.LinearMedia = new[]
             {

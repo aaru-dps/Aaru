@@ -523,8 +523,19 @@ namespace DiscImageChef.Core.Devices.Dumping
                             return;
                         }
 
-                        DateTime         chkStart = DateTime.UtcNow;
-                        CICMMetadataType sidecar  = Sidecar.Create(inputPlugin, outputPath, filter.Id, encoding);
+                        DateTime chkStart = DateTime.UtcNow;
+                        Sidecar sidecarClass = new Sidecar(inputPlugin, outputPath, filter.Id, encoding)
+                        {
+                            // TODO: Be able to cancel hashing
+                            InitProgressEvent += InitProgress,
+                            UpdateProgressEvent += UpdateProgress,
+                            EndProgressEvent += EndProgress,
+                            InitProgressEvent2 += InitProgress2,
+                            UpdateProgressEvent2 += UpdateProgress2,
+                            EndProgressEvent2 += EndProgress2,
+                            UpdateStatusEvent += UpdateStatus
+                        };
+                        CICMMetadataType sidecar = sidecarClass.Create();
                         if(preSidecar != null)
                         {
                             preSidecar.BlockMedia = sidecar.BlockMedia;

@@ -46,10 +46,10 @@ namespace DiscImageChef.Gui.Forms
 {
     public class frmImageSidecar : Form
     {
-        Encoding    encoding;
-        Guid        filterId;
-        string      imageSource;
-        IMediaImage inputFormat;
+        readonly Encoding    encoding;
+        readonly Guid        filterId;
+        readonly string      imageSource;
+        readonly IMediaImage inputFormat;
 
         public frmImageSidecar(IMediaImage inputFormat, string imageSource, Guid filterId, Encoding encoding)
         {
@@ -81,7 +81,8 @@ namespace DiscImageChef.Gui.Forms
                 btnDestination.Visible = false;
             });
 
-            CICMMetadataType sidecar = Sidecar.Create(inputFormat, imageSource, filterId, encoding);
+            Sidecar          sidecarClass = new Sidecar(inputFormat, imageSource, filterId, encoding);
+            CICMMetadataType sidecar      = sidecarClass.Create();
 
             DicConsole.WriteLine("Writing metadata sidecar");
 

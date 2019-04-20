@@ -32,47 +32,47 @@
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
-        public static event InitProgressHandler    InitProgressEvent;
-        public static event UpdateProgressHandler  UpdateProgressEvent;
-        public static event EndProgressHandler     EndProgressEvent;
-        public static event InitProgressHandler2   InitProgressEvent2;
-        public static event UpdateProgressHandler2 UpdateProgressEvent2;
-        public static event EndProgressHandler2    EndProgressEvent2;
-        public static event UpdateStatusHandler    UpdateStatusEvent;
+        public event InitProgressHandler    InitProgressEvent;
+        public event UpdateProgressHandler  UpdateProgressEvent;
+        public event EndProgressHandler     EndProgressEvent;
+        public event InitProgressHandler2   InitProgressEvent2;
+        public event UpdateProgressHandler2 UpdateProgressEvent2;
+        public event EndProgressHandler2    EndProgressEvent2;
+        public event UpdateStatusHandler    UpdateStatusEvent;
 
-        public static void InitProgress()
+        public void InitProgress()
         {
             InitProgressEvent?.Invoke();
         }
 
-        public static void UpdateProgress(string text, long current, long maximum)
+        public void UpdateProgress(string text, long current, long maximum)
         {
             UpdateProgressEvent?.Invoke(string.Format(text, current, maximum), current, maximum);
         }
 
-        public static void EndProgress()
+        public void EndProgress()
         {
             EndProgressEvent?.Invoke();
         }
 
-        public static void InitProgress2()
+        public void InitProgress2()
         {
             InitProgressEvent2?.Invoke();
         }
 
-        public static void UpdateProgress2(string text, long current, long maximum)
+        public void UpdateProgress2(string text, long current, long maximum)
         {
             UpdateProgressEvent2?.Invoke(string.Format(text, current, maximum), current, maximum);
         }
 
-        public static void EndProgress2()
+        public void EndProgress2()
         {
             EndProgressEvent2?.Invoke();
         }
 
-        public static void UpdateStatus(string text, params object[] args)
+        public void UpdateStatus(string text, params object[] args)
         {
             UpdateStatusEvent?.Invoke(string.Format(text, args));
         }

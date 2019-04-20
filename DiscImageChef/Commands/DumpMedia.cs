@@ -144,15 +144,6 @@ namespace DiscImageChef.Commands
             devicePath = extra[0];
             outputFile = extra[1];
 
-            // TODO: Be able to cancel hashing
-            Sidecar.InitProgressEvent    += Progress.InitProgress;
-            Sidecar.UpdateProgressEvent  += Progress.UpdateProgress;
-            Sidecar.EndProgressEvent     += Progress.EndProgress;
-            Sidecar.InitProgressEvent2   += Progress.InitProgress2;
-            Sidecar.UpdateProgressEvent2 += Progress.UpdateProgress2;
-            Sidecar.EndProgressEvent2    += Progress.EndProgress2;
-            Sidecar.UpdateStatusEvent    += Progress.UpdateStatus;
-
             DicConsole.DebugWriteLine("Dump-Media command", "--cicm-xml={0}",     cicmXml);
             DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}",        MainClass.Debug);
             DicConsole.DebugWriteLine("Dump-Media command", "--device={0}",       devicePath);

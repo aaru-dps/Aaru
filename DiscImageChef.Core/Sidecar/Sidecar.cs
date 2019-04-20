@@ -42,26 +42,50 @@ using Schemas;
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
-        /// <summary>
-        ///     Implements creating a metadata sidecar
-        /// </summary>
+        readonly Encoding    encoding;
+        readonly FileInfo    fi;
+        readonly Guid        filterId;
+        FileStream           fs;
+        readonly IMediaImage image;
+        readonly string      imagePath;
+        readonly Checksum    imgChkWorker;
+        readonly PluginBase  plugins;
+        CICMMetadataType     sidecar;
+
+        public Sidecar()
+        {
+            plugins      = GetPluginBase.Instance;
+            imgChkWorker = new Checksum();
+        }
+
         /// <param name="image">Image</param>
         /// <param name="imagePath">Path to image</param>
         /// <param name="filterId">Filter uuid</param>
         /// <param name="encoding">Encoding for analysis</param>
-        /// <returns>The metadata sidecar</returns>
-        public static CICMMetadataType Create(IMediaImage image, string imagePath, Guid filterId, Encoding encoding)
+        public Sidecar(IMediaImage image, string imagePath, Guid filterId, Encoding encoding)
         {
-            CICMMetadataType sidecar = image.CicmMetadata ?? new CICMMetadataType();
-            PluginBase       plugins = GetPluginBase.Instance;
+            this.image     = image;
+            this.imagePath = imagePath;
+            this.filterId  = filterId;
+            this.encoding  = encoding;
 
-            FileInfo   fi = new FileInfo(imagePath);
-            FileStream fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
+            sidecar = image.CicmMetadata ?? new CICMMetadataType();
+            plugins = GetPluginBase.Instance;
 
-            Checksum imgChkWorker = new Checksum();
+            fi = new FileInfo(imagePath);
+            fs = new FileStream(imagePath, FileMode.Open, FileAccess.Read);
 
+            imgChkWorker = new Checksum();
+        }
+
+        /// <summary>
+        ///     Implements creating a metadata sidecar
+        /// </summary>
+        /// <returns>The metadata sidecar</returns>
+        public CICMMetadataType Create()
+        {
             // For fast debugging, skip checksum
             //goto skipImageChecksum;
 

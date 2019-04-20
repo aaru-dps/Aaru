@@ -36,7 +36,7 @@ using Schemas;
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
         /// <summary>
         ///     Creates a metadata sidecar for a block tape (e.g. scsi streaming)
@@ -44,9 +44,9 @@ namespace DiscImageChef.Core
         /// <param name="files">List of files</param>
         /// <param name="folderName">Dump path</param>
         /// <param name="blockSize">Expected block size in bytes</param>
-        public static CICMMetadataType Create(string folderName, List<string> files, int blockSize)
+        public CICMMetadataType BlockTape(string folderName, List<string> files, int blockSize)
         {
-            CICMMetadataType sidecar = new CICMMetadataType
+            sidecar = new CICMMetadataType
             {
                 BlockMedia = new[]
                 {
@@ -84,8 +84,8 @@ namespace DiscImageChef.Core
 
             for(int i = 0; i < files.Count; i++)
             {
-                FileStream fs         = new FileStream(files[i], FileMode.Open, FileAccess.Read);
-                Checksum   fileWorker = new Checksum();
+                fs = new FileStream(files[i], FileMode.Open, FileAccess.Read);
+                Checksum fileWorker = new Checksum();
                 TapeFileType tapeFile = new TapeFileType
                 {
                     Image = new ImageType

@@ -50,7 +50,7 @@ using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
         /// <summary>
         ///     Creates a metadata sidecar for a block media (e.g. floppy, hard disk, flash card, usb stick)
@@ -62,9 +62,9 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void BlockMedia(IMediaImage        image,        Guid                 filterId, string imagePath,
-                               FileInfo           fi,           PluginBase           plugins,
-                               List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
+        void BlockMedia(IMediaImage        image, Guid filterId, string imagePath, FileInfo fi,
+                        PluginBase         plugins,
+                        List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.BlockMedia = new[]
             {

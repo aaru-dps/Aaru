@@ -50,7 +50,7 @@ using TrackType = Schemas.TrackType;
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
         /// <summary>
         ///     Creates a metadata sidecar for an optical disc (e.g. CD, DVD, GD, BD, XGD, GOD)
@@ -62,11 +62,9 @@ namespace DiscImageChef.Core
         /// <param name="plugins">Image plugins</param>
         /// <param name="imgChecksums">List of image checksums</param>
         /// <param name="sidecar">Metadata sidecar</param>
-        static void OpticalDisc(IOpticalMediaImage   image,     Guid               filterId,
-                                string               imagePath, FileInfo           fi,
-                                PluginBase           plugins,   List<ChecksumType> imgChecksums,
-                                ref CICMMetadataType sidecar,
-                                Encoding             encoding)
+        void OpticalDisc(IOpticalMediaImage image,        Guid                 filterId, string imagePath,
+                         FileInfo           fi,           PluginBase           plugins,
+                         List<ChecksumType> imgChecksums, ref CICMMetadataType sidecar, Encoding encoding)
         {
             sidecar.OpticalDisc = new[]
             {
@@ -110,10 +108,8 @@ namespace DiscImageChef.Core
                         };
                         ATIP.CDATIP? atip = ATIP.Decode(image.ReadDiskTag(MediaTagType.CD_ATIP));
                         if(atip.HasValue)
-                            if(atip.Value.DDCD)
-                                dskType = atip.Value.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
-                            else
-                                dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+                            if(atip.Value.DDCD) dskType = atip.Value.DiscType ? MediaType.DDCDRW : MediaType.DDCDR;
+                            else dskType                = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
                         break;
                     case MediaTagType.DVD_BCA:
                         sidecar.OpticalDisc[0].BCA = new DumpType

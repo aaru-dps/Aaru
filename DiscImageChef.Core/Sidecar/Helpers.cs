@@ -32,7 +32,7 @@
 
 namespace DiscImageChef.Core
 {
-    public static partial class Sidecar
+    public partial class Sidecar
     {
         /// <summary>
         ///     Converts a LBA to MM:SS:FF string for CDs
