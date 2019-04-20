@@ -52,11 +52,6 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>
         ///     Dumps the tape from a SCSI Streaming device
         /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="devicePath">Path to the device</param>
-        /// <param name="outputPrefix">Prefix for output data files</param>
-        /// <param name="resume">Information for dump resuming</param>
-        /// <param name="dumpLog">Dump logger</param>
         internal void Ssc()
         {
             FixedSense?      fxSense;
