@@ -59,11 +59,16 @@ namespace DiscImageChef.Gui.Forms
     public class frmDump : Form
     {
         readonly string devicePath;
+        Device          dev;
 
-        Dump             dumper;
-        string           outputPrefix;
-        Resume           resume;
-        CICMMetadataType sidecar;
+        Dump     dumper;
+        Encoding encoding;
+
+        IWritableImage             outputFormat;
+        string                     outputPrefix;
+        Dictionary<string, string> parsedOptions;
+        Resume                     resume;
+        CICMMetadataType           sidecar;
 
         public frmDump(string devicePath, DeviceInfo deviceInfo, ScsiInfo scsiInfo = null)
         {
@@ -398,13 +403,7 @@ namespace DiscImageChef.Gui.Forms
             btnDestination.Visible = false;
             stkOptions.Visible     = false;
 
-            new Thread(DoWork).Start();
-        }
-
-        void DoWork()
-        {
             UpdateStatus("Opening device...");
-            Device dev;
             try
             {
                 dev = new Device(devicePath);
@@ -430,7 +429,8 @@ namespace DiscImageChef.Gui.Forms
                 return;
             }
 
-            Encoding encoding = null;
+            this.outputFormat = outputFormat;
+            encoding          = null;
 
             if(cmbEncoding.SelectedValue is CommonEncodingInfo encodingInfo)
                 try { encoding = Claunia.Encoding.Encoding.GetEncoding(encodingInfo.Name); }
@@ -440,11 +440,7 @@ namespace DiscImageChef.Gui.Forms
                     return;
                 }
 
-            DumpLog dumpLog = new DumpLog(outputPrefix + ".log", dev);
-
-            dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
-
-            Dictionary<string, string> parsedOptions = new Dictionary<string, string>();
+            parsedOptions = new Dictionary<string, string>();
 
             if(grpOptions.Content is StackLayout stkFormatOptions)
                 foreach(Control option in stkFormatOptions.Children)
@@ -469,6 +465,15 @@ namespace DiscImageChef.Gui.Forms
 
                     parsedOptions.Add(key, value);
                 }
+
+            new Thread(DoWork).Start();
+        }
+
+        void DoWork()
+        {
+            DumpLog dumpLog = new DumpLog(outputPrefix + ".log", dev);
+
+            dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
 
             dumper = new Dump(chkResume.Checked      == true, dev, devicePath, outputFormat, (ushort)stpRetries.Value,
                               chkForce.Checked       == true, false, chkPersistent.Checked == true,
