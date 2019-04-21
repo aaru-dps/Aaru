@@ -47,7 +47,7 @@ namespace DiscImageChef.Core.Devices.Scanning
     /// </summary>
     public partial class MediaScan
     {
-        public ScanResults Scsi()
+        ScanResults Scsi()
         {
             ScanResults results = new ScanResults();
             MhddLog     mhddLog;

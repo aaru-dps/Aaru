@@ -46,7 +46,7 @@ namespace DiscImageChef.Core.Devices.Scanning
         ///     Scans the media from an ATA device
         /// </summary>
         /// <returns>Scanning results</returns>
-        public ScanResults Ata()
+        ScanResults Ata()
         {
             ScanResults results = new ScanResults();
             bool        sense;

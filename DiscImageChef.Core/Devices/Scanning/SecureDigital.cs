@@ -43,7 +43,7 @@ namespace DiscImageChef.Core.Devices.Scanning
     /// </summary>
     public partial class MediaScan
     {
-        public ScanResults SecureDigital()
+        ScanResults SecureDigital()
         {
             ScanResults results = new ScanResults();
             byte[]      cmdBuf;

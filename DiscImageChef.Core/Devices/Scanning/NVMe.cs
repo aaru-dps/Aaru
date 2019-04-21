@@ -34,7 +34,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 {
     public partial class MediaScan
     {
-        public ScanResults Nvme()
+        ScanResults Nvme()
         {
             StoppingErrorMessage?.Invoke("NVMe devices not yet supported.");
             return default;
