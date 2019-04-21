@@ -102,4 +102,11 @@ namespace DiscImageChef.Core
     ///     Shows an error message
     /// </summary>
     public delegate void ErrorMessageHandler(string text);
+
+    /// <summary>
+    /// Updates lists of time taken on scanning the specified number of blocks
+    /// </summary>
+    /// <param name="time">Time in milliseconds</param>
+    /// <param name="blocks">Number of blocks scanned</param>
+    public delegate void ScanTime(double time, uint blocks);
 }

@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Threading;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
@@ -67,13 +68,17 @@ namespace DiscImageChef.Gui.Forms
             scanner.Abort();
         }
 
-        // TODO: Allow to save MHDD and ImgBurn log files
         void OnBtnScanClick(object sender, EventArgs e)
         {
             btnStop.Visible   = true;
             btnScan.Visible   = false;
             btnCancel.Visible = false;
+            new Thread(DoWork).Start();
+        }
 
+        // TODO: Allow to save MHDD and ImgBurn log files
+        void DoWork()
+        {
             if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
@@ -94,18 +99,21 @@ namespace DiscImageChef.Gui.Forms
             scanner = new MediaScan(null, null, devicePath, dev);
             ScanResults results = scanner.Scan();
 
-            lblTotalTime.Text = lblTotalTime.Text =
-                                    $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";
-            lblAvgSpeed.Text          = $"Average speed: {results.AvgSpeed:F3} MiB/sec.";
-            lblMaxSpeed.Text          = $"Fastest speed burst: {results.MaxSpeed:F3} MiB/sec.";
-            lblMinSpeed.Text          = $"Slowest speed burst: {results.MinSpeed:F3} MiB/sec.";
-            lblA.Text                 = $"{results.A} sectors took less than 3 ms.";
-            lblB.Text                 = $"{results.B} sectors took less than 10 ms but more than 3 ms.";
-            lblC.Text                 = $"{results.C} sectors took less than 50 ms but more than 10 ms.";
-            lblD.Text                 = $"{results.D} sectors took less than 150 ms but more than 50 ms.";
-            lblE.Text                 = $"{results.E} sectors took less than 500 ms but more than 150 ms.";
-            lblF.Text                 = $"{results.F} sectors took more than 500 ms.";
-            lblUnreadableSectors.Text = $"{results.UnreadableSectors.Count} sectors could not be read.";
+            Application.Instance.Invoke(() =>
+            {
+                lblTotalTime.Text = lblTotalTime.Text =
+                                        $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";
+                lblAvgSpeed.Text          = $"Average speed: {results.AvgSpeed:F3} MiB/sec.";
+                lblMaxSpeed.Text          = $"Fastest speed burst: {results.MaxSpeed:F3} MiB/sec.";
+                lblMinSpeed.Text          = $"Slowest speed burst: {results.MinSpeed:F3} MiB/sec.";
+                lblA.Text                 = $"{results.A} sectors took less than 3 ms.";
+                lblB.Text                 = $"{results.B} sectors took less than 10 ms but more than 3 ms.";
+                lblC.Text                 = $"{results.C} sectors took less than 50 ms but more than 10 ms.";
+                lblD.Text                 = $"{results.D} sectors took less than 150 ms but more than 50 ms.";
+                lblE.Text                 = $"{results.E} sectors took less than 500 ms but more than 150 ms.";
+                lblF.Text                 = $"{results.F} sectors took more than 500 ms.";
+                lblUnreadableSectors.Text = $"{results.UnreadableSectors.Count} sectors could not be read.";
+            });
 
             // TODO: Show list of unreadable sectors
             /*
@@ -127,9 +135,12 @@ namespace DiscImageChef.Gui.Forms
 
             dev.Close();
 
-            btnStop.Visible   = false;
-            btnScan.Visible   = true;
-            btnCancel.Visible = true;
+            Application.Instance.Invoke(() =>
+            {
+                btnStop.Visible   = false;
+                btnScan.Visible   = true;
+                btnCancel.Visible = true;
+            });
         }
 
         #region XAML IDs
