@@ -58,17 +58,12 @@ namespace DiscImageChef.Gui.Forms
 {
     public class frmDump : Form
     {
-        readonly string devicePath;
-        Device          dev;
-
-        Dump     dumper;
-        Encoding encoding;
-
-        IWritableImage             outputFormat;
-        string                     outputPrefix;
-        Dictionary<string, string> parsedOptions;
-        Resume                     resume;
-        CICMMetadataType           sidecar;
+        readonly string  devicePath;
+        Device           dev;
+        Dump             dumper;
+        string           outputPrefix;
+        Resume           resume;
+        CICMMetadataType sidecar;
 
         public frmDump(string devicePath, DeviceInfo deviceInfo, ScsiInfo scsiInfo = null)
         {
@@ -429,8 +424,7 @@ namespace DiscImageChef.Gui.Forms
                 return;
             }
 
-            this.outputFormat = outputFormat;
-            encoding          = null;
+            Encoding encoding = null;
 
             if(cmbEncoding.SelectedValue is CommonEncodingInfo encodingInfo)
                 try { encoding = Claunia.Encoding.Encoding.GetEncoding(encodingInfo.Name); }
@@ -440,7 +434,7 @@ namespace DiscImageChef.Gui.Forms
                     return;
                 }
 
-            parsedOptions = new Dictionary<string, string>();
+            Dictionary<string, string> parsedOptions = new Dictionary<string, string>();
 
             if(grpOptions.Content is StackLayout stkFormatOptions)
                 foreach(Control option in stkFormatOptions.Children)
@@ -466,11 +460,6 @@ namespace DiscImageChef.Gui.Forms
                     parsedOptions.Add(key, value);
                 }
 
-            new Thread(DoWork).Start();
-        }
-
-        void DoWork()
-        {
             DumpLog dumpLog = new DumpLog(outputPrefix + ".log", dev);
 
             dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
@@ -482,6 +471,11 @@ namespace DiscImageChef.Gui.Forms
                               chkExistingMetadata.Checked == false, chkTrim.Checked == false,
                               chkTrack1Pregap.Checked     == true);
 
+            new Thread(DoWork).Start();
+        }
+
+        void DoWork()
+        {
             dumper.UpdateStatus         += UpdateStatus;
             dumper.ErrorMessage         += ErrorMessage;
             dumper.StoppingErrorMessage += StoppingErrorMessage;
