@@ -72,9 +72,10 @@ namespace DiscImageChef.Gui.Forms
 
         void OnBtnScanClick(object sender, EventArgs e)
         {
-            btnStop.Visible   = true;
-            btnScan.Visible   = false;
-            btnCancel.Visible = false;
+            btnStop.Visible     = true;
+            btnScan.Visible     = false;
+            btnCancel.Visible   = false;
+            stkProgress.Visible = true;
             new Thread(DoWork).Start();
         }
 
@@ -89,19 +90,27 @@ namespace DiscImageChef.Gui.Forms
             if(dev.Error)
             {
                 MessageBox.Show($"Error {dev.LastError} opening device.", MessageBoxType.Error);
-                btnStop.Visible   = false;
-                btnScan.Visible   = true;
-                btnCancel.Visible = true;
+                btnStop.Visible     = false;
+                btnScan.Visible     = true;
+                btnCancel.Visible   = true;
+                stkProgress.Visible = false;
 
                 return;
             }
 
             Statistics.AddDevice(dev);
 
-            localResults           =  new ScanResults();
-            scanner                =  new MediaScan(null, null, devicePath, dev);
-            scanner.ScanTime       += OnScanTime;
-            scanner.ScanUnreadable += OnScanUnreadable;
+            localResults                 =  new ScanResults();
+            scanner                      =  new MediaScan(null, null, devicePath, dev);
+            scanner.ScanTime             += OnScanTime;
+            scanner.ScanUnreadable       += OnScanUnreadable;
+            scanner.UpdateStatus         += UpdateStatus;
+            scanner.StoppingErrorMessage += StoppingErrorMessage;
+            scanner.PulseProgress        += PulseProgress;
+            scanner.InitProgress         += InitProgress;
+            scanner.UpdateProgress       += UpdateProgress;
+            scanner.EndProgress          += EndProgress;
+
             ScanResults results = scanner.Scan();
 
             Application.Instance.Invoke(() =>
@@ -139,13 +148,72 @@ namespace DiscImageChef.Gui.Forms
             Statistics.AddCommand("media-scan");
 
             dev.Close();
+            WorkFinished();
+        }
 
+        void WorkFinished()
+        {
             Application.Instance.Invoke(() =>
             {
-                btnStop.Visible   = false;
-                btnScan.Visible   = true;
-                btnCancel.Visible = true;
+                btnStop.Visible     = false;
+                btnScan.Visible     = true;
+                btnCancel.Visible   = true;
+                stkProgress.Visible = false;
             });
+        }
+
+        void EndProgress()
+        {
+            Application.Instance.Invoke(() => { stkProgress1.Visible = false; });
+        }
+
+        void UpdateProgress(string text, long current, long maximum)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress.Text          = text;
+                prgProgress.Indeterminate = false;
+                prgProgress.MinValue      = 0;
+                if(maximum > int.MaxValue)
+                {
+                    prgProgress.MaxValue = (int)(maximum / int.MaxValue);
+                    prgProgress.Value    = (int)(current / int.MaxValue);
+                }
+                else
+                {
+                    prgProgress.MaxValue = (int)maximum;
+                    prgProgress.Value    = (int)current;
+                }
+            });
+        }
+
+        void InitProgress()
+        {
+            Application.Instance.Invoke(() => { stkProgress1.Visible = true; });
+        }
+
+        void PulseProgress(string text)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress.Text          = text;
+                prgProgress.Indeterminate = true;
+            });
+        }
+
+        void StoppingErrorMessage(string text)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                lblProgress.Text = text;
+                MessageBox.Show(text, MessageBoxType.Error);
+                WorkFinished();
+            });
+        }
+
+        void UpdateStatus(string text)
+        {
+            Application.Instance.Invoke(() => { lblProgress.Text = text; });
         }
 
         void OnScanUnreadable(uint blocks)
@@ -177,20 +245,27 @@ namespace DiscImageChef.Gui.Forms
         }
 
         #region XAML IDs
-        Label  lblTotalTime;
-        Label  lblAvgSpeed;
-        Label  lblMaxSpeed;
-        Label  lblMinSpeed;
-        Label  lblA;
-        Label  lblB;
-        Label  lblC;
-        Label  lblD;
-        Label  lblE;
-        Label  lblF;
-        Label  lblUnreadableSectors;
-        Button btnCancel;
-        Button btnStop;
-        Button btnScan;
+        Label       lblTotalTime;
+        Label       lblAvgSpeed;
+        Label       lblMaxSpeed;
+        Label       lblMinSpeed;
+        Label       lblA;
+        Label       lblB;
+        Label       lblC;
+        Label       lblD;
+        Label       lblE;
+        Label       lblF;
+        Label       lblUnreadableSectors;
+        Button      btnCancel;
+        Button      btnStop;
+        Button      btnScan;
+        StackLayout stkProgress;
+        StackLayout stkProgress1;
+        Label       lblProgress;
+        ProgressBar prgProgress;
+        StackLayout stkProgress2;
+        Label       lblProgress2;
+        ProgressBar prgProgress2;
         #endregion
     }
 }

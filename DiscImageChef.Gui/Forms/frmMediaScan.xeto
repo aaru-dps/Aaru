@@ -31,8 +31,7 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 -->
-<Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="Media scan" ClientSize="600, 450" Padding="10">
+<Form xmlns="http://schema.picoe.ca/eto.forms" Title="Media scan" ClientSize="600, 450" Padding="10">
     <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
         <Label ID="lblTotalTime" Text="Took a total of 0 seconds (0 processing commands)."/>
         <Label ID="lblAvgSpeed" Text="Average speed: 0 MiB/sec."/>
@@ -45,6 +44,27 @@
         <Label ID="lblE" Text="0 sectors took less than 500 ms but more than 150 ms."/>
         <Label ID="lblF" Text="0 sectors took more than 500 ms."/>
         <Label ID="lblUnreadableSectors" Text="0 sectors could not be read."/>
+        <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                     ID="stkProgress" Visible="False">
+            <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                         ID="stkProgress1" Visible="False">
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <Label ID="lblProgress"/>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <ProgressBar ID="prgProgress"/>
+                </StackLayoutItem>
+            </StackLayout>
+            <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                         ID="stkProgress2" Visible="False">
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <Label ID="lblProgress2"/>
+                </StackLayoutItem>
+                <StackLayoutItem HorizontalAlignment="Center" Expand="True">
+                    <ProgressBar ID="prgProgress2"/>
+                </StackLayoutItem>
+            </StackLayout>
+        </StackLayout>
         <StackLayout Orientation="Horizontal">
             <StackLayoutItem HorizontalAlignment="Right">
                 <Button ID="btnCancel" Click="OnBtnCancelClick" Text="Cancel"/>
