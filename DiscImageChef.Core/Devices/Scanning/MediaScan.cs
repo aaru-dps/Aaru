@@ -68,6 +68,7 @@ namespace DiscImageChef.Core.Devices.Scanning
         ///     Event raised to update the status of an undeterminate progress bar
         /// </summary>
         public event PulseProgressHandler PulseProgress;
-        public event ScanTimeHandler ScanTime;
+        public event ScanTimeHandler       ScanTime;
+        public event ScanUnreadableHandler ScanUnreadable;
     }
 }

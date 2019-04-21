@@ -109,4 +109,10 @@ namespace DiscImageChef.Core
     /// <param name="time">Time in milliseconds</param>
     /// <param name="blocks">Number of blocks scanned</param>
     public delegate void ScanTimeHandler(double time, uint blocks);
+
+    /// <summary>
+    ///     Specified a number of blocks could not be read on scan
+    /// </summary>
+    /// <param name="blocks">Number of blocks scanned</param>
+    public delegate void ScanUnreadableHandler(uint blocks);
 }

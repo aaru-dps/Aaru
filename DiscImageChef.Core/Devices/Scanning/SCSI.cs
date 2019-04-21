@@ -345,6 +345,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                         }
                         else
                         {
+                            ScanUnreadable?.Invoke(blocksToRead);
                             results.Errored += blocksToRead;
                             for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
@@ -417,6 +418,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     // TODO: Separate errors on kind of errors.
                     else
                     {
+                        ScanUnreadable?.Invoke(blocksToRead);
                         results.Errored += blocksToRead;
                         for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 

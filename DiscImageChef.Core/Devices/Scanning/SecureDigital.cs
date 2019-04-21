@@ -186,6 +186,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
                 else
                 {
+                    ScanUnreadable?.Invoke(blocksToRead);
                     results.Errored += blocksToRead;
                     for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 

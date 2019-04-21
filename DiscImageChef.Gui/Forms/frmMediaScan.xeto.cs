@@ -98,9 +98,10 @@ namespace DiscImageChef.Gui.Forms
 
             Statistics.AddDevice(dev);
 
-            localResults     =  new ScanResults();
-            scanner          =  new MediaScan(null, null, devicePath, dev);
-            scanner.ScanTime += OnScanTime;
+            localResults           =  new ScanResults();
+            scanner                =  new MediaScan(null, null, devicePath, dev);
+            scanner.ScanTime       += OnScanTime;
+            scanner.ScanUnreadable += OnScanUnreadable;
             ScanResults results = scanner.Scan();
 
             Application.Instance.Invoke(() =>
@@ -144,6 +145,15 @@ namespace DiscImageChef.Gui.Forms
                 btnStop.Visible   = false;
                 btnScan.Visible   = true;
                 btnCancel.Visible = true;
+            });
+        }
+
+        void OnScanUnreadable(uint blocks)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                localResults.Errored      += blocks;
+                lblUnreadableSectors.Text =  $"{localResults.Errored} sectors could not be read.";
             });
         }
 
