@@ -76,6 +76,7 @@ namespace DiscImageChef.Gui.Forms
             btnScan.Visible     = false;
             btnCancel.Visible   = false;
             stkProgress.Visible = true;
+            tabResults.Visible = true;
             new Thread(DoWork).Start();
         }
 
@@ -159,6 +160,10 @@ namespace DiscImageChef.Gui.Forms
                 btnScan.Visible     = true;
                 btnCancel.Visible   = true;
                 stkProgress.Visible = false;
+                lblTotalTime.Visible = true;
+                lblAvgSpeed.Visible = true;
+                lblMaxSpeed.Visible = true;
+                lblMinSpeed.Visible = true;
             });
         }
 
@@ -266,6 +271,7 @@ namespace DiscImageChef.Gui.Forms
         StackLayout stkProgress2;
         Label       lblProgress2;
         ProgressBar prgProgress2;
+        TabControl tabResults;
         #endregion
     }
 }
