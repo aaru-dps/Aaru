@@ -66,7 +66,6 @@ namespace DiscImageChef.Devices.Windows
         [SuppressMessage("ReSharper", "RedundantCatchClause")]
         internal static DeviceInfo[] GetList()
         {
-            // TODO: Any way to fill this in .NET Standard ???
             List<string> deviceIDs = new List<string>();
 
             try
