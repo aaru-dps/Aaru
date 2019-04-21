@@ -54,6 +54,9 @@
         <e p="MacIcon.icns" t="Include" />
         <e p="Main.cs" t="Include" />
         <e p="Progress.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="launchSettings.json" t="Include" />
+        </e>
         <e p="Settings.StyleCop" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">

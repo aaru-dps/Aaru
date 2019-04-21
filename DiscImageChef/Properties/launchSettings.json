@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "DiscImageChef": {
+      "commandName": "Project"
+    },
+    "GUI": {
+      "commandName": "Project",
+      "commandLineArgs": "gui -d"
+    }
+  }
+}
