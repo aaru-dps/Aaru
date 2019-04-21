@@ -31,40 +31,43 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 -->
-<Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      Title="DiscImageChef" ClientSize="600, 450" Padding="10">
+<Form xmlns="http://schema.picoe.ca/eto.forms" Title="DiscImageChef" ClientSize="600, 450" Padding="10">
     <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-    <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                 ID="stkOptions">
-        <Label Text="Output format"/>
-        <ComboBox ID="cmbFormat" ReadOnly="True" SelectedIndexChanged="OnCmbFormatSelectedIndexChanged"/>
-        <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <StackLayoutItem Expand="True">
-                <TextBox ID="txtDestination" ReadOnly="True"/>
-            </StackLayoutItem>
-            <Button ID="btnDestination" Text="Choose..." Click="OnBtnDestinationClick" Enabled="False"/>
+        <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                     ID="stkOptions">
+            <Label Text="Output format"/>
+            <ComboBox ID="cmbFormat" ReadOnly="True" SelectedIndexChanged="OnCmbFormatSelectedIndexChanged"/>
+            <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch"
+                         VerticalContentAlignment="Stretch">
+                <StackLayoutItem Expand="True">
+                    <TextBox ID="txtDestination" ReadOnly="True"/>
+                </StackLayoutItem>
+                <Button ID="btnDestination" Text="Choose..." Click="OnBtnDestinationClick" Enabled="False"/>
+            </StackLayout>
+            <CheckBox ID="chkStopOnError" Text="Stop media dump on first error"/>
+            <CheckBox ID="chkForce" Text="Continue dumping whatever happens"/>
+            <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch"
+                         VerticalContentAlignment="Stretch">
+                <NumericStepper ID="stpRetries" MinValue="0"/>
+                <Label Text="Retry passes"/>
+            </StackLayout>
+            <CheckBox ID="chkPersistent" Text="Try to recover partial or incorrect data"/>
+            <CheckBox ID="chkResume" Text="Create/use resume mapfile" CheckedChanged="OnChkResumeCheckedChanged"/>
+            <CheckBox ID="chkTrack1Pregap" Text="Try to read track 1 pregap"/>
+            <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch"
+                         VerticalContentAlignment="Stretch">
+                <NumericStepper ID="stpSkipped" MinValue="1"/>
+                <Label Text="Skipped sectors on error"/>
+            </StackLayout>
+            <CheckBox ID="chkSidecar" Text="Create CICM XML metadata sidecar"
+                      CheckedChanged="OnChkSidecarCheckedChanged"/>
+            <CheckBox ID="chkTrim" Text="Trim errors from skipped sectors"/>
+            <CheckBox ID="chkExistingMetadata" Text="Take metadata from existing CICM XML sidecar"
+                      CheckedChanged="OnChkExistingMetadataCheckedChanged"/>
+            <Label ID="lblEncoding" Text="Encoding to use on metadata sidecar creation"/>
+            <ComboBox ID="cmbEncoding" ReadOnly="True"/>
+            <GroupBox ID="grpOptions" Text="Options" Visible="False"/>
         </StackLayout>
-        <CheckBox ID="chkStopOnError" Text="Stop media dump on first error"/>
-        <CheckBox ID="chkForce" Text="Continue dumping whatever happens"/>
-        <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <NumericStepper ID="stpRetries" MinValue="0"/>
-            <Label Text="Retry passes"/>
-        </StackLayout>
-        <CheckBox ID="chkPersistent" Text="Try to recover partial or incorrect data"/>
-        <CheckBox ID="chkResume" Text="Create/use resume mapfile" CheckedChanged="OnChkResumeCheckedChanged"/>
-        <CheckBox ID="chkTrack1Pregap" Text="Try to read track 1 pregap"/>
-        <StackLayout Orientation="Horizontal" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-            <NumericStepper ID="stpSkipped" MinValue="1"/>
-            <Label Text="Skipped sectors on error"/>
-        </StackLayout>
-        <CheckBox ID="chkSidecar" Text="Create CICM XML metadata sidecar" CheckedChanged="OnChkSidecarCheckedChanged"/>
-        <CheckBox ID="chkTrim" Text="Trim errors from skipped sectors"/>
-        <CheckBox ID="chkExistingMetadata" Text="Take metadata from existing CICM XML sidecar"
-                  CheckedChanged="OnChkExistingMetadataCheckedChanged"/>
-        <Label ID="lblEncoding" Text="Encoding to use on metadata sidecar creation"/>
-        <ComboBox ID="cmbEncoding" ReadOnly="True"/>
-        <GroupBox ID="grpOptions" Text="Options" Visible="False"/>
-    </StackLayout>
         <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                      ID="stkProgress" Visible="False">
             <StackLayoutItem HorizontalAlignment="Left" Expand="True">
@@ -74,9 +77,9 @@
                 </StackLayout>
             </StackLayoutItem>
             <StackLayoutItem Expand="True">
-            <GroupBox Text="Log">
-                            <TextArea ID="txtLog" ReadOnly="True"/>
-            </GroupBox>
+                <GroupBox Text="Log">
+                    <TextArea ID="txtLog" ReadOnly="True"/>
+                </GroupBox>
             </StackLayoutItem>
             <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                          ID="stkProgress1" Visible="False">
