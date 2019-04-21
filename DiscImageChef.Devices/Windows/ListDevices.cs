@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -33,14 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
-#if !NETSTANDARD2_0
-using System.Linq;
-using System.Management;
-
-#endif
 
 namespace DiscImageChef.Devices.Windows
 {
@@ -72,7 +69,6 @@ namespace DiscImageChef.Devices.Windows
             // TODO: Any way to fill this in .NET Standard ???
             List<string> deviceIDs = new List<string>();
 
-            #if !NETSTANDARD2_0
             try
             {
                 ManagementObjectSearcher mgmtObjSearcher =
@@ -99,12 +95,13 @@ namespace DiscImageChef.Devices.Windows
                 return null;
                 #endif
             }
-            #endif
 
             List<DeviceInfo> devList = new List<DeviceInfo>();
 
             foreach(string devId in deviceIDs)
             {
+                if(devId is null) continue;
+
                 string physId = devId;
                 // TODO: This can be done better
                 if(devId.Length == 2 && devId[1] == ':') physId = "\\\\?\\" + devId;
