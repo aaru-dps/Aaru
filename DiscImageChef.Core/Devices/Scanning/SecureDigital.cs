@@ -147,6 +147,7 @@ namespace DiscImageChef.Core.Devices.Scanning
 
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
+            InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead);
             MhddLog mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
             IbgLog  ibgLog  = new IbgLog(ibgLogPath, SD_PROFILE);
 
@@ -180,13 +181,13 @@ namespace DiscImageChef.Core.Devices.Scanning
                     else if(duration >= 3) results.B   += blocksToRead;
                     else results.A                     += blocksToRead;
 
-                    ScanTime?.Invoke(duration, blocksToRead);
+                    ScanTime?.Invoke(i, duration);
                     mhddLog.Write(i, duration);
                     ibgLog.Write(i, currentSpeed * 1024);
                 }
                 else
                 {
-                    ScanUnreadable?.Invoke(blocksToRead);
+                    ScanUnreadable?.Invoke(i);
                     results.Errored += blocksToRead;
                     for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 

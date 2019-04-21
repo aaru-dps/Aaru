@@ -103,16 +103,16 @@ namespace DiscImageChef.Core
     /// </summary>
     public delegate void ErrorMessageHandler(string text);
 
+    public delegate void InitBlockMapHandler(ulong blocks, ulong blockSize, ulong blocksToRead);
+
     /// <summary>
-    ///     Updates lists of time taken on scanning the specified number of blocks
+    ///     Updates lists of time taken on scanning from the specified sector
     /// </summary>
-    /// <param name="time">Time in milliseconds</param>
-    /// <param name="blocks">Number of blocks scanned</param>
-    public delegate void ScanTimeHandler(double time, uint blocks);
+    /// <param name="duration">Time in milliseconds</param>
+    public delegate void ScanTimeHandler(ulong sector, double duration);
 
     /// <summary>
     ///     Specified a number of blocks could not be read on scan
     /// </summary>
-    /// <param name="blocks">Number of blocks scanned</param>
-    public delegate void ScanUnreadableHandler(uint blocks);
+    public delegate void ScanUnreadableHandler(ulong sector);
 }

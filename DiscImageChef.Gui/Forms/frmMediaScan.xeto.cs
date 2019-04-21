@@ -37,6 +37,8 @@ using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Devices;
+using DiscImageChef.Gui.Controls;
+using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
@@ -45,11 +47,17 @@ namespace DiscImageChef.Gui.Forms
 {
     public class frmMediaScan : Form
     {
-        string devicePath;
-
-        ScanResults localResults;
-
-        MediaScan scanner;
+        static readonly Color LightGreen = Color.FromRgb(0x00FF00);
+        static readonly Color Green      = Color.FromRgb(0x006400);
+        static readonly Color DarkGreen  = Color.FromRgb(0x003200);
+        static readonly Color Yellow     = Color.FromRgb(0xFFA500);
+        static readonly Color Orange     = Color.FromRgb(0xFF4500);
+        static readonly Color Red        = Color.FromRgb(0x800000);
+        static          Color LightRed   = Color.FromRgb(0xFF0000);
+        ulong                 blocksToRead;
+        string                devicePath;
+        ScanResults           localResults;
+        MediaScan             scanner;
 
         public frmMediaScan(string devicePath, DeviceInfo deviceInfo, ScsiInfo scsiInfo = null)
         {
@@ -76,7 +84,7 @@ namespace DiscImageChef.Gui.Forms
             btnScan.Visible     = false;
             btnCancel.Visible   = false;
             stkProgress.Visible = true;
-            tabResults.Visible = true;
+            tabResults.Visible  = true;
             new Thread(DoWork).Start();
         }
 
@@ -111,6 +119,7 @@ namespace DiscImageChef.Gui.Forms
             scanner.InitProgress         += InitProgress;
             scanner.UpdateProgress       += UpdateProgress;
             scanner.EndProgress          += EndProgress;
+            scanner.InitBlockMap         += InitBlockMap;
 
             ScanResults results = scanner.Scan();
 
@@ -152,18 +161,28 @@ namespace DiscImageChef.Gui.Forms
             WorkFinished();
         }
 
+        void InitBlockMap(ulong blocks, ulong blocksize, ulong blockstoread)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                blockMap.Sectors       = blocks;
+                blockMap.SectorsToRead = (uint)blockstoread;
+                blocksToRead           = blockstoread;
+            });
+        }
+
         void WorkFinished()
         {
             Application.Instance.Invoke(() =>
             {
-                btnStop.Visible     = false;
-                btnScan.Visible     = true;
-                btnCancel.Visible   = true;
-                stkProgress.Visible = false;
+                btnStop.Visible      = false;
+                btnScan.Visible      = true;
+                btnCancel.Visible    = true;
+                stkProgress.Visible  = false;
                 lblTotalTime.Visible = true;
-                lblAvgSpeed.Visible = true;
-                lblMaxSpeed.Visible = true;
-                lblMinSpeed.Visible = true;
+                lblAvgSpeed.Visible  = true;
+                lblMaxSpeed.Visible  = true;
+                lblMinSpeed.Visible  = true;
             });
         }
 
@@ -221,25 +240,51 @@ namespace DiscImageChef.Gui.Forms
             Application.Instance.Invoke(() => { lblProgress.Text = text; });
         }
 
-        void OnScanUnreadable(uint blocks)
+        void OnScanUnreadable(ulong sector)
         {
             Application.Instance.Invoke(() =>
             {
-                localResults.Errored      += blocks;
+                localResults.Errored      += blocksToRead;
                 lblUnreadableSectors.Text =  $"{localResults.Errored} sectors could not be read.";
+                blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
             });
         }
 
-        void OnScanTime(double time, uint blocks)
+        void OnScanTime(ulong sector, double duration)
         {
             Application.Instance.Invoke(() =>
             {
-                if(time < 3) localResults.A                       += blocks;
-                else if(time >= 3   && time < 10) localResults.B  += blocks;
-                else if(time >= 10  && time < 50) localResults.C  += blocks;
-                else if(time >= 50  && time < 150) localResults.D += blocks;
-                else if(time >= 150 && time < 500) localResults.E += blocks;
-                else if(time >= 500) localResults.F               += blocks;
+                if(duration < 3)
+                {
+                    localResults.A += blocksToRead;
+                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
+                }
+                else if(duration >= 3 && duration < 10)
+                {
+                    localResults.B += blocksToRead;
+                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Green));
+                }
+                else if(duration >= 10 && duration < 50)
+                {
+                    localResults.C += blocksToRead;
+                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, DarkGreen));
+                }
+                else if(duration >= 50 && duration < 150)
+                {
+                    localResults.D += blocksToRead;
+                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Yellow));
+                }
+                else if(duration >= 150 && duration < 500)
+                {
+                    localResults.E += blocksToRead;
+                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Orange));
+                }
+                else if(duration >= 500)
+                {
+                    localResults.F += blocksToRead;
+                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Red));
+                }
+
                 lblA.Text = $"{localResults.A} sectors took less than 3 ms.";
                 lblB.Text = $"{localResults.B} sectors took less than 10 ms but more than 3 ms.";
                 lblC.Text = $"{localResults.C} sectors took less than 50 ms but more than 10 ms.";
@@ -271,7 +316,8 @@ namespace DiscImageChef.Gui.Forms
         StackLayout stkProgress2;
         Label       lblProgress2;
         ProgressBar prgProgress2;
-        TabControl tabResults;
+        TabControl  tabResults;
+        BlockMap    blockMap;
         #endregion
     }
 }

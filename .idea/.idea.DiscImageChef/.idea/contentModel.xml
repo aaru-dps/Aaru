@@ -1677,6 +1677,7 @@
         </e>
         <e p="ConsoleHandler.cs" t="Include" />
         <e p="Controls" t="Include">
+          <e p="BlockMap.cs" t="Include" />
           <e p="ColoredGrid.cs" t="Include" />
           <e p="SvgImageView.cs" t="Include" />
         </e>

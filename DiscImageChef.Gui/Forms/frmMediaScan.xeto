@@ -31,9 +31,9 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 -->
-<Form xmlns="http://schema.picoe.ca/eto.forms" Title="Media scan" ClientSize="600, 450" Padding="10">
+<Form xmlns="http://schema.picoe.ca/eto.forms" xmlns:local="clr-namespace:DiscImageChef.Gui.Controls;assembly=DiscImageChef.Gui" Title="Media scan" ClientSize="600, 450" Padding="10">
     <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-        <TabControl Visible="False" ID="tabResults">
+        <TabControl Visible="True" ID="tabResults">
             <TabPage Text="Log">
                 <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch"
                              VerticalContentAlignment="Stretch">
@@ -50,6 +50,9 @@
                     <Label ID="lblMaxSpeed" Text="Fastest speed burst: 0 MiB/sec." Visible="False"/>
                     <Label ID="lblMinSpeed" Text="Slowest speed burst: 0 MiB/sec." Visible="False"/>
                 </StackLayout>
+            </TabPage>
+            <TabPage Text="Graph">
+                <local:BlockMap ID="blockMap"/>
             </TabPage>
         </TabControl>
         <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
