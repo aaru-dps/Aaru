@@ -149,6 +149,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                             else if(duration >= 3) results.B   += blocksToRead;
                             else results.A                     += blocksToRead;
 
+                            ScanTime?.Invoke(duration, blocksToRead);
                             mhddLog.Write(i, duration);
                             ibgLog.Write(i, currentSpeed * 1024);
                         }
@@ -243,6 +244,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                                     else if(duration >= 3) results.B   += blocksToRead;
                                     else results.A                     += blocksToRead;
 
+                                    ScanTime?.Invoke(duration, blocksToRead);
                                     mhddLog.Write(currentBlock, duration);
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                 }

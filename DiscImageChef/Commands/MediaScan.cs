@@ -113,7 +113,6 @@ namespace DiscImageChef.Commands
 
             MediaScan scanner = new MediaScan(mhddLogPath, ibgLogPath, devicePath, dev);
             scanner.UpdateStatus         += Progress.UpdateStatus;
-            scanner.ErrorMessage         += Progress.ErrorMessage;
             scanner.StoppingErrorMessage += Progress.ErrorMessage;
             scanner.UpdateProgress       += Progress.UpdateProgress;
             scanner.PulseProgress        += Progress.PulseProgress;

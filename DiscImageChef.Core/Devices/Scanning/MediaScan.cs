@@ -57,10 +57,6 @@ namespace DiscImageChef.Core.Devices.Scanning
         /// </summary>
         public event UpdateStatusHandler UpdateStatus;
         /// <summary>
-        ///     Event raised to report a non-fatal error
-        /// </summary>
-        public event ErrorMessageHandler ErrorMessage;
-        /// <summary>
         ///     Event raised to report a fatal error that stops the dumping operation and should call user's attention
         /// </summary>
         public event ErrorMessageHandler StoppingErrorMessage;
@@ -72,5 +68,6 @@ namespace DiscImageChef.Core.Devices.Scanning
         ///     Event raised to update the status of an undeterminate progress bar
         /// </summary>
         public event PulseProgressHandler PulseProgress;
+        public event ScanTimeHandler ScanTime;
     }
 }

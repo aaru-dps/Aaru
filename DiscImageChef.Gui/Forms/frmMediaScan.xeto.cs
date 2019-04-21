@@ -47,6 +47,8 @@ namespace DiscImageChef.Gui.Forms
     {
         string devicePath;
 
+        ScanResults localResults;
+
         MediaScan scanner;
 
         public frmMediaScan(string devicePath, DeviceInfo deviceInfo, ScsiInfo scsiInfo = null)
@@ -96,7 +98,9 @@ namespace DiscImageChef.Gui.Forms
 
             Statistics.AddDevice(dev);
 
-            scanner = new MediaScan(null, null, devicePath, dev);
+            localResults     =  new ScanResults();
+            scanner          =  new MediaScan(null, null, devicePath, dev);
+            scanner.ScanTime += OnScanTime;
             ScanResults results = scanner.Scan();
 
             Application.Instance.Invoke(() =>
@@ -140,6 +144,25 @@ namespace DiscImageChef.Gui.Forms
                 btnStop.Visible   = false;
                 btnScan.Visible   = true;
                 btnCancel.Visible = true;
+            });
+        }
+
+        void OnScanTime(double time, uint blocks)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                if(time < 3) localResults.A                       += blocks;
+                else if(time >= 3   && time < 10) localResults.B  += blocks;
+                else if(time >= 10  && time < 50) localResults.C  += blocks;
+                else if(time >= 50  && time < 150) localResults.D += blocks;
+                else if(time >= 150 && time < 500) localResults.E += blocks;
+                else if(time >= 500) localResults.F               += blocks;
+                lblA.Text = $"{localResults.A} sectors took less than 3 ms.";
+                lblB.Text = $"{localResults.B} sectors took less than 10 ms but more than 3 ms.";
+                lblC.Text = $"{localResults.C} sectors took less than 50 ms but more than 10 ms.";
+                lblD.Text = $"{localResults.D} sectors took less than 150 ms but more than 50 ms.";
+                lblE.Text = $"{localResults.E} sectors took less than 500 ms but more than 150 ms.";
+                lblF.Text = $"{localResults.F} sectors took more than 500 ms.";
             });
         }
 
