@@ -14,10 +14,13 @@ namespace DiscImageChef.Gui.Controls
         /// </summary>
         const int BLOCK_SIZE = 5;
 
+        Color gridColor;
+
         public ColoredGrid()
         {
             ColoredBlocks                   =  new ObservableCollection<ColoredBlock>();
             ColoredBlocks.CollectionChanged += (sender, args) => Invalidate();
+            gridColor                       =  Colors.Black;
         }
 
         new bool CanFocus => false;
@@ -32,7 +35,18 @@ namespace DiscImageChef.Gui.Controls
         /// <summary>
         ///     How many blocks are in the grid
         /// </summary>
-        public int Blocks { get; private set; }
+        public ulong Blocks { get; private set; }
+        public Color GridColor
+        {
+            get => gridColor;
+            set
+            {
+                if(gridColor == value) return;
+
+                gridColor = value;
+                Invalidate();
+            }
+        }
 
         public ObservableCollection<ColoredBlock> ColoredBlocks { get; }
 
@@ -48,28 +62,26 @@ namespace DiscImageChef.Gui.Controls
             remainder = (int)rect.Height % (BLOCK_SIZE  + 1);
             int height = (int)rect.Height - remainder   - 1;
 
-            for(float i = rect.X; i <= width; i += 5)
-                graphics.DrawLine(Color.FromRgb(0x00000000), i, rect.Y, i, height);
+            for(float i = rect.X; i <= width; i += 5) graphics.DrawLine(gridColor, i, rect.Y, i, height);
 
-            for(float i = rect.Y; i <= height; i += 5)
-                graphics.DrawLine(Color.FromRgb(0x00000000), rect.X, i, width, i);
+            for(float i = rect.Y; i <= height; i += 5) graphics.DrawLine(gridColor, rect.X, i, width, i);
 
-            Columns = width   / BLOCK_SIZE;
-            Rows    = height  / BLOCK_SIZE;
-            Blocks  = Columns * Rows;
+            Columns = width  / BLOCK_SIZE;
+            Rows    = height / BLOCK_SIZE;
+            Blocks  = (ulong)(Columns * Rows);
 
             foreach(ColoredBlock coloredBlock in ColoredBlocks)
                 PaintBlock(graphics, coloredBlock.Color, coloredBlock.Block);
         }
 
-        void PaintBlock(Graphics graphics, Color color, int block)
+        void PaintBlock(Graphics graphics, Color color, ulong block)
         {
             if(block > Blocks) return;
 
-            int row = block / Columns;
-            int col = block % Columns;
-            int x   = col   * BLOCK_SIZE;
-            int y   = row   * BLOCK_SIZE;
+            int row = (int)(block / (ulong)Columns);
+            int col = (int)(block % (ulong)Columns);
+            int x   = col * BLOCK_SIZE;
+            int y   = row * BLOCK_SIZE;
 
             graphics.FillRectangle(color, x + 1, y + 1, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
         }
@@ -80,10 +92,10 @@ namespace DiscImageChef.Gui.Controls
     /// </summary>
     public class ColoredBlock
     {
-        public readonly int   Block;
+        public readonly ulong Block;
         public readonly Color Color;
 
-        public ColoredBlock(int block, Color color)
+        public ColoredBlock(ulong block, Color color)
         {
             Block = block;
             Color = color;
