@@ -10,25 +10,29 @@ namespace DiscImageChef.Gui.Controls
     /// </summary>
     public class LineChart : Drawable
     {
-        bool  absoluteMargins;
-        Color axesColor;
-        Color backgroundColor;
-        Color colorX;
-        Color colorY;
-        bool  drawAxes;
-        Color lineColor;
-        float marginX;
-        float marginY;
-        float maxX;
-        float maxY;
-        float minX;
-        float minY;
-        float ratioX;
-        float ratioY;
-        bool  showStepsX;
-        bool  showStepsY;
-        float stepsX;
-        float stepsY;
+        bool       absoluteMargins;
+        Color      axesColor;
+        Color      backgroundColor;
+        Color      colorX;
+        Color      colorY;
+        bool       drawAxes;
+        Color      lineColor;
+        float      marginX;
+        float      marginXrated;
+        float      marginY;
+        float      marginYrated;
+        float      maxX;
+        float      maxY;
+        float      minX;
+        float      minY;
+        PointF     previousPoint;
+        float      ratioX;
+        float      ratioY;
+        RectangleF rect;
+        bool       showStepsX;
+        bool       showStepsY;
+        float      stepsX;
+        float      stepsY;
 
         public LineChart()
         {
@@ -51,6 +55,7 @@ namespace DiscImageChef.Gui.Controls
             marginX                  =  5;
             marginY                  =  5;
             absoluteMargins          =  true;
+            previousPoint            =  new PointF(0, 0);
         }
 
         /// <summary>
@@ -299,45 +304,83 @@ namespace DiscImageChef.Gui.Controls
 
         void OnValuesChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            Invalidate();
+            // If we do not support to drawn on the graphics we will need to redraw it, slowly
+            if(!SupportsCreateGraphics) Invalidate();
+
+            Graphics g;
+
+            // If the control is not visible (hidden in another tab) this raises an exception
+            try { g = CreateGraphics(); }
+            catch { return; }
+
+            switch(args.Action)
+            {
+                // Draw only next point
+                case NotifyCollectionChangedAction.Add:
+                    foreach(object item in args.NewItems)
+                    {
+                        if(!(item is PointF nextPoint)) continue;
+
+                        float prevXrated = previousPoint.X * ratioX;
+                        float prevYrated = previousPoint.Y * ratioY;
+
+                        float nextXrated = nextPoint.X * ratioX;
+                        float nextYrated = nextPoint.Y * ratioY;
+
+                        g.DrawLine(lineColor, marginXrated + prevXrated, rect.Height - marginYrated - prevYrated,
+                                   marginXrated            + nextXrated, rect.Height - marginYrated - nextYrated);
+
+                        previousPoint = nextPoint;
+                    }
+
+                    break;
+                // Need to redraw all points
+                default:
+                    Invalidate();
+                    break;
+            }
+
+            g.Dispose();
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
-            Graphics   g = e.Graphics;
-            RectangleF r = e.ClipRectangle;
+            Graphics g = e.Graphics;
+            rect = e.ClipRectangle;
 
-            g.FillRectangle(backgroundColor, r);
+            g.FillRectangle(backgroundColor, rect);
 
-            ratioX = r.Width  / (maxX - minX);
-            ratioY = r.Height / (maxY - minY);
+            ratioX = rect.Width  / (maxX - minX);
+            ratioY = rect.Height / (maxY - minY);
 
-            float marginXrated = marginX * (absoluteMargins ? 1 : ratioX);
-            float marginYrated = marginY * (absoluteMargins ? 1 : ratioY);
+            marginXrated = marginX * (absoluteMargins ? 1 : ratioX);
+            marginYrated = marginY * (absoluteMargins ? 1 : ratioY);
 
             if(drawAxes)
             {
-                g.DrawLine(axesColor, marginXrated, 0,                       marginXrated, r.Height);
-                g.DrawLine(axesColor, 0,            r.Height - marginYrated, r.Width,      r.Height - marginYrated);
+                g.DrawLine(axesColor, marginXrated, 0, marginXrated, rect.Height);
+                g.DrawLine(axesColor, 0, rect.Height - marginYrated, rect.Width,
+                           rect.Height               - marginYrated);
             }
 
             if(showStepsX)
             {
                 float stepsXraged = stepsX * ratioX;
-                for(float x = marginXrated                              + stepsXraged; x < r.Width; x += stepsXraged)
-                    g.DrawLine(colorX, x, 0, x, r.Height - marginYrated - 1);
+                for(float x = marginXrated + stepsXraged; x < rect.Width;
+                    x += stepsXraged)
+                    g.DrawLine(colorX, x, 0, x, rect.Height - marginYrated - 1);
             }
 
             if(showStepsY)
             {
                 float stepsYraged = stepsY * ratioY;
-                for(float y = r.Height - marginYrated - stepsYraged; y > 0; y -= stepsYraged)
-                    g.DrawLine(colorY, marginXrated   + 1, y, r.Width, y);
+                for(float y = rect.Height - marginYrated - stepsYraged; y > 0; y -= stepsYraged)
+                    g.DrawLine(colorY, marginXrated      + 1, y, rect.Width, y);
             }
 
-            PointF previousPoint = new PointF(0, 0);
+            previousPoint = new PointF(0, 0);
             foreach(Point nextPoint in Values)
             {
                 float prevXrated = previousPoint.X * ratioX;
@@ -346,8 +389,8 @@ namespace DiscImageChef.Gui.Controls
                 float nextXrated = nextPoint.X * ratioX;
                 float nextYrated = nextPoint.Y * ratioY;
 
-                g.DrawLine(lineColor, marginXrated + prevXrated, r.Height - marginYrated - prevYrated,
-                           marginXrated            + nextXrated, r.Height - marginYrated - nextYrated);
+                g.DrawLine(lineColor, marginXrated + prevXrated, rect.Height - marginYrated - prevYrated,
+                           marginXrated            + nextXrated, rect.Height - marginYrated - nextYrated);
 
                 previousPoint = nextPoint;
             }
