@@ -161,62 +161,60 @@ namespace DiscImageChef.CommonTypes.Structs
         public long Blocks;
         /// <summary>File block size in bytes</summary>
         public long BlockSize;
-        /// <summary>If file points to a device, device number</summary>
-        public ulong DeviceNo;
-        /// <summary>POSIX group ID</summary>
-        public ulong GID;
-
-        /// <summary>inode number for this file</summary>
+        /// <summary>If file points to a device, device number. Null if the underlying filesystem does not support them.</summary>
+        public ulong? DeviceNo;
+        /// <summary>POSIX group ID. Null if the underlying filesystem does not support them.</summary>
+        public ulong? GID;
+        /// <summary>inode number for this file (or other unique identifier for the volume)</summary>
         public ulong Inode;
         /// <summary>File length in bytes</summary>
         public long Length;
-        /// <summary>Number of hard links pointing to this file</summary>
+        /// <summary>Number of hard links pointing to this file (. and .. entries count as hard links)</summary>
         public ulong Links;
-        /// <summary>POSIX permissions/mode for this file</summary>
-        public uint Mode;
-        /// <summary>POSIX owner ID</summary>
-        public ulong UID;
+        /// <summary>POSIX permissions/mode for this file. Null if the underlying filesystem does not support them.</summary>
+        public uint? Mode;
+        /// <summary>POSIX owner ID. Null if the underlying filesystem does not support them.</summary>
+        public ulong? UID;
+        /// <summary>File creation date in UTC. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? CreationTimeUtc { get; set; }
+        /// <summary>File last access date in UTC. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? AccessTimeUtc { get; set; }
+        /// <summary>File attributes change date in UTC. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? StatusChangeTimeUtc { get; set; }
+        /// <summary>File last backup date in UTC. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? BackupTimeUtc { get; set; }
+        /// <summary>File last modification date in UTC. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? LastWriteTimeUtc { get; set; }
 
-        /// <summary>File creation date in UTC</summary>
-        public DateTime CreationTimeUtc { get; set; }
-        /// <summary>File last access date in UTC</summary>
-        public DateTime AccessTimeUtc { get; set; }
-        /// <summary>File attributes change date in UTC</summary>
-        public DateTime StatusChangeTimeUtc { get; set; }
-        /// <summary>File last backup date in UTC</summary>
-        public DateTime BackupTimeUtc { get; set; }
-        /// <summary>File last modification date in UTC</summary>
-        public DateTime LastWriteTimeUtc { get; set; }
-
-        /// <summary>File creation date</summary>
-        public DateTime CreationTime
+        /// <summary>File creation date. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? CreationTime
         {
-            get => CreationTimeUtc.ToLocalTime();
-            set => CreationTimeUtc = value.ToUniversalTime();
+            get => CreationTimeUtc?.ToLocalTime();
+            set => CreationTimeUtc = value?.ToUniversalTime();
         }
-        /// <summary>File last access date</summary>
-        public DateTime AccessTime
+        /// <summary>File last access date. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? AccessTime
         {
-            get => AccessTimeUtc.ToLocalTime();
-            set => AccessTimeUtc = value.ToUniversalTime();
+            get => AccessTimeUtc?.ToLocalTime();
+            set => AccessTimeUtc = value?.ToUniversalTime();
         }
-        /// <summary>File attributes change date</summary>
-        public DateTime StatusChangeTime
+        /// <summary>File attributes change date. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? StatusChangeTime
         {
-            get => StatusChangeTimeUtc.ToLocalTime();
-            set => StatusChangeTimeUtc = value.ToUniversalTime();
+            get => StatusChangeTimeUtc?.ToLocalTime();
+            set => StatusChangeTimeUtc = value?.ToUniversalTime();
         }
-        /// <summary>File last backup date</summary>
-        public DateTime BackupTime
+        /// <summary>File last backup date. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? BackupTime
         {
-            get => BackupTimeUtc.ToLocalTime();
-            set => BackupTimeUtc = value.ToUniversalTime();
+            get => BackupTimeUtc?.ToLocalTime();
+            set => BackupTimeUtc = value?.ToUniversalTime();
         }
-        /// <summary>File last modification date</summary>
-        public DateTime LastWriteTime
+        /// <summary>File last modification date. Null if the underlying filesystem does not support them.</summary>
+        public DateTime? LastWriteTime
         {
-            get => LastWriteTimeUtc.ToLocalTime();
-            set => LastWriteTimeUtc = value.ToUniversalTime();
+            get => LastWriteTimeUtc?.ToLocalTime();
+            set => LastWriteTimeUtc = value?.ToUniversalTime();
         }
     }
 
@@ -236,7 +234,6 @@ namespace DiscImageChef.CommonTypes.Structs
         public FileSystemId Id;
         /// <summary>ID of plugin for this file</summary>
         public Guid PluginId;
-
         /// <summary>Filesystem type</summary>
         public string Type;
 
