@@ -49,15 +49,15 @@ namespace DiscImageChef.Gui.Panels
     // TODO: Show xattrs
     public class pnlListFiles : Panel
     {
-        GridColumn                         accessColumn;
-        bool                               ascendingSort;
-        GridColumn                         attributesColumn;
-        GridColumn                         backupColumn;
-        GridColumn                         changedColumn;
-        GridColumn                         createdColumn;
-        ObservableCollection<EntryForGrid> entries;
-        IReadOnlyFilesystem                filesystem;
-        GridColumn                         gidColumn;
+        readonly GridColumn                         accessColumn;
+        bool                                        ascendingSort;
+        readonly GridColumn                         attributesColumn;
+        readonly GridColumn                         backupColumn;
+        readonly GridColumn                         changedColumn;
+        readonly GridColumn                         createdColumn;
+        readonly ObservableCollection<EntryForGrid> entries;
+        readonly IReadOnlyFilesystem                filesystem;
+        readonly GridColumn                         gidColumn;
 
         #region XAML controls
         #pragma warning disable 169
@@ -67,15 +67,15 @@ namespace DiscImageChef.Gui.Panels
         #pragma warning restore 649
         #endregion
 
-        GridColumn     inodeColumn;
-        GridColumn     linksColumn;
-        GridColumn     modeColumn;
-        GridColumn     nameColumn;
-        ButtonMenuItem saveFilesMenuItem;
-        GridColumn     sizeColumn;
-        GridColumn     sortedColumn;
-        GridColumn     uidColumn;
-        GridColumn     writeColumn;
+        readonly GridColumn     inodeColumn;
+        readonly GridColumn     linksColumn;
+        readonly GridColumn     modeColumn;
+        readonly GridColumn     nameColumn;
+        readonly ButtonMenuItem saveFilesMenuItem;
+        readonly GridColumn     sizeColumn;
+        GridColumn              sortedColumn;
+        readonly GridColumn     uidColumn;
+        readonly GridColumn     writeColumn;
 
         public pnlListFiles(IReadOnlyFilesystem filesystem, Dictionary<string, FileEntryInfo> files, string parentPath)
         {
@@ -406,19 +406,28 @@ namespace DiscImageChef.Gui.Panels
                     fs.Close();
                     FileInfo fi = new FileInfo(outputPath);
                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                    try { fi.CreationTimeUtc = file.Stat.CreationTimeUtc; }
+                    try
+                    {
+                        if(file.Stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = file.Stat.CreationTimeUtc.Value;
+                    }
                     catch
                     {
                         // ignored
                     }
 
-                    try { fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc; }
+                    try
+                    {
+                        if(file.Stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = file.Stat.LastWriteTimeUtc.Value;
+                    }
                     catch
                     {
                         // ignored
                     }
 
-                    try { fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc; }
+                    try
+                    {
+                        if(file.Stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = file.Stat.AccessTimeUtc.Value;
+                    }
                     catch
                     {
                         // ignored

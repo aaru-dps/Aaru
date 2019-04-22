@@ -226,8 +226,7 @@ namespace DiscImageChef.Filesystems.LisaFS
             ExtentFile file;
 
             if(fileId <= 4)
-                if(!debug || fileId == 0)
-                    return Errno.NoSuchFile;
+                if(!debug || fileId == 0) return Errno.NoSuchFile;
                 else
                 {
                     stat = new FileEntryInfo {Attributes = new FileAttributes()};
@@ -246,11 +245,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
 
                         stat.Inode     = (ulong)fileId;
-                        stat.Mode      = 0x124;
                         stat.Links     = 0;
-                        stat.UID       = 0;
-                        stat.GID       = 0;
-                        stat.DeviceNo  = 0;
                         stat.Length    = mddf.datasize;
                         stat.BlockSize = mddf.datasize;
                         stat.Blocks    = 1;
@@ -265,11 +260,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                         stat.BackupTime = mddf.dtvb;
 
                         stat.Inode     = (ulong)fileId;
-                        stat.Mode      = 0x124;
                         stat.Links     = 0;
-                        stat.UID       = 0;
-                        stat.GID       = 0;
-                        stat.DeviceNo  = 0;
                         stat.Length    = buf.Length;
                         stat.BlockSize = mddf.datasize;
                         stat.Blocks    = buf.Length / mddf.datasize;
@@ -290,12 +281,8 @@ namespace DiscImageChef.Filesystems.LisaFS
             stat.BackupTime    = DateHandlers.LisaToDateTime(file.dtb);
             stat.LastWriteTime = DateHandlers.LisaToDateTime(file.dtm);
 
-            stat.Inode    = (ulong)fileId;
-            stat.Mode     = 0x1B6;
-            stat.Links    = 1;
-            stat.UID      = 0;
-            stat.GID      = 0;
-            stat.DeviceNo = 0;
+            stat.Inode = (ulong)fileId;
+            stat.Links = 1;
             if(!fileSizeCache.TryGetValue(fileId, out int len)) stat.Length = srecords[fileId].filesize;
             else stat.Length                                                = len;
             stat.BlockSize = mddf.datasize;

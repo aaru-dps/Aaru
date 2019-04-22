@@ -113,12 +113,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                     {
                         Attributes = FileAttributes.System,
                         BlockSize  = device.Info.SectorSize * multiplier,
-                        DeviceNo   = 0,
-                        GID        = 0,
-                        Inode      = 0,
-                        Links      = 1,
-                        Mode       = 0x124,
-                        UID        = 0
+                        Links      = 1
                     };
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
@@ -144,15 +139,10 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 Attributes       = FileAttributes.File,
                 Blocks           = entry.LastBlock - entry.FirstBlock,
                 BlockSize        = device.Info.SectorSize * multiplier,
-                DeviceNo         = 0,
-                GID              = 0,
-                Inode            = 0,
                 LastWriteTimeUtc = DateHandlers.UcsdPascalToDateTime(entry.ModificationTime),
                 Length = (entry.LastBlock - entry.FirstBlock) * device.Info.SectorSize * multiplier +
                          entry.LastBytes,
-                Links = 1,
-                Mode  = 0x124,
-                UID   = 0
+                Links = 1
             };
 
             return Errno.NoError;

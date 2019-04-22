@@ -369,19 +369,28 @@ namespace DiscImageChef.Commands
                         DirectoryInfo di = new DirectoryInfo(outputPath);
 
                         #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                        try { di.CreationTimeUtc = stat.CreationTimeUtc; }
+                        try
+                        {
+                            if(stat.CreationTimeUtc.HasValue) di.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                        }
                         catch
                         {
                             // ignored
                         }
 
-                        try { di.LastWriteTimeUtc = stat.LastWriteTimeUtc; }
+                        try
+                        {
+                            if(stat.LastWriteTimeUtc.HasValue) di.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                        }
                         catch
                         {
                             // ignored
                         }
 
-                        try { di.LastAccessTimeUtc = stat.AccessTimeUtc; }
+                        try
+                        {
+                            if(stat.AccessTimeUtc.HasValue) di.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                        }
                         catch
                         {
                             // ignored
@@ -416,19 +425,30 @@ namespace DiscImageChef.Commands
                                     outputFile.Close();
                                     FileInfo fi = new FileInfo(outputPath);
                                     #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                                    try { fi.CreationTimeUtc = stat.CreationTimeUtc; }
+                                    try
+                                    {
+                                        if(stat.CreationTimeUtc.HasValue)
+                                            fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                                    }
                                     catch
                                     {
                                         // ignored
                                     }
 
-                                    try { fi.LastWriteTimeUtc = stat.LastWriteTimeUtc; }
+                                    try
+                                    {
+                                        if(stat.LastWriteTimeUtc.HasValue)
+                                            fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                                    }
                                     catch
                                     {
                                         // ignored
                                     }
 
-                                    try { fi.LastAccessTimeUtc = stat.AccessTimeUtc; }
+                                    try
+                                    {
+                                        if(stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                                    }
                                     catch
                                     {
                                         // ignored
@@ -461,19 +481,28 @@ namespace DiscImageChef.Commands
                             outputFile.Close();
                             FileInfo fi = new FileInfo(outputPath);
                             #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                            try { fi.CreationTimeUtc = stat.CreationTimeUtc; }
+                            try
+                            {
+                                if(stat.CreationTimeUtc.HasValue) fi.CreationTimeUtc = stat.CreationTimeUtc.Value;
+                            }
                             catch
                             {
                                 // ignored
                             }
 
-                            try { fi.LastWriteTimeUtc = stat.LastWriteTimeUtc; }
+                            try
+                            {
+                                if(stat.LastWriteTimeUtc.HasValue) fi.LastWriteTimeUtc = stat.LastWriteTimeUtc.Value;
+                            }
                             catch
                             {
                                 // ignored
                             }
 
-                            try { fi.LastAccessTimeUtc = stat.AccessTimeUtc; }
+                            try
+                            {
+                                if(stat.AccessTimeUtc.HasValue) fi.LastAccessTimeUtc = stat.AccessTimeUtc.Value;
+                            }
                             catch
                             {
                                 // ignored

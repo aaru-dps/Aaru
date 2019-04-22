@@ -128,13 +128,9 @@ namespace DiscImageChef.Filesystems.FATX
                     Attributes = FileAttributes.Directory | FileAttributes.System | FileAttributes.Hidden,
                     Blocks     = GetClusters(superblock.rootDirectoryCluster).Length,
                     BlockSize  = bytesPerCluster,
-                    DeviceNo   = 0,
-                    GID        = 0,
                     Length     = GetClusters(superblock.rootDirectoryCluster).Length * bytesPerCluster,
                     Inode      = superblock.rootDirectoryCluster,
-                    Links      = 1,
-                    Mode       = 0x16D,
-                    UID        = 0
+                    Links      = 1
                 };
 
                 return Errno.NoError;
@@ -148,13 +144,9 @@ namespace DiscImageChef.Filesystems.FATX
                 Attributes = new FileAttributes(),
                 Blocks     = entry.length / bytesPerCluster,
                 BlockSize  = bytesPerCluster,
-                DeviceNo   = 0,
-                GID        = 0,
                 Length     = entry.length,
                 Inode      = entry.firstCluster,
                 Links      = 1,
-                Mode       = (uint)(entry.attributes.HasFlag(Attributes.Directory) ? 0x16D : 0x124),
-                UID        = 0,
                 CreationTime =
                     littleEndian
                         ? DateHandlers.DosToDateTime(entry.creationDate, entry.creationTime).AddYears(20)

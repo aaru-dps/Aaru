@@ -169,14 +169,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 {
                     stat = new FileEntryInfo
                     {
-                        BlockSize  = device.Info.SectorSize,
-                        DeviceNo   = 0,
-                        GID        = 0,
-                        Inode      = 0,
-                        Links      = 1,
-                        Mode       = 0x124,
-                        UID        = 0,
-                        Attributes = FileAttributes.System
+                        BlockSize = device.Info.SectorSize, Inode = 0, Links = 1, Attributes = FileAttributes.System
                     };
 
                     if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
@@ -217,14 +210,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 Blocks        = entry.flLgLen / volMDB.drAlBlkSiz,
                 BlockSize     = volMDB.drAlBlkSiz,
                 CreationTime  = DateHandlers.MacToDateTime(entry.flCrDat),
-                DeviceNo      = 0,
-                GID           = 0,
                 Inode         = entry.flFlNum,
                 LastWriteTime = DateHandlers.MacToDateTime(entry.flMdDat),
                 Length        = entry.flPyLen,
-                Links         = 1,
-                Mode          = 0x124,
-                UID           = 0
+                Links         = 1
             };
 
             return Errno.NoError;
@@ -304,8 +293,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             else
             {
                 if(resourceFork)
-                    if(ms.Length < entry.flRLgLen)
-                        buf = ms.ToArray();
+                    if(ms.Length < entry.flRLgLen) buf = ms.ToArray();
                     else
                     {
                         buf = new byte[entry.flRLgLen];
