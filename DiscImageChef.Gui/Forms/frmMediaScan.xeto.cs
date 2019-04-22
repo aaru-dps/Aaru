@@ -176,7 +176,6 @@ namespace DiscImageChef.Gui.Forms
         {
             Application.Instance.Invoke(() =>
             {
-                System.Console.WriteLine(lineChart.MaxY);
                 if(currentspeed > lineChart.MaxY) lineChart.MaxY = (float)(currentspeed + currentspeed / 10);
 
                 lineChart.Values.Add(new PointF(sector, (float)currentspeed));
