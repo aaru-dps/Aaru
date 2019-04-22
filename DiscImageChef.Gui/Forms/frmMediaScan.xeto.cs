@@ -206,7 +206,7 @@ namespace DiscImageChef.Gui.Forms
                         else lineChart.MaxX                      = blocks;
                         lineChart.StepsX = lineChart.MaxX   / 10f;
                         lineChart.StepsY = 150              * 4;
-                        lineChart.MaxY   = lineChart.StepsY * 13.5f;
+                        lineChart.MaxY   = lineChart.StepsY * 12.5f;
                         break;
                     case 0x0010: // DVD SL
                     case 0x0011:
@@ -219,7 +219,7 @@ namespace DiscImageChef.Gui.Forms
                         lineChart.MaxX   = 2298496;
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 1352.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 30;
+                        lineChart.MaxY   = lineChart.StepsY * 26;
                         break;
                     case 0x0015: // DVD DL
                     case 0x0016:
@@ -229,7 +229,7 @@ namespace DiscImageChef.Gui.Forms
                         lineChart.MaxX   = 4173824;
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 1352.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 30;
+                        lineChart.MaxY   = lineChart.StepsY * 26;
                         break;
                     case 0x0041:
                     case 0x0042:
@@ -242,7 +242,7 @@ namespace DiscImageChef.Gui.Forms
                         else lineChart.MaxX                        = blocks;
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 4394.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 20;
+                        lineChart.MaxY   = lineChart.StepsY * 18;
                         break;
                     case 0x0050: // HD DVD
                     case 0x0051:
@@ -255,7 +255,7 @@ namespace DiscImageChef.Gui.Forms
                         else lineChart.MaxX                        = blocks;
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 4394.5f;
-                        lineChart.MaxY   = lineChart.StepsY * 20;
+                        lineChart.MaxY   = lineChart.StepsY * 8;
                         break;
                     default:
                         lineChart.MaxX   = blocks;
