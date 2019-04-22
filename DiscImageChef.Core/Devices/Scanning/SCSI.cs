@@ -319,7 +319,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                         else results.A                        += blocksToRead;
 
                         ScanTime?.Invoke(i, cmdDuration);
-                        ScanSpeed?.Invoke(i, currentSpeed * 1024);
                         mhddLog.Write(i, cmdDuration);
                         ibgLog.Write(i, currentSpeed * 1024);
                     }
@@ -340,6 +339,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                                 results.Errored += blocksToRead;
                                 for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
+                                ScanUnreadable?.Invoke(i);
                                 mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                                 ibgLog.Write(i, 0);
@@ -348,7 +348,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                         else
                         {
                             ScanUnreadable?.Invoke(i);
-                            ScanSpeed?.Invoke(i, 0);
                             results.Errored += blocksToRead;
                             for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
@@ -363,7 +362,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
                     if(elapsed < 1) continue;
 
-                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                     sectorSpeedStart = 0;
                     timeSpeedStart   = DateTime.UtcNow;
                 }
@@ -416,7 +416,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                         else results.A                        += blocksToRead;
 
                         ScanTime?.Invoke(i, cmdDuration);
-                        ScanSpeed?.Invoke(i, currentSpeed * 1024);
                         mhddLog.Write(i, cmdDuration);
                         ibgLog.Write(i, currentSpeed * 1024);
                     }
@@ -424,7 +423,6 @@ namespace DiscImageChef.Core.Devices.Scanning
                     else
                     {
                         ScanUnreadable?.Invoke(i);
-                        ScanSpeed?.Invoke(i, 0);
                         results.Errored += blocksToRead;
                         for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
@@ -437,7 +435,8 @@ namespace DiscImageChef.Core.Devices.Scanning
                     double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
                     if(elapsed < 1) continue;
 
-                    currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                    ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
                     sectorSpeedStart = 0;
                     timeSpeedStart   = DateTime.UtcNow;
                 }
