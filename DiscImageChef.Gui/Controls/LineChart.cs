@@ -327,6 +327,8 @@ namespace DiscImageChef.Gui.Controls
                         float nextXrated = nextPoint.X * ratioX;
                         float nextYrated = nextPoint.Y * ratioY;
 
+                        if(prevYrated <= 0) prevYrated = nextYrated;
+
                         g.DrawLine(lineColor, marginXrated + prevXrated, rect.Height - marginYrated - prevYrated,
                                    marginXrated            + nextXrated, rect.Height - marginYrated - nextYrated);
 
