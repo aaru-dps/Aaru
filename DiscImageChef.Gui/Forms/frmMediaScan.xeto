@@ -54,6 +54,9 @@
             <TabPage Text="Graph">
                 <local:BlockMap ID="blockMap"/>
             </TabPage>
+            <TabPage Text="Chart">
+                <local:LineChart ID="lineChart"/>
+            </TabPage>
         </TabControl>
         <StackLayout Orientation="Vertical" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
                      ID="stkProgress" Visible="False">

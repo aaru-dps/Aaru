@@ -103,7 +103,7 @@ namespace DiscImageChef.Core
     /// </summary>
     public delegate void ErrorMessageHandler(string text);
 
-    public delegate void InitBlockMapHandler(ulong blocks, ulong blockSize, ulong blocksToRead);
+    public delegate void InitBlockMapHandler(ulong blocks, ulong blockSize, ulong blocksToRead, ushort currentProfile);
 
     /// <summary>
     ///     Updates lists of time taken on scanning from the specified sector
@@ -115,4 +115,6 @@ namespace DiscImageChef.Core
     ///     Specified a number of blocks could not be read on scan
     /// </summary>
     public delegate void ScanUnreadableHandler(ulong sector);
+
+    public delegate void ScanSpeedHandler(ulong sector, double currentSpeed);
 }

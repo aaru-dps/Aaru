@@ -117,7 +117,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 {
                     UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
 
-                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead);
+                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
                     mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
                     ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
 
@@ -151,12 +151,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                             else results.A                     += blocksToRead;
 
                             ScanTime?.Invoke(i, duration);
+                            ScanSpeed?.Invoke(i, currentSpeed * 1024);
                             mhddLog.Write(i, duration);
                             ibgLog.Write(i, currentSpeed * 1024);
                         }
                         else
                         {
                             ScanUnreadable?.Invoke(i);
+                            ScanSpeed?.Invoke(i, 0);
                             results.Errored += blocksToRead;
                             for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
 
@@ -208,7 +210,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                 }
                 else
                 {
-                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead);
+                    InitBlockMap?.Invoke(results.Blocks, blockSize, blocksToRead, ATA_PROFILE);
                     mhddLog = new MhddLog(mhddLogPath, dev, results.Blocks, blockSize, blocksToRead);
                     ibgLog  = new IbgLog(ibgLogPath, ATA_PROFILE);
 
@@ -248,12 +250,14 @@ namespace DiscImageChef.Core.Devices.Scanning
                                     else results.A                     += blocksToRead;
 
                                     ScanTime?.Invoke(currentBlock, duration);
+                                    ScanSpeed?.Invoke(currentBlock, currentSpeed * 1024);
                                     mhddLog.Write(currentBlock, duration);
                                     ibgLog.Write(currentBlock, currentSpeed * 1024);
                                 }
                                 else
                                 {
                                     ScanUnreadable?.Invoke(currentBlock);
+                                    ScanSpeed?.Invoke(currentBlock, 0);
                                     results.Errored += blocksToRead;
                                     results.UnreadableSectors.Add(currentBlock);
                                     mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);

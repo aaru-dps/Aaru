@@ -66,6 +66,16 @@ namespace DiscImageChef.Gui.Forms
 
             this.devicePath = devicePath;
             btnStop.Visible = false;
+
+            lineChart.AbsoluteMargins = true;
+            lineChart.MarginX         = 5;
+            lineChart.MarginY         = 5;
+            lineChart.DrawAxes        = true;
+            lineChart.AxesColor       = Colors.Black;
+            lineChart.ColorX          = Colors.Gray;
+            lineChart.ColorY          = Colors.Gray;
+            lineChart.BackgroundColor = Color.FromRgb(0x2974c1);
+            lineChart.LineColor       = Colors.Yellow;
         }
 
         void OnBtnCancelClick(object sender, EventArgs e)
@@ -120,6 +130,7 @@ namespace DiscImageChef.Gui.Forms
             scanner.UpdateProgress       += UpdateProgress;
             scanner.EndProgress          += EndProgress;
             scanner.InitBlockMap         += InitBlockMap;
+            scanner.ScanSpeed            += ScanSpeed;
 
             ScanResults results = scanner.Scan();
 
@@ -161,13 +172,99 @@ namespace DiscImageChef.Gui.Forms
             WorkFinished();
         }
 
-        void InitBlockMap(ulong blocks, ulong blocksize, ulong blockstoread)
+        void ScanSpeed(ulong sector, double currentspeed)
+        {
+            Application.Instance.Invoke(() =>
+            {
+                System.Console.WriteLine(lineChart.MaxY);
+                if(currentspeed > lineChart.MaxY) lineChart.MaxY = (float)(currentspeed + currentspeed / 10);
+
+                lineChart.Values.Add(new PointF(sector, (float)currentspeed));
+            });
+        }
+
+        void InitBlockMap(ulong blocks, ulong blocksize, ulong blockstoread, ushort currentProfile)
         {
             Application.Instance.Invoke(() =>
             {
                 blockMap.Sectors       = blocks;
                 blockMap.SectorsToRead = (uint)blockstoread;
                 blocksToRead           = blockstoread;
+                lineChart.MinX         = 0;
+                lineChart.MinY         = 0;
+                switch(currentProfile)
+                {
+                    case 0x0005: // CD and DDCD
+                    case 0x0008:
+                    case 0x0009:
+                    case 0x000A:
+                    case 0x0020:
+                    case 0x0021:
+                    case 0x0022:
+                        if(blocks      <= 360000) lineChart.MaxX = 360000;
+                        else if(blocks <= 405000) lineChart.MaxX = 405000;
+                        else if(blocks <= 445500) lineChart.MaxX = 445500;
+                        else lineChart.MaxX                      = blocks;
+                        lineChart.StepsX = lineChart.MaxX   / 10f;
+                        lineChart.StepsY = 150              * 4;
+                        lineChart.MaxY   = lineChart.StepsY * 13.5f;
+                        break;
+                    case 0x0010: // DVD SL
+                    case 0x0011:
+                    case 0x0012:
+                    case 0x0013:
+                    case 0x0014:
+                    case 0x0018:
+                    case 0x001A:
+                    case 0x001B:
+                        lineChart.MaxX   = 2298496;
+                        lineChart.StepsX = lineChart.MaxX / 10f;
+                        lineChart.StepsY = 1352.5f;
+                        lineChart.MaxY   = lineChart.StepsY * 30;
+                        break;
+                    case 0x0015: // DVD DL
+                    case 0x0016:
+                    case 0x0017:
+                    case 0x002A:
+                    case 0x002B:
+                        lineChart.MaxX   = 4173824;
+                        lineChart.StepsX = lineChart.MaxX / 10f;
+                        lineChart.StepsY = 1352.5f;
+                        lineChart.MaxY   = lineChart.StepsY * 30;
+                        break;
+                    case 0x0041:
+                    case 0x0042:
+                    case 0x0043:
+                    case 0x0040: // BD
+                        if(blocks      <= 12219392) lineChart.MaxX = 12219392;
+                        else if(blocks <= 24438784) lineChart.MaxX = 24438784;
+                        else if(blocks <= 48878592) lineChart.MaxX = 48878592;
+                        else if(blocks <= 62500864) lineChart.MaxX = 62500864;
+                        else lineChart.MaxX                        = blocks;
+                        lineChart.StepsX = lineChart.MaxX / 10f;
+                        lineChart.StepsY = 4394.5f;
+                        lineChart.MaxY   = lineChart.StepsY * 20;
+                        break;
+                    case 0x0050: // HD DVD
+                    case 0x0051:
+                    case 0x0052:
+                    case 0x0053:
+                    case 0x0058:
+                    case 0x005A:
+                        if(blocks      <= 7361599) lineChart.MaxX  = 7361599;
+                        else if(blocks <= 16305407) lineChart.MaxX = 16305407;
+                        else lineChart.MaxX                        = blocks;
+                        lineChart.StepsX = lineChart.MaxX / 10f;
+                        lineChart.StepsY = 4394.5f;
+                        lineChart.MaxY   = lineChart.StepsY * 20;
+                        break;
+                    default:
+                        lineChart.MaxX   = blocks;
+                        lineChart.StepsX = lineChart.MaxX / 10f;
+                        lineChart.StepsY = 625f;
+                        lineChart.MaxY   = lineChart.StepsY;
+                        break;
+                }
             });
         }
 
@@ -318,6 +415,7 @@ namespace DiscImageChef.Gui.Forms
         ProgressBar prgProgress2;
         TabControl  tabResults;
         BlockMap    blockMap;
+        LineChart   lineChart;
         #endregion
     }
 }

@@ -71,5 +71,6 @@ namespace DiscImageChef.Core.Devices.Scanning
         public event ScanTimeHandler       ScanTime;
         public event ScanUnreadableHandler ScanUnreadable;
         public event InitBlockMapHandler   InitBlockMap;
+        public event ScanSpeedHandler      ScanSpeed;
     }
 }
