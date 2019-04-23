@@ -26,7 +26,6 @@ If you want to contribute in any way please read the [contributing guide](CONTRI
 
 Stable releases in [Github](https://github.com/discimagechef/DiscImageChef/releases).
 CI beta builds [here](https://goo.gl/6dZPMq).  
-[![Feature Requests](http://feathub.com/discimagechef/DiscImageChef?format=svg)](http://feathub.com/discimagechef/DiscImageChef)
 
 
 System requirements
@@ -63,6 +62,10 @@ Features
 * Has an online database with drive capabilities, and can report the capabilities of any drive.
 * Works on any operating system and architecture where Mono or .NET Framework is supported (drive access requires Windows, Linux or FreeBSD).
 * Has a graphical interface (work in progress)
+
+Feature requests
+================
+[![Feature Requests](http://feathub.com/discimagechef/DiscImageChef?format=svg)](http://feathub.com/discimagechef/DiscImageChef)
 
 Supported disk image formats (read-only)
 ========================================
@@ -263,5 +266,6 @@ These disk image formats cannot be read, but their contents can be checksummed o
 * SuperCardPro
 
 
-## License
+License
+=======
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_large)
