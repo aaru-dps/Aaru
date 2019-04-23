@@ -26,6 +26,8 @@ If you want to contribute in any way please read the [contributing guide](CONTRI
 
 Stable releases in [Github](https://github.com/discimagechef/DiscImageChef/releases).
 CI beta builds [here](https://goo.gl/6dZPMq).  
+[![Feature Requests](http://feathub.com/discimagechef/DiscImageChef?format=svg)](http://feathub.com/discimagechef/DiscImageChef)
+
 
 System requirements
 ===================
