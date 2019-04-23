@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters     = (long)(partition.Size / HAMMER_BIGBLOCK_SIZE),
+                Clusters     = partition.Size / HAMMER_BIGBLOCK_SIZE,
                 ClusterSize  = HAMMER_BIGBLOCK_SIZE,
                 Dirty        = false,
                 Type         = "HAMMER",
@@ -127,10 +127,10 @@ namespace DiscImageChef.Filesystems
                                 hammerSb.vol0_stat_freebigblocks * HAMMER_BIGBLOCK_SIZE).AppendLine();
                 sb.AppendFormat("Filesystem has {0} inode used", hammerSb.vol0_stat_inodes).AppendLine();
 
-                XmlFsType.Clusters              = hammerSb.vol0_stat_bigblocks;
-                XmlFsType.FreeClusters          = hammerSb.vol0_stat_freebigblocks;
+                XmlFsType.Clusters              = (ulong)hammerSb.vol0_stat_bigblocks;
+                XmlFsType.FreeClusters          = (ulong)hammerSb.vol0_stat_freebigblocks;
                 XmlFsType.FreeClustersSpecified = true;
-                XmlFsType.Files                 = hammerSb.vol0_stat_inodes;
+                XmlFsType.Files                 = (ulong)hammerSb.vol0_stat_inodes;
                 XmlFsType.FilesSpecified        = true;
             }
             // 0 ?
@@ -147,43 +147,43 @@ namespace DiscImageChef.Filesystems
         struct HammerSuperBlock
         {
             /// <summary><see cref="HAMMER_FSBUF_VOLUME" /> for a valid header</summary>
-            public ulong vol_signature;
+            public readonly ulong vol_signature;
 
             /* These are relative to block device offset, not zone offsets. */
             /// <summary>offset of boot area</summary>
-            public long vol_bot_beg;
+            public readonly long vol_bot_beg;
             /// <summary>offset of memory log</summary>
-            public long vol_mem_beg;
+            public readonly long vol_mem_beg;
             /// <summary>offset of the first buffer in volume</summary>
-            public long vol_buf_beg;
+            public readonly long vol_buf_beg;
             /// <summary>offset of volume EOF (on buffer boundary)</summary>
-            public long vol_buf_end;
-            public long vol_reserved01;
+            public readonly long vol_buf_end;
+            public readonly long vol_reserved01;
 
             /// <summary>identify filesystem</summary>
-            public Guid vol_fsid;
+            public readonly Guid vol_fsid;
             /// <summary>identify filesystem type</summary>
-            public Guid vol_fstype;
+            public readonly Guid vol_fstype;
             /// <summary>filesystem label</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] vol_label;
+            public readonly byte[] vol_label;
 
             /// <summary>volume number within filesystem</summary>
-            public int vol_no;
+            public readonly int vol_no;
             /// <summary>number of volumes making up filesystem</summary>
-            public int vol_count;
+            public readonly int vol_count;
 
             /// <summary>version control information</summary>
-            public uint vol_version;
+            public readonly uint vol_version;
             /// <summary>header crc</summary>
-            public hammer_crc_t vol_crc;
+            public readonly hammer_crc_t vol_crc;
             /// <summary>volume flags</summary>
-            public uint vol_flags;
+            public readonly uint vol_flags;
             /// <summary>the root volume number (must be 0)</summary>
-            public uint vol_rootvol;
+            public readonly uint vol_rootvol;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public uint[] vol_reserved;
+            public readonly uint[] vol_reserved;
 
             /*
              * These fields are initialized and space is reserved in every
@@ -193,29 +193,29 @@ namespace DiscImageChef.Filesystems
              * by newfs_hammer(8).
              */
             /// <summary>total big-blocks when fs is empty</summary>
-            public long vol0_stat_bigblocks;
+            public readonly long vol0_stat_bigblocks;
             /// <summary>number of free big-blocks</summary>
-            public long vol0_stat_freebigblocks;
-            public long vol0_reserved01;
+            public readonly long vol0_stat_freebigblocks;
+            public readonly long vol0_reserved01;
             /// <summary>for statfs only</summary>
-            public long vol0_stat_inodes;
-            public long vol0_reserved02;
+            public readonly long vol0_stat_inodes;
+            public readonly long vol0_reserved02;
             /// <summary>B-Tree root offset in zone-8</summary>
-            public hammer_off_t vol0_btree_root;
+            public readonly hammer_off_t vol0_btree_root;
             /// <summary>highest partially synchronized TID</summary>
-            public hammer_tid_t vol0_next_tid;
-            public hammer_off_t vol0_reserved03;
+            public readonly hammer_tid_t vol0_next_tid;
+            public readonly hammer_off_t vol0_reserved03;
 
             /// <summary>
             ///     Blockmaps for zones.  Not all zones use a blockmap.  Note that the entire root blockmap is cached in the
             ///     hammer_mount structure.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public HammerBlockMap[] vol0_blockmap;
+            public readonly HammerBlockMap[] vol0_blockmap;
 
             /// <summary>Array of zone-2 addresses for undo FIFO.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public hammer_off_t[] vol0_undo_array;
+            public readonly hammer_off_t[] vol0_undo_array;
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]

@@ -123,8 +123,8 @@ namespace DiscImageChef.Filesystems
             {
                 Type        = "Opera",
                 VolumeName  = StringHandlers.CToString(sb.volume_label, Encoding),
-                ClusterSize = sb.block_size,
-                Clusters    = sb.block_count
+                ClusterSize = (uint)sb.block_size,
+                Clusters    = (ulong)sb.block_count
             };
         }
 
@@ -132,34 +132,34 @@ namespace DiscImageChef.Filesystems
         struct OperaSuperBlock
         {
             /// <summary>0x000, Record type, must be 1</summary>
-            public byte record_type;
+            public readonly byte record_type;
             /// <summary>0x001, 5 bytes, "ZZZZZ"</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public byte[] sync_bytes;
             /// <summary>0x006, Record version, must be 1</summary>
-            public byte record_version;
+            public readonly byte record_version;
             /// <summary>0x007, Volume flags</summary>
-            public byte volume_flags;
+            public readonly byte volume_flags;
             /// <summary>0x008, 32 bytes, volume comment</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volume_comment;
+            public readonly byte[] volume_comment;
             /// <summary>0x028, 32 bytes, volume label</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volume_label;
+            public readonly byte[] volume_label;
             /// <summary>0x048, Volume ID</summary>
-            public int volume_id;
+            public readonly int volume_id;
             /// <summary>0x04C, Block size in bytes</summary>
-            public int block_size;
+            public readonly int block_size;
             /// <summary>0x050, Blocks in volume</summary>
-            public int block_count;
+            public readonly int block_count;
             /// <summary>0x054, Root directory ID</summary>
-            public int root_dirid;
+            public readonly int root_dirid;
             /// <summary>0x058, Root directory blocks</summary>
-            public int rootdir_blocks;
+            public readonly int rootdir_blocks;
             /// <summary>0x05C, Root directory block size</summary>
-            public int rootdir_bsize;
+            public readonly int rootdir_bsize;
             /// <summary>0x060, Last root directory copy</summary>
-            public int last_root_copy;
+            public readonly int last_root_copy;
         }
     }
 }

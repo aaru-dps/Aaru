@@ -124,8 +124,8 @@ namespace DiscImageChef.Filesystems
             {
                 Type                   = "F2FS filesystem",
                 SystemIdentifier       = Encoding.ASCII.GetString(f2fsSb.version),
-                Clusters               = (long)f2fsSb.block_count,
-                ClusterSize            = 1 << (int)f2fsSb.log_blocksize,
+                Clusters               = f2fsSb.block_count,
+                ClusterSize            = (uint)(1 << (int)f2fsSb.log_blocksize),
                 DataPreparerIdentifier = Encoding.ASCII.GetString(f2fsSb.init_version),
                 VolumeName             = StringHandlers.CToString(f2fsSb.volume_name, Encoding.Unicode, true),
                 VolumeSerial           = f2fsSb.uuid.ToString()
@@ -136,64 +136,64 @@ namespace DiscImageChef.Filesystems
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct F2FS_Superblock
         {
-            public uint   magic;
-            public ushort major_ver;
-            public ushort minor_ver;
-            public uint   log_sectorsize;
-            public uint   log_sectors_per_block;
-            public uint   log_blocksize;
-            public uint   log_blocks_per_seg;
-            public uint   segs_per_sec;
-            public uint   secs_per_zone;
-            public uint   checksum_offset;
-            public ulong  block_count;
-            public uint   section_count;
-            public uint   segment_count;
-            public uint   segment_count_ckpt;
-            public uint   segment_count_sit;
-            public uint   segment_count_nat;
-            public uint   segment_count_ssa;
-            public uint   segment_count_main;
-            public uint   segment0_blkaddr;
-            public uint   cp_blkaddr;
-            public uint   sit_blkaddr;
-            public uint   nat_blkaddr;
-            public uint   ssa_blkaddr;
-            public uint   main_blkaddr;
-            public uint   root_ino;
-            public uint   node_ino;
-            public uint   meta_ino;
-            public Guid   uuid;
+            public readonly uint   magic;
+            public readonly ushort major_ver;
+            public readonly ushort minor_ver;
+            public readonly uint   log_sectorsize;
+            public readonly uint   log_sectors_per_block;
+            public readonly uint   log_blocksize;
+            public readonly uint   log_blocks_per_seg;
+            public readonly uint   segs_per_sec;
+            public readonly uint   secs_per_zone;
+            public readonly uint   checksum_offset;
+            public readonly ulong  block_count;
+            public readonly uint   section_count;
+            public readonly uint   segment_count;
+            public readonly uint   segment_count_ckpt;
+            public readonly uint   segment_count_sit;
+            public readonly uint   segment_count_nat;
+            public readonly uint   segment_count_ssa;
+            public readonly uint   segment_count_main;
+            public readonly uint   segment0_blkaddr;
+            public readonly uint   cp_blkaddr;
+            public readonly uint   sit_blkaddr;
+            public readonly uint   nat_blkaddr;
+            public readonly uint   ssa_blkaddr;
+            public readonly uint   main_blkaddr;
+            public readonly uint   root_ino;
+            public readonly uint   node_ino;
+            public readonly uint   meta_ino;
+            public readonly Guid   uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)]
-            public byte[] volume_name;
-            public uint extension_count;
+            public readonly byte[] volume_name;
+            public readonly uint extension_count;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list1;
+            public readonly byte[] extension_list1;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list2;
+            public readonly byte[] extension_list2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list3;
+            public readonly byte[] extension_list3;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list4;
+            public readonly byte[] extension_list4;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list5;
+            public readonly byte[] extension_list5;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list6;
+            public readonly byte[] extension_list6;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list7;
+            public readonly byte[] extension_list7;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] extension_list8;
-            public uint cp_payload;
+            public readonly byte[] extension_list8;
+            public readonly uint cp_payload;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-            public byte[] version;
+            public readonly byte[] version;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-            public byte[] init_version;
-            public uint feature;
-            public byte encryption_level;
+            public readonly byte[] init_version;
+            public readonly uint feature;
+            public readonly byte encryption_level;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] encrypt_pw_salt;
+            public readonly byte[] encrypt_pw_salt;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 871)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
         }
     }
 }

@@ -231,7 +231,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                     {
                         Image     = outputPrefix + ".modesense10.bin",
-                        Size      = cmdBuf.Length,
+                        Size      = (ulong)cmdBuf.Length,
                         Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                     };
                     DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense10.Image, cmdBuf);
@@ -252,7 +252,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                     {
                         Image     = outputPrefix + ".modesense.bin",
-                        Size      = cmdBuf.Length,
+                        Size      = (ulong)cmdBuf.Length,
                         Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                     };
                     DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense.Image, cmdBuf);
@@ -379,12 +379,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Image = new ImageType
                 {
                     format          = "BINARY",
-                    offset          = (long)currentSize,
+                    offset          = currentSize,
                     offsetSpecified = true,
                     Value           = outputPrefix + ".bin"
                 },
-                Sequence   = (long)currentFile,
-                StartBlock = (long)currentBlock,
+                Sequence   = currentFile,
+                StartBlock = currentBlock,
                 BlockSize  = blockSize
             };
             Checksum fileChk = new Checksum();
@@ -393,12 +393,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Image = new ImageType
                 {
                     format          = "BINARY",
-                    offset          = (long)currentSize,
+                    offset          = currentSize,
                     offsetSpecified = true,
                     Value           = outputPrefix + ".bin"
                 },
                 Sequence   = currentPartition,
-                StartBlock = (long)currentBlock
+                StartBlock = currentBlock
             };
             Checksum partitionChk = new Checksum();
 
@@ -421,8 +421,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Finished partition {0}", currentPartition);
                     currentTapePartition.File      = files.ToArray();
                     currentTapePartition.Checksums = partitionChk.End().ToArray();
-                    currentTapePartition.EndBlock  = (long)(currentBlock - 1);
-                    currentTapePartition.Size      = (long)currentPartitionSize;
+                    currentTapePartition.EndBlock  = currentBlock - 1;
+                    currentTapePartition.Size      = currentPartitionSize;
                     partitions.Add(currentTapePartition);
 
                     currentPartition++;
@@ -435,12 +435,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Image = new ImageType
                             {
                                 format          = "BINARY",
-                                offset          = (long)currentSize,
+                                offset          = currentSize,
                                 offsetSpecified = true,
                                 Value           = outputPrefix + ".bin"
                             },
-                            Sequence   = (long)currentFile,
-                            StartBlock = (long)currentBlock,
+                            Sequence   = currentFile,
+                            StartBlock = currentBlock,
                             BlockSize  = blockSize
                         };
                         currentFileSize = 0;
@@ -451,12 +451,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Image = new ImageType
                             {
                                 format          = "BINARY",
-                                offset          = (long)currentSize,
+                                offset          = currentSize,
                                 offsetSpecified = true,
                                 Value           = outputPrefix + ".bin"
                             },
                             Sequence   = currentPartition,
-                            StartBlock = (long)currentBlock
+                            StartBlock = currentBlock
                         };
                         currentPartitionSize = 0;
                         partitionChk         = new Checksum();
@@ -551,8 +551,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                        (fxSense.Value.ASCQ == 0x01 || fxSense.Value.Filemark))
                     {
                         currentTapeFile.Checksums = fileChk.End().ToArray();
-                        currentTapeFile.EndBlock  = (long)(currentBlock - 1);
-                        currentTapeFile.Size      = (long)currentFileSize;
+                        currentTapeFile.EndBlock  = currentBlock - 1;
+                        currentTapeFile.Size      = currentFileSize;
                         files.Add(currentTapeFile);
 
                         currentFile++;
@@ -561,12 +561,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Image = new ImageType
                             {
                                 format          = "BINARY",
-                                offset          = (long)currentSize,
+                                offset          = currentSize,
                                 offsetSpecified = true,
                                 Value           = outputPrefix + ".bin"
                             },
-                            Sequence   = (long)currentFile,
-                            StartBlock = (long)currentBlock,
+                            Sequence   = currentFile,
+                            StartBlock = currentBlock,
                             BlockSize  = blockSize
                         };
                         currentFileSize = 0;
@@ -644,8 +644,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 format = "Raw disk image (sector by sector copy)", Value = outputPrefix + ".bin"
             };
-            sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
-            sidecar.BlockMedia[0].Size              = (long)currentSize;
+            sidecar.BlockMedia[0].LogicalBlocks     = blocks;
+            sidecar.BlockMedia[0].Size              = currentSize;
             sidecar.BlockMedia[0].DumpHardwareArray = new DumpHardwareType[1];
             sidecar.BlockMedia[0].DumpHardwareArray[0] =
                 new DumpHardwareType {Extents = new ExtentType[1]};

@@ -80,8 +80,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(debug && (string.Compare(path, "$",     StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Boot", StringComparison.InvariantCulture) == 0 ||
                          string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0))
-                if(string.Compare(path, "$", StringComparison.InvariantCulture) == 0)
-                    file                                                                            = catalogBlocks;
+                if(string.Compare(path,      "$",     StringComparison.InvariantCulture) == 0) file = catalogBlocks;
                 else if(string.Compare(path, "$Vtoc", StringComparison.InvariantCulture) == 0) file = vtocBlocks;
                 else file                                                                           = bootBlocks;
             else
@@ -227,7 +226,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
             if(!track2UsedByFiles) tracksOnBoot++;
 
             bootBlocks  =  device.ReadSectors(0, (uint)(tracksOnBoot * sectorsPerTrack));
-            usedSectors += bootBlocks.Length / vtoc.bytesPerSector;
+            usedSectors += (uint)(bootBlocks.Length / vtoc.bytesPerSector);
 
             return Errno.NoError;
         }

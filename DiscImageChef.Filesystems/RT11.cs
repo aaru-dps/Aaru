@@ -105,7 +105,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type        = "RT-11",
-                ClusterSize = homeblock.cluster * 512,
+                ClusterSize = (uint)(homeblock.cluster * 512),
                 Clusters    = homeblock.cluster,
                 VolumeName  = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
                 Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlock)
@@ -119,47 +119,47 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>Bad block replacement table</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 130)]
-            public byte[] badBlockTable;
+            public readonly byte[] badBlockTable;
             /// <summary>Unused</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] unused;
+            public readonly byte[] unused;
             /// <summary>INITIALIZE/RESTORE data area</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)]
-            public byte[] initArea;
+            public readonly byte[] initArea;
             /// <summary>BUP information area</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
-            public byte[] bupInformation;
+            public readonly byte[] bupInformation;
             /// <summary>Empty</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 260)]
-            public byte[] empty;
+            public readonly byte[] empty;
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] reserved1;
+            public readonly byte[] reserved1;
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] reserved2;
+            public readonly byte[] reserved2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
-            public byte[] empty2;
+            public readonly byte[] empty2;
             /// <summary>Cluster size</summary>
-            public ushort cluster;
+            public readonly ushort cluster;
             /// <summary>Block of the first directory segment</summary>
-            public ushort rootBlock;
+            public readonly ushort rootBlock;
             /// <summary>"V3A" in Radix-50</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] systemVersion;
+            public readonly byte[] systemVersion;
             /// <summary>Name of the volume, 12 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] volname;
+            public readonly byte[] volname;
             /// <summary>Name of the volume owner, 12 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] ownername;
+            public readonly byte[] ownername;
             /// <summary>RT11 defines it as "DECRT11A    ", 12 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] format;
+            public readonly byte[] format;
             /// <summary>Unused</summary>
-            public ushort unused2;
+            public readonly ushort unused2;
             /// <summary>Checksum of preceding 255 words (16 bit units)</summary>
-            public ushort checksum;
+            public readonly ushort checksum;
         }
     }
 }

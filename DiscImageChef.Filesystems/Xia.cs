@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems
             {
                 Bootable    = !ArrayHelpers.ArrayIsNullOrEmpty(supblk.s_boot_segment),
                 Clusters    = supblk.s_nzones,
-                ClusterSize = (int)supblk.s_zone_size,
+                ClusterSize = supblk.s_zone_size,
                 Type        = "Xia filesystem"
             };
 
@@ -121,39 +121,39 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>1st sector reserved for boot</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] s_boot_segment;
+            public readonly byte[] s_boot_segment;
             /// <summary>the name says it</summary>
-            public uint s_zone_size;
+            public readonly uint s_zone_size;
             /// <summary>volume size, zone aligned</summary>
-            public uint s_nzones;
+            public readonly uint s_nzones;
             /// <summary># of inodes</summary>
-            public uint s_ninodes;
+            public readonly uint s_ninodes;
             /// <summary># of data zones</summary>
-            public uint s_ndatazones;
+            public readonly uint s_ndatazones;
             /// <summary># of imap zones</summary>
-            public uint s_imap_zones;
+            public readonly uint s_imap_zones;
             /// <summary># of zmap zones</summary>
-            public uint s_zmap_zones;
+            public readonly uint s_zmap_zones;
             /// <summary>first data zone</summary>
-            public uint s_firstdatazone;
+            public readonly uint s_firstdatazone;
             /// <summary>z size = 1KB &lt;&lt; z shift</summary>
-            public uint s_zone_shift;
+            public readonly uint s_zone_shift;
             /// <summary>max size of a single file</summary>
-            public uint s_max_size;
+            public readonly uint s_max_size;
             /// <summary>reserved</summary>
-            public uint s_reserved0;
+            public readonly uint s_reserved0;
             /// <summary>reserved</summary>
-            public uint s_reserved1;
+            public readonly uint s_reserved1;
             /// <summary>reserved</summary>
-            public uint s_reserved2;
+            public readonly uint s_reserved2;
             /// <summary>reserved</summary>
-            public uint s_reserved3;
+            public readonly uint s_reserved3;
             /// <summary>first kernel zone</summary>
-            public uint s_firstkernzone;
+            public readonly uint s_firstkernzone;
             /// <summary>kernel size in zones</summary>
-            public uint s_kernzones;
+            public readonly uint s_kernzones;
             /// <summary>magic number for xiafs</summary>
-            public uint s_magic;
+            public readonly uint s_magic;
         }
 
         /// <summary>
@@ -162,11 +162,11 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XiaDirect
         {
-            public uint   d_ino;
-            public ushort d_rec_len;
-            public byte   d_name_len;
+            public readonly uint   d_ino;
+            public readonly ushort d_rec_len;
+            public readonly byte   d_name_len;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NAME_LEN + 1)]
-            public byte[] d_name;
+            public readonly byte[] d_name;
         }
 
         /// <summary>
@@ -175,16 +175,16 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XiaInode
         {
-            public ushort i_mode;
-            public ushort i_nlinks;
-            public ushort i_uid;
-            public ushort i_gid;
-            public uint   i_size;
-            public uint   i_ctime;
-            public uint   i_atime;
-            public uint   i_mtime;
+            public readonly ushort i_mode;
+            public readonly ushort i_nlinks;
+            public readonly ushort i_uid;
+            public readonly ushort i_gid;
+            public readonly uint   i_size;
+            public readonly uint   i_ctime;
+            public readonly uint   i_atime;
+            public readonly uint   i_mtime;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = XIAFS_NUM_BLOCK_POINTERS)]
-            public uint[] i_zone;
+            public readonly uint[] i_zone;
         }
     }
 }

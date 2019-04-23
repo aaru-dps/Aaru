@@ -127,8 +127,8 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("Boot code's SHA1: {0}", bootChk).AppendLine();
             }
 
-            XmlFsType.ClusterSize  = ntfsBb.spc     * ntfsBb.bps;
-            XmlFsType.Clusters     = ntfsBb.sectors / ntfsBb.spc;
+            XmlFsType.ClusterSize  = (uint)(ntfsBb.spc      * ntfsBb.bps);
+            XmlFsType.Clusters     = (ulong)(ntfsBb.sectors / ntfsBb.spc);
             XmlFsType.VolumeSerial = $"{ntfsBb.serial_no:X16}";
             XmlFsType.Type         = "NTFS";
 
@@ -144,70 +144,70 @@ namespace DiscImageChef.Filesystems
             // Start of BIOS Parameter Block
             /// <summary>0x000, Jump to boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] jump;
+            public readonly byte[] jump;
             /// <summary>0x003, OEM Name, 8 bytes, space-padded, must be "NTFS    "</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] oem_name;
+            public readonly byte[] oem_name;
             /// <summary>0x00B, Bytes per sector</summary>
-            public ushort bps;
+            public readonly ushort bps;
             /// <summary>0x00D, Sectors per cluster</summary>
-            public byte spc;
+            public readonly byte spc;
             /// <summary>0x00E, Reserved sectors, seems 0</summary>
-            public ushort rsectors;
+            public readonly ushort rsectors;
             /// <summary>0x010, Number of FATs... obviously, 0</summary>
-            public byte fats_no;
+            public readonly byte fats_no;
             /// <summary>0x011, Number of entries on root directory... 0</summary>
-            public ushort root_ent;
+            public readonly ushort root_ent;
             /// <summary>0x013, Sectors in volume... 0</summary>
-            public ushort sml_sectors;
+            public readonly ushort sml_sectors;
             /// <summary>0x015, Media descriptor</summary>
-            public byte media;
+            public readonly byte media;
             /// <summary>0x016, Sectors per FAT... 0</summary>
-            public ushort spfat;
+            public readonly ushort spfat;
             /// <summary>0x018, Sectors per track, required to boot</summary>
-            public ushort sptrk;
+            public readonly ushort sptrk;
             /// <summary>0x01A, Heads... required to boot</summary>
-            public ushort heads;
+            public readonly ushort heads;
             /// <summary>0x01C, Hidden sectors before BPB</summary>
-            public uint hsectors;
+            public readonly uint hsectors;
             /// <summary>0x020, Sectors in volume if &gt; 65535... 0</summary>
-            public uint big_sectors;
+            public readonly uint big_sectors;
             /// <summary>0x024, Drive number</summary>
-            public byte drive_no;
+            public readonly byte drive_no;
             /// <summary>0x025, 0</summary>
-            public byte nt_flags;
+            public readonly byte nt_flags;
             /// <summary>0x026, EPB signature, 0x80</summary>
-            public byte signature1;
+            public readonly byte signature1;
             /// <summary>0x027, Alignment</summary>
-            public byte dummy;
+            public readonly byte dummy;
             // End of BIOS Parameter Block
 
             // Start of NTFS real superblock
             /// <summary>0x028, Sectors on volume</summary>
-            public long sectors;
+            public readonly long sectors;
             /// <summary>0x030, LSN of $MFT</summary>
-            public long mft_lsn;
+            public readonly long mft_lsn;
             /// <summary>0x038, LSN of $MFTMirror</summary>
-            public long mftmirror_lsn;
+            public readonly long mftmirror_lsn;
             /// <summary>0x040, Clusters per MFT record</summary>
-            public sbyte mft_rc_clusters;
+            public readonly sbyte mft_rc_clusters;
             /// <summary>0x041, Alignment</summary>
-            public byte dummy2;
+            public readonly byte dummy2;
             /// <summary>0x042, Alignment</summary>
-            public ushort dummy3;
+            public readonly ushort dummy3;
             /// <summary>0x044, Clusters per index block</summary>
-            public sbyte index_blk_cts;
+            public readonly sbyte index_blk_cts;
             /// <summary>0x045, Alignment</summary>
-            public byte dummy4;
+            public readonly byte dummy4;
             /// <summary>0x046, Alignment</summary>
-            public ushort dummy5;
+            public readonly ushort dummy5;
             /// <summary>0x048, Volume serial number</summary>
-            public ulong serial_no;
+            public readonly ulong serial_no;
             /// <summary>Boot code.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 430)]
-            public byte[] boot_code;
+            public readonly byte[] boot_code;
             /// <summary>0x1FE, 0xAA55</summary>
-            public ushort signature2;
+            public readonly ushort signature2;
         }
     }
 }

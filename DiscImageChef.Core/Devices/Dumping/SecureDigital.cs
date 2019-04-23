@@ -82,7 +82,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[] ocr               = null;
             byte[] ecsd              = null;
             byte[] scr               = null;
-            int    physicalBlockSize = 0;
+            uint   physicalBlockSize = 0;
             bool   byteAddressed     = true;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
@@ -513,7 +513,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     cidDump = new DumpType
                     {
-                        Image = outputPath, Size = cid.Length, Checksums = Checksum.GetChecksums(cid).ToArray()
+                        Image     = outputPath,
+                        Size      = (ulong)cid.Length,
+                        Checksums = Checksum.GetChecksums(cid).ToArray()
                     };
 
                     ret =
@@ -536,7 +538,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     csdDump = new DumpType
                     {
-                        Image = outputPath, Size = csd.Length, Checksums = Checksum.GetChecksums(csd).ToArray()
+                        Image     = outputPath,
+                        Size      = (ulong)csd.Length,
+                        Checksums = Checksum.GetChecksums(csd).ToArray()
                     };
 
                     ret =
@@ -559,7 +563,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     sidecar.BlockMedia[0].MultiMediaCard.ExtendedCSD = new DumpType
                     {
-                        Image = outputPath, Size = ecsd.Length, Checksums = Checksum.GetChecksums(ecsd).ToArray()
+                        Image     = outputPath,
+                        Size      = (ulong)ecsd.Length,
+                        Checksums = Checksum.GetChecksums(ecsd).ToArray()
                     };
 
                     ret = outputPlugin.WriteMediaTag(ecsd, MediaTagType.MMC_ExtendedCSD);
@@ -579,7 +585,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     ocrDump = new DumpType
                     {
-                        Image = outputPath, Size = ocr.Length, Checksums = Checksum.GetChecksums(ocr).ToArray()
+                        Image     = outputPath,
+                        Size      = (ulong)ocr.Length,
+                        Checksums = Checksum.GetChecksums(ocr).ToArray()
                     };
 
                     ret =
@@ -602,7 +610,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                     {
-                        Image = outputPath, Size = scr.Length, Checksums = Checksum.GetChecksums(scr).ToArray()
+                        Image     = outputPath,
+                        Size      = (ulong)scr.Length,
+                        Checksums = Checksum.GetChecksums(scr).ToArray()
                     };
 
                     ret = outputPlugin.WriteMediaTag(scr, MediaTagType.SD_SCR);
@@ -659,13 +669,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
                 sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
                 // TODO: Implement device firmware revision
-                sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
-                sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : (int)blockSize;
-                sidecar.BlockMedia[0].LogicalBlockSize  = (int)blockSize;
+                sidecar.BlockMedia[0].LogicalBlocks     = blocks;
+                sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize > 0 ? physicalBlockSize : blockSize;
+                sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
                 sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
                 sidecar.BlockMedia[0].Model             = dev.Model;
                 sidecar.BlockMedia[0].Serial            = dev.Serial;
-                sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
+                sidecar.BlockMedia[0].Size              = blocks * blockSize;
 
                 UpdateStatus?.Invoke("Writing metadata sidecar");
 

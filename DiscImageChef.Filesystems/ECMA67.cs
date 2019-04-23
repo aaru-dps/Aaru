@@ -85,7 +85,7 @@ namespace DiscImageChef.Filesystems
             {
                 Type        = "ECMA-67",
                 ClusterSize = 256,
-                Clusters    = (long)(partition.End - partition.Start + 1),
+                Clusters    = partition.End - partition.Start + 1,
                 VolumeName  = Encoding.ASCII.GetString(vol.volumeIdentifier)
             };
 
@@ -96,27 +96,27 @@ namespace DiscImageChef.Filesystems
         struct VolumeLabel
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] labelIdentifier;
-            public byte labelNumber;
+            public readonly byte[] labelIdentifier;
+            public readonly byte labelNumber;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] volumeIdentifier;
-            public byte volumeAccessibility;
+            public readonly byte[] volumeIdentifier;
+            public readonly byte volumeAccessibility;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
-            public byte[] reserved1;
+            public readonly byte[] reserved1;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
-            public byte[] owner;
+            public readonly byte[] owner;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] reserved2;
-            public byte surface;
+            public readonly byte[] reserved2;
+            public readonly byte surface;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] reserved3;
-            public byte recordLength;
+            public readonly byte[] reserved3;
+            public readonly byte recordLength;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] reserved4;
-            public byte fileLabelAllocation;
-            public byte labelStandardVersion;
+            public readonly byte[] reserved4;
+            public readonly byte fileLabelAllocation;
+            public readonly byte labelStandardVersion;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
-            public byte[] reserved5;
+            public readonly byte[] reserved5;
         }
     }
 }

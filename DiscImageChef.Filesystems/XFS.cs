@@ -173,11 +173,11 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type                  = "XFS filesystem",
-                ClusterSize           = (int)xfsSb.blocksize,
-                Clusters              = (long)xfsSb.dblocks,
-                FreeClusters          = (long)xfsSb.fdblocks,
+                ClusterSize           = xfsSb.blocksize,
+                Clusters              = xfsSb.dblocks,
+                FreeClusters          = xfsSb.fdblocks,
                 FreeClustersSpecified = true,
-                Files                 = (long)(xfsSb.icount - xfsSb.ifree),
+                Files                 = xfsSb.icount - xfsSb.ifree,
                 FilesSpecified        = true,
                 Dirty                 = xfsSb.inprogress > 0,
                 VolumeName            = StringHandlers.CToString(xfsSb.fname, Encoding),
@@ -188,63 +188,63 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct XFS_Superblock
         {
-            public uint   magicnum;
-            public uint   blocksize;
-            public ulong  dblocks;
-            public ulong  rblocks;
-            public ulong  rextents;
-            public Guid   uuid;
-            public ulong  logstat;
-            public ulong  rootino;
-            public ulong  rbmino;
-            public ulong  rsumino;
-            public uint   rextsize;
-            public uint   agblocks;
-            public uint   agcount;
-            public uint   rbmblocks;
-            public uint   logblocks;
-            public ushort version;
-            public ushort sectsize;
-            public ushort inodesize;
-            public ushort inopblock;
+            public readonly uint   magicnum;
+            public readonly uint   blocksize;
+            public readonly ulong  dblocks;
+            public readonly ulong  rblocks;
+            public readonly ulong  rextents;
+            public readonly Guid   uuid;
+            public readonly ulong  logstat;
+            public readonly ulong  rootino;
+            public readonly ulong  rbmino;
+            public readonly ulong  rsumino;
+            public readonly uint   rextsize;
+            public readonly uint   agblocks;
+            public readonly uint   agcount;
+            public readonly uint   rbmblocks;
+            public readonly uint   logblocks;
+            public readonly ushort version;
+            public readonly ushort sectsize;
+            public readonly ushort inodesize;
+            public readonly ushort inopblock;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] fname;
-            public byte   blocklog;
-            public byte   sectlog;
-            public byte   inodelog;
-            public byte   inopblog;
-            public byte   agblklog;
-            public byte   rextslog;
-            public byte   inprogress;
-            public byte   imax_pct;
-            public ulong  icount;
-            public ulong  ifree;
-            public ulong  fdblocks;
-            public ulong  frextents;
-            public ulong  uquotino;
-            public ulong  gquotino;
-            public ushort qflags;
-            public byte   flags;
-            public byte   shared_vn;
-            public ulong  inoalignmt;
-            public ulong  unit;
-            public ulong  width;
-            public byte   dirblklog;
-            public byte   logsectlog;
-            public ushort logsectsize;
-            public uint   logsunit;
-            public uint   features2;
-            public uint   bad_features2;
-            public uint   features_compat;
-            public uint   features_ro_compat;
-            public uint   features_incompat;
-            public uint   features_log_incompat;
+            public readonly byte[] fname;
+            public readonly byte   blocklog;
+            public readonly byte   sectlog;
+            public readonly byte   inodelog;
+            public readonly byte   inopblog;
+            public readonly byte   agblklog;
+            public readonly byte   rextslog;
+            public readonly byte   inprogress;
+            public readonly byte   imax_pct;
+            public readonly ulong  icount;
+            public readonly ulong  ifree;
+            public readonly ulong  fdblocks;
+            public readonly ulong  frextents;
+            public readonly ulong  uquotino;
+            public readonly ulong  gquotino;
+            public readonly ushort qflags;
+            public readonly byte   flags;
+            public readonly byte   shared_vn;
+            public readonly ulong  inoalignmt;
+            public readonly ulong  unit;
+            public readonly ulong  width;
+            public readonly byte   dirblklog;
+            public readonly byte   logsectlog;
+            public readonly ushort logsectsize;
+            public readonly uint   logsunit;
+            public readonly uint   features2;
+            public readonly uint   bad_features2;
+            public readonly uint   features_compat;
+            public readonly uint   features_ro_compat;
+            public readonly uint   features_incompat;
+            public readonly uint   features_log_incompat;
             // This field is little-endian while rest of superblock is big-endian
-            public uint  crc;
-            public uint  spino_align;
-            public ulong pquotino;
-            public ulong lsn;
-            public Guid  meta_uuid;
+            public readonly uint  crc;
+            public readonly uint  spino_align;
+            public readonly ulong pquotino;
+            public readonly ulong lsn;
+            public readonly Guid  meta_uuid;
         }
     }
 }

@@ -108,7 +108,7 @@ namespace DiscImageChef.Filesystems
                 ModificationDate          = DateHandlers.UnixUnsignedToDateTime(mtimeSecs, mtimeNanoSecs),
                 ModificationDateSpecified = true,
                 Clusters                  = volInfo.size * 256 / imagePlugin.Info.SectorSize,
-                ClusterSize               = (int)imagePlugin.Info.SectorSize,
+                ClusterSize               = imagePlugin.Info.SectorSize,
                 VolumeSerial              = volInfo.uuid.ToString()
             };
         }
@@ -123,23 +123,23 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct VolumeInfo
         {
-            public uint magic;
-            public uint version;
+            public readonly uint magic;
+            public readonly uint version;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] unknown1;
-            public byte lun;
+            public readonly byte[] unknown1;
+            public readonly byte lun;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] unknown2;
+            public readonly byte[] unknown2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-            public byte[] name;
+            public readonly byte[] name;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 49)]
-            public byte[] unknown3;
-            public uint size;
+            public readonly byte[] unknown3;
+            public readonly uint size;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)]
-            public byte[] unknown4;
-            public Guid  uuid;
-            public ulong ctime;
-            public ulong mtime;
+            public readonly byte[] unknown4;
+            public readonly Guid  uuid;
+            public readonly ulong ctime;
+            public readonly ulong mtime;
         }
     }
 }

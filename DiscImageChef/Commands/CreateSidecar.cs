@@ -48,7 +48,7 @@ namespace DiscImageChef.Commands
 {
     class CreateSidecarCommand : Command
     {
-        int    blockSize;
+        uint   blockSize;
         string encodingName;
         string inputFile;
         bool   showHelp;
@@ -67,7 +67,7 @@ namespace DiscImageChef.Commands
                 {
                     "block-size|b=",
                     "Only used for tapes, indicates block size. Files in the folder whose size is not a multiple of this value will simply be ignored.",
-                    (int i) => blockSize = i
+                    (uint i) => blockSize = i
                 },
                 {"encoding|e=", "Name of character encoding to use.", s => encodingName = s},
                 {

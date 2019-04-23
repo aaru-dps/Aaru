@@ -585,7 +585,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].PFI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -593,7 +593,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DMI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -602,7 +602,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].CMI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
 
@@ -621,7 +621,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].BCA = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -630,7 +630,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DDS = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -639,7 +639,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].SAI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -647,7 +647,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].PRI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -655,7 +655,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].MediaID = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -663,7 +663,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].PFIR = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -671,7 +671,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].ADIP = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -679,7 +679,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DCB = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -687,7 +687,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].DI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -703,7 +703,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             SecuritySectors = new DumpType
                             {
                                 Image     = outputPath,
-                                Size      = tag.Value.Length,
+                                Size      = (ulong)tag.Value.Length,
                                 Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                             }
                         }
@@ -716,7 +716,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].Xbox.PFI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -726,7 +726,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].Xbox.DMI = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -734,7 +734,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].TOC = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -742,7 +742,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].ATIP = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -750,7 +750,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].PMA = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
@@ -758,17 +758,28 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.OpticalDisc[0].LeadInCdText = new DumpType
                     {
                         Image     = outputPath,
-                        Size      = tag.Value.Length,
+                        Size      = (ulong)tag.Value.Length,
                         Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                     };
                     break;
                 case MediaTagType.CD_FirstTrackPregap:
+                    sidecar.OpticalDisc[0].FirstTrackPregrap = new[]
+                    {
+                        new BorderType
+                        {
+                            Image     = outputPath,
+                            Size      = (ulong)tag.Value.Length,
+                            Checksums = Checksum.GetChecksums(tag.Value).ToArray()
+                        }
+                    };
+                    break;
+                case MediaTagType.CD_LeadIn:
                     sidecar.OpticalDisc[0].LeadIn = new[]
                     {
                         new BorderType
                         {
                             Image     = outputPath,
-                            Size      = tag.Value.Length,
+                            Size      = (ulong)tag.Value.Length,
                             Checksums = Checksum.GetChecksums(tag.Value).ToArray()
                         }
                     };

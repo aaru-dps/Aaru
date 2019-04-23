@@ -112,9 +112,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             XmlFsType = new FileSystemType
             {
                 Bootable       = !ArrayHelpers.ArrayIsNullOrEmpty(bootBlocks),
-                Clusters       = mountedVolEntry.Blocks,
-                ClusterSize    = (int)device.Info.SectorSize,
-                Files          = mountedVolEntry.Files,
+                Clusters       = (ulong)mountedVolEntry.Blocks,
+                ClusterSize    = device.Info.SectorSize,
+                Files          = (ulong)mountedVolEntry.Files,
                 FilesSpecified = true,
                 Type           = "UCSD Pascal",
                 VolumeName     = StringHandlers.PascalToString(mountedVolEntry.VolumeName, Encoding)
@@ -136,7 +136,7 @@ namespace DiscImageChef.Filesystems.UCSDPascal
         {
             stat = new FileSystemInfo
             {
-                Blocks         = mountedVolEntry.Blocks,
+                Blocks         = (ulong)mountedVolEntry.Blocks,
                 FilenameLength = 16,
                 Files          = (ulong)mountedVolEntry.Files,
                 FreeBlocks     = 0,
@@ -144,9 +144,11 @@ namespace DiscImageChef.Filesystems.UCSDPascal
                 Type           = "UCSD Pascal"
             };
 
-            stat.FreeBlocks = mountedVolEntry.Blocks - (mountedVolEntry.LastBlock - mountedVolEntry.FirstBlock);
+            stat.FreeBlocks =
+                (ulong)(mountedVolEntry.Blocks - (mountedVolEntry.LastBlock - mountedVolEntry.FirstBlock));
 
-            foreach(PascalFileEntry entry in fileEntries) stat.FreeBlocks -= entry.LastBlock - entry.FirstBlock;
+            foreach(PascalFileEntry entry in fileEntries)
+                stat.FreeBlocks -= (ulong)(entry.LastBlock - entry.FirstBlock);
 
             return Errno.NotImplemented;
         }

@@ -254,7 +254,7 @@ namespace DiscImageChef.Filesystems
                     $"UDF v{Convert.ToInt32($"{(lvidiu.maximumWriteUDF & 0xFF00) >> 8}", 10)}.{Convert.ToInt32($"{lvidiu.maximumWriteUDF & 0xFF}", 10):X2}",
                 ApplicationIdentifier =
                     Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000'),
-                ClusterSize               = (int)lvd.logicalBlockSize,
+                ClusterSize               = lvd.logicalBlockSize,
                 ModificationDate          = EcmaToDateTime(lvid.recordingDateTime),
                 ModificationDateSpecified = true,
                 Files                     = lvidiu.files,
@@ -264,8 +264,8 @@ namespace DiscImageChef.Filesystems
                 SystemIdentifier =
                     Encoding.GetString(pvd.implementationIdentifier.identifier).TrimEnd('\u0000')
             };
-            XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                        (ulong)XmlFsType.ClusterSize);
+            XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                 XmlFsType.ClusterSize;
 
             information = sbInformation.ToString();
         }
@@ -288,32 +288,32 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Entity flags
             /// </summary>
-            public EntityFlags flags;
+            public readonly EntityFlags flags;
             /// <summary>
             ///     Structure identifier
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 23)]
-            public byte[] identifier;
+            public readonly byte[] identifier;
             /// <summary>
             ///     Structure data
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] identifierSuffix;
+            public readonly byte[] identifierSuffix;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct Timestamp
         {
-            public ushort typeAndZone;
-            public short  year;
-            public byte   month;
-            public byte   day;
-            public byte   hour;
-            public byte   minute;
-            public byte   second;
-            public byte   centiseconds;
-            public byte   hundredsMicroseconds;
-            public byte   microseconds;
+            public readonly ushort typeAndZone;
+            public readonly short  year;
+            public readonly byte   month;
+            public readonly byte   day;
+            public readonly byte   hour;
+            public readonly byte   minute;
+            public readonly byte   second;
+            public readonly byte   centiseconds;
+            public readonly byte   hundredsMicroseconds;
+            public readonly byte   microseconds;
         }
 
         enum TagIdentifier : ushort
@@ -332,103 +332,103 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DescriptorTag
         {
-            public TagIdentifier tagIdentifier;
-            public ushort        descriptorVersion;
-            public byte          tagChecksum;
-            public byte          reserved;
-            public ushort        tagSerialNumber;
-            public ushort        descriptorCrc;
-            public ushort        descriptorCrcLength;
-            public uint          tagLocation;
+            public readonly TagIdentifier tagIdentifier;
+            public readonly ushort        descriptorVersion;
+            public readonly byte          tagChecksum;
+            public readonly byte          reserved;
+            public readonly ushort        tagSerialNumber;
+            public readonly ushort        descriptorCrc;
+            public readonly ushort        descriptorCrcLength;
+            public readonly uint          tagLocation;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ExtentDescriptor
         {
-            public uint length;
-            public uint location;
+            public readonly uint length;
+            public readonly uint location;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CharacterSpecification
         {
-            public byte type;
+            public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 63)]
-            public byte[] information;
+            public readonly byte[] information;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AnchorVolumeDescriptorPointer
         {
-            public DescriptorTag    tag;
-            public ExtentDescriptor mainVolumeDescriptorSequenceExtent;
-            public ExtentDescriptor reserveVolumeDescriptorSequenceExtent;
+            public readonly DescriptorTag    tag;
+            public readonly ExtentDescriptor mainVolumeDescriptorSequenceExtent;
+            public readonly ExtentDescriptor reserveVolumeDescriptorSequenceExtent;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 480)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PrimaryVolumeDescriptor
         {
-            public DescriptorTag tag;
-            public uint          volumeDescriptorSequenceNumber;
-            public uint          primaryVolumeDescriptorNumber;
+            public readonly DescriptorTag tag;
+            public readonly uint          volumeDescriptorSequenceNumber;
+            public readonly uint          primaryVolumeDescriptorNumber;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volumeIdentifier;
-            public ushort volumeSequenceNumber;
-            public ushort maximumVolumeSequenceNumber;
-            public ushort interchangeLevel;
-            public ushort maximumInterchangeLevel;
-            public uint   characterSetList;
-            public uint   maximumCharacterSetList;
+            public readonly byte[] volumeIdentifier;
+            public readonly ushort volumeSequenceNumber;
+            public readonly ushort maximumVolumeSequenceNumber;
+            public readonly ushort interchangeLevel;
+            public readonly ushort maximumInterchangeLevel;
+            public readonly uint   characterSetList;
+            public readonly uint   maximumCharacterSetList;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] volumeSetIdentifier;
-            public CharacterSpecification descriptorCharacterSet;
-            public CharacterSpecification explanatoryCharacterSet;
-            public ExtentDescriptor       volumeAbstract;
-            public ExtentDescriptor       volumeCopyright;
-            public EntityIdentifier       applicationIdentifier;
-            public Timestamp              recordingDateTime;
-            public EntityIdentifier       implementationIdentifier;
+            public readonly byte[] volumeSetIdentifier;
+            public readonly CharacterSpecification descriptorCharacterSet;
+            public readonly CharacterSpecification explanatoryCharacterSet;
+            public readonly ExtentDescriptor       volumeAbstract;
+            public readonly ExtentDescriptor       volumeCopyright;
+            public readonly EntityIdentifier       applicationIdentifier;
+            public readonly Timestamp              recordingDateTime;
+            public readonly EntityIdentifier       implementationIdentifier;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] implementationUse;
-            public uint   predecessorVolumeDescriptorSequenceLocation;
-            public ushort flags;
+            public readonly byte[] implementationUse;
+            public readonly uint   predecessorVolumeDescriptorSequenceLocation;
+            public readonly ushort flags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LogicalVolumeDescriptor
         {
-            public DescriptorTag          tag;
-            public uint                   volumeDescriptorSequenceNumber;
-            public CharacterSpecification descriptorCharacterSet;
+            public readonly DescriptorTag          tag;
+            public readonly uint                   volumeDescriptorSequenceNumber;
+            public readonly CharacterSpecification descriptorCharacterSet;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] logicalVolumeIdentifier;
-            public uint             logicalBlockSize;
-            public EntityIdentifier domainIdentifier;
+            public readonly byte[] logicalVolumeIdentifier;
+            public readonly uint             logicalBlockSize;
+            public readonly EntityIdentifier domainIdentifier;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] logicalVolumeContentsUse;
-            public uint             mapTableLength;
-            public uint             numberOfPartitionMaps;
-            public EntityIdentifier implementationIdentifier;
+            public readonly byte[] logicalVolumeContentsUse;
+            public readonly uint             mapTableLength;
+            public readonly uint             numberOfPartitionMaps;
+            public readonly EntityIdentifier implementationIdentifier;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] implementationUse;
-            public ExtentDescriptor integritySequenceExtent;
+            public readonly byte[] implementationUse;
+            public readonly ExtentDescriptor integritySequenceExtent;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LogicalVolumeIntegrityDescriptor
         {
-            public DescriptorTag    tag;
-            public Timestamp        recordingDateTime;
-            public uint             integrityType;
-            public ExtentDescriptor nextIntegrityExtent;
+            public readonly DescriptorTag    tag;
+            public readonly Timestamp        recordingDateTime;
+            public readonly uint             integrityType;
+            public readonly ExtentDescriptor nextIntegrityExtent;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] logicalVolumeContentsUse;
-            public uint numberOfPartitions;
-            public uint lengthOfImplementationUse;
+            public readonly byte[] logicalVolumeContentsUse;
+            public readonly uint numberOfPartitions;
+            public readonly uint lengthOfImplementationUse;
             // Follows uint[numberOfPartitions] freeSpaceTable;
             // Follows uint[numberOfPartitions] sizeTable;
             // Follows byte[lengthOfImplementationUse] implementationUse;
@@ -437,12 +437,12 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LogicalVolumeIntegrityDescriptorImplementationUse
         {
-            public EntityIdentifier implementationId;
-            public uint             files;
-            public uint             directories;
-            public ushort           minimumReadUDF;
-            public ushort           minimumWriteUDF;
-            public ushort           maximumWriteUDF;
+            public readonly EntityIdentifier implementationId;
+            public readonly uint             files;
+            public readonly uint             directories;
+            public readonly ushort           minimumReadUDF;
+            public readonly ushort           minimumWriteUDF;
+            public readonly ushort           maximumWriteUDF;
         }
     }
 }

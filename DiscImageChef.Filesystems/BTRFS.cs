@@ -165,76 +165,76 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters              = (long)(btrfsSb.total_bytes / btrfsSb.sectorsize),
-                ClusterSize           = (int)btrfsSb.sectorsize,
+                Clusters              = btrfsSb.total_bytes / btrfsSb.sectorsize,
+                ClusterSize           = btrfsSb.sectorsize,
                 FreeClustersSpecified = true,
                 VolumeName            = btrfsSb.label,
                 VolumeSerial          = $"{btrfsSb.uuid}",
                 VolumeSetIdentifier   = $"{btrfsSb.dev_item.device_uuid}",
                 Type                  = Name
             };
-            XmlFsType.FreeClusters = XmlFsType.Clusters - (long)(btrfsSb.bytes_used / btrfsSb.sectorsize);
+            XmlFsType.FreeClusters = XmlFsType.Clusters - btrfsSb.bytes_used / btrfsSb.sectorsize;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SuperBlock
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x20)]
-            public byte[] checksum;
-            public Guid    uuid;
-            public ulong   pba;
-            public ulong   flags;
-            public ulong   magic;
-            public ulong   generation;
-            public ulong   root_lba;
-            public ulong   chunk_lba;
-            public ulong   log_lba;
-            public ulong   log_root_transid;
-            public ulong   total_bytes;
-            public ulong   bytes_used;
-            public ulong   root_dir_objectid;
-            public ulong   num_devices;
-            public uint    sectorsize;
-            public uint    nodesize;
-            public uint    leafsize;
-            public uint    stripesize;
-            public uint    n;
-            public ulong   chunk_root_generation;
-            public ulong   compat_flags;
-            public ulong   compat_ro_flags;
-            public ulong   incompat_flags;
-            public ushort  csum_type;
-            public byte    root_level;
-            public byte    chunk_root_level;
-            public byte    log_root_level;
-            public DevItem dev_item;
+            public readonly byte[] checksum;
+            public readonly Guid    uuid;
+            public readonly ulong   pba;
+            public readonly ulong   flags;
+            public readonly ulong   magic;
+            public readonly ulong   generation;
+            public readonly ulong   root_lba;
+            public readonly ulong   chunk_lba;
+            public readonly ulong   log_lba;
+            public readonly ulong   log_root_transid;
+            public readonly ulong   total_bytes;
+            public readonly ulong   bytes_used;
+            public readonly ulong   root_dir_objectid;
+            public readonly ulong   num_devices;
+            public readonly uint    sectorsize;
+            public readonly uint    nodesize;
+            public readonly uint    leafsize;
+            public readonly uint    stripesize;
+            public readonly uint    n;
+            public readonly ulong   chunk_root_generation;
+            public readonly ulong   compat_flags;
+            public readonly ulong   compat_ro_flags;
+            public readonly ulong   incompat_flags;
+            public readonly ushort  csum_type;
+            public readonly byte    root_level;
+            public readonly byte    chunk_root_level;
+            public readonly byte    log_root_level;
+            public readonly DevItem dev_item;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 0x100)]
-            public string label;
+            public readonly string label;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x100)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x800)]
-            public byte[] chunkpairs;
+            public readonly byte[] chunkpairs;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x4D5)]
-            public byte[] unused;
+            public readonly byte[] unused;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DevItem
         {
-            public ulong id;
-            public ulong bytes;
-            public ulong used;
-            public uint  optimal_align;
-            public uint  optimal_width;
-            public uint  minimal_size;
-            public ulong type;
-            public ulong generation;
-            public ulong start_offset;
-            public uint  dev_group;
-            public byte  seek_speed;
-            public byte  bandwitdh;
-            public Guid  device_uuid;
-            public Guid  uuid;
+            public readonly ulong id;
+            public readonly ulong bytes;
+            public readonly ulong used;
+            public readonly uint  optimal_align;
+            public readonly uint  optimal_width;
+            public readonly uint  minimal_size;
+            public readonly ulong type;
+            public readonly ulong generation;
+            public readonly ulong start_offset;
+            public readonly uint  dev_group;
+            public readonly byte  seek_speed;
+            public readonly byte  bandwitdh;
+            public readonly Guid  device_uuid;
+            public readonly Guid  uuid;
         }
     }
 }

@@ -85,13 +85,13 @@ namespace DiscImageChef.Filesystems.FATX
             {
                 Type = "FATX filesystem",
                 ClusterSize =
-                    (int)(superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
-                          imagePlugin.Info.SectorSize),
+                    (uint)(superblock.sectorsPerCluster * logicalSectorsPerPhysicalSectors *
+                           imagePlugin.Info.SectorSize),
                 VolumeName   = volumeLabel,
                 VolumeSerial = $"{superblock.id:X8}"
             };
-            XmlFsType.Clusters = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                        (ulong)XmlFsType.ClusterSize);
+            XmlFsType.Clusters = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                 XmlFsType.ClusterSize;
 
             statfs = new FileSystemInfo
             {

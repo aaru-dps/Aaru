@@ -640,10 +640,10 @@ namespace DiscImageChef.Filesystems.CPM
                 }
 
             // Generate statfs.
-            cpmStat.Blocks         = dpb.dsm + 1;
+            cpmStat.Blocks         = (ulong)(dpb.dsm + 1);
             cpmStat.FilenameLength = 11;
             cpmStat.Files          = (ulong)fileCache.Count;
-            cpmStat.FreeBlocks     = cpmStat.Blocks - usedBlocks;
+            cpmStat.FreeBlocks     = cpmStat.Blocks - (ulong)usedBlocks;
             cpmStat.PluginId       = Id;
             cpmStat.Type           = "CP/M filesystem";
 
@@ -651,8 +651,8 @@ namespace DiscImageChef.Filesystems.CPM
             XmlFsType = new FileSystemType
             {
                 Clusters              = cpmStat.Blocks,
-                ClusterSize           = blockSize,
-                Files                 = fileCache.Count,
+                ClusterSize           = (uint)blockSize,
+                Files                 = (ulong)fileCache.Count,
                 FilesSpecified        = true,
                 FreeClusters          = cpmStat.FreeBlocks,
                 FreeClustersSpecified = true,

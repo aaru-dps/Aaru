@@ -106,7 +106,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type                  = "PC-FX",
-                Clusters              = (long)partition.Length,
+                Clusters              = partition.Length,
                 ClusterSize           = 2048,
                 Bootable              = true,
                 CreationDate          = dateTime,
@@ -121,27 +121,27 @@ namespace DiscImageChef.Filesystems
         struct PcfxHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] signature;
+            public readonly byte[] signature;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0xE0)]
-            public byte[] copyright;
+            public readonly byte[] copyright;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x710)]
-            public byte[] unknown;
+            public readonly byte[] unknown;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] title;
-            public uint loadOffset;
-            public uint loadCount;
-            public uint loadAddress;
-            public uint entryPoint;
+            public readonly byte[] title;
+            public readonly uint loadOffset;
+            public readonly uint loadCount;
+            public readonly uint loadAddress;
+            public readonly uint entryPoint;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] makerId;
+            public readonly byte[] makerId;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
-            public byte[] makerName;
-            public uint   volumeNumber;
-            public byte   majorVersion;
-            public byte   minorVersion;
-            public ushort country;
+            public readonly byte[] makerName;
+            public readonly uint   volumeNumber;
+            public readonly byte   majorVersion;
+            public readonly byte   minorVersion;
+            public readonly ushort country;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] date;
+            public readonly byte[] date;
         }
     }
 }

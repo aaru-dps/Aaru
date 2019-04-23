@@ -100,9 +100,9 @@ namespace DiscImageChef.Filesystems.AppleDOS
             XmlFsType = new FileSystemType
             {
                 Bootable              = true,
-                Clusters              = (long)device.Info.Sectors,
+                Clusters              = device.Info.Sectors,
                 ClusterSize           = vtoc.bytesPerSector,
-                Files                 = catalogCache.Count,
+                Files                 = (ulong)catalogCache.Count,
                 FilesSpecified        = true,
                 FreeClustersSpecified = true,
                 Type                  = "Apple DOS"
@@ -137,7 +137,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         {
             stat = new FileSystemInfo
             {
-                Blocks         = (long)device.Info.Sectors,
+                Blocks         = device.Info.Sectors,
                 FilenameLength = 30,
                 Files          = (ulong)catalogCache.Count,
                 PluginId       = Id,

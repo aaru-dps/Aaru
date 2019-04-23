@@ -48,7 +48,7 @@ namespace DiscImageChef.Filesystems.AppleDOS
         ulong       totalFileEntries;
         bool        track1UsedByFiles;
         bool        track2UsedByFiles;
-        int         usedSectors;
+        uint        usedSectors;
 
         Vtoc vtoc;
 

@@ -69,15 +69,15 @@ namespace DiscImageChef.Core
                         offsetSpecified = true,
                         Value           = Path.GetFileName(imagePath)
                     },
-                    Size     = fi.Length,
+                    Size     = (ulong)fi.Length,
                     Sequence = new SequenceType {MediaTitle = image.Info.MediaTitle}
                 }
             };
 
             if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
             {
-                sidecar.AudioMedia[0].Sequence.MediaSequence = image.Info.MediaSequence;
-                sidecar.AudioMedia[0].Sequence.TotalMedia    = image.Info.LastMediaSequence;
+                sidecar.AudioMedia[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
+                sidecar.AudioMedia[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
             }
             else
             {

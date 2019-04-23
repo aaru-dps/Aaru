@@ -88,8 +88,8 @@ namespace DiscImageChef.Filesystems.AppleDOS
             XmlFsType = new FileSystemType
             {
                 Bootable    = true,
-                Clusters    = (long)imagePlugin.Info.Sectors,
-                ClusterSize = (int)imagePlugin.Info.SectorSize,
+                Clusters    = imagePlugin.Info.Sectors,
+                ClusterSize = imagePlugin.Info.SectorSize,
                 Type        = "Apple DOS"
             };
         }

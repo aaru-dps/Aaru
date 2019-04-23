@@ -964,7 +964,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                          from partition in xmlTrack.FileSystemInformation
                                          where partition.FileSystems != null
                                          from fileSystem in partition.FileSystems
-                                         select ((ulong)partition.StartSector, fileSystem.Type));
+                                         select (partition.StartSector, fileSystem.Type));
 
                 if(filesystems.Count > 0)
                     foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
@@ -977,7 +977,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     type = LayersTypeType.OTP, typeSpecified = true, Sectors = new SectorsType[1]
                 };
-                sidecar.OpticalDisc[0].Layers.Sectors[0] = new SectorsType {Value = (long)layerBreak};
+                sidecar.OpticalDisc[0].Layers.Sectors[0] = new SectorsType {Value = layerBreak};
                 sidecar.OpticalDisc[0].Sessions          = 1;
                 sidecar.OpticalDisc[0].Dimensions        = Dimensions.DimensionsFromMediaType(dskType);
                 CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,

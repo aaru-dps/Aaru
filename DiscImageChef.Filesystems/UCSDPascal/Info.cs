@@ -165,9 +165,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             {
                 Bootable =
                     !ArrayHelpers.ArrayIsNullOrEmpty(imagePlugin.ReadSectors(partition.Start, multiplier * 2)),
-                Clusters       = volEntry.Blocks,
-                ClusterSize    = (int)imagePlugin.Info.SectorSize,
-                Files          = volEntry.Files,
+                Clusters       = (ulong)volEntry.Blocks,
+                ClusterSize    = imagePlugin.Info.SectorSize,
+                Files          = (ulong)volEntry.Files,
                 FilesSpecified = true,
                 Type           = "UCSD Pascal",
                 VolumeName     = StringHandlers.PascalToString(volEntry.VolumeName, Encoding)

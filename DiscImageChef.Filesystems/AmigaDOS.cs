@@ -304,7 +304,7 @@ namespace DiscImageChef.Filesystems
             if((bootBlk.diskType & 0xFF) == 4 || (bootBlk.diskType & 0xFF) == 5)
                 sbInformation.AppendFormat("Directory cache starts at block {0}", rootBlk.extension).AppendLine();
 
-            long blocks = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize);
+            ulong blocks = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / blockSize;
 
             sbInformation.AppendFormat("Volume block size is {0} bytes", blockSize).AppendLine();
             sbInformation.AppendFormat("Volume has {0} blocks", blocks).AppendLine();
@@ -328,7 +328,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType.ModificationDateSpecified = true;
             XmlFsType.Dirty                     = rootBlk.bitmapFlag != 0xFFFFFFFF;
             XmlFsType.Clusters                  = blocks;
-            XmlFsType.ClusterSize               = (int)blockSize;
+            XmlFsType.ClusterSize               = blockSize;
             XmlFsType.VolumeName                = diskName;
             XmlFsType.Bootable                  = bsum == bootBlk.checksum;
             // Useful as a serial
@@ -381,15 +381,15 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Offset 0x00, "DOSx" disk type
             /// </summary>
-            public uint diskType;
+            public readonly uint diskType;
             /// <summary>
             ///     Offset 0x04, Checksum
             /// </summary>
-            public uint checksum;
+            public readonly uint checksum;
             /// <summary>
             ///     Offset 0x08, Pointer to root block, mostly invalid
             /// </summary>
-            public uint root_ptr;
+            public readonly uint root_ptr;
             /// <summary>
             ///     Offset 0x0C, Boot code, til completion. Size is intentionally incorrect to allow marshaling to work.
             /// </summary>
@@ -407,11 +407,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Offset 0x04, unused
             /// </summary>
-            public uint headerKey;
+            public readonly uint headerKey;
             /// <summary>
             ///     Offset 0x08, unused
             /// </summary>
-            public uint highSeq;
+            public readonly uint highSeq;
             /// <summary>
             ///     Offset 0x0C, longs used by hash table
             /// </summary>
@@ -419,7 +419,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Offset 0x10, unused
             /// </summary>
-            public uint firstData;
+            public readonly uint firstData;
             /// <summary>
             ///     Offset 0x14, Rootblock checksum
             /// </summary>
@@ -433,81 +433,81 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+0, bitmap flag, 0xFFFFFFFF if valid
             /// </summary>
-            public uint bitmapFlag;
+            public readonly uint bitmapFlag;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+4, bitmap pages, 25 entries
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 25)]
-            public uint[] bitmapPages;
+            public readonly uint[] bitmapPages;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+104, pointer to bitmap extension block
             /// </summary>
-            public uint bitmapExtensionBlock;
+            public readonly uint bitmapExtensionBlock;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+108, last root alteration days since 1978/01/01
             /// </summary>
-            public uint rDays;
+            public readonly uint rDays;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+112, last root alteration minutes past midnight
             /// </summary>
-            public uint rMins;
+            public readonly uint rMins;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+116, last root alteration ticks (1/50 secs)
             /// </summary>
-            public uint rTicks;
+            public readonly uint rTicks;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+120, disk name, pascal string, 31 bytes
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)]
-            public byte[] diskName;
+            public readonly byte[] diskName;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+151, unused
             /// </summary>
-            public byte padding;
+            public readonly byte padding;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+152, unused
             /// </summary>
-            public uint reserved1;
+            public readonly uint reserved1;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+156, unused
             /// </summary>
-            public uint reserved2;
+            public readonly uint reserved2;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+160, last disk alteration days since 1978/01/01
             /// </summary>
-            public uint vDays;
+            public readonly uint vDays;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+164, last disk alteration minutes past midnight
             /// </summary>
-            public uint vMins;
+            public readonly uint vMins;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+168, last disk alteration ticks (1/50 secs)
             /// </summary>
-            public uint vTicks;
+            public readonly uint vTicks;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+172, filesystem creation days since 1978/01/01
             /// </summary>
-            public uint cDays;
+            public readonly uint cDays;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+176, filesystem creation minutes since 1978/01/01
             /// </summary>
-            public uint cMins;
+            public readonly uint cMins;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+180, filesystem creation ticks since 1978/01/01
             /// </summary>
-            public uint cTicks;
+            public readonly uint cTicks;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+184, unused
             /// </summary>
-            public uint nextHash;
+            public readonly uint nextHash;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+188, unused
             /// </summary>
-            public uint parentDir;
+            public readonly uint parentDir;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+192, first directory cache block
             /// </summary>
-            public uint extension;
+            public readonly uint extension;
             /// <summary>
             ///     Offset 0x18+hashTableSize*4+196, block secondary type = ST_ROOT (1)
             /// </summary>

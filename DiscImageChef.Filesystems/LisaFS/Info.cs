@@ -360,7 +360,7 @@ namespace DiscImageChef.Filesystems.LisaFS
                     }
 
                     XmlFsType.Clusters    = infoMddf.vol_size;
-                    XmlFsType.ClusterSize = infoMddf.clustersize * infoMddf.datasize;
+                    XmlFsType.ClusterSize = (uint)(infoMddf.clustersize * infoMddf.datasize);
                     if(DateTime.Compare(infoMddf.dtvc, DateHandlers.LisaToDateTime(0)) > 0)
                     {
                         XmlFsType.CreationDate          = infoMddf.dtvc;

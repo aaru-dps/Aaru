@@ -115,7 +115,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type                      = "NILFS2 filesystem",
-                ClusterSize               = 1 << (int)(nilfsSb.log_block_size + 10),
+                ClusterSize               = (uint)(1 << (int)(nilfsSb.log_block_size + 10)),
                 VolumeName                = StringHandlers.CToString(nilfsSb.volume_name, Encoding),
                 VolumeSerial              = nilfsSb.uuid.ToString(),
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(nilfsSb.ctime),
@@ -124,7 +124,7 @@ namespace DiscImageChef.Filesystems
                 ModificationDateSpecified = true
             };
             if(nilfsSb.creator_os == 0) XmlFsType.SystemIdentifier = "Linux";
-            XmlFsType.Clusters = (long)nilfsSb.dev_size / XmlFsType.ClusterSize;
+            XmlFsType.Clusters = nilfsSb.dev_size / XmlFsType.ClusterSize;
         }
 
         enum NILFS2_State : ushort
@@ -137,48 +137,48 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NILFS2_Superblock
         {
-            public uint         rev_level;
-            public ushort       minor_rev_level;
-            public ushort       magic;
-            public ushort       bytes;
-            public ushort       flags;
-            public uint         crc_seed;
-            public uint         sum;
-            public uint         log_block_size;
-            public ulong        nsegments;
-            public ulong        dev_size;
-            public ulong        first_data_block;
-            public uint         blocks_per_segment;
-            public uint         r_segments_percentage;
-            public ulong        last_cno;
-            public ulong        last_pseg;
-            public ulong        last_seq;
-            public ulong        free_blocks_count;
-            public ulong        ctime;
-            public ulong        mtime;
-            public ulong        wtime;
-            public ushort       mnt_count;
-            public ushort       max_mnt_count;
-            public NILFS2_State state;
-            public ushort       errors;
-            public ulong        lastcheck;
-            public uint         checkinterval;
-            public uint         creator_os;
-            public ushort       def_resuid;
-            public ushort       def_resgid;
-            public uint         first_ino;
-            public ushort       inode_size;
-            public ushort       dat_entry_size;
-            public ushort       checkpoint_size;
-            public ushort       segment_usage_size;
-            public Guid         uuid;
+            public readonly uint         rev_level;
+            public readonly ushort       minor_rev_level;
+            public readonly ushort       magic;
+            public readonly ushort       bytes;
+            public readonly ushort       flags;
+            public readonly uint         crc_seed;
+            public readonly uint         sum;
+            public readonly uint         log_block_size;
+            public readonly ulong        nsegments;
+            public readonly ulong        dev_size;
+            public readonly ulong        first_data_block;
+            public readonly uint         blocks_per_segment;
+            public readonly uint         r_segments_percentage;
+            public readonly ulong        last_cno;
+            public readonly ulong        last_pseg;
+            public readonly ulong        last_seq;
+            public readonly ulong        free_blocks_count;
+            public readonly ulong        ctime;
+            public readonly ulong        mtime;
+            public readonly ulong        wtime;
+            public readonly ushort       mnt_count;
+            public readonly ushort       max_mnt_count;
+            public readonly NILFS2_State state;
+            public readonly ushort       errors;
+            public readonly ulong        lastcheck;
+            public readonly uint         checkinterval;
+            public readonly uint         creator_os;
+            public readonly ushort       def_resuid;
+            public readonly ushort       def_resgid;
+            public readonly uint         first_ino;
+            public readonly ushort       inode_size;
+            public readonly ushort       dat_entry_size;
+            public readonly ushort       checkpoint_size;
+            public readonly ushort       segment_usage_size;
+            public readonly Guid         uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 80)]
-            public byte[] volume_name;
-            public uint  c_interval;
-            public uint  c_block_max;
-            public ulong feature_compat;
-            public ulong feature_compat_ro;
-            public ulong feature_incompat;
+            public readonly byte[] volume_name;
+            public readonly uint  c_interval;
+            public readonly uint  c_block_max;
+            public readonly ulong feature_compat;
+            public readonly ulong feature_compat_ro;
+            public readonly ulong feature_incompat;
         }
     }
 }

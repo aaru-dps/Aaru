@@ -69,7 +69,7 @@ namespace DiscImageChef.Core
                         offsetSpecified = true,
                         Value           = Path.GetFileName(imagePath)
                     },
-                    Size = fi.Length
+                    Size = (ulong)fi.Length
                 }
             };
         }

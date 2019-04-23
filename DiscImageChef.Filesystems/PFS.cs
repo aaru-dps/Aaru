@@ -135,7 +135,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType.FreeClusters          = rootBlock.blocksfree;
             XmlFsType.FreeClustersSpecified = true;
             XmlFsType.Clusters              = rootBlock.diskSize;
-            XmlFsType.ClusterSize           = (int)imagePlugin.Info.SectorSize;
+            XmlFsType.ClusterSize           = imagePlugin.Info.SectorSize;
             XmlFsType.VolumeName            = StringHandlers.PascalToString(rootBlock.diskname, Encoding);
         }
 
@@ -148,11 +148,11 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     "PFS\1" disk type
             /// </summary>
-            public uint diskType;
+            public readonly uint diskType;
             /// <summary>
             ///     Boot code, til completion
             /// </summary>
-            public byte[] bootCode;
+            public readonly byte[] bootCode;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -161,84 +161,84 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Disk type
             /// </summary>
-            public uint diskType;
+            public readonly uint diskType;
             /// <summary>
             ///     Options
             /// </summary>
-            public uint options;
+            public readonly uint options;
             /// <summary>
             ///     Current datestamp
             /// </summary>
-            public uint datestamp;
+            public readonly uint datestamp;
             /// <summary>
             ///     Volume creation day
             /// </summary>
-            public ushort creationday;
+            public readonly ushort creationday;
             /// <summary>
             ///     Volume creation minute
             /// </summary>
-            public ushort creationminute;
+            public readonly ushort creationminute;
             /// <summary>
             ///     Volume creation tick
             /// </summary>
-            public ushort creationtick;
+            public readonly ushort creationtick;
             /// <summary>
             ///     AmigaDOS protection bits
             /// </summary>
-            public ushort protection;
+            public readonly ushort protection;
             /// <summary>
             ///     Volume label (Pascal string)
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] diskname;
+            public readonly byte[] diskname;
             /// <summary>
             ///     Last reserved block
             /// </summary>
-            public uint lastreserved;
+            public readonly uint lastreserved;
             /// <summary>
             ///     First reserved block
             /// </summary>
-            public uint firstreserved;
+            public readonly uint firstreserved;
             /// <summary>
             ///     Free reserved blocks
             /// </summary>
-            public uint reservedfree;
+            public readonly uint reservedfree;
             /// <summary>
             ///     Size of reserved blocks in bytes
             /// </summary>
-            public ushort reservedblocksize;
+            public readonly ushort reservedblocksize;
             /// <summary>
             ///     Blocks in rootblock, including bitmap
             /// </summary>
-            public ushort rootblockclusters;
+            public readonly ushort rootblockclusters;
             /// <summary>
             ///     Free blocks
             /// </summary>
-            public uint blocksfree;
+            public readonly uint blocksfree;
             /// <summary>
             ///     Blocks that must be always free
             /// </summary>
-            public uint alwaysfree;
+            public readonly uint alwaysfree;
             /// <summary>
             ///     Current bitmapfield number for allocation
             /// </summary>
-            public uint rovingPointer;
+            public readonly uint rovingPointer;
             /// <summary>
             ///     Pointer to deldir
             /// </summary>
-            public uint delDirPtr;
+            public readonly uint delDirPtr;
             /// <summary>
             ///     Disk size in sectors
             /// </summary>
-            public uint diskSize;
+            public readonly uint diskSize;
             /// <summary>
             ///     Rootblock extension
             /// </summary>
-            public uint extension;
+            public readonly uint extension;
             /// <summary>
             ///     Unused
             /// </summary>
-            public uint unused;
+            public readonly uint unused;
         }
     }
 }

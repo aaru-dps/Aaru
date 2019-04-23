@@ -205,8 +205,8 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type         = "FILES-11",
-                ClusterSize  = homeblock.cluster    * 512,
-                Clusters     = (long)partition.Size / (homeblock.cluster * 512),
+                ClusterSize  = (uint)(homeblock.cluster * 512),
+                Clusters     = partition.Size / (ulong)(homeblock.cluster * 512),
                 VolumeName   = StringHandlers.SpacePaddedToString(homeblock.volname, Encoding),
                 VolumeSerial = $"{homeblock.serialnum:X8}"
             };
@@ -229,104 +229,104 @@ namespace DiscImageChef.Filesystems
         struct OdsHomeBlock
         {
             /// <summary>0x000, LBN of THIS home block</summary>
-            public uint homelbn;
+            public readonly uint homelbn;
             /// <summary>0x004, LBN of the secondary home block</summary>
-            public uint alhomelbn;
+            public readonly uint alhomelbn;
             /// <summary>0x008, LBN of backup INDEXF.SYS;1</summary>
-            public uint altidxlbn;
+            public readonly uint altidxlbn;
             /// <summary>0x00C, High byte contains filesystem version (1, 2 or 5), low byte contains revision (1)</summary>
-            public ushort struclev;
+            public readonly ushort struclev;
             /// <summary>0x00E, Number of blocks each bit of the volume bitmap represents</summary>
-            public ushort cluster;
+            public readonly ushort cluster;
             /// <summary>0x010, VBN of THIS home block</summary>
-            public ushort homevbn;
+            public readonly ushort homevbn;
             /// <summary>0x012, VBN of the secondary home block</summary>
-            public ushort alhomevbn;
+            public readonly ushort alhomevbn;
             /// <summary>0x014, VBN of backup INDEXF.SYS;1</summary>
-            public ushort altidxvbn;
+            public readonly ushort altidxvbn;
             /// <summary>0x016, VBN of the bitmap</summary>
-            public ushort ibmapvbn;
+            public readonly ushort ibmapvbn;
             /// <summary>0x018, LBN of the bitmap</summary>
-            public uint ibmaplbn;
+            public readonly uint ibmaplbn;
             /// <summary>0x01C, Max files on volume</summary>
-            public uint maxfiles;
+            public readonly uint maxfiles;
             /// <summary>0x020, Bitmap size in sectors</summary>
-            public ushort ibmapsize;
+            public readonly ushort ibmapsize;
             /// <summary>0x022, Reserved files, 5 at minimum</summary>
-            public ushort resfiles;
+            public readonly ushort resfiles;
             /// <summary>0x024, Device type, ODS-2 defines it as always 0</summary>
-            public ushort devtype;
+            public readonly ushort devtype;
             /// <summary>0x026, Relative volume number (number of the volume in a set)</summary>
-            public ushort rvn;
+            public readonly ushort rvn;
             /// <summary>0x028, Total number of volumes in the set this volume is</summary>
-            public ushort setcount;
+            public readonly ushort setcount;
             /// <summary>0x02A, Flags</summary>
-            public ushort volchar;
+            public readonly ushort volchar;
             /// <summary>0x02C, User ID of the volume owner</summary>
-            public uint volowner;
+            public readonly uint volowner;
             /// <summary>0x030, Security mask (??)</summary>
-            public uint sec_mask;
+            public readonly uint sec_mask;
             /// <summary>0x034, Volume permissions (system, owner, group and other)</summary>
-            public ushort protect;
+            public readonly ushort protect;
             /// <summary>0x036, Default file protection, unsupported in ODS-2</summary>
-            public ushort fileprot;
+            public readonly ushort fileprot;
             /// <summary>0x038, Default file record protection</summary>
-            public ushort recprot;
+            public readonly ushort recprot;
             /// <summary>0x03A, Checksum of all preceding entries</summary>
-            public ushort checksum1;
+            public readonly ushort checksum1;
             /// <summary>0x03C, Creation date</summary>
-            public ulong credate;
+            public readonly ulong credate;
             /// <summary>0x044, Window size (pointers for the window)</summary>
-            public byte window;
+            public readonly byte window;
             /// <summary>0x045, Directories to be stored in cache</summary>
-            public byte lru_lim;
+            public readonly byte lru_lim;
             /// <summary>0x046, Default allocation size in blocks</summary>
-            public ushort extend;
+            public readonly ushort extend;
             /// <summary>0x048, Minimum file retention period</summary>
-            public ulong retainmin;
+            public readonly ulong retainmin;
             /// <summary>0x050, Maximum file retention period</summary>
-            public ulong retainmax;
+            public readonly ulong retainmax;
             /// <summary>0x058, Last modification date</summary>
-            public ulong revdate;
+            public readonly ulong revdate;
             /// <summary>0x060, Minimum security class, 20 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] min_class;
+            public readonly byte[] min_class;
             /// <summary>0x074, Maximum security class, 20 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] max_class;
+            public readonly byte[] max_class;
             /// <summary>0x088, File lookup table FID</summary>
-            public ushort filetab_fid1;
+            public readonly ushort filetab_fid1;
             /// <summary>0x08A, File lookup table FID</summary>
-            public ushort filetab_fid2;
+            public readonly ushort filetab_fid2;
             /// <summary>0x08C, File lookup table FID</summary>
-            public ushort filetab_fid3;
+            public readonly ushort filetab_fid3;
             /// <summary>0x08E, Lowest structure level on the volume</summary>
-            public ushort lowstruclev;
+            public readonly ushort lowstruclev;
             /// <summary>0x090, Highest structure level on the volume</summary>
-            public ushort highstruclev;
+            public readonly ushort highstruclev;
             /// <summary>0x092, Volume copy date (??)</summary>
-            public ulong copydate;
+            public readonly ulong copydate;
             /// <summary>0x09A, 302 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 302)]
-            public byte[] reserved1;
+            public readonly byte[] reserved1;
             /// <summary>0x1C8, Physical drive serial number</summary>
-            public uint serialnum;
+            public readonly uint serialnum;
             /// <summary>0x1CC, Name of the volume set, 12 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] strucname;
+            public readonly byte[] strucname;
             /// <summary>0x1D8, Volume label, 12 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] volname;
+            public readonly byte[] volname;
             /// <summary>0x1E4, Name of the volume owner, 12 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] ownername;
+            public readonly byte[] ownername;
             /// <summary>0x1F0, ODS-2 defines it as "DECFILE11B", 12 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] format;
+            public readonly byte[] format;
             /// <summary>0x1FC, Reserved</summary>
-            public ushort reserved2;
+            public readonly ushort reserved2;
             /// <summary>0x1FE, Checksum of preceding 255 words (16 bit units)</summary>
-            public ushort checksum2;
+            public readonly ushort checksum2;
         }
     }
 }

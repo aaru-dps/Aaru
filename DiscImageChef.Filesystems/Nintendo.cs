@@ -292,7 +292,7 @@ namespace DiscImageChef.Filesystems
 
             information            = sbInformation.ToString();
             XmlFsType.Bootable     = true;
-            XmlFsType.Clusters     = (long)(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048);
+            XmlFsType.Clusters     = imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize / 2048;
             XmlFsType.ClusterSize  = 2048;
             XmlFsType.Type         = wii ? "Nintendo Wii filesystem" : "Nintendo Gamecube filesystem";
             XmlFsType.VolumeName   = fields.Title;

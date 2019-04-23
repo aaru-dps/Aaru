@@ -108,10 +108,9 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type        = "Reiser 4 filesystem",
-                ClusterSize = reiserSb.blocksize,
-                Clusters =
-                    (long)((partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize),
+                Type         = "Reiser 4 filesystem",
+                ClusterSize  = reiserSb.blocksize,
+                Clusters     = (partition.End - partition.Start) * imagePlugin.Info.SectorSize / reiserSb.blocksize,
                 VolumeName   = StringHandlers.CToString(reiserSb.label, Encoding),
                 VolumeSerial = reiserSb.uuid.ToString()
             };
@@ -121,12 +120,12 @@ namespace DiscImageChef.Filesystems
         struct Reiser4_Superblock
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] magic;
-            public ushort diskformat;
-            public ushort blocksize;
-            public Guid   uuid;
+            public readonly byte[] magic;
+            public readonly ushort diskformat;
+            public readonly ushort blocksize;
+            public readonly Guid   uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] label;
+            public readonly byte[] label;
         }
     }
 }

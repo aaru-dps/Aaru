@@ -221,13 +221,13 @@ namespace DiscImageChef.CommonTypes.Structs
     public class FileSystemInfo
     {
         /// <summary>Blocks for this filesystem</summary>
-        public long Blocks;
+        public ulong Blocks;
         /// <summary>Maximum length of filenames on this filesystem</summary>
         public ushort FilenameLength;
         /// <summary>Files on this filesystem</summary>
         public ulong Files;
         /// <summary>Blocks free on this filesystem</summary>
-        public long FreeBlocks;
+        public ulong FreeBlocks;
         /// <summary>Free inodes on this filesystem</summary>
         public ulong FreeFiles;
         /// <summary>Filesystem ID</summary>

@@ -135,10 +135,10 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Clusters              = afsSb.num_blocks,
-                ClusterSize           = (int)afsSb.block_size,
+                Clusters              = (ulong)afsSb.num_blocks,
+                ClusterSize           = afsSb.block_size,
                 Dirty                 = false,
-                FreeClusters          = afsSb.num_blocks - afsSb.used_blocks,
+                FreeClusters          = (ulong)(afsSb.num_blocks - afsSb.used_blocks),
                 FreeClustersSpecified = true,
                 Type                  = "AtheOS filesystem",
                 VolumeName            = StringHandlers.CToString(afsSb.name, Encoding)
@@ -153,65 +153,65 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>0x000, Volume name, 32 bytes</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] name;
+            public readonly byte[] name;
             /// <summary>0x020, "AFS1", 0x41465331</summary>
-            public uint magic1;
+            public readonly uint magic1;
             /// <summary>0x024, "BIGE", 0x42494745</summary>
-            public uint fs_byte_order;
+            public readonly uint fs_byte_order;
             /// <summary>0x028, Bytes per block</summary>
-            public uint block_size;
+            public readonly uint block_size;
             /// <summary>0x02C, 1 &lt;&lt; block_shift == block_size</summary>
-            public uint block_shift;
+            public readonly uint block_shift;
             /// <summary>0x030, Blocks in volume</summary>
-            public long num_blocks;
+            public readonly long num_blocks;
             /// <summary>0x038, Used blocks in volume</summary>
-            public long used_blocks;
+            public readonly long used_blocks;
             /// <summary>0x040, Bytes per inode</summary>
-            public int inode_size;
+            public readonly int inode_size;
             /// <summary>0x044, 0xDD121031</summary>
-            public uint magic2;
+            public readonly uint magic2;
             /// <summary>0x048, Blocks per allocation group</summary>
-            public int blocks_per_ag;
+            public readonly int blocks_per_ag;
             /// <summary>0x04C, 1 &lt;&lt; ag_shift == blocks_per_ag</summary>
-            public int ag_shift;
+            public readonly int ag_shift;
             /// <summary>0x050, Allocation groups in volume</summary>
-            public int num_ags;
+            public readonly int num_ags;
             /// <summary>0x054, 0x434c454e if clean, 0x44495254 if dirty</summary>
-            public uint flags;
+            public readonly uint flags;
             /// <summary>0x058, Allocation group of journal</summary>
-            public int log_blocks_ag;
+            public readonly int log_blocks_ag;
             /// <summary>0x05C, Start block of journal, inside ag</summary>
-            public ushort log_blocks_start;
+            public readonly ushort log_blocks_start;
             /// <summary>0x05E, Length in blocks of journal, inside ag</summary>
-            public ushort log_blocks_len;
+            public readonly ushort log_blocks_len;
             /// <summary>0x060, Start of journal</summary>
-            public long log_start;
+            public readonly long log_start;
             /// <summary>0x068, Valid block logs</summary>
-            public int log_valid_blocks;
+            public readonly int log_valid_blocks;
             /// <summary>0x06C, Log size</summary>
-            public int log_size;
+            public readonly int log_size;
             /// <summary>0x070, 0x15B6830E</summary>
-            public uint magic3;
+            public readonly uint magic3;
             /// <summary>0x074, Allocation group where root folder's i-node resides</summary>
-            public int root_dir_ag;
+            public readonly int root_dir_ag;
             /// <summary>0x078, Start in ag of root folder's i-node</summary>
-            public ushort root_dir_start;
+            public readonly ushort root_dir_start;
             /// <summary>0x07A, As this is part of inode_addr, this is 1</summary>
-            public ushort root_dir_len;
+            public readonly ushort root_dir_len;
             /// <summary>0x07C, Allocation group where pending-delete-files' i-node resides</summary>
-            public int deleted_ag;
+            public readonly int deleted_ag;
             /// <summary>0x080, Start in ag of pending-delete-files' i-node</summary>
-            public ushort deleted_start;
+            public readonly ushort deleted_start;
             /// <summary>0x082, As this is part of inode_addr, this is 1</summary>
-            public ushort deleted_len;
+            public readonly ushort deleted_len;
             /// <summary>0x084, Allocation group where indices' i-node resides</summary>
-            public int indices_ag;
+            public readonly int indices_ag;
             /// <summary>0x088, Start in ag of indices' i-node</summary>
-            public ushort indices_start;
+            public readonly ushort indices_start;
             /// <summary>0x08A, As this is part of inode_addr, this is 1</summary>
-            public ushort indices_len;
+            public readonly ushort indices_len;
             /// <summary>0x08C, Size of bootloader</summary>
-            public int boot_size;
+            public readonly int boot_size;
         }
     }
 }

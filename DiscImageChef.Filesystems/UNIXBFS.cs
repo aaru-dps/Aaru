@@ -105,8 +105,8 @@ namespace DiscImageChef.Filesystems
             {
                 Type        = "BFS",
                 VolumeName  = bfsSb.s_volume,
-                ClusterSize = (int)imagePlugin.Info.SectorSize,
-                Clusters    = (long)(partition.End - partition.Start + 1)
+                ClusterSize = imagePlugin.Info.SectorSize,
+                Clusters    = partition.End - partition.Start + 1
             };
 
             information = sb.ToString();

@@ -122,7 +122,7 @@ namespace DiscImageChef.Filesystems
                 FreeClusters          = extSb.freecountblk,
                 FreeClustersSpecified = true,
                 ClusterSize           = 1024,
-                Clusters              = (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024)
+                Clusters              = (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / 1024
             };
 
             information = sb.ToString();

@@ -122,8 +122,8 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type        = "Resilient File System",
-                ClusterSize = (int)(refsVhdr.bytesPerSector * refsVhdr.sectorsPerCluster),
-                Clusters    = (long)(refsVhdr.sectors       / refsVhdr.sectorsPerCluster)
+                ClusterSize = refsVhdr.bytesPerSector * refsVhdr.sectorsPerCluster,
+                Clusters    = refsVhdr.sectors        / refsVhdr.sectorsPerCluster
             };
         }
 
@@ -131,23 +131,23 @@ namespace DiscImageChef.Filesystems
         struct RefsVolumeHeader
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] jump;
+            public readonly byte[] jump;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] signature;
+            public readonly byte[] signature;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] mustBeZero;
-            public uint   identifier;
-            public ushort length;
-            public ushort checksum;
-            public ulong  sectors;
-            public uint   bytesPerSector;
-            public uint   sectorsPerCluster;
-            public uint   unknown1;
-            public uint   unknown2;
-            public ulong  unknown3;
-            public ulong  unknown4;
+            public readonly byte[] mustBeZero;
+            public readonly uint   identifier;
+            public readonly ushort length;
+            public readonly ushort checksum;
+            public readonly ulong  sectors;
+            public readonly uint   bytesPerSector;
+            public readonly uint   sectorsPerCluster;
+            public readonly uint   unknown1;
+            public readonly uint   unknown2;
+            public readonly ulong  unknown3;
+            public readonly ulong  unknown4;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15872)]
-            public byte[] unknown5;
+            public readonly byte[] unknown5;
         }
     }
 }

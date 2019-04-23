@@ -127,7 +127,7 @@ namespace DiscImageChef.Filesystems
 
             sb.AppendFormat("Checksum 0x{0:X8}", chksector.checksum[0]).AppendLine();
 
-            XmlFsType.ClusterSize  = (1 << vbr.sectorShift) * (1 << vbr.clusterShift);
+            XmlFsType.ClusterSize  = (uint)((1 << vbr.sectorShift) * (1 << vbr.clusterShift));
             XmlFsType.Clusters     = vbr.clusterHeapLength;
             XmlFsType.Dirty        = vbr.flags.HasFlag(VolumeFlags.VolumeDirty);
             XmlFsType.Type         = "exFAT";
@@ -149,62 +149,62 @@ namespace DiscImageChef.Filesystems
         struct VolumeBootRecord
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] jump;
+            public readonly byte[] jump;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] signature;
+            public readonly byte[] signature;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
-            public byte[] zero;
-            public ulong       offset;
-            public ulong       sectors;
-            public uint        fatOffset;
-            public uint        fatLength;
-            public uint        clusterHeapOffset;
-            public uint        clusterHeapLength;
-            public uint        rootDirectoryCluster;
-            public uint        volumeSerial;
-            public ushort      revision;
-            public VolumeFlags flags;
-            public byte        sectorShift;
-            public byte        clusterShift;
-            public byte        fats;
-            public byte        drive;
-            public byte        heapUsage;
+            public readonly byte[] zero;
+            public readonly ulong       offset;
+            public readonly ulong       sectors;
+            public readonly uint        fatOffset;
+            public readonly uint        fatLength;
+            public readonly uint        clusterHeapOffset;
+            public readonly uint        clusterHeapLength;
+            public readonly uint        rootDirectoryCluster;
+            public readonly uint        volumeSerial;
+            public readonly ushort      revision;
+            public readonly VolumeFlags flags;
+            public readonly byte        sectorShift;
+            public readonly byte        clusterShift;
+            public readonly byte        fats;
+            public readonly byte        drive;
+            public readonly byte        heapUsage;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 53)]
-            public byte[] bootCode;
-            public ushort bootSignature;
+            public readonly byte[] bootCode;
+            public readonly ushort bootSignature;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OemParameter
         {
-            public Guid OemParameterType;
-            public uint eraseBlockSize;
-            public uint pageSize;
-            public uint spareBlocks;
-            public uint randomAccessTime;
-            public uint programTime;
-            public uint readCycleTime;
-            public uint writeCycleTime;
+            public readonly Guid OemParameterType;
+            public readonly uint eraseBlockSize;
+            public readonly uint pageSize;
+            public readonly uint spareBlocks;
+            public readonly uint randomAccessTime;
+            public readonly uint programTime;
+            public readonly uint readCycleTime;
+            public readonly uint writeCycleTime;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OemParameterTable
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public OemParameter[] parameters;
+            public readonly OemParameter[] parameters;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] padding;
+            public readonly byte[] padding;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ChecksumSector
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public uint[] checksum;
+            public readonly uint[] checksum;
         }
     }
 }

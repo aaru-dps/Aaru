@@ -83,11 +83,11 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type                  = "Alexander Osipov DOS file system",
-                Clusters              = (long)imagePlugin.Info.Sectors,
-                ClusterSize           = (int)imagePlugin.Info.SectorSize,
+                Clusters              = imagePlugin.Info.Sectors,
+                ClusterSize           = imagePlugin.Info.SectorSize,
                 Files                 = bb.files,
                 FilesSpecified        = true,
-                FreeClusters          = (long)(imagePlugin.Info.Sectors - bb.usedSectors),
+                FreeClusters          = imagePlugin.Info.Sectors - bb.usedSectors,
                 FreeClustersSpecified = true,
                 VolumeName            = StringHandlers.SpacePaddedToString(bb.volumeLabel, Encoding),
                 Bootable              = true
@@ -107,33 +107,33 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     A NOP opcode
             /// </summary>
-            public byte nop;
+            public readonly byte nop;
             /// <summary>
             ///     A branch to real bootloader
             /// </summary>
-            public ushort branch;
+            public readonly ushort branch;
             /// <summary>
             ///     Unused
             /// </summary>
-            public byte unused;
+            public readonly byte unused;
             /// <summary>
             ///     " AO-DOS "
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] identifier;
+            public readonly byte[] identifier;
             /// <summary>
             ///     Volume label
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] volumeLabel;
+            public readonly byte[] volumeLabel;
             /// <summary>
             ///     How many files are present in disk
             /// </summary>
-            public ushort files;
+            public readonly ushort files;
             /// <summary>
             ///     How many sectors are used
             /// </summary>
-            public ushort usedSectors;
+            public readonly ushort usedSectors;
         }
     }
 }

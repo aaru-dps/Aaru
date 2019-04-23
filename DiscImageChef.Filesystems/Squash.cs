@@ -130,8 +130,8 @@ namespace DiscImageChef.Filesystems
                 CreationDate          = DateHandlers.UnixUnsignedToDateTime(sqSb.mkfs_time),
                 CreationDateSpecified = true,
                 Clusters =
-                    (long)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size),
-                ClusterSize           = (int)sqSb.block_size,
+                    (partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize / sqSb.block_size,
+                ClusterSize           = sqSb.block_size,
                 Files                 = sqSb.inodes,
                 FilesSpecified        = true,
                 FreeClusters          = 0,
@@ -152,25 +152,25 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SquashSuperBlock
         {
-            public uint   magic;
-            public uint   inodes;
-            public uint   mkfs_time;
-            public uint   block_size;
-            public uint   fragments;
-            public ushort compression;
-            public ushort block_log;
-            public ushort flags;
-            public ushort no_ids;
-            public ushort s_major;
-            public ushort s_minor;
-            public ulong  root_inode;
-            public ulong  bytes_used;
-            public ulong  id_table_start;
-            public ulong  xattr_id_table_start;
-            public ulong  inode_table_start;
-            public ulong  directory_table_start;
-            public ulong  fragment_table_start;
-            public ulong  lookup_table_start;
+            public readonly uint   magic;
+            public readonly uint   inodes;
+            public readonly uint   mkfs_time;
+            public readonly uint   block_size;
+            public readonly uint   fragments;
+            public readonly ushort compression;
+            public readonly ushort block_log;
+            public readonly ushort flags;
+            public readonly ushort no_ids;
+            public readonly ushort s_major;
+            public readonly ushort s_minor;
+            public readonly ulong  root_inode;
+            public readonly ulong  bytes_used;
+            public readonly ulong  id_table_start;
+            public readonly ulong  xattr_id_table_start;
+            public readonly ulong  inode_table_start;
+            public readonly ulong  directory_table_start;
+            public readonly ulong  fragment_table_start;
+            public readonly ulong  lookup_table_start;
         }
     }
 }

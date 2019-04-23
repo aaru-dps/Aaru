@@ -379,10 +379,8 @@ namespace DiscImageChef.Filesystems.CPM
 
                     // Check for alternate location of format ID
                     if(sector.Last() == 0x00 || sector.Last() == 0xFF)
-                        if(sector[0x40] == 0x94 || sector[0x40] == 0x26)
-                            formatByte = sector[0x40];
-                        else
-                            formatByte = sector.Last();
+                        if(sector[0x40] == 0x94 || sector[0x40] == 0x26) formatByte = sector[0x40];
+                        else formatByte                                             = sector.Last();
                     else formatByte = sector.Last();
 
                     uint firstDirectorySector86 = 0;
@@ -1047,9 +1045,9 @@ namespace DiscImageChef.Filesystems.CPM
 
             XmlFsType             =  new FileSystemType();
             XmlFsType.Bootable    |= workingDefinition.sofs > 0 || workingDefinition.ofs > 0;
-            XmlFsType.ClusterSize =  128 << dpb.bsh;
+            XmlFsType.ClusterSize =  (uint)(128 << dpb.bsh);
             if(dpb.dsm > 0) XmlFsType.Clusters = dpb.dsm;
-            else XmlFsType.Clusters            = (long)(partition.End - partition.Start);
+            else XmlFsType.Clusters            = partition.End - partition.Start;
             if(labelCreationDate != null)
             {
                 XmlFsType.CreationDate          = DateHandlers.CpmToDateTime(labelCreationDate);

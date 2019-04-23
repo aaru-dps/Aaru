@@ -346,8 +346,8 @@ namespace DiscImageChef.Filesystems
             XmlFsType.ModificationDateSpecified = true;
             sbInformation.AppendFormat("{0} blocks in volume ({1} bytes)", ufs_sb.fs_old_size,
                                        (long)ufs_sb.fs_old_size * ufs_sb.fs_fsize).AppendLine();
-            XmlFsType.Clusters    = ufs_sb.fs_old_size;
-            XmlFsType.ClusterSize = ufs_sb.fs_fsize;
+            XmlFsType.Clusters    = (ulong)ufs_sb.fs_old_size;
+            XmlFsType.ClusterSize = (uint)ufs_sb.fs_fsize;
             sbInformation.AppendFormat("{0} data blocks in volume ({1} bytes)", ufs_sb.fs_old_dsize,
                                        (long)ufs_sb.fs_old_dsize * ufs_sb.fs_fsize).AppendLine();
             sbInformation.AppendFormat("{0} cylinder groups in volume", ufs_sb.fs_ncg).AppendLine();
@@ -408,7 +408,7 @@ namespace DiscImageChef.Filesystems
             sbInformation.AppendFormat("{0} directories", ufs_sb.fs_old_cstotal.cs_ndir).AppendLine();
             sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_old_cstotal.cs_nbfree,
                                        (long)ufs_sb.fs_old_cstotal.cs_nbfree * ufs_sb.fs_fsize).AppendLine();
-            XmlFsType.FreeClusters          = ufs_sb.fs_old_cstotal.cs_nbfree;
+            XmlFsType.FreeClusters          = (ulong)ufs_sb.fs_old_cstotal.cs_nbfree;
             XmlFsType.FreeClustersSpecified = true;
             sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_old_cstotal.cs_nifree).AppendLine();
             sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_old_cstotal.cs_nffree).AppendLine();
@@ -439,7 +439,7 @@ namespace DiscImageChef.Filesystems
                 sbInformation.AppendFormat("{0} directories", ufs_sb.fs_cstotal.cs_ndir).AppendLine();
                 sbInformation.AppendFormat("{0} free blocks ({1} bytes)", ufs_sb.fs_cstotal.cs_nbfree,
                                            ufs_sb.fs_cstotal.cs_nbfree * ufs_sb.fs_fsize).AppendLine();
-                XmlFsType.FreeClusters          = ufs_sb.fs_cstotal.cs_nbfree;
+                XmlFsType.FreeClusters          = (ulong)ufs_sb.fs_cstotal.cs_nbfree;
                 XmlFsType.FreeClustersSpecified = true;
                 sbInformation.AppendFormat("{0} free inodes", ufs_sb.fs_cstotal.cs_nifree).AppendLine();
                 sbInformation.AppendFormat("{0} free frags", ufs_sb.fs_cstotal.cs_nffree).AppendLine();
@@ -450,7 +450,7 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.ModificationDateSpecified = true;
                 sbInformation.AppendFormat("{0} blocks ({1} bytes)", ufs_sb.fs_size, ufs_sb.fs_size * ufs_sb.fs_fsize)
                              .AppendLine();
-                XmlFsType.Clusters = ufs_sb.fs_size;
+                XmlFsType.Clusters = (ulong)ufs_sb.fs_size;
                 sbInformation
                    .AppendFormat("{0} data blocks ({1} bytes)", ufs_sb.fs_dsize, ufs_sb.fs_dsize * ufs_sb.fs_fsize)
                    .AppendLine();
@@ -509,242 +509,242 @@ namespace DiscImageChef.Filesystems
             public long cs_numclusters;
             /// <summary>future expansion</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public long[] cs_spare;
+            public readonly long[] cs_spare;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct UFSSuperBlock
         {
             /// <summary>linked list of file systems</summary>
-            public uint fs_link;
+            public readonly uint fs_link;
             /// <summary>
             ///     used for incore super blocks
             ///     on Sun: uint fs_rolled; // logging only: fs fully rolled
             /// </summary>
-            public uint fs_rlink;
+            public readonly uint fs_rlink;
             /// <summary>addr of super-block in filesys</summary>
-            public int fs_sblkno;
+            public readonly int fs_sblkno;
             /// <summary>offset of cyl-block in filesys</summary>
-            public int fs_cblkno;
+            public readonly int fs_cblkno;
             /// <summary>offset of inode-blocks in filesys</summary>
-            public int fs_iblkno;
+            public readonly int fs_iblkno;
             /// <summary>offset of first data after cg</summary>
-            public int fs_dblkno;
+            public readonly int fs_dblkno;
             /// <summary>cylinder group offset in cylinder</summary>
-            public int fs_old_cgoffset;
+            public readonly int fs_old_cgoffset;
             /// <summary>used to calc mod fs_ntrak</summary>
-            public int fs_old_cgmask;
+            public readonly int fs_old_cgmask;
             /// <summary>last time written</summary>
-            public int fs_old_time;
+            public readonly int fs_old_time;
             /// <summary>number of blocks in fs</summary>
-            public int fs_old_size;
+            public readonly int fs_old_size;
             /// <summary>number of data blocks in fs</summary>
-            public int fs_old_dsize;
+            public readonly int fs_old_dsize;
             /// <summary>number of cylinder groups</summary>
-            public int fs_ncg;
+            public readonly int fs_ncg;
             /// <summary>size of basic blocks in fs</summary>
-            public int fs_bsize;
+            public readonly int fs_bsize;
             /// <summary>size of frag blocks in fs</summary>
-            public int fs_fsize;
+            public readonly int fs_fsize;
             /// <summary>number of frags in a block in fs</summary>
-            public int fs_frag;
+            public readonly int fs_frag;
             /* these are configuration parameters */
             /// <summary>minimum percentage of free blocks</summary>
-            public int fs_minfree;
+            public readonly int fs_minfree;
             /// <summary>num of ms for optimal next block</summary>
-            public int fs_old_rotdelay;
+            public readonly int fs_old_rotdelay;
             /// <summary>disk revolutions per second</summary>
-            public int fs_old_rps;
+            public readonly int fs_old_rps;
             /* these fields can be computed from the others */
             /// <summary>``blkoff'' calc of blk offsets</summary>
-            public int fs_bmask;
+            public readonly int fs_bmask;
             /// <summary>``fragoff'' calc of frag offsets</summary>
-            public int fs_fmask;
+            public readonly int fs_fmask;
             /// <summary>``lblkno'' calc of logical blkno</summary>
-            public int fs_bshift;
+            public readonly int fs_bshift;
             /// <summary>``numfrags'' calc number of frags</summary>
-            public int fs_fshift;
+            public readonly int fs_fshift;
             /* these are configuration parameters */
             /// <summary>max number of contiguous blks</summary>
-            public int fs_maxcontig;
+            public readonly int fs_maxcontig;
             /// <summary>max number of blks per cyl group</summary>
-            public int fs_maxbpg;
+            public readonly int fs_maxbpg;
             /* these fields can be computed from the others */
             /// <summary>block to frag shift</summary>
-            public int fs_fragshift;
+            public readonly int fs_fragshift;
             /// <summary>fsbtodb and dbtofsb shift constant</summary>
-            public int fs_fsbtodb;
+            public readonly int fs_fsbtodb;
             /// <summary>actual size of super block</summary>
-            public int fs_sbsize;
+            public readonly int fs_sbsize;
             /// <summary>csum block offset</summary>
-            public int fs_csmask;
+            public readonly int fs_csmask;
             /// <summary>csum block number</summary>
-            public int fs_csshift;
+            public readonly int fs_csshift;
             /// <summary>value of NINDIR</summary>
-            public int fs_nindir;
+            public readonly int fs_nindir;
             /// <summary>value of INOPB</summary>
-            public uint fs_inopb;
+            public readonly uint fs_inopb;
             /// <summary>value of NSPF</summary>
-            public int fs_old_nspf;
+            public readonly int fs_old_nspf;
             /* yet another configuration parameter */
             /// <summary>
             ///     optimization preference, see below
             ///     On SVR: int fs_state; // file system state
             /// </summary>
-            public int fs_optim;
+            public readonly int fs_optim;
             /// <summary># sectors/track including spares</summary>
-            public int fs_old_npsect;
+            public readonly int fs_old_npsect;
             /// <summary>hardware sector interleave</summary>
-            public int fs_old_interleave;
+            public readonly int fs_old_interleave;
             /// <summary>
             ///     sector 0 skew, per track
             ///     On A/UX: int fs_state; // file system state
             /// </summary>
-            public int fs_old_trackskew;
+            public readonly int fs_old_trackskew;
             /// <summary>
             ///     unique filesystem id
             ///     On old: int fs_headswitch; // head switch time, usec
             /// </summary>
-            public int fs_id_1;
+            public readonly int fs_id_1;
             /// <summary>
             ///     unique filesystem id
             ///     On old: int fs_trkseek; // track-to-track seek, usec
             /// </summary>
-            public int fs_id_2;
+            public readonly int fs_id_2;
             /* sizes determined by number of cylinder groups and their sizes */
             /// <summary>blk addr of cyl grp summary area</summary>
-            public int fs_old_csaddr;
+            public readonly int fs_old_csaddr;
             /// <summary>size of cyl grp summary area</summary>
-            public int fs_cssize;
+            public readonly int fs_cssize;
             /// <summary>cylinder group size</summary>
-            public int fs_cgsize;
+            public readonly int fs_cgsize;
             /* these fields are derived from the hardware */
             /// <summary>tracks per cylinder</summary>
-            public int fs_old_ntrak;
+            public readonly int fs_old_ntrak;
             /// <summary>sectors per track</summary>
-            public int fs_old_nsect;
+            public readonly int fs_old_nsect;
             /// <summary>sectors per cylinder</summary>
-            public int fs_old_spc;
+            public readonly int fs_old_spc;
             /* this comes from the disk driver partitioning */
             /// <summary>cylinders in filesystem</summary>
-            public int fs_old_ncyl;
+            public readonly int fs_old_ncyl;
             /* these fields can be computed from the others */
             /// <summary>cylinders per group</summary>
-            public int fs_old_cpg;
+            public readonly int fs_old_cpg;
             /// <summary>inodes per group</summary>
-            public int fs_ipg;
+            public readonly int fs_ipg;
             /// <summary>blocks per group * fs_frag</summary>
-            public int fs_fpg;
+            public readonly int fs_fpg;
             /* this data must be re-computed after crashes */
             /// <summary>cylinder summary information</summary>
             public csum fs_old_cstotal;
             /* these fields are cleared at mount time */
             /// <summary>super block modified flag</summary>
-            public sbyte fs_fmod;
+            public readonly sbyte fs_fmod;
             /// <summary>filesystem is clean flag</summary>
-            public sbyte fs_clean;
+            public readonly sbyte fs_clean;
             /// <summary>mounted read-only flag</summary>
-            public sbyte fs_ronly;
+            public readonly sbyte fs_ronly;
             /// <summary>old FS_ flags</summary>
-            public sbyte fs_old_flags;
+            public readonly sbyte fs_old_flags;
             /// <summary>name mounted on</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 468)]
-            public byte[] fs_fsmnt;
+            public readonly byte[] fs_fsmnt;
             /// <summary>volume name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] fs_volname;
+            public readonly byte[] fs_volname;
             /// <summary>system-wide uid</summary>
-            public ulong fs_swuid;
+            public readonly ulong fs_swuid;
             /// <summary>due to alignment of fs_swuid</summary>
-            public int fs_pad;
+            public readonly int fs_pad;
             /* these fields retain the current block allocation info */
             /// <summary>last cg searched</summary>
-            public int fs_cgrotor;
+            public readonly int fs_cgrotor;
             /// <summary>padding; was list of fs_cs buffers</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-            public uint[] fs_ocsp;
+            public readonly uint[] fs_ocsp;
             /// <summary>(u) # of contig. allocated dirs</summary>
-            public uint fs_contigdirs;
+            public readonly uint fs_contigdirs;
             /// <summary>(u) cg summary info buffer</summary>
-            public uint fs_csp;
+            public readonly uint fs_csp;
             /// <summary>(u) max cluster in each cyl group</summary>
-            public uint fs_maxcluster;
+            public readonly uint fs_maxcluster;
             /// <summary>(u) used by snapshots to track fs</summary>
-            public uint fs_active;
+            public readonly uint fs_active;
             /// <summary>cyl per cycle in postbl</summary>
-            public int fs_old_cpc;
+            public readonly int fs_old_cpc;
             /// <summary>maximum blocking factor permitted</summary>
-            public int fs_maxbsize;
+            public readonly int fs_maxbsize;
             /// <summary>number of unreferenced inodes</summary>
-            public long fs_unrefs;
+            public readonly long fs_unrefs;
             /// <summary>size of underlying GEOM provider</summary>
-            public long fs_providersize;
+            public readonly long fs_providersize;
             /// <summary>size of area reserved for metadata</summary>
-            public long fs_metaspace;
+            public readonly long fs_metaspace;
             /// <summary>old rotation block list head</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
-            public long[] fs_sparecon64;
+            public readonly long[] fs_sparecon64;
             /// <summary>byte offset of standard superblock</summary>
-            public long fs_sblockloc;
+            public readonly long fs_sblockloc;
             /// <summary>(u) cylinder summary information</summary>
             public csum_total fs_cstotal;
             /// <summary>last time written</summary>
-            public long fs_time;
+            public readonly long fs_time;
             /// <summary>number of blocks in fs</summary>
-            public long fs_size;
+            public readonly long fs_size;
             /// <summary>number of data blocks in fs</summary>
-            public long fs_dsize;
+            public readonly long fs_dsize;
             /// <summary>blk addr of cyl grp summary area</summary>
-            public long fs_csaddr;
+            public readonly long fs_csaddr;
             /// <summary>(u) blocks being freed</summary>
-            public long fs_pendingblocks;
+            public readonly long fs_pendingblocks;
             /// <summary>(u) inodes being freed</summary>
-            public uint fs_pendinginodes;
+            public readonly uint fs_pendinginodes;
             /// <summary>list of snapshot inode numbers</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public uint[] fs_snapinum;
+            public readonly uint[] fs_snapinum;
             /// <summary>expected average file size</summary>
-            public uint fs_avgfilesize;
+            public readonly uint fs_avgfilesize;
             /// <summary>expected # of files per directory</summary>
-            public uint fs_avgfpdir;
+            public readonly uint fs_avgfpdir;
             /// <summary>save real cg size to use fs_bsize</summary>
-            public int fs_save_cgsize;
+            public readonly int fs_save_cgsize;
             /// <summary>Last mount or fsck time.</summary>
-            public long fs_mtime;
+            public readonly long fs_mtime;
             /// <summary>SUJ free list</summary>
-            public int fs_sujfree;
+            public readonly int fs_sujfree;
             /// <summary>reserved for future constants</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 23)]
-            public int[] fs_sparecon32;
+            public readonly int[] fs_sparecon32;
             /// <summary>see FS_ flags below</summary>
-            public int fs_flags;
+            public readonly int fs_flags;
             /// <summary>size of cluster summary array</summary>
-            public int fs_contigsumsize;
+            public readonly int fs_contigsumsize;
             /// <summary>max length of an internal symlink</summary>
-            public int fs_maxsymlinklen;
+            public readonly int fs_maxsymlinklen;
             /// <summary>format of on-disk inodes</summary>
-            public int fs_old_inodefmt;
+            public readonly int fs_old_inodefmt;
             /// <summary>maximum representable file size</summary>
-            public ulong fs_maxfilesize;
+            public readonly ulong fs_maxfilesize;
             /// <summary>~fs_bmask for use with 64-bit size</summary>
-            public long fs_qbmask;
+            public readonly long fs_qbmask;
             /// <summary>~fs_fmask for use with 64-bit size</summary>
-            public long fs_qfmask;
+            public readonly long fs_qfmask;
             /// <summary>validate fs_clean field</summary>
-            public int fs_state;
+            public readonly int fs_state;
             /// <summary>format of positional layout tables</summary>
-            public int fs_old_postblformat;
+            public readonly int fs_old_postblformat;
             /// <summary>number of rotational positions</summary>
-            public int fs_old_nrpos;
+            public readonly int fs_old_nrpos;
             /// <summary>(short) rotation block list head</summary>
-            public int fs_old_postbloff;
+            public readonly int fs_old_postbloff;
             /// <summary>(uchar_t) blocks for each rotation</summary>
-            public int fs_old_rotbloff;
+            public readonly int fs_old_rotbloff;
             /// <summary>magic number</summary>
-            public uint fs_magic;
+            public readonly uint fs_magic;
             /// <summary>list of blocks for each rotation</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
-            public byte[] fs_rotbl;
+            public readonly byte[] fs_rotbl;
         }
     }
 }

@@ -96,7 +96,7 @@ namespace DiscImageChef.Filesystems
             {
                 Type                  = "HP Logical Interchange Format",
                 ClusterSize           = 256,
-                Clusters              = (long)(partition.Size / 256),
+                Clusters              = partition.Size / 256,
                 CreationDate          = DateHandlers.LifToDateTime(lifSb.creationDate),
                 CreationDateSpecified = true,
                 VolumeName            = StringHandlers.CToString(lifSb.volumeLabel, Encoding)
@@ -106,20 +106,20 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LifSystemBlock
         {
-            public ushort magic;
+            public readonly ushort magic;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] volumeLabel;
-            public uint   directoryStart;
-            public ushort lifId;
-            public ushort unused;
-            public uint   directorySize;
-            public ushort lifVersion;
-            public ushort unused2;
-            public uint   tracks;
-            public uint   heads;
-            public uint   sectors;
+            public readonly byte[] volumeLabel;
+            public readonly uint   directoryStart;
+            public readonly ushort lifId;
+            public readonly ushort unused;
+            public readonly uint   directorySize;
+            public readonly ushort lifVersion;
+            public readonly ushort unused2;
+            public readonly uint   tracks;
+            public readonly uint   heads;
+            public readonly uint   sectors;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] creationDate;
+            public readonly byte[] creationDate;
         }
     }
 }

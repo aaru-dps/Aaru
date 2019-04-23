@@ -44,7 +44,7 @@ namespace DiscImageChef.Core
         /// <param name="files">List of files</param>
         /// <param name="folderName">Dump path</param>
         /// <param name="blockSize">Expected block size in bytes</param>
-        public CICMMetadataType BlockTape(string folderName, List<string> files, int blockSize)
+        public CICMMetadataType BlockTape(string folderName, List<string> files, uint blockSize)
         {
             sidecar = new CICMMetadataType
             {
@@ -79,8 +79,8 @@ namespace DiscImageChef.Core
 
             if(aborted) return sidecar;
 
-            long               currentBlock = 0;
-            long               totalSize    = 0;
+            ulong              currentBlock = 0;
+            ulong              totalSize    = 0;
             Checksum           tapeWorker   = new Checksum();
             List<TapeFileType> tapeFiles    = new List<TapeFileType>();
 
@@ -99,15 +99,15 @@ namespace DiscImageChef.Core
                         offset = 0,
                         Value  = Path.GetFileName(files[i])
                     },
-                    Size       = fs.Length,
+                    Size       = (ulong)fs.Length,
                     BlockSize  = blockSize,
                     StartBlock = currentBlock,
-                    Sequence   = i
+                    Sequence   = (ulong)i
                 };
 
                 const uint SECTORS_TO_READ = 512;
-                long       sectors         = fs.Length / blockSize;
-                long       doneSectors     = 0;
+                ulong      sectors         = (ulong)fs.Length / blockSize;
+                ulong      doneSectors     = 0;
 
                 InitProgress2();
                 while(doneSectors < sectors)
@@ -125,7 +125,7 @@ namespace DiscImageChef.Core
                         sector = new byte[SECTORS_TO_READ * blockSize];
                         fs.Read(sector, 0, sector.Length);
                         UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
-                                        doneSectors, sectors);
+                                        (long)doneSectors, (long)sectors);
                         doneSectors += SECTORS_TO_READ;
                     }
                     else
@@ -133,7 +133,7 @@ namespace DiscImageChef.Core
                         sector = new byte[(uint)(sectors - doneSectors) * blockSize];
                         fs.Read(sector, 0, sector.Length);
                         UpdateProgress2($"Hashing block {doneSectors} of {sectors} on file {i + 1} of {files.Count}",
-                                        doneSectors, sectors);
+                                        (long)doneSectors, (long)sectors);
                         doneSectors += sectors - doneSectors;
                     }
 
@@ -143,7 +143,7 @@ namespace DiscImageChef.Core
 
                 tapeFile.EndBlock  =  tapeFile.StartBlock + sectors - 1;
                 currentBlock       += sectors;
-                totalSize          += fs.Length;
+                totalSize          += (ulong)fs.Length;
                 tapeFile.Checksums =  fileWorker.End().ToArray();
                 tapeFiles.Add(tapeFile);
 

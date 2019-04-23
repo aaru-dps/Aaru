@@ -93,8 +93,8 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Bootable    = false,
-                Clusters    = (long)nxSb.containerBlocks,
-                ClusterSize = (int)nxSb.blockSize,
+                Clusters    = nxSb.containerBlocks,
+                ClusterSize = nxSb.blockSize,
                 Type        = "Apple File System"
             };
         }
@@ -102,13 +102,13 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ApfsContainerSuperBlock
         {
-            public ulong unknown1; // Varies between copies of the superblock
-            public ulong unknown2;
-            public ulong unknown3; // Varies by 1 between copies of the superblock
-            public ulong unknown4;
-            public uint  magic;
-            public uint  blockSize;
-            public ulong containerBlocks;
+            public readonly ulong unknown1; // Varies between copies of the superblock
+            public readonly ulong unknown2;
+            public readonly ulong unknown3; // Varies by 1 between copies of the superblock
+            public readonly ulong unknown4;
+            public readonly uint  magic;
+            public readonly uint  blockSize;
+            public readonly ulong containerBlocks;
         }
     }
 }

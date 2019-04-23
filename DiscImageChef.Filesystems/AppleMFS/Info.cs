@@ -184,7 +184,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             XmlFsType.Bootable    = bb.signature == MFSBB_MAGIC;
             XmlFsType.Clusters    = mdb.drNmAlBlks;
-            XmlFsType.ClusterSize = (int)mdb.drAlBlkSiz;
+            XmlFsType.ClusterSize = mdb.drAlBlkSiz;
             if(mdb.drCrDate > 0)
             {
                 XmlFsType.CreationDate          = DateHandlers.MacToDateTime(mdb.drCrDate);

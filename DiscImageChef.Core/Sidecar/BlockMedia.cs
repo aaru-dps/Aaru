@@ -80,15 +80,15 @@ namespace DiscImageChef.Core
                         offsetSpecified = true,
                         Value           = Path.GetFileName(imagePath)
                     },
-                    Size     = fi.Length,
+                    Size     = (ulong)fi.Length,
                     Sequence = new SequenceType {MediaTitle = image.Info.MediaTitle}
                 }
             };
 
             if(image.Info.MediaSequence != 0 && image.Info.LastMediaSequence != 0)
             {
-                sidecar.BlockMedia[0].Sequence.MediaSequence = image.Info.MediaSequence;
-                sidecar.BlockMedia[0].Sequence.TotalMedia    = image.Info.LastMediaSequence;
+                sidecar.BlockMedia[0].Sequence.MediaSequence = (uint)image.Info.MediaSequence;
+                sidecar.BlockMedia[0].Sequence.TotalMedia    = (uint)image.Info.LastMediaSequence;
             }
             else
             {
@@ -111,7 +111,7 @@ namespace DiscImageChef.Core
                                 Checksums =
                                     Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY))
                                             .ToArray(),
-                                Size = image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY).Length
+                                Size = (ulong)image.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY).Length
                             }
                         };
                         break;
@@ -123,7 +123,7 @@ namespace DiscImageChef.Core
                                 Checksums = Checksum
                                            .GetChecksums(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY))
                                            .ToArray(),
-                                Size = image.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length
+                                Size = (ulong)image.ReadDiskTag(MediaTagType.ATA_IDENTIFY).Length
                             }
                         };
                         break;
@@ -131,7 +131,10 @@ namespace DiscImageChef.Core
                         byte[] cis = image.ReadDiskTag(MediaTagType.PCMCIA_CIS);
                         sidecar.BlockMedia[0].PCMCIA = new PCMCIAType
                         {
-                            CIS = new DumpType {Checksums = Checksum.GetChecksums(cis).ToArray(), Size = cis.Length}
+                            CIS = new DumpType
+                            {
+                                Checksums = Checksum.GetChecksums(cis).ToArray(), Size = (ulong)cis.Length
+                            }
                         };
                         Tuple[] tuples = CIS.GetTuples(cis);
                         if(tuples != null)
@@ -177,7 +180,7 @@ namespace DiscImageChef.Core
                                 Checksums = Checksum
                                            .GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_INQUIRY))
                                            .ToArray(),
-                                Size = image.ReadDiskTag(MediaTagType.SCSI_INQUIRY).Length
+                                Size = (ulong)image.ReadDiskTag(MediaTagType.SCSI_INQUIRY).Length
                             }
                         };
                         break;
@@ -187,7 +190,7 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].SecureDigital.CID = new DumpType
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CID)).ToArray(),
-                            Size      = image.ReadDiskTag(MediaTagType.SD_CID).Length
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CID).Length
                         };
                         break;
                     case MediaTagType.SD_CSD:
@@ -196,7 +199,7 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].SecureDigital.CSD = new DumpType
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CSD)).ToArray(),
-                            Size      = image.ReadDiskTag(MediaTagType.SD_CSD).Length
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CSD).Length
                         };
                         break;
                     case MediaTagType.SD_SCR:
@@ -205,7 +208,7 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].SecureDigital.SCR = new DumpType
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_SCR)).ToArray(),
-                            Size      = image.ReadDiskTag(MediaTagType.SD_SCR).Length
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_SCR).Length
                         };
                         break;
                     case MediaTagType.SD_OCR:
@@ -214,7 +217,7 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].SecureDigital.OCR = new DumpType
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_OCR)).ToArray(),
-                            Size      = image.ReadDiskTag(MediaTagType.SD_OCR).Length
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_OCR).Length
                         };
                         break;
                     case MediaTagType.MMC_CID:
@@ -223,7 +226,7 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].MultiMediaCard.CID = new DumpType
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CID)).ToArray(),
-                            Size      = image.ReadDiskTag(MediaTagType.SD_CID).Length
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CID).Length
                         };
                         break;
                     case MediaTagType.MMC_CSD:
@@ -232,7 +235,7 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].MultiMediaCard.CSD = new DumpType
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_CSD)).ToArray(),
-                            Size      = image.ReadDiskTag(MediaTagType.SD_CSD).Length
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_CSD).Length
                         };
                         break;
                     case MediaTagType.MMC_OCR:
@@ -241,7 +244,7 @@ namespace DiscImageChef.Core
                         sidecar.BlockMedia[0].MultiMediaCard.OCR = new DumpType
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SD_OCR)).ToArray(),
-                            Size      = image.ReadDiskTag(MediaTagType.SD_OCR).Length
+                            Size      = (ulong)image.ReadDiskTag(MediaTagType.SD_OCR).Length
                         };
                         break;
                     case MediaTagType.MMC_ExtendedCSD:
@@ -251,7 +254,7 @@ namespace DiscImageChef.Core
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD))
                                                 .ToArray(),
-                            Size = image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD).Length
+                            Size = (ulong)image.ReadDiskTag(MediaTagType.MMC_ExtendedCSD).Length
                         };
                         break;
                     case MediaTagType.USB_Descriptors:
@@ -260,7 +263,7 @@ namespace DiscImageChef.Core
                         {
                             Checksums = Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.USB_Descriptors))
                                                 .ToArray(),
-                            Size = image.ReadDiskTag(MediaTagType.USB_Descriptors).Length
+                            Size = (ulong)image.ReadDiskTag(MediaTagType.USB_Descriptors).Length
                         };
                         break;
                     case MediaTagType.SCSI_MODESENSE_6:
@@ -269,7 +272,7 @@ namespace DiscImageChef.Core
                         {
                             Checksums =
                                 Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6)).ToArray(),
-                            Size = image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6).Length
+                            Size = (ulong)image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_6).Length
                         };
                         break;
                     case MediaTagType.SCSI_MODESENSE_10:
@@ -278,7 +281,7 @@ namespace DiscImageChef.Core
                         {
                             Checksums =
                                 Checksum.GetChecksums(image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10)).ToArray(),
-                            Size = image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10).Length
+                            Size = (ulong)image.ReadDiskTag(MediaTagType.SCSI_MODESENSE_10).Length
                         };
                         break;
                 }
@@ -345,10 +348,10 @@ namespace DiscImageChef.Core
 
             sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(image.Info.MediaType);
 
-            sidecar.BlockMedia[0].LogicalBlocks    = (long)image.Info.Sectors;
-            sidecar.BlockMedia[0].LogicalBlockSize = (int)image.Info.SectorSize;
+            sidecar.BlockMedia[0].LogicalBlocks    = image.Info.Sectors;
+            sidecar.BlockMedia[0].LogicalBlockSize = image.Info.SectorSize;
             // TODO: Detect it
-            sidecar.BlockMedia[0].PhysicalBlockSize = (int)image.Info.SectorSize;
+            sidecar.BlockMedia[0].PhysicalBlockSize = image.Info.SectorSize;
 
             UpdateStatus("Checking filesystems...");
 
@@ -368,10 +371,10 @@ namespace DiscImageChef.Core
                     sidecar.BlockMedia[0].FileSystemInformation[i] = new PartitionType
                     {
                         Description = partitions[i].Description,
-                        EndSector   = (int)partitions[i].End,
+                        EndSector   = partitions[i].End,
                         Name        = partitions[i].Name,
-                        Sequence    = (int)partitions[i].Sequence,
-                        StartSector = (int)partitions[i].Start,
+                        Sequence    = (uint)partitions[i].Sequence,
+                        StartSector = partitions[i].Start,
                         Type        = partitions[i].Type
                     };
                     List<FileSystemType> lstFs = new List<FileSystemType>();
@@ -402,7 +405,7 @@ namespace DiscImageChef.Core
                 if(aborted) return;
 
                 sidecar.BlockMedia[0].FileSystemInformation[0] =
-                    new PartitionType {StartSector = 0, EndSector = (int)(image.Info.Sectors - 1)};
+                    new PartitionType {StartSector = 0, EndSector = image.Info.Sectors - 1};
 
                 Partition wholePart = new Partition
                 {
@@ -442,7 +445,7 @@ namespace DiscImageChef.Core
                 sidecar.BlockMedia[0].HeadsSpecified           = true;
                 sidecar.BlockMedia[0].SectorsPerTrackSpecified = true;
                 sidecar.BlockMedia[0].Cylinders                = image.Info.Cylinders;
-                sidecar.BlockMedia[0].Heads                    = image.Info.Heads;
+                sidecar.BlockMedia[0].Heads                    = (ushort)image.Info.Heads;
                 sidecar.BlockMedia[0].SectorsPerTrack          = image.Info.SectorsPerTrack;
             }
 
@@ -611,7 +614,7 @@ namespace DiscImageChef.Core
                         if(scpImage.Header.end + 1 >= image.Info.Cylinders)
                         {
                             List<BlockTrackType> scpBlockTrackTypes = new List<BlockTrackType>();
-                            long                 currentSector      = 0;
+                            ulong                currentSector      = 0;
                             Stream               scpStream          = scpFilter.GetDataForkStream();
 
                             for(byte t = scpImage.Header.start; t <= scpImage.Header.end; t++)
@@ -621,7 +624,7 @@ namespace DiscImageChef.Core
                                 BlockTrackType scpBlockTrackType = new BlockTrackType
                                 {
                                     Cylinder = t / image.Info.Heads,
-                                    Head     = t % image.Info.Heads,
+                                    Head     = (ushort)(t % image.Info.Heads),
                                     Image = new ImageType
                                     {
                                         format = scpImage.Format,
@@ -636,7 +639,7 @@ namespace DiscImageChef.Core
                                     currentSector                    += image.Info.SectorsPerTrack;
                                     scpBlockTrackType.EndSector      =  currentSector - 1;
                                     scpBlockTrackType.Sectors        =  image.Info.SectorsPerTrack;
-                                    scpBlockTrackType.BytesPerSector =  (int)image.Info.SectorSize;
+                                    scpBlockTrackType.BytesPerSector =  image.Info.SectorSize;
                                     scpBlockTrackType.Format         =  trkFormat;
                                 }
 
@@ -647,7 +650,7 @@ namespace DiscImageChef.Core
                                                  scpTrack.Entries.Last().trackLength - scpImage.Header.offsets[t] + 1];
                                     scpStream.Position = scpImage.Header.offsets[t];
                                     scpStream.Read(trackContents, 0, trackContents.Length);
-                                    scpBlockTrackType.Size      = trackContents.Length;
+                                    scpBlockTrackType.Size      = (ulong)trackContents.Length;
                                     scpBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
                                 }
 
@@ -705,7 +708,7 @@ namespace DiscImageChef.Core
                         {
                             List<BlockTrackType> kfBlockTrackTypes = new List<BlockTrackType>();
 
-                            long currentSector = 0;
+                            ulong currentSector = 0;
 
                             foreach(KeyValuePair<byte, IFilter> kvp in kfImage.tracks)
                             {
@@ -714,7 +717,7 @@ namespace DiscImageChef.Core
                                 BlockTrackType kfBlockTrackType = new BlockTrackType
                                 {
                                     Cylinder = kvp.Key / image.Info.Heads,
-                                    Head     = kvp.Key % image.Info.Heads,
+                                    Head     = (ushort)(kvp.Key % image.Info.Heads),
                                     Image = new ImageType
                                     {
                                         format = kfImage.Format,
@@ -733,7 +736,7 @@ namespace DiscImageChef.Core
                                     currentSector                   += image.Info.SectorsPerTrack;
                                     kfBlockTrackType.EndSector      =  currentSector - 1;
                                     kfBlockTrackType.Sectors        =  image.Info.SectorsPerTrack;
-                                    kfBlockTrackType.BytesPerSector =  (int)image.Info.SectorSize;
+                                    kfBlockTrackType.BytesPerSector =  image.Info.SectorSize;
                                     kfBlockTrackType.Format         =  trkFormat;
                                 }
 
@@ -741,7 +744,7 @@ namespace DiscImageChef.Core
                                 byte[] trackContents = new byte[kfStream.Length];
                                 kfStream.Position = 0;
                                 kfStream.Read(trackContents, 0, trackContents.Length);
-                                kfBlockTrackType.Size      = trackContents.Length;
+                                kfBlockTrackType.Size      = (ulong)trackContents.Length;
                                 kfBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
 
                                 kfBlockTrackTypes.Add(kfBlockTrackType);
@@ -784,7 +787,7 @@ namespace DiscImageChef.Core
                 if(dfiImage.Info.Cylinders >= image.Info.Cylinders)
                 {
                     List<BlockTrackType> dfiBlockTrackTypes = new List<BlockTrackType>();
-                    long                 currentSector      = 0;
+                    ulong                currentSector      = 0;
                     Stream               dfiStream          = dfiFilter.GetDataForkStream();
 
                     foreach(int t in dfiImage.TrackOffsets.Keys)
@@ -793,8 +796,8 @@ namespace DiscImageChef.Core
 
                         BlockTrackType dfiBlockTrackType = new BlockTrackType
                         {
-                            Cylinder = t / image.Info.Heads,
-                            Head     = t % image.Info.Heads,
+                            Cylinder = (uint)(t   / image.Info.Heads),
+                            Head     = (ushort)(t % image.Info.Heads),
                             Image    = new ImageType {format = dfiImage.Format, Value = Path.GetFileName(dfiFilePath)}
                         };
 
@@ -804,18 +807,18 @@ namespace DiscImageChef.Core
                             currentSector                    += image.Info.SectorsPerTrack;
                             dfiBlockTrackType.EndSector      =  currentSector - 1;
                             dfiBlockTrackType.Sectors        =  image.Info.SectorsPerTrack;
-                            dfiBlockTrackType.BytesPerSector =  (int)image.Info.SectorSize;
+                            dfiBlockTrackType.BytesPerSector =  image.Info.SectorSize;
                             dfiBlockTrackType.Format         =  trkFormat;
                         }
 
                         if(dfiImage.TrackOffsets.TryGetValue(t, out long offset) &&
                            dfiImage.TrackLengths.TryGetValue(t, out long length))
                         {
-                            dfiBlockTrackType.Image.offset = offset;
+                            dfiBlockTrackType.Image.offset = (ulong)offset;
                             byte[] trackContents = new byte[length];
                             dfiStream.Position = offset;
                             dfiStream.Read(trackContents, 0, trackContents.Length);
-                            dfiBlockTrackType.Size      = trackContents.Length;
+                            dfiBlockTrackType.Size      = (ulong)trackContents.Length;
                             dfiBlockTrackType.Checksums = Checksum.GetChecksums(trackContents).ToArray();
                         }
 

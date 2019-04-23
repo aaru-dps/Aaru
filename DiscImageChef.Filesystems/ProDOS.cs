@@ -307,8 +307,8 @@ namespace DiscImageChef.Filesystems
                 Type           = "ProDOS"
             };
 
-            XmlFsType.ClusterSize = (int)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
-                                          (ulong)XmlFsType.Clusters);
+            XmlFsType.ClusterSize = (uint)((partition.End - partition.Start + 1) * imagePlugin.Info.SectorSize /
+                                           XmlFsType.Clusters);
             if(!dateCorrect) return;
 
             XmlFsType.CreationDate          = rootDirectoryKeyBlock.header.creation_time;

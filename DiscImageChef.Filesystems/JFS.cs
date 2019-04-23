@@ -118,8 +118,8 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type         = "JFS filesystem",
-                Clusters     = (long)jfsSb.s_size,
-                ClusterSize  = (int)jfsSb.s_bsize,
+                Clusters     = jfsSb.s_size,
+                ClusterSize  = jfsSb.s_bsize,
                 Bootable     = true,
                 VolumeName   = Encoding.GetString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label),
                 VolumeSerial = $"{jfsSb.s_uuid}",
@@ -176,51 +176,51 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Leftmost 24 bits are extent length, rest 8 bits are most significant for <see cref="addr2" />
             /// </summary>
-            public uint len_addr;
-            public uint addr2;
+            public readonly uint len_addr;
+            public readonly uint addr2;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct JfsTimeStruct
         {
-            public uint tv_sec;
-            public uint tv_nsec;
+            public readonly uint tv_sec;
+            public readonly uint tv_nsec;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct JfsSuperBlock
         {
-            public uint          s_magic;
-            public uint          s_version;
-            public ulong         s_size;
-            public uint          s_bsize;
-            public ushort        s_l2bsize;
-            public ushort        s_l2bfactor;
-            public uint          s_pbsize;
-            public ushort        s_l1pbsize;
-            public ushort        pad;
-            public uint          s_agsize;
-            public JfsFlags      s_flags;
-            public JfsState      s_state;
-            public uint          s_compress;
-            public JfsExtent     s_ait2;
-            public JfsExtent     s_aim2;
-            public uint          s_logdev;
-            public uint          s_logserial;
-            public JfsExtent     s_logpxd;
-            public JfsExtent     s_fsckpxd;
-            public JfsTimeStruct s_time;
-            public uint          s_fsckloglen;
-            public sbyte         s_fscklog;
+            public readonly uint          s_magic;
+            public readonly uint          s_version;
+            public readonly ulong         s_size;
+            public readonly uint          s_bsize;
+            public readonly ushort        s_l2bsize;
+            public readonly ushort        s_l2bfactor;
+            public readonly uint          s_pbsize;
+            public readonly ushort        s_l1pbsize;
+            public readonly ushort        pad;
+            public readonly uint          s_agsize;
+            public readonly JfsFlags      s_flags;
+            public readonly JfsState      s_state;
+            public readonly uint          s_compress;
+            public readonly JfsExtent     s_ait2;
+            public readonly JfsExtent     s_aim2;
+            public readonly uint          s_logdev;
+            public readonly uint          s_logserial;
+            public readonly JfsExtent     s_logpxd;
+            public readonly JfsExtent     s_fsckpxd;
+            public readonly JfsTimeStruct s_time;
+            public readonly uint          s_fsckloglen;
+            public readonly sbyte         s_fscklog;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-            public byte[] s_fpack;
-            public ulong     s_xsize;
-            public JfsExtent s_xfsckpxd;
-            public JfsExtent s_xlogpxd;
-            public Guid      s_uuid;
+            public readonly byte[] s_fpack;
+            public readonly ulong     s_xsize;
+            public readonly JfsExtent s_xfsckpxd;
+            public readonly JfsExtent s_xlogpxd;
+            public readonly Guid      s_uuid;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] s_label;
-            public Guid s_loguuid;
+            public readonly byte[] s_label;
+            public readonly Guid s_loguuid;
         }
     }
 }

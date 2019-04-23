@@ -264,7 +264,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType.Bootable = bb.signature    == HFSBB_MAGIC || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
                                  mdb.drFndrInfo5 != 0;
             XmlFsType.Clusters    = mdb.drNmAlBlks;
-            XmlFsType.ClusterSize = (int)mdb.drAlBlkSiz;
+            XmlFsType.ClusterSize = mdb.drAlBlkSiz;
             if(mdb.drCrDate > 0)
             {
                 XmlFsType.CreationDate          = DateHandlers.MacToDateTime(mdb.drCrDate);
@@ -308,91 +308,91 @@ namespace DiscImageChef.Filesystems
         struct HfsMasterDirectoryBlock // Should be sector 2 in volume
         {
             /// <summary>0x000, Signature, 0x4244</summary>
-            public ushort drSigWord;
+            public readonly ushort drSigWord;
             /// <summary>0x002, Volume creation date</summary>
-            public uint drCrDate;
+            public readonly uint drCrDate;
             /// <summary>0x006, Volume last modification date</summary>
-            public uint drLsMod;
+            public readonly uint drLsMod;
             /// <summary>0x00A, Volume attributes</summary>
-            public ushort drAtrb;
+            public readonly ushort drAtrb;
             /// <summary>0x00C, Files in root directory</summary>
-            public ushort drNmFls;
+            public readonly ushort drNmFls;
             /// <summary>0x00E, Start 512-byte sector of volume bitmap</summary>
-            public ushort drVBMSt;
+            public readonly ushort drVBMSt;
             /// <summary>0x010, Allocation block to begin next allocation</summary>
-            public ushort drAllocPtr;
+            public readonly ushort drAllocPtr;
             /// <summary>0x012, Allocation blocks</summary>
-            public ushort drNmAlBlks;
+            public readonly ushort drNmAlBlks;
             /// <summary>0x014, Bytes per allocation block</summary>
-            public uint drAlBlkSiz;
+            public readonly uint drAlBlkSiz;
             /// <summary>0x018, Bytes to allocate when extending a file</summary>
-            public uint drClpSiz;
+            public readonly uint drClpSiz;
             /// <summary>0x01C, Start 512-byte sector of first allocation block</summary>
-            public ushort drAlBlSt;
+            public readonly ushort drAlBlSt;
             /// <summary>0x01E, CNID for next file</summary>
-            public uint drNxtCNID;
+            public readonly uint drNxtCNID;
             /// <summary>0x022, Free allocation blocks</summary>
-            public ushort drFreeBks;
+            public readonly ushort drFreeBks;
             /// <summary>0x024, Volume name (28 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-            public byte[] drVN;
+            public readonly byte[] drVN;
             /// <summary>0x040, Volume last backup time</summary>
-            public uint drVolBkUp;
+            public readonly uint drVolBkUp;
             /// <summary>0x044, Volume backup sequence number</summary>
-            public ushort drVSeqNum;
+            public readonly ushort drVSeqNum;
             /// <summary>0x046, Filesystem write count</summary>
-            public uint drWrCnt;
+            public readonly uint drWrCnt;
             /// <summary>0x04A, Bytes to allocate when extending the extents B-Tree</summary>
-            public uint drXTClpSiz;
+            public readonly uint drXTClpSiz;
             /// <summary>0x04E, Bytes to allocate when extending the catalog B-Tree</summary>
-            public uint drCTClpSiz;
+            public readonly uint drCTClpSiz;
             /// <summary>0x052, Number of directories in root directory</summary>
-            public ushort drNmRtDirs;
+            public readonly ushort drNmRtDirs;
             /// <summary>0x054, Number of files in the volume</summary>
-            public uint drFilCnt;
+            public readonly uint drFilCnt;
             /// <summary>0x058, Number of directories in the volume</summary>
-            public uint drDirCnt;
+            public readonly uint drDirCnt;
             /// <summary>0x05C, finderInfo[0], CNID for bootable system's directory</summary>
-            public uint drFndrInfo0;
+            public readonly uint drFndrInfo0;
             /// <summary>0x060, finderInfo[1], CNID of the directory containing the boot application</summary>
-            public uint drFndrInfo1;
+            public readonly uint drFndrInfo1;
             /// <summary>0x064, finderInfo[2], CNID of the directory that should be opened on boot</summary>
-            public uint drFndrInfo2;
+            public readonly uint drFndrInfo2;
             /// <summary>0x068, finderInfo[3], CNID for Mac OS 8 or 9 directory</summary>
-            public uint drFndrInfo3;
+            public readonly uint drFndrInfo3;
             /// <summary>0x06C, finderInfo[4], Reserved</summary>
-            public uint drFndrInfo4;
+            public readonly uint drFndrInfo4;
             /// <summary>0x070, finderInfo[5], CNID for Mac OS X directory</summary>
-            public uint drFndrInfo5;
+            public readonly uint drFndrInfo5;
             /// <summary>0x074, finderInfo[6], first part of Mac OS X volume ID</summary>
-            public uint drFndrInfo6;
+            public readonly uint drFndrInfo6;
             /// <summary>0x078, finderInfo[7], second part of Mac OS X volume ID</summary>
-            public uint drFndrInfo7;
+            public readonly uint drFndrInfo7;
             // If wrapping HFS+
             /// <summary>0x07C, Embedded volume signature, "H+" if HFS+ is embedded ignore following two fields if not</summary>
-            public ushort drEmbedSigWord;
+            public readonly ushort drEmbedSigWord;
             /// <summary>0x07E, Starting block number of embedded HFS+ volume</summary>
-            public ushort xdrStABNt;
+            public readonly ushort xdrStABNt;
             /// <summary>0x080, Allocation blocks used by embedded volume</summary>
-            public ushort xdrNumABlks;
+            public readonly ushort xdrNumABlks;
             // If not
             /// <summary>0x07C, Size in blocks of volume cache</summary>
-            public ushort drVCSize;
+            public readonly ushort drVCSize;
             /// <summary>0x07E, Size in blocks of volume bitmap cache</summary>
-            public ushort drVBMCSize;
+            public readonly ushort drVBMCSize;
             /// <summary>0x080, Size in blocks of volume common cache</summary>
-            public ushort drCtlCSize;
+            public readonly ushort drCtlCSize;
             // End of variable variables :D
             /// <summary>
             ///     0x082, Bytes in the extents B-Tree
             ///     3 HFS extents following, 32 bits each
             /// </summary>
-            public uint drXTFlSize;
+            public readonly uint drXTFlSize;
             /// <summary>
             ///     0x092, Bytes in the catalog B-Tree
             ///     3 HFS extents following, 32 bits each
             /// </summary>
-            public uint drCTFlSize;
+            public readonly uint drCTFlSize;
         }
 
         /// <summary>
@@ -402,50 +402,50 @@ namespace DiscImageChef.Filesystems
         struct HfsBootBlock // Should be sectors 0 and 1 in volume
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
-            public ushort signature;
+            public readonly ushort signature;
             /// <summary>0x002, Branch</summary>
-            public uint branch;
+            public readonly uint branch;
             /// <summary>0x007, Boot block version</summary>
-            public ushort boot_version;
+            public readonly ushort boot_version;
             /// <summary>0x006, Boot block flags</summary>
-            public short boot_flags;
+            public readonly short boot_flags;
             /// <summary>0x00A, System file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] system_name;
+            public readonly byte[] system_name;
             /// <summary>0x01A, Finder file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] finder_name;
+            public readonly byte[] finder_name;
             /// <summary>0x02A, Debugger file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] debug_name;
+            public readonly byte[] debug_name;
             /// <summary>0x03A, Disassembler file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] disasm_name;
+            public readonly byte[] disasm_name;
             /// <summary>0x04A, Startup screen file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] stupscr_name;
+            public readonly byte[] stupscr_name;
             /// <summary>0x05A, First program to execute on boot (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] bootup_name;
+            public readonly byte[] bootup_name;
             /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] clipbrd_name;
+            public readonly byte[] clipbrd_name;
             /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
-            public ushort max_files;
+            public readonly ushort max_files;
             /// <summary>0x07C, Event queue size</summary>
-            public ushort queue_size;
+            public readonly ushort queue_size;
             /// <summary>0x07E, Heap size on a Mac with 128KiB of RAM</summary>
-            public uint heap_128k;
+            public readonly uint heap_128k;
             /// <summary>0x082, Heap size on a Mac with 256KiB of RAM</summary>
-            public uint heap_256k;
+            public readonly uint heap_256k;
             /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
-            public uint heap_512k;
+            public readonly uint heap_512k;
             /// <summary>Padding</summary>
-            public ushort padding;
+            public readonly ushort padding;
             /// <summary>Additional system heap space</summary>
-            public uint heap_extra;
+            public readonly uint heap_extra;
             /// <summary>Fraction of RAM for system heap</summary>
-            public uint heap_fract;
+            public readonly uint heap_fract;
         }
     }
 }

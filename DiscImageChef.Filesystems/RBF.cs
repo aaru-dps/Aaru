@@ -207,7 +207,7 @@ namespace DiscImageChef.Filesystems
                 {
                     Type                  = "OS-9 Random Block File",
                     Bootable              = LSNToUInt32(rbfSb.dd_bt) > 0 && rbfSb.dd_bsz > 0,
-                    ClusterSize           = rbfSb.dd_bit * (256 << rbfSb.dd_lsnsize),
+                    ClusterSize           = (uint)(rbfSb.dd_bit * (256 << rbfSb.dd_lsnsize)),
                     Clusters              = LSNToUInt32(rbfSb.dd_tot),
                     CreationDate          = DateHandlers.Os9ToDateTime(rbfSb.dd_dat),
                     CreationDateSpecified = true,
@@ -234,52 +234,52 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>Sectors on disk</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] dd_tot;
+            public readonly byte[] dd_tot;
             /// <summary>Tracks</summary>
-            public byte dd_tks;
+            public readonly byte dd_tks;
             /// <summary>Bytes in allocation map</summary>
-            public ushort dd_map;
+            public readonly ushort dd_map;
             /// <summary>Sectors per cluster</summary>
-            public ushort dd_bit;
+            public readonly ushort dd_bit;
             /// <summary>LSN of root directory</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] dd_dir;
+            public readonly byte[] dd_dir;
             /// <summary>Owner ID</summary>
-            public ushort dd_own;
+            public readonly ushort dd_own;
             /// <summary>Attributes</summary>
-            public byte dd_att;
+            public readonly byte dd_att;
             /// <summary>Disk ID</summary>
-            public ushort dd_dsk;
+            public readonly ushort dd_dsk;
             /// <summary>Format byte</summary>
-            public byte dd_fmt;
+            public readonly byte dd_fmt;
             /// <summary>Sectors per track</summary>
-            public ushort dd_spt;
+            public readonly ushort dd_spt;
             /// <summary>Reserved</summary>
-            public ushort dd_res;
+            public readonly ushort dd_res;
             /// <summary>LSN of boot file</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] dd_bt;
+            public readonly byte[] dd_bt;
             /// <summary>Size of boot file</summary>
-            public ushort dd_bsz;
+            public readonly ushort dd_bsz;
             /// <summary>Creation date</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] dd_dat;
+            public readonly byte[] dd_dat;
             /// <summary>Volume name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] dd_nam;
+            public readonly byte[] dd_nam;
             /// <summary>Path options</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] dd_opt;
+            public readonly byte[] dd_opt;
             /// <summary>Reserved</summary>
-            public byte reserved;
+            public readonly byte reserved;
             /// <summary>Magic number</summary>
-            public uint dd_sync;
+            public readonly uint dd_sync;
             /// <summary>LSN of allocation map</summary>
-            public uint dd_maplsn;
+            public readonly uint dd_maplsn;
             /// <summary>Size of an LSN</summary>
-            public ushort dd_lsnsize;
+            public readonly ushort dd_lsnsize;
             /// <summary>Version ID</summary>
-            public ushort dd_versid;
+            public readonly ushort dd_versid;
         }
 
         /// <summary>
@@ -290,53 +290,53 @@ namespace DiscImageChef.Filesystems
         struct RBF_NewIdSector
         {
             /// <summary>Magic number</summary>
-            public uint rid_sync;
+            public readonly uint rid_sync;
             /// <summary>Disk ID</summary>
-            public uint rid_diskid;
+            public readonly uint rid_diskid;
             /// <summary>Sectors on disk</summary>
-            public uint rid_totblocks;
+            public readonly uint rid_totblocks;
             /// <summary>Cylinders</summary>
-            public ushort rid_cylinders;
+            public readonly ushort rid_cylinders;
             /// <summary>Sectors in cylinder 0</summary>
-            public ushort rid_cyl0size;
+            public readonly ushort rid_cyl0size;
             /// <summary>Sectors per cylinder</summary>
-            public ushort rid_cylsize;
+            public readonly ushort rid_cylsize;
             /// <summary>Heads</summary>
-            public ushort rid_heads;
+            public readonly ushort rid_heads;
             /// <summary>Bytes per sector</summary>
-            public ushort rid_blocksize;
+            public readonly ushort rid_blocksize;
             /// <summary>Disk format</summary>
-            public ushort rid_format;
+            public readonly ushort rid_format;
             /// <summary>Flags</summary>
-            public ushort rid_flags;
+            public readonly ushort rid_flags;
             /// <summary>Padding</summary>
-            public ushort rid_unused1;
+            public readonly ushort rid_unused1;
             /// <summary>Sector of allocation bitmap</summary>
-            public uint rid_bitmap;
+            public readonly uint rid_bitmap;
             /// <summary>Sector of debugger FD</summary>
-            public uint rid_firstboot;
+            public readonly uint rid_firstboot;
             /// <summary>Sector of bootfile FD</summary>
-            public uint rid_bootfile;
+            public readonly uint rid_bootfile;
             /// <summary>Sector of root directory FD</summary>
-            public uint rid_rootdir;
+            public readonly uint rid_rootdir;
             /// <summary>Group owner of media</summary>
-            public ushort rid_group;
+            public readonly ushort rid_group;
             /// <summary>Owner of media</summary>
-            public ushort rid_owner;
+            public readonly ushort rid_owner;
             /// <summary>Creation time</summary>
-            public uint rid_ctime;
+            public readonly uint rid_ctime;
             /// <summary>Last write time for this structure</summary>
-            public uint rid_mtime;
+            public readonly uint rid_mtime;
             /// <summary>Volume name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] rid_name;
+            public readonly byte[] rid_name;
             /// <summary>Endian flag</summary>
-            public byte rid_endflag;
+            public readonly byte rid_endflag;
             /// <summary>Padding</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] rid_unused2;
+            public readonly byte[] rid_unused2;
             /// <summary>Parity</summary>
-            public uint rid_parity;
+            public readonly uint rid_parity;
         }
     }
 }

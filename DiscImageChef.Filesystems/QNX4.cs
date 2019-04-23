@@ -175,7 +175,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Type                      = "QNX4 filesystem",
-                Clusters                  = (long)partition.Length,
+                Clusters                  = partition.Length,
                 ClusterSize               = 512,
                 CreationDate              = DateHandlers.UnixUnsignedToDateTime(qnxSb.rootDir.di_ftime),
                 CreationDateSpecified     = true,
@@ -195,59 +195,59 @@ namespace DiscImageChef.Filesystems
         struct QNX4_Inode
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] di_fname;
-            public uint        di_size;
-            public QNX4_Extent di_first_xtnt;
-            public uint        di_xblk;
-            public uint        di_ftime;
-            public uint        di_mtime;
-            public uint        di_atime;
-            public uint        di_ctime;
-            public ushort      di_num_xtnts;
-            public ushort      di_mode;
-            public ushort      di_uid;
-            public ushort      di_gid;
-            public ushort      di_nlink;
-            public uint        di_zero;
-            public byte        di_type;
-            public byte        di_status;
+            public readonly byte[] di_fname;
+            public readonly uint        di_size;
+            public readonly QNX4_Extent di_first_xtnt;
+            public readonly uint        di_xblk;
+            public readonly uint        di_ftime;
+            public readonly uint        di_mtime;
+            public readonly uint        di_atime;
+            public readonly uint        di_ctime;
+            public readonly ushort      di_num_xtnts;
+            public readonly ushort      di_mode;
+            public readonly ushort      di_uid;
+            public readonly ushort      di_gid;
+            public readonly ushort      di_nlink;
+            public readonly uint        di_zero;
+            public readonly byte        di_type;
+            public readonly byte        di_status;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QNX4_LinkInfo
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 48)]
-            public byte[] dl_fname;
-            public uint dl_inode_blk;
-            public byte dl_inode_ndx;
+            public readonly byte[] dl_fname;
+            public readonly uint dl_inode_blk;
+            public readonly byte dl_inode_ndx;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] dl_spare;
-            public byte dl_status;
+            public readonly byte[] dl_spare;
+            public readonly byte dl_status;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QNX4_ExtentBlock
         {
-            public uint next_xblk;
-            public uint prev_xblk;
-            public byte num_xtnts;
+            public readonly uint next_xblk;
+            public readonly uint prev_xblk;
+            public readonly byte num_xtnts;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] spare;
-            public uint num_blocks;
+            public readonly byte[] spare;
+            public readonly uint num_blocks;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 60)]
-            public QNX4_Extent[] xtnts;
+            public readonly QNX4_Extent[] xtnts;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] signature;
-            public QNX4_Extent first_xtnt;
+            public readonly byte[] signature;
+            public readonly QNX4_Extent first_xtnt;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct QNX4_Superblock
         {
-            public QNX4_Inode rootDir;
-            public QNX4_Inode inode;
-            public QNX4_Inode boot;
-            public QNX4_Inode altBoot;
+            public readonly QNX4_Inode rootDir;
+            public readonly QNX4_Inode inode;
+            public readonly QNX4_Inode boot;
+            public readonly QNX4_Inode altBoot;
         }
     }
 }

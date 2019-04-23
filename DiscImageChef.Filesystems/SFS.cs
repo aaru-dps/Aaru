@@ -105,7 +105,7 @@ namespace DiscImageChef.Filesystems
                 CreationDate          = DateHandlers.UnixUnsignedToDateTime(rootBlock.datecreated).AddYears(8),
                 CreationDateSpecified = true,
                 Clusters              = rootBlock.totalblocks,
-                ClusterSize           = (int)rootBlock.blocksize,
+                ClusterSize           = rootBlock.blocksize,
                 Type                  = "SmartFileSystem"
             };
         }
@@ -120,32 +120,32 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct RootBlock
         {
-            public uint     blockId;
-            public uint     blockChecksum;
-            public uint     blockSelfPointer;
-            public ushort   version;
-            public ushort   sequence;
-            public uint     datecreated;
-            public SFSFlags bits;
-            public byte     padding1;
-            public ushort   padding2;
+            public readonly uint     blockId;
+            public readonly uint     blockChecksum;
+            public readonly uint     blockSelfPointer;
+            public readonly ushort   version;
+            public readonly ushort   sequence;
+            public readonly uint     datecreated;
+            public readonly SFSFlags bits;
+            public readonly byte     padding1;
+            public readonly ushort   padding2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] reserved1;
-            public ulong firstbyte;
-            public ulong lastbyte;
-            public uint  totalblocks;
-            public uint  blocksize;
+            public readonly uint[] reserved1;
+            public readonly ulong firstbyte;
+            public readonly ulong lastbyte;
+            public readonly uint  totalblocks;
+            public readonly uint  blocksize;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] reserved2;
+            public readonly uint[] reserved2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public uint[] reserved3;
-            public uint bitmapbase;
-            public uint adminspacecontainer;
-            public uint rootobjectcontainer;
-            public uint extentbnoderoot;
-            public uint objectnoderoot;
+            public readonly uint[] reserved3;
+            public readonly uint bitmapbase;
+            public readonly uint adminspacecontainer;
+            public readonly uint rootobjectcontainer;
+            public readonly uint extentbnoderoot;
+            public readonly uint objectnoderoot;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public uint[] reserved4;
+            public readonly uint[] reserved4;
         }
     }
 }

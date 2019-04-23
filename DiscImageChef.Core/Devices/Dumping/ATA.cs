@@ -553,7 +553,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     Descriptors = new DumpType
                                     {
                                         Image     = outputPath,
-                                        Size      = dev.UsbDescriptors.Length,
+                                        Size      = (ulong)dev.UsbDescriptors.Length,
                                         Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
                                     }
                                 };
@@ -571,7 +571,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     CIS = new DumpType
                                     {
                                         Image     = outputPath,
-                                        Size      = dev.Cis.Length,
+                                        Size      = (ulong)dev.Cis.Length,
                                         Checksums = Checksum.GetChecksums(dev.Cis).ToArray()
                                     }
                                 };
@@ -622,7 +622,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 Identify = new DumpType
                                 {
                                     Image     = outputPath,
-                                    Size      = cmdBuf.Length,
+                                    Size      = (ulong)cmdBuf.Length,
                                     Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                 }
                             };
@@ -642,7 +642,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
                                                  where partition.FileSystems != null
                                                  from fileSystem in partition.FileSystems
-                                                 select ((ulong)partition.StartSector, fileSystem.Type));
+                                                 select (partition.StartSector, fileSystem.Type));
 
                         if(filesystems.Count > 0)
                             foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
@@ -666,13 +666,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                         sidecar.BlockMedia[0].DiskType          = xmlDskTyp;
                         sidecar.BlockMedia[0].DiskSubType       = xmlDskSubTyp;
                         sidecar.BlockMedia[0].Interface         = "ATA";
-                        sidecar.BlockMedia[0].LogicalBlocks     = (long)blocks;
-                        sidecar.BlockMedia[0].PhysicalBlockSize = (int)physicalsectorsize;
-                        sidecar.BlockMedia[0].LogicalBlockSize  = (int)blockSize;
+                        sidecar.BlockMedia[0].LogicalBlocks     = blocks;
+                        sidecar.BlockMedia[0].PhysicalBlockSize = physicalsectorsize;
+                        sidecar.BlockMedia[0].LogicalBlockSize  = blockSize;
                         sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
                         sidecar.BlockMedia[0].Model             = dev.Model;
                         sidecar.BlockMedia[0].Serial            = dev.Serial;
-                        sidecar.BlockMedia[0].Size              = (long)(blocks * blockSize);
+                        sidecar.BlockMedia[0].Size              = blocks * blockSize;
                         if(cylinders > 0 && heads > 0 && sectors > 0)
                         {
                             sidecar.BlockMedia[0].Cylinders                = cylinders;

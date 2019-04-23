@@ -119,7 +119,7 @@ namespace DiscImageChef.Filesystems
             {
                 Type                      = "UNICOS filesystem",
                 ClusterSize               = 4096,
-                Clusters                  = unicosSb.s_fsize,
+                Clusters                  = (ulong)unicosSb.s_fsize,
                 VolumeName                = StringHandlers.CToString(unicosSb.s_fname, Encoding),
                 ModificationDate          = DateHandlers.UnixToDateTime(unicosSb.s_time),
                 ModificationDateSpecified = true
@@ -131,20 +131,20 @@ namespace DiscImageChef.Filesystems
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct nc1ireg_sb
         {
-            public ushort i_unused; /* reserved */
-            public ushort i_nblk;   /* number of blocks */
-            public uint   i_sblk;   /* start block number */
+            public readonly ushort i_unused; /* reserved */
+            public readonly ushort i_nblk;   /* number of blocks */
+            public readonly uint   i_sblk;   /* start block number */
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         struct nc1fdev_sb
         {
-            public long fd_name; /* Physical device name */
-            public uint fd_sblk; /* Start block number */
-            public uint fd_nblk; /* Number of blocks */
+            public readonly long fd_name; /* Physical device name */
+            public readonly uint fd_sblk; /* Start block number */
+            public readonly uint fd_nblk; /* Number of blocks */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1_MAXIREG)]
-            public nc1ireg_sb[] fd_ireg; /* Inode regions */
+            public readonly nc1ireg_sb[] fd_ireg; /* Inode regions */
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -152,64 +152,64 @@ namespace DiscImageChef.Filesystems
         [SuppressMessage("ReSharper", "BuiltInTypeReferenceStyle")]
         struct UNICOS_Superblock
         {
-            public ulong s_magic; /* magic number to indicate file system type */
+            public readonly ulong s_magic; /* magic number to indicate file system type */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] s_fname; /* file system name */
+            public readonly byte[] s_fname; /* file system name */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] s_fpack; /* file system pack name */
-            public dev_t s_dev;    /* major/minor device, for verification */
+            public readonly byte[] s_fpack; /* file system pack name */
+            public readonly dev_t s_dev;    /* major/minor device, for verification */
 
-            public daddr_t  s_fsize;   /* size in blocks of entire volume */
-            public long     s_isize;   /* Number of total inodes */
-            public long     s_bigfile; /* number of bytes at which a file is big */
-            public long     s_bigunit; /* minimum number of blocks allocated for big files */
-            public ulong    s_secure;  /* security: secure FS label */
-            public long     s_maxlvl;  /* security: maximum security level */
-            public long     s_minlvl;  /* security: minimum security level */
-            public long     s_valcmp;  /* security: valid security compartments */
-            public time_t   s_time;    /* last super block update */
-            public blkno_t  s_dboff;   /* Dynamic block number */
-            public ino_t    s_root;    /* root inode */
-            public long     s_error;   /* Type of file system error detected */
-            public blkno_t  s_mapoff;  /* Start map block number */
-            public long     s_mapblks; /* Last map block number */
-            public long     s_nscpys;  /* Number of copies of s.b per partition */
-            public long     s_npart;   /* Number of partitions */
-            public long     s_ifract;  /* Ratio of inodes to blocks */
-            public extent_t s_sfs;     /* SFS only blocks */
-            public long     s_flag;    /* Flag word */
+            public readonly daddr_t  s_fsize;   /* size in blocks of entire volume */
+            public readonly long     s_isize;   /* Number of total inodes */
+            public readonly long     s_bigfile; /* number of bytes at which a file is big */
+            public readonly long     s_bigunit; /* minimum number of blocks allocated for big files */
+            public readonly ulong    s_secure;  /* security: secure FS label */
+            public readonly long     s_maxlvl;  /* security: maximum security level */
+            public readonly long     s_minlvl;  /* security: minimum security level */
+            public readonly long     s_valcmp;  /* security: valid security compartments */
+            public readonly time_t   s_time;    /* last super block update */
+            public readonly blkno_t  s_dboff;   /* Dynamic block number */
+            public readonly ino_t    s_root;    /* root inode */
+            public readonly long     s_error;   /* Type of file system error detected */
+            public readonly blkno_t  s_mapoff;  /* Start map block number */
+            public readonly long     s_mapblks; /* Last map block number */
+            public readonly long     s_nscpys;  /* Number of copies of s.b per partition */
+            public readonly long     s_npart;   /* Number of partitions */
+            public readonly long     s_ifract;  /* Ratio of inodes to blocks */
+            public readonly extent_t s_sfs;     /* SFS only blocks */
+            public readonly long     s_flag;    /* Flag word */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = NC1_MAXPART)]
-            public nc1fdev_sb[] s_part; /* Partition descriptors */
-            public long s_iounit;       /* Physical block size */
-            public long s_numiresblks;  /* number of inode reservation blocks */
+            public readonly nc1fdev_sb[] s_part; /* Partition descriptors */
+            public readonly long s_iounit;       /* Physical block size */
+            public readonly long s_numiresblks;  /* number of inode reservation blocks */
             /* per region (currently 1) */
             /* 0 = 1*(AU) words, n = (n+1)*(AU) words */
-            public long s_priparts; /* bitmap of primary partitions */
-            public long s_priblock; /* block size of primary partition(s) */
+            public readonly long s_priparts; /* bitmap of primary partitions */
+            public readonly long s_priblock; /* block size of primary partition(s) */
             /* 0 = 1*512 words, n = (n+1)*512 words */
-            public long s_prinblks; /* number of 512 wds blocks in primary */
-            public long s_secparts; /* bitmap of secondary partitions */
-            public long s_secblock; /* block size of secondary partition(s) */
+            public readonly long s_prinblks; /* number of 512 wds blocks in primary */
+            public readonly long s_secparts; /* bitmap of secondary partitions */
+            public readonly long s_secblock; /* block size of secondary partition(s) */
             /* 0 = 1*512 words, n = (n+1)*512 words */
-            public long s_secnblks;  /* number of 512 wds blocks in secondary */
-            public long s_sbdbparts; /* bitmap of partitions with file system data */
+            public readonly long s_secnblks;  /* number of 512 wds blocks in secondary */
+            public readonly long s_sbdbparts; /* bitmap of partitions with file system data */
             /* including super blocks, dynamic block */
             /* and free block bitmaps (only primary */
             /* partitions may contain these) */
-            public long s_rootdparts; /* bitmap of partitions with root directory */
+            public readonly long s_rootdparts; /* bitmap of partitions with root directory */
             /* (only primary partitions) */
-            public long s_nudparts; /* bitmap of no-user-data partitions */
+            public readonly long s_nudparts; /* bitmap of no-user-data partitions */
             /* (only primary partitions) */
-            public long s_nsema;     /* SFS: # fs semaphores to allocate */
-            public long s_priactive; /* bitmap of primary partitions which contain */
+            public readonly long s_nsema;     /* SFS: # fs semaphores to allocate */
+            public readonly long s_priactive; /* bitmap of primary partitions which contain */
             /* active (up to date) dynamic blocks and */
             /* free block bitmaps. All bits set indicate */
             /* that all primary partitions are active, */
             /* and no kernel manipulation of active flag */
             /* is allowed. */
-            public long s_sfs_arbiterid; /* SFS Arbiter ID */
+            public readonly long s_sfs_arbiterid; /* SFS Arbiter ID */
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 91)]
-            public long[] s_fill; /* reserved */
+            public readonly long[] s_fill; /* reserved */
         }
     }
 }

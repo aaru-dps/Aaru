@@ -287,8 +287,8 @@ namespace DiscImageChef.Filesystems
                     XmlFsType = new FileSystemType
                     {
                         Bootable    = oldMap1.boot != 0, // Or not?
-                        Clusters    = (long)(bytes / imagePlugin.Info.SectorSize),
-                        ClusterSize = (int)imagePlugin.Info.SectorSize,
+                        Clusters    = bytes / imagePlugin.Info.SectorSize,
+                        ClusterSize = imagePlugin.Info.SectorSize,
                         Type        = "Acorn Advanced Disc Filing System"
                     };
 
@@ -476,8 +476,8 @@ namespace DiscImageChef.Filesystems
             information = sbInformation.ToString();
 
             XmlFsType.Bootable    |= drSb.bootoption != 0; // Or not?
-            XmlFsType.Clusters    =  (long)(bytes / (ulong)(1 << drSb.log2secsize));
-            XmlFsType.ClusterSize =  1 << drSb.log2secsize;
+            XmlFsType.Clusters    =  bytes / (ulong)(1 << drSb.log2secsize);
+            XmlFsType.ClusterSize =  (uint)(1 << drSb.log2secsize);
             XmlFsType.Type        =  "Acorn Advanced Disc Filing System";
         }
 
@@ -562,11 +562,11 @@ namespace DiscImageChef.Filesystems
         struct BootBlock
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x1C0)]
-            public byte[] spare;
-            public DiscRecord discRecord;
-            public byte       flags;
-            public ushort     startCylinder;
-            public byte       checksum;
+            public readonly byte[] spare;
+            public readonly DiscRecord discRecord;
+            public readonly byte       flags;
+            public readonly ushort     startCylinder;
+            public readonly byte       checksum;
         }
 
         /// <summary>
@@ -575,30 +575,30 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DiscRecord
         {
-            public byte   log2secsize;
-            public byte   spt;
-            public byte   heads;
-            public byte   density;
-            public byte   idlen;
-            public byte   log2bpmb;
-            public byte   skew;
-            public byte   bootoption;
-            public byte   lowsector;
-            public byte   nzones;
-            public ushort zone_spare;
-            public uint   root;
-            public uint   disc_size;
-            public ushort disc_id;
+            public readonly byte   log2secsize;
+            public readonly byte   spt;
+            public readonly byte   heads;
+            public readonly byte   density;
+            public readonly byte   idlen;
+            public readonly byte   log2bpmb;
+            public readonly byte   skew;
+            public readonly byte   bootoption;
+            public readonly byte   lowsector;
+            public readonly byte   nzones;
+            public readonly ushort zone_spare;
+            public readonly uint   root;
+            public readonly uint   disc_size;
+            public readonly ushort disc_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] disc_name;
-            public uint disc_type;
-            public uint disc_size_high;
-            public byte flags;
-            public byte nzones_high;
-            public uint format_version;
-            public uint root_size;
+            public readonly byte[] disc_name;
+            public readonly uint disc_type;
+            public readonly uint disc_size_high;
+            public readonly byte flags;
+            public readonly byte nzones_high;
+            public readonly uint format_version;
+            public readonly uint root_size;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
         }
 
         /// <summary>
@@ -608,13 +608,13 @@ namespace DiscImageChef.Filesystems
         struct OldMapSector0
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
-            public byte[] freeStart;
-            public byte reserved;
+            public readonly byte[] freeStart;
+            public readonly byte reserved;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] name;
+            public readonly byte[] name;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] size;
-            public byte checksum;
+            public readonly byte[] size;
+            public readonly byte checksum;
         }
 
         /// <summary>
@@ -624,13 +624,13 @@ namespace DiscImageChef.Filesystems
         struct OldMapSector1
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 82 * 3)]
-            public byte[] freeStart;
+            public readonly byte[] freeStart;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] name;
-            public ushort discId;
-            public byte   boot;
-            public byte   freeEnd;
-            public byte   checksum;
+            public readonly byte[] name;
+            public readonly ushort discId;
+            public readonly byte   boot;
+            public readonly byte   freeEnd;
+            public readonly byte   checksum;
         }
 
         /// <summary>
@@ -639,10 +639,10 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NewMap
         {
-            public byte       zoneChecksum;
-            public ushort     freeLink;
-            public byte       crossChecksum;
-            public DiscRecord discRecord;
+            public readonly byte       zoneChecksum;
+            public readonly ushort     freeLink;
+            public readonly byte       crossChecksum;
+            public readonly DiscRecord discRecord;
         }
 
         /// <summary>
@@ -651,8 +651,8 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct DirectoryHeader
         {
-            public byte masterSequence;
-            public uint magic;
+            public readonly byte masterSequence;
+            public readonly uint magic;
         }
 
         /// <summary>
@@ -662,13 +662,13 @@ namespace DiscImageChef.Filesystems
         struct DirectoryEntry
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] name;
-            public uint load;
-            public uint exec;
-            public uint length;
+            public readonly byte[] name;
+            public readonly uint load;
+            public readonly uint exec;
+            public readonly uint length;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] address;
-            public byte atts;
+            public readonly byte[] address;
+            public readonly byte atts;
         }
 
         /// <summary>
@@ -677,17 +677,17 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NewDirectoryTail
         {
-            public byte   lastMark;
-            public ushort reserved;
+            public readonly byte   lastMark;
+            public readonly ushort reserved;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] parent;
+            public readonly byte[] parent;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)]
-            public byte[] title;
+            public readonly byte[] title;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] name;
-            public byte endMasSeq;
-            public uint magic;
-            public byte checkByte;
+            public readonly byte[] name;
+            public readonly byte endMasSeq;
+            public readonly uint magic;
+            public readonly byte checkByte;
         }
 
         /// <summary>
@@ -696,18 +696,18 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OldDirectoryTail
         {
-            public byte lastMark;
+            public readonly byte lastMark;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-            public byte[] name;
+            public readonly byte[] name;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] parent;
+            public readonly byte[] parent;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)]
-            public byte[] title;
+            public readonly byte[] title;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
-            public byte[] reserved;
-            public byte endMasSeq;
-            public uint magic;
-            public byte checkByte;
+            public readonly byte[] reserved;
+            public readonly byte endMasSeq;
+            public readonly uint magic;
+            public readonly byte checkByte;
         }
 
         /// <summary>
@@ -716,10 +716,10 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct OldDirectory
         {
-            public DirectoryHeader header;
+            public readonly DirectoryHeader header;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 47)]
-            public DirectoryEntry[] entries;
-            public OldDirectoryTail tail;
+            public readonly DirectoryEntry[] entries;
+            public readonly OldDirectoryTail tail;
         }
 
         /// <summary>
@@ -728,10 +728,10 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NewDirectory
         {
-            public DirectoryHeader header;
+            public readonly DirectoryHeader header;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 77)]
-            public DirectoryEntry[] entries;
-            public NewDirectoryTail tail;
+            public readonly DirectoryEntry[] entries;
+            public readonly NewDirectoryTail tail;
         }
     }
 }

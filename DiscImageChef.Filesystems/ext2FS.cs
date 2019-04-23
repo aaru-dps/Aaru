@@ -356,8 +356,8 @@ namespace DiscImageChef.Filesystems
             sb.AppendFormat("Volume has {0} blocks of {1} bytes, for a total of {2} bytes", blocks,
                             1024 << (int)supblk.block_size, blocks * (ulong)(1024 << (int)supblk.block_size))
               .AppendLine();
-            XmlFsType.Clusters    = (long)blocks;
-            XmlFsType.ClusterSize = 1024 << (int)supblk.block_size;
+            XmlFsType.Clusters    = blocks;
+            XmlFsType.ClusterSize = (uint)(1024 << (int)supblk.block_size);
             if(supblk.mount_t > 0 || supblk.mount_c > 0)
             {
                 if(supblk.mount_t > 0)
@@ -463,7 +463,7 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} KiB has been written on volume", supblk.kbytes_written).AppendLine();
 
             sb.AppendFormat("{0} reserved and {1} free blocks", reserved, free).AppendLine();
-            XmlFsType.FreeClusters          = (long)free;
+            XmlFsType.FreeClusters          = free;
             XmlFsType.FreeClustersSpecified = true;
             sb.AppendFormat("{0} inodes with {1} free inodes ({2}%)", supblk.inodes, supblk.free_inodes,
                             supblk.free_inodes * 100 / supblk.inodes).AppendLine();
@@ -640,227 +640,227 @@ namespace DiscImageChef.Filesystems
         struct ext2FSSuperBlock
         {
             /// <summary>0x000, inodes on volume</summary>
-            public uint inodes;
+            public readonly uint inodes;
             /// <summary>0x004, blocks on volume</summary>
-            public uint blocks;
+            public readonly uint blocks;
             /// <summary>0x008, reserved blocks</summary>
-            public uint reserved_blocks;
+            public readonly uint reserved_blocks;
             /// <summary>0x00C, free blocks count</summary>
-            public uint free_blocks;
+            public readonly uint free_blocks;
             /// <summary>0x010, free inodes count</summary>
-            public uint free_inodes;
+            public readonly uint free_inodes;
             /// <summary>0x014, first data block</summary>
-            public uint first_block;
+            public readonly uint first_block;
             /// <summary>0x018, block size</summary>
             public uint block_size;
             /// <summary>0x01C, fragment size</summary>
-            public int frag_size;
+            public readonly int frag_size;
             /// <summary>0x020, blocks per group</summary>
-            public uint blocks_per_grp;
+            public readonly uint blocks_per_grp;
             /// <summary>0x024, fragments per group</summary>
-            public uint flags_per_grp;
+            public readonly uint flags_per_grp;
             /// <summary>0x028, inodes per group</summary>
-            public uint inodes_per_grp;
+            public readonly uint inodes_per_grp;
             /// <summary>0x02C, last mount time</summary>
-            public uint mount_t;
+            public readonly uint mount_t;
             /// <summary>0x030, last write time</summary>
-            public uint write_t;
+            public readonly uint write_t;
             /// <summary>0x034, mounts count</summary>
-            public ushort mount_c;
+            public readonly ushort mount_c;
             /// <summary>0x036, max mounts</summary>
-            public short max_mount_c;
+            public readonly short max_mount_c;
             /// <summary>0x038, (little endian)</summary>
-            public ushort magic;
+            public readonly ushort magic;
             /// <summary>0x03A, filesystem state</summary>
-            public ushort state;
+            public readonly ushort state;
             /// <summary>0x03C, behaviour on errors</summary>
-            public ushort err_behaviour;
+            public readonly ushort err_behaviour;
             /// <summary>0x03E, From 0.5b onward</summary>
-            public ushort minor_revision;
+            public readonly ushort minor_revision;
             /// <summary>0x040, last check time</summary>
-            public uint check_t;
+            public readonly uint check_t;
             /// <summary>0x044, max time between checks</summary>
-            public uint check_inv;
+            public readonly uint check_inv;
 
             // From 0.5a onward
             /// <summary>0x048, Creation OS</summary>
-            public uint creator_os;
+            public readonly uint creator_os;
             /// <summary>0x04C, Revison level</summary>
-            public uint revision;
+            public readonly uint revision;
             /// <summary>0x050, Default UID for reserved blocks</summary>
-            public ushort default_uid;
+            public readonly ushort default_uid;
             /// <summary>0x052, Default GID for reserved blocks</summary>
-            public ushort default_gid;
+            public readonly ushort default_gid;
 
             // From 0.5b onward
             /// <summary>0x054, First unreserved inode</summary>
-            public uint first_inode;
+            public readonly uint first_inode;
             /// <summary>0x058, inode size</summary>
-            public ushort inode_size;
+            public readonly ushort inode_size;
             /// <summary>0x05A, Block group number of THIS superblock</summary>
-            public ushort block_group_no;
+            public readonly ushort block_group_no;
             /// <summary>0x05C, Compatible features set</summary>
-            public uint ftr_compat;
+            public readonly uint ftr_compat;
             /// <summary>0x060, Incompatible features set</summary>
-            public uint ftr_incompat;
+            public readonly uint ftr_incompat;
 
             // Found on Linux 2.0.40
             /// <summary>0x064, Read-only compatible features set</summary>
-            public uint ftr_ro_compat;
+            public readonly uint ftr_ro_compat;
 
             // Found on Linux 2.1.132
             /// <summary>0x068, 16 bytes, UUID</summary>
-            public Guid uuid;
+            public readonly Guid uuid;
             /// <summary>0x078, 16 bytes, volume name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] volume_name;
+            public readonly byte[] volume_name;
             /// <summary>0x088, 64 bytes, where last mounted</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] last_mount_dir;
+            public readonly byte[] last_mount_dir;
             /// <summary>0x0C8, Usage bitmap algorithm, for compression</summary>
-            public uint algo_usage_bmp;
+            public readonly uint algo_usage_bmp;
             /// <summary>0x0CC, Block to try to preallocate</summary>
-            public byte prealloc_blks;
+            public readonly byte prealloc_blks;
             /// <summary>0x0CD, Blocks to try to preallocate for directories</summary>
-            public byte prealloc_dir_blks;
+            public readonly byte prealloc_dir_blks;
             /// <summary>0x0CE, Per-group desc for online growth</summary>
-            public ushort rsrvd_gdt_blocks;
+            public readonly ushort rsrvd_gdt_blocks;
 
             // Found on Linux 2.4
             // ext3
             /// <summary>0x0D0, 16 bytes, UUID of journal superblock</summary>
-            public Guid journal_uuid;
+            public readonly Guid journal_uuid;
             /// <summary>0x0E0, inode no. of journal file</summary>
-            public uint journal_inode;
+            public readonly uint journal_inode;
             /// <summary>0x0E4, device no. of journal file</summary>
-            public uint journal_dev;
+            public readonly uint journal_dev;
             /// <summary>0x0E8, Start of list of inodes to delete</summary>
-            public uint last_orphan;
+            public readonly uint last_orphan;
             /// <summary>0x0EC, First byte of 128bit HTREE hash seed</summary>
-            public uint hash_seed_1;
+            public readonly uint hash_seed_1;
             /// <summary>0x0F0, Second byte of 128bit HTREE hash seed</summary>
-            public uint hash_seed_2;
+            public readonly uint hash_seed_2;
             /// <summary>0x0F4, Third byte of 128bit HTREE hash seed</summary>
-            public uint hash_seed_3;
+            public readonly uint hash_seed_3;
             /// <summary>0x0F8, Fourth byte of 128bit HTREE hash seed</summary>
-            public uint hash_seed_4;
+            public readonly uint hash_seed_4;
             /// <summary>0x0FC, Hash version</summary>
-            public byte hash_version;
+            public readonly byte hash_version;
             /// <summary>0x0FD, Journal backup type</summary>
-            public byte jnl_backup_type;
+            public readonly byte jnl_backup_type;
             /// <summary>0x0FE, Size of group descriptor</summary>
-            public ushort desc_grp_size;
+            public readonly ushort desc_grp_size;
             /// <summary>0x100, Default mount options</summary>
-            public uint default_mnt_opts;
+            public readonly uint default_mnt_opts;
             /// <summary>0x104, First metablock block group</summary>
-            public uint first_meta_bg;
+            public readonly uint first_meta_bg;
 
             // Introduced with ext4, some can be ext3
             /// <summary>0x108, Filesystem creation time</summary>
-            public uint mkfs_t;
+            public readonly uint mkfs_t;
 
             /// <summary>Backup of the journal inode</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 17)]
-            public uint[] jnl_blocks;
+            public readonly uint[] jnl_blocks;
 
             // Following 3 fields are valid if EXT4_FEATURE_COMPAT_64BIT is set
             /// <summary>0x14C, High 32bits of blocks no.</summary>
-            public uint blocks_hi;
+            public readonly uint blocks_hi;
             /// <summary>0x150, High 32bits of reserved blocks no.</summary>
-            public uint reserved_blocks_hi;
+            public readonly uint reserved_blocks_hi;
             /// <summary>0x154, High 32bits of free blocks no.</summary>
-            public uint free_blocks_hi;
+            public readonly uint free_blocks_hi;
             /// <summary>0x158, inodes minimal size in bytes</summary>
-            public ushort min_inode_size;
+            public readonly ushort min_inode_size;
             /// <summary>0x15A, Bytes reserved by new inodes</summary>
-            public ushort rsv_inode_size;
+            public readonly ushort rsv_inode_size;
             /// <summary>0x15C, Flags</summary>
-            public uint flags;
+            public readonly uint flags;
             /// <summary>0x160, RAID stride</summary>
-            public ushort raid_stride;
+            public readonly ushort raid_stride;
             /// <summary>0x162, Waiting seconds in MMP check</summary>
-            public ushort mmp_interval;
+            public readonly ushort mmp_interval;
             /// <summary>0x164, Block for multi-mount protection</summary>
-            public ulong mmp_block;
+            public readonly ulong mmp_block;
             /// <summary>0x16C, Blocks on all data disks (N*stride)</summary>
-            public uint raid_stripe_width;
+            public readonly uint raid_stripe_width;
             /// <summary>0x170, FLEX_BG group size</summary>
-            public byte flex_bg_grp_size;
+            public readonly byte flex_bg_grp_size;
             /// <summary>0x171 Metadata checksum algorithm</summary>
-            public byte checksum_type;
+            public readonly byte checksum_type;
             /// <summary>0x172 Versioning level for encryption</summary>
-            public byte encryption_level;
+            public readonly byte encryption_level;
             /// <summary>0x173 Padding</summary>
-            public ushort padding;
+            public readonly ushort padding;
             // Following are introduced with ext4
             /// <summary>0x174, Kibibytes written in volume lifetime</summary>
-            public ulong kbytes_written;
+            public readonly ulong kbytes_written;
             /// <summary>0x17C, Active snapshot inode number</summary>
-            public uint snapshot_inum;
+            public readonly uint snapshot_inum;
             /// <summary>0x180, Active snapshot sequential ID</summary>
-            public uint snapshot_id;
+            public readonly uint snapshot_id;
             /// <summary>0x184, Reserved blocks for active snapshot's future use</summary>
-            public ulong snapshot_blocks;
+            public readonly ulong snapshot_blocks;
             /// <summary>0x18C, inode number of the on-disk start of the snapshot list</summary>
-            public uint snapshot_list;
+            public readonly uint snapshot_list;
 
             // Optional ext4 error-handling features
             /// <summary>0x190, total registered filesystem errors</summary>
-            public uint error_count;
+            public readonly uint error_count;
             /// <summary>0x194, time on first error</summary>
-            public uint first_error_t;
+            public readonly uint first_error_t;
             /// <summary>0x198, inode involved in first error</summary>
-            public uint first_error_inode;
+            public readonly uint first_error_inode;
             /// <summary>0x19C, block involved of first error</summary>
-            public ulong first_error_block;
+            public readonly ulong first_error_block;
             /// <summary>0x1A0, 32 bytes, function where the error happened</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] first_error_func;
+            public readonly byte[] first_error_func;
             /// <summary>0x1B0, line number where error happened</summary>
-            public uint first_error_line;
+            public readonly uint first_error_line;
             /// <summary>0x1B4, time of most recent error</summary>
-            public uint last_error_t;
+            public readonly uint last_error_t;
             /// <summary>0x1B8, inode involved in last error</summary>
-            public uint last_error_inode;
+            public readonly uint last_error_inode;
             /// <summary>0x1BC, line number where error happened</summary>
-            public uint last_error_line;
+            public readonly uint last_error_line;
             /// <summary>0x1C0, block involved of last error</summary>
-            public ulong last_error_block;
+            public readonly ulong last_error_block;
             /// <summary>0x1C8, 32 bytes, function where the error happened</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] last_error_func;
+            public readonly byte[] last_error_func;
             // End of optional error-handling features
 
             // 0x1D8, 64 bytes, last used mount options</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-            public byte[] mount_options;
+            public readonly byte[] mount_options;
 
             /// <summary>Inode for user quota</summary>
-            public uint usr_quota_inum;
+            public readonly uint usr_quota_inum;
             /// <summary>Inode for group quota</summary>
-            public uint grp_quota_inum;
+            public readonly uint grp_quota_inum;
             /// <summary>Overhead clusters in volume</summary>
-            public uint overhead_clusters;
+            public readonly uint overhead_clusters;
             /// <summary>Groups with sparse_super2 SBs</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public uint[] backup_bgs;
+            public readonly uint[] backup_bgs;
             /// <summary>Encryption algorithms in use</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] encrypt_algos;
+            public readonly byte[] encrypt_algos;
             /// <summary>Salt used for string2key algorithm</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] encrypt_pw_salt;
+            public readonly byte[] encrypt_pw_salt;
             /// <summary>Inode number of lost+found</summary>
-            public uint lpf_inum;
+            public readonly uint lpf_inum;
             /// <summary>Inode number for tracking project quota</summary>
-            public uint prj_quota_inum;
+            public readonly uint prj_quota_inum;
             /// <summary>crc32c(uuid) if csum_seed is set</summary>
-            public uint checksum_seed;
+            public readonly uint checksum_seed;
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 98)]
-            public byte[] reserved;
+            public readonly byte[] reserved;
             /// <summary>crc32c(superblock)</summary>
-            public uint checksum;
+            public readonly uint checksum;
         }
     }
 }

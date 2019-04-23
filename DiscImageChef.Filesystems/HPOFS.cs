@@ -186,7 +186,7 @@ namespace DiscImageChef.Filesystems
             XmlFsType = new FileSystemType
             {
                 Clusters               = mib.sectors / bpb.spc,
-                ClusterSize            = bpb.bps     * bpb.spc,
+                ClusterSize            = (uint)(bpb.bps * bpb.spc),
                 CreationDate           = DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime),
                 CreationDateSpecified  = true,
                 DataPreparerIdentifier = StringHandlers.SpacePaddedToString(vib.owner, Encoding),
@@ -207,57 +207,57 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>0x000, Jump to boot code</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] jump;
+            public readonly byte[] jump;
             /// <summary>0x003, OEM Name, 8 bytes, space-padded</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] oem_name;
+            public readonly byte[] oem_name;
             /// <summary>0x00B, Bytes per sector</summary>
-            public ushort bps;
+            public readonly ushort bps;
             /// <summary>0x00D, Sectors per cluster</summary>
-            public byte spc;
+            public readonly byte spc;
             /// <summary>0x00E, Reserved sectors between BPB and... does it have sense in HPFS?</summary>
-            public ushort rsectors;
+            public readonly ushort rsectors;
             /// <summary>0x010, Number of FATs... seriously?</summary>
-            public byte fats_no;
+            public readonly byte fats_no;
             /// <summary>0x011, Number of entries on root directory... ok</summary>
-            public ushort root_ent;
+            public readonly ushort root_ent;
             /// <summary>0x013, Sectors in volume... doubt it</summary>
-            public ushort sectors;
+            public readonly ushort sectors;
             /// <summary>0x015, Media descriptor</summary>
-            public byte media;
+            public readonly byte media;
             /// <summary>0x016, Sectors per FAT... again</summary>
-            public ushort spfat;
+            public readonly ushort spfat;
             /// <summary>0x018, Sectors per track... you're kidding</summary>
-            public ushort sptrk;
+            public readonly ushort sptrk;
             /// <summary>0x01A, Heads... stop!</summary>
-            public ushort heads;
+            public readonly ushort heads;
             /// <summary>0x01C, Hidden sectors before BPB</summary>
-            public uint hsectors;
+            public readonly uint hsectors;
             /// <summary>0x024, Sectors in volume if &gt; 65535...</summary>
-            public uint big_sectors;
+            public readonly uint big_sectors;
             /// <summary>0x028, Drive number</summary>
-            public byte drive_no;
+            public readonly byte drive_no;
             /// <summary>0x029, Volume flags?</summary>
-            public byte nt_flags;
+            public readonly byte nt_flags;
             /// <summary>0x02A, EPB signature, 0x29</summary>
-            public byte signature;
+            public readonly byte signature;
             /// <summary>0x02B, Volume serial number</summary>
-            public uint serial_no;
+            public readonly uint serial_no;
             /// <summary>0x02F, Volume label, 11 bytes, space-padded</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-            public byte[] volume_label;
+            public readonly byte[] volume_label;
             /// <summary>0x03A, Filesystem type, 8 bytes, space-padded ("HPFS    ")</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] fs_type;
+            public readonly byte[] fs_type;
             /// <summary>Boot code.</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 442)]
-            public byte[] boot_code;
+            public readonly byte[] boot_code;
             /// <summary>0x1F8, Unknown</summary>
-            public uint unknown;
+            public readonly uint unknown;
             /// <summary>0x1FC, Unknown</summary>
-            public ushort unknown2;
+            public readonly ushort unknown2;
             /// <summary>0x1FE, 0xAA55</summary>
-            public ushort signature2;
+            public readonly ushort signature2;
         }
 
         /// <summary>
@@ -268,50 +268,50 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>Block identifier "MEDINFO "</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] blockId;
+            public readonly byte[] blockId;
             /// <summary>Volume label</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volumeLabel;
+            public readonly byte[] volumeLabel;
             /// <summary>Volume comment</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 160)]
-            public byte[] comment;
+            public readonly byte[] comment;
             /// <summary>Volume serial number</summary>
-            public uint serial;
+            public readonly uint serial;
             /// <summary>Volume creation date, DOS format</summary>
-            public ushort creationDate;
+            public readonly ushort creationDate;
             /// <summary>Volume creation time, DOS format</summary>
-            public ushort creationTime;
+            public readonly ushort creationTime;
             /// <summary>
             ///     Codepage type: 1 ASCII, 2 EBCDIC
             /// </summary>
-            public ushort codepageType;
+            public readonly ushort codepageType;
             /// <summary>Codepage</summary>
-            public ushort codepage;
+            public readonly ushort codepage;
             /// <summary>RPS level</summary>
-            public uint rps;
+            public readonly uint rps;
             /// <summary>Coincides with bytes per sector, and bytes per cluster, need more media</summary>
-            public ushort bps;
+            public readonly ushort bps;
             /// <summary>Coincides with bytes per sector, and bytes per cluster, need more media</summary>
-            public ushort bpc;
+            public readonly ushort bpc;
             /// <summary>Unknown, empty</summary>
-            public uint unknown2;
+            public readonly uint unknown2;
             /// <summary>Sectors (or clusters)</summary>
-            public uint sectors;
+            public readonly uint sectors;
             /// <summary>Unknown, coincides with bps but changing it makes nothing</summary>
-            public uint unknown3;
+            public readonly uint unknown3;
             /// <summary>Empty?</summary>
-            public ulong unknown4;
+            public readonly ulong unknown4;
             /// <summary>Format major version</summary>
-            public ushort major;
+            public readonly ushort major;
             /// <summary>Format minor version</summary>
-            public ushort minor;
+            public readonly ushort minor;
             /// <summary>Empty?</summary>
-            public uint unknown5;
+            public readonly uint unknown5;
             /// <summary>Unknown, non-empty</summary>
-            public uint unknown6;
+            public readonly uint unknown6;
             /// <summary>Empty</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 260)]
-            public byte[] filler;
+            public readonly byte[] filler;
         }
 
         /// <summary>
@@ -322,32 +322,32 @@ namespace DiscImageChef.Filesystems
         {
             /// <summary>Block identifier "VOLINFO "</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] blockId;
+            public readonly byte[] blockId;
             /// <summary>Unknown</summary>
-            public uint unknown;
+            public readonly uint unknown;
             /// <summary>Unknown</summary>
-            public uint unknown2;
+            public readonly uint unknown2;
             /// <summary>Unknown</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] unknown3;
+            public readonly byte[] unknown3;
             /// <summary>Unknown, space-padded string</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] unknown4;
+            public readonly byte[] unknown4;
             /// <summary>Owner, space-padded string</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] owner;
+            public readonly byte[] owner;
             /// <summary>Unknown, space-padded string</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] unknown5;
+            public readonly byte[] unknown5;
             /// <summary>Unknown, empty?</summary>
-            public uint unknown6;
+            public readonly uint unknown6;
             /// <summary>Maximum percent full</summary>
-            public ushort percentFull;
+            public readonly ushort percentFull;
             /// <summary>Unknown, empty?</summary>
-            public ushort unknown7;
+            public readonly ushort unknown7;
             /// <summary>Empty</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 384)]
-            public byte[] filler;
+            public readonly byte[] filler;
         }
     }
 }

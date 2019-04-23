@@ -93,7 +93,7 @@ namespace DiscImageChef.Filesystems
 
             XmlFsType = new FileSystemType
             {
-                Type = "Commodore file system", Clusters = (long)imagePlugin.Info.Sectors, ClusterSize = 256
+                Type = "Commodore file system", Clusters = imagePlugin.Info.Sectors, ClusterSize = 256
             };
 
             if(imagePlugin.Info.Sectors == 3200)
@@ -146,73 +146,73 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Track where directory starts
             /// </summary>
-            public byte directoryTrack;
+            public readonly byte directoryTrack;
             /// <summary>
             ///     Sector where directory starts
             /// </summary>
-            public byte directorySector;
+            public readonly byte directorySector;
             /// <summary>
             ///     Disk DOS version, 0x41
             /// </summary>
-            public byte dosVersion;
+            public readonly byte dosVersion;
             /// <summary>
             ///     Set to 0x80 if 1571, 0x00 if not
             /// </summary>
-            public byte doubleSided;
+            public readonly byte doubleSided;
             /// <summary>
             ///     Block allocation map
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 140)]
-            public byte[] bam;
+            public readonly byte[] bam;
             /// <summary>
             ///     Disk name
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            public readonly byte[] name;
             /// <summary>
             ///     Filled with 0xA0
             /// </summary>
-            public ushort fill1;
+            public readonly ushort fill1;
             /// <summary>
             ///     Disk ID
             /// </summary>
-            public ushort diskId;
+            public readonly ushort diskId;
             /// <summary>
             ///     Filled with 0xA0
             /// </summary>
-            public byte fill2;
+            public readonly byte fill2;
             /// <summary>
             ///     DOS type
             /// </summary>
-            public ushort dosType;
+            public readonly ushort dosType;
             /// <summary>
             ///     Filled with 0xA0
             /// </summary>
-            public uint fill3;
+            public readonly uint fill3;
             /// <summary>
             ///     Unused
             /// </summary>
-            public byte unused1;
+            public readonly byte unused1;
             /// <summary>
             ///     Block allocation map for Dolphin DOS extended tracks
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] dolphinBam;
+            public readonly byte[] dolphinBam;
             /// <summary>
             ///     Block allocation map for Speed DOS extended tracks
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] speedBam;
+            public readonly byte[] speedBam;
             /// <summary>
             ///     Unused
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
-            public byte[] unused2;
+            public readonly byte[] unused2;
             /// <summary>
             ///     Free sector count for second side in 1571
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
-            public byte[] freeCount;
+            public readonly byte[] freeCount;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -221,48 +221,48 @@ namespace DiscImageChef.Filesystems
             /// <summary>
             ///     Track where directory starts
             /// </summary>
-            public byte directoryTrack;
+            public readonly byte directoryTrack;
             /// <summary>
             ///     Sector where directory starts
             /// </summary>
-            public byte directorySector;
+            public readonly byte directorySector;
             /// <summary>
             ///     Disk DOS version, 0x44
             /// </summary>
-            public byte diskDosVersion;
+            public readonly byte diskDosVersion;
             /// <summary>
             ///     Unusued
             /// </summary>
-            public byte unused1;
+            public readonly byte unused1;
             /// <summary>
             ///     Disk name
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] name;
+            public readonly byte[] name;
             /// <summary>
             ///     Filled with 0xA0
             /// </summary>
-            public ushort fill1;
+            public readonly ushort fill1;
             /// <summary>
             ///     Disk ID
             /// </summary>
-            public ushort diskId;
+            public readonly ushort diskId;
             /// <summary>
             ///     Filled with 0xA0
             /// </summary>
-            public byte fill2;
+            public readonly byte fill2;
             /// <summary>
             ///     DOS version ('3')
             /// </summary>
-            public byte dosVersion;
+            public readonly byte dosVersion;
             /// <summary>
             ///     Disk version ('D')
             /// </summary>
-            public byte diskVersion;
+            public readonly byte diskVersion;
             /// <summary>
             ///     Filled with 0xA0
             /// </summary>
-            public short fill3;
+            public readonly short fill3;
         }
     }
 }
