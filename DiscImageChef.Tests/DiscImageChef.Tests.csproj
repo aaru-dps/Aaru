@@ -187,7 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NUnitLite" Version="3.11.0" />
-    <PackageReference Include="SharpCompress" Version="0.22.0" />
+    <PackageReference Include="SharpCompress" Version="0.23.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
   </ItemGroup>
   <ProjectExtensions>

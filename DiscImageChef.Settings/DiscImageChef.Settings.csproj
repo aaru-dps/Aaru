@@ -60,7 +60,7 @@
     <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="plist-cil" Version="1.16.0" />
+    <PackageReference Include="plist-cil" Version="1.60.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
   </ItemGroup>
   <ProjectExtensions>
