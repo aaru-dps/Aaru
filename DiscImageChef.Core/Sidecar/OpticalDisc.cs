@@ -185,7 +185,9 @@ namespace DiscImageChef.Core
                         };
                         PFI.PhysicalFormatInformation? pfi = PFI.Decode(image.ReadDiskTag(MediaTagType.DVD_PFI));
                         if(pfi.HasValue)
-                            if(dskType != MediaType.XGD && dskType != MediaType.XGD2 && dskType != MediaType.XGD3)
+                            if(dskType != MediaType.XGD    && dskType != MediaType.XGD2 &&
+                               dskType != MediaType.XGD3   &&
+                               dskType != MediaType.PS2DVD && dskType != MediaType.PS3DVD && dskType != MediaType.Nuon)
                             {
                                 switch(pfi.Value.DiskCategory)
                                 {
