@@ -60,6 +60,14 @@
     <Compile Include="FATX\Info.cs" />
     <Compile Include="FATX\Structs.cs" />
     <Compile Include="FATX\Super.cs" />
+    <Compile Include="FAT\Consts.cs" />
+    <Compile Include="FAT\Dir.cs" />
+    <Compile Include="FAT\FAT.cs" />
+    <Compile Include="FAT\File.cs" />
+    <Compile Include="FAT\Info.cs" />
+    <Compile Include="FAT\Structs.cs" />
+    <Compile Include="FAT\Super.cs" />
+    <Compile Include="FAT\Xattr.cs" />
     <Compile Include="HPOFS.cs" />
     <Compile Include="PCFX.cs" />
     <Compile Include="AmigaDOS.cs" />
@@ -68,7 +76,6 @@
     <Compile Include="BFS.cs" />
     <Compile Include="ext2FS.cs" />
     <Compile Include="extFS.cs" />
-    <Compile Include="FAT.cs" />
     <Compile Include="FFS.cs" />
     <Compile Include="HPFS.cs" />
     <Compile Include="MinixFS.cs" />
