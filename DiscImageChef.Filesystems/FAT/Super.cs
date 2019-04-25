@@ -32,10 +32,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Console;
+using DiscImageChef.Helpers;
+using Schemas;
+using FileSystemInfo = DiscImageChef.CommonTypes.Structs.FileSystemInfo;
 
 namespace DiscImageChef.Filesystems.FAT
 {
@@ -45,18 +52,344 @@ namespace DiscImageChef.Filesystems.FAT
         ///     Mounts an Apple Lisa filesystem
         /// </summary>
         public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
-                           Dictionary<string, string> options,     string    @namespace) =>
-            throw new NotImplementedException();
+                           Dictionary<string, string> options,     string    @namespace)
+        {
+            Encoding  = encoding ?? Encoding.GetEncoding("IBM437");
+            XmlFsType = new FileSystemType();
+            if(options == null) options = GetDefaultOptions();
+            if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
+
+            if(imagePlugin.Info.SectorSize < 512) return Errno.InvalidArgument;
+
+            DicConsole.DebugWriteLine("FAT plugin", "Reading BPB");
+
+            uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
+
+            byte[] bpbSector = imagePlugin.ReadSectors(0 + partition.Start, sectorsPerBpb);
+
+            BpbKind bpbKind = DetectBpbKind(bpbSector, imagePlugin, partition,
+                                            out BiosParameterBlockEbpb fakeBpb,
+                                            out HumanParameterBlock humanBpb, out AtariParameterBlock atariBpb,
+                                            out byte minBootNearJump,         out bool andosOemCorrect,
+                                            out bool bootable);
+
+            fat12              = false;
+            fat16              = false;
+            fat32              = false;
+            useFirstFat        = true;
+            XmlFsType.Bootable = bootable;
+
+            // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
+            uint sectorsPerRealSector = 1;
+            // This is needed because some OSes don't put volume label as first entry in the root directory
+            uint sectorsForRootDirectory = 0;
+
+            switch(bpbKind)
+            {
+                case BpbKind.DecRainbow:
+                case BpbKind.Hardcoded:
+                case BpbKind.Msx:
+                case BpbKind.Apricot:
+                    fat12 = true;
+                    break;
+                case BpbKind.ShortFat32:
+                case BpbKind.LongFat32:
+                {
+                    fat32 = true;
+                    Fat32ParameterBlock fat32Bpb =
+                        Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlock>(bpbSector);
+                    Fat32ParameterBlockShort shortFat32Bpb =
+                        Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlockShort>(bpbSector);
+
+                    // This is to support FAT partitions on hybrid ISO/USB images
+                    if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+                    {
+                        fat32Bpb.bps       *= 4;
+                        fat32Bpb.spc       /= 4;
+                        fat32Bpb.big_spfat /= 4;
+                        fat32Bpb.hsectors  /= 4;
+                        fat32Bpb.sptrk     /= 4;
+                    }
+
+                    XmlFsType.Type = fat32Bpb.version != 0 ? "FAT+" : "FAT32";
+
+                    if(fat32Bpb.oem_name != null && (fat32Bpb.oem_name[5] != 0x49 || fat32Bpb.oem_name[6] != 0x48 ||
+                                                     fat32Bpb.oem_name[7] != 0x43))
+                        XmlFsType.SystemIdentifier = StringHandlers.CToString(fat32Bpb.oem_name);
+
+                    sectorsPerCluster     = fat32Bpb.spc;
+                    XmlFsType.ClusterSize = (uint)(fat32Bpb.bps * fat32Bpb.spc);
+                    reservedSectors       = fat32Bpb.rsectors;
+                    if(fat32Bpb.big_sectors == 0 && fat32Bpb.signature == 0x28)
+                        XmlFsType.Clusters  = shortFat32Bpb.huge_sectors / shortFat32Bpb.spc;
+                    else XmlFsType.Clusters = fat32Bpb.big_sectors       / fat32Bpb.spc;
+
+                    sectorsPerFat          = fat32Bpb.big_spfat;
+                    XmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
+
+                    if((fat32Bpb.flags & 0xF8) == 0x00)
+                        if((fat32Bpb.flags & 0x01) == 0x01)
+                            XmlFsType.Dirty = true;
+
+                    if((fat32Bpb.mirror_flags & 0x80) == 0x80) useFirstFat = (fat32Bpb.mirror_flags & 0xF) != 1;
+
+                    if(fat32Bpb.signature == 0x29)
+                        XmlFsType.VolumeName = Encoding.ASCII.GetString(fat32Bpb.volume_label);
+
+                    // Check that jumps to a correct boot code position and has boot signature set.
+                    // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
+                    XmlFsType.Bootable =
+                        fat32Bpb.jump[0] == 0xEB && fat32Bpb.jump[1] >= minBootNearJump && fat32Bpb.jump[1] < 0x80 ||
+                        fat32Bpb.jump[0]                        == 0xE9            && fat32Bpb.jump.Length >= 3 &&
+                        BitConverter.ToUInt16(fat32Bpb.jump, 1) >= minBootNearJump &&
+                        BitConverter.ToUInt16(fat32Bpb.jump, 1) <= 0x1FC;
+
+                    sectorsPerRealSector =  fat32Bpb.bps / imagePlugin.Info.SectorSize;
+                    sectorsPerCluster    *= sectorsPerRealSector;
+
+                    // First root directory sector
+                    firstClusterSector =
+                        (ulong)((fat32Bpb.root_cluster - 2) * fat32Bpb.spc + fat32Bpb.big_spfat * fat32Bpb.fats_no +
+                                fat32Bpb.rsectors) * sectorsPerRealSector;
+                    sectorsForRootDirectory = 1;
+
+                    if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
+                    {
+                        byte[] fsinfoSector = imagePlugin.ReadSector(fat32Bpb.fsinfo_sector + partition.Start);
+                        FsInfoSector fsInfo =
+                            Marshal.ByteArrayToStructureLittleEndian<FsInfoSector>(fsinfoSector);
+
+                        if(fsInfo.signature1 == FSINFO_SIGNATURE1 && fsInfo.signature2 == FSINFO_SIGNATURE2 &&
+                           fsInfo.signature3 == FSINFO_SIGNATURE3)
+                            if(fsInfo.free_clusters < 0xFFFFFFFF)
+                            {
+                                XmlFsType.FreeClusters          = fsInfo.free_clusters;
+                                XmlFsType.FreeClustersSpecified = true;
+                            }
+                    }
+
+                    break;
+                }
+
+                // Some fields could overflow fake BPB, those will be handled below
+                case BpbKind.Atari:
+                {
+                    ushort sum = 0;
+                    BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+                    for(int i = 0; i < bpbSector.Length; i += 2) sum += BigEndianBitConverter.ToUInt16(bpbSector, i);
+
+                    // TODO: Check this
+                    if(sum == 0x1234) XmlFsType.Bootable = true;
+
+                    break;
+                }
+
+                case BpbKind.Human:
+                    fat16              = true;
+                    XmlFsType.Bootable = true;
+                    break;
+            }
+
+            if(!fat32)
+            {
+                // This is to support FAT partitions on hybrid ISO/USB images
+                if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
+                {
+                    fakeBpb.bps      *= 4;
+                    fakeBpb.spc      /= 4;
+                    fakeBpb.spfat    /= 4;
+                    fakeBpb.hsectors /= 4;
+                    fakeBpb.sptrk    /= 4;
+                    fakeBpb.rsectors /= 4;
+
+                    if(fakeBpb.spc == 0) fakeBpb.spc = 1;
+                }
+
+                // This assumes no sane implementation will violate cluster size rules
+                // However nothing prevents this to happen
+                // If first file on disk uses only one cluster there is absolutely no way to differentiate between FAT12 and FAT16,
+                // so let's hope implementations use common sense?
+                if(!fat12 && !fat16)
+                {
+                    ulong clusters;
+
+                    if(fakeBpb.sectors == 0)
+                        clusters  = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
+                    else clusters = fakeBpb.spc == 0 ? fakeBpb.sectors : (ulong)fakeBpb.sectors  / fakeBpb.spc;
+
+                    if(clusters < 4089) fat12 = true;
+                    else fat16                = true;
+                }
+
+                if(fat12) XmlFsType.Type      = "FAT12";
+                else if(fat16) XmlFsType.Type = "FAT16";
+
+                if(bpbKind == BpbKind.Atari)
+                {
+                    if(atariBpb.serial_no[0] != 0x49 || atariBpb.serial_no[1] != 0x48 || atariBpb.serial_no[2] != 0x43)
+                        XmlFsType.VolumeSerial =
+                            $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]:X2}";
+
+                    XmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
+                    if(string.IsNullOrEmpty(XmlFsType.SystemIdentifier)) XmlFsType.SystemIdentifier = null;
+                }
+                else if(fakeBpb.oem_name != null)
+                {
+                    if(fakeBpb.oem_name[5] != 0x49 || fakeBpb.oem_name[6] != 0x48 || fakeBpb.oem_name[7] != 0x43)
+                    {
+                        // Later versions of Windows create a DOS 3 BPB without OEM name on 8 sectors/track floppies
+                        // OEM ID should be ASCII, otherwise ignore it
+                        if(fakeBpb.oem_name[0] >= 0x20 && fakeBpb.oem_name[0] <= 0x7F && fakeBpb.oem_name[1] >= 0x20 &&
+                           fakeBpb.oem_name[1] <= 0x7F && fakeBpb.oem_name[2] >= 0x20 && fakeBpb.oem_name[2] <= 0x7F &&
+                           fakeBpb.oem_name[3] >= 0x20 && fakeBpb.oem_name[3] <= 0x7F && fakeBpb.oem_name[4] >= 0x20 &&
+                           fakeBpb.oem_name[4] <= 0x7F && fakeBpb.oem_name[5] >= 0x20 && fakeBpb.oem_name[5] <= 0x7F &&
+                           fakeBpb.oem_name[6] >= 0x20 && fakeBpb.oem_name[6] <= 0x7F && fakeBpb.oem_name[7] >= 0x20 &&
+                           fakeBpb.oem_name[7] <= 0x7F)
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name);
+                        else if(fakeBpb.oem_name[0] < 0x20  && fakeBpb.oem_name[1] >= 0x20 &&
+                                fakeBpb.oem_name[1] <= 0x7F && fakeBpb.oem_name[2] >= 0x20 &&
+                                fakeBpb.oem_name[2] <= 0x7F && fakeBpb.oem_name[3] >= 0x20 &&
+                                fakeBpb.oem_name[3] <= 0x7F && fakeBpb.oem_name[4] >= 0x20 &&
+                                fakeBpb.oem_name[4] <= 0x7F && fakeBpb.oem_name[5] >= 0x20 &&
+                                fakeBpb.oem_name[5] <= 0x7F && fakeBpb.oem_name[6] >= 0x20 &&
+                                fakeBpb.oem_name[6] <= 0x7F && fakeBpb.oem_name[7] >= 0x20 &&
+                                fakeBpb.oem_name[7] <= 0x7F)
+                            XmlFsType.SystemIdentifier = StringHandlers.CToString(fakeBpb.oem_name, Encoding, start: 1);
+                    }
+
+                    if(fakeBpb.signature == 0x28 || fakeBpb.signature == 0x29)
+                        XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
+                }
+
+                if(bpbKind != BpbKind.Human)
+                    if(fakeBpb.sectors == 0)
+                        XmlFsType.Clusters = fakeBpb.spc == 0 ? fakeBpb.big_sectors : fakeBpb.big_sectors / fakeBpb.spc;
+                    else
+                        XmlFsType.Clusters =
+                            (ulong)(fakeBpb.spc == 0 ? fakeBpb.sectors : fakeBpb.sectors / fakeBpb.spc);
+                else XmlFsType.Clusters = humanBpb.clusters == 0 ? humanBpb.big_clusters : humanBpb.clusters;
+
+                sectorsPerCluster     = fakeBpb.spc;
+                XmlFsType.ClusterSize = (uint)(fakeBpb.bps * fakeBpb.spc);
+                reservedSectors       = fakeBpb.rsectors;
+                sectorsPerFat         = fakeBpb.spfat;
+
+                if(fakeBpb.signature == 0x28 || fakeBpb.signature == 0x29 || andosOemCorrect)
+                {
+                    if((fakeBpb.flags & 0xF8) == 0x00)
+                        if((fakeBpb.flags & 0x01) == 0x01)
+                            XmlFsType.Dirty = true;
+
+                    if(fakeBpb.signature == 0x29 || andosOemCorrect)
+                        XmlFsType.VolumeName = Encoding.ASCII.GetString(fakeBpb.volume_label);
+                }
+
+                // Workaround that PCExchange jumps into "FAT16   "...
+                if(XmlFsType.SystemIdentifier == "PCX 2.0 ") fakeBpb.jump[1] += 8;
+
+                // Check that jumps to a correct boot code position and has boot signature set.
+                // This will mean that the volume will boot, even if just to say "this is not bootable change disk"......
+                if(XmlFsType.Bootable == false && fakeBpb.jump != null)
+                    XmlFsType.Bootable |=
+                        fakeBpb.jump[0] == 0xEB && fakeBpb.jump[1] >= minBootNearJump && fakeBpb.jump[1] < 0x80 ||
+                        fakeBpb.jump[0]                        == 0xE9            && fakeBpb.jump.Length >= 3 &&
+                        BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
+                        BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC;
+
+                sectorsPerRealSector =  fakeBpb.bps / imagePlugin.Info.SectorSize;
+                sectorsPerCluster    *= sectorsPerRealSector;
+
+                // First root directory sector
+                firstClusterSector =
+                    (ulong)(fakeBpb.spfat * fakeBpb.fats_no + fakeBpb.rsectors) * sectorsPerRealSector;
+                sectorsForRootDirectory = (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
+            }
+
+            firstClusterSector += partition.Start;
+
+            if(!fat32)
+                if(firstClusterSector + partition.Start < partition.End &&
+                   imagePlugin.Info.XmlMediaType        != XmlMediaType.OpticalDisc)
+                {
+                    byte[] rootDirectory = imagePlugin.ReadSectors(firstClusterSector, sectorsForRootDirectory);
+
+                    if(bpbKind == BpbKind.DecRainbow)
+                    {
+                        MemoryStream rootMs = new MemoryStream();
+                        foreach(byte[] tmp in from ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20}
+                                              select imagePlugin.ReadSector(rootSector))
+                            rootMs.Write(tmp, 0, tmp.Length);
+
+                        rootDirectory = rootMs.ToArray();
+                    }
+
+                    for(int i = 0; i < rootDirectory.Length; i += 32)
+                    {
+                        // Not a correct entry
+                        if(rootDirectory[i] < 0x20 && rootDirectory[i] != 0x05) continue;
+
+                        // Deleted or subdirectory entry
+                        if(rootDirectory[i] == 0x2E || rootDirectory[i] == 0xE5) continue;
+
+                        // Not a volume label
+                        if(rootDirectory[i + 0x0B] != 0x08 && rootDirectory[i + 0x0B] != 0x28) continue;
+
+                        DirectoryEntry entry =
+                            Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i, 32);
+
+                        byte[] fullname = new byte[11];
+                        Array.Copy(entry.filename,  0, fullname, 0, 8);
+                        Array.Copy(entry.extension, 0, fullname, 8, 3);
+                        string volname = Encoding.GetString(fullname).Trim();
+                        if(!string.IsNullOrEmpty(volname))
+                            XmlFsType.VolumeName = (entry.caseinfo & 0x0C) > 0 ? volname.ToLower() : volname;
+
+                        if(entry.ctime > 0 && entry.cdate > 0)
+                        {
+                            XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
+                            if(entry.ctime_ms > 0)
+                                XmlFsType.CreationDate = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
+                            XmlFsType.CreationDateSpecified = true;
+                        }
+
+                        if(entry.mtime > 0 && entry.mdate > 0)
+                        {
+                            XmlFsType.ModificationDate          = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
+                            XmlFsType.ModificationDateSpecified = true;
+                        }
+
+                        break;
+                    }
+                }
+
+            XmlFsType.VolumeName = XmlFsType.VolumeName?.Trim();
+            fatFirstSector       = partition.Start + reservedSectors * sectorsPerRealSector;
+
+            mounted = true;
+            return Errno.NoError;
+        }
 
         /// <summary>
         ///     Umounts this Lisa filesystem
         /// </summary>
-        public Errno Unmount() => throw new NotImplementedException();
+        public Errno Unmount()
+        {
+            if(!mounted) return Errno.AccessDenied;
+
+            mounted = false;
+            return Errno.NoError;
+        }
 
         /// <summary>
         ///     Gets information about the mounted volume.
         /// </summary>
         /// <param name="stat">Information about the mounted volume.</param>
-        public Errno StatFs(out FileSystemInfo stat) => throw new NotImplementedException();
+        public Errno StatFs(out FileSystemInfo stat)
+        {
+            stat = null;
+            if(!mounted) return Errno.AccessDenied;
+
+            throw new NotImplementedException();
+        }
     }
 }

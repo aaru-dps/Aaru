@@ -54,6 +54,12 @@ namespace DiscImageChef.Filesystems.FAT
         /// </summary>
         /// <param name="path">Directory path.</param>
         /// <param name="contents">Directory contents.</param>
-        public Errno ReadDir(string path, out List<string> contents) => throw new NotImplementedException();
+        public Errno ReadDir(string path, out List<string> contents)
+        {
+            contents = null;
+            if(!mounted) return Errno.AccessDenied;
+
+            throw new NotImplementedException();
+        }
     }
 }

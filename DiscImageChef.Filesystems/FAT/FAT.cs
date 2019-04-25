@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
 using Schemas;
@@ -39,13 +40,33 @@ namespace DiscImageChef.Filesystems.FAT
 {
     // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
     // X68K uses cdate/adate from direntry for extending filename
-    public partial class FAT : IFilesystem
+    public partial class FAT : IReadOnlyFilesystem
     {
+        bool  debug;
+        bool  fat12;
+        bool  fat16;
+        bool  fat32;
+        ulong fatFirstSector;
+        ulong firstClusterSector;
+        bool  mounted;
+        uint  reservedSectors;
+        uint  sectorsPerCluster;
+        uint  sectorsPerFat;
+        bool  useFirstFat;
+
         public FileSystemType XmlFsType { get; private set; }
 
         public Encoding Encoding { get; private set; }
         public string   Name     => "Microsoft File Allocation Table";
         public Guid     Id       => new Guid("33513B2C-0D26-0D2D-32C3-79D8611158E0");
         public string   Author   => "Natalia Portillo";
+
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new (string name, Type type, string description)[] { };
+
+        public Dictionary<string, string> Namespaces => null;
+
+        static Dictionary<string, string> GetDefaultOptions() =>
+            new Dictionary<string, string> {{"debug", false.ToString()}};
     }
 }
