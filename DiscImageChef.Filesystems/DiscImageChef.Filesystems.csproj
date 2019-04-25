@@ -60,6 +60,7 @@
     <Compile Include="FATX\Info.cs" />
     <Compile Include="FATX\Structs.cs" />
     <Compile Include="FATX\Super.cs" />
+    <Compile Include="FAT\BPB.cs" />
     <Compile Include="FAT\Consts.cs" />
     <Compile Include="FAT\Dir.cs" />
     <Compile Include="FAT\FAT.cs" />

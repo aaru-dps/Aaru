@@ -147,5 +147,25 @@ namespace DiscImageChef.Filesystems.FAT
             Reserved     = 0x80,
             LFN          = 0x0F
         }
+
+        enum BpbKind
+        {
+            None,
+            Hardcoded,
+            Atari,
+            Msx,
+            Dos2,
+            Dos3,
+            Dos32,
+            Dos33,
+            ShortExtended,
+            Extended,
+            ShortFat32,
+            LongFat32,
+            Andos,
+            Apricot,
+            DecRainbow,
+            Human
+        }
     }
 }
