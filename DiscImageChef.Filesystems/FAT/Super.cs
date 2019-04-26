@@ -49,6 +49,10 @@ namespace DiscImageChef.Filesystems.FAT
 {
     public partial class FAT
     {
+        uint fatEntriesPerSector;
+
+        IMediaImage image;
+
         /// <summary>
         ///     Mounts an Apple Lisa filesystem
         /// </summary>
@@ -84,6 +88,7 @@ namespace DiscImageChef.Filesystems.FAT
             uint sectorsPerRealSector = 1;
             // This is needed because some OSes don't put volume label as first entry in the root directory
             uint sectorsForRootDirectory = 0;
+            uint rootDirectoryCluster    = 0;
 
             switch(bpbKind)
             {
@@ -101,6 +106,8 @@ namespace DiscImageChef.Filesystems.FAT
                         Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlock>(bpbSector);
                     Fat32ParameterBlockShort shortFat32Bpb =
                         Marshal.ByteArrayToStructureLittleEndian<Fat32ParameterBlockShort>(bpbSector);
+
+                    rootDirectoryCluster = fat32Bpb.root_cluster;
 
                     // This is to support FAT partitions on hybrid ISO/USB images
                     if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
@@ -308,92 +315,112 @@ namespace DiscImageChef.Filesystems.FAT
 
             firstClusterSector += partition.Start;
 
+            image = imagePlugin;
+
+            if(fat32) fatEntriesPerSector      = imagePlugin.Info.SectorSize     / 4;
+            else if(fat16) fatEntriesPerSector = imagePlugin.Info.SectorSize     / 2;
+            else fatEntriesPerSector           = imagePlugin.Info.SectorSize * 2 / 3;
+            fatFirstSector = partition.Start + reservedSectors * sectorsPerRealSector;
+
             rootDirectoryCache = new Dictionary<string, DirectoryEntry>();
+            byte[] rootDirectory = null;
 
             if(!fat32)
-                if(firstClusterSector + partition.Start < partition.End &&
-                   imagePlugin.Info.XmlMediaType        != XmlMediaType.OpticalDisc)
+            {
+                rootDirectory = imagePlugin.ReadSectors(firstClusterSector, sectorsForRootDirectory);
+
+                if(bpbKind == BpbKind.DecRainbow)
                 {
-                    byte[] rootDirectory = imagePlugin.ReadSectors(firstClusterSector, sectorsForRootDirectory);
+                    MemoryStream rootMs = new MemoryStream();
+                    foreach(byte[] tmp in from ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20}
+                                          select imagePlugin.ReadSector(rootSector)) rootMs.Write(tmp, 0, tmp.Length);
 
-                    if(bpbKind == BpbKind.DecRainbow)
-                    {
-                        MemoryStream rootMs = new MemoryStream();
-                        foreach(byte[] tmp in from ulong rootSector in new[] {0x17, 0x19, 0x1B, 0x1D, 0x1E, 0x20}
-                                              select imagePlugin.ReadSector(rootSector))
-                            rootMs.Write(tmp, 0, tmp.Length);
+                    rootDirectory = rootMs.ToArray();
+                }
+            }
+            else
+            {
+                if(rootDirectoryCluster == 0) return Errno.InvalidArgument;
 
-                        rootDirectory = rootMs.ToArray();
-                    }
+                MemoryStream rootMs                = new MemoryStream();
+                uint[]       rootDirectoryClusters = GetClusters(rootDirectoryCluster);
 
-                    for(int i = 0; i < rootDirectory.Length; i += 32)
-                    {
-                        DirectoryEntry entry =
-                            Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i, 32);
+                foreach(uint cluster in rootDirectoryClusters)
+                {
+                    byte[] buffer =
+                        imagePlugin.ReadSectors(firstClusterSector + (cluster - 2) * sectorsPerCluster,
+                                                sectorsPerCluster);
 
-                        if(entry.filename[0] == DIRENT_FINISHED) break;
-
-                        // Not a correct entry
-                        if(entry.filename[0] < DIRENT_MIN && entry.filename[0] != DIRENT_E5) continue;
-
-                        // Deleted or subdirectory entry
-                        if(entry.filename[0] == DIRENT_SUBDIR || entry.filename[0] == DIRENT_DELETED) continue;
-
-                        // TODO: LFN namespace
-                        if(entry.attributes.HasFlag(FatAttributes.LFN)) continue;
-
-                        string filename;
-
-                        if(entry.attributes.HasFlag(FatAttributes.VolumeLabel))
-                        {
-                            byte[] fullname = new byte[11];
-                            Array.Copy(entry.filename,  0, fullname, 0, 8);
-                            Array.Copy(entry.extension, 0, fullname, 8, 3);
-                            string volname = Encoding.GetString(fullname).Trim();
-                            if(!string.IsNullOrEmpty(volname))
-                                XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 ? volname.ToLower() : volname;
-
-                            if(entry.ctime > 0 && entry.cdate > 0)
-                            {
-                                XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
-                                if(entry.ctime_ms > 0)
-                                    XmlFsType.CreationDate =
-                                        XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
-                                XmlFsType.CreationDateSpecified = true;
-                            }
-
-                            if(entry.mtime > 0 && entry.mdate > 0)
-                            {
-                                XmlFsType.ModificationDate =
-                                    DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
-                                XmlFsType.ModificationDateSpecified = true;
-                            }
-
-                            continue;
-                        }
-
-                        if(entry.filename[0] == DIRENT_E5) entry.filename[0] = DIRENT_DELETED;
-
-                        string name      = Encoding.GetString(entry.filename).Trim();
-                        string extension = Encoding.GetString(entry.extension).Trim();
-
-                        if((entry.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
-                            extension = extension.ToLower(CultureInfo.CurrentCulture);
-
-                        if((entry.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0)
-                            name = name.ToLower(CultureInfo.CurrentCulture);
-
-                        if(extension != "") filename = name + "." + extension;
-                        else filename                = name;
-
-                        rootDirectoryCache.Add(filename, entry);
-                    }
+                    rootMs.Write(buffer, 0, buffer.Length);
                 }
 
-            XmlFsType.VolumeName = XmlFsType.VolumeName?.Trim();
-            fatFirstSector       = partition.Start + reservedSectors * sectorsPerRealSector;
+                rootDirectory = rootMs.ToArray();
+            }
 
-            mounted = true;
+            if(rootDirectory is null) return Errno.InvalidArgument;
+
+            for(int i = 0; i < rootDirectory.Length; i += 32)
+            {
+                DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i, 32);
+
+                if(entry.filename[0] == DIRENT_FINISHED) break;
+
+                // Not a correct entry
+                if(entry.filename[0] < DIRENT_MIN && entry.filename[0] != DIRENT_E5) continue;
+
+                // Deleted or subdirectory entry
+                if(entry.filename[0] == DIRENT_SUBDIR || entry.filename[0] == DIRENT_DELETED) continue;
+
+                // TODO: LFN namespace
+                if(entry.attributes.HasFlag(FatAttributes.LFN)) continue;
+
+                string filename;
+
+                if(entry.attributes.HasFlag(FatAttributes.VolumeLabel))
+                {
+                    byte[] fullname = new byte[11];
+                    Array.Copy(entry.filename,  0, fullname, 0, 8);
+                    Array.Copy(entry.extension, 0, fullname, 8, 3);
+                    string volname = Encoding.GetString(fullname).Trim();
+                    if(!string.IsNullOrEmpty(volname))
+                        XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 ? volname.ToLower() : volname;
+
+                    if(entry.ctime > 0 && entry.cdate > 0)
+                    {
+                        XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
+                        if(entry.ctime_ms > 0)
+                            XmlFsType.CreationDate = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
+                        XmlFsType.CreationDateSpecified = true;
+                    }
+
+                    if(entry.mtime > 0 && entry.mdate > 0)
+                    {
+                        XmlFsType.ModificationDate          = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
+                        XmlFsType.ModificationDateSpecified = true;
+                    }
+
+                    continue;
+                }
+
+                if(entry.filename[0] == DIRENT_E5) entry.filename[0] = DIRENT_DELETED;
+
+                string name      = Encoding.GetString(entry.filename).Trim();
+                string extension = Encoding.GetString(entry.extension).Trim();
+
+                if((entry.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
+                    extension = extension.ToLower(CultureInfo.CurrentCulture);
+
+                if((entry.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0) name = name.ToLower(CultureInfo.CurrentCulture);
+
+                if(extension != "") filename = name + "." + extension;
+                else filename                = name;
+
+                rootDirectoryCache.Add(filename, entry);
+            }
+
+            XmlFsType.VolumeName = XmlFsType.VolumeName?.Trim();
+            mounted              = true;
+
             return Errno.NoError;
         }
 
