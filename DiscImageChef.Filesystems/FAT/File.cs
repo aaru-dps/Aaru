@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(fat12) return null;
 
-            ulong nextSector = nextCluster / fatEntriesPerSector + fatFirstSector;
+            ulong nextSector = nextCluster / fatEntriesPerSector + fatFirstSector + (useFirstFat ? 0 : sectorsPerFat);
             int   nextEntry  = (int)(nextCluster % fatEntriesPerSector);
 
             ulong  currentSector = nextSector;
@@ -99,8 +99,9 @@ namespace DiscImageChef.Filesystems.FAT
                     }
 
                     nextCluster = BitConverter.ToUInt32(fatData, nextEntry * 4);
-                    nextSector  = nextCluster / fatEntriesPerSector + fatFirstSector;
-                    nextEntry   = (int)(nextCluster % fatEntriesPerSector);
+                    nextSector = nextCluster / fatEntriesPerSector + fatFirstSector +
+                                  (useFirstFat ? 0 : sectorsPerFat);
+                    nextEntry = (int)(nextCluster % fatEntriesPerSector);
                 }
             else if(fat16)
                 while(nextCluster > 0 && nextCluster <= FAT16_BAD)
@@ -114,8 +115,9 @@ namespace DiscImageChef.Filesystems.FAT
                     }
 
                     nextCluster = BitConverter.ToUInt16(fatData, nextEntry * 2);
-                    nextSector  = nextCluster / fatEntriesPerSector + fatFirstSector;
-                    nextEntry   = (int)(nextCluster % fatEntriesPerSector);
+                    nextSector = nextCluster / fatEntriesPerSector + fatFirstSector +
+                                  (useFirstFat ? 0 : sectorsPerFat);
+                    nextEntry = (int)(nextCluster % fatEntriesPerSector);
                 }
 
             return clusters.ToArray();
