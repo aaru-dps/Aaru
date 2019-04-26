@@ -49,7 +49,7 @@ namespace DiscImageChef.Filesystems.FAT
             xattrs = null;
             if(!mounted) return Errno.AccessDenied;
 
-            throw new NotImplementedException();
+            return Errno.NotSupported;
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems.FAT
         {
             if(!mounted) return Errno.AccessDenied;
 
-            throw new NotImplementedException();
+            return Errno.NotSupported;
         }
     }
 }
