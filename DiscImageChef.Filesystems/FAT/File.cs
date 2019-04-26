@@ -52,7 +52,13 @@ namespace DiscImageChef.Filesystems.FAT
             attributes = new FileAttributes();
             if(!mounted) return Errno.AccessDenied;
 
-            throw new NotImplementedException();
+            Errno err = Stat(path, out FileEntryInfo stat);
+
+            if(err != Errno.NoError) return err;
+
+            attributes = stat.Attributes;
+
+            return Errno.NoError;
         }
 
         public Errno Read(string path, long offset, long size, ref byte[] buf)
