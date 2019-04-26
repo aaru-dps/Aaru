@@ -67,7 +67,39 @@ namespace DiscImageChef.Filesystems.FAT
             stat = null;
             if(!mounted) return Errno.AccessDenied;
 
-            throw new NotImplementedException();
+            Errno err = GetFileEntry(path, out DirectoryEntry entry);
+            if(err != Errno.NoError) return err;
+
+            stat = new FileEntryInfo
+            {
+                Attributes    = new FileAttributes(),
+                Blocks        = entry.size / bytesPerCluster,
+                BlockSize     = bytesPerCluster,
+                Length        = entry.size,
+                Inode         = entry.start_cluster,
+                Links         = 1,
+                CreationTime  = DateHandlers.DosToDateTime(entry.cdate, entry.ctime),
+                LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime)
+            };
+
+            stat.CreationTime = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
+
+            if(entry.size % bytesPerCluster > 0) stat.Blocks++;
+
+            if(entry.attributes.HasFlag(FatAttributes.Subdirectory))
+            {
+                stat.Attributes |= FileAttributes.Directory;
+                stat.Blocks     =  GetClusters(entry.start_cluster).Length;
+                stat.Length     =  stat.Blocks * stat.BlockSize;
+            }
+
+            if(entry.attributes.HasFlag(FatAttributes.ReadOnly)) stat.Attributes |= FileAttributes.ReadOnly;
+            if(entry.attributes.HasFlag(FatAttributes.Hidden)) stat.Attributes   |= FileAttributes.Hidden;
+            if(entry.attributes.HasFlag(FatAttributes.System)) stat.Attributes   |= FileAttributes.System;
+            if(entry.attributes.HasFlag(FatAttributes.Archive)) stat.Attributes  |= FileAttributes.Archive;
+            if(entry.attributes.HasFlag(FatAttributes.Device)) stat.Attributes   |= FileAttributes.Device;
+
+            return Errno.NoError;
         }
 
         uint[] GetClusters(uint startCluster)
