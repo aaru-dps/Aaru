@@ -39,6 +39,34 @@ namespace DiscImageChef.Filesystems.FAT
         const uint FSINFO_SIGNATURE1 = 0x41615252;
         const uint FSINFO_SIGNATURE2 = 0x61417272;
         const uint FSINFO_SIGNATURE3 = 0xAA550000;
+        /// <summary>
+        ///     Directory finishes
+        /// </summary>
+        const byte DIRENT_FINISHED = 0x00;
+        /// <summary>
+        ///     Deleted directory entry
+        /// </summary>
+        const byte DIRENT_DELETED = 0xE5;
+        /// <summary>
+        ///     Minimum allowed value in name/extension
+        /// </summary>
+        const byte DIRENT_MIN = 0x20;
+        /// <summary>
+        ///     Value used instead of <see cref="DIRENT_FINISHED" /> for first name character
+        /// </summary>
+        const byte DIRENT_E5 = 0x05;
+        /// <summary>
+        ///     Entry points to self or parent directory
+        /// </summary>
+        const byte DIRENT_SUBDIR = 0x2E;
+        /// <summary>
+        ///     FASTFAT.SYS indicator that extension is lowercase
+        /// </summary>
+        const byte FASTFAT_LOWERCASE_EXTENSION = 0x10;
+        /// <summary>
+        ///     FASTFAT.SYS indicator that basename is lowercase
+        /// </summary>
+        const byte FASTFAT_LOWERCASE_BASENAME = 0x08;
 
         readonly (string hash, string name)[] knownBootHashes =
         {

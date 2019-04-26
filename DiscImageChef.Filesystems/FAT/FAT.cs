@@ -42,17 +42,18 @@ namespace DiscImageChef.Filesystems.FAT
     // X68K uses cdate/adate from direntry for extending filename
     public partial class FAT : IReadOnlyFilesystem
     {
-        bool  debug;
-        bool  fat12;
-        bool  fat16;
-        bool  fat32;
-        ulong fatFirstSector;
-        ulong firstClusterSector;
-        bool  mounted;
-        uint  reservedSectors;
-        uint  sectorsPerCluster;
-        uint  sectorsPerFat;
-        bool  useFirstFat;
+        bool                               debug;
+        bool                               fat12;
+        bool                               fat16;
+        bool                               fat32;
+        ulong                              fatFirstSector;
+        ulong                              firstClusterSector;
+        bool                               mounted;
+        uint                               reservedSectors;
+        Dictionary<string, DirectoryEntry> rootDirectoryCache;
+        uint                               sectorsPerCluster;
+        uint                               sectorsPerFat;
+        bool                               useFirstFat;
 
         public FileSystemType XmlFsType { get; private set; }
 

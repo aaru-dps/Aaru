@@ -775,10 +775,10 @@ namespace DiscImageChef.Filesystems.FAT
                 for(int i = 0; i < rootDirectory.Length; i += 32)
                 {
                     // Not a correct entry
-                    if(rootDirectory[i] < 0x20 && rootDirectory[i] != 0x05) continue;
+                    if(rootDirectory[i] < DIRENT_MIN && rootDirectory[i] != DIRENT_E5) continue;
 
                     // Deleted or subdirectory entry
-                    if(rootDirectory[i] == 0x2E || rootDirectory[i] == 0xE5) continue;
+                    if(rootDirectory[i] == DIRENT_SUBDIR || rootDirectory[i] == DIRENT_DELETED) continue;
 
                     // Not a volume label
                     if(rootDirectory[i + 0x0B] != 0x08 && rootDirectory[i + 0x0B] != 0x28) continue;
@@ -791,7 +791,7 @@ namespace DiscImageChef.Filesystems.FAT
                     Array.Copy(entry.extension, 0, fullname, 8, 3);
                     string volname = Encoding.GetString(fullname).Trim();
                     if(!string.IsNullOrEmpty(volname))
-                        XmlFsType.VolumeName = (entry.caseinfo & 0x0C) > 0 ? volname.ToLower() : volname;
+                        XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 ? volname.ToLower() : volname;
 
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {

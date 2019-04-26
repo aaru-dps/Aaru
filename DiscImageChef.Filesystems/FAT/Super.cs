@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -307,6 +308,8 @@ namespace DiscImageChef.Filesystems.FAT
 
             firstClusterSector += partition.Start;
 
+            rootDirectoryCache = new Dictionary<string, DirectoryEntry>();
+
             if(!fat32)
                 if(firstClusterSector + partition.Start < partition.End &&
                    imagePlugin.Info.XmlMediaType        != XmlMediaType.OpticalDisc)
@@ -325,40 +328,65 @@ namespace DiscImageChef.Filesystems.FAT
 
                     for(int i = 0; i < rootDirectory.Length; i += 32)
                     {
-                        // Not a correct entry
-                        if(rootDirectory[i] < 0x20 && rootDirectory[i] != 0x05) continue;
-
-                        // Deleted or subdirectory entry
-                        if(rootDirectory[i] == 0x2E || rootDirectory[i] == 0xE5) continue;
-
-                        // Not a volume label
-                        if(rootDirectory[i + 0x0B] != 0x08 && rootDirectory[i + 0x0B] != 0x28) continue;
-
                         DirectoryEntry entry =
                             Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i, 32);
 
-                        byte[] fullname = new byte[11];
-                        Array.Copy(entry.filename,  0, fullname, 0, 8);
-                        Array.Copy(entry.extension, 0, fullname, 8, 3);
-                        string volname = Encoding.GetString(fullname).Trim();
-                        if(!string.IsNullOrEmpty(volname))
-                            XmlFsType.VolumeName = (entry.caseinfo & 0x0C) > 0 ? volname.ToLower() : volname;
+                        if(entry.filename[0] == DIRENT_FINISHED) break;
 
-                        if(entry.ctime > 0 && entry.cdate > 0)
+                        // Not a correct entry
+                        if(entry.filename[0] < DIRENT_MIN && entry.filename[0] != DIRENT_E5) continue;
+
+                        // Deleted or subdirectory entry
+                        if(entry.filename[0] == DIRENT_SUBDIR || entry.filename[0] == DIRENT_DELETED) continue;
+
+                        // TODO: LFN namespace
+                        if(entry.attributes.HasFlag(FatAttributes.LFN)) continue;
+
+                        string filename;
+
+                        if(entry.attributes.HasFlag(FatAttributes.VolumeLabel))
                         {
-                            XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
-                            if(entry.ctime_ms > 0)
-                                XmlFsType.CreationDate = XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
-                            XmlFsType.CreationDateSpecified = true;
+                            byte[] fullname = new byte[11];
+                            Array.Copy(entry.filename,  0, fullname, 0, 8);
+                            Array.Copy(entry.extension, 0, fullname, 8, 3);
+                            string volname = Encoding.GetString(fullname).Trim();
+                            if(!string.IsNullOrEmpty(volname))
+                                XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 ? volname.ToLower() : volname;
+
+                            if(entry.ctime > 0 && entry.cdate > 0)
+                            {
+                                XmlFsType.CreationDate = DateHandlers.DosToDateTime(entry.cdate, entry.ctime);
+                                if(entry.ctime_ms > 0)
+                                    XmlFsType.CreationDate =
+                                        XmlFsType.CreationDate.AddMilliseconds(entry.ctime_ms * 10);
+                                XmlFsType.CreationDateSpecified = true;
+                            }
+
+                            if(entry.mtime > 0 && entry.mdate > 0)
+                            {
+                                XmlFsType.ModificationDate =
+                                    DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
+                                XmlFsType.ModificationDateSpecified = true;
+                            }
+
+                            continue;
                         }
 
-                        if(entry.mtime > 0 && entry.mdate > 0)
-                        {
-                            XmlFsType.ModificationDate          = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
-                            XmlFsType.ModificationDateSpecified = true;
-                        }
+                        if(entry.filename[0] == DIRENT_E5) entry.filename[0] = DIRENT_DELETED;
 
-                        break;
+                        string name      = Encoding.GetString(entry.filename).Trim();
+                        string extension = Encoding.GetString(entry.extension).Trim();
+
+                        if((entry.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
+                            extension = extension.ToLower(CultureInfo.CurrentCulture);
+
+                        if((entry.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0)
+                            name = name.ToLower(CultureInfo.CurrentCulture);
+
+                        if(extension != "") filename = name + "." + extension;
+                        else filename                = name;
+
+                        rootDirectoryCache.Add(filename, entry);
                     }
                 }
 
