@@ -94,7 +94,6 @@ namespace DiscImageChef.Filesystems.FAT
                 FreeBlocks     = 0 // Requires traversing the FAT
             };
 
-
             // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
             uint sectorsPerRealSector = 1;
             // This is needed because some OSes don't put volume label as first entry in the root directory
@@ -145,7 +144,7 @@ namespace DiscImageChef.Filesystems.FAT
 
                     sectorsPerFat          = fat32Bpb.big_spfat;
                     XmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
-                    statfs.Id = new FileSystemId {IsInt = true, Serial32 = fat32Bpb.serial_no};
+                    statfs.Id              = new FileSystemId {IsInt = true, Serial32 = fat32Bpb.serial_no};
 
                     if((fat32Bpb.flags & 0xF8) == 0x00)
                         if((fat32Bpb.flags & 0x01) == 0x01)
@@ -250,7 +249,12 @@ namespace DiscImageChef.Filesystems.FAT
                     {
                         XmlFsType.VolumeSerial =
                             $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]:X2}";
-                        statfs.Id = new FileSystemId {IsInt = true, Serial32 = (uint)((atariBpb.serial_no[0] << 16) + (atariBpb.serial_no[1] << 8) + atariBpb.serial_no[2])};
+                        statfs.Id = new FileSystemId
+                        {
+                            IsInt = true,
+                            Serial32 = (uint)((atariBpb.serial_no[0] << 16) + (atariBpb.serial_no[1] << 8) +
+                                              atariBpb.serial_no[2])
+                        };
                     }
 
                     XmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
@@ -283,7 +287,7 @@ namespace DiscImageChef.Filesystems.FAT
                     if(fakeBpb.signature == 0x28 || fakeBpb.signature == 0x29)
                     {
                         XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
-                        statfs.Id = new FileSystemId {IsInt = true, Serial32 = fakeBpb.serial_no};
+                        statfs.Id              = new FileSystemId {IsInt = true, Serial32 = fakeBpb.serial_no};
                     }
                 }
 
@@ -377,17 +381,25 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(rootDirectory is null) return Errno.InvalidArgument;
 
-            for(int i = 0; i < rootDirectory.Length; i += 32)
+            for(int i = 0; i < rootDirectory.Length; i += Marshal.SizeOf<DirectoryEntry>())
             {
-                DirectoryEntry entry = Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i, 32);
+                DirectoryEntry entry =
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(rootDirectory, i,
+                                                                             Marshal.SizeOf<DirectoryEntry>());
 
                 if(entry.filename[0] == DIRENT_FINISHED) break;
 
                 // Not a correct entry
                 if(entry.filename[0] < DIRENT_MIN && entry.filename[0] != DIRENT_E5) continue;
 
-                // Deleted or subdirectory entry
-                if(entry.filename[0] == DIRENT_SUBDIR || entry.filename[0] == DIRENT_DELETED) continue;
+                // Self
+                if(Encoding.GetString(entry.filename).TrimEnd() == ".") continue;
+
+                // Parent
+                if(Encoding.GetString(entry.filename).TrimEnd() == "..") continue;
+
+                // Deleted
+                if(entry.filename[0] == DIRENT_DELETED) continue;
 
                 // TODO: LFN namespace
                 if(entry.attributes.HasFlag(FatAttributes.LFN)) continue;
@@ -422,8 +434,8 @@ namespace DiscImageChef.Filesystems.FAT
 
                 if(entry.filename[0] == DIRENT_E5) entry.filename[0] = DIRENT_DELETED;
 
-                string name      = Encoding.GetString(entry.filename).Trim();
-                string extension = Encoding.GetString(entry.extension).Trim();
+                string name      = Encoding.GetString(entry.filename).TrimEnd();
+                string extension = Encoding.GetString(entry.extension).TrimEnd();
 
                 if((entry.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
                     extension = extension.ToLower(CultureInfo.CurrentCulture);
@@ -437,40 +449,53 @@ namespace DiscImageChef.Filesystems.FAT
             }
 
             XmlFsType.VolumeName = XmlFsType.VolumeName?.Trim();
-            mounted              = true;
-
-            statfs.Blocks = XmlFsType.Clusters;
+            statfs.Blocks        = XmlFsType.Clusters;
 
             switch(bpbKind)
             {
                 case BpbKind.Hardcoded:
                     statfs.Type = $"Microsoft FAT{(fat16 ? "16" : "12")}";
                     break;
-                case BpbKind.Atari: statfs.Type = $"Atari FAT{(fat16 ? "16" : "12")}";
+                case BpbKind.Atari:
+                    statfs.Type = $"Atari FAT{(fat16 ? "16" : "12")}";
                     break;
-                case BpbKind.Msx: statfs.Type = $"MSX FAT{(fat16 ? "16" : "12")}";
+                case BpbKind.Msx:
+                    statfs.Type = $"MSX FAT{(fat16 ? "16" : "12")}";
                     break;
                 case BpbKind.Dos2:
                 case BpbKind.Dos3:
                 case BpbKind.Dos32:
                 case BpbKind.Dos33:
                 case BpbKind.ShortExtended:
-                case BpbKind.Extended: statfs.Type = $"Microsoft FAT{(fat16 ? "16" : "12")}";
+                case BpbKind.Extended:
+                    statfs.Type = $"Microsoft FAT{(fat16 ? "16" : "12")}";
                     break;
                 case BpbKind.ShortFat32:
-                case BpbKind.LongFat32: statfs.Type = XmlFsType.Type == "FAT+" ? "FAT+" : "Microsoft FAT32";
+                case BpbKind.LongFat32:
+                    statfs.Type = XmlFsType.Type == "FAT+" ? "FAT+" : "Microsoft FAT32";
                     break;
-                case BpbKind.Andos: statfs.Type = $"ANDOS FAT{(fat16 ? "16" : "12")}";
+                case BpbKind.Andos:
+                    statfs.Type = $"ANDOS FAT{(fat16 ? "16" : "12")}";
                     break;
-                case BpbKind.Apricot: statfs.Type = $"Apricot FAT{(fat16 ? "16" : "12")}";
+                case BpbKind.Apricot:
+                    statfs.Type = $"Apricot FAT{(fat16 ? "16" : "12")}";
                     break;
-                case BpbKind.DecRainbow: statfs.Type = $"DEC FAT{(fat16 ? "16" : "12")}";
+                case BpbKind.DecRainbow:
+                    statfs.Type = $"DEC FAT{(fat16 ? "16" : "12")}";
                     break;
-                case BpbKind.Human: statfs.Type = $"Human FAT{(fat16 ? "16" : "12")}";
+                case BpbKind.Human:
+                    statfs.Type = $"Human FAT{(fat16 ? "16" : "12")}";
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
 
+            bytesPerCluster = sectorsPerCluster * imagePlugin.Info.SectorSize;
+
+            // TODO: Check how this affects international filenames
+            cultureInfo    = new CultureInfo("en-US", false);
+            directoryCache = new Dictionary<string, Dictionary<string, DirectoryEntry>>();
+
+            mounted = true;
             return Errno.NoError;
         }
 

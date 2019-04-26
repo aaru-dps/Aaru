@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
@@ -43,19 +44,22 @@ namespace DiscImageChef.Filesystems.FAT
     // X68K uses cdate/adate from direntry for extending filename
     public partial class FAT : IReadOnlyFilesystem
     {
-        bool                               debug;
-        bool                               fat12;
-        bool                               fat16;
-        bool                               fat32;
-        ulong                              fatFirstSector;
-        ulong                              firstClusterSector;
-        bool                               mounted;
-        uint                               reservedSectors;
-        Dictionary<string, DirectoryEntry> rootDirectoryCache;
-        uint                               sectorsPerCluster;
-        uint                               sectorsPerFat;
-        bool                               useFirstFat;
-        FileSystemInfo statfs;
+        uint                                                   bytesPerCluster;
+        CultureInfo                                            cultureInfo;
+        bool                                                   debug;
+        Dictionary<string, Dictionary<string, DirectoryEntry>> directoryCache;
+        bool                                                   fat12;
+        bool                                                   fat16;
+        bool                                                   fat32;
+        ulong                                                  fatFirstSector;
+        ulong                                                  firstClusterSector;
+        bool                                                   mounted;
+        uint                                                   reservedSectors;
+        Dictionary<string, DirectoryEntry>                     rootDirectoryCache;
+        uint                                                   sectorsPerCluster;
+        uint                                                   sectorsPerFat;
+        FileSystemInfo                                         statfs;
+        bool                                                   useFirstFat;
 
         public FileSystemType XmlFsType { get; private set; }
 
