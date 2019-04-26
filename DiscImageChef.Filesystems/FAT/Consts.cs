@@ -67,6 +67,16 @@ namespace DiscImageChef.Filesystems.FAT
         ///     FASTFAT.SYS indicator that basename is lowercase
         /// </summary>
         const byte FASTFAT_LOWERCASE_BASENAME = 0x08;
+        const uint   FAT32_MASK      = 0x0FFFFFFF;
+        const uint   FAT32_END_MASK  = 0xFFFFFF8;
+        const uint   FAT32_FORMATTED = 0xFFFFFF6;
+        const uint   FAT32_BAD       = 0xFFFFFF7;
+        const ushort FAT16_END_MASK  = 0xFFF8;
+        const ushort FAT16_FORMATTED = 0xFFF6;
+        const ushort FAT16_BAD       = 0xFFF7;
+        const ushort FAT12_END_MASK  = 0xFF8;
+        const ushort FAT12_FORMATTED = 0xFF6;
+        const ushort FAT12_BAD       = 0xFF7;
 
         readonly (string hash, string name)[] knownBootHashes =
         {

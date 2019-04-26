@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.Filesystems.FAT
@@ -66,6 +67,58 @@ namespace DiscImageChef.Filesystems.FAT
             if(!mounted) return Errno.AccessDenied;
 
             throw new NotImplementedException();
+        }
+
+        uint[] GetClusters(uint startCluster)
+        {
+            if(startCluster == 0) return null;
+
+            if(startCluster >= XmlFsType.Clusters) return null;
+
+            List<uint> clusters = new List<uint>();
+
+            uint nextCluster = startCluster;
+
+            if(fat12) return null;
+
+            ulong nextSector = nextCluster / fatEntriesPerSector + fatFirstSector;
+            int   nextEntry  = (int)(nextCluster % fatEntriesPerSector);
+
+            ulong  currentSector = nextSector;
+            byte[] fatData       = image.ReadSector(currentSector);
+
+            if(fat32)
+                while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_BAD)
+                {
+                    clusters.Add(nextCluster);
+
+                    if(currentSector != nextSector)
+                    {
+                        fatData       = image.ReadSector(nextSector);
+                        currentSector = nextSector;
+                    }
+
+                    nextCluster = BitConverter.ToUInt32(fatData, nextEntry * 4);
+                    nextSector  = nextCluster / fatEntriesPerSector + fatFirstSector;
+                    nextEntry   = (int)(nextCluster % fatEntriesPerSector);
+                }
+            else if(fat16)
+                while(nextCluster > 0 && nextCluster <= FAT16_BAD)
+                {
+                    clusters.Add(nextCluster);
+
+                    if(currentSector != nextSector)
+                    {
+                        fatData       = image.ReadSector(nextSector);
+                        currentSector = nextSector;
+                    }
+
+                    nextCluster = BitConverter.ToUInt16(fatData, nextEntry * 2);
+                    nextSector  = nextCluster / fatEntriesPerSector + fatFirstSector;
+                    nextEntry   = (int)(nextCluster % fatEntriesPerSector);
+                }
+
+            return clusters.ToArray();
         }
     }
 }
