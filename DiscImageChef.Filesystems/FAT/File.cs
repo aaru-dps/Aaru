@@ -44,7 +44,19 @@ namespace DiscImageChef.Filesystems.FAT
             deviceBlock = 0;
             if(!mounted) return Errno.AccessDenied;
 
-            throw new NotImplementedException();
+            Errno err = Stat(path, out FileEntryInfo stat);
+
+            if(err != Errno.NoError) return err;
+
+            if(stat.Attributes.HasFlag(FileAttributes.Directory) && !debug) return Errno.IsDirectory;
+
+            uint[] clusters = GetClusters((uint)stat.Inode);
+
+            if(fileBlock >= clusters.Length) return Errno.InvalidArgument;
+
+            deviceBlock = (long)(firstClusterSector + (clusters[fileBlock] - 2) * sectorsPerCluster);
+
+            return Errno.NoError;
         }
 
         public Errno GetAttributes(string path, out FileAttributes attributes)
