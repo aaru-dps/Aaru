@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.Filesystems.FAT
@@ -121,6 +122,36 @@ namespace DiscImageChef.Filesystems.FAT
                 }
 
             return clusters.ToArray();
+        }
+
+        Errno GetFileEntry(string path, out DirectoryEntry entry)
+        {
+            entry = new DirectoryEntry();
+
+            string cutPath =
+                path.StartsWith("/") ? path.Substring(1).ToLower(cultureInfo) : path.ToLower(cultureInfo);
+            string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+
+            if(pieces.Length == 0) return Errno.InvalidArgument;
+
+            string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
+
+            Errno err = ReadDir(parentPath, out _);
+
+            if(err != Errno.NoError) return err;
+
+            Dictionary<string, DirectoryEntry> parent;
+
+            if(pieces.Length == 1) parent = rootDirectoryCache;
+            else if(!directoryCache.TryGetValue(parentPath, out parent)) return Errno.InvalidArgument;
+
+            KeyValuePair<string, DirectoryEntry> dirent =
+                parent.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[pieces.Length - 1]);
+
+            if(string.IsNullOrEmpty(dirent.Key)) return Errno.NoSuchFile;
+
+            entry = dirent.Value;
+            return Errno.NoError;
         }
     }
 }
