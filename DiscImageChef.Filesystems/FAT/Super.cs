@@ -84,6 +84,17 @@ namespace DiscImageChef.Filesystems.FAT
             useFirstFat        = true;
             XmlFsType.Bootable = bootable;
 
+            statfs = new FileSystemInfo
+            {
+                Blocks         = XmlFsType.Clusters,
+                FilenameLength = 11,
+                Files          = 0, // Requires traversing all directories
+                FreeFiles      = 0,
+                PluginId       = Id,
+                FreeBlocks     = 0 // Requires traversing the FAT
+            };
+
+
             // This is needed because for FAT16, GEMDOS increases bytes per sector count instead of using big_sectors field.
             uint sectorsPerRealSector = 1;
             // This is needed because some OSes don't put volume label as first entry in the root directory
@@ -134,6 +145,7 @@ namespace DiscImageChef.Filesystems.FAT
 
                     sectorsPerFat          = fat32Bpb.big_spfat;
                     XmlFsType.VolumeSerial = $"{fat32Bpb.serial_no:X8}";
+                    statfs.Id = new FileSystemId {IsInt = true, Serial32 = fat32Bpb.serial_no};
 
                     if((fat32Bpb.flags & 0xF8) == 0x00)
                         if((fat32Bpb.flags & 0x01) == 0x01)
@@ -235,8 +247,11 @@ namespace DiscImageChef.Filesystems.FAT
                 if(bpbKind == BpbKind.Atari)
                 {
                     if(atariBpb.serial_no[0] != 0x49 || atariBpb.serial_no[1] != 0x48 || atariBpb.serial_no[2] != 0x43)
+                    {
                         XmlFsType.VolumeSerial =
                             $"{atariBpb.serial_no[0]:X2}{atariBpb.serial_no[1]:X2}{atariBpb.serial_no[2]:X2}";
+                        statfs.Id = new FileSystemId {IsInt = true, Serial32 = (uint)((atariBpb.serial_no[0] << 16) + (atariBpb.serial_no[1] << 8) + atariBpb.serial_no[2])};
+                    }
 
                     XmlFsType.SystemIdentifier = StringHandlers.CToString(atariBpb.oem_name);
                     if(string.IsNullOrEmpty(XmlFsType.SystemIdentifier)) XmlFsType.SystemIdentifier = null;
@@ -266,7 +281,10 @@ namespace DiscImageChef.Filesystems.FAT
                     }
 
                     if(fakeBpb.signature == 0x28 || fakeBpb.signature == 0x29)
+                    {
                         XmlFsType.VolumeSerial = $"{fakeBpb.serial_no:X8}";
+                        statfs.Id = new FileSystemId {IsInt = true, Serial32 = fakeBpb.serial_no};
+                    }
                 }
 
                 if(bpbKind != BpbKind.Human)
@@ -421,6 +439,38 @@ namespace DiscImageChef.Filesystems.FAT
             XmlFsType.VolumeName = XmlFsType.VolumeName?.Trim();
             mounted              = true;
 
+            statfs.Blocks = XmlFsType.Clusters;
+
+            switch(bpbKind)
+            {
+                case BpbKind.Hardcoded:
+                    statfs.Type = $"Microsoft FAT{(fat16 ? "16" : "12")}";
+                    break;
+                case BpbKind.Atari: statfs.Type = $"Atari FAT{(fat16 ? "16" : "12")}";
+                    break;
+                case BpbKind.Msx: statfs.Type = $"MSX FAT{(fat16 ? "16" : "12")}";
+                    break;
+                case BpbKind.Dos2:
+                case BpbKind.Dos3:
+                case BpbKind.Dos32:
+                case BpbKind.Dos33:
+                case BpbKind.ShortExtended:
+                case BpbKind.Extended: statfs.Type = $"Microsoft FAT{(fat16 ? "16" : "12")}";
+                    break;
+                case BpbKind.ShortFat32:
+                case BpbKind.LongFat32: statfs.Type = XmlFsType.Type == "FAT+" ? "FAT+" : "Microsoft FAT32";
+                    break;
+                case BpbKind.Andos: statfs.Type = $"ANDOS FAT{(fat16 ? "16" : "12")}";
+                    break;
+                case BpbKind.Apricot: statfs.Type = $"Apricot FAT{(fat16 ? "16" : "12")}";
+                    break;
+                case BpbKind.DecRainbow: statfs.Type = $"DEC FAT{(fat16 ? "16" : "12")}";
+                    break;
+                case BpbKind.Human: statfs.Type = $"Human FAT{(fat16 ? "16" : "12")}";
+                    break;
+                default: throw new ArgumentOutOfRangeException();
+            }
+
             return Errno.NoError;
         }
 
@@ -444,7 +494,8 @@ namespace DiscImageChef.Filesystems.FAT
             stat = null;
             if(!mounted) return Errno.AccessDenied;
 
-            throw new NotImplementedException();
+            stat = statfs.ShallowCopy();
+            return Errno.NoError;
         }
     }
 }

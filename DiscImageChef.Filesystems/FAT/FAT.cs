@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.FAT
@@ -54,6 +55,7 @@ namespace DiscImageChef.Filesystems.FAT
         uint                               sectorsPerCluster;
         uint                               sectorsPerFat;
         bool                               useFirstFat;
+        FileSystemInfo statfs;
 
         public FileSystemType XmlFsType { get; private set; }
 
