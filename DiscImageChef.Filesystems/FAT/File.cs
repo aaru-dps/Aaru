@@ -192,17 +192,7 @@ namespace DiscImageChef.Filesystems.FAT
                 while(nextCluster > 0 && nextCluster <= FAT16_FORMATTED)
                 {
                     clusters.Add(nextCluster);
-
-                    if(currentSector != nextSector)
-                    {
-                        fatData       = image.ReadSector(nextSector);
-                        currentSector = nextSector;
-                    }
-
-                    nextCluster = BitConverter.ToUInt16(fatData, nextEntry * 2);
-                    nextSector = nextCluster / fatEntriesPerSector + fatFirstSector +
-                                  (useFirstFat ? 0 : sectorsPerFat);
-                    nextEntry = (int)(nextCluster % fatEntriesPerSector);
+                    nextCluster = fatEntries[nextCluster];
                 }
             else
                 while(nextCluster > 0 && nextCluster <= FAT12_FORMATTED)

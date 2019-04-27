@@ -35,15 +35,16 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
-using DiscImageChef.Helpers;
 using Schemas;
 using FileSystemInfo = DiscImageChef.CommonTypes.Structs.FileSystemInfo;
+using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Filesystems.FAT
 {
@@ -504,6 +505,16 @@ namespace DiscImageChef.Filesystems.FAT
                     fatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF)  << 8) + fatBytes[i + 0]);
                     fatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
                 }
+            }
+            else if(fat16)
+            {
+                DicConsole.DebugWriteLine("FAT plugin", "Reading FAT16");
+
+                byte[] fatBytes =
+                    imagePlugin.ReadSectors(fatFirstSector + (useFirstFat ? 0 : sectorsPerFat), sectorsPerFat);
+
+                DicConsole.DebugWriteLine("FAT plugin", "Casting FAT");
+                fatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
             }
 
             // TODO: Check how this affects international filenames
