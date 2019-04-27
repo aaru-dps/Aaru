@@ -602,6 +602,18 @@ namespace DiscImageChef.Filesystems.FAT
             cultureInfo    = new CultureInfo("en-US", false);
             directoryCache = new Dictionary<string, Dictionary<string, DirectoryEntry>>();
 
+            // Check it is really an OS/2 EA file
+            if(eaDirEntry.start_cluster != 0)
+            {
+                ulong secadd = firstClusterSector + eaDirEntry.start_cluster * sectorsPerCluster;
+                byte[] eadata =
+                    imagePlugin.ReadSectors(firstClusterSector + eaDirEntry.start_cluster * sectorsPerCluster,
+                                            sectorsPerCluster);
+                ushort eamagic = BitConverter.ToUInt16(eadata, 0);
+
+                if(eamagic != EADATA_MAGIC) eaDirEntry = new DirectoryEntry();
+            }
+
             mounted = true;
             return Errno.NoError;
         }

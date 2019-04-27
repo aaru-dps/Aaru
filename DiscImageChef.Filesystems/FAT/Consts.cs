@@ -80,6 +80,8 @@ namespace DiscImageChef.Filesystems.FAT
         const byte   LFN_ERASED      = 0x80;
         const byte   LFN_LAST        = 0x40;
         const byte   LFN_MASK        = 0x1F;
+        const ushort EADATA_MAGIC    = 0x4445;
+        const ushort EASCTR_MAGIC    = 0x4145;
 
         readonly (string hash, string name)[] knownBootHashes =
         {
