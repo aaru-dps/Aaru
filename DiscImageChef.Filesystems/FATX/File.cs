@@ -193,13 +193,13 @@ namespace DiscImageChef.Filesystems.FATX
             uint nextCluster = startCluster;
 
             if(fat16 is null)
-                while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_BAD)
+                while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_FORMATTED)
                 {
                     clusters.Add(nextCluster);
                     nextCluster = fat32[nextCluster];
                 }
             else
-                while(nextCluster > 0 && nextCluster <= FAT16_BAD)
+                while(nextCluster > 0 && nextCluster <= FAT16_FORMATTED)
                 {
                     clusters.Add(nextCluster);
                     nextCluster = fat16[nextCluster];
