@@ -5,7 +5,7 @@
 // Filename       : File.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : FATX filesystem plugin.
+// Component      : Microsoft FAT filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
@@ -37,9 +37,9 @@ using System.Linq;
 using DiscImageChef.CommonTypes.Structs;
 using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
-namespace DiscImageChef.Filesystems.FATX
+namespace DiscImageChef.Filesystems.FAT
 {
-    public partial class XboxFatPlugin
+    public partial class FAT
     {
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
         {
@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.FATX
 
             if(fileBlock >= clusters.Length) return Errno.InvalidArgument;
 
-            deviceBlock = (long)(firstClusterSector + (clusters[fileBlock] - 1) * sectorsPerCluster);
+            deviceBlock = (long)(firstClusterSector + (clusters[fileBlock] - 2) * sectorsPerCluster);
 
             return Errno.NoError;
         }
@@ -103,8 +103,8 @@ namespace DiscImageChef.Filesystems.FATX
                 if(i + firstCluster >= clusters.Length) return Errno.InvalidArgument;
 
                 byte[] buffer =
-                    imagePlugin.ReadSectors(firstClusterSector + (clusters[i + firstCluster] - 1) * sectorsPerCluster,
-                                            sectorsPerCluster);
+                    image.ReadSectors(firstClusterSector + (clusters[i + firstCluster] - 2) * sectorsPerCluster,
+                                      sectorsPerCluster);
 
                 ms.Write(buffer, 0, buffer.Length);
             }
@@ -121,59 +121,37 @@ namespace DiscImageChef.Filesystems.FATX
             stat = null;
             if(!mounted) return Errno.AccessDenied;
 
-            if(debug && (string.IsNullOrEmpty(path) || path == "$" || path == "/"))
-            {
-                stat = new FileEntryInfo
-                {
-                    Attributes = FileAttributes.Directory | FileAttributes.System | FileAttributes.Hidden,
-                    Blocks     = GetClusters(superblock.rootDirectoryCluster).Length,
-                    BlockSize  = bytesPerCluster,
-                    Length     = GetClusters(superblock.rootDirectoryCluster).Length * bytesPerCluster,
-                    Inode      = superblock.rootDirectoryCluster,
-                    Links      = 1
-                };
-
-                return Errno.NoError;
-            }
-
             Errno err = GetFileEntry(path, out DirectoryEntry entry);
             if(err != Errno.NoError) return err;
 
             stat = new FileEntryInfo
             {
-                Attributes = new FileAttributes(),
-                Blocks     = entry.length / bytesPerCluster,
-                BlockSize  = bytesPerCluster,
-                Length     = entry.length,
-                Inode      = entry.firstCluster,
-                Links      = 1,
-                CreationTime =
-                    littleEndian
-                        ? DateHandlers.DosToDateTime(entry.creationDate, entry.creationTime).AddYears(20)
-                        : DateHandlers.DosToDateTime(entry.creationTime, entry.creationDate),
-                AccessTime =
-                    littleEndian
-                        ? DateHandlers.DosToDateTime(entry.lastAccessDate, entry.lastAccessTime).AddYears(20)
-                        : DateHandlers.DosToDateTime(entry.lastAccessTime, entry.lastAccessDate),
-                LastWriteTime = littleEndian
-                                    ? DateHandlers
-                                     .DosToDateTime(entry.lastWrittenDate, entry.lastWrittenTime).AddYears(20)
-                                    : DateHandlers.DosToDateTime(entry.lastWrittenTime, entry.lastWrittenDate)
+                Attributes    = new FileAttributes(),
+                Blocks        = entry.size / bytesPerCluster,
+                BlockSize     = bytesPerCluster,
+                Length        = entry.size,
+                Inode         = entry.start_cluster,
+                Links         = 1,
+                CreationTime  = DateHandlers.DosToDateTime(entry.cdate, entry.ctime),
+                LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime)
             };
 
-            if(entry.length % bytesPerCluster > 0) stat.Blocks++;
+            stat.CreationTime = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
 
-            if(entry.attributes.HasFlag(Attributes.Directory))
+            if(entry.size % bytesPerCluster > 0) stat.Blocks++;
+
+            if(entry.attributes.HasFlag(FatAttributes.Subdirectory))
             {
                 stat.Attributes |= FileAttributes.Directory;
-                stat.Blocks     =  GetClusters(entry.firstCluster).Length;
+                stat.Blocks     =  GetClusters(entry.start_cluster).Length;
                 stat.Length     =  stat.Blocks * stat.BlockSize;
             }
 
-            if(entry.attributes.HasFlag(Attributes.ReadOnly)) stat.Attributes |= FileAttributes.ReadOnly;
-            if(entry.attributes.HasFlag(Attributes.Hidden)) stat.Attributes   |= FileAttributes.Hidden;
-            if(entry.attributes.HasFlag(Attributes.System)) stat.Attributes   |= FileAttributes.System;
-            if(entry.attributes.HasFlag(Attributes.Archive)) stat.Attributes  |= FileAttributes.Archive;
+            if(entry.attributes.HasFlag(FatAttributes.ReadOnly)) stat.Attributes |= FileAttributes.ReadOnly;
+            if(entry.attributes.HasFlag(FatAttributes.Hidden)) stat.Attributes   |= FileAttributes.Hidden;
+            if(entry.attributes.HasFlag(FatAttributes.System)) stat.Attributes   |= FileAttributes.System;
+            if(entry.attributes.HasFlag(FatAttributes.Archive)) stat.Attributes  |= FileAttributes.Archive;
+            if(entry.attributes.HasFlag(FatAttributes.Device)) stat.Attributes   |= FileAttributes.Device;
 
             return Errno.NoError;
         }
@@ -182,27 +160,45 @@ namespace DiscImageChef.Filesystems.FATX
         {
             if(startCluster == 0) return null;
 
-            if(fat16 is null)
-            {
-                if(startCluster >= fat32.Length) return null;
-            }
-            else if(startCluster >= fat16.Length) return null;
+            if(startCluster >= XmlFsType.Clusters) return null;
 
             List<uint> clusters = new List<uint>();
 
             uint nextCluster = startCluster;
 
-            if(fat16 is null)
+            ulong nextSector = nextCluster / fatEntriesPerSector + fatFirstSector + (useFirstFat ? 0 : sectorsPerFat);
+            int   nextEntry  = (int)(nextCluster % fatEntriesPerSector);
+
+            ulong  currentSector = nextSector;
+            byte[] fatData       = image.ReadSector(currentSector);
+
+            if(fat32)
                 while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_FORMATTED)
                 {
                     clusters.Add(nextCluster);
-                    nextCluster = fat32[nextCluster];
+
+                    if(currentSector != nextSector)
+                    {
+                        fatData       = image.ReadSector(nextSector);
+                        currentSector = nextSector;
+                    }
+
+                    nextCluster = BitConverter.ToUInt32(fatData, nextEntry * 4);
+                    nextSector = nextCluster / fatEntriesPerSector + fatFirstSector +
+                                  (useFirstFat ? 0 : sectorsPerFat);
+                    nextEntry = (int)(nextCluster % fatEntriesPerSector);
                 }
-            else
+            else if(fat16)
                 while(nextCluster > 0 && nextCluster <= FAT16_FORMATTED)
                 {
                     clusters.Add(nextCluster);
-                    nextCluster = fat16[nextCluster];
+                    nextCluster = fatEntries[nextCluster];
+                }
+            else
+                while(nextCluster > 0 && nextCluster <= FAT12_FORMATTED)
+                {
+                    clusters.Add(nextCluster);
+                    nextCluster = fatEntries[nextCluster];
                 }
 
             return clusters.ToArray();
@@ -226,7 +222,7 @@ namespace DiscImageChef.Filesystems.FATX
 
             Dictionary<string, DirectoryEntry> parent;
 
-            if(pieces.Length == 1) parent = rootDirectory;
+            if(pieces.Length == 1) parent = rootDirectoryCache;
             else if(!directoryCache.TryGetValue(parentPath, out parent)) return Errno.InvalidArgument;
 
             KeyValuePair<string, DirectoryEntry> dirent =

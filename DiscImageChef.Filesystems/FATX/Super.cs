@@ -243,7 +243,7 @@ namespace DiscImageChef.Filesystems.FATX
             stat = null;
             if(!mounted) return Errno.AccessDenied;
 
-            stat = statfs;
+            stat = statfs.ShallowCopy();
 
             return Errno.NoError;
         }

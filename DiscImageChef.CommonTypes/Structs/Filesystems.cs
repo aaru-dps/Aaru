@@ -241,6 +241,8 @@ namespace DiscImageChef.CommonTypes.Structs
         {
             Id = new FileSystemId();
         }
+
+        public FileSystemInfo ShallowCopy() => (FileSystemInfo)MemberwiseClone();
     }
 
     [StructLayout(LayoutKind.Explicit)]
