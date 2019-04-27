@@ -122,8 +122,9 @@ namespace DiscImageChef.Filesystems.FAT
                 }
 
                 currentDirectory = new Dictionary<string, DirectoryEntry>();
-                byte[] lastLfnName     = null;
-                byte   lastLfnChecksum = 0;
+                byte[]       lastLfnName     = null;
+                byte         lastLfnChecksum = 0;
+                List<string> LFNs            = new List<string>();
 
                 for(int pos = 0; pos < directoryBuffer.Length; pos += Marshal.SizeOf<DirectoryEntry>())
                 {
@@ -187,6 +188,7 @@ namespace DiscImageChef.Filesystems.FAT
                         {
                             filename = StringHandlers.CToString(lastLfnName, Encoding.Unicode, true);
 
+                            LFNs.Add(filename);
                             currentDirectory[filename] = dirent;
                             lastLfnName                = null;
                             lastLfnChecksum            = 0;
@@ -215,6 +217,45 @@ namespace DiscImageChef.Filesystems.FAT
                     // Repeated entries are not allowed but some bad implementations (e.g. FAT32.IFS)allow to create them
                     // when using spaces
                     currentDirectory[filename] = dirent;
+                }
+
+                // Check OS/2 .LONGNAME
+                if(eaCache != null && (@namespace == Namespace.Os2 || @namespace == Namespace.Ecs))
+                {
+                    List<KeyValuePair<string, DirectoryEntry>> filesWithEas =
+                        currentDirectory.Where(t => t.Value.ea_handle != 0).ToList();
+
+                    foreach(KeyValuePair<string, DirectoryEntry> fileWithEa in filesWithEas)
+                    {
+                        // This ensures LFN takes preference when eCS is in use
+                        if(LFNs.Contains(fileWithEa.Key)) continue;
+
+                        Dictionary<string, byte[]> eas = GetEas(fileWithEa.Value.ea_handle);
+
+                        if(eas is null) continue;
+
+                        if(!eas.TryGetValue("com.microsoft.os2.longname", out byte[] longnameEa)) continue;
+
+                        if(BitConverter.ToUInt16(longnameEa, 0) != EAT_ASCII) continue;
+
+                        ushort longnameSize = BitConverter.ToUInt16(longnameEa, 2);
+
+                        if(longnameSize + 4 > longnameEa.Length) continue;
+
+                        byte[] longnameBytes = new byte[longnameSize];
+
+                        Array.Copy(longnameEa, 4, longnameBytes, 0, longnameSize);
+
+                        string longname = StringHandlers.CToString(longnameBytes, Encoding);
+
+                        if(string.IsNullOrWhiteSpace(longname)) continue;
+
+                        // Forward slash is allowed in .LONGNAME, so change it to visually similar division slash
+                        longname = longname.Replace('/', '\u2215');
+
+                        currentDirectory.Remove(fileWithEa.Key);
+                        currentDirectory[longname] = fileWithEa.Value;
+                    }
                 }
 
                 directoryCache.Add(currentPath, currentDirectory);

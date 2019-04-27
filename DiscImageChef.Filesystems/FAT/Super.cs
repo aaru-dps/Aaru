@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems.FAT
             if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
 
             // Default namespace
-            if(@namespace is null) @namespace = "lfn";
+            if(@namespace is null) @namespace = "ecs";
 
             switch(@namespace.ToLowerInvariant())
             {
@@ -75,6 +75,12 @@ namespace DiscImageChef.Filesystems.FAT
                     break;
                 case "nt":
                     this.@namespace = Namespace.Nt;
+                    break;
+                case "os2":
+                    this.@namespace = Namespace.Os2;
+                    break;
+                case "ecs":
+                    this.@namespace = Namespace.Ecs;
                     break;
                 case "lfn":
                     this.@namespace = Namespace.Lfn;
@@ -399,8 +405,9 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(rootDirectory is null) return Errno.InvalidArgument;
 
-            byte[] lastLfnName     = null;
-            byte   lastLfnChecksum = 0;
+            byte[]       lastLfnName     = null;
+            byte         lastLfnChecksum = 0;
+            List<string> LFNs            = new List<string>();
 
             for(int i = 0; i < rootDirectory.Length; i += Marshal.SizeOf<DirectoryEntry>())
             {
@@ -412,7 +419,7 @@ namespace DiscImageChef.Filesystems.FAT
 
                 if(entry.attributes.HasFlag(FatAttributes.LFN))
                 {
-                    if(this.@namespace != Namespace.Lfn) continue;
+                    if(this.@namespace != Namespace.Lfn && this.@namespace != Namespace.Ecs) continue;
 
                     LfnEntry lfnEntry =
                         Marshal.ByteArrayToStructureLittleEndian<LfnEntry>(rootDirectory, i,
@@ -482,7 +489,7 @@ namespace DiscImageChef.Filesystems.FAT
                     continue;
                 }
 
-                if(this.@namespace == Namespace.Lfn && lastLfnName != null)
+                if((this.@namespace == Namespace.Lfn || this.@namespace == Namespace.Ecs) && lastLfnName != null)
                 {
                     byte calculatedLfnChecksum = LfnChecksum(entry.filename, entry.extension);
 
@@ -490,6 +497,7 @@ namespace DiscImageChef.Filesystems.FAT
                     {
                         filename = StringHandlers.CToString(lastLfnName, Encoding.Unicode, true);
 
+                        LFNs.Add(filename);
                         rootDirectoryCache[filename] = entry;
                         lastLfnName                  = null;
                         lastLfnChecksum              = 0;
@@ -614,6 +622,45 @@ namespace DiscImageChef.Filesystems.FAT
                     cachedEaData = null;
                 }
                 else eaCache = new Dictionary<string, Dictionary<string, byte[]>>();
+            }
+
+            // Check OS/2 .LONGNAME
+            if(eaCache != null && (this.@namespace == Namespace.Os2 || this.@namespace == Namespace.Ecs))
+            {
+                List<KeyValuePair<string, DirectoryEntry>> rootFilesWithEas =
+                    rootDirectoryCache.Where(t => t.Value.ea_handle != 0).ToList();
+
+                foreach(KeyValuePair<string, DirectoryEntry> fileWithEa in rootFilesWithEas)
+                {
+                    // This ensures LFN takes preference when eCS is in use
+                    if(LFNs.Contains(fileWithEa.Key)) continue;
+
+                    Dictionary<string, byte[]> eas = GetEas(fileWithEa.Value.ea_handle);
+
+                    if(eas is null) continue;
+
+                    if(!eas.TryGetValue("com.microsoft.os2.longname", out byte[] longnameEa)) continue;
+
+                    if(BitConverter.ToUInt16(longnameEa, 0) != EAT_ASCII) continue;
+
+                    ushort longnameSize = BitConverter.ToUInt16(longnameEa, 2);
+
+                    if(longnameSize + 4 > longnameEa.Length) continue;
+
+                    byte[] longnameBytes = new byte[longnameSize];
+
+                    Array.Copy(longnameEa, 4, longnameBytes, 0, longnameSize);
+
+                    string longname = StringHandlers.CToString(longnameBytes, Encoding);
+
+                    if(string.IsNullOrWhiteSpace(longname)) continue;
+
+                    // Forward slash is allowed in .LONGNAME, so change it to visually similar division slash
+                    longname = longname.Replace('/', '\u2215');
+
+                    rootDirectoryCache.Remove(fileWithEa.Key);
+                    rootDirectoryCache[longname] = fileWithEa.Value;
+                }
             }
 
             mounted = true;

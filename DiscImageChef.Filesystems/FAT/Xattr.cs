@@ -74,58 +74,9 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(entry.ea_handle == 0) return Errno.NoError;
 
-            int aIndex = entry.ea_handle >> 7;
-            // First 0x20 bytes are the magic number and unused words
-            ushort a = BitConverter.ToUInt16(cachedEaData, aIndex * 2 + 0x20);
+            eas = GetEas(entry.ea_handle);
 
-            ushort b = BitConverter.ToUInt16(cachedEaData, entry.ea_handle * 2 + 0x200);
-
-            uint eaCluster = (uint)(a + b);
-
-            if(b == EA_UNUSED) return Errno.NoError;
-
-            EaHeader header =
-                Marshal.ByteArrayToStructureLittleEndian<EaHeader>(cachedEaData, (int)(eaCluster * bytesPerCluster),
-                                                                   Marshal.SizeOf<EaHeader>());
-
-            if(header.magic != 0x4145) return Errno.NoError;
-
-            uint eaLen = BitConverter.ToUInt32(cachedEaData,
-                                               (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>());
-
-            byte[] eaData = new byte[eaLen];
-            Array.Copy(cachedEaData, (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0, eaLen);
-
-            eas = new Dictionary<string, byte[]>();
-
-            if(true) eas.Add("com.microsoft.os2.fea", eaData);
-
-            int pos = 4;
-            while(pos < eaData.Length)
-            {
-                byte   fEA     = eaData[pos++];
-                byte   cbName  = eaData[pos++];
-                ushort cbValue = BitConverter.ToUInt16(eaData, pos);
-                pos += 2;
-
-                string name = Encoding.ASCII.GetString(eaData, pos, cbName);
-                pos += cbName;
-                pos++;
-                byte[] data = new byte[cbValue];
-
-                Array.Copy(eaData, pos, data, 0, cbValue);
-                pos += cbValue;
-
-                // OS/2 System Attributes
-                if(name[0] == '.')
-                {
-                    // This is WorkPlace System information so it's IBM
-                    if(name == ".CLASSINFO") name = "com.ibm.os2.classinfo";
-                    else name                     = "com.microsoft.os2" + name.ToLower();
-                }
-
-                eas.Add(name, data);
-            }
+            if(eas is null) return Errno.NoError;
 
             eaCache.Add(path.ToLower(cultureInfo), eas);
             xattrs = eas.Keys.ToList();
@@ -160,6 +111,64 @@ namespace DiscImageChef.Filesystems.FAT
             data.CopyTo(buf, 0);
 
             return Errno.NoError;
+        }
+
+        Dictionary<string, byte[]> GetEas(ushort eaHandle)
+        {
+            int aIndex = eaHandle >> 7;
+            // First 0x20 bytes are the magic number and unused words
+            ushort a = BitConverter.ToUInt16(cachedEaData, aIndex * 2 + 0x20);
+
+            ushort b = BitConverter.ToUInt16(cachedEaData, eaHandle * 2 + 0x200);
+
+            uint eaCluster = (uint)(a + b);
+
+            if(b == EA_UNUSED) return null;
+
+            EaHeader header =
+                Marshal.ByteArrayToStructureLittleEndian<EaHeader>(cachedEaData, (int)(eaCluster * bytesPerCluster),
+                                                                   Marshal.SizeOf<EaHeader>());
+
+            if(header.magic != 0x4145) return null;
+
+            uint eaLen = BitConverter.ToUInt32(cachedEaData,
+                                               (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>());
+
+            byte[] eaData = new byte[eaLen];
+            Array.Copy(cachedEaData, (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0, eaLen);
+
+            Dictionary<string, byte[]> eas = new Dictionary<string, byte[]>();
+
+            if(debug) eas.Add("com.microsoft.os2.fea", eaData);
+
+            int pos = 4;
+            while(pos < eaData.Length)
+            {
+                byte   fEA     = eaData[pos++];
+                byte   cbName  = eaData[pos++];
+                ushort cbValue = BitConverter.ToUInt16(eaData, pos);
+                pos += 2;
+
+                string name = Encoding.ASCII.GetString(eaData, pos, cbName);
+                pos += cbName;
+                pos++;
+                byte[] data = new byte[cbValue];
+
+                Array.Copy(eaData, pos, data, 0, cbValue);
+                pos += cbValue;
+
+                // OS/2 System Attributes
+                if(name[0] == '.')
+                {
+                    // This is WorkPlace System information so it's IBM
+                    if(name == ".CLASSINFO") name = "com.ibm.os2.classinfo";
+                    else name                     = "com.microsoft.os2" + name.ToLower();
+                }
+
+                eas.Add(name, data);
+            }
+
+            return eas;
         }
 
         void CacheEaData()

@@ -80,7 +80,9 @@ namespace DiscImageChef.Filesystems.FAT
             {
                 {"dos", "DOS (8.3 all uppercase)"},
                 {"nt", "Windows NT (8.3 mixed case)"},
-                {"lfn", "Long file names (default)"}
+                {"os2", "OS/2 .LONGNAME extended attribute"},
+                {"ecs", "Use LFN when available with fallback to .LONGNAME (default)"},
+                {"lfn", "Long file names"}
             };
 
         static Dictionary<string, string> GetDefaultOptions() =>

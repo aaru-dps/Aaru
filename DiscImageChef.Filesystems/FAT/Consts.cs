@@ -83,6 +83,15 @@ namespace DiscImageChef.Filesystems.FAT
         const ushort EADATA_MAGIC    = 0x4445;
         const ushort EASCTR_MAGIC    = 0x4145;
         const ushort EA_UNUSED       = 0xFFFF;
+        const ushort EAT_BINARY      = 0xFFFE;
+        const ushort EAT_ASCII       = 0xFFFD;
+        const ushort EAT_BITMAP      = 0xFFFB;
+        const ushort EAT_METAFILE    = 0xFFFA;
+        const ushort EAT_ICON        = 0xFFF9;
+        const ushort EAT_EA          = 0xFFEE;
+        const ushort EAT_MVMT        = 0xFFDF;
+        const ushort EAT_MVST        = 0xFFDE;
+        const ushort EAT_ASN1        = 0xFFDD;
 
         readonly (string hash, string name)[] knownBootHashes =
         {
@@ -216,7 +225,9 @@ namespace DiscImageChef.Filesystems.FAT
         {
             Dos,
             Nt,
-            Lfn
+            Lfn,
+            Os2,
+            Ecs
         }
 
         [Flags]
