@@ -115,8 +115,9 @@ namespace DiscImageChef.Filesystems.FAT
 
                 for(int i = 0; i < clusters.Length; i++)
                 {
-                    byte[] buffer = image.ReadSectors(firstClusterSector + (clusters[i] - 2) * sectorsPerCluster,
-                                                      sectorsPerCluster);
+                    byte[] buffer =
+                        image.ReadSectors(firstClusterSector + (ulong)((clusters[i] - (fat32 ? 2 : 0)) * sectorsPerCluster),
+                                          sectorsPerCluster);
                     Array.Copy(buffer, 0, directoryBuffer, i * bytesPerCluster, bytesPerCluster);
                 }
 

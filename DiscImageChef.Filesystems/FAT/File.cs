@@ -56,7 +56,8 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(fileBlock >= clusters.Length) return Errno.InvalidArgument;
 
-            deviceBlock = (long)(firstClusterSector + (clusters[fileBlock] - 2) * sectorsPerCluster);
+            deviceBlock = (long)(firstClusterSector +
+                                 (ulong)((clusters[fileBlock] - (fat32 ? 2 : 0)) * sectorsPerCluster));
 
             return Errno.NoError;
         }
@@ -103,7 +104,7 @@ namespace DiscImageChef.Filesystems.FAT
                 if(i + firstCluster >= clusters.Length) return Errno.InvalidArgument;
 
                 byte[] buffer =
-                    image.ReadSectors(firstClusterSector + (clusters[i + firstCluster] - 2) * sectorsPerCluster,
+                    image.ReadSectors(firstClusterSector + (ulong)((clusters[i + firstCluster] - (fat32 ? 2 : 0)) * sectorsPerCluster),
                                       sectorsPerCluster);
 
                 ms.Write(buffer, 0, buffer.Length);
@@ -143,8 +144,10 @@ namespace DiscImageChef.Filesystems.FAT
             if(entry.attributes.HasFlag(FatAttributes.Subdirectory))
             {
                 stat.Attributes |= FileAttributes.Directory;
-                stat.Blocks     =  fat32 ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster)).Length : GetClusters(entry.start_cluster).Length;
-                stat.Length     =  stat.Blocks * stat.BlockSize;
+                stat.Blocks = fat32
+                                  ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster)).Length
+                                  : GetClusters(entry.start_cluster).Length;
+                stat.Length = stat.Blocks * stat.BlockSize;
             }
 
             if(entry.attributes.HasFlag(FatAttributes.ReadOnly)) stat.Attributes |= FileAttributes.ReadOnly;
