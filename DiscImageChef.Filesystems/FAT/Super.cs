@@ -514,6 +514,17 @@ namespace DiscImageChef.Filesystems.FAT
                 if(extension != "") filename = name + "." + extension;
                 else filename                = name;
 
+                if(!fat32 && filename == "EA DATA. SF")
+                {
+                    eaDirEntry      = entry;
+                    lastLfnName     = null;
+                    lastLfnChecksum = 0;
+
+                    if(debug) rootDirectoryCache[filename] = entry;
+
+                    continue;
+                }
+
                 rootDirectoryCache[filename] = entry;
                 lastLfnName                  = null;
                 lastLfnChecksum              = 0;

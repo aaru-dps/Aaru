@@ -48,6 +48,7 @@ namespace DiscImageChef.Filesystems.FAT
         CultureInfo                                            cultureInfo;
         bool                                                   debug;
         Dictionary<string, Dictionary<string, DirectoryEntry>> directoryCache;
+        DirectoryEntry                                         eaDirEntry;
         bool                                                   fat12;
         bool                                                   fat16;
         bool                                                   fat32;
