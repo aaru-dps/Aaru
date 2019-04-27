@@ -143,7 +143,23 @@ namespace DiscImageChef.Filesystems.FAT
         {
             if(!mounted) return Errno.AccessDenied;
 
-            return Errno.NotSupported;
+            Errno err = ListXAttr(path, out List<string> xattrs);
+
+            if(err != Errno.NoError) return err;
+
+            if(path[0] == '/') path = path.Substring(1);
+
+            if(!xattrs.Contains(xattr.ToLower(cultureInfo))) return Errno.NoSuchExtendedAttribute;
+
+            if(!eaCache.TryGetValue(path.ToLower(cultureInfo), out Dictionary<string, byte[]> eas))
+                return Errno.InvalidArgument;
+
+            if(!eas.TryGetValue(xattr.ToLower(cultureInfo), out byte[] data)) return Errno.InvalidArgument;
+
+            buf = new byte[data.Length];
+            data.CopyTo(buf, 0);
+
+            return Errno.NoError;
         }
 
         void CacheEaData()
