@@ -866,5 +866,21 @@ namespace DiscImageChef.Filesystems.FAT
             public readonly ushort        start_cluster;
             public readonly uint          size;
         }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct LfnEntry
+        {
+            public readonly byte sequence;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public readonly byte[] name1;
+            public readonly FatAttributes attributes;
+            public readonly byte          type;
+            public readonly byte          checksum;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public readonly byte[] name2;
+            public readonly ushort start_cluster;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public readonly byte[] name3;
+        }
     }
 }

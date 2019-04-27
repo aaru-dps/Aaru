@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems.FAT
             if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
 
             // Default namespace
-            if(@namespace is null) @namespace = "nt";
+            if(@namespace is null) @namespace = "lfn";
 
             switch(@namespace.ToLowerInvariant())
             {
@@ -75,6 +75,9 @@ namespace DiscImageChef.Filesystems.FAT
                     break;
                 case "nt":
                     this.@namespace = Namespace.Nt;
+                    break;
+                case "lfn":
+                    this.@namespace = Namespace.Lfn;
                     break;
                 default: return Errno.InvalidArgument;
             }
@@ -396,6 +399,9 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(rootDirectory is null) return Errno.InvalidArgument;
 
+            byte[] lastLfnName     = null;
+            byte   lastLfnChecksum = 0;
+
             for(int i = 0; i < rootDirectory.Length; i += Marshal.SizeOf<DirectoryEntry>())
             {
                 DirectoryEntry entry =
@@ -403,6 +409,36 @@ namespace DiscImageChef.Filesystems.FAT
                                                                              Marshal.SizeOf<DirectoryEntry>());
 
                 if(entry.filename[0] == DIRENT_FINISHED) break;
+
+                if(entry.attributes.HasFlag(FatAttributes.LFN))
+                {
+                    if(this.@namespace != Namespace.Lfn) continue;
+
+                    LfnEntry lfnEntry =
+                        Marshal.ByteArrayToStructureLittleEndian<LfnEntry>(rootDirectory, i,
+                                                                           Marshal.SizeOf<LfnEntry>());
+
+                    int lfnSequence = lfnEntry.sequence & LFN_MASK;
+
+                    if((lfnEntry.sequence & LFN_ERASED) > 0) continue;
+
+                    if((lfnEntry.sequence & LFN_LAST) > 0)
+                    {
+                        lastLfnName     = new byte[lfnSequence * 26];
+                        lastLfnChecksum = lfnEntry.checksum;
+                    }
+
+                    if(lastLfnName is null) continue;
+                    if(lfnEntry.checksum != lastLfnChecksum) continue;
+
+                    lfnSequence--;
+
+                    Array.Copy(lfnEntry.name1, 0, lastLfnName, lfnSequence * 26,      10);
+                    Array.Copy(lfnEntry.name2, 0, lastLfnName, lfnSequence * 26 + 10, 12);
+                    Array.Copy(lfnEntry.name3, 0, lastLfnName, lfnSequence * 26 + 22, 4);
+
+                    continue;
+                }
 
                 // Not a correct entry
                 if(entry.filename[0] < DIRENT_MIN && entry.filename[0] != DIRENT_E5) continue;
@@ -415,9 +451,6 @@ namespace DiscImageChef.Filesystems.FAT
 
                 // Deleted
                 if(entry.filename[0] == DIRENT_DELETED) continue;
-
-                // TODO: LFN namespace
-                if(entry.attributes.HasFlag(FatAttributes.LFN)) continue;
 
                 string filename;
 
@@ -449,6 +482,21 @@ namespace DiscImageChef.Filesystems.FAT
                     continue;
                 }
 
+                if(this.@namespace == Namespace.Lfn && lastLfnName != null)
+                {
+                    byte calculatedLfnChecksum = LfnChecksum(entry.filename, entry.extension);
+
+                    if(calculatedLfnChecksum == lastLfnChecksum)
+                    {
+                        filename = StringHandlers.CToString(lastLfnName, Encoding.Unicode, true);
+
+                        rootDirectoryCache[filename] = entry;
+                        lastLfnName                  = null;
+                        lastLfnChecksum              = 0;
+                        continue;
+                    }
+                }
+
                 if(entry.filename[0] == DIRENT_E5) entry.filename[0] = DIRENT_DELETED;
 
                 string name      = Encoding.GetString(entry.filename).TrimEnd();
@@ -466,7 +514,9 @@ namespace DiscImageChef.Filesystems.FAT
                 if(extension != "") filename = name + "." + extension;
                 else filename                = name;
 
-                rootDirectoryCache.Add(filename, entry);
+                rootDirectoryCache[filename] = entry;
+                lastLfnName                  = null;
+                lastLfnChecksum              = 0;
             }
 
             XmlFsType.VolumeName = XmlFsType.VolumeName?.Trim();

@@ -76,7 +76,9 @@ namespace DiscImageChef.Filesystems.FAT
         public Dictionary<string, string> Namespaces =>
             new Dictionary<string, string>
             {
-                {"dos", "DOS (8.3 all uppercase)"}, {"nt", "Windows NT (8.3 mixed case, default)"}
+                {"dos", "DOS (8.3 all uppercase)"},
+                {"nt", "Windows NT (8.3 mixed case)"},
+                {"lfn", "Long file names (default)"}
             };
 
         static Dictionary<string, string> GetDefaultOptions() =>

@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Helpers;
 
@@ -118,17 +119,46 @@ namespace DiscImageChef.Filesystems.FAT
                 }
 
                 currentDirectory = new Dictionary<string, DirectoryEntry>();
+                byte[] lastLfnName     = null;
+                byte   lastLfnChecksum = 0;
 
-                int pos = 0;
-                while(pos < directoryBuffer.Length)
+                for(int pos = 0; pos < directoryBuffer.Length; pos += Marshal.SizeOf<DirectoryEntry>())
                 {
                     DirectoryEntry dirent =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryEntry>(directoryBuffer, pos,
                                                                                  Marshal.SizeOf<DirectoryEntry>());
 
-                    pos += Marshal.SizeOf<DirectoryEntry>();
-
                     if(dirent.filename[0] == DIRENT_FINISHED) break;
+
+                    if(dirent.attributes.HasFlag(FatAttributes.LFN))
+                    {
+                        if(@namespace != Namespace.Lfn) continue;
+
+                        LfnEntry lfnEntry =
+                            Marshal.ByteArrayToStructureLittleEndian<LfnEntry>(directoryBuffer, pos,
+                                                                               Marshal.SizeOf<LfnEntry>());
+
+                        int lfnSequence = lfnEntry.sequence & LFN_MASK;
+
+                        if((lfnEntry.sequence & LFN_ERASED) > 0) continue;
+
+                        if((lfnEntry.sequence & LFN_LAST) > 0)
+                        {
+                            lastLfnName     = new byte[lfnSequence * 26];
+                            lastLfnChecksum = lfnEntry.checksum;
+                        }
+
+                        if(lastLfnName is null) continue;
+                        if(lfnEntry.checksum != lastLfnChecksum) continue;
+
+                        lfnSequence--;
+
+                        Array.Copy(lfnEntry.name1, 0, lastLfnName, lfnSequence * 26,      10);
+                        Array.Copy(lfnEntry.name2, 0, lastLfnName, lfnSequence * 26 + 10, 12);
+                        Array.Copy(lfnEntry.name3, 0, lastLfnName, lfnSequence * 26 + 22, 4);
+
+                        continue;
+                    }
 
                     // Not a correct entry
                     if(dirent.filename[0] < DIRENT_MIN && dirent.filename[0] != DIRENT_E5) continue;
@@ -142,12 +172,24 @@ namespace DiscImageChef.Filesystems.FAT
                     // Deleted
                     if(dirent.filename[0] == DIRENT_DELETED) continue;
 
-                    // TODO: LFN namespace
-                    if(dirent.attributes.HasFlag(FatAttributes.LFN)) continue;
-
                     string filename;
 
                     if(dirent.attributes.HasFlag(FatAttributes.VolumeLabel)) continue;
+
+                    if(@namespace == Namespace.Lfn && lastLfnName != null)
+                    {
+                        byte calculatedLfnChecksum = LfnChecksum(dirent.filename, dirent.extension);
+
+                        if(calculatedLfnChecksum == lastLfnChecksum)
+                        {
+                            filename = StringHandlers.CToString(lastLfnName, Encoding.Unicode, true);
+
+                            currentDirectory[filename] = dirent;
+                            lastLfnName                = null;
+                            lastLfnChecksum            = 0;
+                            continue;
+                        }
+                    }
 
                     if(dirent.filename[0] == DIRENT_E5) dirent.filename[0] = DIRENT_DELETED;
 

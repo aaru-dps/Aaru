@@ -77,6 +77,9 @@ namespace DiscImageChef.Filesystems.FAT
         const ushort FAT12_END_MASK  = 0xFF8;
         const ushort FAT12_FORMATTED = 0xFF6;
         const ushort FAT12_BAD       = 0xFF7;
+        const byte   LFN_ERASED      = 0x80;
+        const byte   LFN_LAST        = 0x40;
+        const byte   LFN_MASK        = 0x1F;
 
         readonly (string hash, string name)[] knownBootHashes =
         {
@@ -209,7 +212,8 @@ namespace DiscImageChef.Filesystems.FAT
         enum Namespace
         {
             Dos,
-            Nt
+            Nt,
+            Lfn
         }
     }
 }

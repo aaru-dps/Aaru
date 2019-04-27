@@ -233,5 +233,15 @@ namespace DiscImageChef.Filesystems.FAT
             entry = dirent.Value;
             return Errno.NoError;
         }
+
+        byte LfnChecksum(byte[] name, byte[] extension)
+        {
+            byte sum = 0;
+
+            for(int i = 0; i < 8; i++) sum = (byte)(((sum & 1) << 7) + (sum >> 1) + name[i]);
+            for(int i = 0; i < 3; i++) sum = (byte)(((sum & 1) << 7) + (sum >> 1) + extension[i]);
+
+            return sum;
+        }
     }
 }
