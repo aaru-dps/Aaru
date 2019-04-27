@@ -166,8 +166,6 @@ namespace DiscImageChef.Filesystems.FAT
 
             uint nextCluster = startCluster;
 
-            if(fat12) return null;
-
             ulong nextSector = nextCluster / fatEntriesPerSector + fatFirstSector + (useFirstFat ? 0 : sectorsPerFat);
             int   nextEntry  = (int)(nextCluster % fatEntriesPerSector);
 
@@ -175,7 +173,7 @@ namespace DiscImageChef.Filesystems.FAT
             byte[] fatData       = image.ReadSector(currentSector);
 
             if(fat32)
-                while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_BAD)
+                while((nextCluster & FAT32_MASK) > 0 && (nextCluster & FAT32_MASK) <= FAT32_FORMATTED)
                 {
                     clusters.Add(nextCluster);
 
@@ -191,7 +189,7 @@ namespace DiscImageChef.Filesystems.FAT
                     nextEntry = (int)(nextCluster % fatEntriesPerSector);
                 }
             else if(fat16)
-                while(nextCluster > 0 && nextCluster <= FAT16_BAD)
+                while(nextCluster > 0 && nextCluster <= FAT16_FORMATTED)
                 {
                     clusters.Add(nextCluster);
 
@@ -205,6 +203,12 @@ namespace DiscImageChef.Filesystems.FAT
                     nextSector = nextCluster / fatEntriesPerSector + fatFirstSector +
                                   (useFirstFat ? 0 : sectorsPerFat);
                     nextEntry = (int)(nextCluster % fatEntriesPerSector);
+                }
+            else
+                while(nextCluster > 0 && nextCluster <= FAT12_FORMATTED)
+                {
+                    clusters.Add(nextCluster);
+                    nextCluster = fatEntries[nextCluster];
                 }
 
             return clusters.ToArray();

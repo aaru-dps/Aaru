@@ -491,6 +491,21 @@ namespace DiscImageChef.Filesystems.FAT
 
             bytesPerCluster = sectorsPerCluster * imagePlugin.Info.SectorSize;
 
+            if(fat12)
+            {
+                byte[] fatBytes =
+                    imagePlugin.ReadSectors(fatFirstSector + (useFirstFat ? 0 : sectorsPerFat), sectorsPerFat);
+
+                fatEntries = new ushort[statfs.Blocks];
+
+                int pos = 0;
+                for(int i = 0; i + 3 < fatBytes.Length && pos < fatEntries.Length; i += 3)
+                {
+                    fatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF)  << 8) + fatBytes[i + 0]);
+                    fatEntries[pos++] = (ushort)(((fatBytes[i + 1] & 0xF0) >> 4) + (fatBytes[i + 2] << 4));
+                }
+            }
+
             // TODO: Check how this affects international filenames
             cultureInfo    = new CultureInfo("en-US", false);
             directoryCache = new Dictionary<string, Dictionary<string, DirectoryEntry>>();
@@ -506,7 +521,8 @@ namespace DiscImageChef.Filesystems.FAT
         {
             if(!mounted) return Errno.AccessDenied;
 
-            mounted = false;
+            mounted    = false;
+            fatEntries = null;
             return Errno.NoError;
         }
 

@@ -51,6 +51,7 @@ namespace DiscImageChef.Filesystems.FAT
         bool                                                   fat12;
         bool                                                   fat16;
         bool                                                   fat32;
+        ushort[]                                               fatEntries;
         ulong                                                  fatFirstSector;
         ulong                                                  firstClusterSector;
         bool                                                   mounted;
