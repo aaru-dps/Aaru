@@ -103,6 +103,8 @@ namespace DiscImageChef.Filesystems.FAT
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
                 uint currentCluster = entry.Value.start_cluster;
 
+                if(fat32) currentCluster += (uint)(entry.Value.ea_handle << 16);
+
                 if(directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
                 uint[] clusters = GetClusters(currentCluster);

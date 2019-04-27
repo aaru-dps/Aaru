@@ -130,7 +130,7 @@ namespace DiscImageChef.Filesystems.FAT
                 Blocks        = entry.size / bytesPerCluster,
                 BlockSize     = bytesPerCluster,
                 Length        = entry.size,
-                Inode         = entry.start_cluster,
+                Inode         = (ulong)(fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
                 Links         = 1,
                 CreationTime  = DateHandlers.DosToDateTime(entry.cdate, entry.ctime),
                 LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime)
@@ -143,7 +143,7 @@ namespace DiscImageChef.Filesystems.FAT
             if(entry.attributes.HasFlag(FatAttributes.Subdirectory))
             {
                 stat.Attributes |= FileAttributes.Directory;
-                stat.Blocks     =  GetClusters(entry.start_cluster).Length;
+                stat.Blocks     =  fat32 ? GetClusters((uint)((entry.ea_handle << 16) + entry.start_cluster)).Length : GetClusters(entry.start_cluster).Length;
                 stat.Length     =  stat.Blocks * stat.BlockSize;
             }
 
