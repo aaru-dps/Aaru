@@ -55,6 +55,7 @@ namespace DiscImageChef.Filesystems.FAT
         ulong                                                  fatFirstSector;
         ulong                                                  firstClusterSector;
         bool                                                   mounted;
+        Namespace                                              @namespace;
         uint                                                   reservedSectors;
         Dictionary<string, DirectoryEntry>                     rootDirectoryCache;
         uint                                                   sectorsPerCluster;
@@ -72,7 +73,11 @@ namespace DiscImageChef.Filesystems.FAT
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[] { };
 
-        public Dictionary<string, string> Namespaces => null;
+        public Dictionary<string, string> Namespaces =>
+            new Dictionary<string, string>
+            {
+                {"dos", "DOS (8.3 all uppercase)"}, {"nt", "Windows NT (8.3 mixed case, default)"}
+            };
 
         static Dictionary<string, string> GetDefaultOptions() =>
             new Dictionary<string, string> {{"debug", false.ToString()}};

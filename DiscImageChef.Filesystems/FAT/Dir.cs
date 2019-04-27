@@ -154,11 +154,14 @@ namespace DiscImageChef.Filesystems.FAT
                     string name      = Encoding.GetString(dirent.filename).TrimEnd();
                     string extension = Encoding.GetString(dirent.extension).TrimEnd();
 
-                    if((dirent.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
-                        extension = extension.ToLower(CultureInfo.CurrentCulture);
+                    if(@namespace == Namespace.Nt)
+                    {
+                        if((dirent.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
+                            extension = extension.ToLower(CultureInfo.CurrentCulture);
 
-                    if((dirent.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0)
-                        name = name.ToLower(CultureInfo.CurrentCulture);
+                        if((dirent.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0)
+                            name = name.ToLower(CultureInfo.CurrentCulture);
+                    }
 
                     if(extension != "") filename = name + "." + extension;
                     else filename                = name;

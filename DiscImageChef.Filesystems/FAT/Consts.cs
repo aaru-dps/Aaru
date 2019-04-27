@@ -205,5 +205,11 @@ namespace DiscImageChef.Filesystems.FAT
             DecRainbow,
             Human
         }
+
+        enum Namespace
+        {
+            Dos,
+            Nt
+        }
     }
 }

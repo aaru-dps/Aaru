@@ -65,6 +65,20 @@ namespace DiscImageChef.Filesystems.FAT
             if(options == null) options = GetDefaultOptions();
             if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
 
+            // Default namespace
+            if(@namespace is null) @namespace = "nt";
+
+            switch(@namespace.ToLowerInvariant())
+            {
+                case "dos":
+                    this.@namespace = Namespace.Dos;
+                    break;
+                case "nt":
+                    this.@namespace = Namespace.Nt;
+                    break;
+                default: return Errno.InvalidArgument;
+            }
+
             if(imagePlugin.Info.SectorSize < 512) return Errno.InvalidArgument;
 
             DicConsole.DebugWriteLine("FAT plugin", "Reading BPB");
@@ -414,7 +428,9 @@ namespace DiscImageChef.Filesystems.FAT
                     Array.Copy(entry.extension, 0, fullname, 8, 3);
                     string volname = Encoding.GetString(fullname).Trim();
                     if(!string.IsNullOrEmpty(volname))
-                        XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 ? volname.ToLower() : volname;
+                        XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 && this.@namespace == Namespace.Nt
+                                                   ? volname.ToLower()
+                                                   : volname;
 
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {
@@ -438,10 +454,14 @@ namespace DiscImageChef.Filesystems.FAT
                 string name      = Encoding.GetString(entry.filename).TrimEnd();
                 string extension = Encoding.GetString(entry.extension).TrimEnd();
 
-                if((entry.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
-                    extension = extension.ToLower(CultureInfo.CurrentCulture);
+                if(this.@namespace == Namespace.Nt)
+                {
+                    if((entry.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
+                        extension = extension.ToLower(CultureInfo.CurrentCulture);
 
-                if((entry.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0) name = name.ToLower(CultureInfo.CurrentCulture);
+                    if((entry.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0)
+                        name = name.ToLower(CultureInfo.CurrentCulture);
+                }
 
                 if(extension != "") filename = name + "." + extension;
                 else filename                = name;
