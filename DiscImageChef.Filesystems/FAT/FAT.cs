@@ -45,6 +45,7 @@ namespace DiscImageChef.Filesystems.FAT
     public partial class FAT : IReadOnlyFilesystem
     {
         uint                                                   bytesPerCluster;
+        byte[]                                                 cachedEaData;
         CultureInfo                                            cultureInfo;
         bool                                                   debug;
         Dictionary<string, Dictionary<string, DirectoryEntry>> directoryCache;

@@ -605,13 +605,15 @@ namespace DiscImageChef.Filesystems.FAT
             // Check it is really an OS/2 EA file
             if(eaDirEntry.start_cluster != 0)
             {
-                ulong secadd = firstClusterSector + eaDirEntry.start_cluster * sectorsPerCluster;
-                byte[] eadata =
-                    imagePlugin.ReadSectors(firstClusterSector + eaDirEntry.start_cluster * sectorsPerCluster,
-                                            sectorsPerCluster);
-                ushort eamagic = BitConverter.ToUInt16(eadata, 0);
+                CacheEaData();
+                ushort eamagic = BitConverter.ToUInt16(cachedEaData, 0);
 
-                if(eamagic != EADATA_MAGIC) eaDirEntry = new DirectoryEntry();
+                if(eamagic != EADATA_MAGIC)
+                {
+                    eaDirEntry   = new DirectoryEntry();
+                    cachedEaData = null;
+                }
+                else eaCache = new Dictionary<string, Dictionary<string, byte[]>>();
             }
 
             mounted = true;

@@ -30,13 +30,20 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Filesystems.FAT
 {
     public partial class FAT
     {
+        Dictionary<string, Dictionary<string, byte[]>> eaCache;
+
         /// <summary>
         ///     Lists all extended attributes, alternate data streams and forks of the given file.
         /// </summary>
@@ -48,7 +55,81 @@ namespace DiscImageChef.Filesystems.FAT
             xattrs = null;
             if(!mounted) return Errno.AccessDenied;
 
-            return Errno.NotSupported;
+            // No other xattr recognized yet
+            if(cachedEaData is null) return Errno.NotSupported;
+
+            if(path[0] == '/') path = path.Substring(1);
+
+            if(eaCache.TryGetValue(path.ToLower(cultureInfo), out Dictionary<string, byte[]> eas))
+            {
+                xattrs = eas.Keys.ToList();
+                return Errno.NoError;
+            }
+
+            Errno err = GetFileEntry(path, out DirectoryEntry entry);
+
+            if(err != Errno.NoError) return err;
+
+            xattrs = new List<string>();
+
+            if(entry.ea_handle == 0) return Errno.NoError;
+
+            int aIndex = entry.ea_handle >> 7;
+            // First 0x20 bytes are the magic number and unused words
+            ushort a = BitConverter.ToUInt16(cachedEaData, aIndex * 2 + 0x20);
+
+            ushort b = BitConverter.ToUInt16(cachedEaData, entry.ea_handle * 2 + 0x200);
+
+            uint eaCluster = (uint)(a + b);
+
+            if(b == EA_UNUSED) return Errno.NoError;
+
+            EaHeader header =
+                Marshal.ByteArrayToStructureLittleEndian<EaHeader>(cachedEaData, (int)(eaCluster * bytesPerCluster),
+                                                                   Marshal.SizeOf<EaHeader>());
+
+            if(header.magic != 0x4145) return Errno.NoError;
+
+            uint eaLen = BitConverter.ToUInt32(cachedEaData,
+                                               (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>());
+
+            byte[] eaData = new byte[eaLen];
+            Array.Copy(cachedEaData, (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0, eaLen);
+
+            eas = new Dictionary<string, byte[]>();
+
+            if(true) eas.Add("com.microsoft.os2.fea", eaData);
+
+            int pos = 4;
+            while(pos < eaData.Length)
+            {
+                byte   fEA     = eaData[pos++];
+                byte   cbName  = eaData[pos++];
+                ushort cbValue = BitConverter.ToUInt16(eaData, pos);
+                pos += 2;
+
+                string name = Encoding.ASCII.GetString(eaData, pos, cbName);
+                pos += cbName;
+                pos++;
+                byte[] data = new byte[cbValue];
+
+                Array.Copy(eaData, pos, data, 0, cbValue);
+                pos += cbValue;
+
+                // OS/2 System Attributes
+                if(name[0] == '.')
+                {
+                    // This is WorkPlace System information so it's IBM
+                    if(name == ".CLASSINFO") name = "com.ibm.os2.classinfo";
+                    else name                     = "com.microsoft.os2" + name.ToLower();
+                }
+
+                eas.Add(name, data);
+            }
+
+            eaCache.Add(path.ToLower(cultureInfo), eas);
+            xattrs = eas.Keys.ToList();
+            return Errno.NoError;
         }
 
         /// <summary>
@@ -63,6 +144,19 @@ namespace DiscImageChef.Filesystems.FAT
             if(!mounted) return Errno.AccessDenied;
 
             return Errno.NotSupported;
+        }
+
+        void CacheEaData()
+        {
+            if(eaDirEntry.start_cluster == 0) return;
+
+            MemoryStream eaDataMs = new MemoryStream();
+
+            foreach(byte[] buffer in GetClusters(eaDirEntry.start_cluster)
+               .Select(cluster => image.ReadSectors(firstClusterSector + cluster * sectorsPerCluster,
+                                                    sectorsPerCluster))) eaDataMs.Write(buffer, 0, buffer.Length);
+
+            cachedEaData = eaDataMs.ToArray();
         }
     }
 }

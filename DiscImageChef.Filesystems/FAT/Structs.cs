@@ -882,5 +882,17 @@ namespace DiscImageChef.Filesystems.FAT
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public readonly byte[] name3;
         }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct EaHeader
+        {
+            public readonly ushort  magic;
+            public readonly ushort  cluster;
+            public readonly EaFlags flags;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public readonly byte[] filename;
+            public readonly uint   unknown;
+            public readonly ushort zero;
+        }
     }
 }

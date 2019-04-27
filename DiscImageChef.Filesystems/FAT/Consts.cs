@@ -82,6 +82,7 @@ namespace DiscImageChef.Filesystems.FAT
         const byte   LFN_MASK        = 0x1F;
         const ushort EADATA_MAGIC    = 0x4445;
         const ushort EASCTR_MAGIC    = 0x4145;
+        const ushort EA_UNUSED       = 0xFFFF;
 
         readonly (string hash, string name)[] knownBootHashes =
         {
@@ -216,6 +217,13 @@ namespace DiscImageChef.Filesystems.FAT
             Dos,
             Nt,
             Lfn
+        }
+
+        [Flags]
+        enum EaFlags : uint
+        {
+            Normal   = 0,
+            Critical = 1
         }
     }
 }
