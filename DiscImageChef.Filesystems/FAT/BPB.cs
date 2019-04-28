@@ -75,7 +75,7 @@ namespace DiscImageChef.Filesystems.FAT
                                    bpbSector[17] >= 0x20;
 
             // Check correct branch for Human68k
-            bool humanBranchCorrect = bpbSector[0] == 0x60 && bpbSector[1] >= 0x20 && bpbSector[1] < 0xFE;
+            bool humanBranchCorrect = bpbSector[0] == 0x60 && bpbSector[1] >= 0x1C && bpbSector[1] < 0xFE;
 
             DicConsole.DebugWriteLine("FAT plugin", "humanClustersCorrect = {0}", humanClustersCorrect);
             DicConsole.DebugWriteLine("FAT plugin", "humanOemCorrect = {0}",      humanOemCorrect);
@@ -98,6 +98,7 @@ namespace DiscImageChef.Filesystems.FAT
                 fakeBpb.boot_code   = humanBpb.boot_code;
                 fakeBpb.sectors     = humanBpb.clusters;
                 fakeBpb.big_sectors = humanBpb.big_clusters;
+                fakeBpb.rsectors    = 1;
 
                 return BpbKind.Human;
             }
