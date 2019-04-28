@@ -228,7 +228,6 @@ namespace DiscImageChef.Filesystems.FAT
                 }
 
                 case BpbKind.Human:
-                    fat16              = true;
                     XmlFsType.Bootable = true;
                     break;
             }
@@ -579,7 +578,7 @@ namespace DiscImageChef.Filesystems.FAT
                     statfs.Type = $"DEC FAT{(fat16 ? "16" : "12")}";
                     break;
                 case BpbKind.Human:
-                    statfs.Type = $"Human FAT{(fat16 ? "16" : "12")}";
+                    statfs.Type = $"Human68k FAT{(fat16 ? "16" : "12")}";
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }

@@ -557,7 +557,6 @@ namespace DiscImageChef.Filesystems.FAT
                 }
 
                 case BpbKind.Human:
-                    isFat16            = true;
                     XmlFsType.Bootable = true;
                     break;
             }
@@ -602,6 +601,9 @@ namespace DiscImageChef.Filesystems.FAT
                             break;
                         case BpbKind.Apricot:
                             sb.AppendLine("Apricot FAT12");
+                            break;
+                        case BpbKind.Human:
+                            sb.AppendLine("Human68k FAT12");
                             break;
                         default:
                             sb.AppendLine("Microsoft FAT12");
