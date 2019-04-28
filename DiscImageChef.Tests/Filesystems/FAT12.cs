@@ -274,7 +274,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "msdos_pc98_5.00_md2dd.img.lz", "msdos_pc98_5.00_md2hd.img.lz",
             // NEC MS-DOS 6.20 for PC-98
-            "msdos_pc98_6.20_md2dd.img.lz", "msdos_pc98_6.20_md2hd.img.lz"
+            "msdos_pc98_6.20_md2dd.img.lz", "msdos_pc98_6.20_md2hd.img.lz",
+            // GEOS 1.2
+            "geos12_md2hd.img.lz",
+            // GEOS 2.0
+            "geos20_mf2hd.img.lz",
+            // GEOS 3.1
+            "geos31_mf2hd.img.lz",
+            // GEOS 3.2
+            "geos32_mf2hd.img.lz",
+            // GEOS 4.1
+            "geos41_mf2hd.img.lz"
         };
 
         readonly MediaType[] mediatypes =
@@ -494,7 +504,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             MediaType.DOS_35_DS_DD_9, MediaType.NEC_525_HD,
             // NEC MS-DOS 6.20 for PC-98
-            MediaType.DOS_35_DS_DD_9, MediaType.NEC_525_HD
+            MediaType.DOS_35_DS_DD_9, MediaType.NEC_525_HD,
+            // GEOS 1.2
+            MediaType.DOS_525_HD,
+            // GEOS 2.0
+            MediaType.DOS_35_HD,
+            // GEOS 3.1
+            MediaType.DOS_35_HD,
+            // GEOS 3.2
+            MediaType.DOS_35_HD,
+            // GEOS 4.1
+            MediaType.DOS_35_HD
         };
 
         readonly ulong[] sectors =
@@ -666,7 +686,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             1440, 1232,
             // NEC MS-DOS 6.20 for PC-98
-            1440, 1232
+            1440, 1232,
+            // GEOS 1.2
+            2400,
+            // GEOS 2.0
+            2880,
+            // GEOS 3.1
+            2880,
+            // GEOS 3.2
+            2880,
+            // GEOS 4.1
+            2880,
         };
 
         readonly uint[] sectorsize =
@@ -838,7 +868,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             512, 1024,
             // NEC MS-DOS 6.20 for PC-98
-            512, 1024
+            512, 1024,
+            // GEOS 1.2
+            512,
+            // GEOS 2.0
+            512,
+            // GEOS 3.1
+            512,
+            // GEOS 3.2
+            512,
+            // GEOS 4.1
+            512
         };
 
         readonly long[] clusters =
@@ -1010,7 +1050,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             640, 1232,
             // NEC MS-DOS 6.20 for PC-98
-            640, 1232
+            640, 1232,
+            // GEOS 1.2
+            2400,
+            // GEOS 2.0
+            2880,
+            // GEOS 3.1
+            2880,
+            // GEOS 3.2
+            2880,
+            // GEOS 4.1
+            2880,
         };
 
         readonly int[] clustersize =
@@ -1182,7 +1232,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             1024, 1024,
             // NEC MS-DOS 6.20 for PC-98
-            1024, 1024
+            1024, 1024,
+            // GEOS 1.2
+            512,
+            // GEOS 2.0
+            512,
+            // GEOS 3.1
+            512,
+            // GEOS 3.2
+            512,
+            // GEOS 4.1
+            512,
         };
 
         readonly string[] volumename =
@@ -1360,7 +1420,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "NO NAME    ", "NO NAME    ",
             // NEC MS-DOS 6.20 for PC-98
-            "NO NAME    ", "NO NAME    "
+            "NO NAME    ", "NO NAME    ",
+            // GEOS 1.2
+            "GEOS12",
+            // GEOS 2.0
+            "GEOS20",
+            // GEOS 3.1
+            "GEOS32",
+            // GEOS 3.2
+            "NDO2000",
+            // GEOS 4.1
+            "GEOS41"
         };
 
         readonly string[] volumeserial =
@@ -1532,7 +1602,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "1002120E", "41021209",
             // NEC MS-DOS 6.20 for PC-98
-            "3D021418", "16021409"
+            "3D021418", "16021409",
+            // GEOS 1.2
+            "0000049C",
+            // GEOS 2.0
+            "8DC94C67",
+            // GEOS 3.1
+            "8E0D4C67",
+            // GEOS 3.2
+            "8EDB4C67",
+            // GEOS 4.1
+            "8D684C67"
         };
 
         readonly string[] oemid =
@@ -1704,7 +1784,17 @@ namespace DiscImageChef.Tests.Filesystems
             // NEC MS-DOS 5.00 for PC-98
             "NEC  5.0", "NEC  5.0",
             // NEC MS-DOS 6.20 for PC-98
-            "NEC  5.0", "NEC  5.0"
+            "NEC  5.0", "NEC  5.0",
+            // GEOS 1.2
+            "GEOWORKS",
+            // GEOS 2.0
+            "GEOWORKS",
+            // GEOS 3.1
+            "GEOWORKS",
+            // GEOS 3.2
+            "GEOWORKS",
+            // GEOS 4.1
+            "GEOWORKS",
         };
 
         [Test]
