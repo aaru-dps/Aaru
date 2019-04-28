@@ -696,7 +696,7 @@ namespace DiscImageChef.Tests.Filesystems
             // GEOS 3.2
             2880,
             // GEOS 4.1
-            2880,
+            2880
         };
 
         readonly uint[] sectorsize =
@@ -1060,7 +1060,7 @@ namespace DiscImageChef.Tests.Filesystems
             // GEOS 3.2
             2880,
             // GEOS 4.1
-            2880,
+            2880
         };
 
         readonly int[] clustersize =
@@ -1242,7 +1242,7 @@ namespace DiscImageChef.Tests.Filesystems
             // GEOS 3.2
             512,
             // GEOS 4.1
-            512,
+            512
         };
 
         readonly string[] volumename =
@@ -1794,7 +1794,7 @@ namespace DiscImageChef.Tests.Filesystems
             // GEOS 3.2
             "GEOWORKS",
             // GEOS 4.1
-            "GEOWORKS",
+            "GEOWORKS"
         };
 
         [Test]
@@ -2042,6 +2042,59 @@ namespace DiscImageChef.Tests.Filesystems
                 IFilesystem     fs         = new FAT();
                 Assert.AreEqual(true, fs.Identify(image, partitions[0]), testfiles[i]);
                 fs.GetInformation(image, partitions[0], out _, null);
+                Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
+                Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
+                Assert.AreEqual("FAT12",         fs.XmlFsType.Type,             testfiles[i]);
+                Assert.AreEqual(volumename[i],   fs.XmlFsType.VolumeName,       testfiles[i]);
+                Assert.AreEqual(volumeserial[i], fs.XmlFsType.VolumeSerial,     testfiles[i]);
+                Assert.AreEqual(oemid[i],        fs.XmlFsType.SystemIdentifier, testfiles[i]);
+            }
+        }
+    }
+
+    [TestFixture]
+    public class Fat12Human
+    {
+        readonly string[] testfiles = {"diska.d88.lz", "diskb.d88.lz"};
+
+        readonly MediaType[] mediatypes = {MediaType.SHARP_525, MediaType.SHARP_525};
+
+        readonly ulong[] sectors = {1232, 1232};
+
+        readonly uint[] sectorsize = {1024, 1024};
+
+        readonly long[] clusters = {1232, 1232};
+
+        readonly int[] clustersize = {1024, 1024};
+
+        readonly string[] volumename = {null, null};
+
+        readonly string[] volumeserial = {null, null};
+
+        readonly string[] oemid = {"Hudson soft 2.00", "Hudson soft 2.00"};
+
+        [Test]
+        public void Test()
+        {
+            for(int i = 0; i < testfiles.Length; i++)
+            {
+                string  location = Path.Combine(Consts.TestFilesRoot, "filesystems", "fat12_human", testfiles[i]);
+                IFilter filter   = new LZip();
+                filter.Open(location);
+                IMediaImage image = new D88();
+                Assert.AreEqual(true,          image.Open(filter),    testfiles[i]);
+                Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
+                Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
+                Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
+                IFilesystem fs = new FAT();
+                Partition wholePart = new Partition
+                {
+                    Name   = "Whole device",
+                    Length = image.Info.Sectors,
+                    Size   = image.Info.Sectors * image.Info.SectorSize
+                };
+                Assert.AreEqual(true, fs.Identify(image, wholePart), testfiles[i]);
+                fs.GetInformation(image, wholePart, out _, null);
                 Assert.AreEqual(clusters[i],     fs.XmlFsType.Clusters,         testfiles[i]);
                 Assert.AreEqual(clustersize[i],  fs.XmlFsType.ClusterSize,      testfiles[i]);
                 Assert.AreEqual("FAT12",         fs.XmlFsType.Type,             testfiles[i]);
