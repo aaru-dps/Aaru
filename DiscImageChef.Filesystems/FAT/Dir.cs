@@ -73,7 +73,7 @@ namespace DiscImageChef.Filesystems.FAT
                                  ? path.Substring(1).ToLower(cultureInfo)
                                  : path.ToLower(cultureInfo);
 
-            if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DirectoryEntry> currentDirectory))
+            if(directoryCache.TryGetValue(cutPath, out Dictionary<string, CompleteDirectoryEntry> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
                 return Errno.NoError;
@@ -81,12 +81,12 @@ namespace DiscImageChef.Filesystems.FAT
 
             string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
-            KeyValuePair<string, DirectoryEntry> entry =
+            KeyValuePair<string, CompleteDirectoryEntry> entry =
                 rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[0]);
 
             if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
 
-            if(!entry.Value.attributes.HasFlag(FatAttributes.Subdirectory)) return Errno.NotDirectory;
+            if(!entry.Value.Dirent.attributes.HasFlag(FatAttributes.Subdirectory)) return Errno.NotDirectory;
 
             string currentPath = pieces[0];
 
@@ -98,12 +98,12 @@ namespace DiscImageChef.Filesystems.FAT
 
                 if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
 
-                if(!entry.Value.attributes.HasFlag(FatAttributes.Subdirectory)) return Errno.NotDirectory;
+                if(!entry.Value.Dirent.attributes.HasFlag(FatAttributes.Subdirectory)) return Errno.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
-                uint currentCluster = entry.Value.start_cluster;
+                uint currentCluster = entry.Value.Dirent.start_cluster;
 
-                if(fat32) currentCluster += (uint)(entry.Value.ea_handle << 16);
+                if(fat32) currentCluster += (uint)(entry.Value.Dirent.ea_handle << 16);
 
                 if(directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
@@ -121,7 +121,7 @@ namespace DiscImageChef.Filesystems.FAT
                     Array.Copy(buffer, 0, directoryBuffer, i * bytesPerCluster, bytesPerCluster);
                 }
 
-                currentDirectory = new Dictionary<string, DirectoryEntry>();
+                currentDirectory = new Dictionary<string, CompleteDirectoryEntry>();
                 byte[]       lastLfnName     = null;
                 byte         lastLfnChecksum = 0;
                 List<string> LFNs            = new List<string>();
@@ -136,7 +136,7 @@ namespace DiscImageChef.Filesystems.FAT
 
                     if(dirent.attributes.HasFlag(FatAttributes.LFN))
                     {
-                        if(@namespace != Namespace.Lfn) continue;
+                        if(@namespace != Namespace.Lfn && @namespace != Namespace.Ecs) continue;
 
                         LfnEntry lfnEntry =
                             Marshal.ByteArrayToStructureLittleEndian<LfnEntry>(directoryBuffer, pos,
@@ -180,7 +180,9 @@ namespace DiscImageChef.Filesystems.FAT
 
                     if(dirent.attributes.HasFlag(FatAttributes.VolumeLabel)) continue;
 
-                    if(@namespace == Namespace.Lfn && lastLfnName != null)
+                    CompleteDirectoryEntry completeEntry = new CompleteDirectoryEntry {Dirent = dirent};
+
+                    if((@namespace == Namespace.Lfn || @namespace == Namespace.Ecs) && lastLfnName != null)
                     {
                         byte calculatedLfnChecksum = LfnChecksum(dirent.filename, dirent.extension);
 
@@ -188,11 +190,9 @@ namespace DiscImageChef.Filesystems.FAT
                         {
                             filename = StringHandlers.CToString(lastLfnName, Encoding.Unicode, true);
 
-                            LFNs.Add(filename);
-                            currentDirectory[filename] = dirent;
-                            lastLfnName                = null;
-                            lastLfnChecksum            = 0;
-                            continue;
+                            completeEntry.Lfn = filename;
+                            lastLfnName       = null;
+                            lastLfnChecksum   = 0;
                         }
                     }
 
@@ -203,10 +203,10 @@ namespace DiscImageChef.Filesystems.FAT
 
                     if(@namespace == Namespace.Nt)
                     {
-                        if((dirent.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
+                        if(dirent.caseinfo.HasFlag(CaseInfo.LowerCaseExtension))
                             extension = extension.ToLower(CultureInfo.CurrentCulture);
 
-                        if((dirent.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0)
+                        if(dirent.caseinfo.HasFlag(CaseInfo.LowerCaseBasename))
                             name = name.ToLower(CultureInfo.CurrentCulture);
                     }
 
@@ -216,21 +216,19 @@ namespace DiscImageChef.Filesystems.FAT
                     // Using array accessor ensures that repeated entries just get substituted.
                     // Repeated entries are not allowed but some bad implementations (e.g. FAT32.IFS)allow to create them
                     // when using spaces
-                    currentDirectory[filename] = dirent;
+                    completeEntry.Shortname                    = filename;
+                    currentDirectory[completeEntry.ToString()] = completeEntry;
                 }
 
                 // Check OS/2 .LONGNAME
                 if(eaCache != null && (@namespace == Namespace.Os2 || @namespace == Namespace.Ecs))
                 {
-                    List<KeyValuePair<string, DirectoryEntry>> filesWithEas =
-                        currentDirectory.Where(t => t.Value.ea_handle != 0).ToList();
+                    List<KeyValuePair<string, CompleteDirectoryEntry>> filesWithEas =
+                        currentDirectory.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
 
-                    foreach(KeyValuePair<string, DirectoryEntry> fileWithEa in filesWithEas)
+                    foreach(KeyValuePair<string, CompleteDirectoryEntry> fileWithEa in filesWithEas)
                     {
-                        // This ensures LFN takes preference when eCS is in use
-                        if(LFNs.Contains(fileWithEa.Key)) continue;
-
-                        Dictionary<string, byte[]> eas = GetEas(fileWithEa.Value.ea_handle);
+                        Dictionary<string, byte[]> eas = GetEas(fileWithEa.Value.Dirent.ea_handle);
 
                         if(eas is null) continue;
 
@@ -253,8 +251,36 @@ namespace DiscImageChef.Filesystems.FAT
                         // Forward slash is allowed in .LONGNAME, so change it to visually similar division slash
                         longname = longname.Replace('/', '\u2215');
 
+                        fileWithEa.Value.Longname = longname;
                         currentDirectory.Remove(fileWithEa.Key);
-                        currentDirectory[longname] = fileWithEa.Value;
+                        currentDirectory[fileWithEa.Value.ToString()] = fileWithEa.Value;
+                    }
+                }
+
+                // Check FAT32.IFS EAs
+                if(fat32 || debug)
+                {
+                    List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars =
+                        currentDirectory.Where(t => t.Key.EndsWith(FAT32_EA_TAIL, true, cultureInfo)).ToList();
+
+                    foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
+                    {
+                        // No real file this sidecar accompanies
+                        if(!currentDirectory
+                              .TryGetValue(sidecar.Key.Substring(0, sidecar.Key.Length - FAT32_EA_TAIL.Length),
+                                           out CompleteDirectoryEntry fileWithEa)) continue;
+
+                        // If not in debug mode we will consider the lack of EA bitflags to mean the EAs are corrupted or not real
+                        if(!debug)
+                            if(!fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEaOld) &&
+                               !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.CriticalEa)  &&
+                               !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEa)    &&
+                               !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.CriticalEa))
+                                continue;
+
+                        fileWithEa.Fat32Ea = sidecar.Value.Dirent;
+
+                        if(!debug) currentDirectory.Remove(sidecar.Key);
                     }
                 }
 

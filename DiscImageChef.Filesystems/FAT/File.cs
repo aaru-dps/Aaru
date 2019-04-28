@@ -122,8 +122,10 @@ namespace DiscImageChef.Filesystems.FAT
             stat = null;
             if(!mounted) return Errno.AccessDenied;
 
-            Errno err = GetFileEntry(path, out DirectoryEntry entry);
+            Errno err = GetFileEntry(path, out CompleteDirectoryEntry completeEntry);
             if(err != Errno.NoError) return err;
+
+            DirectoryEntry entry = completeEntry.Dirent;
 
             stat = new FileEntryInfo
             {
@@ -207,9 +209,9 @@ namespace DiscImageChef.Filesystems.FAT
             return clusters.ToArray();
         }
 
-        Errno GetFileEntry(string path, out DirectoryEntry entry)
+        Errno GetFileEntry(string path, out CompleteDirectoryEntry entry)
         {
-            entry = new DirectoryEntry();
+            entry = null;
 
             string cutPath =
                 path.StartsWith("/") ? path.Substring(1).ToLower(cultureInfo) : path.ToLower(cultureInfo);
@@ -223,12 +225,12 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(err != Errno.NoError) return err;
 
-            Dictionary<string, DirectoryEntry> parent;
+            Dictionary<string, CompleteDirectoryEntry> parent;
 
             if(pieces.Length == 1) parent = rootDirectoryCache;
             else if(!directoryCache.TryGetValue(parentPath, out parent)) return Errno.InvalidArgument;
 
-            KeyValuePair<string, DirectoryEntry> dirent =
+            KeyValuePair<string, CompleteDirectoryEntry> dirent =
                 parent.FirstOrDefault(t => t.Key.ToLower(cultureInfo) == pieces[pieces.Length - 1]);
 
             if(string.IsNullOrEmpty(dirent.Key)) return Errno.NoSuchFile;

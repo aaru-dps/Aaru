@@ -855,7 +855,7 @@ namespace DiscImageChef.Filesystems.FAT
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public readonly byte[] extension;
             public readonly FatAttributes attributes;
-            public readonly byte          caseinfo;
+            public readonly CaseInfo      caseinfo;
             public readonly byte          ctime_ms;
             public readonly ushort        ctime;
             public readonly ushort        cdate;
@@ -893,6 +893,23 @@ namespace DiscImageChef.Filesystems.FAT
             public readonly byte[] filename;
             public readonly uint   unknown;
             public readonly ushort zero;
+        }
+
+        class CompleteDirectoryEntry
+        {
+            public DirectoryEntry Dirent;
+            public DirectoryEntry Fat32Ea;
+            public string         Lfn;
+            public string         Longname;
+            public string         Shortname;
+
+            public override string ToString()
+            {
+                // This ensures LFN takes preference when eCS is in use
+                if(!string.IsNullOrEmpty(Lfn)) return Lfn;
+
+                return !string.IsNullOrEmpty(Longname) ? Longname : Shortname;
+            }
         }
     }
 }

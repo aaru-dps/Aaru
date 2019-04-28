@@ -368,7 +368,7 @@ namespace DiscImageChef.Filesystems.FAT
             else fatEntriesPerSector           = imagePlugin.Info.SectorSize * 2 / 3;
             fatFirstSector = partition.Start + reservedSectors * sectorsPerRealSector;
 
-            rootDirectoryCache = new Dictionary<string, DirectoryEntry>();
+            rootDirectoryCache = new Dictionary<string, CompleteDirectoryEntry>();
             byte[] rootDirectory = null;
 
             if(!fat32)
@@ -401,13 +401,15 @@ namespace DiscImageChef.Filesystems.FAT
                 }
 
                 rootDirectory = rootMs.ToArray();
+
+                // OS/2 FAT32.IFS uses LFN instead of .LONGNAME
+                if(this.@namespace == Namespace.Os2) this.@namespace = Namespace.Os2;
             }
 
             if(rootDirectory is null) return Errno.InvalidArgument;
 
-            byte[]       lastLfnName     = null;
-            byte         lastLfnChecksum = 0;
-            List<string> LFNs            = new List<string>();
+            byte[] lastLfnName     = null;
+            byte   lastLfnChecksum = 0;
 
             for(int i = 0; i < rootDirectory.Length; i += Marshal.SizeOf<DirectoryEntry>())
             {
@@ -468,9 +470,10 @@ namespace DiscImageChef.Filesystems.FAT
                     Array.Copy(entry.extension, 0, fullname, 8, 3);
                     string volname = Encoding.GetString(fullname).Trim();
                     if(!string.IsNullOrEmpty(volname))
-                        XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 && this.@namespace == Namespace.Nt
-                                                   ? volname.ToLower()
-                                                   : volname;
+                        XmlFsType.VolumeName =
+                            entry.caseinfo.HasFlag(CaseInfo.AllLowerCase) && this.@namespace == Namespace.Nt
+                                ? volname.ToLower()
+                                : volname;
 
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {
@@ -489,6 +492,8 @@ namespace DiscImageChef.Filesystems.FAT
                     continue;
                 }
 
+                CompleteDirectoryEntry completeEntry = new CompleteDirectoryEntry {Dirent = entry};
+
                 if((this.@namespace == Namespace.Lfn || this.@namespace == Namespace.Ecs) && lastLfnName != null)
                 {
                     byte calculatedLfnChecksum = LfnChecksum(entry.filename, entry.extension);
@@ -497,11 +502,9 @@ namespace DiscImageChef.Filesystems.FAT
                     {
                         filename = StringHandlers.CToString(lastLfnName, Encoding.Unicode, true);
 
-                        LFNs.Add(filename);
-                        rootDirectoryCache[filename] = entry;
-                        lastLfnName                  = null;
-                        lastLfnChecksum              = 0;
-                        continue;
+                        completeEntry.Lfn = filename;
+                        lastLfnName       = null;
+                        lastLfnChecksum   = 0;
                     }
                 }
 
@@ -512,15 +515,17 @@ namespace DiscImageChef.Filesystems.FAT
 
                 if(this.@namespace == Namespace.Nt)
                 {
-                    if((entry.caseinfo & FASTFAT_LOWERCASE_EXTENSION) > 0)
+                    if(entry.caseinfo.HasFlag(CaseInfo.LowerCaseExtension))
                         extension = extension.ToLower(CultureInfo.CurrentCulture);
 
-                    if((entry.caseinfo & FASTFAT_LOWERCASE_BASENAME) > 0)
+                    if(entry.caseinfo.HasFlag(CaseInfo.LowerCaseBasename))
                         name = name.ToLower(CultureInfo.CurrentCulture);
                 }
 
                 if(extension != "") filename = name + "." + extension;
                 else filename                = name;
+
+                completeEntry.Shortname = filename;
 
                 if(!fat32 && filename == "EA DATA. SF")
                 {
@@ -528,14 +533,14 @@ namespace DiscImageChef.Filesystems.FAT
                     lastLfnName     = null;
                     lastLfnChecksum = 0;
 
-                    if(debug) rootDirectoryCache[filename] = entry;
+                    if(debug) rootDirectoryCache[completeEntry.ToString()] = completeEntry;
 
                     continue;
                 }
 
-                rootDirectoryCache[filename] = entry;
-                lastLfnName                  = null;
-                lastLfnChecksum              = 0;
+                rootDirectoryCache[completeEntry.ToString()] = completeEntry;
+                lastLfnName                                  = null;
+                lastLfnChecksum                              = 0;
             }
 
             XmlFsType.VolumeName = XmlFsType.VolumeName?.Trim();
@@ -608,7 +613,7 @@ namespace DiscImageChef.Filesystems.FAT
 
             // TODO: Check how this affects international filenames
             cultureInfo    = new CultureInfo("en-US", false);
-            directoryCache = new Dictionary<string, Dictionary<string, DirectoryEntry>>();
+            directoryCache = new Dictionary<string, Dictionary<string, CompleteDirectoryEntry>>();
 
             // Check it is really an OS/2 EA file
             if(eaDirEntry.start_cluster != 0)
@@ -623,19 +628,17 @@ namespace DiscImageChef.Filesystems.FAT
                 }
                 else eaCache = new Dictionary<string, Dictionary<string, byte[]>>();
             }
+            else if(fat32) eaCache = new Dictionary<string, Dictionary<string, byte[]>>();
 
             // Check OS/2 .LONGNAME
             if(eaCache != null && (this.@namespace == Namespace.Os2 || this.@namespace == Namespace.Ecs))
             {
-                List<KeyValuePair<string, DirectoryEntry>> rootFilesWithEas =
-                    rootDirectoryCache.Where(t => t.Value.ea_handle != 0).ToList();
+                List<KeyValuePair<string, CompleteDirectoryEntry>> rootFilesWithEas =
+                    rootDirectoryCache.Where(t => t.Value.Dirent.ea_handle != 0).ToList();
 
-                foreach(KeyValuePair<string, DirectoryEntry> fileWithEa in rootFilesWithEas)
+                foreach(KeyValuePair<string, CompleteDirectoryEntry> fileWithEa in rootFilesWithEas)
                 {
-                    // This ensures LFN takes preference when eCS is in use
-                    if(LFNs.Contains(fileWithEa.Key)) continue;
-
-                    Dictionary<string, byte[]> eas = GetEas(fileWithEa.Value.ea_handle);
+                    Dictionary<string, byte[]> eas = GetEas(fileWithEa.Value.Dirent.ea_handle);
 
                     if(eas is null) continue;
 
@@ -658,8 +661,41 @@ namespace DiscImageChef.Filesystems.FAT
                     // Forward slash is allowed in .LONGNAME, so change it to visually similar division slash
                     longname = longname.Replace('/', '\u2215');
 
+                    fileWithEa.Value.Longname = longname;
                     rootDirectoryCache.Remove(fileWithEa.Key);
-                    rootDirectoryCache[longname] = fileWithEa.Value;
+                    rootDirectoryCache[fileWithEa.Value.ToString()] = fileWithEa.Value;
+                }
+            }
+
+            // Check FAT32.IFS EAs
+            if(fat32 || debug)
+            {
+                List<KeyValuePair<string, CompleteDirectoryEntry>> fat32EaSidecars = rootDirectoryCache
+                                                                                    .Where(t =>
+                                                                                               t.Key
+                                                                                                .EndsWith(FAT32_EA_TAIL,
+                                                                                                          true,
+                                                                                                          cultureInfo))
+                                                                                    .ToList();
+
+                foreach(KeyValuePair<string, CompleteDirectoryEntry> sidecar in fat32EaSidecars)
+                {
+                    // No real file this sidecar accompanies
+                    if(!rootDirectoryCache
+                          .TryGetValue(sidecar.Key.Substring(0, sidecar.Key.Length - FAT32_EA_TAIL.Length),
+                                       out CompleteDirectoryEntry fileWithEa)) continue;
+
+                    // If not in debug mode we will consider the lack of EA bitflags to mean the EAs are corrupted or not real
+                    if(!debug)
+                        if(!fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEaOld) &&
+                           !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.CriticalEa)  &&
+                           !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.NormalEa)    &&
+                           !fileWithEa.Dirent.caseinfo.HasFlag(CaseInfo.CriticalEa))
+                            continue;
+
+                    fileWithEa.Fat32Ea = sidecar.Value.Dirent;
+
+                    if(!debug) rootDirectoryCache.Remove(sidecar.Key);
                 }
             }
 

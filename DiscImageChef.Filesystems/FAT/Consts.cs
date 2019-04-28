@@ -59,14 +59,6 @@ namespace DiscImageChef.Filesystems.FAT
         ///     Entry points to self or parent directory
         /// </summary>
         const byte DIRENT_SUBDIR = 0x2E;
-        /// <summary>
-        ///     FASTFAT.SYS indicator that extension is lowercase
-        /// </summary>
-        const byte FASTFAT_LOWERCASE_EXTENSION = 0x10;
-        /// <summary>
-        ///     FASTFAT.SYS indicator that basename is lowercase
-        /// </summary>
-        const byte FASTFAT_LOWERCASE_BASENAME = 0x08;
         const uint   FAT32_MASK      = 0x0FFFFFFF;
         const uint   FAT32_END_MASK  = 0xFFFFFF8;
         const uint   FAT32_FORMATTED = 0xFFFFFF6;
@@ -92,6 +84,7 @@ namespace DiscImageChef.Filesystems.FAT
         const ushort EAT_MVMT        = 0xFFDF;
         const ushort EAT_MVST        = 0xFFDE;
         const ushort EAT_ASN1        = 0xFFDD;
+        const string FAT32_EA_TAIL   = " EA. SF";
 
         readonly (string hash, string name)[] knownBootHashes =
         {
@@ -235,6 +228,36 @@ namespace DiscImageChef.Filesystems.FAT
         {
             Normal   = 0,
             Critical = 1
+        }
+
+        [Flags]
+        enum CaseInfo : byte
+        {
+            /// <summary>
+            ///     FASTFAT.SYS indicator that basename is lowercase
+            /// </summary>
+            LowerCaseBasename = 0x08,
+            /// <summary>
+            ///     FASTFAT.SYS indicator that extension is lowercase
+            /// </summary>
+            LowerCaseExtension = 0x10,
+            AllLowerCase = 0x18,
+            /// <summary>
+            ///     FAT32.IFS &lt; 0.97 indicator for normal EAs present
+            /// </summary>
+            NormalEaOld = 0xEA,
+            /// <summary>
+            ///     FAT32.IFS &lt; 0.97 indicator for critical EAs present
+            /// </summary>
+            CriticalEaOld = 0xEC,
+            /// <summary>
+            ///     FAT32.IFS &gt;= 0.97 indicator for normal EAs present
+            /// </summary>
+            NormalEa = 0x40,
+            /// <summary>
+            ///     FAT32.IFS &gt;= 0.97 indicator for critical EAs present
+            /// </summary>
+            CriticalEa = 0x80
         }
     }
 }

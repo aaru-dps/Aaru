@@ -56,7 +56,7 @@ namespace DiscImageChef.Filesystems.FAT
             if(!mounted) return Errno.AccessDenied;
 
             // No other xattr recognized yet
-            if(cachedEaData is null) return Errno.NotSupported;
+            if(cachedEaData is null && !fat32) return Errno.NotSupported;
 
             if(path[0] == '/') path = path.Substring(1);
 
@@ -66,15 +66,24 @@ namespace DiscImageChef.Filesystems.FAT
                 return Errno.NoError;
             }
 
-            Errno err = GetFileEntry(path, out DirectoryEntry entry);
+            Errno err = GetFileEntry(path, out CompleteDirectoryEntry entry);
 
-            if(err != Errno.NoError) return err;
+            if(err != Errno.NoError || entry is null) return err;
 
             xattrs = new List<string>();
 
-            if(entry.ea_handle == 0) return Errno.NoError;
+            if(!fat32)
+            {
+                if(entry.Dirent.ea_handle == 0) return Errno.NoError;
 
-            eas = GetEas(entry.ea_handle);
+                eas = GetEas(entry.Dirent.ea_handle);
+            }
+            else
+            {
+                if(entry.Fat32Ea.start_cluster == 0) return Errno.NoError;
+
+                eas = GetEas(entry.Fat32Ea);
+            }
 
             if(eas is null) return Errno.NoError;
 
@@ -113,6 +122,30 @@ namespace DiscImageChef.Filesystems.FAT
             return Errno.NoError;
         }
 
+        Dictionary<string, byte[]> GetEas(DirectoryEntry entryFat32Ea)
+        {
+            MemoryStream eaMs                  = new MemoryStream();
+            uint[]       rootDirectoryClusters = GetClusters(entryFat32Ea.start_cluster);
+
+            foreach(uint cluster in rootDirectoryClusters)
+            {
+                byte[] buffer = image.ReadSectors(firstClusterSector + (cluster - 2) * sectorsPerCluster,
+                                                  sectorsPerCluster);
+
+                eaMs.Write(buffer, 0, buffer.Length);
+            }
+
+            byte[] full = eaMs.ToArray();
+            ushort size = BitConverter.ToUInt16(full, 0);
+            byte[] eas  = new byte[size];
+            Array.Copy(full, 0, eas, 0, size);
+
+            full = null;
+            eaMs.Close();
+
+            return GetEas(eas);
+        }
+
         Dictionary<string, byte[]> GetEas(ushort eaHandle)
         {
             int aIndex = eaHandle >> 7;
@@ -136,6 +169,13 @@ namespace DiscImageChef.Filesystems.FAT
 
             byte[] eaData = new byte[eaLen];
             Array.Copy(cachedEaData, (int)(eaCluster * bytesPerCluster) + Marshal.SizeOf<EaHeader>(), eaData, 0, eaLen);
+
+            return GetEas(eaData);
+        }
+
+        Dictionary<string, byte[]> GetEas(byte[] eaData)
+        {
+            if(eaData is null || eaData.Length < 4) return null;
 
             Dictionary<string, byte[]> eas = new Dictionary<string, byte[]>();
 

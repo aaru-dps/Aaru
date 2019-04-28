@@ -791,7 +791,8 @@ namespace DiscImageChef.Filesystems.FAT
                     Array.Copy(entry.extension, 0, fullname, 8, 3);
                     string volname = Encoding.GetString(fullname).Trim();
                     if(!string.IsNullOrEmpty(volname))
-                        XmlFsType.VolumeName = (entry.caseinfo & 0x18) > 0 ? volname.ToLower() : volname;
+                        XmlFsType.VolumeName =
+                            entry.caseinfo.HasFlag(CaseInfo.AllLowerCase) ? volname.ToLower() : volname;
 
                     if(entry.ctime > 0 && entry.cdate > 0)
                     {
