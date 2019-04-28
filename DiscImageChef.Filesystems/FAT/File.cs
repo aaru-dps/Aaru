@@ -127,17 +127,20 @@ namespace DiscImageChef.Filesystems.FAT
 
             stat = new FileEntryInfo
             {
-                Attributes    = new FileAttributes(),
-                Blocks        = entry.size / bytesPerCluster,
-                BlockSize     = bytesPerCluster,
-                Length        = entry.size,
-                Inode         = (ulong)(fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
-                Links         = 1,
-                CreationTime  = DateHandlers.DosToDateTime(entry.cdate, entry.ctime),
-                LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime)
+                Attributes   = new FileAttributes(),
+                Blocks       = entry.size / bytesPerCluster,
+                BlockSize    = bytesPerCluster,
+                Length       = entry.size,
+                Inode        = (ulong)(fat32 ? (entry.ea_handle << 16) + entry.start_cluster : entry.start_cluster),
+                Links        = 1,
+                CreationTime = DateHandlers.DosToDateTime(entry.cdate, entry.ctime)
             };
 
-            stat.CreationTime = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
+            if(@namespace != Namespace.Human)
+            {
+                stat.LastWriteTime = DateHandlers.DosToDateTime(entry.mdate, entry.mtime);
+                stat.CreationTime  = stat.CreationTime?.AddMilliseconds(entry.ctime_ms * 10);
+            }
 
             if(entry.size % bytesPerCluster > 0) stat.Blocks++;
 

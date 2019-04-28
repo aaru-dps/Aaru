@@ -211,6 +211,26 @@ namespace DiscImageChef.Filesystems.FAT
                     if(extension != "") filename = name + "." + extension;
                     else filename                = name;
 
+                    if(@namespace == Namespace.Human)
+                    {
+                        HumanDirectoryEntry humanEntry =
+                            Marshal.ByteArrayToStructureLittleEndian<HumanDirectoryEntry>(directoryBuffer, pos,
+                                                                                          Marshal
+                                                                                             .SizeOf<HumanDirectoryEntry
+                                                                                              >());
+
+                        completeEntry.HumanDirent = humanEntry;
+
+                        name      = StringHandlers.CToString(humanEntry.name1, Encoding).TrimEnd();
+                        extension = StringHandlers.CToString(humanEntry.extension, Encoding).TrimEnd();
+                        string name2 = StringHandlers.CToString(humanEntry.name2, Encoding).TrimEnd();
+
+                        if(extension != "") filename = name + name2 + "." + extension;
+                        else filename                = name               + name2;
+
+                        completeEntry.HumanName = filename;
+                    }
+
                     // Using array accessor ensures that repeated entries just get substituted.
                     // Repeated entries are not allowed but some bad implementations (e.g. FAT32.IFS)allow to create them
                     // when using spaces

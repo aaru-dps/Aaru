@@ -868,6 +868,22 @@ namespace DiscImageChef.Filesystems.FAT
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HumanDirectoryEntry
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public readonly byte[] name1;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public readonly byte[] extension;
+            public readonly FatAttributes attributes;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+            public readonly byte[] name2;
+            public readonly ushort mtime;
+            public readonly ushort mdate;
+            public readonly ushort start_cluster;
+            public readonly uint   size;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct LfnEntry
         {
             public readonly byte sequence;
@@ -897,16 +913,21 @@ namespace DiscImageChef.Filesystems.FAT
 
         class CompleteDirectoryEntry
         {
-            public DirectoryEntry Dirent;
-            public DirectoryEntry Fat32Ea;
-            public string         Lfn;
-            public string         Longname;
-            public string         Shortname;
+            public DirectoryEntry      Dirent;
+            public DirectoryEntry      Fat32Ea;
+            public HumanDirectoryEntry HumanDirent;
+            public string              HumanName;
+            public string              Lfn;
+            public string              Longname;
+            public string              Shortname;
 
             public override string ToString()
             {
                 // This ensures LFN takes preference when eCS is in use
                 if(!string.IsNullOrEmpty(Lfn)) return Lfn;
+
+                // This ensures Humans takes preference when present
+                if(!string.IsNullOrEmpty(HumanName)) return HumanName;
 
                 return !string.IsNullOrEmpty(Longname) ? Longname : Shortname;
             }

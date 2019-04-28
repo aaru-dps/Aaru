@@ -221,7 +221,8 @@ namespace DiscImageChef.Filesystems.FAT
             Nt,
             Lfn,
             Os2,
-            Ecs
+            Ecs,
+            Human
         }
 
         [Flags]

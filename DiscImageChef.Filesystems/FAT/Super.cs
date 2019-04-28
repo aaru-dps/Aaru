@@ -60,7 +60,6 @@ namespace DiscImageChef.Filesystems.FAT
         public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options,     string    @namespace)
         {
-            Encoding  = encoding ?? Encoding.GetEncoding("IBM437");
             XmlFsType = new FileSystemType();
             if(options == null) options = GetDefaultOptions();
             if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
@@ -84,6 +83,9 @@ namespace DiscImageChef.Filesystems.FAT
                     break;
                 case "lfn":
                     this.@namespace = Namespace.Lfn;
+                    break;
+                case "human":
+                    this.@namespace = Namespace.Human;
                     break;
                 default: return Errno.InvalidArgument;
             }
@@ -227,9 +229,20 @@ namespace DiscImageChef.Filesystems.FAT
                 }
 
                 case BpbKind.Human:
+                    // If not debug set Human68k namespace and ShiftJIS codepage as defaults
+                    if(!debug)
+                    {
+                        this.@namespace = Namespace.Human;
+                        encoding        = Encoding.GetEncoding("shift_jis");
+                    }
+
                     XmlFsType.Bootable = true;
                     break;
             }
+
+            Encoding = encoding ?? (bpbKind == BpbKind.Human
+                                        ? Encoding.GetEncoding("shift_jis")
+                                        : Encoding.GetEncoding("IBM437"));
 
             ulong firstRootSector = 0;
 
@@ -527,6 +540,26 @@ namespace DiscImageChef.Filesystems.FAT
 
                 completeEntry.Shortname = filename;
 
+                if(this.@namespace == Namespace.Human)
+                {
+                    HumanDirectoryEntry humanEntry =
+                        Marshal.ByteArrayToStructureLittleEndian<HumanDirectoryEntry>(rootDirectory, i,
+                                                                                      Marshal
+                                                                                         .SizeOf<HumanDirectoryEntry
+                                                                                          >());
+
+                    completeEntry.HumanDirent = humanEntry;
+
+                    name      = StringHandlers.CToString(humanEntry.name1, Encoding).TrimEnd();
+                    extension = StringHandlers.CToString(humanEntry.extension, Encoding).TrimEnd();
+                    string name2 = StringHandlers.CToString(humanEntry.name2, Encoding).TrimEnd();
+
+                    if(extension != "") filename = name + name2 + "." + extension;
+                    else filename                = name               + name2;
+
+                    completeEntry.HumanName = filename;
+                }
+
                 if(!fat32 && filename == "EA DATA. SF")
                 {
                     eaDirEntry      = entry;
@@ -699,8 +732,6 @@ namespace DiscImageChef.Filesystems.FAT
                 }
             }
 
-            System.Console.WriteLine("First cluster sector: {0}", firstClusterSector);
-            System.Console.WriteLine("Sectors per cluster: {0}",  sectorsPerCluster);
             mounted = true;
             return Errno.NoError;
         }
