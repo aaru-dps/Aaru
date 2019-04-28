@@ -90,8 +90,6 @@ namespace DiscImageChef.Filesystems.FAT
                 default: return Errno.InvalidArgument;
             }
 
-            if(imagePlugin.Info.SectorSize < 512) return Errno.InvalidArgument;
-
             DicConsole.DebugWriteLine("FAT plugin", "Reading BPB");
 
             uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
