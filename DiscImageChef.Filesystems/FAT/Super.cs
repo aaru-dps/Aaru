@@ -192,9 +192,8 @@ namespace DiscImageChef.Filesystems.FAT
 
                     // First root directory sector
                     firstClusterSector =
-                        (ulong)((fat32Bpb.root_cluster - 2) * fat32Bpb.spc + fat32Bpb.big_spfat * fat32Bpb.fats_no +
-                                fat32Bpb.rsectors) * sectorsPerRealSector;
-                    sectorsForRootDirectory = 1;
+                        (ulong)(fat32Bpb.big_spfat * fat32Bpb.fats_no + fat32Bpb.rsectors) * sectorsPerRealSector -
+                        2                                                                  * sectorsPerCluster;
 
                     if(fat32Bpb.fsinfo_sector + partition.Start <= partition.End)
                     {
@@ -396,8 +395,7 @@ namespace DiscImageChef.Filesystems.FAT
                 foreach(uint cluster in rootDirectoryClusters)
                 {
                     byte[] buffer =
-                        imagePlugin.ReadSectors(firstClusterSector + (cluster - 2) * sectorsPerCluster,
-                                                sectorsPerCluster);
+                        imagePlugin.ReadSectors(firstClusterSector + cluster * sectorsPerCluster, sectorsPerCluster);
 
                     rootMs.Write(buffer, 0, buffer.Length);
                 }

@@ -129,8 +129,7 @@ namespace DiscImageChef.Filesystems.FAT
 
             foreach(uint cluster in rootDirectoryClusters)
             {
-                byte[] buffer = image.ReadSectors(firstClusterSector + (cluster - 2) * sectorsPerCluster,
-                                                  sectorsPerCluster);
+                byte[] buffer = image.ReadSectors(firstClusterSector + cluster * sectorsPerCluster, sectorsPerCluster);
 
                 eaMs.Write(buffer, 0, buffer.Length);
             }
