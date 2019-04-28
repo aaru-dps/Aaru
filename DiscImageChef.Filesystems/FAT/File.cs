@@ -221,9 +221,12 @@ namespace DiscImageChef.Filesystems.FAT
 
             string parentPath = string.Join("/", pieces, 0, pieces.Length - 1);
 
-            Errno err = ReadDir(parentPath, out _);
+            if(!directoryCache.TryGetValue(parentPath, out _))
+            {
+                Errno err = ReadDir(parentPath, out _);
 
-            if(err != Errno.NoError) return err;
+                if(err != Errno.NoError) return err;
+            }
 
             Dictionary<string, CompleteDirectoryEntry> parent;
 
