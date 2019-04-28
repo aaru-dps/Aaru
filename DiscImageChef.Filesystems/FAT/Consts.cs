@@ -177,7 +177,8 @@ namespace DiscImageChef.Filesystems.FAT
              "iomega"),                                           // OEM ID: "SHIPDISK", contains timedate on boot code may not be unique
             ("ef79a1f33e5237827eb812dda548f0e4e916d815", "GEOS"), // OEM ID: "GEOWORKS"
             ("8524587ee91494cc51cc2c9d07453e84be0cdc33", "Hero Soft v1.10"),
-            ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00")
+            ("681a0d9d662ba368e6acb0d0bf602e1f56411144", "Human68k 2.00"),
+            ("91e2b47c3cb46611249e4daa283a68ba21ba596a", "Human68k 2.00")
         };
 
         [Flags]
