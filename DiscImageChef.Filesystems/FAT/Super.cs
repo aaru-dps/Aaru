@@ -232,6 +232,8 @@ namespace DiscImageChef.Filesystems.FAT
                     break;
             }
 
+            ulong firstRootSector = 0;
+
             if(!fat32)
             {
                 // This is to support FAT partitions on hybrid ISO/USB images
@@ -349,13 +351,13 @@ namespace DiscImageChef.Filesystems.FAT
                         BitConverter.ToUInt16(fakeBpb.jump, 1) >= minBootNearJump &&
                         BitConverter.ToUInt16(fakeBpb.jump, 1) <= 0x1FC;
 
+                // First root directory sector
+                firstRootSector = (ulong)(fakeBpb.spfat * fakeBpb.fats_no + fakeBpb.rsectors) * sectorsPerRealSector +
+                                  partition.Start;
+                sectorsForRootDirectory = (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
+
                 sectorsPerRealSector =  fakeBpb.bps / imagePlugin.Info.SectorSize;
                 sectorsPerCluster    *= sectorsPerRealSector;
-
-                // First root directory sector
-                firstClusterSector =
-                    (ulong)(fakeBpb.spfat * fakeBpb.fats_no + fakeBpb.rsectors) * sectorsPerRealSector;
-                sectorsForRootDirectory = (uint)(fakeBpb.root_ent * 32 / imagePlugin.Info.SectorSize);
             }
 
             firstClusterSector += partition.Start;
@@ -372,7 +374,8 @@ namespace DiscImageChef.Filesystems.FAT
 
             if(!fat32)
             {
-                rootDirectory = imagePlugin.ReadSectors(firstClusterSector, sectorsForRootDirectory);
+                firstClusterSector = firstRootSector + sectorsForRootDirectory - sectorsPerCluster * 2;
+                rootDirectory      = imagePlugin.ReadSectors(firstRootSector, sectorsForRootDirectory);
 
                 if(bpbKind == BpbKind.DecRainbow)
                 {
@@ -698,6 +701,8 @@ namespace DiscImageChef.Filesystems.FAT
                 }
             }
 
+            System.Console.WriteLine("First cluster sector: {0}", firstClusterSector);
+            System.Console.WriteLine("Sectors per cluster: {0}",  sectorsPerCluster);
             mounted = true;
             return Errno.NoError;
         }
