@@ -22,6 +22,7 @@ enum <uint> MediaType
     Microdrive  = 3,
     Zone_HDD    = 4,
     FlashDrive = 5,
+    UnknownTape = 6,
 
     CD = 10,
     CDDA = 11,

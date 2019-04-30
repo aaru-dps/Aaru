@@ -274,6 +274,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumTypeTape,
                                                 scsiDensityCodeTape, blocks, blockSize);
+            if(dskType == MediaType.Unknown) dskType = MediaType.UnknownTape;
 
             UpdateStatus?.Invoke($"SCSI device type: {dev.ScsiType}.");
             UpdateStatus?.Invoke($"SCSI medium type: {scsiMediumTypeTape}.");
