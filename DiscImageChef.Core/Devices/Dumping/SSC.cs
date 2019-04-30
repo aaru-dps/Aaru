@@ -56,8 +56,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         {
             FixedSense?      fxSense;
             bool             sense;
-            ulong            blocks = 0;
             uint             blockSize;
+            ulong            blocks  = 0;
             MediaType        dskType = MediaType.Unknown;
             DateTime         start;
             DateTime         end;
@@ -265,9 +265,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
                     scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
                 blockSize = decMode.Value.Header.BlockDescriptors[0].BlockLength;
+
                 UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
             }
             else blockSize = 1;
+
+            if(blockSize == 0) blockSize = 1;
 
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumTypeTape,
@@ -291,10 +294,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong currentSize          = 0;
             ulong currentPartitionSize = 0;
             ulong currentFileSize      = 0;
+            bool  fixedLen             = false;
+            uint  transferLen          = blockSize;
 
-            bool fixedLen    = false;
-            uint transferLen = blockSize;
-
+            firstRead:
             sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, dev.Timeout,
                               out duration);
             if(sense)
@@ -325,6 +328,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                           dev.Timeout, out duration);
                         if(sense)
                         {
+                            fxSense = Sense.DecodeFixed(senseBuf, out strSense);
                             StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." +
                                                          Environment.NewLine                      + strSense);
                             dumpLog.WriteLine("Drive could not read. Sense follows...");
@@ -332,6 +336,34 @@ namespace DiscImageChef.Core.Devices.Dumping
                                               fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                             return;
                         }
+                    }
+                    else if(fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ == 0x00 && fxSense.Value.ILI &&
+                            fxSense.Value.InformationValid)
+                    {
+                        blockSize = (uint)((int)blockSize -
+                                           BitConverter.ToInt32(BitConverter.GetBytes(fxSense.Value.Information), 0));
+                        transferLen = blockSize;
+
+                        UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
+                        dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
+
+                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout,
+                                                   out duration);
+                        totalDuration += duration;
+
+                        if(sense)
+                        {
+                            fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                            StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
+                                                         Environment.NewLine                                   +
+                                                         strSense);
+                            dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
+                            dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                              fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                            return;
+                        }
+
+                        goto firstRead;
                     }
                     else
                     {
@@ -488,6 +520,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         blockSize = (uint)((int)blockSize -
                                            BitConverter.ToInt32(BitConverter.GetBytes(fxSense.Value.Information), 0));
                         currentTapeFile.BlockSize = blockSize;
+                        if(!fixedLen) transferLen = blockSize;
 
                         UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
                         dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
