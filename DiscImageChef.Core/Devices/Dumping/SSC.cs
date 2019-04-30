@@ -31,7 +31,6 @@
 // ****************************************************************************/
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Xml.Serialization;
@@ -287,15 +286,14 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("SCSI density type: {0}.",  scsiDensityCodeTape);
             dumpLog.WriteLine("Media identified as {0}.", dskType);
 
-            bool  endOfMedia           = false;
-            ulong currentBlock         = 0;
-            uint  currentFile          = 0;
-            byte  currentPartition     = 0;
-            byte  totalPartitions      = 1; // TODO: Handle partitions.
-            ulong currentSize          = 0;
-            ulong currentPartitionSize = 0;
-            bool  fixedLen             = false;
-            uint  transferLen          = blockSize;
+            bool  endOfMedia       = false;
+            ulong currentBlock     = 0;
+            uint  currentFile      = 0;
+            byte  currentPartition = 0;
+            byte  totalPartitions  = 1; // TODO: Handle partitions.
+            ulong currentSize      = 0;
+            bool  fixedLen         = false;
+            uint  transferLen      = blockSize;
 
             firstRead:
             sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, dev.Timeout,
@@ -409,8 +407,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            List<TapePartitionType> partitions = new List<TapePartitionType>();
-
             Checksum dataChk = new Checksum();
             start = DateTime.UtcNow;
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
@@ -418,21 +414,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             TapeFile currentTapeFile =
                 new TapeFile {File = currentFile, FirstBlock = currentBlock, Partition = currentPartition};
-
-            Checksum fileChk = new Checksum();
-            TapePartitionType currentTapePartition = new TapePartitionType
-            {
-                Image = new ImageType
-                {
-                    format          = "BINARY",
-                    offset          = currentSize,
-                    offsetSpecified = true,
-                    Value           = outputPrefix + ".bin"
-                },
-                Sequence   = currentPartition,
-                StartBlock = currentBlock
-            };
-            Checksum partitionChk = new Checksum();
+            TapePartition currentTapePartition =
+                new TapePartition {Number = currentPartition, FirstBlock = currentBlock};
 
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    currentSpeedSize = 0;
@@ -455,10 +438,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     currentTapeFile.LastBlock = currentBlock - 1;
                     (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
 
-                    currentTapePartition.Checksums = partitionChk.End().ToArray();
-                    currentTapePartition.EndBlock  = currentBlock - 1;
-                    currentTapePartition.Size      = currentPartitionSize;
-                    partitions.Add(currentTapePartition);
+                    currentTapePartition.LastBlock = currentBlock - 1;
+                    (outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
 
                     currentPartition++;
 
@@ -469,21 +450,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             File = currentFile, FirstBlock = currentBlock, Partition = currentPartition
                         };
-                        fileChk = new Checksum();
-                        currentTapePartition = new TapePartitionType
-                        {
-                            Image = new ImageType
-                            {
-                                format          = "BINARY",
-                                offset          = currentSize,
-                                offsetSpecified = true,
-                                Value           = outputPrefix + ".bin"
-                            },
-                            Sequence   = currentPartition,
-                            StartBlock = currentBlock
-                        };
-                        currentPartitionSize = 0;
-                        partitionChk         = new Checksum();
+                        currentTapePartition = new TapePartition {Number = currentPartition, FirstBlock = currentBlock};
                         UpdateStatus?.Invoke($"Seeking to partition {currentPartition}");
                         dev.Locate(out senseBuf, false, currentPartition, 0, dev.Timeout, out duration);
                         totalDuration += duration;
@@ -582,7 +549,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             File = currentFile, FirstBlock = currentBlock, Partition = currentPartition
                         };
-                        fileChk = new Checksum();
 
                         UpdateStatus?.Invoke($"Changed to file {currentFile} at block {currentBlock}");
                         dumpLog.WriteLine("Changed to file {0} at block {1}", currentFile, currentBlock);
@@ -605,16 +571,13 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 DateTime chkStart = DateTime.UtcNow;
                 dataChk.Update(cmdBuf);
-                fileChk.Update(cmdBuf);
-                partitionChk.Update(cmdBuf);
                 DateTime chkEnd      = DateTime.UtcNow;
                 double   chkDuration = (chkEnd - chkStart).TotalMilliseconds;
                 totalChkDuration += chkDuration;
 
                 currentBlock++;
-                currentSize          += blockSize;
-                currentPartitionSize += blockSize;
-                currentSpeedSize     += blockSize;
+                currentSize      += blockSize;
+                currentSpeedSize += blockSize;
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
                 if(elapsed < 1) continue;
@@ -628,6 +591,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             currentTapeFile.LastBlock = currentBlock - 1;
             (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
+            currentTapePartition.LastBlock = currentBlock - 1;
+            (outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
 
             dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
@@ -678,7 +643,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             sidecar.BlockMedia[0].DumpHardwareArray[0].Revision     = dev.Revision;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Serial       = dev.Serial;
             sidecar.BlockMedia[0].DumpHardwareArray[0].Software     = Version.GetSoftwareType();
-            sidecar.BlockMedia[0].TapeInformation                   = partitions.ToArray();
 
             if(!aborted)
             {
