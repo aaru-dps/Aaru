@@ -62,7 +62,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             DateTime         start;
             DateTime         end;
             double           totalDuration    = 0;
-            double           totalChkDuration = 0;
             double           currentSpeed     = 0;
             double           maxSpeed         = double.MinValue;
             double           minSpeed         = double.MaxValue;
@@ -291,7 +290,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint  currentFile      = 0;
             byte  currentPartition = 0;
             byte  totalPartitions  = 1; // TODO: Handle partitions.
-            ulong currentSize      = 0;
             bool  fixedLen         = false;
             uint  transferLen      = blockSize;
 
@@ -407,7 +405,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            Checksum dataChk = new Checksum();
             start = DateTime.UtcNow;
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
@@ -483,8 +480,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
                         dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
 
-                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout,
-                                                   out duration);
+                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
                         totalDuration += duration;
 
                         if(sense)
@@ -569,14 +565,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 ibgLog.Write(currentBlock, currentSpeed * 1024);
                 outputPlugin.WriteSector(cmdBuf, currentBlock);
 
-                DateTime chkStart = DateTime.UtcNow;
-                dataChk.Update(cmdBuf);
-                DateTime chkEnd      = DateTime.UtcNow;
-                double   chkDuration = (chkEnd - chkStart).TotalMilliseconds;
-                totalChkDuration += chkDuration;
-
                 currentBlock++;
-                currentSize      += blockSize;
                 currentSpeedSize += blockSize;
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
@@ -611,49 +600,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
             dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
                               (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
-            dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
 
-            UpdateStatus
-              ?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming).");
             UpdateStatus
               ?.Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
             UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
 
-            sidecar.BlockMedia[0].Checksums  = dataChk.End().ToArray();
-            sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-            CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp, out string xmlDskSubTyp);
-            sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
-            sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
-            // TODO: Implement device firmware revision
-            sidecar.BlockMedia[0].Image = new ImageType
-            {
-                format = "Raw disk image (sector by sector copy)", Value = outputPrefix + ".bin"
-            };
-            sidecar.BlockMedia[0].LogicalBlocks     = blocks;
-            sidecar.BlockMedia[0].Size              = currentSize;
-            sidecar.BlockMedia[0].DumpHardwareArray = new DumpHardwareType[1];
-            sidecar.BlockMedia[0].DumpHardwareArray[0] =
-                new DumpHardwareType {Extents = new ExtentType[1]};
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Extents[0] =
-                new ExtentType {Start = 0, End = blocks - 1};
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Manufacturer = dev.Manufacturer;
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Model        = dev.Model;
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Revision     = dev.Revision;
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Serial       = dev.Serial;
-            sidecar.BlockMedia[0].DumpHardwareArray[0].Software     = Version.GetSoftwareType();
-
-            if(!aborted)
-            {
-                UpdateStatus?.Invoke("Writing metadata sidecar");
-
-                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
-
-                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
-            }
+            // TODO: Media sidecar
 
             Statistics.AddMedia(dskType, true);
         }
