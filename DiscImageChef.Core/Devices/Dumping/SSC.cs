@@ -313,7 +313,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                              Environment.NewLine                             +
                                                              strSense);
                                 dumpLog.WriteLine("Drive could not return back. Sense follows...");
-                                dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
                                                   fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                                 return;
                             }
@@ -328,7 +328,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." +
                                                          Environment.NewLine                      + strSense);
                             dumpLog.WriteLine("Drive could not read. Sense follows...");
-                            dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                            dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
                                               fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                             return;
                         }
@@ -338,7 +338,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         StoppingErrorMessage?.Invoke("Drive could not read. Sense follows..." + Environment.NewLine +
                                                      strSense);
                         dumpLog.WriteLine("Drive could not read. Sense follows...");
-                        dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                        dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
                                           fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                         return;
                     }
@@ -359,7 +359,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     StoppingErrorMessage?.Invoke("Drive could not return back. Sense follows..." + Environment.NewLine +
                                                  strSense);
                     dumpLog.WriteLine("Drive could not return back. Sense follows...");
-                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
+                    dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
                                       fxSense.Value.ASC, fxSense.Value.ASCQ);
                     return;
                 }
