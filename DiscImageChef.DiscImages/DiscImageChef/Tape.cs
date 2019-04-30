@@ -45,5 +45,7 @@ namespace DiscImageChef.DiscImages
         public bool AddFile(TapeFile file) => throw new NotImplementedException();
 
         public bool AddPartition(TapePartition partition) => throw new NotImplementedException();
+
+        public bool SetTape() => throw new NotImplementedException();
     }
 }
