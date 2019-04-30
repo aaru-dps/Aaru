@@ -606,6 +606,14 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
+                                // Used by some HP drives for all generations
+                                case 0x8C:
+                                {
+                                    return MediaType.DDS1;
+
+                                    break;
+                                }
                             }
 
                             break;
