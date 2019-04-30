@@ -130,11 +130,13 @@
           <e p="IPartitionableMediaImage.cs" t="Include" />
           <e p="IPluginRegister.cs" t="Include" />
           <e p="IReadOnlyFilesystem.cs" t="Include" />
+          <e p="ITapeImage.cs" t="Include" />
           <e p="IVerifiableImage.cs" t="Include" />
           <e p="IVerifiableSectorsImage.cs" t="Include" />
           <e p="IWritableFloppyImage.cs" t="Include" />
           <e p="IWritableImage.cs" t="Include" />
           <e p="IWritableOpticalImage.cs" t="Include" />
+          <e p="IWritableTapeImage.cs" t="Include" />
         </e>
         <e p="Interop" t="Include">
           <e p="DetectOS.cs" t="Include" />
@@ -158,6 +160,8 @@
         <e p="Structs" t="Include">
           <e p="Filesystems.cs" t="Include" />
           <e p="Images.cs" t="Include" />
+          <e p="TapeFile.cs" t="Include" />
+          <e p="TapePartition.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
