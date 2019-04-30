@@ -54,6 +54,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool  Removable;
         public ulong LastBlock;
         public ulong NextBlock;
+        public bool  Tape;
 
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;

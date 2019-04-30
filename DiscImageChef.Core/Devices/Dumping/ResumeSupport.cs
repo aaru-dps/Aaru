@@ -66,17 +66,22 @@ namespace DiscImageChef.Core.Devices.Dumping
         internal static void Process(bool                 isLba,        bool             removable, ulong blocks,
                                      string               manufacturer, string           model,
                                      string               serial,       PlatformID       platform, ref Resume resume,
-                                     ref DumpHardwareType currentTry,   ref ExtentsULong extents)
+                                     ref DumpHardwareType currentTry,   ref ExtentsULong extents,
+                                     bool                 isTape = false)
         {
             if(resume != null)
             {
                 if(!isLba) throw new NotImplementedException("Resuming CHS devices is currently not supported.");
 
+                if(resume.Tape != isTape)
+                    throw new
+                        InvalidOperationException($"Resume file specifies a {(resume.Tape ? "tape" : "not tape")} device but you're requesting to dump a {(isTape ? "tape" : "not tape")} device, not continuing...");
+
                 if(resume.Removable != removable)
                     throw new
                         InvalidOperationException($"Resume file specifies a {(resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {(removable ? "removable" : "non removable")} device, not continuing...");
 
-                if(resume.LastBlock != blocks - 1)
+                if(!isTape && resume.LastBlock != blocks - 1)
                     throw new
                         InvalidOperationException($"Resume file specifies a device with {resume.LastBlock + 1} blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
 
@@ -131,7 +136,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Tries        = new List<DumpHardwareType>(),
                     CreationDate = DateTime.UtcNow,
                     BadBlocks    = new List<ulong>(),
-                    LastBlock    = blocks - 1
+                    LastBlock    = blocks - 1,
+                    Tape         = isTape
                 };
                 currentTry = new DumpHardwareType
                 {
