@@ -263,7 +263,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 scsiMediumTypeTape = (byte)decMode.Value.Header.MediumType;
                 if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
                     scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                blockSize = decMode.Value.Header.BlockDescriptors[0].BlockLength;
+                blockSize = decMode.Value.Header.BlockDescriptors != null ? decMode.Value.Header.BlockDescriptors[0].BlockLength : (uint)0;
 
                 UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
             }
