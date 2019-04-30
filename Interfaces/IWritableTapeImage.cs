@@ -36,21 +36,22 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.CommonTypes.Interfaces
 {
-    public interface IWritableTapeImage : ITapeImage
+    public interface IWritableTapeImage : ITapeImage, IWritableImage
     {
         /// <summary>
-        /// Registers a new file in the image
+        ///     Registers a new file in the image
         /// </summary>
         /// <param name="file">Tape file descriptor</param>
         /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
         bool AddFile(TapeFile file);
 
         /// <summary>
-        /// Registers a new partition
+        ///     Registers a new partition
         /// </summary>
         /// <param name="partition">Tape partition descriptor</param>
         /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
