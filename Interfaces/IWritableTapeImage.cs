@@ -56,5 +56,12 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <param name="partition">Tape partition descriptor</param>
         /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
         bool AddPartition(TapePartition partition);
+
+        /// <summary>
+        /// Tells the image plugin to set the internal structures to expect a tape (e.g. unknown block count and size).
+        /// Must be called before <see cref="IWritableImage.Create"/>
+        /// </summary>
+        /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
+        bool SetTape();
     }
 }
