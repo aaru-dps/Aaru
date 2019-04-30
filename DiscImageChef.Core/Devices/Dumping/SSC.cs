@@ -36,7 +36,9 @@ using System.IO;
 using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
@@ -287,12 +289,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             bool  endOfMedia           = false;
             ulong currentBlock         = 0;
-            ulong currentFile          = 0;
+            uint  currentFile          = 0;
             byte  currentPartition     = 0;
             byte  totalPartitions      = 1; // TODO: Handle partitions.
             ulong currentSize          = 0;
             ulong currentPartitionSize = 0;
-            ulong currentFileSize      = 0;
             bool  fixedLen             = false;
             uint  transferLen          = blockSize;
 
@@ -409,26 +410,15 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             List<TapePartitionType> partitions = new List<TapePartitionType>();
-            List<TapeFileType>      files      = new List<TapeFileType>();
 
             Checksum dataChk = new Checksum();
             start = DateTime.UtcNow;
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
 
-            TapeFileType currentTapeFile = new TapeFileType
-            {
-                Image = new ImageType
-                {
-                    format          = "BINARY",
-                    offset          = currentSize,
-                    offsetSpecified = true,
-                    Value           = outputPrefix + ".bin"
-                },
-                Sequence   = currentFile,
-                StartBlock = currentBlock,
-                BlockSize  = blockSize
-            };
+            TapeFile currentTapeFile =
+                new TapeFile {File = currentFile, FirstBlock = currentBlock, Partition = currentPartition};
+
             Checksum fileChk = new Checksum();
             TapePartitionType currentTapePartition = new TapePartitionType
             {
@@ -461,7 +451,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     UpdateStatus?.Invoke($"Finished partition {currentPartition}");
                     dumpLog.WriteLine("Finished partition {0}", currentPartition);
-                    currentTapePartition.File      = files.ToArray();
+
+                    currentTapeFile.LastBlock = currentBlock - 1;
+                    (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
+
                     currentTapePartition.Checksums = partitionChk.End().ToArray();
                     currentTapePartition.EndBlock  = currentBlock - 1;
                     currentTapePartition.Size      = currentPartitionSize;
@@ -472,22 +465,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(currentPartition < totalPartitions)
                     {
                         currentFile++;
-                        currentTapeFile = new TapeFileType
+                        currentTapeFile = new TapeFile
                         {
-                            Image = new ImageType
-                            {
-                                format          = "BINARY",
-                                offset          = currentSize,
-                                offsetSpecified = true,
-                                Value           = outputPrefix + ".bin"
-                            },
-                            Sequence   = currentFile,
-                            StartBlock = currentBlock,
-                            BlockSize  = blockSize
+                            File = currentFile, FirstBlock = currentBlock, Partition = currentPartition
                         };
-                        currentFileSize = 0;
-                        fileChk         = new Checksum();
-                        files           = new List<TapeFileType>();
+                        fileChk = new Checksum();
                         currentTapePartition = new TapePartitionType
                         {
                             Image = new ImageType
@@ -529,7 +511,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         blockSize = (uint)((int)blockSize -
                                            BitConverter.ToInt32(BitConverter.GetBytes(fxSense.Value.Information), 0));
-                        currentTapeFile.BlockSize = blockSize;
                         if(!fixedLen) transferLen = blockSize;
 
                         UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
@@ -593,27 +574,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                         fxSense.Value.SenseKey == SenseKeys.RecoveredError) &&
                        (fxSense.Value.ASCQ == 0x01 || fxSense.Value.Filemark))
                     {
-                        currentTapeFile.Checksums = fileChk.End().ToArray();
-                        currentTapeFile.EndBlock  = currentBlock - 1;
-                        currentTapeFile.Size      = currentFileSize;
-                        files.Add(currentTapeFile);
+                        currentTapeFile.LastBlock = currentBlock - 1;
+                        (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
 
                         currentFile++;
-                        currentTapeFile = new TapeFileType
+                        currentTapeFile = new TapeFile
                         {
-                            Image = new ImageType
-                            {
-                                format          = "BINARY",
-                                offset          = currentSize,
-                                offsetSpecified = true,
-                                Value           = outputPrefix + ".bin"
-                            },
-                            Sequence   = currentFile,
-                            StartBlock = currentBlock,
-                            BlockSize  = blockSize
+                            File = currentFile, FirstBlock = currentBlock, Partition = currentPartition
                         };
-                        currentFileSize = 0;
-                        fileChk         = new Checksum();
+                        fileChk = new Checksum();
 
                         UpdateStatus?.Invoke($"Changed to file {currentFile} at block {currentBlock}");
                         dumpLog.WriteLine("Changed to file {0} at block {1}", currentFile, currentBlock);
@@ -644,7 +613,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 currentBlock++;
                 currentSize          += blockSize;
-                currentFileSize      += blockSize;
                 currentPartitionSize += blockSize;
                 currentSpeedSize     += blockSize;
 
@@ -657,6 +625,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             EndProgress?.Invoke();
+
+            currentTapeFile.LastBlock = currentBlock - 1;
+            (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
 
             dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
