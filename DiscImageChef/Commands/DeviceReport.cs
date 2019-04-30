@@ -693,6 +693,9 @@ namespace DiscImageChef.Commands
                                 mediaTest.MediumTypeName    = mediaType;
                                 mediaTest.MediaIsRecognized = mediaIsRecognized;
                                 mediaTests.Add(mediaTest);
+
+                                dev.AllowMediumRemoval(out buffer, dev.Timeout, out _);
+                                dev.EjectTray(out buffer, dev.Timeout, out _);
                             }
 
                             report.SCSI.MultiMediaDevice.TestedMedia = mediaTests;
@@ -779,6 +782,10 @@ namespace DiscImageChef.Commands
                                 seqTest.MediaIsRecognized = mediaIsRecognized;
 
                                 seqTests.Add(seqTest);
+
+                                dev.SpcAllowMediumRemoval(out buffer, dev.Timeout, out _);
+                                DicConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
+                                dev.Unload(out buffer, dev.Timeout, out _);
                             }
 
                             report.SCSI.SequentialDevice.TestedMedia = seqTests;
