@@ -74,11 +74,13 @@
     <Compile Include="Interfaces\IPartitionableMediaImage.cs" />
     <Compile Include="Interfaces\IPluginRegister.cs" />
     <Compile Include="Interfaces\IReadOnlyFilesystem.cs" />
+    <Compile Include="Interfaces\ITapeImage.cs" />
     <Compile Include="Interfaces\IVerifiableImage.cs" />
     <Compile Include="Interfaces\IVerifiableSectorsImage.cs" />
     <Compile Include="Interfaces\IWritableFloppyImage.cs" />
     <Compile Include="Interfaces\IWritableImage.cs" />
     <Compile Include="Interfaces\IWritableOpticalImage.cs" />
+    <Compile Include="Interfaces\IWritableTapeImage.cs" />
     <Compile Include="Interop\DetectOS.cs" />
     <Compile Include="Interop\PlatformID.cs" />
     <Compile Include="Interop\Version.cs" />
@@ -96,6 +98,8 @@
     <Compile Include="PluginBase.cs" />
     <Compile Include="Structs\Filesystems.cs" />
     <Compile Include="Structs\Images.cs" />
+    <Compile Include="Structs\TapeFile.cs" />
+    <Compile Include="Structs\TapePartition.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
