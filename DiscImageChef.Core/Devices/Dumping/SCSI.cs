@@ -199,10 +199,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                         return;
                     }
 
-                    Ssc();
+                    if(outputPlugin is IWritableTapeImage) Ssc();
+                    else
+                        StoppingErrorMessage
+                          ?.Invoke("The specified plugin does not support storing streaming tape images.");
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
-                    if(outputPlugin is IWritableOpticalImage opticalPlugin) Mmc(ref dskType);
+                    if(outputPlugin is IWritableOpticalImage) Mmc(ref dskType);
                     else
                         StoppingErrorMessage
                           ?.Invoke("The specified plugin does not support storing optical disc images.");

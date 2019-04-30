@@ -46,7 +46,6 @@ using Version = DiscImageChef.CommonTypes.Metadata.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    // TODO: Add support for images
     partial class Dump
     {
         /// <summary>
@@ -397,11 +396,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            bool ret = outputPlugin.Create(outputPath, dskType, formatOptions, 0, 0);
+
+            // Cannot create image
+            if(!ret)
+            {
+                dumpLog.WriteLine("Error creating output image, not continuing.");
+                dumpLog.WriteLine(outputPlugin.ErrorMessage);
+                StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
+                                             outputPlugin.ErrorMessage);
+                return;
+            }
+
             List<TapePartitionType> partitions = new List<TapePartitionType>();
             List<TapeFileType>      files      = new List<TapeFileType>();
 
-            DataFile dumpFile = new DataFile(outputPrefix + ".bin");
-            Checksum dataChk  = new Checksum();
+            Checksum dataChk = new Checksum();
             start = DateTime.UtcNow;
             MhddLog mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, 1);
             IbgLog  ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
@@ -535,7 +545,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             StoppingErrorMessage?.Invoke("Drive could not go back one block. Sense follows..." +
                                                          Environment.NewLine                                   +
                                                          strSense);
-                            dumpFile.Close();
+                            outputPlugin.Close();
                             dumpLog.WriteLine("Drive could not go back one block. Sense follows...");
                             dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                               fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
@@ -549,7 +559,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         case SenseKeys.BlankCheck when currentBlock == 0:
                             StoppingErrorMessage?.Invoke("Cannot dump a blank tape...");
-                            dumpFile.Close();
+                            outputPlugin.Close();
                             dumpLog.WriteLine("Cannot dump a blank tape...");
                             return;
                         // For sure this is an end-of-tape/partition
@@ -622,7 +632,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 mhddLog.Write(currentBlock, duration);
                 ibgLog.Write(currentBlock, currentSpeed * 1024);
-                dumpFile.Write(cmdBuf);
+                outputPlugin.WriteSector(cmdBuf, currentBlock);
 
                 DateTime chkStart = DateTime.UtcNow;
                 dataChk.Update(cmdBuf);
@@ -647,6 +657,14 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             EndProgress?.Invoke();
+
+            dumpLog.WriteLine("Closing output file.");
+            UpdateStatus?.Invoke("Closing output file.");
+            DateTime closeStart = DateTime.Now;
+            outputPlugin.Close();
+            DateTime closeEnd = DateTime.Now;
+            UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
+            dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
 
             blocks = currentBlock + 1;
             end    = DateTime.UtcNow;
