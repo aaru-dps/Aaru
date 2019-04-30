@@ -61,9 +61,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     FixedSense? decSense = Sense.DecodeFixed(senseBuf);
                     if(decSense.HasValue)
                     {
-                        UpdateStatus
-                          ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
-                        dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                        ErrorMessage
+                          ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                        dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
                                           decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                         // Just retry, for 5 times
@@ -86,9 +86,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 decSense = Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
                                 {
-                                    UpdateStatus
-                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
-                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                    ErrorMessage
+                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                                    dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
                                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 }
 
@@ -114,8 +114,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 decSense = Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
                                 {
-                                    UpdateStatus
-                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                                    ErrorMessage
+                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
                                     dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 }
@@ -157,8 +157,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 decSense = Sense.DecodeFixed(senseBuf);
                                 if(decSense.HasValue)
                                 {
-                                    UpdateStatus
-                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey}h ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+                                    ErrorMessage
+                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
                                     dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                                       decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
                                 }
