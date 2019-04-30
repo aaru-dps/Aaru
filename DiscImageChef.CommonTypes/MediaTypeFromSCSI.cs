@@ -494,6 +494,7 @@ namespace DiscImageChef.CommonTypes
 
                     return MediaType.Unknown;
                 }
+
                 // Sequential access device
                 case 0x01:
                 {
@@ -520,6 +521,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x41:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
@@ -527,6 +529,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x42:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
@@ -535,12 +538,14 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x43:
                                 {
                                     if(vendor.ToLowerInvariant() == "stk") return MediaType.T9940A;
 
                                     break;
                                 }
+
                                 case 0x44:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
@@ -549,12 +554,14 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x45:
                                 {
                                     if(vendor.ToLowerInvariant() == "stk") return MediaType.T9840C;
 
                                     break;
                                 }
+
                                 case 0x46:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
@@ -563,30 +570,35 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x4A:
                                 {
                                     if(vendor.ToLowerInvariant() == "stk") return MediaType.T10000A;
 
                                     break;
                                 }
+
                                 case 0x4B:
                                 {
                                     if(vendor.ToLowerInvariant() == "stk") return MediaType.T10000B;
 
                                     break;
                                 }
+
                                 case 0x4C:
                                 {
                                     if(vendor.ToLowerInvariant() == "stk") return MediaType.T10000C;
 
                                     break;
                                 }
+
                                 case 0x4D:
                                 {
                                     if(vendor.ToLowerInvariant() == "stk") return MediaType.T10000D;
 
                                     break;
                                 }
+
                                 case 0x58:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
@@ -608,6 +620,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x46:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
@@ -615,6 +628,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x58:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
@@ -772,6 +786,21 @@ namespace DiscImageChef.CommonTypes
                         }
 
                             break;
+                        case 0x50:
+                        {
+                            switch(densityCode)
+                            {
+                                case 0x00:
+                                case 0x24:
+                                {
+                                    if(model.ToLowerInvariant().StartsWith("dat", StringComparison.Ordinal))
+                                        return MediaType.DDS2;
+
+                                    break;
+                                }
+                            }
+                        }
+                            break;
                         case 0x58:
                         {
                             switch(densityCode)
@@ -882,6 +911,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x14:
                                 case 0x15:
                                 case 0x27:
@@ -893,6 +923,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x29:
                                 case 0x2A:
                                 {
@@ -900,6 +931,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x80:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("vxa", StringComparison.Ordinal))
@@ -923,6 +955,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x0A:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal))
@@ -930,6 +963,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x14:
                                 case 0x15:
                                 case 0x27:
@@ -941,6 +975,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x16:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("dlt", StringComparison.Ordinal))
@@ -948,6 +983,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x29:
                                 case 0x2A:
                                 {
@@ -955,6 +991,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x81:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("vxa", StringComparison.Ordinal))
@@ -962,6 +999,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x82:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("vxa", StringComparison.Ordinal))
@@ -986,6 +1024,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x14:
                                 case 0x15:
                                 case 0x27:
@@ -997,6 +1036,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x17:
                                 case 0x18:
                                 case 0x19:
@@ -1025,6 +1065,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x14:
                                 case 0x15:
                                 case 0x27:
@@ -1036,6 +1077,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x19:
                                 case 0x80:
                                 case 0x81:
@@ -1066,6 +1108,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x14:
                                 case 0x15:
                                 case 0x27:
@@ -1077,6 +1120,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x1A:
                                 case 0x1B:
                                 case 0x40:
@@ -1097,6 +1141,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x46:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("stt", StringComparison.Ordinal))
@@ -1124,6 +1169,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x8C:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("exb", StringComparison.Ordinal))
@@ -1131,6 +1177,7 @@ namespace DiscImageChef.CommonTypes
 
                                     break;
                                 }
+
                                 case 0x91:
                                 case 0x92:
                                 case 0x93:
@@ -1393,6 +1440,7 @@ namespace DiscImageChef.CommonTypes
 
                     return MediaType.Unknown;
                 }
+
                 // Write-once device
                 case 0x04:
                 // Optical device
@@ -1421,6 +1469,7 @@ namespace DiscImageChef.CommonTypes
                                 default: return MediaType.UnknownMO;
                             }
                         }
+
                         case 1024:
                         {
                             switch(blocks)
@@ -1437,6 +1486,7 @@ namespace DiscImageChef.CommonTypes
                                 default:       return MediaType.UnknownMO;
                             }
                         }
+
                         case 2048:
                         {
                             switch(blocks)
@@ -1453,6 +1503,7 @@ namespace DiscImageChef.CommonTypes
                                 default:      return MediaType.UnknownMO;
                             }
                         }
+
                         case 4096:
                         {
                             switch(blocks)
@@ -1461,6 +1512,7 @@ namespace DiscImageChef.CommonTypes
                                 default:      return MediaType.UnknownMO;
                             }
                         }
+
                         case 8192:
                         {
                             switch(blocks)
@@ -1471,9 +1523,11 @@ namespace DiscImageChef.CommonTypes
                                 default:      return MediaType.UnknownMO;
                             }
                         }
+
                         default: return MediaType.UnknownMO;
                     }
                 }
+
                 // MultiMedia Device
                 case 0x05:
                 {
