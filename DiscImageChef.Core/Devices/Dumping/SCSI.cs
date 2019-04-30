@@ -103,7 +103,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                         else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                         {
-                            int leftRetries = 10;
+                            int leftRetries = 50;
                             while(leftRetries > 0)
                             {
                                 PulseProgress?.Invoke("Waiting for drive to become ready");
