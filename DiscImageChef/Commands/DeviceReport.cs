@@ -588,7 +588,7 @@ namespace DiscImageChef.Commands
                                     if(decSense.HasValue)
                                         if(decSense.Value.ASC == 0x3A)
                                         {
-                                            int leftRetries = 20;
+                                            int leftRetries = 50;
                                             while(leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -603,7 +603,7 @@ namespace DiscImageChef.Commands
                                         }
                                         else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                         {
-                                            int leftRetries = 20;
+                                            int leftRetries = 50;
                                             while(leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -619,7 +619,7 @@ namespace DiscImageChef.Commands
                                         // These should be trapped by the OS but seems in some cases they're not
                                         else if(decSense.Value.ASC == 0x28)
                                         {
-                                            int leftRetries = 20;
+                                            int leftRetries = 50;
                                             while(leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -738,7 +738,7 @@ namespace DiscImageChef.Commands
                                     if(decSense.HasValue)
                                         if(decSense.Value.ASC == 0x3A)
                                         {
-                                            int leftRetries = 20;
+                                            int leftRetries = 50;
                                             while(leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -753,7 +753,7 @@ namespace DiscImageChef.Commands
                                         }
                                         else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                         {
-                                            int leftRetries = 20;
+                                            int leftRetries = 50;
                                             while(leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
