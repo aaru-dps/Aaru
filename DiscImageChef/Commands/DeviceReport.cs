@@ -730,7 +730,6 @@ namespace DiscImageChef.Commands
 
                                 bool mediaIsRecognized = true;
 
-                                dev.Load(out senseBuffer, dev.Timeout, out _);
                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
                                 if(sense)
                                 {
