@@ -782,6 +782,22 @@ namespace DiscImageChef.Commands
 
                                             mediaIsRecognized &= !sense;
                                         }
+                                        // These should be trapped by the OS but seems in some cases they're not
+                                        else if(decSense.Value.ASC == 0x28)
+                                        {
+                                            int leftRetries = 50;
+                                            while(leftRetries > 0)
+                                            {
+                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                Thread.Sleep(2000);
+                                                sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                                if(!sense) break;
+
+                                                leftRetries--;
+                                            }
+
+                                            mediaIsRecognized &= !sense;
+                                        }
                                         else
                                         {
                                             DicConsole.DebugWriteLine("Device-Report command",
