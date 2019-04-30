@@ -214,6 +214,7 @@
     <Compile Include="DiscImageChef\Properties.cs" />
     <Compile Include="DiscImageChef\Read.cs" />
     <Compile Include="DiscImageChef\Structs.cs" />
+    <Compile Include="DiscImageChef\Tape.cs" />
     <Compile Include="DiscImageChef\Verify.cs" />
     <Compile Include="DiscImageChef\Write.cs" />
     <Compile Include="DiscJuggler\Helpers.cs" />

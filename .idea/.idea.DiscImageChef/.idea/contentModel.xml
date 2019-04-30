@@ -827,6 +827,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
+          <e p="Tape.cs" t="Include" />
           <e p="Verify.cs" t="Include" />
           <e p="Write.cs" t="Include" />
         </e>
