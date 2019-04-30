@@ -284,6 +284,7 @@ namespace DiscImageChef.Commands
 
                     break;
                 }
+
                 case DeviceType.MMC:
                     report.MultiMediaCard = reporter.MmcSdReport();
                     break;
@@ -632,8 +633,20 @@ namespace DiscImageChef.Commands
 
                                             mediaIsRecognized &= !sense;
                                         }
-                                        else mediaIsRecognized = false;
-                                    else mediaIsRecognized = false;
+                                        else
+                                        {
+                                            DicConsole.DebugWriteLine("Device-Report command",
+                                                                      "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                                      decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                      decSense.Value.ASCQ);
+                                            mediaIsRecognized = false;
+                                        }
+                                    else
+                                    {
+                                        DicConsole.DebugWriteLine("Device-Report command",
+                                                                  "Got sense status but no sense buffer");
+                                        mediaIsRecognized = false;
+                                    }
                                 }
 
                                 TestedMedia mediaTest = new TestedMedia();
@@ -734,6 +747,7 @@ namespace DiscImageChef.Commands
                                 bool mediaIsRecognized = true;
 
                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
+                                DicConsole.DebugWriteLine("Device reporting", "sense = {0}", sense);
                                 if(sense)
                                 {
                                     FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
@@ -768,8 +782,20 @@ namespace DiscImageChef.Commands
 
                                             mediaIsRecognized &= !sense;
                                         }
-                                        else mediaIsRecognized = false;
-                                    else mediaIsRecognized = false;
+                                        else
+                                        {
+                                            DicConsole.DebugWriteLine("Device-Report command",
+                                                                      "Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
+                                                                      decSense.Value.SenseKey, decSense.Value.ASC,
+                                                                      decSense.Value.ASCQ);
+                                            mediaIsRecognized = false;
+                                        }
+                                    else
+                                    {
+                                        DicConsole.DebugWriteLine("Device-Report command",
+                                                                  "Got sense status but no sense buffer");
+                                        mediaIsRecognized = false;
+                                    }
                                 }
 
                                 TestedSequentialMedia seqTest = new TestedSequentialMedia();
