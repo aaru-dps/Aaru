@@ -30,22 +30,46 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Interfaces;
+using System.Linq;
 using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages
 {
     public partial class DiscImageChef
     {
-        public List<TapeFile>          Files      { get; }
-        List<TapePartition> ITapeImage.Partitions { get; }
+        public List<TapeFile>      Files          { get; private set; }
+        public List<TapePartition> TapePartitions { get; private set; }
 
-        public bool AddFile(TapeFile file) => throw new NotImplementedException();
+        public bool AddFile(TapeFile file)
+        {
+            if(Files.Any(f => f.File == file.File))
+            {
+                TapeFile removeMe = Files.FirstOrDefault(f => f.File == file.File);
+                Files.Remove(removeMe);
+            }
 
-        public bool AddPartition(TapePartition partition) => throw new NotImplementedException();
+            Files.Add(file);
+            return true;
+        }
 
-        public bool SetTape() => throw new NotImplementedException();
+        public bool AddPartition(TapePartition partition)
+        {
+            if(TapePartitions.Any(f => f.Number == partition.Number))
+            {
+                TapePartition removeMe = TapePartitions.FirstOrDefault(f => f.Number == partition.Number);
+                TapePartitions.Remove(removeMe);
+            }
+
+            TapePartitions.Add(partition);
+            return true;
+        }
+
+        public bool SetTape()
+        {
+            Files          = new List<TapeFile>();
+            TapePartitions = new List<TapePartition>();
+            return isTape = true;
+        }
     }
 }

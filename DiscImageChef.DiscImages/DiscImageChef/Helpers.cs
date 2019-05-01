@@ -107,8 +107,7 @@ namespace DiscImageChef.DiscImages
             string[] separated = identify.Model.Split(' ');
 
             if(separated.Length == 1)
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
-                    imageInfo.DriveModel = separated[0];
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel)) imageInfo.DriveModel = separated[0];
                 else
                 {
                     if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
@@ -249,7 +248,8 @@ namespace DiscImageChef.DiscImages
         {
             if(inMemoryDdt)
             {
-                userDataDdt[sectorAddress] = pointer;
+                if(isTape) tapeDdt[sectorAddress] = pointer;
+                else userDataDdt[sectorAddress]   = pointer;
                 return;
             }
 

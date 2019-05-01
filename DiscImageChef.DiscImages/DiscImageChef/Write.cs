@@ -688,7 +688,11 @@ namespace DiscImageChef.DiscImages
                 inMemoryDdt = sectors <= maxDdtSize * 1024 * 1024 / sizeof(ulong);
 
                 // If in memory, easy
-                if(inMemoryDdt) userDataDdt = new ulong[sectors];
+                if(inMemoryDdt)
+                {
+                    if(isTape) tapeDdt = new Dictionary<ulong, ulong>();
+                    else userDataDdt   = new ulong[sectors];
+                }
                 // If not, create the block, add to index, and enlarge the file to allow the DDT to exist on-disk
                 else
                 {
@@ -798,7 +802,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= Info.Sectors)
+            if(sectorAddress >= Info.Sectors && !isTape)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
@@ -1852,6 +1856,96 @@ namespace DiscImageChef.DiscImages
 
                     index.Add(idxEntry);
                 }
+            }
+
+            if(isTape)
+            {
+                ulong latestBlock = tapeDdt.Max(b => b.Key);
+
+                userDataDdt = new ulong[latestBlock + 1];
+                foreach(KeyValuePair<ulong, ulong> block in tapeDdt) userDataDdt[block.Key] = block.Value;
+
+                inMemoryDdt = true;
+                tapeDdt.Clear();
+
+                idxEntry = new IndexEntry
+                {
+                    blockType = BlockType.TapePartitionBlock,
+                    dataType  = DataType.UserData,
+                    offset    = (ulong)imageStream.Position
+                };
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing tape partitions to position {0}",
+                                          idxEntry.offset);
+
+                TapePartitionEntry[] tapePartitionEntries = new TapePartitionEntry[TapePartitions.Count];
+                for(int t = 0; t < TapePartitions.Count; t++)
+                {
+                    tapePartitionEntries[t]            = new TapePartitionEntry();
+                    tapePartitionEntries[t].Number     = TapePartitions[t].Number;
+                    tapePartitionEntries[t].FirstBlock = TapePartitions[t].FirstBlock;
+                    tapePartitionEntries[t].LastBlock  = TapePartitions[t].LastBlock;
+                }
+
+                byte[] tapePartitionEntriesData =
+                    MemoryMarshal.Cast<TapePartitionEntry, byte>(tapePartitionEntries).ToArray();
+
+                TapePartitionHeader tapePartitionHeader = new TapePartitionHeader();
+                tapePartitionHeader.identifier = BlockType.TapePartitionBlock;
+                tapePartitionHeader.entries    = (byte)tapePartitionEntries.Length;
+                tapePartitionHeader.length     = (ulong)tapePartitionEntriesData.Length;
+
+                crc64 = new Crc64Context();
+                crc64.Update(tapePartitionEntriesData);
+                tapePartitionHeader.crc64 = BitConverter.ToUInt64(crc64.Final(), 0);
+
+                structureBytes = new byte[Marshal.SizeOf<TapePartitionHeader>()];
+                MemoryMarshal.Write(structureBytes, ref tapePartitionHeader);
+                imageStream.Write(structureBytes, 0, structureBytes.Length);
+                structureBytes = null;
+                imageStream.Write(tapePartitionEntriesData, 0, tapePartitionEntriesData.Length);
+
+                index.RemoveAll(t => t.blockType == BlockType.TapePartitionBlock && t.dataType == DataType.UserData);
+                index.Add(idxEntry);
+
+                idxEntry = new IndexEntry
+                {
+                    blockType = BlockType.TapeFileBlock,
+                    dataType  = DataType.UserData,
+                    offset    = (ulong)imageStream.Position
+                };
+
+                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Writing tape files to position {0}",
+                                          idxEntry.offset);
+
+                TapeFileEntry[] tapeFileEntries = new TapeFileEntry[Files.Count];
+                for(int t = 0; t < Files.Count; t++)
+                    tapeFileEntries[t] = new TapeFileEntry
+                    {
+                        File = Files[t].File, FirstBlock = Files[t].FirstBlock, LastBlock = Files[t].LastBlock
+                    };
+
+                byte[] tapeFileEntriesData = MemoryMarshal.Cast<TapeFileEntry, byte>(tapeFileEntries).ToArray();
+
+                TapeFileHeader tapeFileHeader = new TapeFileHeader
+                {
+                    identifier = BlockType.TapeFileBlock,
+                    entries    = (uint)tapeFileEntries.Length,
+                    length     = (ulong)tapeFileEntriesData.Length
+                };
+
+                crc64 = new Crc64Context();
+                crc64.Update(tapeFileEntriesData);
+                tapeFileHeader.crc64 = BitConverter.ToUInt64(crc64.Final(), 0);
+
+                structureBytes = new byte[Marshal.SizeOf<TapeFileHeader>()];
+                MemoryMarshal.Write(structureBytes, ref tapeFileHeader);
+                imageStream.Write(structureBytes, 0, structureBytes.Length);
+                structureBytes = null;
+                imageStream.Write(tapeFileEntriesData, 0, tapeFileEntriesData.Length);
+
+                index.RemoveAll(t => t.blockType == BlockType.TapeFileBlock && t.dataType == DataType.UserData);
+                index.Add(idxEntry);
             }
 
             // If the DDT is in-memory, write it to disk
@@ -2949,11 +3043,13 @@ namespace DiscImageChef.DiscImages
 
                     return true;
                 }
+
                 case SectorTagType.CdTrackIsrc:
                 {
                     if(data != null) trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
                     return true;
                 }
+
                 case SectorTagType.CdSectorSubchannel:
                 {
                     if(data.Length != 96)
@@ -2968,6 +3064,7 @@ namespace DiscImageChef.DiscImages
 
                     return true;
                 }
+
                 default:
                     ErrorMessage = $"Don't know how to write sector tag type {tag}";
                     return false;

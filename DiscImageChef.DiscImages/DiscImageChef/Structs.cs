@@ -86,7 +86,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>CRC64-ECMA of the compressed DDT</summary>
             public ulong cmpCrc64;
             /// <summary>CRC64-ECMA of the uncompressed DDT</summary>
-            public ulong crc64;
+            public readonly ulong crc64;
         }
 
         /// <summary>Header for the index, followed by entries</summary>
@@ -313,6 +313,82 @@ namespace DiscImageChef.DiscImages
             public ChecksumAlgorithm type;
             /// <summary>Length in bytes of checksum that follows this structure</summary>
             public uint length;
+        }
+
+        /// <summary>
+        ///     Tape file block, contains a list of all files in a tape
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct TapeFileHeader
+        {
+            /// <summary>Identifier, <see cref="BlockType.TapeFileBlock" /></summary>
+            public BlockType identifier;
+            /// <summary>How many entries follow this header</summary>
+            public uint entries;
+            /// <summary>Size of the whole block, not including this header, in bytes</summary>
+            public ulong length;
+            /// <summary>CRC64-ECMA of the block</summary>
+            public ulong crc64;
+        }
+
+        /// <summary>
+        ///     Tape file entry
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct TapeFileEntry
+        {
+            /// <summary>
+            ///     File number
+            /// </summary>
+            public uint File;
+            /// <summary>
+            ///     Partition number
+            /// </summary>
+            public readonly byte Partition;
+            /// <summary>
+            ///     First block, inclusive, of the file
+            /// </summary>
+            public ulong FirstBlock;
+            /// <summary>
+            ///     Last block, inclusive, of the file
+            /// </summary>
+            public ulong LastBlock;
+        }
+
+        /// <summary>
+        ///     Tape partition block, contains a list of all partitions in a tape
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct TapePartitionHeader
+        {
+            /// <summary>Identifier, <see cref="BlockType.TapePartitionBlock" /></summary>
+            public BlockType identifier;
+            /// <summary>How many entries follow this header</summary>
+            public byte entries;
+            /// <summary>Size of the whole block, not including this header, in bytes</summary>
+            public ulong length;
+            /// <summary>CRC64-ECMA of the block</summary>
+            public ulong crc64;
+        }
+
+        /// <summary>
+        ///     Tape partition entry
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct TapePartitionEntry
+        {
+            /// <summary>
+            ///     Partition number
+            /// </summary>
+            public byte Number;
+            /// <summary>
+            ///     First block, inclusive, of the partition
+            /// </summary>
+            public ulong FirstBlock;
+            /// <summary>
+            ///     Last block, inclusive, of the partition
+            /// </summary>
+            public ulong LastBlock;
         }
     }
 }

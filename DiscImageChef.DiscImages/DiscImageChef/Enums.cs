@@ -239,8 +239,10 @@ namespace DiscImageChef.DiscImages
             ParentBlock = 0x50524E54,
             /// <summary>Block containing an array of hardware used to create the image</summary>
             DumpHardwareBlock = 0x2A504D44,
-            /// <summary>TODO: Block containing list of files for a tape image</summary>
-            TapeFileBlock = 0x454C4654
+            /// <summary>Block containing list of files for a tape image</summary>
+            TapeFileBlock = 0x454C4654,
+            /// <summary>Block containing list of partitions for a tape image</summary>
+            TapePartitionBlock = 0x54425054
         }
 
         enum ChecksumAlgorithm : byte

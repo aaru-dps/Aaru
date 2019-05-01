@@ -122,6 +122,7 @@ namespace DiscImageChef.DiscImages
         List<IndexEntry> index;
         /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
         bool inMemoryDdt;
+        bool  isTape;
         ulong lastWrittenBlock;
         /// <summary>LZMA stream.</summary>
         LzmaStream lzmaBlockStream;
@@ -154,6 +155,7 @@ namespace DiscImageChef.DiscImages
         byte[] structureBytes;
         /// <summary>Cache for pointer for marshaling structures.</summary>
         IntPtr structurePointer;
+        Dictionary<ulong, ulong> tapeDdt;
         /// <summary>Cache of CompactDisc track's flags</summary>
         Dictionary<byte, byte> trackFlags;
         /// <summary>Cache of CompactDisc track's ISRC</summary>
