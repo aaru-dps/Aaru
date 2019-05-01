@@ -407,7 +407,7 @@ namespace DiscImageChef.DiscImages
 
                                 if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
 
-                                if(ddtHeader.entries != imageInfo.Sectors)
+                                if(ddtHeader.entries != imageInfo.Sectors && !isTape)
                                 {
                                     ErrorMessage =
                                         $"Trying to write a media with {imageInfo.Sectors} sectors to an image with {ddtHeader.entries} sectors, not continuing...";
@@ -447,6 +447,15 @@ namespace DiscImageChef.DiscImages
                                     default:
                                         throw new
                                             ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
+                                }
+
+                                if(isTape)
+                                {
+                                    tapeDdt = new Dictionary<ulong, ulong>();
+                                    for(long i = 0; i < userDataDdt.LongLength; i++)
+                                        tapeDdt.Add((ulong)i, userDataDdt[i]);
+
+                                    userDataDdt = null;
                                 }
 
                                 foundUserDataDdt = true;
