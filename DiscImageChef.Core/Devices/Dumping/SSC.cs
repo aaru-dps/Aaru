@@ -31,20 +31,15 @@
 // ****************************************************************************/
 
 using System;
-using System.IO;
 using System.Threading;
-using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using Schemas;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Version = DiscImageChef.CommonTypes.Metadata.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -62,11 +57,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             MediaType        dskType = MediaType.Unknown;
             DateTime         start;
             DateTime         end;
-            double           totalDuration    = 0;
-            double           currentSpeed     = 0;
-            double           maxSpeed         = double.MinValue;
-            double           minSpeed         = double.MaxValue;
-            CICMMetadataType sidecar          = preSidecar ?? new CICMMetadataType();
+            double           totalDuration = 0;
+            double           currentSpeed  = 0;
+            double           maxSpeed      = double.MinValue;
+            double           minSpeed      = double.MaxValue;
+            CICMMetadataType sidecar       = preSidecar ?? new CICMMetadataType();
 
             dev.RequestSense(out byte[] senseBuf, dev.Timeout, out double duration);
             fxSense = Sense.DecodeFixed(senseBuf, out string strSense);
@@ -399,8 +394,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             ExtentsULong     extents    = null;
             ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
                                   dev.PlatformId, ref resume, ref currentTry, ref extents, true);
+            if(currentTry == null || extents == null)
+            {
+                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
+                return;
+            }
 
-            bool rewind = false;
+            bool canLocate = true;
             if(resume.NextBlock > 0)
             {
                 UpdateStatus?.Invoke($"Positioning tape to block {resume.NextBlock}.");
@@ -417,14 +417,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             if(!force)
                             {
-                                dumpLog.WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
-                                StoppingErrorMessage?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
+                                dumpLog
+                                   .WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
+                                StoppingErrorMessage
+                                  ?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
                             }
                             else
                             {
-                                dumpLog.WriteLine("Could not check current position, unable to resume. Dumping from the start.");
-                                ErrorMessage?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
-                                rewind = true;
+                                dumpLog
+                                   .WriteLine("Could not check current position, unable to resume. Dumping from the start.");
+                                ErrorMessage
+                                  ?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
+                                canLocate = false;
                             }
                         }
                         else
@@ -435,14 +439,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 if(!force)
                                 {
-                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
-                                    StoppingErrorMessage?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    dumpLog
+                                       .WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    StoppingErrorMessage
+                                      ?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
                                 }
                                 else
                                 {
-                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    ErrorMessage?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    rewind = true;
+                                    dumpLog
+                                       .WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    ErrorMessage
+                                      ?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    canLocate = false;
                                 }
                             }
                         }
@@ -451,14 +459,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         if(!force)
                         {
-                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
-                            StoppingErrorMessage?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            dumpLog
+                               .WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            StoppingErrorMessage
+                              ?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
                         }
                         else
                         {
                             dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
                             ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
-                            rewind = true;
+                            canLocate = false;
                         }
                     }
                 }
@@ -474,14 +484,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             if(!force)
                             {
-                                dumpLog.WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
-                                StoppingErrorMessage?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
+                                dumpLog
+                                   .WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
+                                StoppingErrorMessage
+                                  ?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
                             }
                             else
                             {
-                                dumpLog.WriteLine("Could not check current position, unable to resume. Dumping from the start.");
-                                ErrorMessage?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
-                                rewind = true;
+                                dumpLog
+                                   .WriteLine("Could not check current position, unable to resume. Dumping from the start.");
+                                ErrorMessage
+                                  ?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
+                                canLocate = false;
                             }
                         }
                         else
@@ -492,14 +506,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 if(!force)
                                 {
-                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
-                                    StoppingErrorMessage?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    dumpLog
+                                       .WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    StoppingErrorMessage
+                                      ?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
                                 }
                                 else
                                 {
-                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    ErrorMessage?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    rewind = true;
+                                    dumpLog
+                                       .WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    ErrorMessage
+                                      ?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    canLocate = false;
                                 }
                             }
                         }
@@ -508,20 +526,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         if(!force)
                         {
-                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
-                            StoppingErrorMessage?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            dumpLog
+                               .WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            StoppingErrorMessage
+                              ?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
                         }
                         else
                         {
                             dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
                             ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
-                            rewind = true;
+                            canLocate = false;
                         }
                     }
                 }
             }
 
-            if(rewind)
+            if(!canLocate)
             {
                 do
                 {
@@ -538,11 +558,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                         fxSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                 Environment.NewLine                                        +
-                                                 strSense);
+                                                 Environment.NewLine                                        + strSense);
                     dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
-                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                      fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
+                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
+                                      fxSense.Value.ASC, fxSense.Value.ASCQ);
                     return;
                 }
             }
@@ -553,7 +572,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 dumpLog.WriteLine("Error setting output image in tape mode, not continuing.");
                 dumpLog.WriteLine(outputPlugin.ErrorMessage);
-                StoppingErrorMessage?.Invoke("Error setting output image in tape mode, not continuing." + Environment.NewLine +
+                StoppingErrorMessage?.Invoke("Error setting output image in tape mode, not continuing." +
+                                             Environment.NewLine                                        +
                                              outputPlugin.ErrorMessage);
                 return;
             }
@@ -579,14 +599,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             TapePartition currentTapePartition =
                 new TapePartition {Number = currentPartition, FirstBlock = currentBlock};
 
-            DateTime timeSpeedStart   = DateTime.UtcNow;
-            ulong    currentSpeedSize = 0;
+            DateTime timeSpeedStart     = DateTime.UtcNow;
+            ulong    currentSpeedSize   = 0;
+            double   imageWriteDuration = 0;
 
             InitProgress?.Invoke();
             while(currentPartition < totalPartitions)
             {
                 if(aborted)
                 {
+                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                     UpdateStatus?.Invoke("Aborted!");
                     dumpLog.WriteLine("Aborted!");
                     break;
@@ -645,7 +667,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
                         dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
 
-                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
+                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout,
+                                                   out duration);
                         totalDuration += duration;
 
                         if(sense)
@@ -716,19 +739,34 @@ namespace DiscImageChef.Core.Devices.Dumping
                         continue;
                     }
 
-                    // TODO: Add error recovering for tapes
                     fxSense = Sense.DecodeFixed(senseBuf, out strSense);
                     StoppingErrorMessage
-                      ?.Invoke($"Drive could not read block. Sense follows...\n{fxSense.Value.SenseKey} {strSense}");
-                    dumpLog.WriteLine("Drive could not read block. Sense follows...");
+                      ?.Invoke($"Drive could not read block ${currentBlock}. Sense follows...\n{fxSense.Value.SenseKey} {strSense}");
+                    dumpLog.WriteLine($"Drive could not read block ${currentBlock}. Sense follows...");
                     dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
                                       fxSense.Value.ASC, fxSense.Value.ASCQ);
-                    return;
-                }
 
-                mhddLog.Write(currentBlock, duration);
-                ibgLog.Write(currentBlock, currentSpeed * 1024);
-                outputPlugin.WriteSector(cmdBuf, currentBlock);
+                    // TODO: Reset device after X errors
+                    if(stopOnError) return; // TODO: Return more cleanly
+
+                    // Write empty data
+                    DateTime writeStart = DateTime.Now;
+                    outputPlugin.WriteSector(new byte[blockSize], currentBlock);
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                    mhddLog.Write(currentBlock, duration < 500 ? 65535 : duration);
+                    ibgLog.Write(currentBlock, 0);
+                    resume.BadBlocks.Add(currentBlock);
+                }
+                else
+                {
+                    mhddLog.Write(currentBlock, duration);
+                    ibgLog.Write(currentBlock, currentSpeed * 1024);
+                    DateTime writeStart = DateTime.Now;
+                    outputPlugin.WriteSector(cmdBuf, currentBlock);
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                    extents.Add(currentBlock, 1, true);
+                }
 
                 currentBlock++;
                 resume.NextBlock++;
@@ -742,12 +780,164 @@ namespace DiscImageChef.Core.Devices.Dumping
                 timeSpeedStart   = DateTime.UtcNow;
             }
 
-            EndProgress?.Invoke();
+            blocks = currentBlock + 1;
+            end    = DateTime.UtcNow;
 
             currentTapeFile.LastBlock = currentBlock - 1;
             (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
             currentTapePartition.LastBlock = currentBlock - 1;
             (outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
+
+            EndProgress?.Invoke();
+            mhddLog.Close();
+            ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                         blockSize * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
+                         devicePath);
+            UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
+            UpdateStatus
+              ?.Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+            UpdateStatus
+              ?.Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
+                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+            dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+                              (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
+
+            #region Error handling
+            if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0 && canLocate)
+            {
+                int  pass              = 1;
+                bool forward           = false;
+                bool runningPersistent = false;
+
+                Modes.ModePage? currentModePage = null;
+                byte[]          md6;
+                byte[]          md10;
+
+                if(persistent)
+                {
+                    // TODO: Implement persistent
+                }
+
+                InitProgress?.Invoke();
+                repeatRetry:
+                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                foreach(ulong badBlock in tmpArray)
+                {
+                    if(aborted)
+                    {
+                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                        UpdateStatus?.Invoke("Aborted!");
+                        dumpLog.WriteLine("Aborted!");
+                        break;
+                    }
+
+                    PulseProgress?.Invoke(string.Format("Retrying block {0}, pass {1}, {3}{2}", badBlock, pass,
+                                                        forward ? "forward" : "reverse",
+                                                        runningPersistent ? "recovering partial data, " : ""));
+
+                    UpdateStatus?.Invoke($"Positioning tape to block {badBlock}.");
+                    dumpLog.WriteLine($"Positioning tape to block {badBlock}.");
+                    if(badBlock > uint.MaxValue)
+                    {
+                        sense = dev.Locate16(out senseBuf, resume.NextBlock, dev.Timeout, out _);
+
+                        if(!sense)
+                        {
+                            sense = dev.ReadPositionLong(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+                            if(sense)
+                            {
+                                dumpLog.WriteLine("Could not check current position, continuing.");
+                                StoppingErrorMessage?.Invoke("Could not check current position, continuing.");
+                                continue;
+                            }
+
+                            ulong position = Swapping.Swap(BitConverter.ToUInt64(cmdBuf, 8));
+
+                            if(position != resume.NextBlock)
+                            {
+                                dumpLog.WriteLine("Current position is not as expected, continuing.");
+                                StoppingErrorMessage?.Invoke("Current position is not as expected, continuing.");
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            dumpLog.WriteLine($"Cannot position tape to block {badBlock}.");
+                            ErrorMessage?.Invoke($"Cannot position tape to block {badBlock}.");
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        sense = dev.Locate(out senseBuf, (uint)resume.NextBlock, dev.Timeout, out _);
+
+                        if(!sense)
+                        {
+                            sense = dev.ReadPosition(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+                            if(sense)
+                            {
+                                dumpLog.WriteLine("Could not check current position, continuing.");
+                                StoppingErrorMessage?.Invoke("Could not check current position, continuing.");
+                                continue;
+                            }
+
+                            ulong position = Swapping.Swap(BitConverter.ToUInt32(cmdBuf, 4));
+
+                            if(position != resume.NextBlock)
+                            {
+                                dumpLog.WriteLine("Current position is not as expected, continuing.");
+                                StoppingErrorMessage?.Invoke("Current position is not as expected, continuing.");
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            dumpLog.WriteLine($"Cannot position tape to block {badBlock}.");
+                            ErrorMessage?.Invoke($"Cannot position tape to block {badBlock}.");
+                            continue;
+                        }
+                    }
+
+                    sense = dev.Read6(out cmdBuf, out senseBuf, false, fixedLen, transferLen, blockSize, dev.Timeout,
+                                      out duration);
+                    totalDuration += duration;
+
+                    if(!sense && !dev.Error)
+                    {
+                        resume.BadBlocks.Remove(badBlock);
+                        extents.Add(badBlock);
+                        outputPlugin.WriteSector(cmdBuf, badBlock);
+                        UpdateStatus?.Invoke($"Correctly retried block {badBlock} in pass {pass}.");
+                        dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badBlock, pass);
+                    }
+                    else if(runningPersistent) outputPlugin.WriteSector(cmdBuf, badBlock);
+                }
+
+                if(pass < retryPasses && !aborted && resume.BadBlocks.Count > 0)
+                {
+                    pass++;
+                    forward = !forward;
+                    resume.BadBlocks.Sort();
+                    resume.BadBlocks.Reverse();
+                    goto repeatRetry;
+                }
+
+                if(runningPersistent && currentModePage.HasValue)
+                {
+                    // TODO: Persistent mode
+                }
+
+                EndProgress?.Invoke();
+            }
+            #endregion Error handling
+
+            resume.BadBlocks.Sort();
+            foreach(ulong bad in resume.BadBlocks) dumpLog.WriteLine("Block {0} could not be read.", bad);
+            currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             outputPlugin.SetDumpHardware(resume.Tries);
             if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
@@ -759,20 +949,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
             dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
 
-            blocks = currentBlock + 1;
-            end    = DateTime.UtcNow;
-            mhddLog.Close();
-            ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
-                         devicePath);
-            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
-            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
-
-            UpdateStatus
-              ?.Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
-            UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
-            UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+            if(aborted)
+            {
+                UpdateStatus?.Invoke("Aborted!");
+                dumpLog.WriteLine("Aborted!");
+                return;
+            }
 
             // TODO: Media sidecar
 
