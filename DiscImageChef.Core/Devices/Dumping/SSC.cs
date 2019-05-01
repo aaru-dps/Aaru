@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using System.Threading;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Extents;
@@ -652,6 +653,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 new TapeFile {File = currentFile, FirstBlock = currentBlock, Partition = currentPartition};
             TapePartition currentTapePartition =
                 new TapePartition {Number = currentPartition, FirstBlock = currentBlock};
+
+            if((canLocate || canLocateLong) && resume.NextBlock > 0)
+            {
+                currentBlock = resume.NextBlock;
+
+                currentTapeFile =
+                    (outputPlugin as IWritableTapeImage).Files.FirstOrDefault(f => f.LastBlock ==
+                                                                                   (outputPlugin as IWritableTapeImage)
+                                                                                 ?.Files.Max(g => g.LastBlock));
+
+                currentTapePartition =
+                    (outputPlugin as IWritableTapeImage).TapePartitions.FirstOrDefault(p => p.LastBlock ==
+                                                                                            (outputPlugin as
+                                                                                                 IWritableTapeImage)
+                                                                                          ?.TapePartitions
+                                                                                           .Max(g => g.LastBlock));
+            }
 
             DateTime timeSpeedStart     = DateTime.UtcNow;
             ulong    currentSpeedSize   = 0;
