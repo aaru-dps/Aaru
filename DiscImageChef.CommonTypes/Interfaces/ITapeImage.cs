@@ -52,5 +52,9 @@ namespace DiscImageChef.CommonTypes.Interfaces
         ///     Gets a list of all the partitions registered in the image
         /// </summary>
         List<TapePartition> TapePartitions { get; }
+        /// <summary>
+        ///     If the media is a really a tape, as some formats can store non-tapes
+        /// </summary>
+        bool IsTape { get; }
     }
 }
