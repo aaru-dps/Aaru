@@ -400,12 +400,55 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            bool canLocate = true;
+            bool canLocateLong = false;
+            bool canLocate     = false;
+
+            UpdateStatus?.Invoke("Positioning tape to block 1.");
+            dumpLog.WriteLine("Positioning tape to block 1");
+
+            sense = dev.Locate16(out senseBuf, 1, dev.Timeout, out _);
+
+            if(!sense)
+            {
+                sense = dev.ReadPositionLong(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+                if(!sense)
+                {
+                    ulong position = Swapping.Swap(BitConverter.ToUInt64(cmdBuf, 8));
+
+                    if(position == 1)
+                    {
+                        canLocateLong = true;
+                        UpdateStatus?.Invoke("LOCATE LONG works.");
+                        dumpLog.WriteLine("LOCATE LONG works.");
+                    }
+                }
+            }
+
+            sense = dev.Locate(out senseBuf, 1, dev.Timeout, out _);
+
+            if(!sense)
+            {
+                sense = dev.ReadPosition(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+                if(!sense)
+                {
+                    ulong position = Swapping.Swap(BitConverter.ToUInt32(cmdBuf, 8));
+
+                    if(position == 1)
+                    {
+                        canLocate = true;
+                        UpdateStatus?.Invoke("LOCATE works.");
+                        dumpLog.WriteLine("LOCATE works.");
+                    }
+                }
+            }
+
             if(resume.NextBlock > 0)
             {
                 UpdateStatus?.Invoke($"Positioning tape to block {resume.NextBlock}.");
                 dumpLog.WriteLine("Positioning tape to block {0}.", resume.NextBlock);
-                if(resume.NextBlock > uint.MaxValue)
+                if(canLocateLong)
                 {
                     sense = dev.Locate16(out senseBuf, resume.NextBlock, dev.Timeout, out _);
 
@@ -421,15 +464,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                                    .WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
                                 StoppingErrorMessage
                                   ?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
+                                return;
                             }
-                            else
-                            {
-                                dumpLog
-                                   .WriteLine("Could not check current position, unable to resume. Dumping from the start.");
-                                ErrorMessage
-                                  ?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
-                                canLocate = false;
-                            }
+
+                            dumpLog
+                               .WriteLine("Could not check current position, unable to resume. Dumping from the start.");
+                            ErrorMessage
+                              ?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
+                            canLocateLong = false;
                         }
                         else
                         {
@@ -443,15 +485,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                                        .WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
                                     StoppingErrorMessage
                                       ?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    return;
                                 }
-                                else
-                                {
-                                    dumpLog
-                                       .WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    ErrorMessage
-                                      ?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    canLocate = false;
-                                }
+
+                                dumpLog
+                                   .WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
+                                ErrorMessage
+                                  ?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
+                                canLocateLong = false;
                             }
                         }
                     }
@@ -463,16 +504,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                                .WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
                             StoppingErrorMessage
                               ?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            return;
                         }
-                        else
-                        {
-                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
-                            ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
-                            canLocate = false;
-                        }
+
+                        dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
+                        ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
+                        canLocateLong = false;
                     }
                 }
-                else
+                else if(canLocate)
                 {
                     sense = dev.Locate(out senseBuf, (uint)resume.NextBlock, dev.Timeout, out _);
 
@@ -488,15 +528,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                                    .WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
                                 StoppingErrorMessage
                                   ?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
+                                return;
                             }
-                            else
-                            {
-                                dumpLog
-                                   .WriteLine("Could not check current position, unable to resume. Dumping from the start.");
-                                ErrorMessage
-                                  ?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
-                                canLocate = false;
-                            }
+
+                            dumpLog
+                               .WriteLine("Could not check current position, unable to resume. Dumping from the start.");
+                            ErrorMessage
+                              ?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
+                            canLocate = false;
                         }
                         else
                         {
@@ -510,15 +549,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                                        .WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
                                     StoppingErrorMessage
                                       ?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    return;
                                 }
-                                else
-                                {
-                                    dumpLog
-                                       .WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    ErrorMessage
-                                      ?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
-                                    canLocate = false;
-                                }
+
+                                dumpLog
+                                   .WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
+                                ErrorMessage
+                                  ?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
+                                canLocate = false;
                             }
                         }
                     }
@@ -530,40 +568,54 @@ namespace DiscImageChef.Core.Devices.Dumping
                                .WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
                             StoppingErrorMessage
                               ?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            return;
                         }
-                        else
-                        {
-                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
-                            ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
-                            canLocate = false;
-                        }
+
+                        dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
+                        ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
+                        canLocate = false;
                     }
+                }
+                else
+                {
+                    if(!force)
+                    {
+                        dumpLog.WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                        StoppingErrorMessage
+                          ?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                        return;
+                    }
+
+                    dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
+                    ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
+                    canLocate = false;
                 }
             }
 
-            if(!canLocate)
-            {
-                do
-                {
-                    Thread.Sleep(1000);
-                    PulseProgress?.Invoke("Rewinding, please wait...");
-                    dev.RequestSense(out senseBuf, dev.Timeout, out duration);
-                    fxSense = Sense.DecodeFixed(senseBuf, out strSense);
-                }
-                while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
-                      (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+            sense = canLocateLong
+                        ? dev.Locate16(out senseBuf, false, 0, 0, dev.Timeout, out duration)
+                        : dev.Locate(out senseBuf, false, 0, 0, dev.Timeout, out duration);
 
-                // And yet, did not rewind!
-                if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 ||
-                                        fxSense.Value.ASC != 0x00))
-                {
-                    StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                                 Environment.NewLine                                        + strSense);
-                    dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
-                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
-                                      fxSense.Value.ASC, fxSense.Value.ASCQ);
-                    return;
-                }
+            do
+            {
+                Thread.Sleep(1000);
+                PulseProgress?.Invoke("Rewinding, please wait...");
+                dev.RequestSense(out senseBuf, dev.Timeout, out duration);
+                fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+            }
+            while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
+                  (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+
+            // And yet, did not rewind!
+            if(fxSense.HasValue &&
+               (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
+            {
+                StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
+                                             Environment.NewLine                                        + strSense);
+                dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
+                dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
+                                  fxSense.Value.ASC, fxSense.Value.ASCQ);
+                return;
             }
 
             bool ret = (outputPlugin as IWritableTapeImage).SetTape();
@@ -805,7 +857,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                               (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
 
             #region Error handling
-            if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0 && canLocate)
+            if(resume.BadBlocks.Count > 0 && !aborted && retryPasses > 0 && (canLocate || canLocateLong))
             {
                 int  pass              = 1;
                 bool forward           = false;
@@ -839,7 +891,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     UpdateStatus?.Invoke($"Positioning tape to block {badBlock}.");
                     dumpLog.WriteLine($"Positioning tape to block {badBlock}.");
-                    if(badBlock > uint.MaxValue)
+                    if(canLocateLong)
                     {
                         sense = dev.Locate16(out senseBuf, resume.NextBlock, dev.Timeout, out _);
 
