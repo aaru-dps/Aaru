@@ -40,6 +40,7 @@ namespace DiscImageChef.DiscImages
     {
         public List<TapeFile>      Files          { get; private set; }
         public List<TapePartition> TapePartitions { get; private set; }
+        public bool                IsTape         { get; private set; }
 
         public bool AddFile(TapeFile file)
         {
@@ -69,7 +70,7 @@ namespace DiscImageChef.DiscImages
         {
             Files          = new List<TapeFile>();
             TapePartitions = new List<TapePartition>();
-            return isTape = true;
+            return IsTape = true;
         }
     }
 }

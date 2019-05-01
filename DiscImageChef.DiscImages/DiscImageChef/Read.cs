@@ -811,6 +811,59 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
                         break;
+                    // Tape partition block
+                    case BlockType.TapePartitionBlock:
+                        structureBytes = new byte[Marshal.SizeOf<TapePartitionHeader>()];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        TapePartitionHeader partitionHeader =
+                            Marshal.SpanToStructureLittleEndian<TapePartitionHeader>(structureBytes);
+                        if(partitionHeader.identifier != BlockType.TapePartitionBlock) break;
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Found tape partition block at position {0}", entry.offset);
+
+                        byte[] tapePartitionBytes = new byte[partitionHeader.length];
+                        imageStream.Read(tapePartitionBytes, 0, tapePartitionBytes.Length);
+                        Span<TapePartitionEntry> tapePartitions =
+                            MemoryMarshal.Cast<byte, TapePartitionEntry>(tapePartitionBytes);
+                        TapePartitions = new List<TapePartition>();
+
+                        foreach(TapePartitionEntry tapePartition in tapePartitions)
+                            TapePartitions.Add(new TapePartition
+                            {
+                                FirstBlock = tapePartition.FirstBlock,
+                                LastBlock  = tapePartition.LastBlock,
+                                Number     = tapePartition.Number
+                            });
+
+                        IsTape = true;
+                        break;
+                    // Tape file block
+                    case BlockType.TapeFileBlock:
+                        structureBytes = new byte[Marshal.SizeOf<TapeFileHeader>()];
+                        imageStream.Read(structureBytes, 0, structureBytes.Length);
+                        TapeFileHeader fileHeader = Marshal.SpanToStructureLittleEndian<TapeFileHeader>(structureBytes);
+                        if(fileHeader.identifier != BlockType.TapeFileBlock) break;
+
+                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                  "Found tape file block at position {0}", entry.offset);
+
+                        byte[] tapeFileBytes = new byte[fileHeader.length];
+                        imageStream.Read(tapeFileBytes, 0, tapeFileBytes.Length);
+                        Span<TapeFileEntry> tapeFiles = MemoryMarshal.Cast<byte, TapeFileEntry>(tapeFileBytes);
+                        Files = new List<TapeFile>();
+
+                        foreach(TapeFileEntry file in tapeFiles)
+                            Files.Add(new TapeFile
+                            {
+                                FirstBlock = file.FirstBlock,
+                                LastBlock  = file.LastBlock,
+                                Partition  = file.Partition,
+                                File       = file.File
+                            });
+
+                        IsTape = true;
+                        break;
                 }
             }
 
@@ -1150,6 +1203,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorPrefix;
                                 break;
                             }
+
                             case SectorTagType.CdSectorHeader:
                             {
                                 sectorOffset = 12;
@@ -1158,6 +1212,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorPrefix;
                                 break;
                             }
+
                             case SectorTagType.CdSectorSubHeader:
                                 throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                             case SectorTagType.CdSectorEcc:
@@ -1168,6 +1223,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorSuffix;
                                 break;
                             }
+
                             case SectorTagType.CdSectorEccP:
                             {
                                 sectorOffset = 12;
@@ -1176,6 +1232,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorSuffix;
                                 break;
                             }
+
                             case SectorTagType.CdSectorEccQ:
                             {
                                 sectorOffset = 184;
@@ -1184,6 +1241,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorSuffix;
                                 break;
                             }
+
                             case SectorTagType.CdSectorEdc:
                             {
                                 sectorOffset = 0;
@@ -1192,6 +1250,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorSuffix;
                                 break;
                             }
+
                             case SectorTagType.CdSectorSubchannel:
                             {
                                 sectorOffset = 0;
@@ -1200,6 +1259,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorSubchannel;
                                 break;
                             }
+
                             default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
 
@@ -1218,6 +1278,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorPrefix;
                                 break;
                             }
+
                             case SectorTagType.CdSectorHeader:
                             {
                                 sectorOffset = 12;
@@ -1226,6 +1287,7 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorPrefix;
                                 break;
                             }
+
                             // These could be implemented
                             case SectorTagType.CdSectorEcc:
                             case SectorTagType.CdSectorEccP:
@@ -1241,11 +1303,13 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorSubchannel;
                                 break;
                             }
+
                             default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
 
                         break;
                     }
+
                     case TrackType.Audio:
                     {
                         switch(tag)
@@ -1258,11 +1322,13 @@ namespace DiscImageChef.DiscImages
                                 dataSource   = sectorSubchannel;
                                 break;
                             }
+
                             default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                         }
 
                         break;
                     }
+
                     default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
                 }
             }

@@ -407,7 +407,7 @@ namespace DiscImageChef.DiscImages
 
                                 if(ddtHeader.identifier != BlockType.DeDuplicationTable) break;
 
-                                if(ddtHeader.entries != imageInfo.Sectors && !isTape)
+                                if(ddtHeader.entries != imageInfo.Sectors && !IsTape)
                                 {
                                     ErrorMessage =
                                         $"Trying to write a media with {imageInfo.Sectors} sectors to an image with {ddtHeader.entries} sectors, not continuing...";
@@ -449,7 +449,7 @@ namespace DiscImageChef.DiscImages
                                             ImageNotSupportedException($"Found unsupported compression algorithm {(ushort)ddtHeader.compression}");
                                 }
 
-                                if(isTape)
+                                if(IsTape)
                                 {
                                     tapeDdt = new Dictionary<ulong, ulong>();
                                     for(long i = 0; i < userDataDdt.LongLength; i++)
@@ -672,6 +672,60 @@ namespace DiscImageChef.DiscImages
 
                             if(DumpHardware.Count == 0) DumpHardware = null;
                             break;
+                        // Tape partition block
+                        case BlockType.TapePartitionBlock:
+                            structureBytes = new byte[Marshal.SizeOf<TapePartitionHeader>()];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            TapePartitionHeader partitionHeader =
+                                Marshal.SpanToStructureLittleEndian<TapePartitionHeader>(structureBytes);
+                            if(partitionHeader.identifier != BlockType.TapePartitionBlock) break;
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Found tape partition block at position {0}", entry.offset);
+
+                            byte[] tapePartitionBytes = new byte[partitionHeader.length];
+                            imageStream.Read(tapePartitionBytes, 0, tapePartitionBytes.Length);
+                            Span<TapePartitionEntry> tapePartitions =
+                                MemoryMarshal.Cast<byte, TapePartitionEntry>(tapePartitionBytes);
+                            TapePartitions = new List<TapePartition>();
+
+                            foreach(TapePartitionEntry tapePartition in tapePartitions)
+                                TapePartitions.Add(new TapePartition
+                                {
+                                    FirstBlock = tapePartition.FirstBlock,
+                                    LastBlock  = tapePartition.LastBlock,
+                                    Number     = tapePartition.Number
+                                });
+
+                            IsTape = true;
+                            break;
+                        // Tape file block
+                        case BlockType.TapeFileBlock:
+                            structureBytes = new byte[Marshal.SizeOf<TapeFileHeader>()];
+                            imageStream.Read(structureBytes, 0, structureBytes.Length);
+                            TapeFileHeader fileHeader =
+                                Marshal.SpanToStructureLittleEndian<TapeFileHeader>(structureBytes);
+                            if(fileHeader.identifier != BlockType.TapeFileBlock) break;
+
+                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                                      "Found tape file block at position {0}", entry.offset);
+
+                            byte[] tapeFileBytes = new byte[fileHeader.length];
+                            imageStream.Read(tapeFileBytes, 0, tapeFileBytes.Length);
+                            Span<TapeFileEntry> tapeFiles = MemoryMarshal.Cast<byte, TapeFileEntry>(tapeFileBytes);
+                            Files = new List<TapeFile>();
+
+                            foreach(TapeFileEntry file in tapeFiles)
+                                Files.Add(new TapeFile
+                                {
+                                    FirstBlock = file.FirstBlock,
+                                    LastBlock  = file.LastBlock,
+                                    Partition  = file.Partition,
+                                    File       = file.File
+                                });
+
+                            IsTape = true;
+                            break;
                     }
                 }
 
@@ -699,7 +753,7 @@ namespace DiscImageChef.DiscImages
                 // If in memory, easy
                 if(inMemoryDdt)
                 {
-                    if(isTape) tapeDdt = new Dictionary<ulong, ulong>();
+                    if(IsTape) tapeDdt = new Dictionary<ulong, ulong>();
                     else userDataDdt   = new ulong[sectors];
                 }
                 // If not, create the block, add to index, and enlarge the file to allow the DDT to exist on-disk
@@ -811,7 +865,7 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            if(sectorAddress >= Info.Sectors && !isTape)
+            if(sectorAddress >= Info.Sectors && !IsTape)
             {
                 ErrorMessage = "Tried to write past image size";
                 return false;
@@ -1867,7 +1921,7 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            if(isTape)
+            if(IsTape)
             {
                 ulong latestBlock = tapeDdt.Max(b => b.Key);
 

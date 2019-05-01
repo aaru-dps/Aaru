@@ -248,7 +248,7 @@ namespace DiscImageChef.DiscImages
         {
             if(inMemoryDdt)
             {
-                if(isTape) tapeDdt[sectorAddress] = pointer;
+                if(IsTape) tapeDdt[sectorAddress] = pointer;
                 else userDataDdt[sectorAddress]   = pointer;
                 return;
             }

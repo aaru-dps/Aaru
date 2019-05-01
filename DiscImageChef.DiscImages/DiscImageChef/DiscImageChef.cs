@@ -122,7 +122,6 @@ namespace DiscImageChef.DiscImages
         List<IndexEntry> index;
         /// <summary>If set to <c>true</c>, the DDT entries are in-memory.</summary>
         bool inMemoryDdt;
-        bool  isTape;
         ulong lastWrittenBlock;
         /// <summary>LZMA stream.</summary>
         LzmaStream lzmaBlockStream;
