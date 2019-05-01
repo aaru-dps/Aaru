@@ -462,6 +462,63 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
                 }
+                else
+                {
+                    sense = dev.Locate(out senseBuf, (uint)resume.NextBlock, dev.Timeout, out _);
+
+                    if(!sense)
+                    {
+                        sense = dev.ReadPosition(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+                        if(sense)
+                        {
+                            if(!force)
+                            {
+                                dumpLog.WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
+                                StoppingErrorMessage?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
+                            }
+                            else
+                            {
+                                dumpLog.WriteLine("Could not check current position, unable to resume. Dumping from the start.");
+                                ErrorMessage?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
+                                rewind = true;
+                            }
+                        }
+                        else
+                        {
+                            ulong position = Swapping.Swap(BitConverter.ToUInt32(cmdBuf, 4));
+
+                            if(position != resume.NextBlock)
+                            {
+                                if(!force)
+                                {
+                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    StoppingErrorMessage?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                }
+                                else
+                                {
+                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    ErrorMessage?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    rewind = true;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(!force)
+                        {
+                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            StoppingErrorMessage?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                        }
+                        else
+                        {
+                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
+                            ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
+                            rewind = true;
+                        }
+                    }
+                }
             }
 
             if(rewind)
