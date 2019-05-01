@@ -547,7 +547,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            bool ret = outputPlugin.Create(outputPath, dskType, formatOptions, 0, 0);
+            bool ret = (outputPlugin as IWritableTapeImage).SetTape();
+            // Cannot set image to tape mode
+            if(!ret)
+            {
+                dumpLog.WriteLine("Error setting output image in tape mode, not continuing.");
+                dumpLog.WriteLine(outputPlugin.ErrorMessage);
+                StoppingErrorMessage?.Invoke("Error setting output image in tape mode, not continuing." + Environment.NewLine +
+                                             outputPlugin.ErrorMessage);
+                return;
+            }
+
+            ret = outputPlugin.Create(outputPath, dskType, formatOptions, 0, 0);
 
             // Cannot create image
             if(!ret)
