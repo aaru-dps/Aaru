@@ -51,6 +51,6 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <summary>
         ///     Gets a list of all the partitions registered in the image
         /// </summary>
-        List<TapePartition> Partitions { get; }
+        List<TapePartition> TapePartitions { get; }
     }
 }
