@@ -35,20 +35,21 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 namespace DiscImageChef.CommonTypes.Structs
 {
     public struct TapePartition
     {
         /// <summary>
-        /// Partition number
+        ///     Partition number
         /// </summary>
-        public uint Number;
+        public byte Number;
         /// <summary>
-        /// First block, inclusive, of the partition
+        ///     First block, inclusive, of the partition
         /// </summary>
         public ulong FirstBlock;
         /// <summary>
-        /// Last block, inclusive, of the partition
+        ///     Last block, inclusive, of the partition
         /// </summary>
         public ulong LastBlock;
     }
