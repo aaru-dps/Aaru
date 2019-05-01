@@ -35,6 +35,7 @@ using System.IO;
 using System.Threading;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
@@ -263,7 +264,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 scsiMediumTypeTape = (byte)decMode.Value.Header.MediumType;
                 if(decMode.Value.Header.BlockDescriptors != null && decMode.Value.Header.BlockDescriptors.Length >= 1)
                     scsiDensityCodeTape = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
-                blockSize = decMode.Value.Header.BlockDescriptors != null ? decMode.Value.Header.BlockDescriptors[0].BlockLength : (uint)0;
+                blockSize = decMode.Value.Header.BlockDescriptors?[0].BlockLength ?? 0;
 
                 UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
             }
@@ -390,6 +391,101 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Drive could not return back. Sense follows...");
                     dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
                                       fxSense.Value.ASC, fxSense.Value.ASCQ);
+                    return;
+                }
+            }
+
+            DumpHardwareType currentTry = null;
+            ExtentsULong     extents    = null;
+            ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
+                                  dev.PlatformId, ref resume, ref currentTry, ref extents, true);
+
+            bool rewind = false;
+            if(resume.NextBlock > 0)
+            {
+                UpdateStatus?.Invoke($"Positioning tape to block {resume.NextBlock}.");
+                dumpLog.WriteLine("Positioning tape to block {0}.", resume.NextBlock);
+                if(resume.NextBlock > uint.MaxValue)
+                {
+                    sense = dev.Locate16(out senseBuf, resume.NextBlock, dev.Timeout, out _);
+
+                    if(!sense)
+                    {
+                        sense = dev.ReadPositionLong(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+                        if(sense)
+                        {
+                            if(!force)
+                            {
+                                dumpLog.WriteLine("Could not check current position, unable to resume. If you want to continue use force.");
+                                StoppingErrorMessage?.Invoke("Could not check current position, unable to resume. If you want to continue use force.");
+                            }
+                            else
+                            {
+                                dumpLog.WriteLine("Could not check current position, unable to resume. Dumping from the start.");
+                                ErrorMessage?.Invoke("Could not check current position, unable to resume. Dumping from the start.");
+                                rewind = true;
+                            }
+                        }
+                        else
+                        {
+                            ulong position = Swapping.Swap(BitConverter.ToUInt64(cmdBuf, 8));
+
+                            if(position != resume.NextBlock)
+                            {
+                                if(!force)
+                                {
+                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                    StoppingErrorMessage?.Invoke("Current position is not as expected, unable to resume. If you want to continue use force.");
+                                }
+                                else
+                                {
+                                    dumpLog.WriteLine("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    ErrorMessage?.Invoke("Current position is not as expected, unable to resume. Dumping from the start.");
+                                    rewind = true;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(!force)
+                        {
+                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                            StoppingErrorMessage?.Invoke("Cannot reposition tape, unable to resume. If you want to continue use force.");
+                        }
+                        else
+                        {
+                            dumpLog.WriteLine("Cannot reposition tape, unable to resume. Dumping from the start.");
+                            ErrorMessage?.Invoke("Cannot reposition tape, unable to resume. Dumping from the start.");
+                            rewind = true;
+                        }
+                    }
+                }
+            }
+
+            if(rewind)
+            {
+                do
+                {
+                    Thread.Sleep(1000);
+                    PulseProgress?.Invoke("Rewinding, please wait...");
+                    dev.RequestSense(out senseBuf, dev.Timeout, out duration);
+                    fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                }
+                while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
+                      (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+
+                // And yet, did not rewind!
+                if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 ||
+                                        fxSense.Value.ASC != 0x00))
+                {
+                    StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
+                                                 Environment.NewLine                                        +
+                                                 strSense);
+                    dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
+                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                      fxSense.Value.SenseKey, fxSense.Value.ASC, fxSense.Value.ASCQ);
                     return;
                 }
             }
@@ -567,6 +663,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 outputPlugin.WriteSector(cmdBuf, currentBlock);
 
                 currentBlock++;
+                resume.NextBlock++;
                 currentSpeedSize += blockSize;
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
@@ -584,6 +681,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             currentTapePartition.LastBlock = currentBlock - 1;
             (outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
 
+            outputPlugin.SetDumpHardware(resume.Tries);
+            if(preSidecar != null) outputPlugin.SetCicmMetadata(preSidecar);
             dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
