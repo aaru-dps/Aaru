@@ -1029,9 +1029,19 @@ namespace DiscImageChef.DiscImages
 
                 blockStream        = new MemoryStream();
                 decompressedStream = new MemoryStream();
-                if(currentBlockHeader.compression == CompressionType.Flac)
-                    flakeWriter      = new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
-                else lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                switch(currentBlockHeader.compression)
+                {
+                    case CompressionType.Flac:
+                        flakeWriter = new FlakeWriter("", blockStream, flakeWriterSettings) {DoSeekTable = false};
+                        break;
+                    case CompressionType.Lzma:
+                        lzmaBlockStream = new LzmaStream(lzmaEncoderProperties, false, blockStream);
+                        break;
+                    default:
+                        lzmaBlockStream = null;
+                        break;
+                }
+
                 crc64 = new Crc64Context();
             }
 
