@@ -369,7 +369,8 @@ namespace DiscImageChef.Gui.Forms
                 return;
             }
 
-            if(resume == null || resume.NextBlock <= resume.LastBlock || resume.BadBlocks.Count != 0) return;
+            if(resume == null || resume.NextBlock <= resume.LastBlock ||
+               resume.BadBlocks.Count != 0 && !resume.Tape) return;
 
             MessageBox.Show("Media already dumped correctly, please choose another destination...",
                             MessageBoxType.Warning);

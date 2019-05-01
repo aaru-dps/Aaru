@@ -214,7 +214,7 @@ namespace DiscImageChef.Commands
                     return (int)ErrorNumber.InvalidResume;
                 }
 
-            if(resume != null && resume.NextBlock > resume.LastBlock && resume.BadBlocks.Count == 0)
+            if(resume != null && resume.NextBlock > resume.LastBlock && resume.BadBlocks.Count == 0 && !resume.Tape)
             {
                 DicConsole.WriteLine("Media already dumped correctly, not continuing...");
                 return (int)ErrorNumber.AlreadyDumped;

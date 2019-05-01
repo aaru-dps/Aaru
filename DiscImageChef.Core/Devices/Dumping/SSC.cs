@@ -591,31 +591,33 @@ namespace DiscImageChef.Core.Devices.Dumping
                     canLocate = false;
                 }
             }
-
-            sense = canLocateLong
-                        ? dev.Locate16(out senseBuf, false, 0, 0, dev.Timeout, out duration)
-                        : dev.Locate(out senseBuf, false, 0, 0, dev.Timeout, out duration);
-
-            do
+            else
             {
-                Thread.Sleep(1000);
-                PulseProgress?.Invoke("Rewinding, please wait...");
-                dev.RequestSense(out senseBuf, dev.Timeout, out duration);
-                fxSense = Sense.DecodeFixed(senseBuf, out strSense);
-            }
-            while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
-                  (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+                sense = canLocateLong
+                            ? dev.Locate16(out senseBuf, false, 0, 0, dev.Timeout, out duration)
+                            : dev.Locate(out senseBuf, false, 0, 0, dev.Timeout, out duration);
 
-            // And yet, did not rewind!
-            if(fxSense.HasValue &&
-               (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
-            {
-                StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
-                                             Environment.NewLine                                        + strSense);
-                dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
-                dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
-                                  fxSense.Value.ASC, fxSense.Value.ASCQ);
-                return;
+                do
+                {
+                    Thread.Sleep(1000);
+                    PulseProgress?.Invoke("Rewinding, please wait...");
+                    dev.RequestSense(out senseBuf, dev.Timeout, out duration);
+                    fxSense = Sense.DecodeFixed(senseBuf, out strSense);
+                }
+                while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
+                      (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
+
+                // And yet, did not rewind!
+                if(fxSense.HasValue &&
+                   (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
+                {
+                    StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
+                                                 Environment.NewLine                                        + strSense);
+                    dumpLog.WriteLine("Drive could not rewind, please correct. Sense follows...");
+                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h", fxSense.Value.SenseKey,
+                                      fxSense.Value.ASC, fxSense.Value.ASCQ);
+                    return;
+                }
             }
 
             bool ret = (outputPlugin as IWritableTapeImage).SetTape();
