@@ -34,6 +34,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using DiscImageChef.CommonTypes;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
@@ -208,8 +209,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             sidecar.BlockMedia    = new BlockMediaType[1];
             sidecar.BlockMedia[0] = new BlockMediaType {SCSI = new SCSIType()};
-            byte scsiMediumTypeTape  = 0;
-            byte scsiDensityCodeTape = 0;
+            byte   scsiMediumTypeTape  = 0;
+            byte   scsiDensityCodeTape = 0;
+            byte[] mode6Data           = null;
+            byte[] mode10Data          = null;
 
             UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
             sense = dev.ModeSense10(out cmdBuf, out senseBuf, false, true, ScsiModeSensePageControl.Current, 0x3F, 0xFF,
@@ -222,16 +225,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(!sense && !dev.Error)
                 if(Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
-                {
                     decMode = Modes.DecodeMode10(cmdBuf, dev.ScsiType);
-                    sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
-                    {
-                        Image     = outputPrefix + ".modesense10.bin",
-                        Size      = (ulong)cmdBuf.Length,
-                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
-                    };
-                    DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense10.Image, cmdBuf);
-                }
 
             UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
             sense = dev.ModeSense6(out cmdBuf, out senseBuf, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
@@ -243,16 +237,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(!sense && !dev.Error)
                 if(Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
-                {
                     decMode = Modes.DecodeMode6(cmdBuf, dev.ScsiType);
-                    sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
-                    {
-                        Image     = outputPrefix + ".modesense.bin",
-                        Size      = (ulong)cmdBuf.Length,
-                        Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
-                    };
-                    DataFile.WriteTo("SCSI Dump", sidecar.BlockMedia[0].SCSI.ModeSense.Image, cmdBuf);
-                }
 
             // TODO: Check partitions page
             if(decMode.HasValue)
@@ -670,6 +655,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                                                           ?.TapePartitions
                                                                                            .Max(g => g.LastBlock));
             }
+
+            if(mode6Data  != null) outputPlugin.WriteMediaTag(mode6Data,  MediaTagType.SCSI_MODESENSE_6);
+            if(mode10Data != null) outputPlugin.WriteMediaTag(mode10Data, MediaTagType.SCSI_MODESENSE_10);
 
             DateTime timeSpeedStart     = DateTime.UtcNow;
             ulong    currentSpeedSize   = 0;
