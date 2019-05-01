@@ -136,7 +136,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Tries        = new List<DumpHardwareType>(),
                     CreationDate = DateTime.UtcNow,
                     BadBlocks    = new List<ulong>(),
-                    LastBlock    = blocks - 1,
+                    LastBlock    = isTape ? 0 : blocks - 1,
                     Tape         = isTape
                 };
                 currentTry = new DumpHardwareType
