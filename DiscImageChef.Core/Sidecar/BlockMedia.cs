@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
@@ -352,6 +353,163 @@ namespace DiscImageChef.Core
             sidecar.BlockMedia[0].LogicalBlockSize = image.Info.SectorSize;
             // TODO: Detect it
             sidecar.BlockMedia[0].PhysicalBlockSize = image.Info.SectorSize;
+
+            if(image is ITapeImage tapeImage && tapeImage.IsTape)
+            {
+                List<TapePartitionType> tapePartitions = new List<TapePartitionType>();
+                foreach(TapePartition tapePartition in tapeImage.TapePartitions)
+                {
+                    TapePartitionType thisPartition = new TapePartitionType
+                    {
+                        Image      = sidecar.BlockMedia[0].Image,
+                        Sequence   = tapePartition.Number,
+                        StartBlock = tapePartition.FirstBlock,
+                        EndBlock   = tapePartition.LastBlock
+                    };
+
+                    if(tapeImage.TapePartitions.Count == 1)
+                        thisPartition.Checksums = sidecar.BlockMedia[0].ContentChecksums;
+                    else
+                    {
+                        UpdateStatus($"Hashing partition {tapePartition.Number}...");
+
+                        if(aborted) return;
+
+                        Checksum tapePartitionChk = new Checksum();
+
+                        // For fast debugging, skip checksum
+                        //goto skipImageChecksum;
+
+                        uint  sectorsToRead = 512;
+                        ulong sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
+                        ulong doneSectors   = 0;
+
+                        InitProgress2();
+                        while(doneSectors < sectors)
+                        {
+                            if(aborted)
+                            {
+                                EndProgress2();
+                                return;
+                            }
+
+                            byte[] sector;
+
+                            if(sectors - doneSectors >= sectorsToRead)
+                            {
+                                sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors, sectorsToRead);
+                                UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                doneSectors += sectorsToRead;
+                            }
+                            else
+                            {
+                                sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
+                                                           (uint)(sectors - doneSectors));
+                                UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                doneSectors += sectors - doneSectors;
+                            }
+
+                            thisPartition.Size += (ulong)sector.LongLength;
+
+                            tapePartitionChk.Update(sector);
+                        }
+
+                        // For fast debugging, skip checksum
+                        //skipImageChecksum:
+
+                        List<ChecksumType> partitionChecksums = tapePartitionChk.End();
+
+                        thisPartition.Checksums = partitionChecksums.ToArray();
+
+                        EndProgress2();
+                    }
+
+                    List<TapeFileType> filesInPartition = new List<TapeFileType>();
+
+                    foreach(TapeFile tapeFile in tapeImage.Files.Where(f => f.Partition == tapePartition.Number))
+                    {
+                        TapeFileType thisFile = new TapeFileType
+                        {
+                            Sequence   = tapeFile.File,
+                            StartBlock = tapeFile.FirstBlock,
+                            EndBlock   = tapeFile.LastBlock,
+                            Image      = sidecar.BlockMedia[0].Image,
+                            Size       = 0,
+                            BlockSize  = 0
+                        };
+
+                        if(tapeImage.Files.Count(f => f.Partition == tapePartition.Number) == 1)
+                        {
+                            thisFile.Checksums = thisPartition.Checksums;
+                            thisFile.Size      = thisPartition.Size;
+                        }
+                        else
+                        {
+                            UpdateStatus($"Hashing file {tapeFile.File}...");
+
+                            if(aborted) return;
+
+                            Checksum tapeFileChk = new Checksum();
+
+                            // For fast debugging, skip checksum
+                            //goto skipImageChecksum;
+
+                            uint  sectorsToRead = 512;
+                            ulong sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
+                            ulong doneSectors   = 0;
+
+                            InitProgress2();
+                            while(doneSectors < sectors)
+                            {
+                                if(aborted)
+                                {
+                                    EndProgress2();
+                                    return;
+                                }
+
+                                byte[] sector;
+
+                                if(sectors - doneSectors >= sectorsToRead)
+                                {
+                                    sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors, sectorsToRead);
+                                    UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                    doneSectors += sectorsToRead;
+                                }
+                                else
+                                {
+                                    sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
+                                                               (uint)(sectors - doneSectors));
+                                    UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
+                                    doneSectors += sectors - doneSectors;
+                                }
+
+                                if((ulong)sector.LongLength > thisFile.BlockSize)
+                                    thisFile.BlockSize = (ulong)sector.LongLength;
+
+                                thisFile.Size += (ulong)sector.LongLength;
+
+                                tapeFileChk.Update(sector);
+                            }
+
+                            // For fast debugging, skip checksum
+                            //skipImageChecksum:
+
+                            List<ChecksumType> fileChecksums = tapeFileChk.End();
+
+                            thisFile.Checksums = fileChecksums.ToArray();
+
+                            EndProgress2();
+                        }
+
+                        filesInPartition.Add(thisFile);
+                    }
+
+                    thisPartition.File = filesInPartition.ToArray();
+                    tapePartitions.Add(thisPartition);
+                }
+
+                sidecar.BlockMedia[0].TapeInformation = tapePartitions.ToArray();
+            }
 
             UpdateStatus("Checking filesystems...");
 
