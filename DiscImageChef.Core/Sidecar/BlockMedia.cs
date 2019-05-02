@@ -301,7 +301,7 @@ namespace DiscImageChef.Core
                 // For fast debugging, skip checksum
                 //goto skipImageChecksum;
 
-                uint  sectorsToRead = 512;
+                uint  sectorsToRead = 64;
                 ulong sectors       = image.Info.Sectors;
                 ulong doneSectors   = 0;
 
@@ -380,7 +380,7 @@ namespace DiscImageChef.Core
                         // For fast debugging, skip checksum
                         //goto skipImageChecksum;
 
-                        uint  sectorsToRead = 512;
+                        uint  sectorsToRead = 64;
                         ulong sectors       = tapePartition.LastBlock - tapePartition.FirstBlock + 1;
                         ulong doneSectors   = 0;
 
@@ -454,7 +454,7 @@ namespace DiscImageChef.Core
                             // For fast debugging, skip checksum
                             //goto skipImageChecksum;
 
-                            uint  sectorsToRead = 512;
+                            uint  sectorsToRead = 64;
                             ulong sectors       = tapeFile.LastBlock - tapeFile.FirstBlock + 1;
                             ulong doneSectors   = 0;
 
@@ -471,13 +471,13 @@ namespace DiscImageChef.Core
 
                                 if(sectors - doneSectors >= sectorsToRead)
                                 {
-                                    sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors, sectorsToRead);
+                                    sector = image.ReadSectors(tapeFile.FirstBlock + doneSectors, sectorsToRead);
                                     UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
                                     doneSectors += sectorsToRead;
                                 }
                                 else
                                 {
-                                    sector = image.ReadSectors(tapePartition.FirstBlock + doneSectors,
+                                    sector = image.ReadSectors(tapeFile.FirstBlock + doneSectors,
                                                                (uint)(sectors - doneSectors));
                                     UpdateProgress2("Hashing blocks {0} of {1}", (long)doneSectors, (long)sectors);
                                     doneSectors += sectors - doneSectors;
