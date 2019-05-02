@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Partitions;
 
@@ -56,8 +57,25 @@ namespace DiscImageChef.Core
             List<Partition> childPartitions  = new List<Partition>();
             List<ulong>     checkedLocations = new List<ulong>();
 
+            ITapeImage               tapeImage          = image as ITapeImage;
+            IPartitionableMediaImage partitionableImage = image as IPartitionableMediaImage;
+
+            // Create partitions from image files
+            if(tapeImage?.Files != null)
+                foreach(TapeFile tapeFile in tapeImage.Files)
+                {
+                    foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
+                        if(partitionPlugin.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
+                        {
+                            foundPartitions.AddRange(partitions);
+                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
+                                                      tapeFile.FirstBlock);
+                        }
+
+                    checkedLocations.Add(tapeFile.FirstBlock);
+                }
             // Getting all partitions from device (e.g. tracks)
-            if(image is IPartitionableMediaImage partitionableImage && partitionableImage.Partitions != null)
+            else if(partitionableImage?.Partitions != null)
                 foreach(Partition imagePartition in partitionableImage.Partitions)
                 {
                     foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
@@ -115,10 +133,8 @@ namespace DiscImageChef.Core
                     foundPartitions.RemoveAt(0);
 
                     foreach(Partition child in childs)
-                        if(checkedLocations.Contains(child.Start))
-                            childPartitions.Add(child);
-                        else
-                            foundPartitions.Add(child);
+                        if(checkedLocations.Contains(child.Start)) childPartitions.Add(child);
+                        else foundPartitions.Add(child);
                 }
                 else
                 {
@@ -131,8 +147,22 @@ namespace DiscImageChef.Core
             }
 
             // Be sure that device partitions are not excluded if not mapped by any scheme...
-            partitionableImage = image as IPartitionableMediaImage;
-            if(!(partitionableImage is null))
+            if(!(tapeImage is null))
+            {
+                List<ulong> startLocations =
+                    childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
+
+                if(tapeImage.Files != null)
+                    childPartitions.AddRange(tapeImage.Files.Where(f => !startLocations.Contains(f.FirstBlock))
+                                                      .Select(tapeFile => new Partition
+                                                       {
+                                                           Start = tapeFile.FirstBlock,
+                                                           Length = tapeFile.LastBlock -
+                                                                    tapeFile.FirstBlock + 1,
+                                                           Sequence = tapeFile.File
+                                                       }));
+            }
+            else if(!(partitionableImage is null))
             {
                 List<ulong> startLocations =
                     childPartitions.Select(detectedPartition => detectedPartition.Start).ToList();
