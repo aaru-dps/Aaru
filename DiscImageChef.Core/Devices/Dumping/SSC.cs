@@ -680,7 +680,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpLog.WriteLine("Finished partition {0}", currentPartition);
 
                     currentTapeFile.LastBlock = currentBlock - 1;
-                    (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
+                    if(currentTapeFile.LastBlock > currentTapeFile.FirstBlock)
+                        (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
 
                     currentTapePartition.LastBlock = currentBlock - 1;
                     (outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
@@ -843,10 +844,15 @@ namespace DiscImageChef.Core.Devices.Dumping
             blocks = currentBlock + 1;
             end    = DateTime.UtcNow;
 
-            currentTapeFile.LastBlock = currentBlock - 1;
-            (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
-            currentTapePartition.LastBlock = currentBlock - 1;
-            (outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
+            // If not aborted this is added at the end of medium
+            if(aborted)
+            {
+                currentTapeFile.LastBlock = currentBlock - 1;
+                (outputPlugin as IWritableTapeImage).AddFile(currentTapeFile);
+
+                currentTapePartition.LastBlock = currentBlock - 1;
+                (outputPlugin as IWritableTapeImage).AddPartition(currentTapePartition);
+            }
 
             EndProgress?.Invoke();
             mhddLog.Close();
