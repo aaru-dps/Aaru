@@ -45,12 +45,14 @@ namespace DiscImageChef
 
         internal static void UpdateProgress(string text, long current, long maximum)
         {
-            DicConsole.Write("\r" + text);
+            ClearCurrentConsoleLine();
+            DicConsole.Write(text);
         }
 
         internal static void PulseProgress(string text)
         {
-            DicConsole.Write("\r" + text);
+            ClearCurrentConsoleLine();
+            DicConsole.Write(text);
         }
 
         internal static void InitProgress2() { }
@@ -62,7 +64,8 @@ namespace DiscImageChef
 
         internal static void UpdateProgress2(string text, long current, long maximum)
         {
-            DicConsole.Write("\r" + text);
+            ClearCurrentConsoleLine();
+            DicConsole.Write(text);
         }
 
         internal static void InitTwoProgress() { }
@@ -75,17 +78,27 @@ namespace DiscImageChef
         internal static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2,
                                                long   maximum2)
         {
-            DicConsole.Write("\r" + text + ": " + text2);
+            ClearCurrentConsoleLine();
+            DicConsole.Write(text + ": " + text2);
         }
 
         internal static void UpdateStatus(string text)
         {
+            ClearCurrentConsoleLine();
             DicConsole.WriteLine(text);
         }
 
         internal static void ErrorMessage(string text)
         {
             DicConsole.ErrorWriteLine(text);
+        }
+
+        static void ClearCurrentConsoleLine()
+        {
+            int currentLineCursor = System.Console.CursorTop;
+            System.Console.SetCursorPosition(0, System.Console.CursorTop);
+            System.Console.Write(new string(' ', System.Console.WindowWidth));
+            System.Console.SetCursorPosition(0, currentLineCursor);
         }
     }
 }
