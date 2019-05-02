@@ -31,17 +31,22 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using Schemas;
+using MediaType = DiscImageChef.CommonTypes.MediaType;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -52,18 +57,17 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// </summary>
         internal void Ssc()
         {
-            FixedSense?      fxSense;
-            bool             sense;
-            uint             blockSize;
-            ulong            blocks  = 0;
-            MediaType        dskType = MediaType.Unknown;
-            DateTime         start;
-            DateTime         end;
-            double           totalDuration = 0;
-            double           currentSpeed  = 0;
-            double           maxSpeed      = double.MinValue;
-            double           minSpeed      = double.MaxValue;
-            CICMMetadataType sidecar       = preSidecar ?? new CICMMetadataType();
+            FixedSense? fxSense;
+            bool        sense;
+            uint        blockSize;
+            ulong       blocks  = 0;
+            MediaType   dskType = MediaType.Unknown;
+            DateTime    start;
+            DateTime    end;
+            double      totalDuration = 0;
+            double      currentSpeed  = 0;
+            double      maxSpeed      = double.MinValue;
+            double      minSpeed      = double.MaxValue;
 
             dev.RequestSense(out byte[] senseBuf, dev.Timeout, out double duration);
             fxSense = Sense.DecodeFixed(senseBuf, out string strSense);
@@ -207,8 +211,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             EndProgress?.Invoke();
 
-            sidecar.BlockMedia    = new BlockMediaType[1];
-            sidecar.BlockMedia[0] = new BlockMediaType {SCSI = new SCSIType()};
             byte   scsiMediumTypeTape  = 0;
             byte   scsiDensityCodeTape = 0;
             byte[] mode6Data           = null;
@@ -1022,7 +1024,104 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            // TODO: Media sidecar
+            if(aborted)
+            {
+                UpdateStatus?.Invoke("Aborted!");
+                dumpLog.WriteLine("Aborted!");
+                return;
+            }
+
+            double totalChkDuration = 0;
+            if(!nometadata)
+            {
+                UpdateStatus?.Invoke("Creating sidecar.");
+                dumpLog.WriteLine("Creating sidecar.");
+                FiltersList filters     = new FiltersList();
+                IFilter     filter      = filters.GetFilter(outputPath);
+                IMediaImage inputPlugin = ImageFormat.Detect(filter);
+                if(!inputPlugin.Open(filter))
+                {
+                    StoppingErrorMessage?.Invoke("Could not open created image.");
+                    return;
+                }
+
+                DateTime chkStart = DateTime.UtcNow;
+                sidecarClass                      =  new Sidecar(inputPlugin, outputPath, filter.Id, encoding);
+                sidecarClass.InitProgressEvent    += InitProgress;
+                sidecarClass.UpdateProgressEvent  += UpdateProgress;
+                sidecarClass.EndProgressEvent     += EndProgress;
+                sidecarClass.InitProgressEvent2   += InitProgress2;
+                sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
+                sidecarClass.EndProgressEvent2    += EndProgress2;
+                sidecarClass.UpdateStatusEvent    += UpdateStatus;
+                CICMMetadataType sidecar = sidecarClass.Create();
+                end = DateTime.UtcNow;
+
+                totalChkDuration = (end - chkStart).TotalMilliseconds;
+                UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
+                UpdateStatus
+                  ?.Invoke($"Average checksum speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+                dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                  (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+
+                if(preSidecar != null)
+                {
+                    preSidecar.BlockMedia = sidecar.BlockMedia;
+                    sidecar               = preSidecar;
+                }
+
+                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
+                if(sidecar.BlockMedia[0].FileSystemInformation != null)
+                    filesystems.AddRange(from partition in sidecar.BlockMedia[0].FileSystemInformation
+                                         where partition.FileSystems != null
+                                         from fileSystem in partition.FileSystems
+                                         select (partition.StartSector, fileSystem.Type));
+
+                if(filesystems.Count > 0)
+                    foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
+                    {
+                        UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
+                        dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                    }
+
+                sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
+                CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
+                                                                 out string xmlDskSubTyp);
+                sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
+                sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
+                // TODO: Implement device firmware revision
+                if(!dev.IsRemovable || dev.IsUsb)
+                    if(dev.Type == DeviceType.ATAPI) sidecar.BlockMedia[0].Interface = "ATAPI";
+                    else if(dev.IsUsb) sidecar.BlockMedia[0].Interface               = "USB";
+                    else if(dev.IsFireWire) sidecar.BlockMedia[0].Interface          = "FireWire";
+                    else sidecar.BlockMedia[0].Interface                             = "SCSI";
+                sidecar.BlockMedia[0].LogicalBlocks = blocks;
+                sidecar.BlockMedia[0].Manufacturer  = dev.Manufacturer;
+                sidecar.BlockMedia[0].Model         = dev.Model;
+                sidecar.BlockMedia[0].Serial        = dev.Serial;
+                sidecar.BlockMedia[0].Size          = blocks * blockSize;
+
+                if(dev.IsRemovable) sidecar.BlockMedia[0].DumpHardwareArray = resume.Tries.ToArray();
+
+                UpdateStatus?.Invoke("Writing metadata sidecar");
+
+                FileStream xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
+
+                XmlSerializer xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                xmlSer.Serialize(xmlFs, sidecar);
+                xmlFs.Close();
+            }
+
+            UpdateStatus?.Invoke("");
+            UpdateStatus
+              ?.Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
+            UpdateStatus
+              ?.Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+            UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
+            UpdateStatus?.Invoke($"{resume.BadBlocks.Count} sectors could not be read.");
+            UpdateStatus?.Invoke("");
 
             Statistics.AddMedia(dskType, true);
         }
