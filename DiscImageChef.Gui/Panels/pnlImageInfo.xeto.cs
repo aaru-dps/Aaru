@@ -54,16 +54,16 @@ namespace DiscImageChef.Gui.Panels
 {
     public class pnlImageInfo : Panel
     {
-        IFilter            filter;
-        frmDecodeMediaTags frmDecodeMediaTags;
-        frmImageChecksum   frmImageChecksum;
-        frmImageConvert    frmImageConvert;
-        frmImageEntropy    frmImageEntropy;
-        frmImageSidecar    frmImageSidecar;
-        frmImageVerify     frmImageVerify;
-        frmPrintHex        frmPrintHex;
-        IMediaImage        imageFormat;
-        string             imagePath;
+        readonly IFilter     filter;
+        frmDecodeMediaTags   frmDecodeMediaTags;
+        frmImageChecksum     frmImageChecksum;
+        frmImageConvert      frmImageConvert;
+        frmImageEntropy      frmImageEntropy;
+        frmImageSidecar      frmImageSidecar;
+        frmImageVerify       frmImageVerify;
+        frmPrintHex          frmPrintHex;
+        readonly IMediaImage imageFormat;
+        readonly string      imagePath;
 
         public pnlImageInfo(string imagePath, IFilter filter, IMediaImage imageFormat)
         {
@@ -205,9 +205,10 @@ namespace DiscImageChef.Gui.Panels
                 lblDriveFirmwareRevision.Text    = $"Drive firmware info: {imageFormat.Info.DriveFirmwareRevision}";
             }
 
-            if(imageFormat.Info.Cylinders       > 0 && imageFormat.Info.Heads > 0 &&
-               imageFormat.Info.SectorsPerTrack > 0 &&
-               imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc)
+            if(imageFormat.Info.Cylinders       > 0                         && imageFormat.Info.Heads > 0 &&
+               imageFormat.Info.SectorsPerTrack > 0                         &&
+               imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
+               (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
             {
                 lblMediaGeometry.Visible = true;
                 lblMediaGeometry.Text =

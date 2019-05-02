@@ -105,9 +105,10 @@ namespace DiscImageChef.Core
                 DicConsole.WriteLine("Drive serial number: {0}", imageFormat.Info.DriveSerialNumber);
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
                 DicConsole.WriteLine("Drive firmware info: {0}", imageFormat.Info.DriveFirmwareRevision);
-            if(imageFormat.Info.Cylinders       > 0 && imageFormat.Info.Heads > 0 &&
-               imageFormat.Info.SectorsPerTrack > 0 &&
-               imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc)
+            if(imageFormat.Info.Cylinders       > 0                         && imageFormat.Info.Heads > 0 &&
+               imageFormat.Info.SectorsPerTrack > 0                         &&
+               imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
+               (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
                 DicConsole.WriteLine("Media geometry: {0} cylinders, {1} heads, {2} sectors per track",
                                      imageFormat.Info.Cylinders, imageFormat.Info.Heads,
                                      imageFormat.Info.SectorsPerTrack);
