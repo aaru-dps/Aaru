@@ -289,7 +289,7 @@ namespace DiscImageChef.Commands
                         if(currentFile.FirstBlock - previousTrackEnd != 0 && wholeDisc)
                             for(ulong i = previousTrackEnd + 1; i < currentFile.FirstBlock; i++)
                             {
-                                DicConsole.Write("\rHashing track-less sector {0}", i);
+                                DicConsole.Write("\rHashing file-less block {0}", i);
 
                                 byte[] hiddenSector = inputFormat.ReadSector(i);
 
@@ -297,7 +297,7 @@ namespace DiscImageChef.Commands
                             }
 
                         DicConsole.DebugWriteLine("Checksum command",
-                                                  "Track {0} starts at sector {1} and ends at sector {2}",
+                                                  "Track {0} starts at sector {1} and ends at block {2}",
                                                   currentFile.File, currentFile.FirstBlock, currentFile.LastBlock);
 
                         if(separatedTracks) trackChecksum = new Checksum(enabledChecksums);
@@ -313,7 +313,7 @@ namespace DiscImageChef.Commands
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
                                 sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock, SECTORS_TO_READ);
-                                DicConsole.Write("\rHashings sectors {0} to {2} of file {1}", doneSectors,
+                                DicConsole.Write("\rHashings blocks {0} to {2} of file {1}", doneSectors,
                                                  currentFile.File, doneSectors + SECTORS_TO_READ);
                                 doneSectors += SECTORS_TO_READ;
                             }
@@ -321,7 +321,7 @@ namespace DiscImageChef.Commands
                             {
                                 sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
                                                                (uint)(sectors - doneSectors));
-                                DicConsole.Write("\rHashings sectors {0} to {2} of file {1}", doneSectors,
+                                DicConsole.Write("\rHashings blocks {0} to {2} of file {1}", doneSectors,
                                                  currentFile.File, doneSectors + (sectors - doneSectors));
                                 doneSectors += sectors - doneSectors;
                             }
