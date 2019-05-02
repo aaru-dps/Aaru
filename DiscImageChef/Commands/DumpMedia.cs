@@ -295,6 +295,9 @@ namespace DiscImageChef.Commands
             dumper.PulseProgress        += Progress.PulseProgress;
             dumper.InitProgress         += Progress.InitProgress;
             dumper.EndProgress          += Progress.EndProgress;
+            dumper.InitProgress2        += Progress.InitProgress2;
+            dumper.EndProgress2         += Progress.EndProgress2;
+            dumper.UpdateProgress2      += Progress.UpdateProgress2;
             System.Console.CancelKeyPress += (sender, e) =>
             {
                 e.Cancel = true;
