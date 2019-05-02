@@ -73,6 +73,9 @@ namespace DiscImageChef.Partitions
                 foreach(uint offset in labelOffsets)
                 {
                     byte[] sector = new byte[MAX_LABEL_SIZE];
+
+                    if(offset + MAX_LABEL_SIZE > tmp.Length) break;
+
                     Array.Copy(tmp, offset, sector, 0, MAX_LABEL_SIZE);
                     dl = Marshal.ByteArrayToStructureLittleEndian<DiskLabel>(sector);
                     DicConsole.DebugWriteLine("BSD plugin",
@@ -372,89 +375,89 @@ namespace DiscImageChef.Partitions
             /// <summary>
             ///     <see cref="DISKMAGIC" />
             /// </summary>
-            public uint d_magic;
+            public readonly uint d_magic;
             /// <summary>
             ///     <see cref="dType" />
             /// </summary>
-            public dType d_type;
+            public readonly dType d_type;
             /// <summary>Disk subtype</summary>
-            public ushort d_subtype;
+            public readonly ushort d_subtype;
             /// <summary>Type name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] d_typename;
+            public readonly byte[] d_typename;
             /// <summary>Pack identifier</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] d_packname;
+            public readonly byte[] d_packname;
             /// <summary>Bytes per sector</summary>
-            public uint d_secsize;
+            public readonly uint d_secsize;
             /// <summary>Sectors per track</summary>
-            public uint d_nsectors;
+            public readonly uint d_nsectors;
             /// <summary>Tracks per cylinder</summary>
-            public uint d_ntracks;
+            public readonly uint d_ntracks;
             /// <summary>Cylinders per unit</summary>
-            public uint d_ncylinders;
+            public readonly uint d_ncylinders;
             /// <summary>Sectors per cylinder</summary>
-            public uint d_secpercyl;
+            public readonly uint d_secpercyl;
             /// <summary>Sectors per unit</summary>
-            public uint d_secperunit;
+            public readonly uint d_secperunit;
             /// <summary>Spare sectors per track</summary>
-            public ushort d_sparespertrack;
+            public readonly ushort d_sparespertrack;
             /// <summary>Spare sectors per cylinder</summary>
-            public ushort d_sparespercyl;
+            public readonly ushort d_sparespercyl;
             /// <summary>Alternate cylinders</summary>
-            public uint d_acylinders;
+            public readonly uint d_acylinders;
             /// <summary>Rotational speed</summary>
-            public ushort d_rpm;
+            public readonly ushort d_rpm;
             /// <summary>Hardware sector interleave</summary>
-            public ushort d_interleave;
+            public readonly ushort d_interleave;
             /// <summary>Sector 0 skew per track</summary>
-            public ushort d_trackskew;
+            public readonly ushort d_trackskew;
             /// <summary>Sector 0 sker per cylinder</summary>
-            public ushort d_cylskeew;
+            public readonly ushort d_cylskeew;
             /// <summary>Head switch time in microseconds</summary>
-            public uint d_headswitch;
+            public readonly uint d_headswitch;
             /// <summary>Track to track seek in microseconds</summary>
-            public uint d_trkseek;
+            public readonly uint d_trkseek;
             /// <summary>
             ///     <see cref="dFlags" />
             /// </summary>
-            public dFlags d_flags;
+            public readonly dFlags d_flags;
             /// <summary>Drive-specific information</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public uint[] d_drivedata;
+            public readonly uint[] d_drivedata;
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public uint[] d_spare;
+            public readonly uint[] d_spare;
             /// <summary><see cref="DISKMAGIC" /> again</summary>
-            public uint d_magic2;
+            public readonly uint d_magic2;
             /// <summary>XOR of data</summary>
-            public ushort d_checksum;
+            public readonly ushort d_checksum;
             /// <summary>How many partitions</summary>
-            public ushort d_npartitions;
+            public readonly ushort d_npartitions;
             /// <summary>Size of boot area in bytes</summary>
-            public uint d_bbsize;
+            public readonly uint d_bbsize;
             /// <summary>Maximum size of superblock in bytes</summary>
-            public uint d_sbsize;
+            public readonly uint d_sbsize;
             /// <summary>Partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 22)]
-            public BSDPartition[] d_partitions;
+            public readonly BSDPartition[] d_partitions;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct BSDPartition
         {
             /// <summary>Sectors in partition</summary>
-            public uint p_size;
+            public readonly uint p_size;
             /// <summary>Starting sector</summary>
-            public uint p_offset;
+            public readonly uint p_offset;
             /// <summary>Fragment size</summary>
-            public uint p_fsize;
+            public readonly uint p_fsize;
             /// <summary>Filesystem type, <see cref="fsType" /></summary>
-            public fsType p_fstype;
+            public readonly fsType p_fstype;
             /// <summary>Fragment size</summary>
-            public byte p_frag;
+            public readonly byte p_frag;
             /// <summary>Cylinder per group</summary>
-            public ushort p_cpg;
+            public readonly ushort p_cpg;
         }
     }
 }
