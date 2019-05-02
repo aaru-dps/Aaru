@@ -182,8 +182,101 @@ namespace DiscImageChef.Commands
 
             Checksum mediaChecksum = null;
 
-            if(inputFormat is IOpticalMediaImage opticalInput)
-                try
+            switch(inputFormat)
+            {
+                case IOpticalMediaImage opticalInput when opticalInput.Tracks != null:
+                    try
+                    {
+                        Checksum trackChecksum = null;
+
+                        if(wholeDisc) mediaChecksum = new Checksum(enabledChecksums);
+
+                        ulong previousTrackEnd = 0;
+
+                        List<Track> inputTracks = opticalInput.Tracks;
+                        foreach(Track currentTrack in inputTracks)
+                        {
+                            if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
+                                for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
+                                {
+                                    DicConsole.Write("\rHashing track-less sector {0}", i);
+
+                                    byte[] hiddenSector = inputFormat.ReadSector(i);
+
+                                    mediaChecksum?.Update(hiddenSector);
+                                }
+
+                            DicConsole.DebugWriteLine("Checksum command",
+                                                      "Track {0} starts at sector {1} and ends at sector {2}",
+                                                      currentTrack.TrackSequence, currentTrack.TrackStartSector,
+                                                      currentTrack.TrackEndSector);
+
+                            if(separatedTracks) trackChecksum = new Checksum(enabledChecksums);
+
+                            ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                            ulong doneSectors = 0;
+                            DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
+
+                            while(doneSectors < sectors)
+                            {
+                                byte[] sector;
+
+                                if(sectors - doneSectors >= SECTORS_TO_READ)
+                                {
+                                    sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
+                                                                      currentTrack.TrackSequence);
+                                    DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
+                                                     currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
+                                    doneSectors += SECTORS_TO_READ;
+                                }
+                                else
+                                {
+                                    sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
+                                                                      currentTrack.TrackSequence);
+                                    DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
+                                                     currentTrack.TrackSequence, doneSectors + (sectors - doneSectors));
+                                    doneSectors += sectors - doneSectors;
+                                }
+
+                                if(wholeDisc) mediaChecksum?.Update(sector);
+
+                                if(separatedTracks) trackChecksum?.Update(sector);
+                            }
+
+                            DicConsole.WriteLine();
+
+                            if(separatedTracks)
+                                if(trackChecksum != null)
+                                    foreach(ChecksumType chk in trackChecksum.End())
+                                        DicConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence,
+                                                             chk.type, chk.Value);
+
+                            previousTrackEnd = currentTrack.TrackEndSector;
+                        }
+
+                        if(opticalInput.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
+                            for(ulong i = previousTrackEnd + 1; i < opticalInput.Info.Sectors; i++)
+                            {
+                                DicConsole.Write("\rHashing track-less sector {0}", i);
+
+                                byte[] hiddenSector = inputFormat.ReadSector(i);
+                                mediaChecksum?.Update(hiddenSector);
+                            }
+
+                        if(wholeDisc)
+                            if(mediaChecksum != null)
+                                foreach(ChecksumType chk in mediaChecksum.End())
+                                    DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                    }
+                    catch(Exception ex)
+                    {
+                        if(MainClass.Debug) DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                        else DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
+                    }
+
+                    break;
+
+                case ITapeImage tapeImage when tapeImage.IsTape && tapeImage.Files?.Count > 0:
                 {
                     Checksum trackChecksum = null;
 
@@ -191,11 +284,10 @@ namespace DiscImageChef.Commands
 
                     ulong previousTrackEnd = 0;
 
-                    List<Track> inputTracks = opticalInput.Tracks;
-                    foreach(Track currentTrack in inputTracks)
+                    foreach(TapeFile currentFile in tapeImage.Files)
                     {
-                        if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
-                            for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
+                        if(currentFile.FirstBlock - previousTrackEnd != 0 && wholeDisc)
+                            for(ulong i = previousTrackEnd + 1; i < currentFile.FirstBlock; i++)
                             {
                                 DicConsole.Write("\rHashing track-less sector {0}", i);
 
@@ -206,14 +298,13 @@ namespace DiscImageChef.Commands
 
                         DicConsole.DebugWriteLine("Checksum command",
                                                   "Track {0} starts at sector {1} and ends at sector {2}",
-                                                  currentTrack.TrackSequence, currentTrack.TrackStartSector,
-                                                  currentTrack.TrackEndSector);
+                                                  currentFile.File, currentFile.FirstBlock, currentFile.LastBlock);
 
                         if(separatedTracks) trackChecksum = new Checksum(enabledChecksums);
 
-                        ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                        ulong sectors     = currentFile.LastBlock - currentFile.FirstBlock + 1;
                         ulong doneSectors = 0;
-                        DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
+                        DicConsole.WriteLine("File {0} has {1} sectors", currentFile.File, sectors);
 
                         while(doneSectors < sectors)
                         {
@@ -221,18 +312,17 @@ namespace DiscImageChef.Commands
 
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
-                                sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
-                                                                  currentTrack.TrackSequence);
-                                DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
-                                                 currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
+                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock, SECTORS_TO_READ);
+                                DicConsole.Write("\rHashings sectors {0} to {2} of file {1}", doneSectors,
+                                                 currentFile.File, doneSectors + SECTORS_TO_READ);
                                 doneSectors += SECTORS_TO_READ;
                             }
                             else
                             {
-                                sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
-                                                                  currentTrack.TrackSequence);
-                                DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
-                                                 currentTrack.TrackSequence, doneSectors + (sectors - doneSectors));
+                                sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
+                                                               (uint)(sectors - doneSectors));
+                                DicConsole.Write("\rHashings sectors {0} to {2} of file {1}", doneSectors,
+                                                 currentFile.File, doneSectors + (sectors - doneSectors));
                                 doneSectors += sectors - doneSectors;
                             }
 
@@ -246,16 +336,15 @@ namespace DiscImageChef.Commands
                         if(separatedTracks)
                             if(trackChecksum != null)
                                 foreach(ChecksumType chk in trackChecksum.End())
-                                    DicConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence, chk.type,
-                                                         chk.Value);
+                                    DicConsole.WriteLine("File {0}'s {1}: {2}", currentFile.File, chk.type, chk.Value);
 
-                        previousTrackEnd = currentTrack.TrackEndSector;
+                        previousTrackEnd = currentFile.LastBlock;
                     }
 
-                    if(opticalInput.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
-                        for(ulong i = previousTrackEnd + 1; i < opticalInput.Info.Sectors; i++)
+                    if(tapeImage.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
+                        for(ulong i = previousTrackEnd + 1; i < tapeImage.Info.Sectors; i++)
                         {
-                            DicConsole.Write("\rHashing track-less sector {0}", i);
+                            DicConsole.Write("\rHashing file-less sector {0}", i);
 
                             byte[] hiddenSector = inputFormat.ReadSector(i);
                             mediaChecksum?.Update(hiddenSector);
@@ -264,46 +353,46 @@ namespace DiscImageChef.Commands
                     if(wholeDisc)
                         if(mediaChecksum != null)
                             foreach(ChecksumType chk in mediaChecksum.End())
-                                DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                                DicConsole.WriteLine("Tape's {0}: {1}", chk.type, chk.Value);
+                    break;
                 }
-                catch(Exception ex)
+
+                default:
                 {
-                    if(MainClass.Debug) DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
-                    else DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
-                }
-            else
-            {
-                mediaChecksum = new Checksum(enabledChecksums);
+                    mediaChecksum = new Checksum(enabledChecksums);
 
-                ulong sectors = inputFormat.Info.Sectors;
-                DicConsole.WriteLine("Sectors {0}", sectors);
-                ulong doneSectors = 0;
+                    ulong sectors = inputFormat.Info.Sectors;
+                    DicConsole.WriteLine("Sectors {0}", sectors);
+                    ulong doneSectors = 0;
 
-                while(doneSectors < sectors)
-                {
-                    byte[] sector;
-
-                    if(sectors - doneSectors >= SECTORS_TO_READ)
+                    while(doneSectors < sectors)
                     {
-                        sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
-                        DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors, doneSectors + SECTORS_TO_READ);
-                        doneSectors += SECTORS_TO_READ;
-                    }
-                    else
-                    {
-                        sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
-                        DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors,
-                                         doneSectors + (sectors - doneSectors));
-                        doneSectors += sectors - doneSectors;
+                        byte[] sector;
+
+                        if(sectors - doneSectors >= SECTORS_TO_READ)
+                        {
+                            sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
+                            DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors,
+                                             doneSectors + SECTORS_TO_READ);
+                            doneSectors += SECTORS_TO_READ;
+                        }
+                        else
+                        {
+                            sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
+                            DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors,
+                                             doneSectors + (sectors - doneSectors));
+                            doneSectors += sectors - doneSectors;
+                        }
+
+                        mediaChecksum.Update(sector);
                     }
 
-                    mediaChecksum.Update(sector);
+                    DicConsole.WriteLine();
+
+                    foreach(ChecksumType chk in mediaChecksum.End())
+                        DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                    break;
                 }
-
-                DicConsole.WriteLine();
-
-                foreach(ChecksumType chk in mediaChecksum.End())
-                    DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
             }
 
             return (int)ErrorNumber.NoError;
