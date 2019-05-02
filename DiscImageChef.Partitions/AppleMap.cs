@@ -185,7 +185,7 @@ namespace DiscImageChef.Partitions
             uint                   skipDdm;
 
             // If sector is bigger than 512
-            if(sectorSize > 512)
+            if(ddmSector.Length > 512)
             {
                 byte[] tmp = new byte[512];
                 Array.Copy(ddmSector, 512, tmp, 0, 512);
@@ -341,19 +341,19 @@ namespace DiscImageChef.Partitions
         struct AppleDriverDescriptorMap
         {
             /// <summary>Signature <see cref="DDM_MAGIC" /></summary>
-            public ushort sbSig;
+            public readonly ushort sbSig;
             /// <summary>Byter per sector</summary>
-            public ushort sbBlockSize;
+            public readonly ushort sbBlockSize;
             /// <summary>Sectors of the disk</summary>
-            public uint sbBlocks;
+            public readonly uint sbBlocks;
             /// <summary>Device type</summary>
-            public ushort sbDevType;
+            public readonly ushort sbDevType;
             /// <summary>Device ID</summary>
-            public ushort sbDevId;
+            public readonly ushort sbDevId;
             /// <summary>Reserved</summary>
-            public uint sbData;
+            public readonly uint sbData;
             /// <summary>Number of entries of the driver descriptor</summary>
-            public ushort sbDrvrCount;
+            public readonly ushort sbDrvrCount;
             /// <summary>Entries of the driver descriptor</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 61)]
             public AppleDriverEntry[] sbMap;
@@ -363,32 +363,32 @@ namespace DiscImageChef.Partitions
         struct AppleDriverEntry
         {
             /// <summary>First sector of the driver</summary>
-            public uint ddBlock;
+            public readonly uint ddBlock;
             /// <summary>Size in 512bytes sectors of the driver</summary>
-            public ushort ddSize;
+            public readonly ushort ddSize;
             /// <summary>Operating system (MacOS = 1)</summary>
-            public ushort ddType;
+            public readonly ushort ddType;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleOldDevicePartitionMap
         {
             /// <summary>Signature <see cref="APM_MAGIC_OLD" /></summary>
-            public ushort pdSig;
+            public readonly ushort pdSig;
             /// <summary>Entries of the driver descriptor</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 42)]
-            public AppleMapOldPartitionEntry[] pdMap;
+            public readonly AppleMapOldPartitionEntry[] pdMap;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleMapOldPartitionEntry
         {
             /// <summary>First sector of the partition</summary>
-            public uint pdStart;
+            public readonly uint pdStart;
             /// <summary>Number of sectors of the partition</summary>
-            public uint pdSize;
+            public readonly uint pdSize;
             /// <summary>Partition type</summary>
-            public uint pdFSID;
+            public readonly uint pdFSID;
         }
 
         [Flags]
@@ -424,47 +424,47 @@ namespace DiscImageChef.Partitions
         struct AppleMapPartitionEntry
         {
             /// <summary>Signature <see cref="APM_MAGIC" /></summary>
-            public ushort signature;
+            public readonly ushort signature;
             /// <summary>Reserved</summary>
-            public ushort reserved1;
+            public readonly ushort reserved1;
             /// <summary>Number of entries on the partition map, each one sector</summary>
-            public uint entries;
+            public readonly uint entries;
             /// <summary>First sector of the partition</summary>
-            public uint start;
+            public readonly uint start;
             /// <summary>Number of sectos of the partition</summary>
-            public uint sectors;
+            public readonly uint sectors;
             /// <summary>Partition name, 32 bytes, null-padded</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] name;
+            public readonly byte[] name;
             /// <summary>Partition type. 32 bytes, null-padded</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] type;
+            public readonly byte[] type;
             /// <summary>First sector of the data area</summary>
-            public uint first_data_block;
+            public readonly uint first_data_block;
             /// <summary>Number of sectors of the data area</summary>
-            public uint data_sectors;
+            public readonly uint data_sectors;
             /// <summary>Partition flags</summary>
-            public uint flags;
+            public readonly uint flags;
             /// <summary>First sector of the boot code</summary>
-            public uint first_boot_block;
+            public readonly uint first_boot_block;
             /// <summary>Size in bytes of the boot code</summary>
-            public uint boot_size;
+            public readonly uint boot_size;
             /// <summary>Load address of the boot code</summary>
-            public uint load_address;
+            public readonly uint load_address;
             /// <summary>Load address of the boot code</summary>
-            public uint load_address2;
+            public readonly uint load_address2;
             /// <summary>Entry point of the boot code</summary>
-            public uint entry_point;
+            public readonly uint entry_point;
             /// <summary>Entry point of the boot code</summary>
-            public uint entry_point2;
+            public readonly uint entry_point2;
             /// <summary>Boot code checksum</summary>
-            public uint checksum;
+            public readonly uint checksum;
             /// <summary>Processor type, 16 bytes, null-padded</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] processor;
+            public readonly byte[] processor;
             /// <summary>Boot arguments</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public uint[] boot_arguments;
+            public readonly uint[] boot_arguments;
         }
     }
 }
