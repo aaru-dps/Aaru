@@ -56,10 +56,10 @@ namespace DiscImageChef.Filesystems
         {
             if(1 + partition.Start >= partition.End) return false;
 
-            if(imagePlugin.Info.SectorSize < 512) return false;
-
             byte[] magicB   = new byte[12];
             byte[] hbSector = imagePlugin.ReadSector(1 + partition.Start);
+
+            if(hbSector.Length < 512) return false;
 
             Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
             string magic = Encoding.ASCII.GetString(magicB);

@@ -181,6 +181,8 @@ namespace DiscImageChef.Filesystems
 
             byte[] sbSector = imagePlugin.ReadSectors(sbSectorOff + partition.Start, sbSizeInSectors);
             byte[] sb       = new byte[sbSizeInBytes];
+            if(sbOff + sbSizeInBytes > sbSector.Length) return false;
+
             Array.Copy(sbSector, sbOff, sb, 0, sbSizeInBytes);
 
             ushort magic = BitConverter.ToUInt16(sb, 0x038);

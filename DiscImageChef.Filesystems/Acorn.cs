@@ -195,8 +195,10 @@ namespace DiscImageChef.Filesystems
 
             if(sbSector + partition.Start + sectorsToRead >= partition.End) return false;
 
-            byte[] bootSector                      = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
-            int    bootChk                         = 0;
+            byte[] bootSector = imagePlugin.ReadSectors(sbSector + partition.Start, sectorsToRead);
+            int    bootChk    = 0;
+            if(bootSector.Length < 512) return false;
+
             for(int i = 0; i < 0x1FF; i++) bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];
 
             DicConsole.DebugWriteLine("ADFS Plugin", "bootChk = {0}",         bootChk);

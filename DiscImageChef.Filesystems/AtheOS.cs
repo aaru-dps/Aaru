@@ -69,6 +69,9 @@ namespace DiscImageChef.Filesystems
 
             byte[] tmp      = imagePlugin.ReadSectors(sector + partition.Start, run);
             byte[] sbSector = new byte[AFS_SUPERBLOCK_SIZE];
+
+            if(offset + AFS_SUPERBLOCK_SIZE > tmp.Length) return false;
+
             Array.Copy(tmp, offset, sbSector, 0, AFS_SUPERBLOCK_SIZE);
 
             uint magic = BitConverter.ToUInt32(sbSector, 0x20);

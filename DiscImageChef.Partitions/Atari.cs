@@ -63,11 +63,11 @@ namespace DiscImageChef.Partitions
         {
             partitions = new List<Partition>();
 
-            if(imagePlugin.Info.SectorSize < 512) return false;
-
             BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             byte[] sector = imagePlugin.ReadSector(sectorOffset);
+
+            if(sector.Length < 512) return false;
 
             AtariTable table = new AtariTable
             {

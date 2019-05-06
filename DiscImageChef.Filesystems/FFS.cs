@@ -104,12 +104,16 @@ namespace DiscImageChef.Filesystems
                 262144 / imagePlugin.Info.SectorSize
             };
 
-            return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors)
-                            .Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors))
-                            .Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C))
-                            .Any(magic => magic == UFS_MAGIC     || magic == UFS_CIGAM  || magic == UFS_MAGIC_BW ||
-                                          magic == UFS_CIGAM_BW  || magic == UFS2_MAGIC || magic == UFS2_CIGAM   ||
-                                          magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
+            try
+            {
+                return locations.Where(loc => partition.End > partition.Start + loc + sbSizeInSectors)
+                                .Select(loc => imagePlugin.ReadSectors(partition.Start + loc, sbSizeInSectors))
+                                .Select(ufsSbSectors => BitConverter.ToUInt32(ufsSbSectors, 0x055C))
+                                .Any(magic => magic == UFS_MAGIC     || magic == UFS_CIGAM  || magic == UFS_MAGIC_BW ||
+                                              magic == UFS_CIGAM_BW  || magic == UFS2_MAGIC || magic == UFS2_CIGAM   ||
+                                              magic == UFS_BAD_MAGIC || magic == UFS_BAD_CIGAM);
+            }
+            catch(Exception) { return false; }
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
