@@ -39,15 +39,15 @@ namespace DiscImageChef.DiscImages.CopyTape
 {
     public partial class CopyTape
     {
-        public ImageInfo              Info           { get; }
+        public ImageInfo              Info           => imageInfo;
         public string                 Name           => "CopyTape";
         public Guid                   Id             => new Guid("C537D41E-D6A7-4922-9AA9-8E8442D0E340");
         public string                 Author         => "Natalia Portillo";
         public string                 Format         => "CopyTape";
         public List<DumpHardwareType> DumpHardware   => null;
         public CICMMetadataType       CicmMetadata   => null;
-        public List<TapeFile>         Files          { get; }
-        public List<TapePartition>    TapePartitions { get; }
+        public List<TapeFile>         Files          { get; private set; }
+        public List<TapePartition>    TapePartitions { get; set; }
         public bool                   IsTape         => true;
     }
 }

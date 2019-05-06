@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
@@ -7,9 +8,13 @@ namespace DiscImageChef.DiscImages.CopyTape
 {
     public partial class CopyTape : ITapeImage
     {
+        long[]    blockPositionCache;
+        ImageInfo imageInfo;
+        Stream    imageStream;
+
         public CopyTape()
         {
-            Info = new ImageInfo
+            imageInfo = new ImageInfo
             {
                 ReadableSectorTags    = new List<SectorTagType>(),
                 ReadableMediaTags     = new List<MediaTagType>(),

@@ -34,8 +34,9 @@ namespace DiscImageChef.DiscImages.CopyTape
 {
     public partial class CopyTape
     {
-        const string BlockRegex     = @"^CPTP:BLK (?<blockSize>\d{6})\n$";
-        const string FilemarkRegex  = @"^CPTP:MRK\n$";
-        const string EndOfTapeRegex = @"^CPTP:EOT\n$";
+        const string BlockRegex        = @"^CPTP:BLK (?<blockSize>\d{6})\n$";
+        const string PartialBlockRegex = @"^CPTP:BLK $";
+        const string FilemarkRegex     = @"^CPTP:MRK\n$";
+        const string EndOfTapeRegex    = @"^CPTP:EOT\n$";
     }
 }
