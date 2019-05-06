@@ -854,6 +854,39 @@ typedef struct
     ChecksumEntry checksums[entries];
 } ChecksumHeader;
 
+typedef struct
+{
+    uint file;
+    char partition;
+    uint64 first_block;
+    uint64 last_block;
+} TapeFileEntry;
+
+typedef struct
+{
+    BlockType identifier;
+    uint entries;
+    uint64 length;
+    uint64 crc64;
+    TapeFileEntry files[entries];
+} TapeFileHeader;
+
+typedef struct
+{
+    byte number;
+    uint64 first_block;
+    uint64 last_block;
+} TapePartitionEntry;
+
+typedef struct
+{
+    BlockType identifier;
+    byte entries;
+    uint64 length;
+    uint64 crc64;
+    TapePartitionEntry partitions[entries];
+} TapePartitionHeader;
+
 LittleEndian();
 
 local int i;
@@ -952,6 +985,12 @@ for(i = 0; i < index.entries; i++)
             break;
         case 0x4D534B43:
             ChecksumHeader checksum;
+            break;
+        case 0x54425054:
+            TapePartitionHeader partitions;
+            break;
+        case 0x454C4654:
+            TapeFileHeader files;
             break;
     }
 }
