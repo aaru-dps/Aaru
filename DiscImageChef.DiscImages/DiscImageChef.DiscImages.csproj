@@ -177,6 +177,7 @@
     <Compile Include="CopyTape\Properties.cs" />
     <Compile Include="CopyTape\Read.cs" />
     <Compile Include="CopyTape\Unsupported.cs" />
+    <Compile Include="CopyTape\Write.cs" />
     <Compile Include="CPCDSK\Constants.cs" />
     <Compile Include="CPCDSK\Helpers.cs" />
     <Compile Include="CPCDSK\Identify.cs" />

@@ -787,6 +787,7 @@
           <e p="Properties.cs" t="Include" />
           <e p="Read.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
         </e>
         <e p="D88" t="Include">
           <e p="Constants.cs" t="Include" />

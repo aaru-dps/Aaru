@@ -6,7 +6,7 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.DiscImages.CopyTape
 {
-    public partial class CopyTape : ITapeImage
+    public partial class CopyTape : IWritableTapeImage
     {
         long[]    blockPositionCache;
         ImageInfo imageInfo;

@@ -143,6 +143,7 @@ namespace DiscImageChef.DiscImages.CopyTape
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.XmlMediaType         = XmlMediaType.BlockMedia;
+            IsTape                         = true;
 
             return true;
         }
