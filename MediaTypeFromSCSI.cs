@@ -653,15 +653,14 @@ namespace DiscImageChef.CommonTypes
                             switch(densityCode)
                             {
                                 case 0x00:
-                                case 0x40:
                                 {
-                                    {
-                                        if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
-                                            return MediaType.LTO;
+                                    if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
+                                        return MediaType.LTO;
 
-                                        break;
-                                    }
+                                    break;
                                 }
+
+                                case 0x40: { return MediaType.LTO; }
                             }
                         }
 
@@ -671,13 +670,14 @@ namespace DiscImageChef.CommonTypes
                             switch(densityCode)
                             {
                                 case 0x00:
-                                case 0x42:
                                 {
                                     if(model.ToLowerInvariant().StartsWith("ult", StringComparison.Ordinal))
                                         return MediaType.LTO2;
 
                                     break;
                                 }
+
+                                case 0x42: return MediaType.LTO2;
                             }
                         }
 
