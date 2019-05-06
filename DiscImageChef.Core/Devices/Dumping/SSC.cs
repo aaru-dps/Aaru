@@ -411,7 +411,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                         dumpLog.WriteLine("LOCATE LONG works.");
                     }
                 }
+                else fxSense = Sense.DecodeFixed(senseBuf, out strSense);
             }
+            else fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
             sense = dev.Locate(out senseBuf, 1, dev.Timeout, out _);
 
@@ -430,7 +432,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                         dumpLog.WriteLine("LOCATE works.");
                     }
                 }
+                else fxSense = Sense.DecodeFixed(senseBuf, out strSense);
             }
+            else fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
             if(resume.NextBlock > 0)
             {
