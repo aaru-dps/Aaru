@@ -780,6 +780,14 @@
           <e p="Structs.cs" t="Include" />
           <e p="Unsupported.cs" t="Include" />
         </e>
+        <e p="CopyTape" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="CopyTape.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
         <e p="D88" t="Include">
           <e p="Constants.cs" t="Include" />
           <e p="D88.cs" t="Include" />

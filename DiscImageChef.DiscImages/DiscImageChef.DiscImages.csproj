@@ -171,6 +171,12 @@
     <Compile Include="CopyQM\Read.cs" />
     <Compile Include="CopyQM\Structs.cs" />
     <Compile Include="CopyQM\Unsupported.cs" />
+    <Compile Include="CopyTape\Constants.cs" />
+    <Compile Include="CopyTape\CopyTape.cs" />
+    <Compile Include="CopyTape\Identify.cs" />
+    <Compile Include="CopyTape\Properties.cs" />
+    <Compile Include="CopyTape\Read.cs" />
+    <Compile Include="CopyTape\Unsupported.cs" />
     <Compile Include="CPCDSK\Constants.cs" />
     <Compile Include="CPCDSK\Helpers.cs" />
     <Compile Include="CPCDSK\Identify.cs" />
