@@ -104,6 +104,7 @@ Supported disk image formats (read and write)
 * CDRWin cue/bin cuesheets, including ones with ISOBuster extensions
 * CisCopy disk image (aka DC-File, .DCF)
 * CloneCD
+* CopyTape
 * DataPackRat's d2f/f2d disk image format ("WC DISK IMAGE")
 * Digital Research DiskCopy
 * DiscImageChef format
@@ -158,6 +159,9 @@ Supported file systems for read-only operations
 * Apple Lisa file system
 * Apple Macintosh File System (MFS)
 * CP/M file system
+* Microsoft 12-bit File Allocation Table (FAT12), including Atari ST extensions
+* Microsoft 16-bit File Allocation Table (FAT16)
+* Microsoft 32-bit File Allocation Table (FAT32), including FAT+ extension
 * U.C.S.D Pascal file system
 * Xbox filesystems
 
@@ -200,9 +204,6 @@ Supported file systems for identification and information only
 * Linux extended file system 4
 * Locus file system
 * MicroDOS file system
-* Microsoft 12-bit File Allocation Table (FAT12), including Atari ST extensions
-* Microsoft 16-bit File Allocation Table (FAT16)
-* Microsoft 32-bit File Allocation Table (FAT32), including FAT+ extension
 * Microsoft Extended File Allocation Table (exFAT)
 * Microsoft/IBM High Performance File System (HPFS)
 * Microsoft New Technology File System (NTFS)
