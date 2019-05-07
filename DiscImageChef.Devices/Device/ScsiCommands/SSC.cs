@@ -103,7 +103,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate(out byte[] senseBuffer, uint lba, uint timeout, out double duration) =>
-            Locate(out senseBuffer, false, false, true, 0, lba, timeout, out duration);
+            Locate(out senseBuffer, false, false, false, 0, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the specified partition
@@ -114,7 +114,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate(out byte[] senseBuffer, byte partition, uint lba, uint timeout, out double duration) =>
-            Locate(out senseBuffer, false, false, true, partition, lba, timeout, out duration);
+            Locate(out senseBuffer, false, false, false, partition, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the current partition
@@ -125,7 +125,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate(out byte[] senseBuffer, bool immediate, uint lba, uint timeout, out double duration) =>
-            Locate(out senseBuffer, immediate, false, true, 0, lba, timeout, out duration);
+            Locate(out senseBuffer, immediate, false, false, 0, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified block in the specified partition
@@ -138,7 +138,7 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool Locate(out byte[] senseBuffer, bool immediate, byte partition, uint lba, uint timeout,
                            out double duration) =>
-            Locate(out senseBuffer, immediate, false, true, partition, lba, timeout, out duration);
+            Locate(out senseBuffer, immediate, false, false, partition, lba, timeout, out duration);
 
         /// <summary>
         ///     Positions the medium to the specified object identifier
@@ -197,7 +197,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool Locate16(out byte[] senseBuffer, byte partition, ulong lba, uint timeout, out double duration) =>
-            Locate16(out senseBuffer, false, true, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
+            Locate16(out senseBuffer, false, false, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
                      out duration);
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration.</param>
         public bool Locate16(out byte[] senseBuffer, bool immediate, byte partition, ulong lba, uint timeout,
                              out double duration) =>
-            Locate16(out senseBuffer, immediate, true, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
+            Locate16(out senseBuffer, immediate, false, SscLogicalIdTypes.ObjectId, false, partition, lba, timeout,
                      out duration);
 
         /// <summary>
