@@ -99,7 +99,7 @@ namespace DiscImageChef.DiscImages.CopyTape
             }
             else dataStream.Position = (long)position;
 
-            byte[] header = Encoding.ASCII.GetBytes($"CPTP:BLK {data.Length:06D}\n");
+            byte[] header = Encoding.ASCII.GetBytes($"CPTP:BLK {data.Length:D6}\n");
 
             writtenBlockPositions[sectorAddress] = (ulong)dataStream.Position;
             dataStream.Write(header, 0, header.Length);
