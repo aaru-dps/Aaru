@@ -423,7 +423,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(!sense)
                 {
-                    ulong position = Swapping.Swap(BitConverter.ToUInt32(cmdBuf, 8));
+                    ulong position = Swapping.Swap(BitConverter.ToUInt32(cmdBuf, 4));
 
                     if(position == 1)
                     {
