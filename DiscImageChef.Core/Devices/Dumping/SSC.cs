@@ -100,14 +100,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     fxSense = Sense.DecodeFixed(senseBuf, out strSense);
                 }
                 while(fxSense.HasValue && fxSense.Value.ASC == 0x00 &&
-                      (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ != 0x04));
+                      (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASCQ != 0x00));
 
                 dev.RequestSense(out senseBuf, dev.Timeout, out duration);
                 fxSense = Sense.DecodeFixed(senseBuf, out strSense);
 
                 // And yet, did not rewind!
                 if(fxSense.HasValue &&
-                   (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
+                   (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 && fxSense.Value.ASCQ != 0x00 || fxSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
                                                  Environment.NewLine                                        + strSense);
@@ -173,7 +173,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                           (fxSense.Value.ASCQ == 0x1A || fxSense.Value.ASCQ == 0x19));
 
                     // And yet, did not rewind!
-                    if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 ||
+                    if(fxSense.HasValue && (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 && fxSense.Value.ASCQ != 0x00 ||
                                             fxSense.Value.ASC != 0x00))
                     {
                         StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
@@ -601,7 +601,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 // And yet, did not rewind!
                 if(fxSense.HasValue &&
-                   (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
+                   (fxSense.Value.ASC == 0x00 && fxSense.Value.ASCQ != 0x00 && fxSense.Value.ASCQ != 0x04 || fxSense.Value.ASC != 0x00))
                 {
                     StoppingErrorMessage?.Invoke("Drive could not rewind, please correct. Sense follows..." +
                                                  Environment.NewLine                                        + strSense);
