@@ -508,6 +508,7 @@ namespace DiscImageChef.CommonTypes
                                 case 0x09: return MediaType.IBM3490;
                                 case 0x0F: return MediaType.QIC120;
                                 case 0x10: return MediaType.QIC150;
+                                case 0x13: return MediaType.DDS1;
                                 case 0x24: return MediaType.DDS2;
                                 case 0x25: return MediaType.DDS3;
                                 case 0x26: return MediaType.DDS4;
