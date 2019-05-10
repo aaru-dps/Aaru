@@ -544,7 +544,17 @@ namespace DiscImageChef.Core
 
                             if(!plugin.Identify(image, partitions[i])) continue;
 
-                            plugin.GetInformation(image, partitions[i], out _, encoding);
+                            if(plugin is IReadOnlyFilesystem fsPlugin &&
+                               fsPlugin.Mount(image, partitions[i], encoding, null, null) == Errno.NoError)
+                            {
+                                UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
+
+                                fsPlugin.XmlFsType.Contents = Files(fsPlugin);
+
+                                fsPlugin.Unmount();
+                            }
+                            else plugin.GetInformation(image, partitions[i], out _, encoding);
+
                             lstFs.Add(plugin.XmlFsType);
                             Statistics.AddFilesystem(plugin.XmlFsType.Type);
                         }
@@ -581,7 +591,17 @@ namespace DiscImageChef.Core
 
                         if(!plugin.Identify(image, wholePart)) continue;
 
-                        plugin.GetInformation(image, wholePart, out _, encoding);
+                        if(plugin is IReadOnlyFilesystem fsPlugin &&
+                           fsPlugin.Mount(image, wholePart, encoding, null, null) == Errno.NoError)
+                        {
+                            UpdateStatus($"Mounting {fsPlugin.XmlFsType.Type}");
+
+                            fsPlugin.XmlFsType.Contents = Files(fsPlugin);
+
+                            fsPlugin.Unmount();
+                        }
+                        else plugin.GetInformation(image, wholePart, out _, encoding);
+
                         lstFs.Add(plugin.XmlFsType);
                         Statistics.AddFilesystem(plugin.XmlFsType.Type);
                     }

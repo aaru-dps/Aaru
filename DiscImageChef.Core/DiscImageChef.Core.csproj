@@ -66,6 +66,7 @@
     <Compile Include="Options.cs" />
     <Compile Include="ImageFormat.cs" />
     <Compile Include="PrintScsiModePages.cs" />
+    <Compile Include="Sidecar\Files.cs" />
     <Compile Include="Statistics.cs" />
     <Compile Include="Checksum.cs" />
     <Compile Include="Logging\IBGLog.cs" />

@@ -44,22 +44,27 @@ namespace DiscImageChef.Core
 {
     public partial class Sidecar
     {
-        readonly Encoding    encoding;
-        readonly FileInfo    fi;
-        readonly Guid        filterId;
-        readonly IMediaImage image;
-        readonly string      imagePath;
-        readonly Checksum    imgChkWorker;
-        readonly PluginBase  plugins;
-        bool                 aborted;
-        FileStream           fs;
-        CICMMetadataType     sidecar;
+        readonly Encoding       encoding;
+        readonly FileInfo       fi;
+        readonly Guid           filterId;
+        readonly IMediaImage    image;
+        readonly string         imagePath;
+        readonly Checksum       imgChkWorker;
+        readonly PluginBase     plugins;
+        bool                    aborted;
+        readonly ChecksumType[] emptyChecksums;
+        FileStream              fs;
+        CICMMetadataType        sidecar;
 
         public Sidecar()
         {
             plugins      = GetPluginBase.Instance;
             imgChkWorker = new Checksum();
             aborted      = false;
+
+            Checksum emptyChkWorker = new Checksum();
+            emptyChkWorker.Update(new byte[0]);
+            emptyChecksums = emptyChkWorker.End().ToArray();
         }
 
         /// <param name="image">Image</param>

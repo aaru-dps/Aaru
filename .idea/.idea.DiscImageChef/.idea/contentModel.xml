@@ -285,6 +285,7 @@
           <e p="BlockMedia.cs" t="Include" />
           <e p="BlockTape.cs" t="Include" />
           <e p="Events.cs" t="Include" />
+          <e p="Files.cs" t="Include" />
           <e p="Helpers.cs" t="Include" />
           <e p="LinearMedia.cs" t="Include" />
           <e p="OpticalDisc.cs" t="Include" />
