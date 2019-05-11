@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
@@ -64,10 +63,8 @@ namespace DiscImageChef.Checksums
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ CRC16_IBM_POLY);
-                    else
-                        entry = (ushort)(entry >> 1);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ CRC16_IBM_POLY);
+                    else entry                 = (ushort)(entry >> 1);
 
                 table[i] = entry;
             }
@@ -86,10 +83,8 @@ namespace DiscImageChef.Checksums
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ polynomial);
-                    else
-                        entry = (ushort)(entry >> 1);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ polynomial);
+                    else entry                 = (ushort)(entry >> 1);
 
                 table[i] = entry;
             }
@@ -117,11 +112,7 @@ namespace DiscImageChef.Checksums
         /// <summary>
         ///     Returns a byte array of the hash value.
         /// </summary>
-        public byte[] Final()
-        {
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            return BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed));
-        }
+        public byte[] Final() => BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed));
 
         /// <summary>
         ///     Returns a hexadecimal representation of the hash value.
@@ -130,7 +121,6 @@ namespace DiscImageChef.Checksums
         {
             StringBuilder crc16Output = new StringBuilder();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed)).Length; i++)
                 crc16Output.Append(BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed))[i].ToString("x2"));
 
@@ -171,10 +161,8 @@ namespace DiscImageChef.Checksums
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ polynomial);
-                    else
-                        entry = (ushort)(entry >> 1);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ polynomial);
+                    else entry                 = (ushort)(entry >> 1);
 
                 localTable[i] = entry;
             }
@@ -183,9 +171,8 @@ namespace DiscImageChef.Checksums
                 localhashInt =
                     (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)]);
 
-            localhashInt                         ^= seed;
-            BigEndianBitConverter.IsLittleEndian =  BitConverter.IsLittleEndian;
-            hash                                 =  BigEndianBitConverter.GetBytes(localhashInt);
+            localhashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc16Output = new StringBuilder();
 
@@ -222,10 +209,8 @@ namespace DiscImageChef.Checksums
             {
                 ushort entry = (ushort)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (ushort)((entry >> 1) ^ polynomial);
-                    else
-                        entry = (ushort)(entry >> 1);
+                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ polynomial);
+                    else entry                 = (ushort)(entry >> 1);
 
                 localTable[i] = entry;
             }
@@ -233,9 +218,8 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < len; i++)
                 localhashInt = (ushort)((localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)]);
 
-            localhashInt                         ^= seed;
-            BigEndianBitConverter.IsLittleEndian =  BitConverter.IsLittleEndian;
-            hash                                 =  BigEndianBitConverter.GetBytes(localhashInt);
+            localhashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc16Output = new StringBuilder();
 

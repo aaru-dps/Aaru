@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
@@ -83,7 +82,6 @@ namespace DiscImageChef.Checksums
         public byte[] Final()
         {
             uint finalSum = (uint)((sum2 << 16) | sum1);
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
@@ -95,7 +93,6 @@ namespace DiscImageChef.Checksums
             uint          finalSum    = (uint)((sum2 << 16) | sum1);
             StringBuilder adlerOutput = new StringBuilder();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
                 adlerOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
 
@@ -132,8 +129,7 @@ namespace DiscImageChef.Checksums
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 
@@ -163,8 +159,7 @@ namespace DiscImageChef.Checksums
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 
