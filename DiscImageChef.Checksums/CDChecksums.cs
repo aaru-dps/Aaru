@@ -100,6 +100,7 @@ namespace DiscImageChef.Checksums
 
                     return status;
                 }
+
                 case 2352: return CheckCdSectorChannel(buffer);
                 default:   return null;
             }
@@ -428,8 +429,6 @@ namespace DiscImageChef.Checksums
                                               Convert.ToString(cdSubRwPack1[0] & 0x07, 2));
                     break;
             }
-
-            BigEndianBitConverter.IsLittleEndian = true;
 
             ushort qSubChannelCrc    = BigEndianBitConverter.ToUInt16(qSubChannel, 10);
             byte[] qSubChannelForCrc = new byte[10];

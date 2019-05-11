@@ -67,8 +67,6 @@ namespace DiscImageChef.DiscImages
                 imageStream.Read(footer, 0, 511);
             }
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             uint  headerChecksum = BigEndianBitConverter.ToUInt32(header, 0x40);
             uint  footerChecksum = BigEndianBitConverter.ToUInt32(footer, 0x40);
             ulong headerCookie   = BigEndianBitConverter.ToUInt64(header, 0);
@@ -178,6 +176,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case CREATOR_VIRTUAL_BOX:
                 {
                     imageInfo.ApplicationVersion =
@@ -200,6 +199,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case CREATOR_VIRTUAL_SERVER:
                 {
                     imageInfo.Application = "Microsoft Virtual Server";
@@ -215,6 +215,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case CREATOR_VIRTUAL_PC:
                 {
                     switch(thisFooter.CreatorHostOs)
@@ -263,6 +264,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case CREATOR_DISCIMAGECHEF:
                 {
                     imageInfo.Application = "DiscImageChef";
@@ -434,6 +436,7 @@ namespace DiscImageChef.DiscImages
                     // Nothing to do here, really.
                     return true;
                 }
+
                 case TYPE_DIFFERENCING:
                 {
                     locatorEntriesData = new byte[8][];
@@ -553,6 +556,7 @@ namespace DiscImageChef.DiscImages
 
                     return true;
                 }
+
                 case TYPE_DEPRECATED1:
                 case TYPE_DEPRECATED2:
                 case TYPE_DEPRECATED3:
@@ -560,6 +564,7 @@ namespace DiscImageChef.DiscImages
                     throw new
                         ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
                 }
+
                 default:
                 {
                     throw new
@@ -631,6 +636,7 @@ namespace DiscImageChef.DiscImages
 
                     // Read sector from parent image
                 }
+
                 default: return ReadSectors(sectorAddress, 1);
             }
         }
@@ -649,6 +655,7 @@ namespace DiscImageChef.DiscImages
 
                     return data;
                 }
+
                 // Contrary to Microsoft's specifications that tell us to check the bitmap
                 // and in case of unused sector just return zeros, as blocks are allocated
                 // as a whole, this would waste time and miss cache, so we read any sector
@@ -699,6 +706,7 @@ namespace DiscImageChef.DiscImages
                     Array.Copy(suffix, 0, data, prefix.Length, suffix.Length);
                     return data;
                 }
+
                 case TYPE_DIFFERENCING:
                 {
                     // As on differencing images, each independent sector can be read from child or parent
@@ -712,6 +720,7 @@ namespace DiscImageChef.DiscImages
 
                     return fullData;
                 }
+
                 case TYPE_DEPRECATED1:
                 case TYPE_DEPRECATED2:
                 case TYPE_DEPRECATED3:
@@ -719,6 +728,7 @@ namespace DiscImageChef.DiscImages
                     throw new
                         ImageNotSupportedException("(VirtualPC plugin): Deprecated image type found. Please submit a bug with an example image.");
                 }
+
                 default:
                 {
                     throw new

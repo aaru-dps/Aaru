@@ -61,8 +61,6 @@ namespace DiscImageChef.Filesystems
         {
             if(partition.Start >= partition.End) return false;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             // Boot block is unless defined otherwise, 2 blocks
             // Funny, you may need boot block to find root block if it's not in standard place just to know size of
             // block size and then read the whole boot block.
@@ -159,10 +157,8 @@ namespace DiscImageChef.Filesystems
         {
             Encoding = encoding ?? Encoding.GetEncoding("iso-8859-1");
             StringBuilder sbInformation = new StringBuilder();
-            XmlFsType                            = new FileSystemType();
-            information                          = null;
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
+            XmlFsType   = new FileSystemType();
+            information = null;
             byte[] bootBlockSectors = imagePlugin.ReadSectors(0 + partition.Start, 2);
 
             BootBlock bootBlk = Marshal.ByteArrayToStructureBigEndian<BootBlock>(bootBlockSectors);
@@ -341,8 +337,7 @@ namespace DiscImageChef.Filesystems
             Array.Copy(block, 0,                  tmp, 0,  24);
             Array.Copy(block, block.Length - 200, tmp, 28, 200);
             RootBlock root = Marshal.ByteArrayToStructureBigEndian<RootBlock>(tmp);
-            root.hashTable                       = new uint[(block.Length - 224) / 4];
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            root.hashTable = new uint[(block.Length - 224) / 4];
             for(int i = 0; i < root.hashTable.Length; i++)
                 root.hashTable[i] = BigEndianBitConverter.ToUInt32(block, 24 + i * 4);
 

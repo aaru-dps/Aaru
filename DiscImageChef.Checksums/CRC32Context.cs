@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
@@ -64,10 +63,8 @@ namespace DiscImageChef.Checksums
             {
                 uint entry = (uint)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (entry >> 1) ^ CRC32_ISO_POLY;
-                    else
-                        entry = entry >> 1;
+                    if((entry & 1) == 1) entry = (entry >> 1) ^ CRC32_ISO_POLY;
+                    else entry                 = entry >> 1;
 
                 table[i] = entry;
             }
@@ -86,10 +83,8 @@ namespace DiscImageChef.Checksums
             {
                 uint entry = (uint)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (entry >> 1) ^ polynomial;
-                    else
-                        entry = entry >> 1;
+                    if((entry & 1) == 1) entry = (entry >> 1) ^ polynomial;
+                    else entry                 = entry >> 1;
 
                 table[i] = entry;
             }
@@ -117,11 +112,7 @@ namespace DiscImageChef.Checksums
         /// <summary>
         ///     Returns a byte array of the hash value.
         /// </summary>
-        public byte[] Final()
-        {
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            return BigEndianBitConverter.GetBytes(hashInt ^ finalSeed);
-        }
+        public byte[] Final() => BigEndianBitConverter.GetBytes(hashInt ^ finalSeed);
 
         /// <summary>
         ///     Returns a hexadecimal representation of the hash value.
@@ -130,7 +121,6 @@ namespace DiscImageChef.Checksums
         {
             StringBuilder crc32Output = new StringBuilder();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^ finalSeed).Length; i++)
                 crc32Output.Append(BigEndianBitConverter.GetBytes(hashInt ^ finalSeed)[i].ToString("x2"));
 
@@ -171,10 +161,8 @@ namespace DiscImageChef.Checksums
             {
                 uint entry = (uint)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (entry >> 1) ^ polynomial;
-                    else
-                        entry = entry >> 1;
+                    if((entry & 1) == 1) entry = (entry >> 1) ^ polynomial;
+                    else entry                 = entry >> 1;
 
                 localTable[i] = entry;
             }
@@ -182,9 +170,8 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < fileStream.Length; i++)
                 localhashInt = (localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)];
 
-            localhashInt                         ^= seed;
-            BigEndianBitConverter.IsLittleEndian =  BitConverter.IsLittleEndian;
-            hash                                 =  BigEndianBitConverter.GetBytes(localhashInt);
+            localhashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc32Output = new StringBuilder();
 
@@ -221,10 +208,8 @@ namespace DiscImageChef.Checksums
             {
                 uint entry = (uint)i;
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1)
-                        entry = (entry >> 1) ^ polynomial;
-                    else
-                        entry = entry >> 1;
+                    if((entry & 1) == 1) entry = (entry >> 1) ^ polynomial;
+                    else entry                 = entry >> 1;
 
                 localTable[i] = entry;
             }
@@ -232,9 +217,8 @@ namespace DiscImageChef.Checksums
             for(int i = 0; i < len; i++)
                 localhashInt = (localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)];
 
-            localhashInt                         ^= seed;
-            BigEndianBitConverter.IsLittleEndian =  BitConverter.IsLittleEndian;
-            hash                                 =  BigEndianBitConverter.GetBytes(localhashInt);
+            localhashInt ^= seed;
+            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
 
             StringBuilder crc32Output = new StringBuilder();
 

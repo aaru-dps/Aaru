@@ -228,8 +228,6 @@ namespace DiscImageChef.Decoders.CD
 
             CDATIP decoded = new CDATIP();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             if(CDATIPResponse.Length != 32 && CDATIPResponse.Length != 28)
             {
                 DicConsole.DebugWriteLine("CD ATIP decoder",

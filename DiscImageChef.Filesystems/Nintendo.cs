@@ -53,8 +53,6 @@ namespace DiscImageChef.Filesystems
 
             if(imagePlugin.Info.Sectors * imagePlugin.Info.SectorSize < 0x50000) return false;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
 
             uint magicGc  = BigEndianBitConverter.ToUInt32(header, 0x1C);
@@ -72,7 +70,6 @@ namespace DiscImageChef.Filesystems
             XmlFsType   = new FileSystemType();
 
             NintendoFields fields = new NintendoFields();
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             byte[] header = imagePlugin.ReadSectors(0, 0x50000 / imagePlugin.Info.SectorSize);
 

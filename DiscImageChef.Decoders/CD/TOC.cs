@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
@@ -117,13 +116,13 @@ namespace DiscImageChef.Decoders.CD
         {
             if(CDTOCResponse == null) return null;
 
-            CDTOC decoded = new CDTOC();
+            CDTOC decoded = new CDTOC
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(CDTOCResponse, 0),
+                FirstTrack = CDTOCResponse[2],
+                LastTrack  = CDTOCResponse[3]
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength       = BigEndianBitConverter.ToUInt16(CDTOCResponse, 0);
-            decoded.FirstTrack       = CDTOCResponse[2];
-            decoded.LastTrack        = CDTOCResponse[3];
             decoded.TrackDescriptors = new CDTOCTrackDataDescriptor[(decoded.DataLength - 2) / 8];
 
             if(decoded.DataLength + 2 != CDTOCResponse.Length)

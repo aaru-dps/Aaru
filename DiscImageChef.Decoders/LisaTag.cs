@@ -134,8 +134,6 @@ namespace DiscImageChef.Decoders
             {
                 byte[] tagBytes = new byte[20];
 
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
                 byte[] tmp = BigEndianBitConverter.GetBytes(Version);
                 Array.Copy(tmp, 0, tagBytes, 0, 2);
                 tagBytes[2] = (byte)(Kind << 6);
@@ -257,8 +255,6 @@ namespace DiscImageChef.Decoders
             {
                 byte[] tagBytes = new byte[24];
 
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
                 byte[] tmp = BigEndianBitConverter.GetBytes(Version);
                 Array.Copy(tmp, 0, tagBytes, 0, 2);
                 tagBytes[2] = (byte)(Kind << 6);
@@ -358,8 +354,6 @@ namespace DiscImageChef.Decoders
             {
                 byte[] tagBytes = new byte[12];
 
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
                 byte[] tmp = BigEndianBitConverter.GetBytes(Version);
                 Array.Copy(tmp, 0, tagBytes, 0, 2);
                 tagBytes[2] = (byte)(Kind << 6);
@@ -381,18 +375,17 @@ namespace DiscImageChef.Decoders
         {
             if(tag == null || tag.Length != 12) return null;
 
-            SonyTag snTag = new SonyTag();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            snTag.Version   = BigEndianBitConverter.ToUInt16(tag, 0);
-            snTag.Kind      = (byte)((tag[2] & 0xC0) >> 6);
-            snTag.Reserved  = (byte)(tag[2] & 0x3F);
-            snTag.Volume    = tag[3];
-            snTag.FileId    = BigEndianBitConverter.ToInt16(tag, 4);
-            snTag.RelPage   = BigEndianBitConverter.ToUInt16(tag, 6);
-            snTag.NextBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 8)  & 0x7FF);
-            snTag.PrevBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 10) & 0x7FF);
+            SonyTag snTag = new SonyTag
+            {
+                Version   = BigEndianBitConverter.ToUInt16(tag, 0),
+                Kind      = (byte)((tag[2] & 0xC0) >> 6),
+                Reserved  = (byte)(tag[2] & 0x3F),
+                Volume    = tag[3],
+                FileId    = BigEndianBitConverter.ToInt16(tag, 4),
+                RelPage   = BigEndianBitConverter.ToUInt16(tag, 6),
+                NextBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 8)  & 0x7FF),
+                PrevBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 10) & 0x7FF)
+            };
 
             snTag.IsLast  = snTag.NextBlock == 0x7FF;
             snTag.IsFirst = snTag.PrevBlock == 0x7FF;
@@ -405,8 +398,6 @@ namespace DiscImageChef.Decoders
             if(tag == null || tag.Length != 20) return null;
 
             ProfileTag phTag = new ProfileTag();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             byte[] tmp = new byte[4];
 
@@ -450,8 +441,6 @@ namespace DiscImageChef.Decoders
             if(tag == null || tag.Length != 24) return null;
 
             PriamTag pmTag = new PriamTag();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             byte[] tmp = new byte[4];
 

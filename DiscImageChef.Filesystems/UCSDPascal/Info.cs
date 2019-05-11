@@ -53,22 +53,24 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             // Blocks 0 and 1 are boot code
             byte[] volBlock = imagePlugin.ReadSectors(multiplier * 2 + partition.Start, multiplier);
 
-            PascalVolumeEntry volEntry = new PascalVolumeEntry();
-
             // On Apple II, it's little endian
-            BigEndianBitConverter.IsLittleEndian =
-                multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
+            // TODO: Fix
+            /*BigEndianBitConverter.IsLittleEndian =
+                multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;*/
 
-            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00);
-            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02);
-            volEntry.EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
-            volEntry.VolumeName = new byte[8];
+            PascalVolumeEntry volEntry = new PascalVolumeEntry
+            {
+                FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00),
+                LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02),
+                EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04),
+                VolumeName = new byte[8],
+                Blocks     = BigEndianBitConverter.ToInt16(volBlock, 0x0E),
+                Files      = BigEndianBitConverter.ToInt16(volBlock, 0x10),
+                Dummy      = BigEndianBitConverter.ToInt16(volBlock, 0x12),
+                LastBoot   = BigEndianBitConverter.ToInt16(volBlock, 0x14),
+                Tail       = BigEndianBitConverter.ToInt32(volBlock, 0x16)
+            };
             Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
-            volEntry.Blocks   = BigEndianBitConverter.ToInt16(volBlock, 0x0E);
-            volEntry.Files    = BigEndianBitConverter.ToInt16(volBlock, 0x10);
-            volEntry.Dummy    = BigEndianBitConverter.ToInt16(volBlock, 0x12);
-            volEntry.LastBoot = BigEndianBitConverter.ToInt16(volBlock, 0x14);
-            volEntry.Tail     = BigEndianBitConverter.ToInt32(volBlock, 0x16);
 
             DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.firstBlock = {0}", volEntry.FirstBlock);
             DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBlock = {0}",  volEntry.LastBlock);
@@ -113,22 +115,25 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             // Blocks 0 and 1 are boot code
             byte[] volBlock = imagePlugin.ReadSectors(multiplier * 2 + partition.Start, multiplier);
 
-            PascalVolumeEntry volEntry = new PascalVolumeEntry();
-
             // On Apple //, it's little endian
-            BigEndianBitConverter.IsLittleEndian =
-                multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
+            // TODO: Fix
+            //BigEndianBitConverter.IsLittleEndian =
+            //    multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
 
-            volEntry.FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00);
-            volEntry.LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02);
-            volEntry.EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04);
-            volEntry.VolumeName = new byte[8];
+            PascalVolumeEntry volEntry = new PascalVolumeEntry
+            {
+                FirstBlock = BigEndianBitConverter.ToInt16(volBlock, 0x00),
+                LastBlock  = BigEndianBitConverter.ToInt16(volBlock, 0x02),
+                EntryType  = (PascalFileKind)BigEndianBitConverter.ToInt16(volBlock, 0x04),
+                VolumeName = new byte[8],
+                Blocks     = BigEndianBitConverter.ToInt16(volBlock, 0x0E),
+                Files      = BigEndianBitConverter.ToInt16(volBlock, 0x10),
+                Dummy      = BigEndianBitConverter.ToInt16(volBlock, 0x12),
+                LastBoot   = BigEndianBitConverter.ToInt16(volBlock, 0x14),
+                Tail       = BigEndianBitConverter.ToInt32(volBlock, 0x16)
+            };
+
             Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
-            volEntry.Blocks   = BigEndianBitConverter.ToInt16(volBlock, 0x0E);
-            volEntry.Files    = BigEndianBitConverter.ToInt16(volBlock, 0x10);
-            volEntry.Dummy    = BigEndianBitConverter.ToInt16(volBlock, 0x12);
-            volEntry.LastBoot = BigEndianBitConverter.ToInt16(volBlock, 0x14);
-            volEntry.Tail     = BigEndianBitConverter.ToInt32(volBlock, 0x16);
 
             // First block is always 0 (even is it's sector 2)
             if(volEntry.FirstBlock != 0) return;

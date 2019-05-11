@@ -57,8 +57,6 @@ namespace DiscImageChef.Filesystems
         {
             if(partition.Start >= partition.End) return false;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             byte[] sector = imagePlugin.ReadSector(partition.Start);
 
             uint magic = BigEndianBitConverter.ToUInt32(sector, 0x00);

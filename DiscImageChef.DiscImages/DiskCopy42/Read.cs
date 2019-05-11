@@ -58,8 +58,7 @@ namespace DiscImageChef.DiscImages
             // Incorrect pascal string length, not DC42
             if(buffer[0] > 63) return false;
 
-            header                               = new Dc42Header();
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            header = new Dc42Header();
 
             Array.Copy(buffer, 0, pString, 0, 64);
             header.DiskName     = StringHandlers.PascalToString(pString, Encoding.GetEncoding("macintosh"));

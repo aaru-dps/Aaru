@@ -553,8 +553,7 @@ namespace DiscImageChef.DiscImages
                     }
                 }
 
-                fullToc                              = tocMs.ToArray();
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+                fullToc = tocMs.ToArray();
                 byte[] fullTocSize = BigEndianBitConverter.GetBytes((short)(fullToc.Length - 2));
                 fullToc[0] = fullTocSize[0];
                 fullToc[1] = fullTocSize[1];
@@ -597,24 +596,28 @@ namespace DiscImageChef.DiscImages
 
                     throw new FeatureNotPresentImageException("Image does not contain BCA information.");
                 }
+
                 case MediaTagType.DVD_PFI:
                 {
                     if(pfi != null) return (byte[])pfi.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain PFI.");
                 }
+
                 case MediaTagType.DVD_DMI:
                 {
                     if(dmi != null) return (byte[])dmi.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain DMI.");
                 }
+
                 case MediaTagType.CD_FullTOC:
                 {
                     if(fullToc != null) return (byte[])fullToc.Clone();
 
                     throw new FeatureNotPresentImageException("Image does not contain TOC information.");
                 }
+
                 default:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not supported by image format");
             }
@@ -684,6 +687,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 288;
                     break;
                 }
+
                 case AlcoholTrackMode.Mode2:
                 {
                     sectorOffset = 16;
@@ -691,6 +695,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt:
                 {
@@ -699,6 +704,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 280;
                     break;
                 }
+
                 case AlcoholTrackMode.Mode2F2:
                 case AlcoholTrackMode.Mode2F2Alt:
                 {
@@ -707,6 +713,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 4;
                     break;
                 }
+
                 case AlcoholTrackMode.Audio:
                 {
                     sectorOffset = 0;
@@ -714,6 +721,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 case AlcoholTrackMode.DVD:
                 {
                     sectorOffset = 0;
@@ -721,6 +729,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
@@ -798,6 +807,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2340;
                             break;
                         }
+
                         case SectorTagType.CdSectorHeader:
                         {
                             sectorOffset = 12;
@@ -805,6 +815,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2336;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubHeader:
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                         case SectorTagType.CdSectorEcc:
@@ -814,6 +825,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccP:
                         {
                             sectorOffset = 2076;
@@ -821,6 +833,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 104;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccQ:
                         {
                             sectorOffset = 2248;
@@ -828,6 +841,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2064;
@@ -835,6 +849,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 284;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubchannel:
                         {
                             switch(alcTrack.subMode)
@@ -850,6 +865,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -871,6 +887,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2328;
                             break;
                         }
+
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2332;
@@ -878,6 +895,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubchannel:
                         {
                             switch(alcTrack.subMode)
@@ -893,11 +911,13 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
                     break;
                 }
+
                 case AlcoholTrackMode.Mode2F1:
                 case AlcoholTrackMode.Mode2F1Alt:
                     switch(tag)
@@ -909,6 +929,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2340;
                             break;
                         }
+
                         case SectorTagType.CdSectorHeader:
                         {
                             sectorOffset = 12;
@@ -916,6 +937,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2336;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubHeader:
                         {
                             sectorOffset = 16;
@@ -923,6 +945,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2328;
                             break;
                         }
+
                         case SectorTagType.CdSectorEcc:
                         {
                             sectorOffset = 2076;
@@ -930,6 +953,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccP:
                         {
                             sectorOffset = 2076;
@@ -937,6 +961,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 104;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccQ:
                         {
                             sectorOffset = 2248;
@@ -944,6 +969,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2072;
@@ -951,6 +977,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 276;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubchannel:
                         {
                             switch(alcTrack.subMode)
@@ -966,6 +993,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -981,6 +1009,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2340;
                             break;
                         }
+
                         case SectorTagType.CdSectorHeader:
                         {
                             sectorOffset = 12;
@@ -988,6 +1017,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2336;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubHeader:
                         {
                             sectorOffset = 16;
@@ -995,6 +1025,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2328;
                             break;
                         }
+
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2348;
@@ -1002,6 +1033,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubchannel:
                         {
                             switch(alcTrack.subMode)
@@ -1017,6 +1049,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
@@ -1040,11 +1073,13 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
                     break;
                 }
+
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
@@ -1129,6 +1164,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 

@@ -141,6 +141,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case 2:
                 {
                     ChdHeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV2>(buffer);
@@ -211,6 +212,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case 3:
                 {
                     ChdHeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV3>(buffer);
@@ -260,6 +262,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case 4:
                 {
                     ChdHeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV4>(buffer);
@@ -305,6 +308,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case 5:
                 {
                     ChdHeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV5>(buffer);
@@ -389,6 +393,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 default: throw new ImageNotSupportedException($"Unsupported CHD version {version}");
             }
 
@@ -450,11 +455,7 @@ namespace DiscImageChef.DiscImages
                             uint chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                             // Byteswapped
-                            if(chdTracksNumber > 99)
-                            {
-                                BigEndianBitConverter.IsLittleEndian = !BitConverter.IsLittleEndian;
-                                chdTracksNumber                      = BigEndianBitConverter.ToUInt32(meta, 0);
-                            }
+                            if(chdTracksNumber > 99) chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                             currentSector = 0;
 
@@ -546,8 +547,7 @@ namespace DiscImageChef.DiscImages
                                 tracks.Add(dicTrack.TrackSequence, dicTrack);
                             }
 
-                            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-                            isCdrom                              = true;
+                            isCdrom = true;
 
                             break;
                         // "CHTR"
@@ -1111,6 +1111,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case TrackType.CdMode2Form2:
                 {
                     if(track.TrackRawBytesPerSector == 2352)
@@ -1126,6 +1127,7 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case TrackType.CdMode2Formless:
                 {
                     if(track.TrackRawBytesPerSector == 2352)
@@ -1141,12 +1143,14 @@ namespace DiscImageChef.DiscImages
 
                     break;
                 }
+
                 case TrackType.Audio:
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
                     break;
                 }
+
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
@@ -1225,12 +1229,14 @@ namespace DiscImageChef.DiscImages
                                     sectorSize   = 12;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorHeader:
                                 {
                                     sectorOffset = 12;
                                     sectorSize   = 4;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorSubHeader:
                                     throw new ArgumentException("Unsupported tag requested for this track",
                                                                 nameof(tag));
@@ -1240,30 +1246,35 @@ namespace DiscImageChef.DiscImages
                                     sectorSize   = 276;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorEccP:
                                 {
                                     sectorOffset = 2076;
                                     sectorSize   = 172;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorEccQ:
                                 {
                                     sectorOffset = 2248;
                                     sectorSize   = 104;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorEdc:
                                 {
                                     sectorOffset = 2064;
                                     sectorSize   = 4;
                                     break;
                                 }
+
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
                         else throw new FeatureNotPresentImageException("Requested sector does not contain tags");
 
                         break;
                     }
+
                     case TrackType.CdMode2Form2:
                     {
                         if(track.TrackRawBytesPerSector == 2352)
@@ -1275,24 +1286,28 @@ namespace DiscImageChef.DiscImages
                                     sectorSize   = 12;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorHeader:
                                 {
                                     sectorOffset = 12;
                                     sectorSize   = 4;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorSubHeader:
                                 {
                                     sectorOffset = 16;
                                     sectorSize   = 8;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorEdc:
                                 {
                                     sectorOffset = 2348;
                                     sectorSize   = 4;
                                     break;
                                 }
+
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
                         else
@@ -1312,17 +1327,20 @@ namespace DiscImageChef.DiscImages
                                     sectorSize   = 8;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorEdc:
                                 {
                                     sectorOffset = 2332;
                                     sectorSize   = 4;
                                     break;
                                 }
+
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
 
                         break;
                     }
+
                     case TrackType.CdMode2Formless:
                     {
                         if(track.TrackRawBytesPerSector == 2352)
@@ -1341,18 +1359,21 @@ namespace DiscImageChef.DiscImages
                                     sectorSize   = 8;
                                     break;
                                 }
+
                                 case SectorTagType.CdSectorEdc:
                                 {
                                     sectorOffset = 2332;
                                     sectorSize   = 4;
                                     break;
                                 }
+
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
                         else throw new FeatureNotPresentImageException("Requested sector does not contain tags");
 
                         break;
                     }
+
                     case TrackType.Audio:
                         throw new FeatureNotPresentImageException("Requested sector does not contain tags");
                     default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");

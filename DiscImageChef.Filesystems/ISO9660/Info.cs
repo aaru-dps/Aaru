@@ -162,6 +162,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     }
+
                     case 1:
                     {
                         if(highSierra)
@@ -173,6 +174,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     }
+
                     case 2:
                     {
                         PrimaryVolumeDescriptor svd =
@@ -181,8 +183,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         // Check if this is Joliet
                         if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
                             if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
-                               svd.escape_sequences[2] == 'E')
-                                jolietvd = svd;
+                               svd.escape_sequences[2] == 'E') jolietvd = svd;
                             else
                                 DicConsole.WriteLine("ISO9660 plugin", "Found unknown supplementary volume descriptor");
 
@@ -247,8 +248,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(rootLocation + rootSize < imagePlugin.Info.Sectors)
                 rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             // Walk thru root directory to see system area extensions in use
             while(rootOff + Marshal.SizeOf<DirectoryRecord>() < rootDir.Length && !cdi)

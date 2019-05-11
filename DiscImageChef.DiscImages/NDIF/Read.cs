@@ -102,8 +102,6 @@ namespace DiscImageChef.DiscImages
                 // Block chunks and headers
                 chunks = new Dictionary<ulong, BlockChunk>();
 
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
                 for(int i = 0; i < header.chunks; i++)
                 {
                     // Obsolete read-only NDIF only prepended the header and then put the image without any kind of block references.
@@ -318,6 +316,7 @@ namespace DiscImageChef.DiscImages
                             Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
                             break;
                         }
+
                         case CHUNK_TYPE_RLE:
                         {
                             byte[] tmpBuffer = new byte[buffersize];
@@ -336,6 +335,7 @@ namespace DiscImageChef.DiscImages
                             Array.Copy(tmpBuffer, 0, buffer, 0, realSize);
                             break;
                         }
+
                         default:
                             throw new
                                 ImageNotSupportedException($"Unsupported chunk type 0x{currentChunk.type:X8} found");

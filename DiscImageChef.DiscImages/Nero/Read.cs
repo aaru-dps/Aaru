@@ -50,9 +50,7 @@ namespace DiscImageChef.DiscImages
         {
             try
             {
-                imageStream                          = imageFilter.GetDataForkStream();
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
+                imageStream = imageFilter.GetDataForkStream();
                 NeroV1Footer footerV1 = new NeroV1Footer();
                 NeroV2Footer footerV2 = new NeroV2Footer();
 
@@ -158,6 +156,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_CUE_V2:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"CUEX\" chunk, parsing {0} bytes",
@@ -196,6 +195,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_DAO_V1:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"DAOI\" chunk, parsing {0} bytes",
@@ -290,6 +290,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_DAO_V2:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"DAOX\" chunk, parsing {0} bytes",
@@ -385,6 +386,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_CDTEXT:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"CDTX\" chunk, parsing {0} bytes",
@@ -428,6 +430,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_TAO_V1:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"ETNF\" chunk, parsing {0} bytes",
@@ -491,6 +494,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_TAO_V2:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"ETN2\" chunk, parsing {0} bytes",
@@ -557,6 +561,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_SESSION:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"SINF\" chunk, parsing {0} bytes",
@@ -573,6 +578,7 @@ namespace DiscImageChef.DiscImages
                             currentsession++;
                             break;
                         }
+
                         case NERO_DISC_TYPE:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"MTYP\" chunk, parsing {0} bytes",
@@ -591,6 +597,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_DISC_INFO:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"DINF\" chunk, parsing {0} bytes",
@@ -606,6 +613,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_RELOCATION:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"RELO\" chunk, parsing {0} bytes",
@@ -621,6 +629,7 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_TOC:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"TOCT\" chunk, parsing {0} bytes",
@@ -636,12 +645,14 @@ namespace DiscImageChef.DiscImages
 
                             break;
                         }
+
                         case NERO_END:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Found \"END!\" chunk, finishing parse");
                             parsing = false;
                             break;
                         }
+
                         default:
                         {
                             DicConsole.DebugWriteLine("Nero plugin", "Unknown chunk ID \"{0}\", skipping...",
@@ -980,6 +991,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 case DaoMode.DataM2F2:
                 {
                     sectorOffset = 8;
@@ -987,6 +999,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 4;
                     break;
                 }
+
                 case DaoMode.Audio:
                 {
                     sectorOffset = 0;
@@ -994,6 +1007,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 case DaoMode.DataRaw:
                 {
                     sectorOffset = 16;
@@ -1001,6 +1015,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 288;
                     break;
                 }
+
                 case DaoMode.DataM2Raw:
                 {
                     sectorOffset = 16;
@@ -1008,6 +1023,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 // TODO: Supposing Nero suffixes the subchannel to the channel
                 case DaoMode.DataRawSub:
                 {
@@ -1016,6 +1032,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 288 + 96;
                     break;
                 }
+
                 case DaoMode.DataM2RawSub:
                 {
                     sectorOffset = 16;
@@ -1023,6 +1040,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 96;
                     break;
                 }
+
                 case DaoMode.AudioSub:
                 {
                     sectorOffset = 0;
@@ -1030,6 +1048,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 96;
                     break;
                 }
+
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
@@ -1085,6 +1104,7 @@ namespace DiscImageChef.DiscImages
 
                     return flags;
                 }
+
                 case SectorTagType.CdTrackIsrc: return dicTrack.Isrc;
                 case SectorTagType.CdTrackText:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
@@ -1113,6 +1133,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2328;
                             break;
                         }
+
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2332;
@@ -1120,11 +1141,13 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
                     break;
                 }
+
                 case DaoMode.Audio: throw new ArgumentException("There are no tags on audio tracks", nameof(tag));
                 case DaoMode.DataRaw:
                 {
@@ -1137,6 +1160,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2340;
                             break;
                         }
+
                         case SectorTagType.CdSectorHeader:
                         {
                             sectorOffset = 12;
@@ -1144,6 +1168,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2336;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubchannel:
                         case SectorTagType.CdSectorSubHeader:
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
@@ -1154,6 +1179,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccP:
                         {
                             sectorOffset = 2076;
@@ -1161,6 +1187,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 104;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccQ:
                         {
                             sectorOffset = 2248;
@@ -1168,6 +1195,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2064;
@@ -1175,11 +1203,13 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 284;
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
                     break;
                 }
+
                 // TODO
                 case DaoMode.DataM2RawSub:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
@@ -1194,6 +1224,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2340 + 96;
                             break;
                         }
+
                         case SectorTagType.CdSectorHeader:
                         {
                             sectorOffset = 12;
@@ -1201,6 +1232,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 2336 + 96;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubchannel:
                         {
                             sectorOffset = 2352;
@@ -1208,6 +1240,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0;
                             break;
                         }
+
                         case SectorTagType.CdSectorSubHeader:
                             throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                         case SectorTagType.CdSectorEcc:
@@ -1217,6 +1250,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0 + 96;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccP:
                         {
                             sectorOffset = 2076;
@@ -1224,6 +1258,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 104 + 96;
                             break;
                         }
+
                         case SectorTagType.CdSectorEccQ:
                         {
                             sectorOffset = 2248;
@@ -1231,6 +1266,7 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 0 + 96;
                             break;
                         }
+
                         case SectorTagType.CdSectorEdc:
                         {
                             sectorOffset = 2064;
@@ -1238,11 +1274,13 @@ namespace DiscImageChef.DiscImages
                             sectorSkip   = 284 + 96;
                             break;
                         }
+
                         default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                     }
 
                     break;
                 }
+
                 case DaoMode.AudioSub:
                 {
                     if(tag != SectorTagType.CdSectorSubchannel)
@@ -1253,6 +1291,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 
@@ -1316,6 +1355,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 case DaoMode.DataM2F2:
                 {
                     sectorOffset = 0;
@@ -1323,6 +1363,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 case DaoMode.DataRaw:
                 case DaoMode.DataM2Raw:
                 case DaoMode.Audio:
@@ -1332,6 +1373,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 case DaoMode.DataRawSub:
                 case DaoMode.DataM2RawSub:
                 case DaoMode.AudioSub:
@@ -1341,6 +1383,7 @@ namespace DiscImageChef.DiscImages
                     sectorSkip   = 0;
                     break;
                 }
+
                 default: throw new FeatureSupportedButNotImplementedImageException("Unsupported track type");
             }
 

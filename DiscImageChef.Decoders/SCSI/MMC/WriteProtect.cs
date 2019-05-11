@@ -120,21 +120,20 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(WPSResponse == null) return null;
 
-            WriteProtectionStatus decoded = new WriteProtectionStatus();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(WPSResponse, 0);
-            decoded.Reserved1  = WPSResponse[2];
-            decoded.Reserved2  = WPSResponse[3];
-            decoded.Reserved3  = (byte)((WPSResponse[4] & 0xF0) >> 4);
-            decoded.MSWI       = Convert.ToBoolean(WPSResponse[4] & 0x08);
-            decoded.CWP        = Convert.ToBoolean(WPSResponse[4] & 0x04);
-            decoded.PWP        = Convert.ToBoolean(WPSResponse[4] & 0x02);
-            decoded.SWPP       = Convert.ToBoolean(WPSResponse[4] & 0x01);
-            decoded.Reserved4  = WPSResponse[5];
-            decoded.Reserved5  = WPSResponse[6];
-            decoded.Reserved6  = WPSResponse[7];
+            WriteProtectionStatus decoded = new WriteProtectionStatus
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(WPSResponse, 0),
+                Reserved1  = WPSResponse[2],
+                Reserved2  = WPSResponse[3],
+                Reserved3  = (byte)((WPSResponse[4] & 0xF0) >> 4),
+                MSWI       = Convert.ToBoolean(WPSResponse[4] & 0x08),
+                CWP        = Convert.ToBoolean(WPSResponse[4] & 0x04),
+                PWP        = Convert.ToBoolean(WPSResponse[4] & 0x02),
+                SWPP       = Convert.ToBoolean(WPSResponse[4] & 0x01),
+                Reserved4  = WPSResponse[5],
+                Reserved5  = WPSResponse[6],
+                Reserved6  = WPSResponse[7]
+            };
 
             return decoded;
         }

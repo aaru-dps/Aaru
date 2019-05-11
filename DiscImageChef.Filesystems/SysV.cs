@@ -40,6 +40,7 @@ using Schemas;
 
 namespace DiscImageChef.Filesystems
 {
+    // TODO: Fix little endian
     // Information from the Linux kernel
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class SysVfs : IFilesystem
@@ -157,18 +158,16 @@ namespace DiscImageChef.Filesystems
             Encoding    = encoding ?? Encoding.GetEncoding("iso-8859-15");
             information = "";
 
-            StringBuilder sb = new StringBuilder();
-            BigEndianBitConverter.IsLittleEndian =
-                true; // Start in little endian until we know what are we handling here
-            int    start    = 0;
-            bool   xenix    = false;
-            bool   sysv     = false;
-            bool   sys7th   = false;
-            bool   coherent = false;
-            bool   xenix3   = false;
-            byte[] sb_sector;
-            byte   sb_size_in_sectors;
-            int    offset = 0;
+            StringBuilder sb       = new StringBuilder();
+            int           start    = 0;
+            bool          xenix    = false;
+            bool          sysv     = false;
+            bool          sys7th   = false;
+            bool          coherent = false;
+            bool          xenix3   = false;
+            byte[]        sb_sector;
+            byte          sb_size_in_sectors;
+            int           offset = 0;
 
             if(imagePlugin.Info.SectorSize <= 0x400
             ) // Check if underlying device sector size is smaller than SuperBlock size
@@ -192,7 +191,6 @@ namespace DiscImageChef.Filesystems
 
                 if(magic == XENIX_MAGIC || magic == SYSV_MAGIC)
                 {
-                    BigEndianBitConverter.IsLittleEndian = true; // Little endian
                     if(magic == SYSV_MAGIC)
                     {
                         sysv   = true;
@@ -206,7 +204,6 @@ namespace DiscImageChef.Filesystems
 
                 if(magic == XENIX_CIGAM || magic == SYSV_CIGAM)
                 {
-                    BigEndianBitConverter.IsLittleEndian = false; // Big endian
                     if(magic == SYSV_CIGAM)
                     {
                         sysv   = true;
@@ -222,17 +219,15 @@ namespace DiscImageChef.Filesystems
 
                 if(magic == XENIX_MAGIC)
                 {
-                    BigEndianBitConverter.IsLittleEndian = true; // Little endian
-                    xenix3                               = true;
-                    start                                = i;
+                    xenix3 = true;
+                    start  = i;
                     break;
                 }
 
                 if(magic == XENIX_CIGAM)
                 {
-                    BigEndianBitConverter.IsLittleEndian = false; // Big endian
-                    xenix3                               = true;
-                    start                                = i;
+                    xenix3 = true;
+                    start  = i;
                     break;
                 }
 
@@ -240,17 +235,15 @@ namespace DiscImageChef.Filesystems
 
                 if(magic == SYSV_MAGIC)
                 {
-                    BigEndianBitConverter.IsLittleEndian = true; // Little endian
-                    sysv                                 = true;
-                    start                                = i;
+                    sysv  = true;
+                    start = i;
                     break;
                 }
 
                 if(magic == SYSV_CIGAM)
                 {
-                    BigEndianBitConverter.IsLittleEndian = false; // Big endian
-                    sysv                                 = true;
-                    start                                = i;
+                    sysv  = true;
+                    start = i;
                     break;
                 }
 
@@ -263,9 +256,8 @@ namespace DiscImageChef.Filesystems
                 if(s_fname == COH_FNAME && s_fpack == COH_FPACK || s_fname == COH_XXXXX && s_fpack == COH_XXXXX ||
                    s_fname == COH_XXXXS && s_fpack == COH_XXXXN)
                 {
-                    BigEndianBitConverter.IsLittleEndian = true; // Coherent is in PDP endianness, use helper for that
-                    coherent                             = true;
-                    start                                = i;
+                    coherent = true;
+                    start    = i;
                     break;
                 }
 
@@ -294,9 +286,8 @@ namespace DiscImageChef.Filesystems
                 if(s_fsize * 1024 != (partition.End - partition.Start) * imagePlugin.Info.SectorSize &&
                    s_fsize * 512  != (partition.End - partition.Start) * imagePlugin.Info.SectorSize) continue;
 
-                sys7th                               = true;
-                BigEndianBitConverter.IsLittleEndian = true;
-                start                                = i;
+                sys7th = true;
+                start  = i;
                 break;
             }
 
@@ -673,8 +664,6 @@ namespace DiscImageChef.Filesystems
             }
 
             information = sb.ToString();
-
-            BigEndianBitConverter.IsLittleEndian = false; // Return to default (bigendian)
         }
 
         // Old XENIX use different offsets

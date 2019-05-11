@@ -233,7 +233,6 @@ namespace DiscImageChef.DiscImages
                 chunks       = (uint)chunks.Count
             };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             MemoryStream chunkMs = new MemoryStream();
             chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.signature),    0, 4);
             chunkMs.Write(BigEndianBitConverter.GetBytes(bHdr.version),      0, 4);

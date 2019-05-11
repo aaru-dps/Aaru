@@ -49,8 +49,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             ushort drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
 
             return drSigWord == MFS_MAGIC;
@@ -71,8 +69,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             byte[] mdbSector = imagePlugin.ReadSector(2 + partition.Start);
             byte[] bbSector  = imagePlugin.ReadSector(0 + partition.Start);
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             mdb.drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x000);
             if(mdb.drSigWord != MFS_MAGIC) return;

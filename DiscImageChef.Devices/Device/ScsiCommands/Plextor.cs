@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using DiscImageChef.Console;
 
 namespace DiscImageChef.Devices
@@ -229,10 +228,9 @@ namespace DiscImageChef.Devices
 
             if(sense || Error) return sense;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            selected                             = BigEndianBitConverter.ToUInt16(buf, 4);
-            max                                  = BigEndianBitConverter.ToUInt16(buf, 6);
-            last                                 = BigEndianBitConverter.ToUInt16(buf, 8);
+            selected = BigEndianBitConverter.ToUInt16(buf, 4);
+            max      = BigEndianBitConverter.ToUInt16(buf, 6);
+            last     = BigEndianBitConverter.ToUInt16(buf, 8);
 
             return false;
         }
@@ -268,9 +266,8 @@ namespace DiscImageChef.Devices
 
             if(sense || Error) return sense;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            enabled                              = buf[2] != 0;
-            speed                                = BigEndianBitConverter.ToUInt16(buf, 4);
+            enabled = buf[2] != 0;
+            speed   = BigEndianBitConverter.ToUInt16(buf, 4);
 
             return false;
         }

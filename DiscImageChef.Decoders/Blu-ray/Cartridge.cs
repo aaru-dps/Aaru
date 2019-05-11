@@ -72,21 +72,20 @@ namespace DiscImageChef.Decoders.Bluray
                 return null;
             }
 
-            CartridgeStatus decoded = new CartridgeStatus();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(CSResponse, 0);
-            decoded.Reserved1  = CSResponse[2];
-            decoded.Reserved2  = CSResponse[3];
-            decoded.Cartridge  = Convert.ToBoolean(CSResponse[4] & 0x80);
-            decoded.OUT        = Convert.ToBoolean(CSResponse[4] & 0x40);
-            decoded.Reserved3  = (byte)((CSResponse[4] & 0x38) >> 3);
-            decoded.OUT        = Convert.ToBoolean(CSResponse[4] & 0x04);
-            decoded.Reserved4  = (byte)(CSResponse[4] & 0x03);
-            decoded.Reserved5  = CSResponse[5];
-            decoded.Reserved6  = CSResponse[6];
-            decoded.Reserved7  = CSResponse[7];
+            CartridgeStatus decoded = new CartridgeStatus
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(CSResponse, 0),
+                Reserved1  = CSResponse[2],
+                Reserved2  = CSResponse[3],
+                Cartridge  = Convert.ToBoolean(CSResponse[4] & 0x80),
+                OUT        = Convert.ToBoolean(CSResponse[4] & 0x40),
+                Reserved3  = (byte)((CSResponse[4] & 0x38) >> 3),
+                CWP        = Convert.ToBoolean(CSResponse[4] & 0x04),
+                Reserved4  = (byte)(CSResponse[4] & 0x03),
+                Reserved5  = CSResponse[5],
+                Reserved6  = CSResponse[6],
+                Reserved7  = CSResponse[7]
+            };
 
             return decoded;
         }

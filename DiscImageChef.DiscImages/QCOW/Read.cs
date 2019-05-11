@@ -104,8 +104,6 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l2Size = {0}",         l2Size);
             DicConsole.DebugWriteLine("QCOW plugin", "qHdr.sectors = {0}",        imageInfo.Sectors);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             byte[] l1TableB = new byte[l1Size * 8];
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
             stream.Read(l1TableB, 0, (int)l1Size * 8);

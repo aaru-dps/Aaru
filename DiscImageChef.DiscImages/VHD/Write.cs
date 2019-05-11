@@ -203,7 +203,6 @@ namespace DiscImageChef.DiscImages
             };
             footer.Offset = footer.DiskType == TYPE_FIXED ? ulong.MaxValue : 512;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             byte[] footerBytes = new byte[512];
             Array.Copy(BigEndianBitConverter.GetBytes(footer.Cookie),             0, footerBytes, 0x00, 8);
             Array.Copy(BigEndianBitConverter.GetBytes(footer.Features),           0, footerBytes, 0x08, 4);

@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
@@ -71,16 +70,15 @@ namespace DiscImageChef.Decoders.Bluray
                 return null;
             }
 
-            SpareAreaInformation decoded = new SpareAreaInformation();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength           = BigEndianBitConverter.ToUInt16(SAIResponse, 0);
-            decoded.Reserved1            = SAIResponse[2];
-            decoded.Reserved2            = SAIResponse[3];
-            decoded.Reserved3            = BigEndianBitConverter.ToUInt32(SAIResponse, 4);
-            decoded.FreeSpareBlocks      = BigEndianBitConverter.ToUInt32(SAIResponse, 8);
-            decoded.AllocatedSpareBlocks = BigEndianBitConverter.ToUInt32(SAIResponse, 12);
+            SpareAreaInformation decoded = new SpareAreaInformation
+            {
+                DataLength           = BigEndianBitConverter.ToUInt16(SAIResponse, 0),
+                Reserved1            = SAIResponse[2],
+                Reserved2            = SAIResponse[3],
+                Reserved3            = BigEndianBitConverter.ToUInt32(SAIResponse, 4),
+                FreeSpareBlocks      = BigEndianBitConverter.ToUInt32(SAIResponse, 8),
+                AllocatedSpareBlocks = BigEndianBitConverter.ToUInt32(SAIResponse, 12)
+            };
 
             return decoded;
         }

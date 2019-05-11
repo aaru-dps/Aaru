@@ -216,8 +216,7 @@ namespace DiscImageChef.Filesystems.FAT
                 // Some fields could overflow fake BPB, those will be handled below
                 case BpbKind.Atari:
                 {
-                    ushort sum = 0;
-                    BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+                    ushort sum                                       = 0;
                     for(int i = 0; i < bpbSector.Length; i += 2) sum += BigEndianBitConverter.ToUInt16(bpbSector, i);
 
                     // TODO: Check this

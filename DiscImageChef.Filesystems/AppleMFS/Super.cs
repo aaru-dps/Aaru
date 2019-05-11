@@ -57,8 +57,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
             mdbBlocks  = device.ReadSector(2 + partitionStart);
             bootBlocks = device.ReadSector(0 + partitionStart);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             volMDB.drSigWord = BigEndianBitConverter.ToUInt16(mdbBlocks, 0x000);
             if(volMDB.drSigWord != MFS_MAGIC) return Errno.InvalidArgument;
 

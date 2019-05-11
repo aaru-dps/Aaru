@@ -44,12 +44,6 @@ namespace DiscImageChef
     public static class BigEndianBitConverter
     {
         /// <summary>
-        ///     Indicates the byte order ("endianess") in which data is stored in this computer
-        ///     architecture.
-        /// </summary>
-        public static bool IsLittleEndian { get; set; }
-
-        /// <summary>
         ///     Converts the specified double-precision floating point number to a 64-bit signed integer.
         /// </summary>
         /// <param name="value">The number to convert.</param>
@@ -62,80 +56,70 @@ namespace DiscImageChef
         /// </summary>
         /// <param name="value">A Boolean value.</param>
         /// <returns>An array of bytes with length 1.</returns>
-        public static byte[] GetBytes(bool value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(bool value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified Unicode character value as an array of bytes.
         /// </summary>
         /// <param name="value">A character to convert.</param>
         /// <returns>An array of bytes with length 2.</returns>
-        public static byte[] GetBytes(char value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(char value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified double-precision floating point value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 8.</returns>
-        public static byte[] GetBytes(double value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(double value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified single-precision floating point value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 4.</returns>
-        public static byte[] GetBytes(float value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(float value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified 32-bit signed integer value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 4.</returns>
-        public static byte[] GetBytes(int value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(int value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified 64-bit signed integer value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 8.</returns>
-        public static byte[] GetBytes(long value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(long value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified 16-bit signed integer value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 2.</returns>
-        public static byte[] GetBytes(short value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(short value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified 32-bit unsigned integer value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 4.</returns>
-        public static byte[] GetBytes(uint value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(uint value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified 64-bit unsigned integer value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 8.</returns>
-        public static byte[] GetBytes(ulong value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(ulong value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Returns the specified 16-bit unsigned integer value as an array of bytes.
         /// </summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 2.</returns>
-        public static byte[] GetBytes(ushort value) =>
-            !IsLittleEndian ? BitConverter.GetBytes(value) : BitConverter.GetBytes(value).Reverse().ToArray();
+        public static byte[] GetBytes(ushort value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
         /// <summary>
         ///     Converts the specified 64-bit signed integer to a double-precision floating point number.
@@ -202,9 +186,7 @@ namespace DiscImageChef
         ///     minus 1.
         /// </exception>
         public static short ToInt16(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToInt16(value,                     startIndex)
-                : BitConverter.ToInt16(value.Reverse().ToArray(), value.Length - sizeof(short) - startIndex);
+            BitConverter.ToInt16(value.Reverse().ToArray(), value.Length - sizeof(short) - startIndex);
 
         /// <summary>
         ///     Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.
@@ -222,9 +204,7 @@ namespace DiscImageChef
         ///     minus 1.
         /// </exception>
         public static int ToInt32(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToInt32(value,                     startIndex)
-                : BitConverter.ToInt32(value.Reverse().ToArray(), value.Length - sizeof(int) - startIndex);
+            BitConverter.ToInt32(value.Reverse().ToArray(), value.Length - sizeof(int) - startIndex);
 
         /// <summary>
         ///     Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.
@@ -242,9 +222,7 @@ namespace DiscImageChef
         ///     length of value minus 1.
         /// </exception>
         public static long ToInt64(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToInt64(value,                     startIndex)
-                : BitConverter.ToInt64(value.Reverse().ToArray(), value.Length - sizeof(long) - startIndex);
+            BitConverter.ToInt64(value.Reverse().ToArray(), value.Length - sizeof(long) - startIndex);
 
         /// <summary>
         ///     Returns a single-precision floating point number converted from four bytes  at a specified position in a byte
@@ -263,9 +241,7 @@ namespace DiscImageChef
         ///     length of value minus 1.
         /// </exception>
         public static float ToSingle(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToSingle(value,                     startIndex)
-                : BitConverter.ToSingle(value.Reverse().ToArray(), value.Length - sizeof(float) - startIndex);
+            BitConverter.ToSingle(value.Reverse().ToArray(), value.Length - sizeof(float) - startIndex);
 
         /// <summary>
         ///     Converts the numeric value of each element of a specified array of bytes to its equivalent hexadecimal string
@@ -277,8 +253,7 @@ namespace DiscImageChef
         ///     element in value; for example, "7F-2C-4A".
         /// </returns>
         /// <exception cref="System.ArgumentNullException">value is null.</exception>
-        public static string ToString(byte[] value) =>
-            !IsLittleEndian ? BitConverter.ToString(value) : BitConverter.ToString(value.Reverse().ToArray());
+        public static string ToString(byte[] value) => BitConverter.ToString(value.Reverse().ToArray());
 
         /// <summary>
         ///     Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string
@@ -296,9 +271,7 @@ namespace DiscImageChef
         ///     minus 1.
         /// </exception>
         public static string ToString(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToString(value,                     startIndex)
-                : BitConverter.ToString(value.Reverse().ToArray(), startIndex);
+            BitConverter.ToString(value.Reverse().ToArray(), startIndex);
 
         /// <summary>
         ///     Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string
@@ -321,9 +294,7 @@ namespace DiscImageChef
         ///     value; that is, the startIndex parameter is greater than the length of value minus the length parameter.
         /// </exception>
         public static string ToString(byte[] value, int startIndex, int length) =>
-            !IsLittleEndian
-                ? BitConverter.ToString(value,                     startIndex, length)
-                : BitConverter.ToString(value.Reverse().ToArray(), startIndex, length);
+            BitConverter.ToString(value.Reverse().ToArray(), startIndex, length);
 
         /// <summary>
         ///     Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.
@@ -338,9 +309,7 @@ namespace DiscImageChef
         ///     minus 1.
         /// </exception>
         public static ushort ToUInt16(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToUInt16(value,                     startIndex)
-                : BitConverter.ToUInt16(value.Reverse().ToArray(), value.Length - sizeof(ushort) - startIndex);
+            BitConverter.ToUInt16(value.Reverse().ToArray(), value.Length - sizeof(ushort) - startIndex);
 
         /// <summary>
         ///     Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.
@@ -358,9 +327,7 @@ namespace DiscImageChef
         ///     minus 1.
         /// </exception>
         public static uint ToUInt32(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToUInt32(value,                     startIndex)
-                : BitConverter.ToUInt32(value.Reverse().ToArray(), value.Length - sizeof(uint) - startIndex);
+            BitConverter.ToUInt32(value.Reverse().ToArray(), value.Length - sizeof(uint) - startIndex);
 
         /// <summary>
         ///     Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.
@@ -378,9 +345,7 @@ namespace DiscImageChef
         ///     minus 1.
         /// </exception>
         public static ulong ToUInt64(byte[] value, int startIndex) =>
-            !IsLittleEndian
-                ? BitConverter.ToUInt64(value,                     startIndex)
-                : BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(ulong) - startIndex);
+            BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(ulong) - startIndex);
 
         public static Guid ToGuid(byte[] value, int startIndex) =>
             new Guid(ToUInt32(value, 0 + startIndex), ToUInt16(value, 4 + startIndex),

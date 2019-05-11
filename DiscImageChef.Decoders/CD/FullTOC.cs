@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
@@ -153,14 +152,14 @@ namespace DiscImageChef.Decoders.CD
         {
             if(CDFullTOCResponse == null) return null;
 
-            CDFullTOC decoded = new CDFullTOC();
+            CDFullTOC decoded = new CDFullTOC
+            {
+                DataLength           = BigEndianBitConverter.ToUInt16(CDFullTOCResponse, 0),
+                FirstCompleteSession = CDFullTOCResponse[2],
+                LastCompleteSession  = CDFullTOCResponse[3]
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength           = BigEndianBitConverter.ToUInt16(CDFullTOCResponse, 0);
-            decoded.FirstCompleteSession = CDFullTOCResponse[2];
-            decoded.LastCompleteSession  = CDFullTOCResponse[3];
-            decoded.TrackDescriptors     = new TrackDataDescriptor[(decoded.DataLength - 2) / 11];
+            decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 11];
 
             if(decoded.DataLength + 2 != CDFullTOCResponse.Length)
             {
@@ -271,6 +270,7 @@ namespace DiscImageChef.Decoders.CD
 
                                     break;
                                 }
+
                                 case 0xA0 when descriptor.ADR == 1:
                                 {
                                     sb.AppendFormat("First track number: {0} (", descriptor.PMIN);
@@ -301,6 +301,7 @@ namespace DiscImageChef.Decoders.CD
                                     //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
                                     break;
                                 }
+
                                 case 0xA1 when descriptor.ADR == 4:
                                     sb.AppendFormat("Last video track number: {0}", descriptor.PMIN).AppendLine();
                                     break;
@@ -333,6 +334,7 @@ namespace DiscImageChef.Decoders.CD
                                     //sb.AppendFormat("Absolute time: {3:D2}:{0:D2}:{1:D2}:{2:D2}", descriptor.Min, descriptor.Sec, descriptor.Frame, descriptor.HOUR).AppendLine();
                                     break;
                                 }
+
                                 case 0xA2:
                                 {
                                     if(descriptor.PHOUR > 0)
@@ -361,6 +363,7 @@ namespace DiscImageChef.Decoders.CD
 
                                     break;
                                 }
+
                                 case 0xF0:
                                 {
                                     sb.AppendFormat("Book type: 0x{0:X2}",         descriptor.PMIN);
@@ -374,6 +377,7 @@ namespace DiscImageChef.Decoders.CD
                                                         descriptor.Sec, descriptor.Frame).AppendLine();
                                     break;
                                 }
+
                                 default:
                                 {
                                     if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x63)
@@ -444,6 +448,7 @@ namespace DiscImageChef.Decoders.CD
 
                             break;
                         }
+
                         case 5:
                         {
                             switch(descriptor.POINT)
@@ -474,6 +479,7 @@ namespace DiscImageChef.Decoders.CD
 
                                     break;
                                 }
+
                                 case 0xB1:
                                 {
                                     sb.AppendFormat("Number of skip interval pointers: {0}", descriptor.PMIN)
@@ -481,6 +487,7 @@ namespace DiscImageChef.Decoders.CD
                                     sb.AppendFormat("Number of skip track pointers: {0}", descriptor.PSEC).AppendLine();
                                     break;
                                 }
+
                                 case 0xB2:
                                 case 0xB3:
                                 case 0xB4:
@@ -494,6 +501,7 @@ namespace DiscImageChef.Decoders.CD
                                     sb.AppendFormat("Skip track {0}", descriptor.PFRAME).AppendLine();
                                     break;
                                 }
+
                                 case 0xC0:
                                 {
                                     sb.AppendFormat("Optimum recording power: 0x{0:X2}", descriptor.Min).AppendLine();
@@ -509,6 +517,7 @@ namespace DiscImageChef.Decoders.CD
                                            .AppendLine();
                                     break;
                                 }
+
                                 case 0xC1:
                                 {
                                     sb.AppendFormat("Copy of information of A1 from ATIP found");
@@ -521,6 +530,7 @@ namespace DiscImageChef.Decoders.CD
                                     sb.AppendFormat("PFRAME = {0}", descriptor.PFRAME).AppendLine();
                                     break;
                                 }
+
                                 case 0xCF:
                                 {
                                     if(descriptor.PHOUR > 0)
@@ -547,6 +557,7 @@ namespace DiscImageChef.Decoders.CD
 
                                     break;
                                 }
+
                                 default:
                                 {
                                     if(descriptor.POINT >= 0x01 && descriptor.POINT <= 0x40)
@@ -581,6 +592,7 @@ namespace DiscImageChef.Decoders.CD
 
                             break;
                         }
+
                         case 6:
                         {
                             uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);

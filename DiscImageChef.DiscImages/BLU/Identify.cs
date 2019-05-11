@@ -49,7 +49,6 @@ namespace DiscImageChef.DiscImages
             stream.Read(header, 0, 0x17);
 
             BluHeader tmpHdr = new BluHeader {DeviceName = new byte[0x0D]};
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             Array.Copy(header, 0, tmpHdr.DeviceName, 0, 0x0D);
             tmpHdr.DeviceType    = BigEndianBitConverter.ToUInt32(header, 0x0C) & 0x00FFFFFF;

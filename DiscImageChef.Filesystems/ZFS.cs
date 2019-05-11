@@ -169,8 +169,6 @@ namespace DiscImageChef.Filesystems
 
             if(!xdr) return false;
 
-            BigEndianBitConverter.IsLittleEndian = littleEndian;
-
             int offset = 8;
             while(offset < nvlist.Length)
             {
@@ -637,9 +635,9 @@ namespace DiscImageChef.Filesystems
         struct ZIO_Empty
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 472)]
-            public byte[] empty;
-            public ulong        magic;
-            public ZIO_Checksum checksum;
+            public readonly byte[] empty;
+            public readonly ulong        magic;
+            public readonly ZIO_Checksum checksum;
         }
 
         /// <summary>
@@ -648,10 +646,10 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NVS_Method
         {
-            public byte encoding;
-            public byte endian;
-            public byte reserved1;
-            public byte reserved2;
+            public readonly byte encoding;
+            public readonly byte endian;
+            public readonly byte reserved1;
+            public readonly byte reserved2;
         }
 
         /// <summary>
@@ -660,9 +658,9 @@ namespace DiscImageChef.Filesystems
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct NVS_XDR_Header
         {
-            public NVS_Method encodingAndEndian;
-            public uint       version;
-            public uint       flags;
+            public readonly NVS_Method encodingAndEndian;
+            public readonly uint       version;
+            public readonly uint       flags;
         }
 
         enum NVS_DataTypes : uint
@@ -732,7 +730,7 @@ namespace DiscImageChef.Filesystems
         struct DVA
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public ulong[] word;
+            public readonly ulong[] word;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -742,40 +740,40 @@ namespace DiscImageChef.Filesystems
             ///     Data virtual address
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public DVA[] dataVirtualAddress;
+            public readonly DVA[] dataVirtualAddress;
             /// <summary>
             ///     Block properties
             /// </summary>
-            public ulong properties;
+            public readonly ulong properties;
             /// <summary>
             ///     Reserved for future expansion
             /// </summary>
-            public ulong[] padding;
+            public readonly ulong[] padding;
             /// <summary>
             ///     TXG when block was allocated
             /// </summary>
-            public ulong birthTxg;
+            public readonly ulong birthTxg;
             /// <summary>
             ///     Transaction group at birth
             /// </summary>
-            public ulong birth;
+            public readonly ulong birth;
             /// <summary>
             ///     Fill count
             /// </summary>
-            public ulong fill;
-            public ZIO_Checksum checksum;
+            public readonly ulong fill;
+            public readonly ZIO_Checksum checksum;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZFS_Uberblock
         {
-            public ulong            magic;
-            public ulong            spaVersion;
-            public ulong            lastTxg;
-            public ulong            guidSum;
-            public ulong            timestamp;
-            public SPA_BlockPointer mosPtr;
-            public ulong            softwareVersion;
+            public readonly ulong            magic;
+            public readonly ulong            spaVersion;
+            public readonly ulong            lastTxg;
+            public readonly ulong            guidSum;
+            public readonly ulong            timestamp;
+            public readonly SPA_BlockPointer mosPtr;
+            public readonly ulong            softwareVersion;
         }
     }
 }

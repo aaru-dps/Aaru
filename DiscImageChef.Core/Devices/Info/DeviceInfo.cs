@@ -106,6 +106,7 @@ namespace DiscImageChef.Core.Devices.Info
 
                     break;
                 }
+
                 case DeviceType.ATAPI:
                 {
                     bool sense = dev.AtapiIdentify(out byte[] ataBuf, out AtaErrorRegistersChs errorRegisters);
@@ -133,6 +134,7 @@ namespace DiscImageChef.Core.Devices.Info
                     // ATAPI devices are also SCSI devices
                     goto case DeviceType.SCSI;
                 }
+
                 case DeviceType.SCSI:
                 {
                     bool sense = dev.ScsiInquiry(out byte[] inqBuf, out byte[] senseBuf);
@@ -292,6 +294,7 @@ namespace DiscImageChef.Core.Devices.Info
                                         plxtDvd = true;
                                         break;
                                     }
+
                                     default:
                                     {
                                         if(dev.Model.StartsWith("CD-R   ", StringComparison.Ordinal))
@@ -307,7 +310,6 @@ namespace DiscImageChef.Core.Devices.Info
                                 {
                                     PlextorFeatures.Eeprom = plxtBuf;
 
-                                    BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
                                     if(plxtDvd)
                                     {
                                         PlextorFeatures.Discs        = BigEndianBitConverter.ToUInt16(plxtBuf, 0x0120);
@@ -420,6 +422,7 @@ namespace DiscImageChef.Core.Devices.Info
                                     KreonFeatures = krFeatures;
                             break;
                         }
+
                         case PeripheralDeviceTypes.SequentialAccess:
                         {
                             sense = dev.ReadBlockLimits(out byte[] seqBuf, out senseBuf, dev.Timeout, out _);
@@ -453,6 +456,7 @@ namespace DiscImageChef.Core.Devices.Info
 
                     break;
                 }
+
                 case DeviceType.MMC:
                 {
                     bool sense     = dev.ReadCid(out byte[] mmcBuf, out _, dev.Timeout, out _);

@@ -59,8 +59,9 @@ namespace DiscImageChef.Filesystems.UCSDPascal
             catalogBlocks = device.ReadSectors(multiplier * 2, multiplier);
 
             // On Apple //, it's little endian
-            BigEndianBitConverter.IsLittleEndian =
-                multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
+            // TODO: Fix
+            //BigEndianBitConverter.IsLittleEndian =
+            //    multiplier == 2 ? !BitConverter.IsLittleEndian : BitConverter.IsLittleEndian;
 
             mountedVolEntry.FirstBlock = BigEndianBitConverter.ToInt16(catalogBlocks, 0x00);
             mountedVolEntry.LastBlock  = BigEndianBitConverter.ToInt16(catalogBlocks, 0x02);

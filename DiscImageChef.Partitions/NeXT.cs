@@ -74,8 +74,6 @@ namespace DiscImageChef.Partitions
 
             partitions = new List<Partition>();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             ulong labelPosition = 0;
 
             foreach(ulong i in new ulong[] {0, 4, 15, 16}.TakeWhile(i => i + sectorOffset < imagePlugin.Info.Sectors))
@@ -221,22 +219,22 @@ namespace DiscImageChef.Partitions
         struct NeXTLabel
         {
             /// <summary>Signature</summary>
-            public uint dl_version;
+            public readonly uint dl_version;
             /// <summary>Block on which this label resides</summary>
-            public int dl_label_blkno;
+            public readonly int dl_label_blkno;
             /// <summary>Device size in blocks</summary>
-            public int dl_size;
+            public readonly int dl_size;
             /// <summary>Device name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] dl_label;
+            public readonly byte[] dl_label;
             /// <summary>Device flags</summary>
-            public uint dl_flags;
+            public readonly uint dl_flags;
             /// <summary>Device tag</summary>
-            public uint dl_tag;
+            public readonly uint dl_tag;
             /// <summary>Device info and partitions</summary>
             public NeXTDiskTab dl_dt;
             /// <summary>Checksum</summary>
-            public ushort dl_v3_checksum;
+            public readonly ushort dl_v3_checksum;
         }
 
         /// <summary>
@@ -246,25 +244,25 @@ namespace DiscImageChef.Partitions
         struct NeXTLabelOld
         {
             /// <summary>Signature</summary>
-            public uint dl_version;
+            public readonly uint dl_version;
             /// <summary>Block on which this label resides</summary>
-            public int dl_label_blkno;
+            public readonly int dl_label_blkno;
             /// <summary>Device size in blocks</summary>
-            public int dl_size;
+            public readonly int dl_size;
             /// <summary>Device name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] dl_label;
+            public readonly byte[] dl_label;
             /// <summary>Device flags</summary>
-            public uint dl_flags;
+            public readonly uint dl_flags;
             /// <summary>Device tag</summary>
-            public uint dl_tag;
+            public readonly uint dl_tag;
             /// <summary>Device info and partitions</summary>
-            public NeXTDiskTab dl_dt;
+            public readonly NeXTDiskTab dl_dt;
             /// <summary>Bad sector table</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1670)]
-            public int[] dl_bad;
+            public readonly int[] dl_bad;
             /// <summary>Checksum</summary>
-            public ushort dl_checksum;
+            public readonly ushort dl_checksum;
         }
 
         /// <summary>
@@ -275,45 +273,45 @@ namespace DiscImageChef.Partitions
         {
             /// <summary>Drive name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] d_name;
+            public readonly byte[] d_name;
             /// <summary>Drive type</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] d_type;
+            public readonly byte[] d_type;
             /// <summary>Sector size</summary>
-            public int d_secsize;
+            public readonly int d_secsize;
             /// <summary>tracks/cylinder</summary>
-            public int d_ntracks;
+            public readonly int d_ntracks;
             /// <summary>sectors/track</summary>
-            public int d_nsectors;
+            public readonly int d_nsectors;
             /// <summary>cylinders</summary>
-            public int d_ncylinders;
+            public readonly int d_ncylinders;
             /// <summary>revolutions/minute</summary>
-            public int d_rpm;
+            public readonly int d_rpm;
             /// <summary>size of front porch in sectors</summary>
-            public short d_front;
+            public readonly short d_front;
             /// <summary>size of back porch in sectors</summary>
-            public short d_back;
+            public readonly short d_back;
             /// <summary>number of alt groups</summary>
-            public short d_ngroups;
+            public readonly short d_ngroups;
             /// <summary>alt group size in sectors</summary>
-            public short d_ag_size;
+            public readonly short d_ag_size;
             /// <summary>alternate sectors per alt group</summary>
-            public short d_ag_alts;
+            public readonly short d_ag_alts;
             /// <summary>sector offset to first alternate</summary>
-            public short d_ag_off;
+            public readonly short d_ag_off;
             /// <summary>"blk 0" boot locations</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public int[] d_boot0_blkno;
+            public readonly int[] d_boot0_blkno;
             /// <summary>default bootfile</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] d_bootfile;
+            public readonly byte[] d_bootfile;
             /// <summary>host name</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] d_hostname;
+            public readonly byte[] d_hostname;
             /// <summary>root partition</summary>
-            public byte d_rootpartition;
+            public readonly byte d_rootpartition;
             /// <summary>r/w partition</summary>
-            public byte d_rwpartition;
+            public readonly byte d_rwpartition;
             /// <summary>partitions</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public NeXTEntry[] d_partitions;
@@ -326,31 +324,31 @@ namespace DiscImageChef.Partitions
         struct NeXTEntry
         {
             /// <summary>Sector of start, counting from front porch</summary>
-            public int p_base;
+            public readonly int p_base;
             /// <summary>Length in sectors</summary>
-            public int p_size;
+            public readonly int p_size;
             /// <summary>Filesystem's block size</summary>
-            public short p_bsize;
+            public readonly short p_bsize;
             /// <summary>Filesystem's fragment size</summary>
-            public short p_fsize;
+            public readonly short p_fsize;
             /// <summary>'s'pace or 't'ime</summary>
-            public byte p_opt;
+            public readonly byte p_opt;
             /// <summary>Cylinders per group</summary>
-            public short p_cpg;
+            public readonly short p_cpg;
             /// <summary>Bytes per inode</summary>
-            public short p_density;
+            public readonly short p_density;
             /// <summary>% of minimum free space</summary>
-            public byte p_minfree;
+            public readonly byte p_minfree;
             /// <summary>Should newfs be run on first start?</summary>
-            public byte p_newfs;
+            public readonly byte p_newfs;
             /// <summary>Mount point or empty if mount where you want</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] p_mountpt;
+            public readonly byte[] p_mountpt;
             /// <summary>Should automount</summary>
-            public byte p_automnt;
+            public readonly byte p_automnt;
             /// <summary>Filesystem type, always "4.3BSD"?</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            public byte[] p_type;
+            public readonly byte[] p_type;
         }
     }
 }

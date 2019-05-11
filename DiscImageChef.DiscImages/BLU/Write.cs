@@ -314,7 +314,6 @@ namespace DiscImageChef.DiscImages
                 return false;
             }
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             byte[] markerTag = Encoding.UTF8.GetBytes("DiscImageChef " + Version.GetVersion());
             byte[] driveName;
             byte[] driveType      = new byte[3];

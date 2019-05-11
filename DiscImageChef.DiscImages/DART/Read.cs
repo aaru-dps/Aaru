@@ -103,8 +103,6 @@ namespace DiscImageChef.DiscImages
                 bLength  = new short[BLOCK_ARRAY_LEN_HIGH];
             else bLength = new short[BLOCK_ARRAY_LEN_LOW];
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             for(int i = 0; i < bLength.Length; i++)
             {
                 byte[] tmpShort = new byte[2];

@@ -53,9 +53,6 @@ namespace DiscImageChef.Filesystems.LisaFS
 
                 if(!imagePlugin.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return false;
 
-                // LisaOS is big-endian
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
                 if(imagePlugin.Info.Sectors < 800) return false;
 
@@ -133,9 +130,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                 if(imagePlugin.Info.ReadableSectorTags == null) return;
 
                 if(!imagePlugin.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag)) return;
-
-                // LisaOS is big-endian
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
                 if(imagePlugin.Info.Sectors < 800) return;

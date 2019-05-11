@@ -47,8 +47,7 @@ namespace DiscImageChef.DiscImages
             Stream stream = imageFilter.GetDataForkStream();
             stream.Seek(0, SeekOrigin.Begin);
 
-            imageHeader                          = new BluHeader {DeviceName = new byte[0x0D]};
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            imageHeader = new BluHeader {DeviceName = new byte[0x0D]};
 
             byte[] header = new byte[0x17];
             stream.Read(header, 0, 0x17);

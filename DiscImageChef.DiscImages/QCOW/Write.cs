@@ -176,8 +176,6 @@ namespace DiscImageChef.DiscImages
 
             writingStream.Seek((long)(l1Table[l1Off] + l2Off * 8), SeekOrigin.Begin);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             byte[] entry = new byte[8];
             writingStream.Read(entry, 0, 8);
             ulong offset = BigEndianBitConverter.ToUInt64(entry, 0);
@@ -257,7 +255,6 @@ namespace DiscImageChef.DiscImages
 
             qHdr.mtime = (uint)(DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             writingStream.Seek(0, SeekOrigin.Begin);
             writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.magic),               0, 4);
             writingStream.Write(BigEndianBitConverter.GetBytes(qHdr.version),             0, 4);

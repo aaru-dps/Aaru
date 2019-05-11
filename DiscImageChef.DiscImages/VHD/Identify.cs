@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using DiscImageChef.CommonTypes.Interfaces;
 
@@ -52,7 +51,6 @@ namespace DiscImageChef.DiscImages
             imageStream.Seek(0, SeekOrigin.Begin);
             imageStream.Read(headerCookieBytes, 0, 8);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             ulong headerCookie = BigEndianBitConverter.ToUInt64(headerCookieBytes, 0);
             ulong footerCookie = BigEndianBitConverter.ToUInt64(footerCookieBytes, 0);
 

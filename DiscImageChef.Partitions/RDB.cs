@@ -281,8 +281,7 @@ namespace DiscImageChef.Partitions
 
         public bool GetInformation(IMediaImage imagePlugin, out List<Partition> partitions, ulong sectorOffset)
         {
-            partitions                           = new List<Partition>();
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
+            partitions = new List<Partition>();
             ulong rdbBlock = 0;
             bool  foundRdb = false;
 
@@ -625,7 +624,7 @@ namespace DiscImageChef.Partitions
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bootPriority = {0}",
                                           partEntry.DosEnvVec.BootPriority);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.dosType = {0}",
-                                          AmigaDosTypeToString(partEntry.DosEnvVec.DosType, true));
+                                          AmigaDosTypeToString(partEntry.DosEnvVec.DosType));
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.baud = {0}",
                                           partEntry.DosEnvVec.Baud);
                 DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.control = 0x{0:X8}",

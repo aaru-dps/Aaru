@@ -67,9 +67,6 @@ namespace DiscImageChef.Filesystems.LisaFS
                     return Errno.InOutError;
                 }
 
-                // LisaOS is big-endian
-                BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
                 if(device.Info.Sectors < 800)
                 {

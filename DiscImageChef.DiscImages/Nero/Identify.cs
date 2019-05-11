@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.IO;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
@@ -41,9 +40,7 @@ namespace DiscImageChef.DiscImages
     {
         public bool Identify(IFilter imageFilter)
         {
-            imageStream                          = imageFilter.GetDataForkStream();
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
+            imageStream = imageFilter.GetDataForkStream();
             NeroV1Footer footerV1 = new NeroV1Footer();
             NeroV2Footer footerV2 = new NeroV2Footer();
 

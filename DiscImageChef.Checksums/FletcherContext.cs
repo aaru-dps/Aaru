@@ -32,7 +32,6 @@
 
 // Disabled because the speed is abnormally slow
 
-using System;
 using System.IO;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
@@ -85,7 +84,6 @@ namespace DiscImageChef.Checksums
         public byte[] Final()
         {
             uint finalSum = (uint)((sum2 << 16) | sum1);
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
@@ -97,7 +95,6 @@ namespace DiscImageChef.Checksums
             uint          finalSum       = (uint)((sum2 << 16) | sum1);
             StringBuilder fletcherOutput = new StringBuilder();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
                 fletcherOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
 
@@ -134,8 +131,7 @@ namespace DiscImageChef.Checksums
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder fletcherOutput = new StringBuilder();
 
@@ -165,8 +161,7 @@ namespace DiscImageChef.Checksums
 
             uint finalSum = (uint)((localSum2 << 16) | localSum1);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 
@@ -229,7 +224,6 @@ namespace DiscImageChef.Checksums
         public byte[] Final()
         {
             ushort finalSum = (ushort)((sum2 << 8) | sum1);
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
@@ -241,7 +235,6 @@ namespace DiscImageChef.Checksums
             ushort        finalSum       = (ushort)((sum2 << 8) | sum1);
             StringBuilder fletcherOutput = new StringBuilder();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
                 fletcherOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
 
@@ -278,8 +271,7 @@ namespace DiscImageChef.Checksums
 
             ushort finalSum = (ushort)((localSum2 << 8) | localSum1);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder fletcherOutput = new StringBuilder();
 
@@ -309,8 +301,7 @@ namespace DiscImageChef.Checksums
 
             ushort finalSum = (ushort)((localSum2 << 8) | localSum1);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-            hash                                 = BigEndianBitConverter.GetBytes(finalSum);
+            hash = BigEndianBitConverter.GetBytes(finalSum);
 
             StringBuilder adlerOutput = new StringBuilder();
 

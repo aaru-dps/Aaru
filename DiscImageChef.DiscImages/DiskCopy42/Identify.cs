@@ -55,8 +55,6 @@ namespace DiscImageChef.DiscImages
 
             Array.Copy(buffer, 0, pString, 0, 64);
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             tmpHeader.DiskName     = StringHandlers.PascalToString(pString, Encoding.GetEncoding("macintosh"));
             tmpHeader.DataSize     = BigEndianBitConverter.ToUInt32(buffer, 0x40);
             tmpHeader.TagSize      = BigEndianBitConverter.ToUInt32(buffer, 0x44);
