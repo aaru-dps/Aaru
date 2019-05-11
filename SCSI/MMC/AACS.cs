@@ -227,8 +227,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             AACSVolumeIdentifier decoded = new AACSVolumeIdentifier();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             decoded.VolumeIdentifier = new byte[AACSVIResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSVIResponse, 0);
@@ -268,8 +266,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(AACSMSNResponse == null) return null;
 
             AACSMediaSerialNumber decoded = new AACSMediaSerialNumber();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.MediaSerialNumber = new byte[AACSMSNResponse.Length - 4];
 
@@ -311,8 +307,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             AACSMediaIdentifier decoded = new AACSMediaIdentifier();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             decoded.MediaIdentifier = new byte[AACSMIResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSMIResponse, 0);
@@ -352,8 +346,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
             if(AACSMKBResponse == null) return null;
 
             AACSMediaKeyBlock decoded = new AACSMediaKeyBlock();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
 
             decoded.MediaKeyBlockPacks = new byte[AACSMKBResponse.Length - 4];
 
@@ -396,8 +388,6 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             AACSDataKeys decoded = new AACSDataKeys();
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
             decoded.DataKeys = new byte[AACSDKResponse.Length - 4];
 
             decoded.DataLength = BigEndianBitConverter.ToUInt16(AACSDKResponse, 0);
@@ -436,13 +426,12 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(AACSLBAExtsResponse == null) return null;
 
-            AACSLBAExtentsResponse decoded = new AACSLBAExtentsResponse();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength    = BigEndianBitConverter.ToUInt16(AACSLBAExtsResponse, 0);
-            decoded.Reserved      = AACSLBAExtsResponse[2];
-            decoded.MaxLBAExtents = AACSLBAExtsResponse[3];
+            AACSLBAExtentsResponse decoded = new AACSLBAExtentsResponse
+            {
+                DataLength    = BigEndianBitConverter.ToUInt16(AACSLBAExtsResponse, 0),
+                Reserved      = AACSLBAExtsResponse[2],
+                MaxLBAExtents = AACSLBAExtsResponse[3]
+            };
 
             if((AACSLBAExtsResponse.Length - 4) % 16 != 0) return decoded;
 

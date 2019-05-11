@@ -85,15 +85,14 @@ namespace DiscImageChef.Decoders.SCSI.MMC
         {
             if(CPRMMKBResponse == null) return null;
 
-            CPRMMediaKeyBlock decoded = new CPRMMediaKeyBlock();
+            CPRMMediaKeyBlock decoded = new CPRMMediaKeyBlock
+            {
+                MKBPackData = new byte[CPRMMKBResponse.Length - 4],
+                DataLength  = BigEndianBitConverter.ToUInt16(CPRMMKBResponse, 0),
+                Reserved    = CPRMMKBResponse[2],
+                TotalPacks  = CPRMMKBResponse[3]
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.MKBPackData = new byte[CPRMMKBResponse.Length - 4];
-
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(CPRMMKBResponse, 0);
-            decoded.Reserved   = CPRMMKBResponse[2];
-            decoded.TotalPacks = CPRMMKBResponse[3];
             Array.Copy(CPRMMKBResponse, 4, decoded.MKBPackData, 0, CPRMMKBResponse.Length - 4);
 
             return decoded;

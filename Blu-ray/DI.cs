@@ -83,13 +83,12 @@ namespace DiscImageChef.Decoders.Bluray
                 return null;
             }
 
-            DiscInformation decoded = new DiscInformation();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(DIResponse, 0);
-            decoded.Reserved1  = DIResponse[2];
-            decoded.Reserved2  = DIResponse[3];
+            DiscInformation decoded = new DiscInformation
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(DIResponse, 0),
+                Reserved1  = DIResponse[2],
+                Reserved2  = DIResponse[3]
+            };
 
             int                        offset = 4;
             List<DiscInformationUnits> units  = new List<DiscInformationUnits>();
@@ -141,6 +140,7 @@ namespace DiscImageChef.Decoders.Bluray
                         Array.Copy(DIResponse, 32 + offset, unit.FormatDependentContents, 0, 32);
                         break;
                     }
+
                     case DiscTypeBDRE:
                     case DiscTypeBDR:
                     {
@@ -156,6 +156,7 @@ namespace DiscImageChef.Decoders.Bluray
                         offset += 14;
                         break;
                     }
+
                     default:
                     {
                         DicConsole.DebugWriteLine("BD Disc Information decoder",

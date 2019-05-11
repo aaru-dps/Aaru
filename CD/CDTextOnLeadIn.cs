@@ -194,14 +194,14 @@ namespace DiscImageChef.Decoders.CD
         {
             if(CDTextResponse == null) return null;
 
-            CDText decoded = new CDText();
+            CDText decoded = new CDText
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(CDTextResponse, 0),
+                Reserved1  = CDTextResponse[2],
+                Reserved2  = CDTextResponse[3]
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(CDTextResponse, 0);
-            decoded.Reserved1  = CDTextResponse[2];
-            decoded.Reserved2  = CDTextResponse[3];
-            decoded.DataPacks  = new CDTextPack[(decoded.DataLength - 2) / 18];
+            decoded.DataPacks = new CDTextPack[(decoded.DataLength - 2) / 18];
 
             if(decoded.DataLength == 2) return null;
 
@@ -260,6 +260,7 @@ namespace DiscImageChef.Decoders.CD
                             else sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                             break;
                         }
+
                         case 0x81:
                         {
                             sb.Append("CD-Text pack contains performer for ");
@@ -267,6 +268,7 @@ namespace DiscImageChef.Decoders.CD
                             else sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                             break;
                         }
+
                         case 0x82:
                         {
                             sb.Append("CD-Text pack contains songwriter for ");
@@ -274,12 +276,14 @@ namespace DiscImageChef.Decoders.CD
                             else sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                             break;
                         }
+
                         case 0x83:
                         {
                             if(descriptor.HeaderID2 == 0x00) sb.AppendLine("album");
                             else sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                             break;
                         }
+
                         case 0x84:
                         {
                             sb.Append("CD-Text pack contains arranger for ");
@@ -287,6 +291,7 @@ namespace DiscImageChef.Decoders.CD
                             else sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                             break;
                         }
+
                         case 0x85:
                         {
                             sb.Append("CD-Text pack contains content provider's message for ");
@@ -294,26 +299,31 @@ namespace DiscImageChef.Decoders.CD
                             else sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                             break;
                         }
+
                         case 0x86:
                         {
                             sb.AppendLine("CD-Text pack contains disc identification information");
                             break;
                         }
+
                         case 0x87:
                         {
                             sb.AppendLine("CD-Text pack contains genre identification information");
                             break;
                         }
+
                         case 0x88:
                         {
                             sb.AppendLine("CD-Text pack contains table of contents information");
                             break;
                         }
+
                         case 0x89:
                         {
                             sb.AppendLine("CD-Text pack contains second table of contents information");
                             break;
                         }
+
                         case 0x8A:
                         case 0x8B:
                         case 0x8C:
@@ -321,17 +331,20 @@ namespace DiscImageChef.Decoders.CD
                             sb.AppendLine("CD-Text pack contains reserved data");
                             break;
                         }
+
                         case 0x8D:
                         {
                             sb.AppendLine("CD-Text pack contains data reserved for content provider only");
                             break;
                         }
+
                         case 0x8E:
                         {
                             if(descriptor.HeaderID2 == 0x00) sb.AppendLine("CD-Text pack contains UPC");
                             else sb.AppendFormat("track {0}", descriptor.HeaderID2).AppendLine();
                             break;
                         }
+
                         case 0x8F:
                         {
                             sb.AppendLine("CD-Text pack contains size block information");
@@ -359,6 +372,7 @@ namespace DiscImageChef.Decoders.CD
                                                                      Encoding.GetEncoding("iso-8859-1"))).AppendLine();
                             break;
                         }
+
                         default:
                         {
                             sb.AppendFormat("Binary contents: {0}",

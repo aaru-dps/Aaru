@@ -70,14 +70,14 @@ namespace DiscImageChef.Decoders.Bluray
         {
             if(DDSResponse == null) return null;
 
-            DiscDefinitionStructure decoded = new DiscDefinitionStructure();
+            DiscDefinitionStructure decoded = new DiscDefinitionStructure
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(DDSResponse, 0),
+                Reserved1  = DDSResponse[2],
+                Reserved2  = DDSResponse[3],
+                Signature  = BigEndianBitConverter.ToUInt16(DDSResponse, 4)
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(DDSResponse, 0);
-            decoded.Reserved1  = DDSResponse[2];
-            decoded.Reserved2  = DDSResponse[3];
-            decoded.Signature  = BigEndianBitConverter.ToUInt16(DDSResponse, 4);
             if(decoded.Signature != DDSIdentifier)
             {
                 DicConsole.DebugWriteLine("BD DDS decoder", "Found incorrect DDS signature (0x{0:X4})",

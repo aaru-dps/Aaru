@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
@@ -140,13 +139,13 @@ namespace DiscImageChef.Decoders.CD
         {
             if(CDPMAResponse == null) return null;
 
-            CDPMA decoded = new CDPMA();
+            CDPMA decoded = new CDPMA
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(CDPMAResponse, 0),
+                Reserved1  = CDPMAResponse[2],
+                Reserved2  = CDPMAResponse[3]
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength     = BigEndianBitConverter.ToUInt16(CDPMAResponse, 0);
-            decoded.Reserved1      = CDPMAResponse[2];
-            decoded.Reserved2      = CDPMAResponse[3];
             decoded.PMADescriptors = new CDPMADescriptors[(decoded.DataLength - 2) / 11];
 
             if(decoded.DataLength + 2 != CDPMAResponse.Length)

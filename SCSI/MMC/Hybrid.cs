@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -112,20 +111,18 @@ namespace DiscImageChef.Decoders.SCSI.MMC
 
             if(FormatLayersResponse.Length < 8) return null;
 
-            RecognizedFormatLayers decoded = new RecognizedFormatLayers();
-
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength         = BigEndianBitConverter.ToUInt16(FormatLayersResponse, 0);
-            decoded.Reserved1          = FormatLayersResponse[2];
-            decoded.Reserved2          = FormatLayersResponse[3];
-            decoded.NumberOfLayers     = FormatLayersResponse[4];
-            decoded.Reserved3          = (byte)((FormatLayersResponse[5] & 0xC0) >> 6);
-            decoded.DefaultFormatLayer = (byte)((FormatLayersResponse[5] & 0x30) >> 4);
-            decoded.Reserved4          = (byte)((FormatLayersResponse[5] & 0x0C) >> 2);
-            decoded.OnlineFormatLayer  = (byte)(FormatLayersResponse[5] & 0x03);
-
-            decoded.FormatLayers = new ushort[(FormatLayersResponse.Length - 6) / 2];
+            RecognizedFormatLayers decoded = new RecognizedFormatLayers
+            {
+                DataLength         = BigEndianBitConverter.ToUInt16(FormatLayersResponse, 0),
+                Reserved1          = FormatLayersResponse[2],
+                Reserved2          = FormatLayersResponse[3],
+                NumberOfLayers     = FormatLayersResponse[4],
+                Reserved3          = (byte)((FormatLayersResponse[5] & 0xC0) >> 6),
+                DefaultFormatLayer = (byte)((FormatLayersResponse[5] & 0x30) >> 4),
+                Reserved4          = (byte)((FormatLayersResponse[5] & 0x0C) >> 2),
+                OnlineFormatLayer  = (byte)(FormatLayersResponse[5] & 0x03),
+                FormatLayers       = new ushort[(FormatLayersResponse.Length - 6) / 2]
+            };
 
             for(int i = 0; i < (FormatLayersResponse.Length - 6) / 2; i++)
                 decoded.FormatLayers[i] = BigEndianBitConverter.ToUInt16(FormatLayersResponse, i * 2 + 6);
@@ -153,6 +150,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                         if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
+
                     case (ushort)FormatLayerTypeCodes.CDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type CD", i).AppendLine();
@@ -160,6 +158,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                         if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
+
                     case (ushort)FormatLayerTypeCodes.DVDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type DVD", i).AppendLine();
@@ -167,6 +166,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                         if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
+
                     case (ushort)FormatLayerTypeCodes.HDDVDLayer:
                     {
                         sb.AppendFormat("Layer {0} is of type HD DVD", i).AppendLine();
@@ -174,6 +174,7 @@ namespace DiscImageChef.Decoders.SCSI.MMC
                         if(response.OnlineFormatLayer  == i) sb.AppendLine("This is the layer actually in use.");
                         break;
                     }
+
                     default:
                     {
                         sb.AppendFormat("Layer {0} is of unknown type 0x{1:X4}", i, response.FormatLayers[i])

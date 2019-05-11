@@ -30,7 +30,6 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using DiscImageChef.Console;
@@ -115,14 +114,14 @@ namespace DiscImageChef.Decoders.CD
         {
             if(CDSessionInfoResponse == null) return null;
 
-            CDSessionInfo decoded = new CDSessionInfo();
+            CDSessionInfo decoded = new CDSessionInfo
+            {
+                DataLength           = BigEndianBitConverter.ToUInt16(CDSessionInfoResponse, 0),
+                FirstCompleteSession = CDSessionInfoResponse[2],
+                LastCompleteSession  = CDSessionInfoResponse[3]
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength           = BigEndianBitConverter.ToUInt16(CDSessionInfoResponse, 0);
-            decoded.FirstCompleteSession = CDSessionInfoResponse[2];
-            decoded.LastCompleteSession  = CDSessionInfoResponse[3];
-            decoded.TrackDescriptors     = new TrackDataDescriptor[(decoded.DataLength - 2) / 8];
+            decoded.TrackDescriptors = new TrackDataDescriptor[(decoded.DataLength - 2) / 8];
 
             if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
             {

@@ -70,14 +70,14 @@ namespace DiscImageChef.Decoders.Bluray
                 return null;
             }
 
-            BurstCuttingArea decoded = new BurstCuttingArea();
+            BurstCuttingArea decoded = new BurstCuttingArea
+            {
+                DataLength = BigEndianBitConverter.ToUInt16(BCAResponse, 0),
+                Reserved1  = BCAResponse[2],
+                Reserved2  = BCAResponse[3],
+                BCA        = new byte[64]
+            };
 
-            BigEndianBitConverter.IsLittleEndian = BitConverter.IsLittleEndian;
-
-            decoded.DataLength = BigEndianBitConverter.ToUInt16(BCAResponse, 0);
-            decoded.Reserved1  = BCAResponse[2];
-            decoded.Reserved2  = BCAResponse[3];
-            decoded.BCA        = new byte[64];
             Array.Copy(BCAResponse, 4, decoded.BCA, 0, 64);
 
             return decoded;
