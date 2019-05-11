@@ -41,19 +41,22 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class F2Fs
     {
-        readonly string[] testfiles = {"linux.vdi.lz"};
+        readonly string[] testfiles = {"linux.vdi.lz", "linux_4.19_f2fs_flashdrive.vdi.lz"};
 
-        readonly ulong[] sectors = {262144};
+        readonly ulong[] sectors = {262144, 2097152};
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {32512};
+        readonly long[] clusters = {32512, 261888};
 
-        readonly int[] clustersize = {4096};
+        readonly int[] clustersize = {4096, 4096};
 
-        readonly string[] volumename = {"VolumeLabel"};
+        readonly string[] volumename = {"VolumeLabel", "DicSetter"};
 
-        readonly string[] volumeserial = {"81bd3a4e-de0c-484c-becc-aaa479b2070a"};
+        readonly string[] volumeserial =
+        {
+            "81bd3a4e-de0c-484c-becc-aaa479b2070a", "422bd2a8-68ab-6f45-9a04-9c264d07dd6e"
+        };
 
         [Test]
         public void Test()

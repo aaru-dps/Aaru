@@ -40,17 +40,24 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class Reiser3
     {
-        readonly string[] testfiles = {"linux_r3.5.vdi.lz", "linux_r3.6.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "linux_r3.5.vdi.lz", "linux_r3.6.vdi.lz", "linux_4.19_reiser_3.5_flashdrive.vdi.lz",
+            "linux_4.19_reiser_3.6_flashdrive.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {262144, 262144};
+        readonly ulong[] sectors = {262144, 262144, 1024000, 1024000};
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize = {512, 512, 512, 512};
 
-        readonly long[] clusters = {32512, 32512};
+        readonly long[] clusters = {32512, 32512, 127744, 127744};
 
-        readonly int[] clustersize = {4096, 4096};
+        readonly int[] clustersize = {4096, 4096, 4096, 4096};
 
-        readonly string[] reiserversion = {"Reiser 3.5 filesystem", "Reiser 3.6 filesystem"};
+        readonly string[] reiserversion =
+        {
+            "Reiser 3.5 filesystem", "Reiser 3.6 filesystem", "Reiser 3.5 filesystem", "Reiser 3.6 filesystem"
+        };
 
         [Test]
         public void Test()

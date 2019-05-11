@@ -93,17 +93,17 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class MinixV1Mbr
     {
-        readonly string[] testfiles = {"linux.vdi.lz", "minix_3.1.2a.vdi.lz"};
+        readonly string[] testfiles = {"linux.vdi.lz", "minix_3.1.2a.vdi.lz", "linux_4.19_minix1_flashdrive.vdi.lz"};
 
-        readonly ulong[] sectors = {262144, 102400};
+        readonly ulong[] sectors = {262144, 102400, 131072};
 
-        readonly uint[] sectorsize = {512, 512};
+        readonly uint[] sectorsize = {512, 512, 512};
 
-        readonly long[] clusters = {65535, 50399};
+        readonly long[] clusters = {65535, 50399, 64512};
 
-        readonly int[] clustersize = {1024, 1024};
+        readonly int[] clustersize = {1024, 1024, 1024};
 
-        readonly string[] types = {"Minix v1", "Minix 3 v1"};
+        readonly string[] types = {"Minix v1", "Minix 3 v1", "Minix v1"};
 
         [Test]
         public void Test()
@@ -193,17 +193,17 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class MinixV2Mbr
     {
-        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz"};
+        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz", "linux_4.19_minix2_flashdrive.vdi.lz"};
 
-        readonly ulong[] sectors = {1024000};
+        readonly ulong[] sectors = {1024000, 1024000};
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {511055};
+        readonly long[] clusters = {511055, 510976};
 
-        readonly int[] clustersize = {1024};
+        readonly int[] clustersize = {1024, 1024};
 
-        readonly string[] types = {"Minix 3 v2"};
+        readonly string[] types = {"Minix 3 v2", "Minix v2"};
 
         [Test]
         public void Test()
@@ -293,17 +293,17 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class MinixV3Mbr
     {
-        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz"};
+        readonly string[] testfiles = {"minix_3.1.2a.vdi.lz", "linux_4.19_minix3_flashdrive.vdi.lz"};
 
-        readonly ulong[] sectors = {4194304};
+        readonly ulong[] sectors = {4194304, 1024000};
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {523151};
+        readonly long[] clusters = {523151, 510976};
 
-        readonly int[] clustersize = {4096};
+        readonly int[] clustersize = {4096, 1024};
 
-        readonly string[] types = {"Minix v3"};
+        readonly string[] types = {"Minix v3", "Minix v3"};
 
         [Test]
         public void Test()

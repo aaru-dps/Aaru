@@ -142,19 +142,23 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class ExFatMbr
     {
-        readonly string[] testfiles = {"linux.vdi.lz", "macosx_10.11.vdi.lz", "win10.vdi.lz", "winvista.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "linux.vdi.lz", "macosx_10.11.vdi.lz", "win10.vdi.lz", "winvista.vdi.lz",
+            "linux_4.19_exfat_flashdrive.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {262144, 262144, 262144, 262144};
+        readonly ulong[] sectors = {262144, 262144, 262144, 262144, 1024000};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {32464, 32712, 32448, 32208};
+        readonly long[] clusters = {32464, 32712, 32448, 32208, 15964};
 
-        readonly int[] clustersize = {4096, 4096, 4096, 4096};
+        readonly int[] clustersize = {4096, 4096, 4096, 4096, 32768};
 
-        readonly string[] volumename = {null, null, null, null};
+        readonly string[] volumename = {null, null, null, null, null};
 
-        readonly string[] volumeserial = {"603565AC", "595AC21E", "20126663", "0AC5CA52"};
+        readonly string[] volumeserial = {"603565AC", "595AC21E", "20126663", "0AC5CA52", "636E083B"};
 
         [Test]
         public void Test()

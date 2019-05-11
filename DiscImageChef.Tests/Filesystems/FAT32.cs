@@ -154,51 +154,55 @@ namespace DiscImageChef.Tests.Filesystems
             "win2000.vdi.lz", "win95osr2.1.vdi.lz", "win95osr2.5.vdi.lz", "win95osr2.vdi.lz", "win98se.vdi.lz",
             "win98.vdi.lz", "winme.vdi.lz", "winvista.vdi.lz", "beos_r4.5.vdi.lz", "linux.vdi.lz", "aros.vdi.lz",
             "freebsd_6.1.vdi.lz", "freebsd_7.0.vdi.lz", "freebsd_8.2.vdi.lz", "freedos_1.2.vdi.lz",
-            "ecs20_fstester.vdi.lz"
+            "ecs20_fstester.vdi.lz", "linux_2.2_umsdos32_flashdrive.vdi.lz",
+            "linux_4.19_fat32_msdos_flashdrive.vdi.lz", "linux_4.19_vfat32_flashdrive.vdi.lz"
         };
 
         readonly ulong[] sectors =
         {
             8388608, 8388608, 8388608, 4194304, 4194304, 8388608, 4194304, 4194304, 4194304, 4194304, 4194304,
-            4194304, 4194304, 4194304, 262144, 4194304, 4194304, 4194304, 4194304, 8388608, 1024000
+            4194304, 4194304, 4194304, 262144, 4194304, 4194304, 4194304, 4194304, 8388608, 1024000, 1024000,
+            1024000, 1024000
         };
 
         readonly uint[] sectorsize =
         {
-            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512
+            512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512,
+            512, 512, 512
         };
 
         readonly long[] clusters =
         {
             1048233, 1048233, 1048233, 524287, 524016, 1048233, 524152, 524152, 524152, 524112, 524112, 524112,
-            523520, 1048560, 260096, 524160, 524112, 524112, 65514, 1048233, 127744
+            523520, 1048560, 260096, 524160, 524112, 524112, 65514, 1048233, 127744, 127882, 127744, 127744
         };
 
         readonly int[] clustersize =
         {
             4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 2048, 512, 4096, 4096,
-            4096, 32768, 4096, 4096
+            4096, 32768, 4096, 4096, 4096, 4096, 4096
         };
 
         readonly string[] volumename =
         {
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
             "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL",
-            "VolumeLabel", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "Volume labe"
+            "VolumeLabel", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "VOLUMELABEL", "Volume labe",
+            "DICSETTER", "DICSETTER", "DICSETTER"
         };
 
         readonly string[] volumeserial =
         {
             "5955996C", "1BFB1A43", "3B331809", "42D51EF1", "48073346", "EC62E6DE", "2A310DE4", "0C140DFC",
             "3E310D18", "0D3D0EED", "0E131162", "3F500F02", "82EB4C04", "00000000", "B488C502", "5CAC9B4E",
-            "41540E0E", "4E600E0F", "26E20E0F", "3E0C1BE8", "63084BBA"
+            "41540E0E", "4E600E0F", "26E20E0F", "3E0C1BE8", "63084BBA", "5CC7908D", "D1290612", "79BCA86E"
         };
 
         readonly string[] oemid =
         {
             "DRDOS7.X", "IBM  7.1", "MSWIN4.1", "BSD  4.4", "MSDOS5.0", "MSDOS5.0", "MSWIN4.1", "MSWIN4.1",
             "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSWIN4.1", "MSDOS5.0", "BeOS    ", "mkfs.fat", "MSWIN4.1",
-            "BSD  4.4", "BSD  4.4", "BSD4.4  ", "FRDOS4.1", "mkfs.fat"
+            "BSD  4.4", "BSD  4.4", "BSD4.4  ", "FRDOS4.1", "mkfs.fat", "mkdosfs", "mkfs.fat", "mkfs.fat"
         };
 
         [Test]

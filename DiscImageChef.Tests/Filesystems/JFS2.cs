@@ -40,22 +40,27 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class Jfs2
     {
-        readonly string[] testfiles = {"linux.vdi.lz", "linux_caseinsensitive.vdi.lz", "ecs20_fstester.vdi.lz"};
+        readonly string[] testfiles =
+        {
+            "linux.vdi.lz", "linux_caseinsensitive.vdi.lz", "ecs20_fstester.vdi.lz",
+            "linux_4.19_jfs_flashdrive.vdi.lz", "linux_4.19_jfs_os2_flashdrive.vdi.lz"
+        };
 
-        readonly ulong[] sectors = {262144, 262144, 1024000};
+        readonly ulong[] sectors = {262144, 262144, 1024000, 1024000, 1024000};
 
-        readonly uint[] sectorsize = {512, 512, 512};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {257632, 257632, 1017512};
+        readonly long[] clusters = {257632, 257632, 1017512, 1017416, 1017416};
 
-        readonly int[] clustersize = {4096, 4096, 4096};
+        readonly int[] clustersize = {4096, 4096, 4096, 4096, 4096};
 
-        readonly string[] volumename = {"Volume labe", "Volume labe", "Volume labe"};
+        readonly string[] volumename = {"Volume labe", "Volume labe", "Volume labe", "DicSetter", "DicSetter"};
 
         readonly string[] volumeserial =
         {
             "8033b783-0cd1-1645-8ecc-f8f113ad6a47", "d6cd91e9-3899-7e40-8468-baab688ee2e2",
-            "f4077ce9-0000-0000-0000-000000007c10"
+            "f4077ce9-0000-0000-0000-000000007c10", "91746c77-eb51-7441-85e2-902c925969f8",
+            "08fc8e22-0201-894e-89c9-31ec3f546203"
         };
 
         [Test]

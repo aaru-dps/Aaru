@@ -41,19 +41,22 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class Btrfs
     {
-        readonly string[] testfiles = {"linux.vdi.lz"};
+        readonly string[] testfiles = {"linux.vdi.lz", "linux_4.19_btrfs_flashdrive.vdi.lz"};
 
-        readonly ulong[] sectors = {262144};
+        readonly ulong[] sectors = {262144, 1024000};
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {32512};
+        readonly long[] clusters = {32512, 127744};
 
-        readonly int[] clustersize = {4096};
+        readonly int[] clustersize = {4096, 4096};
 
-        readonly string[] volumename = {"VolumeLabel"};
+        readonly string[] volumename = {"VolumeLabel", "btrfs"};
 
-        readonly string[] volumeserial = {"a4fc5201-85cc-6840-8a68-998cab9ae897"};
+        readonly string[] volumeserial =
+        {
+            "a4fc5201-85cc-6840-8a68-998cab9ae897", "5af44541-0605-f541-af6d-c229576707ab"
+        };
 
         [Test]
         public void Test()

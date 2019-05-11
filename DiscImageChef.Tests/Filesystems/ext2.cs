@@ -44,27 +44,33 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "linux_ext2.vdi.lz", "linux_ext3.vdi.lz", "linux_ext4.vdi.lz", "netbsd_7.1.vdi.lz",
-            "netbsd_7.1_r0.vdi.lz"
+            "netbsd_7.1_r0.vdi.lz", "linux_4.19_ext2_flashdrive.vdi.lz", "linux_4.19_ext3_flashdrive.vdi.lz",
+            "linux_4.19_ext4_flashdrive.vdi.lz"
         };
 
-        readonly ulong[] sectors = {262144, 262144, 262144, 8388608, 2097152};
+        readonly ulong[] sectors = {262144, 262144, 262144, 8388608, 2097152, 1024000, 1024000, 1024000};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {130048, 130048, 130048, 1046567, 260135};
+        readonly long[] clusters = {130048, 130048, 130048, 1046567, 260135, 510976, 510976, 510976};
 
-        readonly int[] clustersize = {1024, 1024, 1024, 4096, 4096};
+        readonly int[] clustersize = {1024, 1024, 1024, 4096, 4096, 1024, 1024, 1024};
 
-        readonly string[] volumename = {"VolumeLabel", "VolumeLabel", "VolumeLabel", "Volume label", "Volume label"};
+        readonly string[] volumename =
+        {
+            "VolumeLabel", "VolumeLabel", "VolumeLabel", "Volume label", "Volume label", "DicSetter", "DicSetter",
+            "DicSetter"
+        };
 
         readonly string[] volumeserial =
         {
             "8e3992cf-7d98-e44a-b753-0591a35913eb", "1b411516-5415-4b42-95e6-1a247056a960",
             "b2f8f305-770f-ad47-abe4-f0484aa319e9", "e72aee05-627b-11e7-a573-0800272a08ec",
-            "072756f2-627c-11e7-a573-0800272a08ec"
+            "072756f2-627c-11e7-a573-0800272a08ec", "f5b2500f-99fb-764b-a6c4-c4db0b98a653",
+            "a3914b55-260f-7245-8c72-7ccdf45436cb", "10413797-43d1-6545-8fbc-6ebc9d328be9"
         };
 
-        readonly string[] extversion = {"ext2", "ext3", "ext4", "ext2", "ext2"};
+        readonly string[] extversion = {"ext2", "ext3", "ext4", "ext2", "ext2", "ext2", "ext3", "ext4"};
 
         [Test]
         public void Test()

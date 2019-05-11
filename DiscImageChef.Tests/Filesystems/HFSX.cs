@@ -159,25 +159,26 @@ namespace DiscImageChef.Tests.Filesystems
         readonly string[] testfiles =
         {
             "macosx_10.11.vdi.lz", "macosx_10.11_journal.vdi.lz", "linux.vdi.lz", "linux_journal.vdi.lz",
-            "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz"
+            "darwin_8.0.1_journal.vdi.lz", "darwin_8.0.1.vdi.lz", "linux_4.19_hfsx_flashdrive.vdi.lz"
         };
 
-        readonly ulong[] sectors = {393216, 409600, 262144, 262144, 1638400, 1433600};
+        readonly ulong[] sectors = {393216, 409600, 262144, 262144, 1638400, 1433600, 1024000};
 
-        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512};
+        readonly uint[] sectorsize = {512, 512, 512, 512, 512, 512, 512};
 
-        readonly long[] clusters = {49140, 51187, 32512, 32512, 204792, 179192};
+        readonly long[] clusters = {49140, 51187, 32512, 32512, 204792, 179192, 127744};
 
-        readonly int[] clustersize = {4096, 4096, 4096, 4096, 4096, 4096};
+        readonly int[] clustersize = {4096, 4096, 4096, 4096, 4096, 4096, 4096};
 
-        readonly string[] volumename = {null, null, null, null, null, null};
+        readonly string[] volumename = {null, null, null, null, null, null, null};
 
         readonly string[] volumeserial =
         {
-            "C2BCCCE6DE5BC98D", "AC54CD78C75CC30F", null, null, "7559DD01BCFADD9A", "AEA39CFBBF14C0FF"
+            "C2BCCCE6DE5BC98D", "AC54CD78C75CC30F", null, null, "7559DD01BCFADD9A", "AEA39CFBBF14C0FF",
+            "5E4A8781D3C9286C"
         };
 
-        readonly string[] oemid = {"10.0", "HFSJ", "10.0", "10.0", "10.0", "10.0"};
+        readonly string[] oemid = {"10.0", "HFSJ", "10.0", "10.0", "10.0", "10.0", "H+Lx"};
 
         [Test]
         public void Test()

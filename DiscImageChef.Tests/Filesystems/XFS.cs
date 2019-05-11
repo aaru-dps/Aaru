@@ -40,19 +40,22 @@ namespace DiscImageChef.Tests.Filesystems
     [TestFixture]
     public class XfsMbr
     {
-        readonly string[] testfiles = {"linux.vdi.lz"};
+        readonly string[] testfiles = {"linux.vdi.lz", "linux_4.19_xfs_flashdrive.vdi.lz"};
 
-        readonly ulong[] sectors = {1048576};
+        readonly ulong[] sectors = {1048576, 1024000};
 
-        readonly uint[] sectorsize = {512};
+        readonly uint[] sectorsize = {512, 512};
 
-        readonly long[] clusters = {130816};
+        readonly long[] clusters = {130816, 127744};
 
-        readonly int[] clustersize = {4096};
+        readonly int[] clustersize = {4096, 4096};
 
-        readonly string[] volumename = {"Volume label"};
+        readonly string[] volumename = {"Volume label", "DicSetter"};
 
-        readonly string[] volumeserial = {"230075b7-9834-b44e-a257-982a058311d8"};
+        readonly string[] volumeserial =
+        {
+            "230075b7-9834-b44e-a257-982a058311d8", "ed6b4d35-aa66-ce4a-9d8f-c56dbc6d7c8c"
+        };
 
         [Test]
         public void Test()
