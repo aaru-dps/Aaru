@@ -111,17 +111,18 @@ namespace DiscImageChef.Filesystems
                             DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec))
               .AppendLine();
             if(jfsSb.s_version == 1)
-                sb.AppendFormat("Volume name: {0}", Encoding.GetString(jfsSb.s_fpack)).AppendLine();
-            else sb.AppendFormat("Volume name: {0}", Encoding.GetString(jfsSb.s_label)).AppendLine();
+                sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(jfsSb.s_fpack, Encoding)).AppendLine();
+            else sb.AppendFormat("Volume name: {0}", StringHandlers.CToString(jfsSb.s_label, Encoding)).AppendLine();
             sb.AppendFormat("Volume UUID: {0}", jfsSb.s_uuid).AppendLine();
 
             XmlFsType = new FileSystemType
             {
-                Type         = "JFS filesystem",
-                Clusters     = jfsSb.s_size,
-                ClusterSize  = jfsSb.s_bsize,
-                Bootable     = true,
-                VolumeName   = Encoding.GetString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label),
+                Type        = "JFS filesystem",
+                Clusters    = jfsSb.s_size,
+                ClusterSize = jfsSb.s_bsize,
+                Bootable    = true,
+                VolumeName =
+                    StringHandlers.CToString(jfsSb.s_version == 1 ? jfsSb.s_fpack : jfsSb.s_label, Encoding),
                 VolumeSerial = $"{jfsSb.s_uuid}",
                 ModificationDate =
                     DateHandlers.UnixUnsignedToDateTime(jfsSb.s_time.tv_sec, jfsSb.s_time.tv_nsec),
