@@ -43,19 +43,19 @@ namespace DiscImageChef.Core.Logging
     /// </summary>
     class IbgLog
     {
-        CultureInfo   ibgCulture;
-        DateTime      ibgDatePoint;
-        double        ibgDivider;
-        ulong         ibgIntSector;
-        double        ibgIntSpeed;
-        double        ibgMaxSpeed;
-        string        ibgMediaType;
-        int           ibgSampleRate;
-        StringBuilder ibgSb;
-        int           ibgSnaps;
-        bool          ibgStartSet;
-        double        ibgStartSpeed;
-        string        logFile;
+        readonly CultureInfo   ibgCulture;
+        DateTime               ibgDatePoint;
+        readonly double        ibgDivider;
+        ulong                  ibgIntSector;
+        double                 ibgIntSpeed;
+        double                 ibgMaxSpeed;
+        readonly string        ibgMediaType;
+        int                    ibgSampleRate;
+        readonly StringBuilder ibgSb;
+        int                    ibgSnaps;
+        bool                   ibgStartSet;
+        double                 ibgStartSpeed;
+        readonly string        logFile;
 
         /// <summary>
         ///     Initializes the IMGBurn log
@@ -81,6 +81,10 @@ namespace DiscImageChef.Core.Logging
                 case 0x0001:
                     ibgMediaType = "HDD";
                     ibgDivider   = 1353;
+                    break;
+                case 0x0002:
+                    ibgMediaType = "PD-650";
+                    ibgDivider   = 150;
                     break;
                 case 0x0005:
                     ibgMediaType = "CD-MO";

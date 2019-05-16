@@ -200,8 +200,6 @@ namespace DiscImageChef.DiscImages
                 case MediaType.DTSCD:
                 case MediaType.JaguarCD:
                 case MediaType.MEGACD:
-                case MediaType.PD650:
-                case MediaType.PD650_WORM:
                 case MediaType.PS1CD:
                 case MediaType.PS2CD:
                 case MediaType.SuperCDROM2:

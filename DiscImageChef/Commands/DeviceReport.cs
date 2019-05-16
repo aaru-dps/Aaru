@@ -560,6 +560,8 @@ namespace DiscImageChef.Commands
                                 }
                             }
 
+                            if(dev.Model.StartsWith("PD-", StringComparison.Ordinal)) mediaTypes.Add("PD-650");
+
                             List<TestedMedia> mediaTests = new List<TestedMedia>();
                             foreach(string mediaType in mediaTypes)
                             {

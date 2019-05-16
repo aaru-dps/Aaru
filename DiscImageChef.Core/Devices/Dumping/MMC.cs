@@ -74,6 +74,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     case 0x0001:
                         dskType = MediaType.GENERIC_HDD;
                         goto default;
+                    case 0x0002:
+                        dskType = MediaType.PD650;
+                        goto default;
                     case 0x0005:
                         dskType = MediaType.CDMO;
                         break;
@@ -174,6 +177,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong  blocks     = scsiReader.GetDeviceBlocks();
             dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
+
+            if(dskType == MediaType.PD650 && blocks == 1281856) dskType = MediaType.PD650_WORM;
 
             #region Nintendo
             switch(dskType)

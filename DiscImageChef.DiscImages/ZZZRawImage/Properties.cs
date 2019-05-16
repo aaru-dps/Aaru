@@ -122,7 +122,9 @@ namespace DiscImageChef.DiscImages
                                ? mode2
                                      ? "MODE2/2352"
                                      : "MODE1/2352"
-                               : "MODE1/2048",
+                               : imageInfo.MediaType == MediaType.PD650 || imageInfo.MediaType == MediaType.PD650_WORM
+                                   ? "DATA/512"
+                                   : "MODE1/2048",
                     Size = imageInfo.Sectors * imageInfo.SectorSize
                 };
                 parts.Add(part);

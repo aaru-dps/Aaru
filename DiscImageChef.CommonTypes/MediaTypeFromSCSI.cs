@@ -1542,7 +1542,12 @@ namespace DiscImageChef.CommonTypes
                 {
                     switch(mediumType)
                     {
-                        case 0x00: return MediaType.CD;
+                        case 0x00:
+                            return blockSize == 512
+                                       ? blocks == 1281856
+                                             ? MediaType.PD650_WORM
+                                             : MediaType.PD650
+                                       : MediaType.CD;
                         case 0x01:
                         case 0x05: return MediaType.CDROM;
                         case 0x02:

@@ -307,6 +307,9 @@ namespace DiscImageChef.Core.Media.Info
                         case 0x0001:
                             MediaType = MediaType.GENERIC_HDD;
                             break;
+                        case 0x0002:
+                            MediaType = MediaType.PD650;
+                            break;
                         case 0x0005:
                             MediaType = MediaType.CDMO;
                             break;
@@ -393,6 +396,8 @@ namespace DiscImageChef.Core.Media.Info
                             break;
                     }
                 }
+
+                if(MediaType == MediaType.PD650 && Blocks == 1281856) MediaType = MediaType.PD650_WORM;
 
                 sense = dev.ReadDiscStructure(out cmdBuf, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
                                               MmcDiscStructureFormat.RecognizedFormatLayers, 0, dev.Timeout, out _);
@@ -1546,6 +1551,7 @@ namespace DiscImageChef.Core.Media.Info
 
                     break;
                 }
+
                 // TODO: Check for CD-i Ready
                 case MediaType.CDI: break;
                 case MediaType.DVDROM:
@@ -1758,6 +1764,7 @@ namespace DiscImageChef.Core.Media.Info
 
                     break;
                 }
+
                 // TODO: Check for CD-i Ready
                 case MediaType.CDI: break;
                 case MediaType.DVDROM:

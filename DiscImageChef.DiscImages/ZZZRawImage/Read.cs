@@ -376,8 +376,7 @@ namespace DiscImageChef.DiscImages
                 // Check for Xbox
                 if(mediaTags.TryGetValue(MediaTagType.DVD_DMI, out byte[] dmi))
                     if(DMI.IsXbox(dmi) || DMI.IsXbox360(dmi))
-                        if(DMI.IsXbox(dmi))
-                            imageInfo.MediaType = MediaType.XGD;
+                        if(DMI.IsXbox(dmi)) imageInfo.MediaType = MediaType.XGD;
                         else if(DMI.IsXbox360(dmi))
                         {
                             imageInfo.MediaType = MediaType.XGD2;
@@ -900,6 +899,8 @@ namespace DiscImageChef.DiscImages
                 case MediaType.XGD:
                 case MediaType.XGD2:
                 case MediaType.XGD3:
+                case MediaType.PD650:
+                case MediaType.PD650_WORM:
                     imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
                     break;
                 default:
@@ -1151,6 +1152,7 @@ namespace DiscImageChef.DiscImages
                         sectorSkip   = 2340;
                         break;
                     }
+
                     case SectorTagType.CdSectorHeader:
                     {
                         sectorOffset = 12;
@@ -1158,12 +1160,14 @@ namespace DiscImageChef.DiscImages
                         sectorSkip   = 2336;
                         break;
                     }
+
                     case SectorTagType.CdSectorSubchannel:
                     {
                         sectorOffset = 2352;
                         sectorSize   = 96;
                         break;
                     }
+
                     case SectorTagType.CdSectorSubHeader:
                         throw new ArgumentException("Unsupported tag requested for this track", nameof(tag));
                     case SectorTagType.CdSectorEcc:
@@ -1173,6 +1177,7 @@ namespace DiscImageChef.DiscImages
                         sectorSkip   = 0;
                         break;
                     }
+
                     case SectorTagType.CdSectorEccP:
                     {
                         sectorOffset = 2076;
@@ -1180,6 +1185,7 @@ namespace DiscImageChef.DiscImages
                         sectorSkip   = 104;
                         break;
                     }
+
                     case SectorTagType.CdSectorEccQ:
                     {
                         sectorOffset = 2248;
@@ -1187,6 +1193,7 @@ namespace DiscImageChef.DiscImages
                         sectorSkip   = 0;
                         break;
                     }
+
                     case SectorTagType.CdSectorEdc:
                     {
                         sectorOffset = 2064;
@@ -1194,6 +1201,7 @@ namespace DiscImageChef.DiscImages
                         sectorSkip   = 284;
                         break;
                     }
+
                     default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                 }
 

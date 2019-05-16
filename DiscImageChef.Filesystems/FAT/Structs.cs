@@ -36,6 +36,8 @@ namespace DiscImageChef.Filesystems.FAT
 {
     public partial class FAT
     {
+        const int UMSDOS_MAXNAME = 220;
+
         /// <summary>
         ///     BIOS Parameter Block as used by Atari ST GEMDOS on FAT12 volumes.
         /// </summary>
@@ -911,18 +913,87 @@ namespace DiscImageChef.Filesystems.FAT
             public readonly ushort zero;
         }
 
+        /// <summary>
+        ///     This structure is 256 bytes large, depending on the name, only part of it is written to disk
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct UmsdosDirectoryEntry
+        {
+            /// <summary>if == 0, then this entry is not used</summary>
+            public readonly byte name_len;
+            /// <summary>
+            ///     UMSDOS_xxxx
+            /// </summary>
+            public readonly UmsdosFlags flags;
+            /// <summary>
+            ///     How many hard links point to this entry
+            /// </summary>
+            public readonly ushort nlink;
+            /// <summary>
+            ///     Owner user id
+            /// </summary>
+            public readonly int uid;
+            /// <summary>
+            ///     Group id
+            /// </summary>
+            public readonly int gid;
+            /// <summary>
+            ///     Access time
+            /// </summary>
+            public readonly int atime;
+            /// <summary>
+            ///     Last modification time
+            /// </summary>
+            public readonly int mtime;
+            /// <summary>
+            ///     Creation time
+            /// </summary>
+            public readonly int ctime;
+            /// <summary>
+            ///     major and minor number of a device
+            /// </summary>
+            public readonly uint rdev;
+            /*  */
+            /// <summary>
+            ///     Standard UNIX permissions bits + type of
+            /// </summary>
+            public readonly ushort mode;
+            /// <summary>unused bytes for future extensions</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
+            public readonly byte[] spare;
+            /// <summary>
+            ///     Not '\0' terminated but '\0' padded, so it will allow for adding news fields in this record by reducing the
+            ///     size of name[]
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = UMSDOS_MAXNAME)]
+            public readonly byte[] name;
+        }
+
+        enum UmsdosFlags : byte
+        {
+            /// <summary>Never show this entry in directory search</summary>
+            UMSDOS_HIDDEN = 1,
+            /// <summary>It is a (pseudo) hard link</summary>
+            UMSDOS_HLINK = 2
+        }
+
         class CompleteDirectoryEntry
         {
-            public DirectoryEntry      Dirent;
-            public DirectoryEntry      Fat32Ea;
-            public HumanDirectoryEntry HumanDirent;
-            public string              HumanName;
-            public string              Lfn;
-            public string              Longname;
-            public string              Shortname;
+            public DirectoryEntry       Dirent;
+            public DirectoryEntry       Fat32Ea;
+            public HumanDirectoryEntry  HumanDirent;
+            public string               HumanName;
+            public string               Lfn;
+            public UmsdosDirectoryEntry LinuxDirent;
+            public string               LinuxName;
+            public string               Longname;
+            public string               Shortname;
 
             public override string ToString()
             {
+                // This ensures UMSDOS takes preference when present
+                if(!string.IsNullOrEmpty(LinuxName)) return LinuxName;
+
                 // This ensures LFN takes preference when eCS is in use
                 if(!string.IsNullOrEmpty(Lfn)) return Lfn;
 

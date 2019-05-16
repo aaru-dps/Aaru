@@ -564,7 +564,8 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             if(mediaType.StartsWith("DVD-",    StringComparison.Ordinal) ||
-               mediaType.StartsWith("HD DVD-", StringComparison.Ordinal))
+               mediaType.StartsWith("HD DVD-", StringComparison.Ordinal) ||
+               mediaType.StartsWith("PD-",     StringComparison.Ordinal))
             {
                 DicConsole.WriteLine("Querying DVD PFI...");
                 mediaTest.CanReadPFI = !dev.ReadDiscStructure(out buffer, out senseBuffer,
@@ -639,6 +640,7 @@ namespace DiscImageChef.Core.Devices.Report
                 case "DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)":
                 case "DVD-RAM (2nd gen, marked 4.7Gb or 9.4Gb)":
                 case "HD DVD-RAM":
+                case "PD-650":
                     mediaTest.CanReadDDS = !dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                   MmcDiscStructureFormat.DvdramDds, 0, dev.Timeout,
@@ -755,25 +757,50 @@ namespace DiscImageChef.Core.Devices.Report
                 if(debug) mediaTest.BluPacData = buffer;
             }
 
-            DicConsole.WriteLine("Trying SCSI READ (6)...");
-            mediaTest.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 16, 2048, dev.Timeout, out _);
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
-            if(debug) mediaTest.Read6Data = buffer;
-            DicConsole.WriteLine("Trying SCSI READ (10)...");
-            mediaTest.SupportsRead10 = !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16, 2048,
-                                                   0, 1, dev.Timeout, out _);
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
-            if(debug) mediaTest.Read10Data = buffer;
-            DicConsole.WriteLine("Trying SCSI READ (12)...");
-            mediaTest.SupportsRead12 = !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16, 2048,
-                                                   0, 1, false, dev.Timeout, out _);
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
-            if(debug) mediaTest.Read12Data = buffer;
-            DicConsole.WriteLine("Trying SCSI READ (16)...");
-            mediaTest.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 2048, 0, 1,
-                                                   false, dev.Timeout, out _);
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
-            if(debug) mediaTest.Read16Data = buffer;
+            if(mediaType.StartsWith("PD-", StringComparison.Ordinal))
+            {
+                DicConsole.WriteLine("Trying SCSI READ (6)...");
+                mediaTest.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 16, 512, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
+                if(debug) mediaTest.Read6Data = buffer;
+                DicConsole.WriteLine("Trying SCSI READ (10)...");
+                mediaTest.SupportsRead10 = !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                       512, 0, 1, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+                if(debug) mediaTest.Read10Data = buffer;
+                DicConsole.WriteLine("Trying SCSI READ (12)...");
+                mediaTest.SupportsRead12 = !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                       512, 0, 1, false, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+                if(debug) mediaTest.Read12Data = buffer;
+                DicConsole.WriteLine("Trying SCSI READ (16)...");
+                mediaTest.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 512, 0,
+                                                       1, false, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+                if(debug) mediaTest.Read16Data = buffer;
+            }
+            else
+            {
+                DicConsole.WriteLine("Trying SCSI READ (6)...");
+                mediaTest.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 16, 2048, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
+                if(debug) mediaTest.Read6Data = buffer;
+                DicConsole.WriteLine("Trying SCSI READ (10)...");
+                mediaTest.SupportsRead10 = !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                       2048, 0, 1, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+                if(debug) mediaTest.Read10Data = buffer;
+                DicConsole.WriteLine("Trying SCSI READ (12)...");
+                mediaTest.SupportsRead12 = !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
+                                                       2048, 0, 1, false, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+                if(debug) mediaTest.Read12Data = buffer;
+                DicConsole.WriteLine("Trying SCSI READ (16)...");
+                mediaTest.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 2048, 0,
+                                                       1, false, dev.Timeout, out _);
+                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+                if(debug) mediaTest.Read16Data = buffer;
+            }
 
             if(mediaType.StartsWith("CD-",   StringComparison.Ordinal) ||
                mediaType.StartsWith("DDCD-", StringComparison.Ordinal) || mediaType == "Audio CD")
