@@ -99,7 +99,7 @@ datetime conversion, hexadecimal printing, string manipulation and byte swapping
 * [DiscImageChef.Partitions](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Partitions) -
 This module contains code for reading partition schemes.
 * [DiscImageChef.Server](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Server) -
-This module contains the server-side code that's running at http://discimagechef.claunia.com
+This module contains the server-side code that's running at https://www.discimagechef.app
 * [DiscImageChef.Settings](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Settings) -
 This module contains code for handling DiscImageChef settings.
 * [DiscImageChef.Tests](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Tests) -

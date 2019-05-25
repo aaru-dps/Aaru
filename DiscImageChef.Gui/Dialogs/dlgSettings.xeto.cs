@@ -75,7 +75,7 @@ namespace DiscImageChef.Gui.Dialogs
             lblShareReports.Text =
                 "Sharing a report with us will send it to our server, that's in the european union territory, where it\n"      +
                 "will be manually analized by an european union citizen to remove any trace of personal identification\n"      +
-                "from it. Once that is done, it will be shared in our stats website, http://discimagechef.claunia.com\n"       +
+                "from it. Once that is done, it will be shared in our stats website, https://www.discimagechef.app\n"       +
                 "These report will be used to improve DiscImageChef support, and in some cases, to provide emulation of the\n" +
                 "devices to other open-source projects. In any case, no information linking the report to you will be stored.";
             chkShareReports.Text    = "Do you want to share your device reports with us? (Y/N): ";

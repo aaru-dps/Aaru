@@ -9,7 +9,7 @@ Copyright © 2011-2019 Natalia Portillo <claunia@claunia.com>
 [![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
 
-You can see statistics and device reports [here](http://discimagechef.claunia.com/Stats)
+You can see statistics and device reports [here](https://www.discimagechef.app/Stats)
 
 DiscImageChef is a fully featured media dump management solution. You usually know media dumps
 as disc images, disk images, tape images, etc.

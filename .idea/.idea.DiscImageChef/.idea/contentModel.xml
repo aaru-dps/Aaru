@@ -6,7 +6,7 @@
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.1/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.1/system/resharper-host/local/Transient/ReSharperHost/v191/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.1/system/rust_expanded_macros/vfwZLTAc/expansions" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
@@ -347,6 +347,8 @@
           <e p="20190102230036_AddOptimalReadMultipleCount.cs" t="Include" />
           <e p="20190108013456_AddChangeableScsiModes.Designer.cs" t="Include" />
           <e p="20190108013456_AddChangeableScsiModes.cs" t="Include" />
+          <e p="20190525183723_IdForDensityCode.Designer.cs" t="Include" />
+          <e p="20190525183723_IdForDensityCode.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1923,6 +1925,12 @@
           <e p="201901081359499_AddChangeableScsiModes.Designer.cs" t="Include" />
           <e p="201901081359499_AddChangeableScsiModes.cs" t="Include" />
           <e p="201901081359499_AddChangeableScsiModes.resx" t="Include" />
+          <e p="201905252122267_IdForDensityCode.Designer.cs" t="Include" />
+          <e p="201905252122267_IdForDensityCode.cs" t="Include" />
+          <e p="201905252122267_IdForDensityCode.resx" t="Include" />
+          <e p="201905252245072_MakeEntityFrameworkHappy.Designer.cs" t="Include" />
+          <e p="201905252245072_MakeEntityFrameworkHappy.cs" t="Include" />
+          <e p="201905252245072_MakeEntityFrameworkHappy.resx" t="Include" />
           <e p="Configuration.cs" t="Include" />
         </e>
         <e p="Models" t="Include">

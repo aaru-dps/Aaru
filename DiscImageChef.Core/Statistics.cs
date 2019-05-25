@@ -627,7 +627,7 @@ namespace DiscImageChef.Core
                                                                       NullValueHandling = NullValueHandling.Ignore
                                                                   });
                         byte[]     jsonBytes = Encoding.UTF8.GetBytes(json);
-                        WebRequest request   = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstatsv2");
+                        WebRequest request   = WebRequest.Create("https://www.discimagechef.app/api/uploadstatsv2");
                         ((HttpWebRequest)request).UserAgent =
                             $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
                         request.Method        = "POST";
@@ -835,7 +835,7 @@ namespace DiscImageChef.Core
                         xs.Deserialize(fs); // Just to test validity of stats file
                         fs.Seek(0, SeekOrigin.Begin);
 
-                        WebRequest request = WebRequest.Create("http://discimagechef.claunia.com/api/uploadstats");
+                        WebRequest request = WebRequest.Create("https://www.discimagechef.app/api/uploadstats");
                         ((HttpWebRequest)request).UserAgent =
                             $"DiscImageChef {typeof(CommonTypes.Interop.Version).Assembly.GetName().Version}";
                         request.Method        = "POST";
