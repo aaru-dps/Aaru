@@ -110,9 +110,9 @@ namespace DiscImageChef.Core.Devices.Report
                 if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
                 DensityCode[] array3 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
-                for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
+                for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
                     array3[j] = new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
-                array2[i].DensityCodes = array3.ToList();
+                array2[i].DensityCodes = array3.Distinct().ToList();
             }
 
             report.SupportedMediaTypes = array2.ToList();
@@ -201,9 +201,9 @@ namespace DiscImageChef.Core.Devices.Report
                         if(mtsh.Value.descriptors[i].densityCodes == null) continue;
 
                         DensityCode[] array2 = new DensityCode[mtsh.Value.descriptors[i].densityCodes.Length];
-                        for(int j = 0; j < mtsh.Value.descriptors.Length; j++)
+                        for(int j = 0; j < mtsh.Value.descriptors[i].densityCodes.Length; j++)
                             array2[j] = new DensityCode {Code = mtsh.Value.descriptors[i].densityCodes[j]};
-                        array[i].DensityCodes = array2.ToList();
+                        array[i].DensityCodes = array2.Distinct().ToList();
                     }
 
                     seqTest.SupportedMediaTypes = array.ToList();
