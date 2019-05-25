@@ -1683,9 +1683,30 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
     }
 
-    public class DensityCode
+    public class DensityCode : IEquatable<DensityCode>
     {
+        [JsonIgnore]
         [Key]
+        public int Id { get; set; }
+
         public int Code { get; set; }
+
+        public bool Equals(DensityCode other)
+        {
+            if(ReferenceEquals(null, other)) return false;
+            if(ReferenceEquals(this, other)) return true;
+
+            return Code == other.Code;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(ReferenceEquals(null, obj)) return false;
+            if(ReferenceEquals(this, obj)) return true;
+
+            return obj.GetType() == GetType() && Equals((DensityCode)obj);
+        }
+
+        public override int GetHashCode() => Code;
     }
 }
