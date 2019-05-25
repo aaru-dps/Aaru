@@ -97,9 +97,8 @@
       <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.5\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MimeKit, Version=2.1.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814">
@@ -273,6 +272,14 @@
     <Compile Include="Migrations\201901081359499_AddChangeableScsiModes.Designer.cs">
       <DependentUpon>201901081359499_AddChangeableScsiModes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905252122267_IdForDensityCode.cs" />
+    <Compile Include="Migrations\201905252122267_IdForDensityCode.Designer.cs">
+      <DependentUpon>201905252122267_IdForDensityCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905252245072_MakeEntityFrameworkHappy.cs" />
+    <Compile Include="Migrations\201905252245072_MakeEntityFrameworkHappy.Designer.cs">
+      <DependentUpon>201905252245072_MakeEntityFrameworkHappy.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
@@ -426,6 +433,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201901081359499_AddChangeableScsiModes.resx">
       <DependentUpon>201901081359499_AddChangeableScsiModes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905252122267_IdForDensityCode.resx">
+      <DependentUpon>201905252122267_IdForDensityCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905252245072_MakeEntityFrameworkHappy.resx">
+      <DependentUpon>201905252245072_MakeEntityFrameworkHappy.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

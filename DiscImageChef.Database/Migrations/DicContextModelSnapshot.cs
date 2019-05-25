@@ -12,7 +12,7 @@ namespace DiscImageChef.Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.0-rtm-35687");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata", b =>
             {
@@ -75,11 +75,13 @@ namespace DiscImageChef.Database.Migrations
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DensityCode", b =>
             {
-                b.Property<int>("Code").ValueGeneratedOnAdd();
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<int>("Code");
 
                 b.Property<int?>("SscSupportedMediaId");
 
-                b.HasKey("Code");
+                b.HasKey("Id");
 
                 b.HasIndex("SscSupportedMediaId");
 

@@ -97,6 +97,8 @@
     <Compile Include="Migrations\20190102230036_AddOptimalReadMultipleCount.Designer.cs" />
     <Compile Include="Migrations\20190108013456_AddChangeableScsiModes.cs" />
     <Compile Include="Migrations\20190108013456_AddChangeableScsiModes.Designer.cs" />
+    <Compile Include="Migrations\20190525183723_IdForDensityCode.cs" />
+    <Compile Include="Migrations\20190525183723_IdForDensityCode.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
