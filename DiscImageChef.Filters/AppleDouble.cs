@@ -131,9 +131,11 @@ namespace DiscImageChef.Filters
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder  = Path.GetDirectoryName(path);
 
+            parentFolder = parentFolder ?? "";
+            if(filename is null || filenameNoExt is null) return false;
+
             // Prepend data fork name with "R."
-            string ProDosAppleDouble =
-                Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
+            string ProDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
             // Prepend data fork name with '%'
             string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             // Change file extension to ADF
@@ -141,8 +143,7 @@ namespace DiscImageChef.Filters
             // Change file extension to adf
             string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
             // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string NetatalkAppleDouble =
-                Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
+            string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
             // Store AppleDouble header file in "resource.frk" folder with same name
             string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             // Prepend data fork name with "._"
@@ -289,9 +290,11 @@ namespace DiscImageChef.Filters
             string filenameNoExt = Path.GetFileNameWithoutExtension(path);
             string parentFolder  = Path.GetDirectoryName(path);
 
+            parentFolder = parentFolder ?? "";
+            if(filename is null || filenameNoExt is null) throw new ArgumentNullException(nameof(path));
+
             // Prepend data fork name with "R."
-            string ProDosAppleDouble =
-                Path.Combine(parentFolder ?? throw new InvalidOperationException(), "R." + filename);
+            string ProDosAppleDouble = Path.Combine(parentFolder, "R." + filename);
             // Prepend data fork name with '%'
             string UNIXAppleDouble = Path.Combine(parentFolder, "%" + filename);
             // Change file extension to ADF
@@ -299,8 +302,7 @@ namespace DiscImageChef.Filters
             // Change file extension to adf
             string DOSAppleDoubleLower = Path.Combine(parentFolder, filenameNoExt + ".adf");
             // Store AppleDouble header file in ".AppleDouble" folder with same name
-            string NetatalkAppleDouble =
-                Path.Combine(parentFolder, ".AppleDouble", filename ?? throw new InvalidOperationException());
+            string NetatalkAppleDouble = Path.Combine(parentFolder, ".AppleDouble", filename);
             // Store AppleDouble header file in "resource.frk" folder with same name
             string DAVEAppleDouble = Path.Combine(parentFolder, "resource.frk", filename);
             // Prepend data fork name with "._"
@@ -543,64 +545,64 @@ namespace DiscImageChef.Filters
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleHeader
         {
-            public uint magic;
-            public uint version;
+            public readonly uint magic;
+            public readonly uint version;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] homeFilesystem;
-            public ushort entries;
+            public readonly byte[] homeFilesystem;
+            public readonly ushort entries;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleEntry
         {
-            public uint id;
-            public uint offset;
-            public uint length;
+            public          uint id;
+            public readonly uint offset;
+            public          uint length;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleFileDates
         {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public uint accessDate;
+            public readonly uint creationDate;
+            public readonly uint modificationDate;
+            public readonly uint backupDate;
+            public readonly uint accessDate;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleMacFileInfo
         {
-            public uint creationDate;
-            public uint modificationDate;
-            public uint backupDate;
-            public uint accessDate;
+            public readonly uint creationDate;
+            public readonly uint modificationDate;
+            public readonly uint backupDate;
+            public readonly uint accessDate;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleUNIXFileInfo
         {
-            public uint creationDate;
-            public uint accessDate;
-            public uint modificationDate;
+            public readonly uint creationDate;
+            public readonly uint accessDate;
+            public readonly uint modificationDate;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleDOSFileInfo
         {
-            public ushort modificationDate;
-            public ushort modificationTime;
-            public ushort attributes;
+            public readonly ushort modificationDate;
+            public readonly ushort modificationTime;
+            public readonly ushort attributes;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleDoubleProDOSFileInfo
         {
-            public uint   creationDate;
-            public uint   modificationDate;
-            public uint   backupDate;
-            public ushort access;
-            public ushort fileType;
-            public uint   auxType;
+            public readonly uint   creationDate;
+            public readonly uint   modificationDate;
+            public readonly uint   backupDate;
+            public readonly ushort access;
+            public readonly ushort fileType;
+            public readonly uint   auxType;
         }
     }
 }

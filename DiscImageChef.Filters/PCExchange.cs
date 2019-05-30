@@ -99,8 +99,9 @@ namespace DiscImageChef.Filters
         {
             string parentFolder = Path.GetDirectoryName(path);
 
-            if(!File.Exists(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO)))
-                return false;
+            parentFolder = parentFolder ?? "";
+
+            if(!File.Exists(Path.Combine(parentFolder, FINDER_INFO))) return false;
 
             if(!Directory.Exists(Path.Combine(parentFolder, RESOURCES))) return false;
 
@@ -164,9 +165,10 @@ namespace DiscImageChef.Filters
             string parentFolder = Path.GetDirectoryName(path);
             string baseFilename = Path.GetFileName(path);
 
+            parentFolder = parentFolder ?? "";
+
             FileStream finderDatStream =
-                new FileStream(Path.Combine(parentFolder ?? throw new InvalidOperationException(), FINDER_INFO),
-                               FileMode.Open, FileAccess.Read);
+                new FileStream(Path.Combine(parentFolder, FINDER_INFO), FileMode.Open, FileAccess.Read);
 
             while(finderDatStream.Position + 0x5C <= finderDatStream.Length)
             {
@@ -223,59 +225,59 @@ namespace DiscImageChef.Filters
             ///     Illegal characters for FAT get substituted with '_' both here and in FAT's LFN entry.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] macName;
+            public readonly byte[] macName;
             /// <summary>
             ///     File type
             /// </summary>
-            public uint type;
+            public readonly uint type;
             /// <summary>
             ///     File creator
             /// </summary>
-            public uint creator;
+            public readonly uint creator;
             /// <summary>
             ///     Finder flags
             /// </summary>
-            public ushort fdFlags;
+            public readonly ushort fdFlags;
             /// <summary>
             ///     File's icon vertical position within its window
             /// </summary>
-            public ushort verticalPosition;
+            public readonly ushort verticalPosition;
             /// <summary>
             ///     File's icon horizontal position within its window
             /// </summary>
-            public ushort horizontalPosition;
+            public readonly ushort horizontalPosition;
             /// <summary>
             ///     Unknown, all bytes are empty but last, except in volume's label entry
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 18)]
-            public byte[] unknown1;
+            public readonly byte[] unknown1;
             /// <summary>
             ///     File's creation date
             /// </summary>
-            public uint creationDate;
+            public readonly uint creationDate;
             /// <summary>
             ///     File's modification date
             /// </summary>
-            public uint modificationDate;
+            public readonly uint modificationDate;
             /// <summary>
             ///     File's last backup date
             /// </summary>
-            public uint backupDate;
+            public readonly uint backupDate;
             /// <summary>
             ///     Unknown, but is unique, starts 0x7FFFFFFF and counts in reverse.
             ///     Probably file ID for alias look up?
             /// </summary>
-            public uint unknown2;
+            public readonly uint unknown2;
             /// <summary>
             ///     Name as in FAT entry (not LFN).
             ///     Resource fork file is always using this name, never LFN.
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 11)]
-            public byte[] dosName;
+            public readonly byte[] dosName;
             /// <summary>
             ///     Unknown, flags?
             /// </summary>
-            public byte unknown3;
+            public readonly byte unknown3;
         }
     }
 }
