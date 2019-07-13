@@ -819,6 +819,15 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 2.5;
                     return dmns;
+                case CommonTypes.MediaType.REV35:
+                case CommonTypes.MediaType.REV70:
+                case CommonTypes.MediaType.REV120:
+                    dmns.Height          = 74.8;
+                    dmns.HeightSpecified = true;
+                    dmns.Width           = 76.8;
+                    dmns.WidthSpecified  = true;
+                    dmns.Thickness       = 10;
+                    return dmns;
 
                 #region CD/DVD/BD
                 case CommonTypes.MediaType.CDDA:
