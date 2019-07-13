@@ -78,6 +78,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]             readBuffer;
             Modes.DecodedMode? decMode = null;
 
+            if(opticalDisc)
+                switch(dskType)
+                {
+                    case MediaType.REV35:
+                    case MediaType.REV70:
+                    case MediaType.REV120:
+                        opticalDisc = false;
+                        break;
+                }
+
             dumpLog.WriteLine("Initializing reader.");
             Reader scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
             ulong  blocks     = scsiReader.GetDeviceBlocks();

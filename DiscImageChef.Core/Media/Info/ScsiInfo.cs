@@ -308,7 +308,19 @@ namespace DiscImageChef.Core.Media.Info
                             MediaType = MediaType.GENERIC_HDD;
                             break;
                         case 0x0002:
-                            MediaType = MediaType.PD650;
+                            switch(scsiMediumType)
+                            {
+                                case 0x01:
+                                    MediaType = MediaType.PD650;
+                                    break;
+                                case 0x41:
+                                    MediaType = MediaType.REV35;
+                                    break;
+                                default:
+                                    MediaType = MediaType.Unknown;
+                                    break;
+                            }
+
                             break;
                         case 0x0005:
                             MediaType = MediaType.CDMO;

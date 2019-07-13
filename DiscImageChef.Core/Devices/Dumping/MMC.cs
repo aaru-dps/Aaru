@@ -178,7 +178,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             dumpLog.WriteLine("Device reports disc has {0} blocks", blocks);
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>();
 
-            if(dskType == MediaType.PD650 && blocks == 1281856) dskType = MediaType.PD650_WORM;
+            if(dskType == MediaType.PD650)
+                switch(blocks + 1)
+                {
+                    case 1281856:
+                        dskType = MediaType.PD650_WORM;
+                        break;
+                    case 17090880:
+                        dskType = MediaType.REV35;
+                        break;
+                }
 
             #region Nintendo
             switch(dskType)
