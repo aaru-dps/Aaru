@@ -96,6 +96,9 @@ namespace DiscImageChef
         static void ClearCurrentConsoleLine()
         {
             int currentLineCursor = System.Console.CursorTop;
+
+            if(System.Console.CursorTop > System.Console.WindowHeight || System.Console.CursorTop < 0) return;
+
             System.Console.SetCursorPosition(0, System.Console.CursorTop);
             System.Console.Write(new string(' ', System.Console.WindowWidth));
             System.Console.SetCursorPosition(0, currentLineCursor);
