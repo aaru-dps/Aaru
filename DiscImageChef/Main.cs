@@ -128,7 +128,6 @@ namespace DiscImageChef
             commands.Add(new EntropyCommand());
             commands.Add(new ExtractFilesCommand());
             commands.Add(new FormatsCommand());
-            commands.Add(new GuiCommand());
             commands.Add(new ImageInfoCommand());
 
             if(currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||

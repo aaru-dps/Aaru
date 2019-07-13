@@ -1,22 +1,18 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="GUI" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/DiscImageChef/bin/Debug/net461/DiscImageChef.exe" />
-    <option name="PROGRAM_PARAMETERS" value="gui -d" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DiscImageChef" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/DiscImageChef.Gtk/bin/Debug/netcoreapp2.0/DiscImageChef.Gtk.dll" />
+    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DiscImageChef.Gtk" />
     <option name="PASS_PARENT_ENVS" value="1" />
-    <envs>
-      <env name="ASPNETCORE_ENVIRONMENT" value="Development" />
-      <env name="ASPNETCORE_URLS" value="http://localhost:5000" />
-    </envs>
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="USE_MONO" value="0" />
     <option name="RUNTIME_ARGUMENTS" value="" />
-    <option name="PROJECT_PATH" value="$PROJECT_DIR$/DiscImageChef/DiscImageChef.csproj" />
-    <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
+    <option name="PROJECT_PATH" value="$PROJECT_DIR$/DiscImageChef.Gtk/DiscImageChef.Gtk.csproj" />
+    <option name="PROJECT_EXE_PATH_TRACKING" value="0" />
     <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
     <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
     <option name="PROJECT_KIND" value="DotNetCore" />
-    <option name="PROJECT_TFM" value=".NETFramework,Version=v4.6.1" />
+    <option name="PROJECT_TFM" value=".NETCoreApp,Version=v2.0" />
     <browser url="http://localhost:5000" />
     <method v="2">
       <option name="Build" enabled="true" />

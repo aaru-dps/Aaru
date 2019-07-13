@@ -10,7 +10,7 @@
     <AssemblyName>DiscImageChef</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
@@ -53,7 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\ConvertImage.cs" />
-    <Compile Include="Commands\Gui.cs" />
     <Compile Include="Commands\ImageInfo.cs" />
     <Compile Include="Commands\ListNamespaces.cs" />
     <Compile Include="Commands\ListOptions.cs" />
@@ -263,10 +262,6 @@
     <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Eto.Forms" Version="2.4.1" />
-    <PackageReference Include="Eto.Platform.Gtk" Version="2.4.1" />
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.4.1" />
-    <PackageReference Include="Eto.Platform.Wpf" Version="2.4.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.4" />
     <PackageReference Include="Mono.Options" Version="5.3.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
