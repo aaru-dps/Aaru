@@ -354,6 +354,9 @@ namespace DiscImageChef.Commands
                     {
                         case PeripheralDeviceTypes.MultiMediaDevice:
                         {
+                            bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" &&
+                                             dev.Model.ToLowerInvariant()        == "rrd";
+
                             List<string> mediaTypes = new List<string>();
 
                             report.SCSI.MultiMediaDevice = new Mmc
@@ -361,7 +364,7 @@ namespace DiscImageChef.Commands
                                 ModeSense2AData = cdromMode, Features = reporter.ReportMmcFeatures()
                             };
 
-                            if(cdromMode != null)
+                            if(cdromMode != null && !iomegaRev)
                             {
                                 mediaTypes.Add("CD-ROM");
                                 mediaTypes.Add("Audio CD");
@@ -384,7 +387,7 @@ namespace DiscImageChef.Commands
                                 if(report.SCSI.MultiMediaDevice.ModeSense2A.ReadDVDR) mediaTypes.Add("DVD-R");
                             }
 
-                            if(report.SCSI.MultiMediaDevice.Features != null)
+                            if(report.SCSI.MultiMediaDevice.Features != null && !iomegaRev)
                             {
                                 if(report.SCSI.MultiMediaDevice.Features.CanReadBD      ||
                                    report.SCSI.MultiMediaDevice.Features.CanReadBDR     ||
@@ -475,6 +478,13 @@ namespace DiscImageChef.Commands
                                         mediaTypes.Add("HD DVD-RAM");
                             }
 
+                            if(iomegaRev)
+                            {
+                                mediaTypes.Add("REV 35Gb");
+                                mediaTypes.Add("REV 70Gb");
+                                mediaTypes.Add("REV 120Gb");
+                            }
+
                             // Very old CD drives do not contain mode page 2Ah neither GET CONFIGURATION, so just try all CDs on them
                             // Also don't get confident, some drives didn't know CD-RW but are able to read them
                             if(mediaTypes.Count == 0 || mediaTypes.Contains("CD-ROM"))
@@ -501,7 +511,7 @@ namespace DiscImageChef.Commands
                             tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
                             tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
 
-                            if(MainClass.Debug)
+                            if(MainClass.Debug && !iomegaRev)
                             {
                                 if(!tryPlextor)
                                 {
