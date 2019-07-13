@@ -399,6 +399,13 @@ namespace DiscImageChef.CommonTypes
 
                             return MediaType.Unknown;
                         case 0x1E: return MediaType.DOS_35_DS_DD_9;
+                        case 0x41:
+                            switch(blocks)
+                            {
+                                case 17090880: return MediaType.REV35;
+                            }
+
+                            break;
                         case 0x93: return MediaType.NEC_35_HD_15;
                         case 0x94: return MediaType.DOS_35_HD;
                     }
