@@ -56,7 +56,6 @@
     <Compile Include="FletcherContext.cs" />
     <Compile Include="MD5Context.cs" />
     <Compile Include="ReedSolomon.cs" />
-    <Compile Include="RIPEMD160Context.cs" />
     <Compile Include="SHA1Context.cs" />
     <Compile Include="SHA256Context.cs" />
     <Compile Include="SHA384Context.cs" />

@@ -361,42 +361,6 @@ namespace DiscImageChef.Core
             results.SeparateTime += (end - start).TotalSeconds;
             #endregion MD5
 
-            #if !NETSTANDARD2_0
-
-            #region RIPEMD160
-            ctx = new Ripemd160Context();
-            ms.Seek(0, SeekOrigin.Begin);
-            mem = GC.GetTotalMemory(false);
-            if(mem > results.MaxMemory) results.MaxMemory = mem;
-            if(mem < results.MinMemory) results.MinMemory = mem;
-            start = DateTime.Now;
-            InitProgress();
-            for(int i = 0; i < bufferSize / blockSize; i++)
-            {
-                UpdateProgress("Checksumming block {0} of {1} with RIPEMD160.", i + 1, bufferSize / blockSize);
-                byte[] tmp = new byte[blockSize];
-                ms.Read(tmp, 0, blockSize);
-                ctx.Update(tmp);
-            }
-
-            EndProgress();
-            ctx.End();
-            end = DateTime.Now;
-            mem = GC.GetTotalMemory(false);
-            if(mem > results.MaxMemory) results.MaxMemory = mem;
-            if(mem < results.MinMemory) results.MinMemory = mem;
-
-            results.Entries.Add("RIPEMD160",
-                                new BenchmarkEntry
-                                {
-                                    TimeSpan = (end - start).TotalSeconds,
-                                    Speed    = bufferSize / 1048576.0 / (end - start).TotalSeconds
-                                });
-            results.SeparateTime += (end - start).TotalSeconds;
-            #endregion RIPEMD160
-
-            #endif
-
             #region SHA1
             ctx = new Sha1Context();
             ms.Seek(0, SeekOrigin.Begin);

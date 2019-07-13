@@ -50,7 +50,6 @@
     <Compile Include="Checksums\CRC32.cs" />
     <Compile Include="Checksums\CRC64.cs" />
     <Compile Include="Checksums\MD5.cs" />
-    <Compile Include="Checksums\RIPEMD160.cs" />
     <Compile Include="Checksums\SHA1.cs" />
     <Compile Include="Checksums\SpamSum.cs" />
     <Compile Include="Checksums\SHA512.cs" />

@@ -55,7 +55,6 @@ namespace DiscImageChef.Commands
         bool   doFletcher16;
         bool   doFletcher32;
         bool   doMd5 = true;
-        bool   doRipemd160;
         bool   doSha1 = true;
         bool   doSha256;
         bool   doSha384;
@@ -83,7 +82,6 @@ namespace DiscImageChef.Commands
                 {"fletcher16", "Calculates Fletcher-16.", b => doFletcher16                     = b != null},
                 {"fletcher32", "Calculates Fletcher-32.", b => doFletcher32                     = b != null},
                 {"md5|m", "Calculates MD5.", b => doMd5                                         = b != null},
-                {"ripemd160", "Calculates RIPEMD160.", b => doRipemd160                         = b != null},
                 {"separated-tracks|t", "Checksums each track separately.", b => separatedTracks = b != null},
                 {"sha1|s", "Calculates SHA1.", b => doSha1                                      = b != null},
                 {"sha256", "Calculates SHA256.", b => doSha256                                  = b != null},
@@ -133,7 +131,6 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Checksum command", "--fletcher32={0}",       doFletcher32);
             DicConsole.DebugWriteLine("Checksum command", "--input={0}",            inputFile);
             DicConsole.DebugWriteLine("Checksum command", "--md5={0}",              doMd5);
-            DicConsole.DebugWriteLine("Checksum command", "--ripemd160={0}",        doRipemd160);
             DicConsole.DebugWriteLine("Checksum command", "--separated-tracks={0}", separatedTracks);
             DicConsole.DebugWriteLine("Checksum command", "--sha1={0}",             doSha1);
             DicConsole.DebugWriteLine("Checksum command", "--sha256={0}",           doSha256);
@@ -171,7 +168,6 @@ namespace DiscImageChef.Commands
             if(doCrc32) enabledChecksums      |= EnableChecksum.Crc32;
             if(doCrc64) enabledChecksums      |= EnableChecksum.Crc64;
             if(doMd5) enabledChecksums        |= EnableChecksum.Md5;
-            if(doRipemd160) enabledChecksums  |= EnableChecksum.Ripemd160;
             if(doSha1) enabledChecksums       |= EnableChecksum.Sha1;
             if(doSha256) enabledChecksums     |= EnableChecksum.Sha256;
             if(doSha384) enabledChecksums     |= EnableChecksum.Sha384;

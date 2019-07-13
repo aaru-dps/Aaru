@@ -59,9 +59,6 @@ namespace DiscImageChef.Gui.Forms
 
             chkChecksumTracks.Checked = chkChecksumTracks.Visible;
             chkChecksumMedia.Visible  = chkChecksumTracks.Visible;
-            #if NETSTANDARD2_0
-            chkRipemd160.Visible = false;
-            #endif
         }
 
         protected void OnBtnStart(object sender, EventArgs e)
@@ -75,7 +72,6 @@ namespace DiscImageChef.Gui.Forms
             chkFletcher16.Enabled     = false;
             chkFletcher32.Enabled     = false;
             chkMd5.Enabled            = false;
-            chkRipemd160.Enabled      = false;
             chkSha1.Enabled           = false;
             chkSha256.Enabled         = false;
             chkSha384.Enabled         = false;
@@ -123,9 +119,6 @@ namespace DiscImageChef.Gui.Forms
             if(chkCrc32.Checked   == true) enabledChecksums |= EnableChecksum.Crc32;
             if(chkCrc64.Checked   == true) enabledChecksums |= EnableChecksum.Crc64;
             if(chkMd5.Checked     == true) enabledChecksums |= EnableChecksum.Md5;
-            #if !NETSTANDARD2_0
-            if(chkRipemd160.Checked == true) enabledChecksums |= EnableChecksum.Ripemd160;
-            #endif
             if(chkSha1.Checked       == true) enabledChecksums |= EnableChecksum.Sha1;
             if(chkSha256.Checked     == true) enabledChecksums |= EnableChecksum.Sha256;
             if(chkSha384.Checked     == true) enabledChecksums |= EnableChecksum.Sha384;
@@ -399,7 +392,6 @@ namespace DiscImageChef.Gui.Forms
         CheckBox     chkFletcher16;
         CheckBox     chkFletcher32;
         CheckBox     chkMd5;
-        CheckBox     chkRipemd160;
         CheckBox     chkSha1;
         CheckBox     chkSha256;
         CheckBox     chkSha384;

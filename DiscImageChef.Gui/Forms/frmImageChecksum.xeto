@@ -45,7 +45,6 @@
             <CheckBox Text="Calculates Fletcher-16." ID="chkFletcher16" Checked="False"/>
             <CheckBox Text="Calculates Fletcher-32." ID="chkFletcher32" Checked="False"/>
             <CheckBox Text="Calculates MD5." ID="chkMd5" Checked="True"/>
-            <CheckBox Text="Calculates RIPEMD160." ID="chkRipemd160" Checked="False"/>
             <CheckBox Text="Calculates SHA1." ID="chkSha1" Checked="True"/>
             <CheckBox Text="Calculates SHA256." ID="chkSha256" Checked="False"/>
             <CheckBox Text="Calculates SHA384." ID="chkSha384" Checked="False"/>

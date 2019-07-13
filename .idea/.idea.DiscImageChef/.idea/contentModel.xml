@@ -77,7 +77,6 @@
         <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
         <e p="FletcherContext.cs" t="Include" />
         <e p="MD5Context.cs" t="Include" />
-        <e p="RIPEMD160Context.cs" t="Include" />
         <e p="ReedSolomon.cs" t="Include" />
         <e p="Register.cs" t="Include" />
         <e p="SHA1Context.cs" t="Include" />
@@ -2075,7 +2074,6 @@
           <e p="CRC32.cs" t="Include" />
           <e p="CRC64.cs" t="Include" />
           <e p="MD5.cs" t="Include" />
-          <e p="RIPEMD160.cs" t="Include" />
           <e p="SHA1.cs" t="Include" />
           <e p="SHA256.cs" t="Include" />
           <e p="SHA384.cs" t="Include" />
