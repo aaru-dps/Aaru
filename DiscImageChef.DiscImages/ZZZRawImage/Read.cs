@@ -127,6 +127,9 @@ namespace DiscImageChef.DiscImages
                             case 1638400:
                                 imageInfo.SectorSize = 1024;
                                 break;
+                            case 35002122240:
+                                imageInfo.SectorSize = 2048;
+                                break;
                             default:
                                 imageInfo.SectorSize = 512;
                                 break;

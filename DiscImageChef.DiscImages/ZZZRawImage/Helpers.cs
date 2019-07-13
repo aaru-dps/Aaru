@@ -40,6 +40,7 @@ namespace DiscImageChef.DiscImages
         {
             if(imageInfo.SectorSize == 2048)
             {
+                if(imageInfo.Sectors == 17090880) return MediaType.REV35;
                 if(imageInfo.Sectors <= 360000) return MediaType.CD;
                 if(imageInfo.Sectors <= 2295104) return MediaType.DVDPR;
                 if(imageInfo.Sectors <= 2298496) return MediaType.DVDR;
