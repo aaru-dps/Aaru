@@ -22,4 +22,6 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
     arguments: '-r linux-x64'
