@@ -15,7 +15,7 @@
         <Copyright>Copyright © {copyright:2011} Natalia Portillo</Copyright>
         <AssemblyTitle>DiscImageChef</AssemblyTitle>
         <AssemblyName>DiscImageChefGui</AssemblyName>
-        <RuntimeIdentifiers>alpine;alpine-x64;freebsd;freebsd-x64;linux-arm;linux-arm64;linux-x64;linux-x86</RuntimeIdentifiers>
+        <RuntimeIdentifiers>alpine-x64;linux-arm;linux-arm64;linux-x64;linux-x86</RuntimeIdentifiers>
     </PropertyGroup>
     <PropertyGroup>
         <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
