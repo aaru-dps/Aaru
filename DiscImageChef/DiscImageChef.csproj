@@ -18,7 +18,7 @@
     <Product>The Disc Image Chef</Product>
     <Title>The Disc Image Chef</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <RuntimeIdentifiers>alpine-x64;linux-arm;linux-arm64;linux-x64;linux-x86;osx-64;win8-arm;win-x64;win-x86</RuntimeIdentifiers>
+    <RuntimeIdentifiers>alpine-x64;linux-arm;linux-arm64;linux-x64;linux-x86;osx-x64;win8-arm;win-x64;win-x86</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
