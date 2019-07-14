@@ -24,7 +24,9 @@ steps:
     command: 'publish'
     projects: 'DiscImageChef/DiscImageChef.csproj'
     publishWebProjects: false
-    arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/linux-amd64'
+    arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/linux-amd64'
     zipAfterPublish: false
+  displayName: "Building for Linux (amd64)"
 - script: |
-    tar cJvf $(Build.ArtifactStagingDirectory)/test.tar.xz -C $(Build.ArtifactStagingDirectory)/out .
+    tar cJvf $(Build.ArtifactStagingDirectory)/DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz -C $(Build.ArtifactStagingDirectory)/out/cli .
+  displayName: "Compressing CLI binaries"
