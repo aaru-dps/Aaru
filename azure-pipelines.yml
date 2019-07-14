@@ -30,3 +30,16 @@ steps:
 - script: |
     tar cJvf $(Build.ArtifactStagingDirectory)/DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz -C $(Build.ArtifactStagingDirectory)/out/cli .
   displayName: "Compressing CLI binaries"
+- task: FtpUpload@2
+  inputs:
+    credentialsOption: 'inputs'
+    serverUrl: 'www.discimagechef.app'
+    username: 'ftpuser'
+    password: '$(FtpPassword)'
+    rootDirectory: '$(Build.ArtifactStagingDirectory)'
+    filePatterns: 'DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz'
+    remoteDirectory: '/'
+    clean: false
+    cleanContents: false
+    preservePaths: false
+    trustSSL: false
