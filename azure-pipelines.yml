@@ -28,7 +28,7 @@ steps:
     zipAfterPublish: false
 - task: CmdLine@2
   inputs:
-    script: 'apt-get -y install p7zip'
+    script: 'sudo apt-get -y install p7zip'
     failOnStderr: true
 - task: CmdLine@2
   inputs:
