@@ -26,10 +26,7 @@ steps:
     publishWebProjects: false
     arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/linux-amd64'
     zipAfterPublish: false
-- task: ArchiveFiles@2
+- task: CmdLine@2
   inputs:
-    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/out'
-    archiveType: '7z'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Date).$(Build.BuildId).7z'
-    replaceExistingArchive: true
-    verbose: true
+    script: '7z a -t7z -bb3 $(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z $(Build.ArtifactStagingDirectory)/out/*'
+    failOnStderr: true
