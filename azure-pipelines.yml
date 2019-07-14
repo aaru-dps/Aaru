@@ -29,7 +29,6 @@ steps:
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/out'
-    includeRootFolder: true
     archiveType: '7z'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Date).$(Build.BuildId).7z'
     replaceExistingArchive: true
