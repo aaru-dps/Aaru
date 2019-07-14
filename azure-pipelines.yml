@@ -28,5 +28,5 @@ steps:
     zipAfterPublish: false
 - script: |
     cd $(Build.ArtifactStagingDirectory)/out
-    7z a -t7z -bb3 $(Build.ArtifactStagingDirectory)/test.7z .
+    7z a $(Build.ArtifactStagingDirectory)/test.7z .
 #    tar cJvf $(Build.ArtifactStagingDirectory)/test.tar.xz $(Build.ArtifactStagingDirectory)/out
