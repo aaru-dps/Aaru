@@ -195,7 +195,6 @@
       <Name>DiscImageChef.Checksums</Name>
     </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Database\DiscImageChef.Database.csproj" />
-    <ProjectReference Include="..\DiscImageChef.Gui\DiscImageChef.Gui.csproj" />
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
