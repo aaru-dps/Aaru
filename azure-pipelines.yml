@@ -38,7 +38,7 @@ steps:
     password: '$(FtpPassword)'
     rootDirectory: '$(Build.ArtifactStagingDirectory)'
     filePatterns: 'DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz'
-    remoteDirectory: '/'
+    remoteDirectory: '/srv/ftp/'
     clean: false
     cleanContents: false
     preservePaths: false
