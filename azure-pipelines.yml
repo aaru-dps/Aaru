@@ -35,7 +35,7 @@ steps:
     credentialsOption: 'inputs'
     serverUrl: 'ftp://www.discimagechef.app'
     username: 'ftpuser'
-    password: '$(FtpPassword)'
+    password: '$(Variables.FtpPassword)'
     rootDirectory: '$(Build.ArtifactStagingDirectory)'
     filePatterns: 'DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz'
     remoteDirectory: '/'
