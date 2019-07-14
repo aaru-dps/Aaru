@@ -22,5 +22,4 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
-    publishWebProjects: true
     arguments: '-r linux-x64'
