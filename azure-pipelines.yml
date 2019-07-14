@@ -13,6 +13,8 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- checkout: self
+  submodules: true
 - task: DotNetCoreCLI@2
   inputs:
     command: 'build'
