@@ -18,6 +18,7 @@
     <Product>The Disc Image Chef</Product>
     <Title>The Disc Image Chef</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
+    <RuntimeIdentifiers>alpine;alpine-x64;freebsd;freebsd-x64;linux-arm;linux-arm64;linux-x64;linux-x86;osx;win-arm;win-arm64;win-x64;win-x86</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
@@ -267,5 +268,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+    <PackageReference Include="System.Collections" Version="4.3.0"/>
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0"/>
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0"/>
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0"/>
   </ItemGroup>
 </Project>

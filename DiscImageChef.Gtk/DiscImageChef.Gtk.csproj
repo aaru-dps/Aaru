@@ -14,6 +14,8 @@
         <ReleaseVersion>$(Version)</ReleaseVersion>
         <Copyright>Copyright © {copyright:2011} Natalia Portillo</Copyright>
         <AssemblyTitle>DiscImageChef</AssemblyTitle>
+        <AssemblyName>DiscImageChefGui</AssemblyName>
+        <RuntimeIdentifiers>alpine;alpine-x64;freebsd;freebsd-x64;linux-arm;linux-arm64;linux-x64;linux-x86</RuntimeIdentifiers>
     </PropertyGroup>
     <PropertyGroup>
         <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>
@@ -31,6 +33,12 @@
         <PackageReference Include="GtkSharp" Version="3.22.24.37" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.4"/>
         <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+        <PackageReference Include="System.Collections" Version="4.3.0"/>
+        <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0"/>
+        <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0"/>
+        <PackageReference Include="System.Runtime.Extensions" Version="4.3.0"/>
+        <PackageReference Include="System.Runtime.Handles" Version="4.3.0"/>
+        <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0"/>
     </ItemGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
         <DebugSymbols>True</DebugSymbols>
