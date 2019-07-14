@@ -27,6 +27,4 @@ steps:
     arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/linux-amd64'
     zipAfterPublish: false
 - script: |
-    cd $(Build.ArtifactStagingDirectory)/out
-    7z a $(Build.ArtifactStagingDirectory)/test.7z .
-#    tar cJvf $(Build.ArtifactStagingDirectory)/test.tar.xz $(Build.ArtifactStagingDirectory)/out
+    tar cJvf $(Build.ArtifactStagingDirectory)/test.tar.xz -C $(Build.ArtifactStagingDirectory)/out .
