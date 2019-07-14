@@ -28,5 +28,9 @@ steps:
     zipAfterPublish: false
 - task: CmdLine@2
   inputs:
+    script: 'apt-get -y install p7zip'
+    failOnStderr: true
+- task: CmdLine@2
+  inputs:
     script: '7z a -t7z -bb3 $(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z $(Build.ArtifactStagingDirectory)/out/*'
     failOnStderr: true
