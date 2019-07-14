@@ -15,13 +15,13 @@ variables:
 steps:
 - checkout: self
   submodules: true
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: 'DiscImageChef/DiscImageChef.csproj'
+#- task: DotNetCoreCLI@2
+#  inputs:
+#    command: 'build'
+#    projects: 'DiscImageChef/DiscImageChef.csproj'
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     projects: 'DiscImageChef/DiscImageChef.csproj'
     publishWebProjects: false
-    arguments: '-r linux-x64'
+    arguments: '-r linux-x64 -o out/linux-amd64'
