@@ -27,4 +27,4 @@ steps:
     arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/linux-amd64'
     zipAfterPublish: false
 - script: |
-    7z a -t7z -bb3 $(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z $(Build.ArtifactStagingDirectory)/out/*
+    7z a -t7z -bb3 $(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z $(Build.ArtifactStagingDirectory)/out/
