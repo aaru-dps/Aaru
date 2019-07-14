@@ -26,8 +26,11 @@ steps:
     publishWebProjects: false
     arguments: '-r linux-x64 -o out/linux-amd64'
     zipAfterPublish: false
-- task: ZipAndDropBox@0
+- task: ArchiveFiles@2
   inputs:
-    sourceDir: 'out'
-    zipPath: '/mydropboxfolder/mybuild.zip'
-    dropboxtoken: '$(DropBoxToken)'
+    rootFolderOrFile: 'out'
+    includeRootFolder: true
+    archiveType: '7z'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).7z'
+    replaceExistingArchive: true
+    verbose: true
