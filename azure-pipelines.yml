@@ -25,3 +25,4 @@ steps:
     projects: 'DiscImageChef/DiscImageChef.csproj'
     publishWebProjects: false
     arguments: '-r linux-x64 -o out/linux-amd64'
+    zipAfterPublish: false
