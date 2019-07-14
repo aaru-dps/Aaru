@@ -33,7 +33,7 @@ steps:
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
-    serverUrl: 'www.discimagechef.app'
+    serverUrl: 'ftp://www.discimagechef.app'
     username: 'ftpuser'
     password: '$(FtpPassword)'
     rootDirectory: '$(Build.ArtifactStagingDirectory)'
