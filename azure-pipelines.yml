@@ -29,15 +29,13 @@ steps:
   displayName: "Building for Linux (amd64)"
 - script: |
     tar cJvf $(Build.ArtifactStagingDirectory)/DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz -C $(Build.ArtifactStagingDirectory)/out/cli .
-    echo Variables $(Variables.FtpPassword)
-    echo $(FtpPassword)
   displayName: "Compressing CLI binaries"
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
     serverUrl: 'ftp://www.discimagechef.app'
     username: 'ftpuser'
-    password: '$(Variables.FtpPassword)'
+    password: '$(FtpPassword)'
     rootDirectory: '$(Build.ArtifactStagingDirectory)'
     filePatterns: 'DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz'
     remoteDirectory: '/'
