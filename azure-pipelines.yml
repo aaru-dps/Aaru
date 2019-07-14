@@ -1,8 +1,3 @@
-# ASP.NET Core
-# Build and test ASP.NET Core projects targeting .NET Core.
-# Add steps that run tests, create a NuGet package, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - master
 
@@ -15,10 +10,30 @@ variables:
 steps:
 - checkout: self
   submodules: true
-#- task: DotNetCoreCLI@2
-#  inputs:
-#    command: 'build'
-#    projects: 'DiscImageChef/DiscImageChef.csproj'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r alpine-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/alpine-amd64'
+    zipAfterPublish: false
+  displayName: "Building for Alpine Linux (amd64)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r linux-arm -o $(Build.ArtifactStagingDirectory)/out/cli/linux-arm'
+    zipAfterPublish: false
+  displayName: "Building for Linux (armv7h)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r linux-arm64 -o $(Build.ArtifactStagingDirectory)/out/cli/linux-aarch64'
+    zipAfterPublish: false
+  displayName: "Building for Linux (aarch64)"
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
@@ -27,9 +42,92 @@ steps:
     arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/linux-amd64'
     zipAfterPublish: false
   displayName: "Building for Linux (amd64)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r linux-x86 -o $(Build.ArtifactStagingDirectory)/out/cli/linux-x86'
+    zipAfterPublish: false
+  displayName: "Building for Linux (x86)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r osx-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/macos'
+    zipAfterPublish: false
+  displayName: "Building for macOS (amd64)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r win8-arm -o $(Build.ArtifactStagingDirectory)/out/cli/windows-arm'
+    zipAfterPublish: false
+  displayName: "Building for Windows (armv7h)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r win-x64 -o $(Build.ArtifactStagingDirectory)/out/cli/windows-x64'
+    zipAfterPublish: false
+  displayName: "Building for Windows (x64)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef/DiscImageChef.csproj'
+    publishWebProjects: false
+    arguments: '-r win-x86 -o $(Build.ArtifactStagingDirectory)/out/cli/windows-x86'
+    zipAfterPublish: false
+  displayName: "Building for Windows (x86)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef.Gtk/DiscImageChef.Gtk.csproj'
+    publishWebProjects: false
+    arguments: '-r alpine-x64 -o $(Build.ArtifactStagingDirectory)/out/gtk/alpine-amd64'
+    zipAfterPublish: false
+  displayName: "Building GTK+ GUI for Alpine Linux (amd64)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef.Gtk/DiscImageChef.Gtk.csproj'
+    publishWebProjects: false
+    arguments: '-r linux-arm -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-arm'
+    zipAfterPublish: false
+  displayName: "Building GTK+ GUI for Linux (armv7h)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef.Gtk/DiscImageChef.Gtk.csproj'
+    publishWebProjects: false
+    arguments: '-r linux-arm64 -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-aarch64'
+    zipAfterPublish: false
+  displayName: "Building GTK+ GUI for Linux (aarch64)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef.Gtk/DiscImageChef.Gtk.csproj'
+    publishWebProjects: false
+    arguments: '-r linux-x64 -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-amd64'
+    zipAfterPublish: false
+  displayName: "Building GTK+ GUI for Linux (amd64)"
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: 'DiscImageChef.Gtk/DiscImageChef.Gtk.csproj'
+    publishWebProjects: false
+    arguments: '-r linux-x86 -o $(Build.ArtifactStagingDirectory)/out/gtk/linux-x86'
+    zipAfterPublish: false
+  displayName: "Building GTK+ GUI for Linux (x86)"
 - script: |
     tar cJvf $(Build.ArtifactStagingDirectory)/DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz -C $(Build.ArtifactStagingDirectory)/out/cli .
   displayName: "Compressing CLI binaries"
+- script: |
+    tar cJvf $(Build.ArtifactStagingDirectory)/DiscImageChef.Gtk-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz -C $(Build.ArtifactStagingDirectory)/out/gtk .
+  displayName: "Compressing GTK+ binaries"
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
@@ -37,7 +135,7 @@ steps:
     username: 'ftpuser'
     password: '$(FtpPassword)'
     rootDirectory: '$(Build.ArtifactStagingDirectory)'
-    filePatterns: 'DiscImageChef-$(Build.BuildNumber)+$(Build.SourceVersion).tar.xz'
+    filePatterns: '*.tar.xz'
     remoteDirectory: '/srv/ftp/'
     clean: false
     cleanContents: false
