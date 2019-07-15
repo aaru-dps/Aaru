@@ -46,7 +46,14 @@ namespace DiscImageChef.CommonTypes.Interop
 {
     public static class DetectOS
     {
-        public static readonly bool IsMono = Type.GetType("Mono.Runtime") != null;
+        public static readonly bool IsMono =
+            RuntimeInformation.FrameworkDescription.StartsWith("Mono", StringComparison.Ordinal);
+        public static readonly bool IsNetFramework =
+            RuntimeInformation.FrameworkDescription.StartsWith(".NET Framework", StringComparison.Ordinal);
+        public static readonly bool IsNetCore =
+            RuntimeInformation.FrameworkDescription.StartsWith(".NET Core", StringComparison.Ordinal);
+        public static readonly bool IsNetNative =
+            RuntimeInformation.FrameworkDescription.StartsWith(".NET Native", StringComparison.Ordinal);
 
         /// <summary>
         ///     Checks if the underlying runtime runs in 64-bit mode
@@ -115,6 +122,7 @@ namespace DiscImageChef.CommonTypes.Interop
                     return PlatformID.Linux;
                     #endif
                 }
+
                 case "Darwin":
                 {
                     IntPtr pLen     = Marshal.AllocHGlobal(sizeof(int));
@@ -149,6 +157,7 @@ namespace DiscImageChef.CommonTypes.Interop
 
                     return PlatformID.MacOSX;
                 }
+
                 case "GNU": return PlatformID.Hurd;
                 case "FreeBSD":
                 case "GNU/kFreeBSD": return PlatformID.FreeBSD;
@@ -308,27 +317,27 @@ namespace DiscImageChef.CommonTypes.Interop
             ///     System name
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string sysname;
+            public readonly string sysname;
             /// <summary>
             ///     Node name
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string nodename;
+            public readonly string nodename;
             /// <summary>
             ///     Release level
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string release;
+            public readonly string release;
             /// <summary>
             ///     Version level
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string version;
+            public readonly string version;
             /// <summary>
             ///     Hardware level
             /// </summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-            public string machine;
+            public readonly string machine;
         }
     }
 }
