@@ -33,6 +33,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Devices;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
@@ -69,8 +70,9 @@ namespace DiscImageChef.Core.Logging
             logSw.WriteLine("################# System information #################");
             logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
                             Environment.Is64BitOperatingSystem ? 64 : 32);
-            if(DetectOS.IsMono) logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
-            else logSw.WriteLine(".NET Framework {0}",      Environment.Version);
+            if(DetectOS.IsMono) logSw.WriteLine("Mono {0}",              Version.GetMonoVersion());
+            else if(DetectOS.IsNetCore) logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
+            else logSw.WriteLine(RuntimeInformation.FrameworkDescription);
 
             logSw.WriteLine();
 

@@ -34,6 +34,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
 using Eto.Drawing;
@@ -142,8 +143,9 @@ namespace DiscImageChef.Gui.Forms
                 logSw.WriteLine("################# System information #################");
                 logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
                                 Environment.Is64BitOperatingSystem ? 64 : 32);
-                if(DetectOS.IsMono) logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
-                else logSw.WriteLine(".NET Framework {0}",      Environment.Version);
+                if(DetectOS.IsMono) logSw.WriteLine("Mono {0}",              Version.GetMonoVersion());
+                else if(DetectOS.IsNetCore) logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
+                else logSw.WriteLine(RuntimeInformation.FrameworkDescription);
 
                 logSw.WriteLine();
 
@@ -161,8 +163,7 @@ namespace DiscImageChef.Gui.Forms
                 foreach(LogEntry entry in ConsoleHandler.Entries)
                     if(entry.Type != "Info")
                         logSw.WriteLine("{0}: ({1}) {2}", entry.Timestamp, entry.Type.ToLower(), entry.Message);
-                    else
-                        logSw.WriteLine("{0}: {1}", entry.Timestamp, entry.Message);
+                    else logSw.WriteLine("{0}: {1}",      entry.Timestamp, entry.Message);
 
                 logSw.Close();
                 logFs.Close();
