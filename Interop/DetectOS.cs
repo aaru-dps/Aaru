@@ -246,7 +246,13 @@ namespace DiscImageChef.CommonTypes.Interop
                 case PlatformID.Hurd:      return "Hurd";
                 case PlatformID.iOS:       return "iOS";
                 case PlatformID.IRIX:      return "IRIX";
-                case PlatformID.Linux:     return "Linux";
+                case PlatformID.Linux:
+                    if(!File.Exists("/proc/version")) return "Linux";
+
+                    string s = File.ReadAllText("/proc/version");
+
+                    return s.Contains("Microsoft") || s.Contains("WSL") ? "Windows Subsystem for Linux" : "Linux";
+
                 case PlatformID.MacOSX:
                     if(string.IsNullOrEmpty(version)) return "macOS";
 
