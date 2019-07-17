@@ -98,12 +98,5 @@ namespace DiscImageChef.Gtk
 
             Statistics.SaveStats();
         }
-
-        internal static void PrintCopyright()
-        {
-            DicConsole.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion?.InformationalVersion);
-            DicConsole.WriteLine("{0}", AssemblyCopyright);
-            DicConsole.WriteLine();
-        }
     }
 }
