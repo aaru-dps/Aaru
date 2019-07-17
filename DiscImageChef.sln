@@ -1,7 +1,7 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef", "DiscImageChef\DiscImageChef.csproj", "{7A4B05BE-73C9-4F34-87FE-E80CCF1F732D}"
 EndProject
@@ -45,9 +45,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Server", "Dis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Server.Task", "DiscImageChef.Server.Task\DiscImageChef.Server.Task.csproj", "{79D6A54E-47B6-4D0A-ABEB-4FA7B5ADF4B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Dto", "DiscImageChef.Dto\DiscImageChef.Dto.csproj", "{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscImageChef.Gtk", "DiscImageChef.Gtk\DiscImageChef.Gtk.csproj", "{13C642CB-817F-4C18-9CAD-0F9A24C4031A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Dto", "DiscImageChef.Dto\DiscImageChef.Dto.csproj", "{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -233,14 +231,6 @@ Global
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|x86.ActiveCfg = Release|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Release|x86.Build.0 = Release|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Debug|x86.Build.0 = Debug|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Release|x86.ActiveCfg = Release|Any CPU
-		{13C642CB-817F-4C18-9CAD-0F9A24C4031A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

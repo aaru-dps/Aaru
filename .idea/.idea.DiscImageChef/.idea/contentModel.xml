@@ -1421,18 +1421,6 @@
           </e>
         </e>
       </e>
-      <e p="DiscImageChef.Gtk" t="IncludeRecursive">
-        <e p="DiscImageChef.Gtk.csproj" t="IncludeRecursive" />
-        <e p="Program.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp2.0" t="Include">
-              <e p="DiscImageChef.Gtk.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-      </e>
       <e p="DiscImageChef.Gui" t="IncludeRecursive">
         <e p="Assets" t="Include">
           <e p="Icons" t="Include">
