@@ -32,7 +32,6 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Database;
 using DiscImageChef.Gui.Forms;
@@ -60,10 +59,6 @@ namespace DiscImageChef.Gtk
                 Attribute.GetCustomAttribute(typeof(Program).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
                     AssemblyInformationalVersionAttribute;
             AssemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-
-            DicConsole.WriteLineEvent += System.Console.WriteLine;
-            DicConsole.WriteEvent += System.Console.Write;
-            DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             Settings.Settings.LoadSettings();
 

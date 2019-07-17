@@ -100,10 +100,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
-      <Project>{ccaa7afe-c094-4d82-a66d-630de8a3f545}</Project>
-      <Name>DiscImageChef.Console</Name>
-    </ProjectReference>
     <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj">
       <Project>{679659b8-25d0-4279-b632-56ef8f94adc0}</Project>
       <Name>DiscImageChef.Core</Name>
@@ -122,53 +118,53 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
-    <ItemGroup>
-        <None Include="..\TODO.md">
-            <Link>TODO.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\README.md">
-            <Link>README.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\.travis.yml">
-            <Link>.travis.yml</Link>
-        </None>
-        <None Include="..\CONTRIBUTING.md">
-            <Link>CONTRIBUTING.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\DONATING.md">
-            <Link>DONATING.md</Link>
-        </None>
-        <None Include="..\NEEDINFO.md">
-            <Link>NEEDINFO.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="..\Changelog.md">
-            <Link>Changelog.md</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.MIT">
-            <Link>LICENSE.MIT</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
-        <EmbeddedResource Include="..\LICENSE.LGPL">
-            <Link>LICENSE.LGPL</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </EmbeddedResource>
-        <Folder Include="..\LICENSE">
-            <Link>LICENSE</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Folder>
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="..\.github\CODE_OF_CONDUCT.md"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="..\.github\ISSUE_TEMPLATE.md"/>
-        <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md"/>
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="..\TODO.md">
+      <Link>TODO.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\.travis.yml">
+      <Link>.travis.yml</Link>
+    </None>
+    <None Include="..\CONTRIBUTING.md">
+      <Link>CONTRIBUTING.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\DONATING.md">
+      <Link>DONATING.md</Link>
+    </None>
+    <None Include="..\NEEDINFO.md">
+      <Link>NEEDINFO.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Changelog.md">
+      <Link>Changelog.md</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\LICENSE.MIT">
+      <Link>LICENSE.MIT</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\LICENSE.LGPL">
+      <Link>LICENSE.LGPL</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Folder Include="..\LICENSE">
+      <Link>LICENSE</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Folder>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.github\CODE_OF_CONDUCT.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\.github\ISSUE_TEMPLATE.md" />
+    <Content Include="..\.github\PULL_REQUEST_TEMPLATE.md" />
+  </ItemGroup>
 </Project>
