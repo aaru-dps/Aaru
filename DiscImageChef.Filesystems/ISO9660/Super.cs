@@ -72,10 +72,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             byte[] vdSector = imagePlugin.ReadSector(16 + counter + partition.Start);
             int    xaOff    = vdSector.Length == 2336 ? 8 : 0;
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
-            bool highSierra      = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
-            int  hsOff           = 0;
+            highSierra = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
+            int hsOff            = 0;
             if(highSierra) hsOff = 8;
-            bool cdi             = false;
+            cdi = false;
 
             while(true)
             {
@@ -184,7 +184,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                 this.@namespace = Namespace.Normal;
 
             if(jolietvd is null)
-            {
                 switch(this.@namespace)
                 {
                     case Namespace.Joliet:
@@ -198,7 +197,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                         this.@namespace = Namespace.RripNormal;
                         break;
                 }
-            }
 
             uint rootLocation = 0;
             uint rootSize     = 0;
@@ -235,11 +233,11 @@ namespace DiscImageChef.Filesystems.ISO9660
             // TODO: Add volume descriptors to debug root directory
             // TODO: Decode Joliet directory
 
-            rootDirectory = cdi
-                                ? DecodeCdiDirectory(rootDir)
-                                : highSierra
-                                    ? DecodeHighSierraDirectory(rootDir)
-                                    : DecodeIsoDirectory(rootDir);
+            rootDirectoryCache = cdi
+                                     ? DecodeCdiDirectory(rootDir)
+                                     : highSierra
+                                         ? DecodeHighSierraDirectory(rootDir)
+                                         : DecodeIsoDirectory(rootDir);
 
             XmlFsType.Type = fsFormat;
 
@@ -354,8 +352,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                 Type     = fsFormat
             };
 
-            image   = imagePlugin;
-            mounted = true;
+            directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();
+            image          = imagePlugin;
+            mounted        = true;
+
             return Errno.NoError;
         }
 
@@ -363,8 +363,9 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             if(!mounted) return Errno.AccessDenied;
 
-            rootDirectory = null;
-            mounted       = false;
+            rootDirectoryCache = null;
+            directoryCache     = null;
+            mounted            = false;
 
             return Errno.NoError;
         }

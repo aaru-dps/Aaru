@@ -42,12 +42,14 @@ namespace DiscImageChef.Filesystems.ISO9660
     // This is coded following ECMA-119.
     public partial class ISO9660 : IReadOnlyFilesystem
     {
-        bool                        debug;
-        IMediaImage                 image;
-        bool                        mounted;
-        Namespace                   @namespace;
-        List<DecodedDirectoryEntry> rootDirectory;
-        FileSystemInfo              statfs;
+        bool                                      cdi;
+        bool                                      debug;
+        bool                                      highSierra;
+        IMediaImage                               image;
+        bool                                      mounted;
+        Namespace                                 @namespace;
+        Dictionary<string, DecodedDirectoryEntry> rootDirectoryCache;
+        FileSystemInfo                            statfs;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }

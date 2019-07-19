@@ -55,16 +55,16 @@ namespace DiscImageChef.Filesystems.ISO9660
             public uint     Blocks;
         }
 
-        struct DecodedDirectoryEntry
+        class DecodedDirectoryEntry
         {
             public uint      Extent;
-            public uint      Size;
-            public FileFlags Flags;
             public byte      FileUnitSize;
+            public FileFlags Flags;
             public byte      Interleave;
-            public ushort    VolumeSequenceNumber;
             public string    IsoFilename;
+            public uint      Size;
             public DateTime? Timestamp;
+            public ushort    VolumeSequenceNumber;
 
             public override string ToString() => IsoFilename;
         }
