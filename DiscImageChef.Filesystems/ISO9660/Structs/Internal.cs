@@ -64,7 +64,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public byte      Interleave;
             public ushort    VolumeSequenceNumber;
             public string    IsoFilename;
-            public DateTime  Timestamp;
+            public DateTime? Timestamp;
 
             public override string ToString() => IsoFilename;
         }
