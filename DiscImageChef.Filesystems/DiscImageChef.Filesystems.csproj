@@ -71,6 +71,10 @@
     <Compile Include="FAT\Super.cs" />
     <Compile Include="FAT\Xattr.cs" />
     <Compile Include="HPOFS.cs" />
+    <Compile Include="ISO9660\Dir.cs" />
+    <Compile Include="ISO9660\File.cs" />
+    <Compile Include="ISO9660\Super.cs" />
+    <Compile Include="ISO9660\Xattr.cs" />
     <Compile Include="PCFX.cs" />
     <Compile Include="AmigaDOS.cs" />
     <Compile Include="AppleHFS.cs" />

@@ -31,19 +31,43 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs;
 using Schemas;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
     // This is coded following ECMA-119.
-    public partial class ISO9660 : IFilesystem
+    public partial class ISO9660 : IReadOnlyFilesystem
     {
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "ISO9660 Filesystem";
         public Guid           Id        => new Guid("d812f4d3-c357-400d-90fd-3b22ef786aa8");
         public string         Author    => "Natalia Portillo";
+
+        public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
+            new (string name, Type type, string description)[] { };
+
+        public Dictionary<string, string> Namespaces =>
+            new Dictionary<string, string>
+            {
+                {"normal", "Primary Volume Descriptor, ignoring ;1 suffixes"},
+                {"vms", "Primary Volume Descriptor, showing version suffixes"},
+                {"joliet", "Joliet Volume Descriptor"},
+                {"joliet+normal", "Joliet with fallback to normal"}
+            };
+
+        public Errno ReadLink(string path, out string dest)
+        {
+            dest = null;
+
+            return Errno.NotSupported;
+        }
+
+        static Dictionary<string, string> GetDefaultOptions() =>
+            new Dictionary<string, string> {{"debug", false.ToString()}};
     }
 }
