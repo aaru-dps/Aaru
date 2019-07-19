@@ -179,6 +179,27 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
             else fsFormat = "ISO9660";
 
+            // High Sierra and CD-i do not support Joliet or RRIP
+            if((highSierra || cdi) && this.@namespace != Namespace.Normal && this.@namespace != Namespace.Vms)
+                this.@namespace = Namespace.Normal;
+
+            if(jolietvd is null)
+            {
+                switch(this.@namespace)
+                {
+                    case Namespace.Joliet:
+                    case Namespace.JolietNormal:
+                        this.@namespace = Namespace.Normal;
+                        break;
+                    case Namespace.RripJoliet:
+                        this.@namespace = Namespace.Rrip;
+                        break;
+                    case Namespace.RripJolietNormal:
+                        this.@namespace = Namespace.RripNormal;
+                        break;
+                }
+            }
+
             uint rootLocation = 0;
             uint rootSize     = 0;
 
