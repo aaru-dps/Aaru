@@ -42,6 +42,8 @@ namespace DiscImageChef.Filesystems.ISO9660
     // This is coded following ECMA-119.
     public partial class ISO9660 : IReadOnlyFilesystem
     {
+        Namespace @namespace;
+
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "ISO9660 Filesystem";
@@ -57,7 +59,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {"normal", "Primary Volume Descriptor, ignoring ;1 suffixes"},
                 {"vms", "Primary Volume Descriptor, showing version suffixes"},
                 {"joliet", "Joliet Volume Descriptor"},
-                {"joliet+normal", "Joliet with fallback to normal"}
+                {"joliet+normal", "Joliet with fallback to normal"},
+                {"rrip", "Rock Ridge"},
+                {"rrip+normal", "Rock Ridge with fallback to normal"},
+                {"rrip+joliet", "Rock Ridge with fallback to Joliet"},
+                {"rrip+joliet+normal", "Rock Ridge with fallback to Joliet and then to normal (default)"}
             };
 
         public Errno ReadLink(string path, out string dest)

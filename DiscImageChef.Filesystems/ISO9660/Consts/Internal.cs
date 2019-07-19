@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Common.cs
+// Filename       : AAIP.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : ISO9660 filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Common structures.
+//     AAIP extensions constants and enumerations.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -30,29 +30,24 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        struct DecodedVolumeDescriptor
+        static readonly int DirectoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
+
+        enum Namespace
         {
-            public string   SystemIdentifier;
-            public string   VolumeIdentifier;
-            public string   VolumeSetIdentifier;
-            public string   PublisherIdentifier;
-            public string   DataPreparerIdentifier;
-            public string   ApplicationIdentifier;
-            public DateTime CreationTime;
-            public bool     HasModificationTime;
-            public DateTime ModificationTime;
-            public bool     HasExpirationTime;
-            public DateTime ExpirationTime;
-            public bool     HasEffectiveTime;
-            public DateTime EffectiveTime;
-            public ushort   BlockSize;
-            public uint     Blocks;
+            Normal,
+            Vms,
+            Joliet,
+            JolietNormal,
+            Rrip,
+            RripNormal,
+            RripJoliet,
+            RripJolietNormal
         }
     }
 }
