@@ -33,6 +33,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using DiscImageChef.Commands;
 using DiscImageChef.CommonTypes.Interop;
@@ -94,6 +95,8 @@ namespace DiscImageChef
                 Task.Run(() => { Statistics.SubmitStats(); });
 
             PlatformID currentPlatform = DetectOS.GetRealPlatformID();
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             CommandSet commands = new CommandSet("DiscImageChef")
             {

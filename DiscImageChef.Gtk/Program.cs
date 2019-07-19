@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using DiscImageChef.Core;
 using DiscImageChef.Database;
@@ -57,6 +58,8 @@ namespace DiscImageChef.Gtk
                         Debug = true;
                         break;
                 }
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             new Application(Platforms.Gtk).Run(new frmMain(Debug, Verbose));
 
