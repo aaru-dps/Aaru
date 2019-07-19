@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using DiscImageChef.CommonTypes.Structs;
+using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
@@ -37,7 +39,40 @@ namespace DiscImageChef.Filesystems.ISO9660
             return Errno.NoError;
         }
 
-        public Errno Read(string path, long offset, long size, ref byte[] buf) => throw new NotImplementedException();
+        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            buf = null;
+            if(!mounted) return Errno.AccessDenied;
+
+            Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+            if(err != Errno.NoError) return err;
+
+            if(entry.Flags.HasFlag(FileFlags.Directory) && !debug) return Errno.IsDirectory;
+
+            if(offset >= entry.Size) return Errno.InvalidArgument;
+
+            if(size + offset >= entry.Size) size = entry.Size - offset;
+
+            if(entry.Size == 0)
+            {
+                buf = new byte[0];
+                return Errno.NoError;
+            }
+
+            // TODO: XA
+            long firstSector    = offset                  / 2048;
+            long offsetInSector = offset                  % 2048;
+            long sizeInSectors  = (size + offsetInSector) / 2048;
+            if((size + offsetInSector) % 2048 > 0) sizeInSectors++;
+
+            MemoryStream ms = new MemoryStream();
+
+            byte[] buffer = image.ReadSectors((ulong)(entry.Extent + firstSector), (uint)sizeInSectors);
+            buf = new byte[size];
+            Array.Copy(buffer, offsetInSector, buf, 0, size);
+
+            return Errno.NoError;
+        }
 
         public Errno Stat(string path, out FileEntryInfo stat)
         {
