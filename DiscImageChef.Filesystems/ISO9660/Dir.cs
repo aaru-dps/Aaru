@@ -9,7 +9,67 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        public Errno ReadDir(string path, out List<string> contents) => throw new NotImplementedException();
+        // TODO: Implement path table traversal
+        public Errno ReadDir(string path, out List<string> contents)
+        {
+            contents = null;
+            if(!mounted) return Errno.AccessDenied;
+
+            contents = new List<string>();
+            if(string.IsNullOrWhiteSpace(path) || path == "/")
+            {
+                foreach(DecodedDirectoryEntry entry in rootDirectory)
+                {
+                    switch(@namespace)
+                    {
+                        case Namespace.Normal:
+                            contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
+                                             ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
+                                             : entry.IsoFilename);
+
+                            break;
+                        case Namespace.Vms:
+                            contents.Add(entry.IsoFilename);
+                            break;
+                        case Namespace.Joliet:
+                            // TODO: Implement Joliet
+                            break;
+                        case Namespace.JolietNormal:
+                            // TODO: Implement Joliet
+                            contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
+                                             ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
+                                             : entry.IsoFilename);
+                            break;
+                        case Namespace.Rrip:
+                            // TODO: Implement RRIP
+                            break;
+                        case Namespace.RripNormal:
+                            // TODO: Implement RRIP
+                            contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
+                                             ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
+                                             : entry.IsoFilename);
+                            break;
+                        case Namespace.RripJoliet:
+                            // TODO: Implement RRIP
+                            // TODO: Implement Joliet
+                            break;
+                        case Namespace.RripJolietNormal:
+                            // TODO: Implement RRIP
+                            // TODO: Implement Joliet
+                            contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
+                                             ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
+                                             : entry.IsoFilename);
+                            break;
+                        default: throw new ArgumentOutOfRangeException();
+                    }
+                }
+
+                return Errno.NoError;
+            }
+
+            // TODO: Implement subdirectories
+            throw new NotImplementedException();
+        }
 
         List<DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data) => throw new NotImplementedException();
 
