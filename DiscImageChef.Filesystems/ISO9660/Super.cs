@@ -13,11 +13,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        bool                        debug;
-        IMediaImage                 image;
-        bool                        mounted;
-        List<DecodedDirectoryEntry> rootDirectory;
-
         public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options,     string    @namespace)
         {
@@ -326,6 +321,18 @@ namespace DiscImageChef.Filesystems.ISO9660
             XmlFsType.Clusters    =  decodedVd.Blocks;
             XmlFsType.ClusterSize =  decodedVd.BlockSize;
 
+            statfs = new FileSystemInfo
+            {
+                Blocks = decodedVd.Blocks,
+                FilenameLength = (ushort)(jolietvd != null
+                                              ? this.@namespace == Namespace.Joliet
+                                                    ? 110
+                                                    : 255
+                                              : 255),
+                PluginId = Id,
+                Type     = fsFormat
+            };
+
             image   = imagePlugin;
             mounted = true;
             return Errno.NoError;
@@ -341,6 +348,13 @@ namespace DiscImageChef.Filesystems.ISO9660
             return Errno.NoError;
         }
 
-        public Errno StatFs(out FileSystemInfo stat) => throw new NotImplementedException();
+        public Errno StatFs(out FileSystemInfo stat)
+        {
+            stat = null;
+            if(!mounted) return Errno.AccessDenied;
+
+            stat = statfs.ShallowCopy();
+            return Errno.NoError;
+        }
     }
 }
