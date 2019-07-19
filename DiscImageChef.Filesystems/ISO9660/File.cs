@@ -8,7 +8,20 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        public Errno MapBlock(string path, long fileBlock, out long deviceBlock) => throw new NotImplementedException();
+        public Errno MapBlock(string path, long fileBlock, out long deviceBlock)
+        {
+            deviceBlock = 0;
+            if(!mounted) return Errno.AccessDenied;
+
+            Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+            if(err != Errno.NoError) return err;
+
+            if(entry.Flags.HasFlag(FileFlags.Directory) && !debug) return Errno.IsDirectory;
+
+            deviceBlock = entry.Extent + fileBlock;
+
+            return Errno.NoError;
+        }
 
         public Errno GetAttributes(string path, out FileAttributes attributes)
         {
