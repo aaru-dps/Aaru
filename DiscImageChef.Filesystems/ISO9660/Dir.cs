@@ -39,7 +39,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry();
 
-                entry.Extent               = record.extent;
+                entry.Extent               = record.size == 0 ? 0 : record.extent;
                 entry.Size                 = record.size;
                 entry.Flags                = record.flags;
                 entry.FileUnitSize         = record.file_unit_size;
