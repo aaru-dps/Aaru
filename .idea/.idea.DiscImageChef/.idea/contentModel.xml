@@ -6,7 +6,6 @@
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.1/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.1/system/resharper-host/local/Transient/ReSharperHost/v191/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
@@ -36,6 +35,7 @@
           <e p="Entropy.cs" t="Include" />
           <e p="ExtractFiles.cs" t="Include" />
           <e p="Formats.cs" t="Include" />
+          <e p="Gui.cs" t="Include" />
           <e p="ImageInfo.cs" t="Include" />
           <e p="ListDevices.cs" t="Include" />
           <e p="ListEncodings.cs" t="Include" />
@@ -61,7 +61,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.0" t="Include">
+            <e p="net461" t="Include">
               <e p="DiscImageChef.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -76,6 +76,7 @@
         <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
         <e p="FletcherContext.cs" t="Include" />
         <e p="MD5Context.cs" t="Include" />
+        <e p="RIPEMD160Context.cs" t="Include" />
         <e p="ReedSolomon.cs" t="Include" />
         <e p="Register.cs" t="Include" />
         <e p="SHA1Context.cs" t="Include" />
@@ -2073,6 +2074,7 @@
           <e p="CRC32.cs" t="Include" />
           <e p="CRC64.cs" t="Include" />
           <e p="MD5.cs" t="Include" />
+          <e p="RIPEMD160.cs" t="Include" />
           <e p="SHA1.cs" t="Include" />
           <e p="SHA256.cs" t="Include" />
           <e p="SHA384.cs" t="Include" />

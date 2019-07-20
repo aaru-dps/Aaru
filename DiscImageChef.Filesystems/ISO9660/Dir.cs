@@ -132,8 +132,46 @@ namespace DiscImageChef.Filesystems.ISO9660
         Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data) =>
             throw new NotImplementedException();
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(byte[] data) =>
-            throw new NotImplementedException();
+        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(byte[] data)
+        {
+            Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
+            int                                       entryOff = 0;
+
+            while(entryOff + DirectoryRecordSize < data.Length)
+            {
+                HighSierraDirectoryRecord record =
+                    Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(data, entryOff,
+                                                                                        Marshal
+                                                                                           .SizeOf<DirectoryRecord>());
+
+                if(record.length == 0) break;
+
+                // Special entries for current and parent directories, skip them
+                if(record.name_len == 1)
+                    if(data[entryOff + DirectoryRecordSize] == 0 || data[entryOff + DirectoryRecordSize] == 1)
+                    {
+                        entryOff += record.length;
+                        continue;
+                    }
+
+                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                {
+                    Extent               = record.size == 0 ? 0 : record.extent,
+                    Size                 = record.size,
+                    Flags                = record.flags,
+                    Interleave           = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    IsoFilename =
+                        Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len)
+                };
+
+                if(!entries.ContainsKey(entry.IsoFilename)) entries.Add(entry.IsoFilename, entry);
+
+                entryOff += record.length;
+            }
+
+            return entries;
+        }
 
         // TODO: Implement system area
         Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data)
