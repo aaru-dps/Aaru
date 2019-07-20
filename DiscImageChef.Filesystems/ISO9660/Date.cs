@@ -21,5 +21,21 @@ namespace DiscImageChef.Filesystems.ISO9660
                 return null;
             }
         }
+
+        DateTime? DecodeHighSierraDateTime(HighSierraTimestamp timestamp)
+        {
+            try
+            {
+                DateTime date = new DateTime(timestamp.Years + 1900, timestamp.Month, timestamp.Day, timestamp.Hour,
+                                             timestamp.Minute, timestamp.Second, DateTimeKind.Unspecified);
+
+                return TimeZoneInfo.ConvertTimeToUtc(date, TimeZoneInfo.FindSystemTimeZoneById("GMT"));
+            }
+            catch(Exception e)
+            {
+                // ISO says timestamp can be unspecified, suppose same for High Sierra
+                return null;
+            }
+        }
     }
 }

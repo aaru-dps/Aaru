@@ -162,7 +162,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
                     IsoFilename =
-                        Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len)
+                        Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    Timestamp = DecodeHighSierraDateTime(record.date)
                 };
 
                 if(!entries.ContainsKey(entry.IsoFilename)) entries.Add(entry.IsoFilename, entry);

@@ -86,88 +86,98 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HighSierraPrimaryVolumeDescriptor
         {
-            public uint volume_lbn;
-            public uint volume_lbn_be;
-            public byte type;
+            public readonly uint volume_lbn;
+            public readonly uint volume_lbn_be;
+            public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] id;
-            public byte version;
+            public readonly byte[] id;
+            public readonly byte version;
             // Only used in SVDs
-            public byte flags;
+            public readonly byte flags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
+            public readonly byte[] system_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volume_id;
-            public ulong reserved1;
-            public uint  volume_space_size;
-            public uint  volume_space_size_be;
+            public readonly byte[] volume_id;
+            public readonly ulong reserved1;
+            public readonly uint  volume_space_size;
+            public readonly uint  volume_space_size_be;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] escape_sequences;
-            public ushort                    volume_set_size;
-            public ushort                    volume_set_size_be;
-            public ushort                    volume_sequence_number;
-            public ushort                    volume_sequence_number_be;
-            public ushort                    logical_block_size;
-            public ushort                    logical_block_size_be;
-            public uint                      path_table_size;
-            public uint                      path_table_size_be;
-            public uint                      manditory_path_table_lsb;
-            public uint                      opt_path_table_lsb_1;
-            public uint                      opt_path_table_lsb_2;
-            public uint                      opt_path_table_lsb_3;
-            public uint                      manditory_path_table_msb;
-            public uint                      opt_path_table_msb_1;
-            public uint                      opt_path_table_msb_2;
-            public uint                      opt_path_table_msb_3;
-            public HighSierraDirectoryRecord root_directory_record;
-            public byte                      root_directory_name;
+            public readonly byte[] escape_sequences;
+            public readonly ushort                    volume_set_size;
+            public readonly ushort                    volume_set_size_be;
+            public readonly ushort                    volume_sequence_number;
+            public readonly ushort                    volume_sequence_number_be;
+            public readonly ushort                    logical_block_size;
+            public readonly ushort                    logical_block_size_be;
+            public readonly uint                      path_table_size;
+            public readonly uint                      path_table_size_be;
+            public readonly uint                      manditory_path_table_lsb;
+            public readonly uint                      opt_path_table_lsb_1;
+            public readonly uint                      opt_path_table_lsb_2;
+            public readonly uint                      opt_path_table_lsb_3;
+            public readonly uint                      manditory_path_table_msb;
+            public readonly uint                      opt_path_table_msb_1;
+            public readonly uint                      opt_path_table_msb_2;
+            public readonly uint                      opt_path_table_msb_3;
+            public readonly HighSierraDirectoryRecord root_directory_record;
+            public readonly byte                      root_directory_name;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] volume_set_id;
+            public readonly byte[] volume_set_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] publisher_id;
+            public readonly byte[] publisher_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] preparer_id;
+            public readonly byte[] preparer_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] application_id;
+            public readonly byte[] application_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] copyright_file_id;
+            public readonly byte[] copyright_file_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] abstract_file_id;
+            public readonly byte[] abstract_file_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] creation_date;
+            public readonly byte[] creation_date;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] modification_date;
+            public readonly byte[] modification_date;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] expiration_date;
+            public readonly byte[] expiration_date;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] effective_date;
-            public byte file_structure_version;
-            public byte reserved2;
+            public readonly byte[] effective_date;
+            public readonly byte file_structure_version;
+            public readonly byte reserved2;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] application_data;
+            public readonly byte[] application_data;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 680)]
-            public byte[] reserved3;
+            public readonly byte[] reserved3;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct HighSierraDirectoryRecord
         {
-            public byte length;
-            public byte xattr_len;
-            public uint extent;
-            public uint extent_be;
-            public uint size;
-            public uint size_be;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] date;
-            public FileFlags flags;
-            public byte      reserved;
-            public byte      interleave_size;
-            public byte      interleave;
-            public ushort    volume_sequence_number;
-            public ushort    volume_sequence_number_be;
-            public byte      name_len;
+            public readonly byte                length;
+            public readonly byte                xattr_len;
+            public readonly uint                extent;
+            public readonly uint                extent_be;
+            public readonly uint                size;
+            public readonly uint                size_be;
+            public readonly HighSierraTimestamp date;
+            public readonly FileFlags           flags;
+            public readonly byte                reserved;
+            public readonly byte                interleave_size;
+            public readonly byte                interleave;
+            public readonly ushort              volume_sequence_number;
+            public readonly ushort              volume_sequence_number_be;
+            public readonly byte                name_len;
             // Followed by name[name_len] and then system area until length arrives
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HighSierraTimestamp
+        {
+            public readonly byte Years;
+            public readonly byte Month;
+            public readonly byte Day;
+            public readonly byte Hour;
+            public readonly byte Minute;
+            public readonly byte Second;
         }
     }
 }
