@@ -35,7 +35,6 @@
           <e p="Entropy.cs" t="Include" />
           <e p="ExtractFiles.cs" t="Include" />
           <e p="Formats.cs" t="Include" />
-          <e p="Gui.cs" t="Include" />
           <e p="ImageInfo.cs" t="Include" />
           <e p="ListDevices.cs" t="Include" />
           <e p="ListEncodings.cs" t="Include" />
@@ -61,7 +60,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="net461" t="Include">
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -76,7 +75,6 @@
         <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
         <e p="FletcherContext.cs" t="Include" />
         <e p="MD5Context.cs" t="Include" />
-        <e p="RIPEMD160Context.cs" t="Include" />
         <e p="ReedSolomon.cs" t="Include" />
         <e p="Register.cs" t="Include" />
         <e p="SHA1Context.cs" t="Include" />
@@ -1303,27 +1301,33 @@
             <e p="ElTorito.cs" t="Include" />
             <e p="HighSierra.cs" t="Include" />
             <e p="ISO.cs" t="Include" />
+            <e p="Internal.cs" t="Include" />
             <e p="RRIP.cs" t="Include" />
             <e p="SUSP.cs" t="Include" />
             <e p="XA.cs" t="Include" />
             <e p="Ziso.cs" t="Include" />
           </e>
+          <e p="Date.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="File.cs" t="Include" />
           <e p="ISO9660.cs" t="Include" />
           <e p="Info.cs" t="Include" />
           <e p="Structs" t="Include">
             <e p="Amiga.cs" t="Include" />
             <e p="Apple.cs" t="Include" />
             <e p="CDi.cs" t="Include" />
-            <e p="Common.cs" t="Include" />
             <e p="ElTorito.cs" t="Include" />
             <e p="HighSierra.cs" t="Include" />
             <e p="ISO.cs" t="Include" />
+            <e p="Internal.cs" t="Include" />
             <e p="Joliet.cs" t="Include" />
             <e p="RRIP.cs" t="Include" />
             <e p="SUSP.cs" t="Include" />
             <e p="XA.cs" t="Include" />
             <e p="Ziso.cs" t="Include" />
           </e>
+          <e p="Super.cs" t="Include" />
+          <e p="Xattr.cs" t="Include" />
         </e>
         <e p="JFS.cs" t="Include" />
         <e p="LIF.cs" t="Include" />
@@ -2074,7 +2078,6 @@
           <e p="CRC32.cs" t="Include" />
           <e p="CRC64.cs" t="Include" />
           <e p="MD5.cs" t="Include" />
-          <e p="RIPEMD160.cs" t="Include" />
           <e p="SHA1.cs" t="Include" />
           <e p="SHA256.cs" t="Include" />
           <e p="SHA384.cs" t="Include" />

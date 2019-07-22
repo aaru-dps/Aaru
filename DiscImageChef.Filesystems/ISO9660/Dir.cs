@@ -210,7 +210,32 @@ namespace DiscImageChef.Filesystems.ISO9660
                 };
 
                 // TODO: Multi-extent files
-                if(!entries.ContainsKey(entry.IsoFilename)) entries.Add(entry.IsoFilename, entry);
+                if(entry.Flags.HasFlag(FileFlags.Associated))
+                {
+                    // TODO: Detect if Apple extensions, as associated files contain the resource fork there
+
+                    if(entries.ContainsKey(entry.IsoFilename)) entries[entry.IsoFilename].AssociatedFile = entry;
+                    else
+                        entries[entry.IsoFilename] = new DecodedDirectoryEntry
+                        {
+                            Extent               = 0,
+                            Size                 = 0,
+                            Flags                = record.flags ^ FileFlags.Associated,
+                            FileUnitSize         = 0,
+                            Interleave           = 0,
+                            VolumeSequenceNumber = record.volume_sequence_number,
+                            IsoFilename =
+                                Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                            Timestamp      = DecodeIsoDateTime(record.date),
+                            AssociatedFile = entry
+                        };
+                }
+                else
+                {
+                    if(entries.ContainsKey(entry.IsoFilename))
+                        entry.AssociatedFile = entries[entry.IsoFilename].AssociatedFile;
+                    entries[entry.IsoFilename] = entry;
+                }
 
                 entryOff += record.length;
             }

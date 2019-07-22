@@ -57,14 +57,15 @@ namespace DiscImageChef.Filesystems.ISO9660
 
         class DecodedDirectoryEntry
         {
-            public uint      Extent;
-            public byte      FileUnitSize;
-            public FileFlags Flags;
-            public byte      Interleave;
-            public string    IsoFilename;
-            public uint      Size;
-            public DateTime? Timestamp;
-            public ushort    VolumeSequenceNumber;
+            public DecodedDirectoryEntry AssociatedFile;
+            public uint                  Extent;
+            public byte                  FileUnitSize;
+            public FileFlags             Flags;
+            public byte                  Interleave;
+            public string                IsoFilename;
+            public uint                  Size;
+            public DateTime?             Timestamp;
+            public ushort                VolumeSequenceNumber;
 
             public override string ToString() => IsoFilename;
         }
