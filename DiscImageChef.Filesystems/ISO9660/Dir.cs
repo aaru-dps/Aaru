@@ -175,7 +175,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         }
 
         // TODO: Implement system area
-        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data)
+        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data, bool joliet = false)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
             int                                       entryOff = 0;
@@ -204,19 +204,25 @@ namespace DiscImageChef.Filesystems.ISO9660
                     FileUnitSize         = record.file_unit_size,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    IsoFilename =
-                        Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                    Timestamp = DecodeIsoDateTime(record.date)
+                    Timestamp            = DecodeIsoDateTime(record.date)
                 };
+
+                if(joliet)
+                    entry.JolietFilename =
+                        Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize, record.name_len);
+                else
+                    entry.IsoFilename = Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len);
 
                 // TODO: Multi-extent files
                 if(entry.Flags.HasFlag(FileFlags.Associated))
                 {
                     // TODO: Detect if Apple extensions, as associated files contain the resource fork there
 
-                    if(entries.ContainsKey(entry.IsoFilename)) entries[entry.IsoFilename].AssociatedFile = entry;
+                    if(entries.ContainsKey(joliet ? entry.JolietFilename : entry.IsoFilename))
+                        entries[joliet ? entry.JolietFilename : entry.IsoFilename].AssociatedFile = entry;
                     else
-                        entries[entry.IsoFilename] = new DecodedDirectoryEntry
+                    {
+                        entries[joliet ? entry.JolietFilename : entry.IsoFilename] = new DecodedDirectoryEntry
                         {
                             Extent               = 0,
                             Size                 = 0,
@@ -229,12 +235,22 @@ namespace DiscImageChef.Filesystems.ISO9660
                             Timestamp      = DecodeIsoDateTime(record.date),
                             AssociatedFile = entry
                         };
+
+                        if(joliet)
+                            entries[entry.JolietFilename].JolietFilename =
+                                Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
+                                                                    record.name_len);
+                        else
+                            entries[entry.IsoFilename].IsoFilename =
+                                Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len);
+                    }
                 }
                 else
                 {
-                    if(entries.ContainsKey(entry.IsoFilename))
-                        entry.AssociatedFile = entries[entry.IsoFilename].AssociatedFile;
-                    entries[entry.IsoFilename] = entry;
+                    if(entries.ContainsKey(joliet ? entry.JolietFilename : entry.IsoFilename))
+                        entry.AssociatedFile =
+                            entries[joliet ? entry.JolietFilename : entry.IsoFilename].AssociatedFile;
+                    entries[joliet ? entry.JolietFilename : entry.IsoFilename] = entry;
                 }
 
                 entryOff += record.length;
