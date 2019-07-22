@@ -46,7 +46,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         bool                                      debug;
         bool                                      highSierra;
         IMediaImage                               image;
-        Dictionary<string, DecodedDirectoryEntry> jolietRootDirectoryCache;
+        bool                                      joliet;
         bool                                      mounted;
         Namespace                                 @namespace;
         Dictionary<string, DecodedDirectoryEntry> rootDirectoryCache;
@@ -67,11 +67,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {"normal", "Primary Volume Descriptor, ignoring ;1 suffixes"},
                 {"vms", "Primary Volume Descriptor, showing version suffixes"},
                 {"joliet", "Joliet Volume Descriptor"},
-                {"joliet+normal", "Joliet with fallback to normal"},
-                {"rrip", "Rock Ridge"},
-                {"rrip+normal", "Rock Ridge with fallback to normal"},
-                {"rrip+joliet", "Rock Ridge with fallback to Joliet"},
-                {"rrip+joliet+normal", "Rock Ridge with fallback to Joliet and then to normal (default)"}
+                {"rrip", "Rock Ridge"}
             };
 
         public Errno ReadLink(string path, out string dest)

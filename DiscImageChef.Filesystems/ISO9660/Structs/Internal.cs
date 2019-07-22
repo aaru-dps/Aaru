@@ -59,16 +59,15 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             public DecodedDirectoryEntry AssociatedFile;
             public uint                  Extent;
+            public string                Filename;
             public byte                  FileUnitSize;
             public FileFlags             Flags;
             public byte                  Interleave;
-            public string                IsoFilename;
             public uint                  Size;
             public DateTime?             Timestamp;
             public ushort                VolumeSequenceNumber;
-            public string                JolietFilename;
 
-            public override string ToString() => JolietFilename ?? IsoFilename;
+            public override string ToString() => Filename;
         }
     }
 }

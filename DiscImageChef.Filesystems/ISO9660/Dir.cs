@@ -86,42 +86,20 @@ namespace DiscImageChef.Filesystems.ISO9660
                 switch(@namespace)
                 {
                     case Namespace.Normal:
-                        contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
-                                         ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
-                                         : entry.IsoFilename);
+                        contents.Add(entry.Filename.EndsWith(";1", StringComparison.Ordinal)
+                                         ? entry.Filename.Substring(0, entry.Filename.Length - 2)
+                                         : entry.Filename);
 
                         break;
                     case Namespace.Vms:
-                        contents.Add(entry.IsoFilename);
+                        contents.Add(entry.Filename);
                         break;
                     case Namespace.Joliet:
                         // TODO: Implement Joliet
                         break;
-                    case Namespace.JolietNormal:
-                        // TODO: Implement Joliet
-                        contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
-                                         ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
-                                         : entry.IsoFilename);
-                        break;
                     case Namespace.Rrip:
                         // TODO: Implement RRIP
                         break;
-                    case Namespace.RripNormal:
-                        // TODO: Implement RRIP
-                        contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
-                                         ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
-                                         : entry.IsoFilename);
-                        break;
-                    case Namespace.RripJoliet:
-                        // TODO: Implement RRIP
-                        // TODO: Implement Joliet
-                        break;
-                    case Namespace.RripJolietNormal:
-                        // TODO: Implement RRIP
-                        // TODO: Implement Joliet
-                        contents.Add(entry.IsoFilename.EndsWith(";1", StringComparison.Ordinal)
-                                         ? entry.IsoFilename.Substring(0, entry.IsoFilename.Length - 2)
-                                         : entry.IsoFilename);
                         break;
                     default: throw new ArgumentOutOfRangeException();
                 }
@@ -161,12 +139,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Flags                = record.flags,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    IsoFilename =
+                    Filename =
                         Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
                     Timestamp = DecodeHighSierraDateTime(record.date)
                 };
 
-                if(!entries.ContainsKey(entry.IsoFilename)) entries.Add(entry.IsoFilename, entry);
+                if(!entries.ContainsKey(entry.Filename)) entries.Add(entry.Filename, entry);
 
                 entryOff += record.length;
             }
@@ -175,7 +153,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         }
 
         // TODO: Implement system area
-        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data, bool joliet = false)
+        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
             int                                       entryOff = 0;
@@ -198,31 +176,28 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {
-                    Extent               = record.size == 0 ? 0 : record.extent,
-                    Size                 = record.size,
-                    Flags                = record.flags,
+                    Extent = record.size == 0 ? 0 : record.extent,
+                    Size   = record.size,
+                    Flags  = record.flags,
+                    Filename =
+                        joliet
+                            ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
+                                                                  record.name_len)
+                            : Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
                     FileUnitSize         = record.file_unit_size,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
                     Timestamp            = DecodeIsoDateTime(record.date)
                 };
 
-                if(joliet)
-                    entry.JolietFilename =
-                        Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize, record.name_len);
-                else
-                    entry.IsoFilename = Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len);
-
                 // TODO: Multi-extent files
                 if(entry.Flags.HasFlag(FileFlags.Associated))
                 {
                     // TODO: Detect if Apple extensions, as associated files contain the resource fork there
 
-                    if(entries.ContainsKey(joliet ? entry.JolietFilename : entry.IsoFilename))
-                        entries[joliet ? entry.JolietFilename : entry.IsoFilename].AssociatedFile = entry;
+                    if(entries.ContainsKey(entry.Filename)) entries[entry.Filename].AssociatedFile = entry;
                     else
-                    {
-                        entries[joliet ? entry.JolietFilename : entry.IsoFilename] = new DecodedDirectoryEntry
+                        entries[entry.Filename] = new DecodedDirectoryEntry
                         {
                             Extent               = 0,
                             Size                 = 0,
@@ -230,27 +205,21 @@ namespace DiscImageChef.Filesystems.ISO9660
                             FileUnitSize         = 0,
                             Interleave           = 0,
                             VolumeSequenceNumber = record.volume_sequence_number,
-                            IsoFilename =
-                                Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                            Filename = joliet
+                                           ? Encoding.BigEndianUnicode.GetString(data,
+                                                                                 entryOff + DirectoryRecordSize,
+                                                                                 record.name_len)
+                                           : Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize,
+                                                                      record.name_len),
                             Timestamp      = DecodeIsoDateTime(record.date),
                             AssociatedFile = entry
                         };
-
-                        if(joliet)
-                            entries[entry.JolietFilename].JolietFilename =
-                                Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
-                                                                    record.name_len);
-                        else
-                            entries[entry.IsoFilename].IsoFilename =
-                                Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len);
-                    }
                 }
                 else
                 {
-                    if(entries.ContainsKey(joliet ? entry.JolietFilename : entry.IsoFilename))
-                        entry.AssociatedFile =
-                            entries[joliet ? entry.JolietFilename : entry.IsoFilename].AssociatedFile;
-                    entries[joliet ? entry.JolietFilename : entry.IsoFilename] = entry;
+                    if(entries.ContainsKey(entry.Filename))
+                        entry.AssociatedFile = entries[entry.Filename].AssociatedFile;
+                    entries[entry.Filename] = entry;
                 }
 
                 entryOff += record.length;

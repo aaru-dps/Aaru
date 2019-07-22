@@ -37,20 +37,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 case "joliet":
                     this.@namespace = Namespace.Joliet;
                     break;
-                case "joliet+normal":
-                    this.@namespace = Namespace.JolietNormal;
-                    break;
                 case "rrip":
                     this.@namespace = Namespace.Rrip;
-                    break;
-                case "rrip+normal":
-                    this.@namespace = Namespace.RripNormal;
-                    break;
-                case "rrip+joliet":
-                    this.@namespace = Namespace.RripJoliet;
-                    break;
-                case "rrip+joliet+normal":
-                    this.@namespace = Namespace.RripJolietNormal;
                     break;
                 default: return Errno.InvalidArgument;
             }
@@ -183,20 +171,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if((highSierra || cdi) && this.@namespace != Namespace.Normal && this.@namespace != Namespace.Vms)
                 this.@namespace = Namespace.Normal;
 
-            if(jolietvd is null)
-                switch(this.@namespace)
-                {
-                    case Namespace.Joliet:
-                    case Namespace.JolietNormal:
-                        this.@namespace = Namespace.Normal;
-                        break;
-                    case Namespace.RripJoliet:
-                        this.@namespace = Namespace.Rrip;
-                        break;
-                    case Namespace.RripJolietNormal:
-                        this.@namespace = Namespace.RripNormal;
-                        break;
-                }
+            if(jolietvd is null && this.@namespace == Namespace.Joliet) this.@namespace = Namespace.Normal;
 
             uint rootLocation = 0;
             uint rootSize     = 0;
@@ -241,9 +216,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             XmlFsType.Type = fsFormat;
 
-            if(jolietvd        != null           && this.@namespace != Namespace.Normal &&
-               this.@namespace != Namespace.Vms  &&
-               this.@namespace != Namespace.Rrip && this.@namespace != Namespace.RripNormal)
+            if(jolietvd != null && this.@namespace == Namespace.Joliet)
             {
                 rootLocation = jolietvd.Value.root_directory_record.extent;
 
@@ -253,9 +226,11 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
 
+                joliet = true;
+
                 rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
 
-                jolietRootDirectoryCache = DecodeIsoDirectory(rootDir, true);
+                rootDirectoryCache = DecodeIsoDirectory(rootDir);
 
                 XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
