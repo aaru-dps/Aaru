@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
 namespace DiscImageChef.Filesystems.ISO9660
@@ -97,6 +98,31 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.Flags.HasFlag(FileFlags.Directory)) stat.Attributes |= FileAttributes.Directory;
             if(entry.Flags.HasFlag(FileFlags.Hidden)) stat.Attributes    |= FileAttributes.Hidden;
+
+            if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
+                return Errno.NoError;
+
+            // TODO: XA
+            uint eaSizeInSectors = entry.AssociatedFile.Size / 2048;
+            if(entry.AssociatedFile.Size % 2048 > 0) eaSizeInSectors++;
+
+            byte[] ea = image.ReadSectors(entry.AssociatedFile.Extent, eaSizeInSectors);
+
+            ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
+
+            stat.UID = ear.owner;
+            stat.GID = ear.group;
+
+            stat.Mode = 0;
+            if(ear.permissions.HasFlag(Permissions.GroupExecute)) stat.Mode += 8;
+            if(ear.permissions.HasFlag(Permissions.GroupRead)) stat.Mode    += 32;
+            if(ear.permissions.HasFlag(Permissions.OwnerExecute)) stat.Mode += 64;
+            if(ear.permissions.HasFlag(Permissions.OwnerRead)) stat.Mode    += 256;
+            if(ear.permissions.HasFlag(Permissions.OtherExecute)) stat.Mode += 1;
+            if(ear.permissions.HasFlag(Permissions.OtherRead)) stat.Mode    += 4;
+
+            stat.CreationTimeUtc  = DateHandlers.Iso9660ToDateTime(ear.creation_date);
+            stat.LastWriteTimeUtc = DateHandlers.Iso9660ToDateTime(ear.modification_date);
 
             return Errno.NoError;
         }
