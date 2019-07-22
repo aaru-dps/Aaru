@@ -46,6 +46,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         bool                                      debug;
         bool                                      highSierra;
         IMediaImage                               image;
+        Dictionary<string, DecodedDirectoryEntry> jolietRootDirectoryCache;
         bool                                      mounted;
         Namespace                                 @namespace;
         Dictionary<string, DecodedDirectoryEntry> rootDirectoryCache;

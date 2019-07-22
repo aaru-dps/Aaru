@@ -231,13 +231,13 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             // TODO: Add IP.BIN to debug root directory
             // TODO: Add volume descriptors to debug root directory
-            // TODO: Decode Joliet directory
 
-            rootDirectoryCache = cdi
-                                     ? DecodeCdiDirectory(rootDir)
-                                     : highSierra
-                                         ? DecodeHighSierraDirectory(rootDir)
-                                         : DecodeIsoDirectory(rootDir);
+            if(this.@namespace != Namespace.Joliet)
+                rootDirectoryCache = cdi
+                                         ? DecodeCdiDirectory(rootDir)
+                                         : highSierra
+                                             ? DecodeHighSierraDirectory(rootDir)
+                                             : DecodeIsoDirectory(rootDir);
 
             XmlFsType.Type = fsFormat;
 
@@ -245,6 +245,18 @@ namespace DiscImageChef.Filesystems.ISO9660
                this.@namespace != Namespace.Vms  &&
                this.@namespace != Namespace.Rrip && this.@namespace != Namespace.RripNormal)
             {
+                rootLocation = jolietvd.Value.root_directory_record.extent;
+
+                rootSize = jolietvd.Value.root_directory_record.size / jolietvd.Value.logical_block_size;
+                if(pvd.Value.root_directory_record.size % jolietvd.Value.logical_block_size > 0)
+                    rootSize++;
+
+                if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
+
+                rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
+
+                jolietRootDirectoryCache = DecodeIsoDirectory(rootDir, true);
+
                 XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
                 if(string.IsNullOrEmpty(decodedJolietVd.SystemIdentifier) ||
