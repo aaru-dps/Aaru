@@ -1,0 +1,1467 @@
+%!PS
+%%Version: 3.3.1
+%%DocumentFonts: (atend)
+%%Pages: (atend)
+%%EndComments
+%
+% Version 3.3.1 prologue for troff files.
+%
+
+/#copies 1 store
+/aspectratio 1 def
+/formsperpage 1 def
+/landscape false def
+/linewidth .3 def
+/magnification 1 def
+/margin 0 def
+/orientation 0 def
+/resolution 720 def
+/rotation 1 def
+/xoffset 0 def
+/yoffset 0 def
+
+/roundpage true def
+/useclippath true def
+/pagebbox [0 0 612 792] def
+
+/R  /Times-Roman def
+/I  /Times-Italic def
+/B  /Times-Bold def
+/BI /Times-BoldItalic def
+/H  /Helvetica def
+/HI /Helvetica-Oblique def
+/HB /Helvetica-Bold def
+/HX /Helvetica-BoldOblique def
+/CW /Courier def
+/CO /Courier def
+/CI /Courier-Oblique def
+/CB /Courier-Bold def
+/CX /Courier-BoldOblique def
+/PA /Palatino-Roman def
+/PI /Palatino-Italic def
+/PB /Palatino-Bold def
+/PX /Palatino-BoldItalic def
+/Hr /Helvetica-Narrow def
+/Hi /Helvetica-Narrow-Oblique def
+/Hb /Helvetica-Narrow-Bold def
+/Hx /Helvetica-Narrow-BoldOblique def
+/KR /Bookman-Light def
+/KI /Bookman-LightItalic def
+/KB /Bookman-Demi def
+/KX /Bookman-DemiItalic def
+/AR /AvantGarde-Book def
+/AI /AvantGarde-BookOblique def
+/AB /AvantGarde-Demi def
+/AX /AvantGarde-DemiOblique def
+/NR /NewCenturySchlbk-Roman def
+/NI /NewCenturySchlbk-Italic def
+/NB /NewCenturySchlbk-Bold def
+/NX /NewCenturySchlbk-BoldItalic def
+/ZD /ZapfDingbats def
+/ZI /ZapfChancery-MediumItalic def
+/S  /S def
+/S1 /S1 def
+/GR /Symbol def
+
+/inch {72 mul} bind def
+/min {2 copy gt {exch} if pop} bind def
+
+/setup {
+	counttomark 2 idiv {def} repeat pop
+
+	landscape {/orientation 90 orientation add def} if
+	/scaling 72 resolution div def
+	linewidth setlinewidth
+	1 setlinecap
+
+	pagedimensions
+	xcenter ycenter translate
+	orientation rotation mul rotate
+	width 2 div neg height 2 div translate
+	xoffset inch yoffset inch neg translate
+	margin 2 div dup neg translate
+	magnification dup aspectratio mul scale
+	scaling scaling scale
+
+	addmetrics
+	0 0 moveto
+} def
+
+/pagedimensions {
+	useclippath userdict /gotpagebbox known not and {
+		/pagebbox [clippath pathbbox newpath] def
+		roundpage currentdict /roundpagebbox known and {roundpagebbox} if
+	} if
+	pagebbox aload pop
+	4 -1 roll exch 4 1 roll 4 copy
+	landscape {4 2 roll} if
+	sub /width exch def
+	sub /height exch def
+	add 2 div /xcenter exch def
+	add 2 div /ycenter exch def
+	userdict /gotpagebbox true put
+} def
+
+/addmetrics {
+	/Symbol /S null Sdefs cf
+	/Times-Roman /S1 StandardEncoding dup length array copy S1defs cf
+} def
+
+/pagesetup {
+	/page exch def
+	currentdict /pagedict known currentdict page known and {
+		page load pagedict exch get cvx exec
+	} if
+} def
+
+/decodingdefs [
+	{counttomark 2 idiv {y moveto show} repeat}
+	{neg /y exch def counttomark 2 idiv {y moveto show} repeat}
+	{neg moveto {2 index stringwidth pop sub exch div 0 32 4 -1 roll widthshow} repeat}
+	{neg moveto {spacewidth sub 0.0 32 4 -1 roll widthshow} repeat}
+	{counttomark 2 idiv {y moveto show} repeat}
+	{neg setfunnytext}
+] def
+
+/setdecoding {/t decodingdefs 3 -1 roll get bind def} bind def
+
+/w {neg moveto show} bind def
+/m {neg dup /y exch def moveto} bind def
+/done {/lastpage where {pop lastpage} if} def
+
+/f {
+	dup /font exch def findfont exch
+	dup /ptsize exch def scaling div dup /size exch def scalefont setfont
+	linewidth ptsize mul scaling 10 mul div setlinewidth
+	/spacewidth ( ) stringwidth pop def
+} bind def
+
+/changefont {
+	/fontheight exch def
+	/fontslant exch def
+	currentfont [
+		1 0
+		fontheight ptsize div fontslant sin mul fontslant cos div
+		fontheight ptsize div
+		0 0
+	] makefont setfont
+} bind def
+
+/sf {f} bind def
+
+/cf {
+	dup length 2 idiv
+	/entries exch def
+	/chtab exch def
+	/newencoding exch def
+	/newfont exch def
+
+	findfont dup length 1 add dict
+	/newdict exch def
+	{1 index /FID ne {newdict 3 1 roll put}{pop pop} ifelse} forall
+
+	newencoding type /arraytype eq {newdict /Encoding newencoding put} if
+
+	newdict /Metrics entries dict put
+	newdict /Metrics get
+	begin
+		chtab aload pop
+		1 1 entries {pop def} for
+		newfont newdict definefont pop
+	end
+} bind def
+
+%
+% A few arrays used to adjust reference points and character widths in some
+% of the printer resident fonts. If square roots are too high try changing
+% the lines describing /radical and /radicalex to,
+%
+%	/radical	[0 -75 550 0]
+%	/radicalex	[-50 -75 500 0]
+%
+% Move braceleftbt a bit - default PostScript character is off a bit.
+%
+
+/Sdefs [
+	/bracketlefttp		[201 500]
+	/bracketleftbt		[201 500]
+	/bracketrighttp		[-81 380]
+	/bracketrightbt		[-83 380]
+	/braceleftbt		[203 490]
+	/bracketrightex		[220 -125 500 0]
+	/radical		[0 0 550 0]
+	/radicalex		[-50 0 500 0]
+	/parenleftex		[-20 -170 0 0]
+	/integral		[100 -50 500 0]
+	/infinity		[10 -75 730 0]
+] def
+
+/S1defs [
+	/underscore		[0 80 500 0]
+	/endash			[7 90 650 0]
+] def
+%%EndProlog
+%%BeginSetup
+mark
+/resolution 720 def
+setup
+2 setdecoding
+%%EndSetup
+%%Page: 1 1
+/saveobj save def
+mark
+1 pagesetup
+25 B f
+(SYSTEM USE SHARING)2 2813 1 1473 1560 t
+(PROTOCOL)2163 1920 w
+20 B f
+(VERSION 1)1 1062 1 2349 2280 t
+(A MECHANISM FOR EXTENSIBLE SHARING)4 4270 1 745 3200 t
+(OF ISO 9660:1988 SYSTEM USE AREAS)5 3632 1 1064 3440 t
+16 B f
+(IEEE CDROM FILE SYSTEMS)3 2246 1 1737 4360 t
+(WORKING GROUP)1 1445 1 2157 4600 t
+12 R f
+(Revision 1.10)1 668 1 2546 5080 t
+(cdfsf@ymi.COM)2459 6040 w
+14 R f
+(DRAFT STANDARD)1 1256 1 2252 6760 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 1 1
+%%Page: 2 2
+/saveobj save def
+mark
+2 pagesetup
+14 R f
+(\( Page 2 should be replaced with a blank page for back of page 1 \))15 3700 1 1030 1080 t
+10 R f
+( 16, 1993)2 375( July)1 3443(Page 2 of 17)3 502 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 2 2
+%%Page: 3 3
+/saveobj save def
+mark
+3 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 R f
+(\( Page 3 should be replaced with the Table of Contents page 3 \))13 3555 1 1102 960 t
+10 R f
+( 3 of 17)3 308( Page)1 3470(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 3 3
+%%Page: 4 4
+/saveobj save def
+mark
+4 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+14 R f
+(\( Page 4 should be replaced with a blank page for back of page 3 \))15 3700 1 1030 960 t
+10 R f
+( 16, 1993)2 375( July)1 3443(Page 4 of 17)3 502 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 4 4
+%%Page: 5 5
+/saveobj save def
+mark
+5 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 R f
+(\( Page 5 should be replaced with the List of Tables page 5 \))13 3329 1 1215 960 t
+10 R f
+( 5 of 17)3 308( Page)1 3470(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 5 5
+%%Page: 6 6
+/saveobj save def
+mark
+6 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+14 R f
+(\( Page 6 should be replaced with a blank page for back of page 5 \))15 3700 1 1030 960 t
+10 R f
+( 16, 1993)2 375( July)1 3443(Page 6 of 17)3 502 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 6 6
+%%Page: 1 7
+/saveobj save def
+mark
+7 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 B f
+(1. PREFACE)1 836 1 720 960 t
+12 B f
+( and Scope)2 554(1.1 Purpose)1 630 2 720 1320 t
+10 R f
+( to)1 115(The ISO 9660:1988 CD-ROM format provides System Use Areas within the Directory Records)12 3955 2 970 1620 t
+( coordinating shared)2 819( no mechanism for)3 755( Unfortunately,)1 638(support convenient extensibility of the speci\256cation.)5 2108 4 720 1740 t
+( It)1 115( use of these areas.)4 766( has led to very restricted and non-standardized)7 1908( This)1 231(use of these areas was provided.)5 1300 5 720 1860 t
+(is desirable to develop the following proposed standard for shared utilization of the System Use Areas)15 4320 1 720 1980 t
+(provided by ISO 9660.)3 916 1 720 2100 t
+12 B f
+( of Sections)2 581(1.2 Summary)1 717 2 720 2400 t
+10 R f
+( this preface.)2 512( Contains)1 506(Section 1)1 375 3 1415 2820 t
+( an overview of the System Use Sharing Protocol.)8 1995( Contains)1 506(Section 2)1 375 3 1415 2940 t
+( an overview of the notation used in this document.)9 2048( Contains)1 506(Section 3)1 375 3 1415 3060 t
+( the System Use Sharing Protocol proposal.)6 1741( Contains)1 506(Section 4)1 375 3 1415 3180 t
+( the System Use Fields provided by the SUSP.)8 1859( Contains)1 506(Section 5)1 375 3 1415 3300 t
+( the SUSP Application Programming Interface.)5 1887( Contains)1 506(Section 6)1 375 3 1415 3420 t
+( the bibliography.)2 708( Contains)1 506(Section 7)1 375 3 1415 3540 t
+( 1 of 17)3 308( Page)1 3470(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 1 7
+%%Page: 2 8
+/saveobj save def
+mark
+8 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+( 16, 1993)2 375( July)1 3443(Page 2 of 17)3 502 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 2 8
+%%Page: 3 9
+/saveobj save def
+mark
+9 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 B f
+(2. OVERVIEW)1 970 1 720 960 t
+10 R f
+( format for CD-)3 671(The System Use Sharing Protocol \(SUSP\) speci\256es an extension to the ISO 9660)12 3399 2 970 1260 t
+( Areas provided by ISO 9660:1988 for)6 1674(ROM which enables the shared utilization of the System Use)9 2646 2 720 1380 t
+(recording system-speci\256c extensions to ISO 9660 de\256ned by multiple independent parties.)10 3616 1 720 1500 t
+( applicable System Use)3 968(The SUSP speci\256es the de\256nition of a generic \256eld format and a set of generally)14 3352 2 720 1740 t
+(Fields for recording:)2 821 1 720 1860 t
+8 S f
+(\267)1633 2160 w
+10 R f
+(Continuation Areas)1 780 1 1720 2160 t
+8 S f
+(\267)1633 2340 w
+10 R f
+(Padding Areas)1 585 1 1720 2340 t
+8 S f
+(\267)1633 2520 w
+10 R f
+(Identi\256er that the System Use Sharing Protocol is used)8 2188 1 1720 2520 t
+8 S f
+(\267)1633 2700 w
+10 R f
+(System Use Sharing Protocol Terminator)4 1649 1 1720 2700 t
+8 S f
+(\267)1633 2880 w
+10 R f
+(Identi\256er of system-speci\256c extensions that are used)6 2091 1 1720 2880 t
+( 3 of 17)3 308( Page)1 3470(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 3 9
+%%Page: 4 10
+/saveobj save def
+mark
+10 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+( 16, 1993)2 375( July)1 3443(Page 4 of 17)3 502 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 4 10
+%%Page: 5 11
+/saveobj save def
+mark
+11 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 B f
+( AND NOTATION)2 1137(3. TERMINOLOGY)1 1274 2 720 960 t
+10 R f
+( an ISO 9660:1988 compliant volume. Unless)6 1908(It is assumed that the SUSP is being utilized within)9 2162 2 970 1260 t
+(de\256ned herein, or otherwise speci\256ed, terms shall be as de\256ned in ISO 9660:1988.)12 3293 1 720 1380 t
+(The following notation is used in this document.)7 1939 1 720 1620 t
+12 B f
+( and Hexadecimal Notation)3 1399(3.1 Decimal)1 630 2 720 1920 t
+10 R f
+(Numbers in decimal notation are represented by decimal digits, namely 0 to 9.)12 3129 1 970 2220 t
+( hexadecimal digits, namely 0 to 9 and A to F, shown)11 2190(Numbers in hexadecimal notation are represented by)6 2130 2 720 2460 t
+(in parentheses. E.g. the hexadecimal number 7F will be written as \(7F\).)11 2854 1 720 2580 t
+12 B f
+( Use Areas)2 545(3.2 System)1 577 2 720 2880 t
+10 R f
+( a similar mechanism)3 882( While)1 304( provides System Use Areas within Directory Records.)7 2261(ISO 9660:1988)1 623 4 970 3180 t
+( used in many other ways within the ISO 9660 structure, this System Use Sharing Protocol)15 3956(could be)1 364 2 720 3300 t
+(addresses only the System Use Areas within the Directory Records.)9 2701 1 720 3420 t
+( System Use)2 518(In the descriptions in this document, the phrase "System Use Area" shall refer equally to the)15 3802 2 720 3660 t
+( designated through the use of "CE")6 1478(Areas speci\256ed as well as any Continuation of the System Use Areas)11 2842 2 720 3780 t
+( THIS)1 256(System Use Fields \(CE is described in the section titled "SYSTEM USE FIELDS PROVIDED BY)14 4064 2 720 3900 t
+(SPECIFICATION"\).)720 4020 w
+( 5 of 17)3 308( Page)1 3470(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 5 11
+%%Page: 6 12
+/saveobj save def
+mark
+12 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+( 16, 1993)2 375( July)1 3443(Page 6 of 17)3 502 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 6 12
+%%Page: 7 13
+/saveobj save def
+mark
+13 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 B f
+( USE SHARING PROTOCOL)3 1834(4. SYSTEM)1 752 2 720 960 t
+10 R f
+( any System Use Area into a number of variable length)10 2336(The System Use Sharing Protocol divides)5 1734 2 970 1260 t
+( may be zero or more System Use Fields in each System Use Area.)13 2738( There)1 287(\256elds called System Use Fields.)4 1295 3 720 1380 t
+(Each System Use Field is identi\256ed by a System Use Field Signature Word \(described below\).)14 3777 1 720 1500 t
+( Field with the same signature word is allowed, unless otherwise speci\256ed in the)13 3234(More than one System Use)4 1086 2 720 1740 t
+( if any, of the recording)5 962( allowed, the signi\256cance of the order,)6 1560( If)1 121(de\256nition of a speci\256c System Use Field.)6 1677 4 720 1860 t
+( shall be speci\256ed in the de\256nition of the)8 1763(of multiple System Use Fields with the same signature word)9 2557 2 720 1980 t
+( other situations, the order in which the System Use Fields)10 2465( all)1 139( In)1 147(particular System Use Field involved.)4 1569 4 720 2100 t
+(appear is not signi\256cant.)3 977 1 720 2220 t
+( Field, each System Use Field recorded)6 1579(Unless otherwise speci\256ed in the de\256nition of a speci\256c System Use)10 2741 2 720 2460 t
+( apply to all extents of the \256le and shall)9 1592(in the System Use Area of the last extent of a multi-extent \256le shall)13 2728 2 720 2580 t
+( Thus,)1 289( other extent of the \256le.)5 1002(override any System Use Field with the same signature recorded for any)11 3029 3 720 2700 t
+( of a speci\256c System Use Field, failure to record)9 1948(unless an alternate mechanism is provided in the de\256nition)8 2372 2 720 2820 t
+( treated the same)3 691(a valid instance of the System Use Field for the \256nal extent of a multi-extent \256le shall be)17 3629 2 720 2940 t
+(as if this \256eld had not been recorded for any extent of the \256le.)13 2462 1 720 3060 t
+( section 5.3, the \256rst System Use)6 1389(With the exception of the "SP" \256eld, which is recorded as speci\256ed in)12 2931 2 720 3300 t
+( any Directory Record shall begin in byte LEN)8 1997(Field recorded in a System Use Area of)7 1696 2 720 3420 t
+10 S f
+(_)4413 3420 w
+10 R f
+(SKP+1 of the)2 577 1 4463 3420 t
+( System Use Field recorded in any Continuation of a)9 2263( \256rst)1 198( The)1 222(System Use Area \(see section 5.3 [5]\).)6 1637 4 720 3540 t
+( more than one System Use Field is to)8 1546( If)1 120(System Use Area shall begin in the \256rst byte of the Continuation.)11 2654 3 720 3660 t
+(be recorded in the same System Use Area or Continuation, they shall be recorded contiguously.)14 3816 1 720 3780 t
+( a System Use Area is less)6 1078(If the remaining allocated space following the last recorded System Use Field in)12 3242 2 720 4020 t
+( and shall be ignored. Otherwise the use of the System)10 2182(than four bytes long, it cannot be a System Use Field)10 2138 2 720 4140 t
+( terminated by the "ST" \256eld or \256lled with the "PD" \256eld, which are)13 2978(Use Sharing Protocol should be)4 1342 2 720 4260 t
+(described in Chapter 5.)3 926 1 720 4380 t
+12 B f
+( Use Field Format)3 923(4.1 System)1 577 2 720 4680 t
+10 R f
+(The System Use Field format is as follows:)7 1730 1 970 4980 t
+( This)1 236( 1 to BP 2 - Signature Word" shall specify an identi\256cation of a System Use Field.)16 3420([1] "BP)1 414 3 970 5280 t
+( byte is recorded according to the ISO 9660:1988 Format)9 2373( Each)1 259( contain two bytes.)3 785(\256eld shall)1 403 4 1220 5400 t
+(Section 7.1.1.)1 550 1 1220 5520 t
+( 3 - Length \(LEN)4 697([2] "BP)1 414 2 970 5700 t
+10 S f
+(_)2081 5700 w
+10 R f
+( bytes of the System)4 819(SUF\)" shall specify as an 8-bit number the length in)9 2090 2 2131 5700 t
+( \256eld)1 207( This)1 232( Word, Length, Version and System Use content.)7 1992(Use Field, including the Signature)4 1389 4 1220 5820 t
+(shall be recorded according to the ISO 9660 Format section 7.1.1.)10 2632 1 1220 5940 t
+( specify as an 8-bit number an identi\256cation of the)9 2119( 4 - System Use Field Version" shall)7 1537([3] "BP)1 414 3 970 6120 t
+( shall be recorded according to ISO 9660 Format)8 2032(version of the System Use Field. This \256eld)7 1788 2 1220 6240 t
+(section 7.1.1.)1 533 1 1220 6360 t
+( 7 of 17)3 308( Page)1 3470(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 7 13
+%%Page: 8 14
+/saveobj save def
+mark
+14 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+( 5 to LEN)3 412([4] "BP)1 414 2 970 960 t
+10 S f
+(_)1796 960 w
+10 R f
+( format of)2 411( The)1 211(SUF - Data" shall contain the content of the System Use Field.)11 2572 3 1846 960 t
+( Data \256eld)2 420( The)1 208(this \256eld depends on the Signature Word and Version of the System Use Field.)13 3192 3 1220 1080 t
+(is optional.)1 445 1 1220 1200 t
+10 B f
+(TABLE 1.)1 440 1 1799 1560 t
+10 R f
+(System Use Field Description - Version 1)6 1671 1 2289 1560 t
+10 S f
+(_ ________________________________________________________)1 2830 1 1465 1700 t
+10 R f
+( DATA)1 698( VERSION)1 583( LENGTH)1 563(SIG1 SIG2)1 600 4 1529 1940 t
+( to LEN)2 322( \(BP5)1 453( \(BP4\))1 566( \(BP3\))1 469(\(BP1\) \(BP2\))1 628 5 1515 2060 t
+10 S f
+(_)3953 2060 w
+10 R f
+(SUF\))4003 2060 w
+10 S f
+( \347)1 -2830(_ ________________________________________________________)1 2830 2 1465 2200 t
+(\347)1465 2100 w
+(\347)1465 2000 w
+(\347)1465 1900 w
+(\347)1465 1800 w
+(\347)1829 2200 w
+(\347)1829 2100 w
+(\347)1829 2000 w
+(\347)1829 1900 w
+(\347)1829 1800 w
+(\347)2218 2200 w
+(\347)2218 2100 w
+(\347)2218 2000 w
+(\347)2218 1900 w
+(\347)2218 1800 w
+(\347)2767 2200 w
+(\347)2767 2100 w
+(\347)2767 2000 w
+(\347)2767 1900 w
+(\347)2767 1800 w
+(\347)3350 2200 w
+(\347)3350 2100 w
+(\347)3350 2000 w
+(\347)3350 1900 w
+(\347)3350 1800 w
+(\347)4295 2200 w
+(\347)4295 2100 w
+(\347)4295 2000 w
+(\347)4295 1900 w
+(\347)4295 1800 w
+10 R f
+( 16, 1993)2 375( July)1 3443(Page 8 of 17)3 502 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 8 14
+%%Page: 9 15
+/saveobj save def
+mark
+15 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 B f
+( USE FIELDS PROVIDED BY THIS SPECIFICATION)6 3382(5. SYSTEM)1 752 2 720 960 t
+10 R f
+(The System Use Sharing Protocol de\256nes the following fundamental System Use Fields:)11 3546 1 970 1260 t
+( Area)1 218("CE" Continuation)1 883 2 1875 1620 t
+( Field)1 231("PD" Padding)1 688 2 1875 1740 t
+( Use Sharing Protocol Indicator)4 1265("SP" System)1 655 2 1875 1860 t
+( Use Sharing Protocol Terminator)4 1354("ST" System)1 655 2 1875 1980 t
+( Reference)1 428("ER" Extensions)1 799 2 1875 2100 t
+12 B f
+( of the CE System Use Field)6 1420(5.1 Description)1 804 2 720 2520 t
+10 R f
+(The purpose of the "CE" System Use Field is to extend the System Use Area to store additional)17 4070 1 970 2820 t
+( at most one "CE" System Use Field)7 1480( is)1 97( There)1 287( "CE" System Use Field is optional.)6 1466( The)1 210(System Use Fields.)2 780 6 720 2940 t
+(in a System Use or Continuation Area.)6 1546 1 720 3060 t
+( single Logical Sector which begins with the Logical Block referred to by a "CE" System Use)16 3904(The entire)1 416 2 720 3300 t
+( recording in any Continuation of the System)7 1872( The)1 215( be used as an additional System Use Area.)8 1802(Field shall)1 431 4 720 3420 t
+( the previous section of this)5 1187(Use Area shall follow the Format of the System Use Area as described in)13 3133 2 720 3540 t
+( same Volume as the "CE")5 1092( Continuation Areas identi\256ed by "CE" \256elds must reside on the)10 2625(document. All)1 603 3 720 3660 t
+( System)1 326( additional space is needed, the Continuation of the System Use Area identi\256ed by a "CE")15 3670(\256eld. If)1 324 3 720 3780 t
+(Use Field may contain another "CE" System Use Field designating another Continuation of the System Use)15 4320 1 720 3900 t
+( after the current)3 673( "CE" System Use Field indicates a Continuation Area that should be processed)12 3221(Area. The)1 426 3 720 4020 t
+(System Use Area or Continuation Area is processed.)7 2102 1 720 4140 t
+( \256elds which predate this)4 1139(Note: For maximum compatibility with pre-existing systems, system use)8 3181 2 720 4380 t
+(document should not be recorded within Continuation Areas.)7 2442 1 720 4500 t
+(The format of the "CE" System Use Field is as follows:)10 2220 1 720 4740 t
+( System Use Field is a "CE" type)7 1443( 1 to BP 2 - Signature Word" shall indicate that the)11 2213([1] "BP)1 414 3 970 5040 t
+( bytes in this \256eld shall be \(43\)\(45\) \("CE"\).)8 1728( The)1 205(System Use Field.)2 731 3 1220 5160 t
+( 3 - Length \(LEN)4 717([2] "BP)1 414 2 970 5340 t
+10 S f
+(_)2101 5340 w
+10 R f
+( bytes of the "CE")4 754(SUF\)" shall specify as an 8-bit number the length in)9 2135 2 2151 5340 t
+( \256eld shall be)3 569( This)1 240( number in this \256eld shall be 28 for this version.)10 2039( The)1 217(System Use Field.)2 755 5 1220 5460 t
+(recorded according to the ISO 9660:1988 Format section 7.1.1.)8 2527 1 1220 5580 t
+( specify as an 8-bit number an identi\256cation of the)9 2119( 4 - System Use Field Version" shall)7 1537([3] "BP)1 414 3 970 5760 t
+( number in this \256eld shall be 1 for this version.)10 1989( The)1 217( "CE" System Use Field.)4 1039(version of the)2 575 4 1220 5880 t
+(This \256eld shall be recorded according to the ISO 9660:1988 Format section 7.1.1.)12 3266 1 1220 6000 t
+( specify as a 32-bit)4 822( 5 to BP 12 - Location of Continuation of System Use Area" shall)13 2834([4] "BP)1 414 3 970 6180 t
+( Block Number of the \256rst Logical Block of the Logical Sector that)12 2986(number the Logical)2 834 2 1220 6300 t
+( \256eld shall be recorded)4 969( This)1 243( Continuation of the Sytem Use Area.)6 1597(contains the start of this)4 1011 4 1220 6420 t
+(according to the ISO 9660:1988 Format section 7.3.3.)7 2154 1 1220 6540 t
+( 20 - Offset to Start of Continuation" shall specify as a 32-bit number the offset,)15 3268( 13 to BP)3 388([5] "BP)1 414 3 970 6720 t
+( from the start of the block speci\256ed in [4] above to the start of the area that is to be)20 3473(in bytes,)1 347 2 1220 6840 t
+( according to)2 539( \256eld shall be recorded)4 941( This)1 236(used for this Continuation of the System Use Area.)8 2104 4 1220 6960 t
+(the ISO 9660:1988 Format section 7.3.3.)5 1633 1 1220 7080 t
+( 9 of 17)3 308( Page)1 3470(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 9 15
+%%Page: 10 16
+/saveobj save def
+mark
+16 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+( specify as a 32-bit number the number of)8 1701( 21 to BP 28 - Length of the Continuation" shall)10 1955([6] "BP)1 414 3 970 960 t
+( be)1 132( \256eld shall)2 445( This)1 242(bytes that are to be used for this Continuation of the System Use Area.)13 3001 4 1220 1080 t
+(recorded according to the ISO 9660:1988 Format section 7.3.3.)8 2527 1 1220 1200 t
+10 B f
+(TABLE 2.)1 440 1 1968 1560 t
+10 R f
+(CE System Use Field - Version 1)6 1333 1 2458 1560 t
+10 S f
+(_ _____________________________________________________________________________________)1 4272 1 744 1700 t
+10 R f
+( of CONTINUATION)2 892( LEN)1 483( OFFSET)1 691( LOCATION)1 795( 1)1 364( 28)1 375('C' 'E')1 519 7 847 1940 t
+( to BP28\))2 384( \(BP21)1 629( to BP20\))2 384( \(BP13)1 406( to BP12\))2 384(\(BP1\) \(BP2\) \(BP3\) \(BP4\) \(BP5)4 1762 6 794 2060 t
+10 S f
+( \347)1 -4272(_ _____________________________________________________________________________________)1 4272 2 744 2200 t
+(\347)744 2100 w
+(\347)744 2000 w
+(\347)744 1900 w
+(\347)744 1800 w
+(\347)1108 2200 w
+(\347)1108 2100 w
+(\347)1108 2000 w
+(\347)1108 1900 w
+(\347)1108 1800 w
+(\347)1497 2200 w
+(\347)1497 2100 w
+(\347)1497 2000 w
+(\347)1497 1900 w
+(\347)1497 1800 w
+(\347)1886 2200 w
+(\347)1886 2100 w
+(\347)1886 2000 w
+(\347)1886 1900 w
+(\347)1886 1800 w
+(\347)2275 2200 w
+(\347)2275 2100 w
+(\347)2275 2000 w
+(\347)2275 1900 w
+(\347)2275 1800 w
+(\347)3015 2200 w
+(\347)3015 2100 w
+(\347)3015 2000 w
+(\347)3015 1900 w
+(\347)3015 1800 w
+(\347)3805 2200 w
+(\347)3805 2100 w
+(\347)3805 2000 w
+(\347)3805 1900 w
+(\347)3805 1800 w
+(\347)5016 2200 w
+(\347)5016 2100 w
+(\347)5016 2000 w
+(\347)5016 1900 w
+(\347)5016 1800 w
+12 B f
+( of the PD System Use Field)6 1413(5.2 Description)1 804 2 720 2860 t
+10 R f
+( "PD" System Use Field is)5 1098( The)1 213(The purpose of the "PD" System Use Field is to provide \257exibility.)11 2759 3 970 3160 t
+( "PD" System)2 569( The)1 212( "PD" System Use Field in a System Use Area.)9 1944( may be more than one)5 952(optional. There)1 643 5 720 3280 t
+(Use Field\(s\) may appear anywhere in the System Use Area.)9 2383 1 720 3400 t
+(The format of the "PD" System Use Field is as follows:)10 2220 1 720 3640 t
+( System Use Field is a "PD" type)7 1443( 1 to BP 2 - Signature Word" shall indicate that the)11 2213([1] "BP)1 414 3 970 4060 t
+( bytes in this \256eld shall be \(50\)\(44\) \("PD"\).)8 1728( The)1 205(System Use Field.)2 731 3 1220 4180 t
+( 3 - Length \(LEN)4 713([2] "BP)1 414 2 970 4360 t
+10 S f
+(_)2097 4360 w
+10 R f
+( in bytes of the "PD")5 859(PAD\)" shall specify as an 8-bit number the length)8 2034 2 2147 4360 t
+( recorded according to the ISO 9660:1988 Format Section)8 2319( \256eld shall be)3 539( This)1 229(System Use Field.)2 733 4 1220 4480 t
+(7.1.1.)1220 4600 w
+( specify as an 8-bit number an identi\256cation of the)9 2119( 4 - System Use Field Version" shall)7 1537([3] "BP)1 414 3 970 4780 t
+( number in this \256eld shall be 1 for this version.)10 1989( The)1 217( "PD" System Use Field.)4 1039(version of the)2 575 4 1220 4900 t
+(This \256eld shall be recorded according to the ISO 9660:1988 Format section 7.1.1.)12 3266 1 1220 5020 t
+( 5 to LEN)3 436([4] "BP)1 414 2 970 5200 t
+10 S f
+(_)1820 5200 w
+10 R f
+( not)1 167( contents are)2 530( The)1 218(PAD - Padding Area" shall be ignored in interchange.)8 2255 4 1870 5200 t
+(restricted by this speci\256cation.)3 1221 1 1220 5320 t
+10 B f
+(TABLE 3.)1 440 1 1968 5680 t
+10 R f
+(PD System Use Field - Version 1)6 1333 1 2458 5680 t
+10 S f
+(_ ____________________________________________________)1 2627 1 1566 5820 t
+10 R f
+( AREA)1 297( PADDING)1 726( 1)1 294( LENGTH)1 600('P' 'D')1 519 5 1674 6060 t
+( to LEN)2 322( \(BP5)1 356( \(BP3\) \(BP4\))2 938(\(BP1\) \(BP2\))1 628 4 1616 6180 t
+10 S f
+(_)3860 6180 w
+10 R f
+(PAD\))3910 6180 w
+10 S f
+( \347)1 -2627(_ ____________________________________________________)1 2627 2 1566 6320 t
+(\347)1566 6220 w
+(\347)1566 6120 w
+(\347)1566 6020 w
+(\347)1566 5920 w
+(\347)1930 6320 w
+(\347)1930 6220 w
+(\347)1930 6120 w
+(\347)1930 6020 w
+(\347)1930 5920 w
+(\347)2319 6320 w
+(\347)2319 6220 w
+(\347)2319 6120 w
+(\347)2319 6020 w
+(\347)2319 5920 w
+(\347)2868 6320 w
+(\347)2868 6220 w
+(\347)2868 6120 w
+(\347)2868 6020 w
+(\347)2868 5920 w
+(\347)3257 6320 w
+(\347)3257 6220 w
+(\347)3257 6120 w
+(\347)3257 6020 w
+(\347)3257 5920 w
+(\347)4193 6320 w
+(\347)4193 6220 w
+(\347)4193 6120 w
+(\347)4193 6020 w
+(\347)4193 5920 w
+10 R f
+( 16, 1993)2 375( July)1 3393(Page 10 of 17)3 552 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 10 16
+%%Page: 11 17
+/saveobj save def
+mark
+17 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+12 B f
+( of the SP System Use Field)6 1394(5.3 Description)1 804 2 720 960 t
+10 R f
+( Field is to provide an identi\256er that the System Use Sharing)11 2540(The purpose of the "SP" System Use)6 1530 2 970 1260 t
+( the "SP" System Use Field speci\256es the)7 1725( Additionally)1 572(Protocol is being used within the given volume.)7 2023 3 720 1380 t
+( Use Area of a Directory Record before recording System Use)10 2551(number of bytes skipped within the System)6 1769 2 720 1500 t
+(Fields \(except the "." entry of the root directory\).)8 1956 1 720 1620 t
+( byte)1 207( "SP" System Use Field must be recorded starting in)9 2171( The)1 214(The "SP" System Use Field is mandatory.)6 1728 4 720 1860 t
+( of the \256rst Directory Record of the root directory of each)11 2451(position one \(BP 1\) in the System Use Area)8 1869 2 720 1980 t
+( Sharing Protocol is utilized, unless the disc is a CD-ROM XA)11 2549(directory structure in which the System Use)6 1771 2 720 2100 t
+( Only)1 252( byte position 15 \(BP 15\).)5 1044(disc, in which case the "SP" System Use Field shall be recorded starting in)13 3024 3 720 2220 t
+(one "SP" System Use Field should be recorded within a single directory structure.)12 3276 1 720 2340 t
+(The format of the "SP" System Use Field is as follows:)10 2204 1 720 2580 t
+( is a "SP" type System Use)6 1101( 1 to BP 2 - Signature" shall indicate that the System Use Field)13 2555([1] "BP)1 414 3 970 3000 t
+(Field. The bytes in this \256eld shall be \(53\)\(50\) \("SP"\).)9 2123 1 1220 3120 t
+( shall specify as an 8-bit number the length in bytes of the "SP" System Use)15 3153( 3 - Length")3 503([2] "BP)1 414 3 970 3300 t
+( shall be 7 for this version. It shall be recorded according to ISO)13 2588(Field. The number in this \256eld)5 1232 2 1220 3420 t
+(9660 Format section 7.1.1.)3 1072 1 1220 3540 t
+( specify as an 8-bit number an identi\256cation of the)9 2119( 4 - System Use Field Version" shall)7 1537([3] "BP)1 414 3 970 3720 t
+( in this \256eld shall be 1 for this version. This)10 1762(version of the "SP" System Use Field. The number)8 2058 2 1220 3840 t
+(\256eld shall be recorded according to ISO 9660 Format section 7.1.1.)10 2688 1 1220 3960 t
+( check bytes. The value of the bytes recorded in)9 1915( 5 to BP 6 - Check Bytes" shall contain two)10 1741([4] "BP)1 414 3 970 4140 t
+(this \256eld shall be veri\256ed in interchange. The bytes in this \256eld shall be \(BE\)\(EF\).)14 3281 1 1220 4260 t
+( - Bytes Skipped \(LEN)4 920( 7)1 75([5] "BP)1 414 3 970 4440 t
+10 S f
+(_)2379 4440 w
+10 R f
+(SKP\)" shall specify as an 8-bit number the number of bytes to be)12 2611 1 2429 4440 t
+( entry of the root)4 683(skipped within the System Use Area of each Directory Record \(except the ".")12 3137 2 1220 4560 t
+( recording System Use Fields other than the "SP" \256eld. The number in this)13 3137(directory\) before)1 683 2 1220 4680 t
+(\256eld shall be recorded according to ISO 9660 Format section 7.1.1.)10 2688 1 1220 4800 t
+10 B f
+(TABLE 4.)1 440 1 1976 5160 t
+10 R f
+(SP System Use Field - Version 1)6 1317 1 2466 5160 t
+10 S f
+(_ _________________________________________________________)1 2862 1 1449 5300 t
+10 R f
+( LEN)1 372( \(EF\))1 384( \(BE\))1 461( 1)1 389( 7)1 353('S' 'P')1 511 6 1557 5540 t
+10 S f
+(_)4027 5540 w
+10 R f
+(SKP)4077 5540 w
+( \(BP7\))1 483(\(BP1\) \(BP2\) \(BP3\) \(BP4\) \(BP5\) \(BP6\))5 2184 2 1499 5660 t
+10 S f
+( \347)1 -2862(_ _________________________________________________________)1 2862 2 1449 5800 t
+(\347)1449 5700 w
+(\347)1449 5600 w
+(\347)1449 5500 w
+(\347)1449 5400 w
+(\347)1813 5800 w
+(\347)1813 5700 w
+(\347)1813 5600 w
+(\347)1813 5500 w
+(\347)1813 5400 w
+(\347)2202 5800 w
+(\347)2202 5700 w
+(\347)2202 5600 w
+(\347)2202 5500 w
+(\347)2202 5400 w
+(\347)2591 5800 w
+(\347)2591 5700 w
+(\347)2591 5600 w
+(\347)2591 5500 w
+(\347)2591 5400 w
+(\347)2980 5800 w
+(\347)2980 5700 w
+(\347)2980 5600 w
+(\347)2980 5500 w
+(\347)2980 5400 w
+(\347)3369 5800 w
+(\347)3369 5700 w
+(\347)3369 5600 w
+(\347)3369 5500 w
+(\347)3369 5400 w
+(\347)3758 5800 w
+(\347)3758 5700 w
+(\347)3758 5600 w
+(\347)3758 5500 w
+(\347)3758 5400 w
+(\347)4311 5800 w
+(\347)4311 5700 w
+(\347)4311 5600 w
+(\347)4311 5500 w
+(\347)4311 5400 w
+10 R f
+( to LEN)2 324( allow compatibility with other uses of the System Use Area, the contents of BP 1)15 3270(Note: To)1 383 3 720 6280 t
+10 S f
+(_)4697 6280 w
+10 R f
+(SKP of)1 293 1 4747 6280 t
+(the System Use Area of each Directory Record are not restricted by this speci\256cation.)13 3420 1 720 6400 t
+12 B f
+( of the ST System Use Field)6 1401(5.4 Description)1 804 2 720 6940 t
+10 R f
+( Use Field is to provide a terminator for the use of the System Use)14 2745(The purpose of the "ST" System)5 1325 2 970 7240 t
+( 11 of 17)3 358( Page)1 3420(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 11 17
+%%Page: 12 18
+/saveobj save def
+mark
+18 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+( "ST" System Use Field)4 1019( The)1 222(Sharing Protocol for a particular System Use Area or Continuation Area.)10 3079 3 720 960 t
+( conforms to the System Use Sharing Protocol within the)9 2352(indicates the completion of any information that)6 1968 2 720 1080 t
+( "ST" System Use Field is optional.)6 1425( The)1 205(particular System Use or Continuation Area.)5 1781 3 720 1200 t
+(The format of the "ST" System Use Field is as follows:)10 2209 1 720 1440 t
+( Use)1 184( 1 to BP 2 - Signature" shall indicate that the System Use Field is a "ST" type System)18 3472([1] "BP)1 414 3 970 1860 t
+(Field. The bytes in this \256eld shall be \(53\)\(54\) \("ST"\).)9 2128 1 1220 1980 t
+( number the length in bytes of the "ST" System Use)10 2150( 3 - Length" shall specify as an 8-bit)8 1506([2] "BP)1 414 3 970 2160 t
+( shall be 4 for this version. It shall be recorded according to ISO)13 2588(Field. The number in this \256eld)5 1232 2 1220 2280 t
+(9660 Format section 7.1.1.)3 1072 1 1220 2400 t
+( specify as an 8-bit number an identi\256cation of the)9 2119( 4 - System Use Field Version" shall)7 1537([3] "BP)1 414 3 970 2580 t
+( System Use Field. The number in this \256eld shall be 1 for this version. This)15 3038(version of the "ST")3 782 2 1220 2700 t
+(\256eld shall be recorded according to ISO 9660 Format section 7.1.1.)10 2688 1 1220 2820 t
+10 B f
+(TABLE 5.)1 440 1 1974 3180 t
+10 R f
+(ST System Use Field - Version 1)6 1322 1 2464 3180 t
+10 S f
+(_ ______________________________)1 1506 1 2127 3320 t
+10 R f
+( 1)1 389( 4)1 350('S' 'T')1 514 3 2235 3560 t
+(\(BP1\) \(BP2\) \(BP3\) \(BP4\))3 1406 1 2177 3680 t
+10 S f
+( \347)1 -1506(_ ______________________________)1 1506 2 2127 3820 t
+(\347)2127 3720 w
+(\347)2127 3620 w
+(\347)2127 3520 w
+(\347)2127 3420 w
+(\347)2491 3820 w
+(\347)2491 3720 w
+(\347)2491 3620 w
+(\347)2491 3520 w
+(\347)2491 3420 w
+(\347)2880 3820 w
+(\347)2880 3720 w
+(\347)2880 3620 w
+(\347)2880 3520 w
+(\347)2880 3420 w
+(\347)3269 3820 w
+(\347)3269 3720 w
+(\347)3269 3620 w
+(\347)3269 3520 w
+(\347)3269 3420 w
+(\347)3633 3820 w
+(\347)3633 3720 w
+(\347)3633 3620 w
+(\347)3633 3520 w
+(\347)3633 3420 w
+10 R f
+( Data \256eld of the System Use Field is optional, thus it is not used in the "ST" System Use Field.)20 3828(Note: The)1 427 2 720 4300 t
+12 B f
+( of the ER System Use Field)6 1420(5.5 Description)1 804 2 720 4840 t
+10 R f
+( information which)2 804(The purpose of the "ER" \(Extension Reference\) System Use Field is to store)12 3266 2 970 5140 t
+(\(uniquely\) identi\256es a speci\256cation of system-speci\256c extensions utilized on a speci\256c volume.)11 3802 1 720 5260 t
+( Field is mandatory or optional shall be speci\256ed by each complying system-)12 3262(Whether this System Use)3 1058 2 720 5500 t
+( the)1 172( copies of this System Use Field may occur specifying)9 2407( Multiple)1 421(speci\256c extension speci\256cation.)2 1320 4 720 5620 t
+(encoding of multiple collections of system-speci\256c extensions used within a single directory structure.)12 4093 1 720 5740 t
+( the System Use Area of the \256rst \("dot" or \(00\)\))10 2121(This System Use Field, if recorded, must appear in)8 2199 2 720 5980 t
+(Directory Record of the root directory of the directory structure in which the system-speci\256c extensions to)15 4320 1 720 6100 t
+(which this "ER" System Use Field refers are used.)8 2010 1 720 6220 t
+( 16, 1993)2 375( July)1 3393(Page 12 of 17)3 552 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 12 18
+%%Page: 13 19
+/saveobj save def
+mark
+19 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+( of the Publisher to avoid or resolve con\257icts between different system-speci\256c)11 3390(It is the responsibility)3 930 2 720 960 t
+(extensions utilized on their publications.)4 1619 1 720 1080 t
+( Directory Record that appears in the Primary Volume Descriptor cannot)10 2975(Note that the instance of the root)6 1345 2 720 1320 t
+( Record as recorded in the "dot" entry of the root)10 2130(contain a System Use Area, thus the root Directory)8 2190 2 720 1440 t
+(directory must be used to record and retrieve this information.)9 2479 1 720 1560 t
+(The format of the "ER" System Use Field is as follows:)10 2220 1 720 1800 t
+( System Use Field is a "ER" type)7 1443( 1 to BP 2 - Signature Word" shall indicate that the)11 2213([1] "BP)1 414 3 970 2220 t
+( bytes in this \256eld shall be \(45\)\(52\) \("ER"\).)8 1728( The)1 205(System Use Field.)2 731 3 1220 2340 t
+( 3 - Length \(LEN)4 729([2] "BP)1 414 2 970 2520 t
+10 S f
+(_)2113 2520 w
+10 R f
+( 8-bit number the length in bytes of the "ER")9 1885(ER\)" shall specify as an)4 992 2 2163 2520 t
+( be 8 + LEN)4 526( number in this \256eld shall)5 1065( The)1 214(System Use Field.)2 749 4 1220 2640 t
+10 S f
+(_)3774 2640 w
+10 R f
+(ID + LEN)2 421 1 3824 2640 t
+10 S f
+(_)4245 2640 w
+10 R f
+(DES + LEN)2 505 1 4295 2640 t
+10 S f
+(_)4800 2640 w
+10 R f
+(SRC)4850 2640 w
+( be recorded according to the ISO 9660:1988 Format Section)9 2510( \256eld shall)2 431( This)1 235(for this version.)2 644 4 1220 2760 t
+(7.1.1.)1220 2880 w
+( specify as an 8-bit number an identi\256cation of the)9 2119( 4 - System Use Field Version" shall)7 1537([3] "BP)1 414 3 970 3060 t
+( number in this \256eld shall be 1 for this version.)10 1989( The)1 217( "ER" System Use Field.)4 1039(version of the)2 575 4 1220 3180 t
+(This \256eld shall be recorded according to the ISO 9660:1988 Format section 7.1.1.)12 3266 1 1220 3300 t
+( 5 - Identi\256er Length \(LEN)5 1089([4] "BP)1 414 2 970 3480 t
+10 S f
+(_)2473 3480 w
+10 R f
+(ID\)" shall specify as an 8-bit number the length in bytes of the)12 2517 1 2523 3480 t
+( \256eld shall be recorded)4 985( This)1 247(Extension Identi\256er recorded in this "ER" System Use Field.)8 2588 3 1220 3600 t
+(according to the ISO 9660:1988 Format Section 7.1.1.)7 2171 1 1220 3720 t
+( 6 - Descriptor Length \(LEN)5 1149([5] "BP)1 414 2 970 3900 t
+10 S f
+(_)2533 3900 w
+10 R f
+( the length in bytes of)5 884(DES\)" shall specify as an 8-bit number)6 1573 2 2583 3900 t
+( shall be recorded)3 715( \256eld)1 207( This)1 232(the Extension Descriptor recorded in this "ER" System Use Field.)9 2666 4 1220 4020 t
+(according to the ISO 9660:1988 Format Section 7.1.1.)7 2171 1 1220 4140 t
+( - Source Length \(LEN)4 928( 7)1 76([6] "BP)1 414 3 970 4320 t
+10 S f
+(_)2388 4320 w
+10 R f
+(SRC\)" shall specify as an 8-bit number the length in bytes of the)12 2602 1 2438 4320 t
+( \256eld shall be)3 569( This)1 239( recorded in this "ER" System Use Field..)7 1739(Extension Speci\256cation Source)2 1273 4 1220 4440 t
+(recorded according to the ISO 9660:1988 Format Section 7.1.1.)8 2544 1 1220 4560 t
+( 8 - Extension Version \(EXT)5 1181([7] "BP)1 414 2 970 4740 t
+10 S f
+(_)2565 4740 w
+10 R f
+( identi\256cation of)2 675(VER\)" Shall specify as an 8-bit number an)7 1750 2 2615 4740 t
+( The)1 208( to which this "ER" System Use Field refers.)8 1808(the version of the system-speci\256c extensions)5 1804 3 1220 4860 t
+( the organization which de\256ned the extensions to)7 2082(number in this \256eld shall be speci\256ed by)7 1738 2 1220 4980 t
+( shall be recorded according to the ISO)7 1637( \256eld)1 215( This)1 240(which this "ER" System Use Field refers.)6 1728 4 1220 5100 t
+(9660:1988 Format Section 7.1.1.)3 1317 1 1220 5220 t
+( 9 to 8 + LEN)5 663([8] "BP)1 414 2 970 5400 t
+10 S f
+(_)2047 5400 w
+10 R f
+( Extension Identi\256er \(EXT)3 1137(ID -)1 185 2 2097 5400 t
+10 S f
+(_)3419 5400 w
+10 R f
+(ID\)" shall contain the content of the)6 1571 1 3469 5400 t
+( d-characters or d1-characters as)4 1308( recording of this identi\256er shall use)6 1479( The)1 211(Extension Identi\256er.)1 822 4 1220 5520 t
+( exact content of this \256eld)5 1050( The)1 208( \256eld is mandatory.)3 781( This)1 230(de\256ned by ISO 9660:1988 section 7.4.)5 1551 5 1220 5640 t
+( the extensions to which this "ER" System Use)8 1935(is speci\256ed by the organization which de\256ned)6 1885 2 1220 5760 t
+(Field refers.)1 482 1 1220 5880 t
+( 9 + LEN)3 426([9] "BP)1 414 2 970 6060 t
+10 S f
+(_)1810 6060 w
+10 R f
+( LEN)1 237(ID to 8 +)3 415 2 1860 6060 t
+10 S f
+(_)2512 6060 w
+10 R f
+(ID + LEN)2 441 1 2562 6060 t
+10 S f
+(_)3003 6060 w
+10 R f
+(DES - Extension Descriptor \(EXT)4 1442 1 3053 6060 t
+10 S f
+(_)4495 6060 w
+10 R f
+(DES\)" shall)1 495 1 4545 6060 t
+( this descriptor shall use a-)5 1108( recording of)2 533( The)1 214(contain the content of the Extension Descriptor.)6 1965 4 1220 6180 t
+( \256eld is optional.)3 715( This)1 242( de\256ned by ISO 9660:1988 section 7.4.)6 1650(characters or a1-characters as)3 1213 4 1220 6300 t
+( may be speci\256ed or recommended by the organization which)9 2486(The minimal content of this \256eld)5 1334 2 1220 6420 t
+( of information)2 617( Recording)1 472( extensions to which this "ER" System Use Field refers.)9 2285(de\256ned the)1 446 4 1220 6540 t
+(in addition to any such minimal information speci\256ed shall follow the recording of said)13 3820 1 1220 6660 t
+(information.)1220 6780 w
+( 13 of 17)3 358( Page)1 3420(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 13 19
+%%Page: 14 20
+/saveobj save def
+mark
+20 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+( 9 + LEN)3 390([10] "BP)1 414 2 970 960 t
+10 S f
+(_)1774 960 w
+10 R f
+(ID + LEN)2 415 1 1824 960 t
+10 S f
+(_)2239 960 w
+10 R f
+( 8 + LEN)3 393(DES to)1 297 2 2289 960 t
+10 S f
+(_)2979 960 w
+10 R f
+(ID + LEN)2 417 1 3029 960 t
+10 S f
+(_)3446 960 w
+10 R f
+(DES + LEN)2 501 1 3496 960 t
+10 S f
+(_)3997 960 w
+10 R f
+(SRC - Extension Source)3 993 1 4047 960 t
+(\(EXT)1220 1080 w
+10 S f
+(_)1447 1080 w
+10 R f
+( recording of this Source)4 1011( The)1 211( content of the Extension Source.)5 1356(SRC\)" shall contain the)3 965 4 1497 1080 t
+( \256eld is)2 311( This)1 236( as de\256ned by ISO 9660:1988 section 7.4.)7 1730(shall use a-characters or a1-characters)4 1543 4 1220 1200 t
+( minimal content of this \256eld may be speci\256ed or recommended by the)12 3137(mandatory. The)1 683 2 1220 1320 t
+( which this "ER" System Use Field refers.)7 1891(organization which de\256ned the extensions to)5 1929 2 1220 1440 t
+( minimal information speci\256ed shall follow)5 1786(Recording of information in addition to any such)7 2034 2 1220 1560 t
+(the recording of said information.)4 1345 1 1220 1680 t
+10 B f
+(TABLE 6.)1 440 1 1968 2040 t
+10 R f
+(ER System Use Field - Version 1)6 1333 1 2458 2040 t
+10 S f
+(_ ______________________________________________________________________________)1 3926 1 917 2180 t
+10 R f
+( LEN)1 439( 1)1 294( LENGTH)1 602('E' 'R')1 519 4 1023 2420 t
+10 S f
+(_)2877 2420 w
+10 R f
+(ID LEN)1 449 1 2927 2420 t
+10 S f
+(_)3376 2420 w
+10 R f
+(DES LEN)1 533 1 3426 2420 t
+10 S f
+(_)3959 2420 w
+10 R f
+(SRC EXT)1 534 1 4009 2420 t
+10 S f
+(_)4543 2420 w
+10 R f
+(VER)4593 2420 w
+( \(BP8\))1 589( \(BP7\))1 583( \(BP6\))1 541( \(BP5\))1 444( \(BP3\) \(BP4\))2 938(\(BP1\) \(BP2\))1 628 6 967 2540 t
+10 S f
+( \347)1 -3926(_ ______________________________________________________________________________)1 3926 2 917 2680 t
+(\347)917 2580 w
+(\347)917 2480 w
+(\347)917 2380 w
+(\347)917 2280 w
+(\347)1281 2680 w
+(\347)1281 2580 w
+(\347)1281 2480 w
+(\347)1281 2380 w
+(\347)1281 2280 w
+(\347)1670 2680 w
+(\347)1670 2580 w
+(\347)1670 2480 w
+(\347)1670 2380 w
+(\347)1670 2280 w
+(\347)2219 2680 w
+(\347)2219 2580 w
+(\347)2219 2480 w
+(\347)2219 2380 w
+(\347)2219 2280 w
+(\347)2608 2680 w
+(\347)2608 2580 w
+(\347)2608 2480 w
+(\347)2608 2380 w
+(\347)2608 2280 w
+(\347)3107 2680 w
+(\347)3107 2580 w
+(\347)3107 2480 w
+(\347)3107 2380 w
+(\347)3107 2280 w
+(\347)3690 2680 w
+(\347)3690 2580 w
+(\347)3690 2480 w
+(\347)3690 2380 w
+(\347)3690 2280 w
+(\347)4274 2680 w
+(\347)4274 2580 w
+(\347)4274 2480 w
+(\347)4274 2380 w
+(\347)4274 2280 w
+(\347)4843 2680 w
+(\347)4843 2580 w
+(\347)4843 2480 w
+(\347)4843 2380 w
+(\347)4843 2280 w
+(_ _______________________________________________________)1 2788 1 1486 3060 t
+10 R f
+(EXT)1772 3300 w
+10 S f
+(_)1966 3300 w
+10 R f
+(ID EXT)1 1327 1 2016 3300 t
+10 S f
+(_)3343 3300 w
+10 R f
+(DES)3393 3300 w
+(\(BP9 to 8+LEN)2 634 1 1536 3420 t
+10 S f
+(_)2170 3420 w
+10 R f
+(ID\) \(BP9+LEN)1 744 1 2220 3420 t
+10 S f
+(_)2964 3420 w
+10 R f
+(ID to 8+LEN)2 533 1 3014 3420 t
+10 S f
+(_)3547 3420 w
+10 R f
+(ID+LEN)3597 3420 w
+10 S f
+(_)3952 3420 w
+10 R f
+(DES\))4002 3420 w
+10 S f
+( \347)1 -2788(_ _______________________________________________________)1 2788 2 1486 3560 t
+(\347)1486 3460 w
+(\347)1486 3360 w
+(\347)1486 3260 w
+(\347)1486 3160 w
+(\347)2433 3560 w
+(\347)2433 3460 w
+(\347)2433 3360 w
+(\347)2433 3260 w
+(\347)2433 3160 w
+(\347)4274 3560 w
+(\347)4274 3460 w
+(\347)4274 3360 w
+(\347)4274 3260 w
+(\347)4274 3160 w
+(_ _______________________________________________________)1 2795 1 1482 3940 t
+10 R f
+(EXT)2662 4180 w
+10 S f
+(_)2856 4180 w
+10 R f
+(SRC)2906 4180 w
+(\(BP9+LEN)1532 4300 w
+10 S f
+(_)1988 4300 w
+10 R f
+(ID+LEN)2038 4300 w
+10 S f
+(_)2393 4300 w
+10 R f
+(DES to 8+LEN)2 617 1 2443 4300 t
+10 S f
+(_)3060 4300 w
+10 R f
+(ID+LEN)3110 4300 w
+10 S f
+(_)3465 4300 w
+10 R f
+(DES+LEN)3515 4300 w
+10 S f
+(_)3954 4300 w
+10 R f
+(SRC\))4004 4300 w
+10 S f
+( \347)1 -2795(_ _______________________________________________________)1 2795 2 1482 4440 t
+(\347)1482 4340 w
+(\347)1482 4240 w
+(\347)1482 4140 w
+(\347)1482 4040 w
+(\347)4277 4440 w
+(\347)4277 4340 w
+(\347)4277 4240 w
+(\347)4277 4140 w
+(\347)4277 4040 w
+10 R f
+( 16, 1993)2 375( July)1 3393(Page 14 of 17)3 552 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 14 20
+%%Page: 15 21
+/saveobj save def
+mark
+21 pagesetup
+10 R f
+( Use Sharing Protocol)3 880( System)1 2892(IEEE CDFSF)1 548 3 720 600 t
+14 B f
+( FOR SYSTEMS)2 1020(6. REQUIREMENTS)1 1329 2 720 960 t
+10 R f
+( information shall be communicated between a)6 1875(The System Use Sharing Protocol speci\256es that certain)7 2195 2 970 1260 t
+(user and an implementation.)3 1132 1 720 1380 t
+( a description which)3 816(An information processing system that conforms to this protocol shall be the subject of)13 3504 2 720 1620 t
+( supply such information, or may obtain it when it is made)11 2492(identi\256es the means by which the user may)7 1828 2 720 1740 t
+(available, as speci\256ed in this standard.)5 1534 1 720 1860 t
+12 B f
+( for an Originating System)4 1370(6.1 Requirements)1 930 2 720 2160 t
+10 R f
+( Protocol must comply)3 951(All originating systems which claim to implement the System Use Sharing)10 3119 2 970 2460 t
+(with the protocol throughout each recorded System Use Area.)8 2470 1 720 2580 t
+( shall be capable of recording a set of System Use Fields in System Use Areas that are)17 3509(The implementation)1 811 2 720 2820 t
+( in accordance with one of the interchange levels speci\256ed in)10 2533(speci\256ed in this standard, on a Volume Set)7 1787 2 720 2940 t
+(ISO 9660:1988.)1 639 1 720 3060 t
+( in the)2 276(The implementation shall allow the data preparer to supply the information that is to be recorded)15 4044 2 720 3300 t
+( according to the System Use Sharing Protocol and shall supply the information for any)14 3609(System Use Area)2 711 2 720 3420 t
+(required \256elds if the data preparer does not supply it.)9 2113 1 720 3540 t
+12 B f
+( for a Receiving System)4 1200(6.2 Requirements)1 930 2 720 3840 t
+10 R f
+( implement the System Use Sharing Protocol must implement)8 2545(All receiving systems which claim to)5 1525 2 970 4140 t
+(the all System Use Fields as de\256ned in this speci\256cation.)9 2272 1 720 4260 t
+(Any System Use Field which the receiving system does not recognize is to be ignored and skipped.)16 3965 1 720 4500 t
+( of System Use Fields in System Use Areas that are)10 2149(The implementation shall be capable of reading a set)8 2171 2 720 4740 t
+( Set in accordance with one of the interchange levels speci\256ed in)11 2652(speci\256ed in this standard from a Volume)6 1668 2 720 4860 t
+(ISO 9660:1988.)1 639 1 720 4980 t
+12 B f
+( with other Extensions and SUSP Registry)6 2155(6.3 Coexistence)1 816 2 720 5400 t
+10 R f
+( coexistence of different)3 1029(Adherence to the System Use Sharing Protocol provides for the mutual)10 3041 2 970 5700 t
+( to be recorded in System Use)6 1222(system-speci\256c extensions to ISO 9660:1988 by de\256ning System Use Fields)9 3098 2 720 5820 t
+(Areas.)720 5940 w
+( to monitor and record existing and new System Use Field)10 2676(A registry system will be established)5 1644 2 720 6180 t
+( implementation of)2 761(speci\256cations and distribute this information to individuals or organizations pursuing the)10 3559 2 720 6300 t
+(new and/or compatible system-speci\256c extensions.)4 2028 1 720 6420 t
+12 B f
+( Suggestions)1 632(6.4 Implementation)1 1032 2 720 6720 t
+10 R f
+( disable the)2 461(For special cases, receiving systems are encouraged to provide a mechanism to optionally)12 3609 2 970 7020 t
+(System Use Sharing Protocol in its entirety.)6 1753 1 720 7140 t
+( 15 of 17)3 358( Page)1 3420(July 16, 1993)2 542 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 15 21
+%%Page: 16 22
+/saveobj save def
+mark
+22 pagesetup
+10 R f
+( CDFSF)1 332( IEEE)1 2813(System Use Sharing Protocol)3 1175 3 720 600 t
+14 B f
+(7. BIBLIOGRAPHY)1 1282 1 720 960 t
+8 S f
+(\267)883 1320 w
+10 R f
+( Processing - Volume and \256le structure of CD-ROM for information)10 2860(ISO 9660:1988 - Information)3 1210 2 970 1320 t
+(interchange)970 1440 w
+8 S f
+(\267)883 1620 w
+10 R f
+(Phillips Consumer Electronics B.V. March 1991. System Description CD-ROM XA)9 3371 1 970 1620 t
+( 16, 1993)2 375( July)1 3393(Page 16 of 17)3 552 3 720 7428 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 16 22
+%%Page: 17 23
+/saveobj save def
+mark
+23 pagesetup
+10 R f
+(CONTENTS)2619 960 w
+(1. PREFACE)1 565 1 720 1260 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . . . . . . . .)25 3350 1 1436 1260 t
+10 R f
+(1)4990 1260 w
+( and Scope)2 438(1.1 Purpose)1 497 2 845 1380 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . . . . .)22 2951 1 1835 1380 t
+10 R f
+(1)4990 1380 w
+( of Sections)2 472(1.2 Summary)1 564 2 845 1500 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . . . .)21 2818 1 1968 1500 t
+10 R f
+(1)4990 1500 w
+(2. OVERVIEW)1 657 1 720 1680 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . . . . . . . .)25 3350 1 1436 1680 t
+10 R f
+(3)4990 1680 w
+( AND NOTATION)2 781(3. TERMINOLOGY)1 857 2 720 1860 t
+10 B f
+(. . . . . . . . . . . . . . . . . .)17 2286 1 2500 1860 t
+10 R f
+(5)4990 1860 w
+( and Hexadecimal Notation)3 1095(3.1 Decimal)1 513 2 845 1980 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 1980 t
+10 R f
+(5)4990 1980 w
+( Use Areas)2 437(3.2 System)1 470 2 845 2100 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . . . . .)22 2951 1 1835 2100 t
+10 R f
+(5)4990 2100 w
+( USE SHARING PROTOCOL)3 1236(4. SYSTEM)1 520 2 720 2280 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 2280 t
+10 R f
+(7)4990 2280 w
+( Use Field Format)3 725(4.1 System)1 470 2 845 2400 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . . .)20 2685 1 2101 2400 t
+10 R f
+(7)4990 2400 w
+( USE FIELDS PROVIDED BY THIS SPECIFICATION)6 2283(5. SYSTEM)1 520 2 720 2580 t
+10 B f
+(. . . . . . . . .)8 1089 1 3697 2580 t
+10 R f
+(9)4990 2580 w
+( of the CE System Use Field)6 1139(5.1 Description)1 641 2 845 2700 t
+10 B f
+(. . . . . . . . . . . . . . . .)15 2020 1 2766 2700 t
+10 R f
+(9)4990 2700 w
+( of the PD System Use Field)6 1139(5.2 Description)1 641 2 845 2820 t
+10 B f
+(. . . . . . . . . . . . . . . .)15 2020 1 2766 2820 t
+10 R f
+(10)4940 2820 w
+( of the SP System Use Field)6 1123(5.3 Description)1 641 2 845 2940 t
+10 B f
+(. . . . . . . . . . . . . . . .)15 2020 1 2766 2940 t
+10 R f
+(11)4940 2940 w
+( of the ST System Use Field)6 1128(5.4 Description)1 641 2 845 3060 t
+10 B f
+(. . . . . . . . . . . . . . . .)15 2020 1 2766 3060 t
+10 R f
+(11)4940 3060 w
+( of the ER System Use Field)6 1139(5.5 Description)1 641 2 845 3180 t
+10 B f
+(. . . . . . . . . . . . . . . .)15 2020 1 2766 3180 t
+10 R f
+(12)4940 3180 w
+( FOR SYSTEMS)2 696(6. REQUIREMENTS)1 897 2 720 3360 t
+10 B f
+(. . . . . . . . . . . . . . . . . . .)18 2419 1 2367 3360 t
+10 R f
+(15)4940 3360 w
+( for an Originating System)4 1066(6.1 Requirements)1 730 2 845 3480 t
+10 B f
+(. . . . . . . . . . . . . . . .)15 2020 1 2766 3480 t
+10 R f
+(15)4940 3480 w
+( for a Receiving System)4 960(6.2 Requirements)1 730 2 845 3600 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 3600 t
+10 R f
+(15)4940 3600 w
+( with other Extensions and SUSP Registry)6 1695(6.3 Coexistence)1 663 2 845 3720 t
+10 B f
+(. . . . . . . . . . . .)11 1488 1 3298 3720 t
+10 R f
+(15)4940 3720 w
+( Suggestions)1 509(6.4 Implementation)1 808 2 845 3840 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . .)19 2552 1 2234 3840 t
+10 R f
+(15)4940 3840 w
+(7. BIBLIOGRAPHY)1 869 1 720 4020 t
+10 B f
+(. . . . . . . . . . . . . . . . . . . . . . . .)23 3084 1 1702 4020 t
+10 R f
+(16)4940 4020 w
+(- i -)2 144 1 2808 7548 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 17 23
+%%Page: 18 24
+/saveobj save def
+mark
+24 pagesetup
+10 R f
+(LIST OF TABLES)2 767 1 2496 1320 t
+( Use Field Description - Version 1)6 1376( System)1 345(TABLE 1.)1 422 3 720 1620 t
+10 B f
+(. . . . . . . . . . . . . .)13 1754 1 3032 1620 t
+10 R f
+(8)4990 1620 w
+( System Use Field - Version 1)6 1205( CE)1 178(TABLE 2.)1 422 3 720 1800 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 1800 t
+10 R f
+(10)4940 1800 w
+( System Use Field - Version 1)6 1205( PD)1 178(TABLE 3.)1 422 3 720 1980 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 1980 t
+10 R f
+(10)4940 1980 w
+( System Use Field - Version 1)6 1205( SP)1 162(TABLE 4.)1 422 3 720 2160 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 2160 t
+10 R f
+(11)4940 2160 w
+( System Use Field - Version 1)6 1205( ST)1 167(TABLE 5.)1 422 3 720 2340 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 2340 t
+10 R f
+(12)4940 2340 w
+( System Use Field - Version 1)6 1205( ER)1 178(TABLE 6.)1 422 3 720 2520 t
+10 B f
+(. . . . . . . . . . . . . . . . .)16 2153 1 2633 2520 t
+10 R f
+(14)4940 2520 w
+(- ii -)2 172 1 2794 7548 t
+cleartomark
+showpage
+saveobj restore
+%%EndPage: 18 24
+%%Trailer
+done
+%%Pages: 24
+%%DocumentFonts: Times-Bold Times-Roman Symbol
