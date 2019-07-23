@@ -16,7 +16,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         public Errno Mount(IMediaImage                imagePlugin, Partition partition, Encoding encoding,
                            Dictionary<string, string> options,     string    @namespace)
         {
-            Encoding = encoding ?? Encoding.ASCII;
+            Encoding = encoding ?? Encoding.GetEncoding(1252);
             byte[] vdMagic = new byte[5]; // Volume Descriptor magic "CD001"
             byte[] hsMagic = new byte[5]; // Volume Descriptor magic "CDROM"
 
@@ -39,6 +39,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                     break;
                 case "rrip":
                     this.@namespace = Namespace.Rrip;
+                    break;
+                case "romeo":
+                    this.@namespace = Namespace.Romeo;
                     break;
                 default: return Errno.InvalidArgument;
             }
@@ -213,6 +216,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                          : highSierra
                                              ? DecodeHighSierraDirectory(rootDir)
                                              : DecodeIsoDirectory(rootDir);
+
+            if(this.@namespace == Namespace.Romeo) Encoding = Encoding.ASCII;
 
             XmlFsType.Type = fsFormat;
 

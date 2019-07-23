@@ -43,7 +43,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             Normal,
             Vms,
             Joliet,
-            Rrip
+            Rrip,
+            Romeo
         }
     }
 }

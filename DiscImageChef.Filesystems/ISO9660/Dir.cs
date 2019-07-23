@@ -139,9 +139,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Flags                = record.flags,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Filename =
-                        Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                    Timestamp = DecodeHighSierraDateTime(record.date)
+                    Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    Timestamp            = DecodeHighSierraDateTime(record.date)
                 };
 
                 if(!entries.ContainsKey(entry.Filename)) entries.Add(entry.Filename, entry);
@@ -183,7 +182,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         joliet
                             ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
                                                                   record.name_len)
-                            : Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                            : Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
                     FileUnitSize         = record.file_unit_size,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
@@ -209,8 +208,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                            ? Encoding.BigEndianUnicode.GetString(data,
                                                                                  entryOff + DirectoryRecordSize,
                                                                                  record.name_len)
-                                           : Encoding.ASCII.GetString(data, entryOff + DirectoryRecordSize,
-                                                                      record.name_len),
+                                           : Encoding.GetString(data, entryOff + DirectoryRecordSize,
+                                                                record.name_len),
                             Timestamp      = DecodeIsoDateTime(record.date),
                             AssociatedFile = entry
                         };
