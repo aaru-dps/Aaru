@@ -67,7 +67,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {"normal", "Primary Volume Descriptor, ignoring ;1 suffixes"},
                 {"vms", "Primary Volume Descriptor, showing version suffixes"},
                 {"joliet", "Joliet Volume Descriptor"},
-                {"rrip", "Rock Ridge"}
+                {"rrip", "Rock Ridge"},
+                {"romeo", "Primary Volume Descriptor using the specified encoding codepage"}
             };
 
         public Errno ReadLink(string path, out string dest)
