@@ -179,5 +179,16 @@ namespace DiscImageChef.Filesystems.ISO9660
             public readonly byte Minute;
             public readonly byte Second;
         }
+
+        // There are two tables one in little endian one in big endian
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct HighSierraPathTableEntry
+        {
+            public readonly uint   start_lbn;
+            public readonly byte   xattr_len;
+            public readonly byte   name_len;
+            public readonly ushort parent_dirno;
+            // Followed by name[name_len]
+        }
     }
 }
