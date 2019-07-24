@@ -155,7 +155,18 @@ namespace DiscImageChef.Filesystems.ISO9660
             KeyValuePair<string, DecodedDirectoryEntry> dirent =
                 parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[pieces.Length - 1]);
 
-            if(string.IsNullOrEmpty(dirent.Key)) return Errno.NoSuchFile;
+            if(string.IsNullOrEmpty(dirent.Key))
+            {
+                // TODO: RRIP
+                if(!joliet && !pieces[pieces.Length - 1].EndsWith(";1", StringComparison.Ordinal))
+                {
+                    dirent = parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) ==
+                                                        pieces[pieces.Length - 1] + ";1");
+
+                    if(string.IsNullOrEmpty(dirent.Key)) return Errno.NoSuchFile;
+                }
+                else return Errno.NoSuchFile;
+            }
 
             entry = dirent.Value;
             return Errno.NoError;
