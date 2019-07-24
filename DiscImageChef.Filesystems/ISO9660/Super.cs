@@ -210,14 +210,14 @@ namespace DiscImageChef.Filesystems.ISO9660
             // TODO: Add IP.BIN to debug root directory
             // TODO: Add volume descriptors to debug root directory
 
+            if(this.@namespace != Namespace.Romeo) Encoding = Encoding.ASCII;
+
             if(this.@namespace != Namespace.Joliet)
                 rootDirectoryCache = cdi
                                          ? DecodeCdiDirectory(rootDir)
                                          : highSierra
                                              ? DecodeHighSierraDirectory(rootDir)
                                              : DecodeIsoDirectory(rootDir);
-
-            if(this.@namespace == Namespace.Romeo) Encoding = Encoding.ASCII;
 
             XmlFsType.Type = fsFormat;
 
