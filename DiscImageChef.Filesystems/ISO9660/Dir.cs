@@ -92,14 +92,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     case Namespace.Vms:
-                        contents.Add(entry.Filename);
-                        break;
                     case Namespace.Joliet:
-                        // TODO: Implement Joliet
-                        break;
                     case Namespace.Rrip:
-                        // TODO: Implement RRIP
-                        break;
+                    case Namespace.Romeo:
+                        contents.Add(entry.Filename);
                         break;
                     default: throw new ArgumentOutOfRangeException();
                 }
