@@ -24,7 +24,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
 
             // Default namespace
-            if(@namespace is null) @namespace = "rrip+joliet+normal";
+            if(@namespace is null) @namespace = "joliet";
 
             switch(@namespace.ToLowerInvariant())
             {
