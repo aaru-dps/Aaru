@@ -63,7 +63,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(currentExtent == 0) return Errno.InvalidArgument;
 
                 // TODO: XA, High Sierra
-                byte[] directoryBuffer = image.ReadSectors(currentExtent, entry.Value.Size / 2048);
+                uint dirSizeInSectors = entry.Value.Size / 2048;
+                if(entry.Value.Size % 2048 > 0) dirSizeInSectors++;
+
+                byte[] directoryBuffer = image.ReadSectors(currentExtent, dirSizeInSectors);
 
                 // TODO: Decode Joliet
                 currentDirectory = cdi
