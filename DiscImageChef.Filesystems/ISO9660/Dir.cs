@@ -266,6 +266,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                         byte    appleLength = data[systemAreaOff + 2];
                         AppleId appleId     = (AppleId)data[systemAreaOff + 3];
 
+                        // Old AAIP
+                        if(appleId == AppleId.ProDOS && appleLength != 7) goto case AAIP_MAGIC;
+
                         switch(appleId)
                         {
                             case AppleId.ProDOS:
@@ -383,6 +386,30 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                                   Marshal.SizeOf<CdromXa>());
 
                         systemAreaOff += Marshal.SizeOf<CdromXa>();
+                        break;
+                    // All of these follow the SUSP indication of 2 bytes for signature 1 byte for length
+                    case AAIP_MAGIC:
+                    case AMIGA_MAGIC:
+                    case RRIP_MAGIC:
+                    case RRIP_POSIX_ATTRIBUTES:
+                    case RRIP_POSIX_DEV_NO:
+                    case RRIP_SYMLINK:
+                    case RRIP_NAME:
+                    case RRIP_CHILDLINK:
+                    case RRIP_PARENTLINK:
+                    case RRIP_RELOCATED_DIR:
+                    case RRIP_TIMESTAMPS:
+                    case RRIP_SPARSE:
+                    case SUSP_CONTINUATION:
+                    case SUSP_PADDING:
+                    case SUSP_INDICATOR:
+                    case SUSP_TERMINATOR:
+                    case SUSP_REFERENCE:
+                    case SUSP_SELECTOR:
+                    case ZISO_MAGIC:
+                        byte suspLength = data[systemAreaOff + 2];
+                        systemAreaOff += suspLength;
+
                         break;
                     default:
                         // Cannot continue as we don't know this structure size
