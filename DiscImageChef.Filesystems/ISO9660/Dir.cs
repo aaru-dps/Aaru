@@ -464,6 +464,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                         systemAreaOff += pnLength;
                         break;
                     case RRIP_SYMLINK:
+                        // TODO
+                        byte slLength = data[systemAreaOff + 2];
+                        systemAreaOff += slLength;
+
+                        break;
                     case RRIP_NAME:
                     case RRIP_CHILDLINK:
                     case RRIP_PARENTLINK:
