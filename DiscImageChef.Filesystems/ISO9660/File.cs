@@ -182,6 +182,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                     stat.Attributes |= FileAttributes.Archive;
             }
 
+            if(entry.PosixDeviceNumber != null)
+                stat.DeviceNo = (entry.PosixDeviceNumber.Value.dev_t_high << 32) +
+                                entry.PosixDeviceNumber.Value.dev_t_low;
+
             if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
                 return Errno.NoError;
 

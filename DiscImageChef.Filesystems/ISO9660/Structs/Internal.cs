@@ -71,6 +71,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public byte                  Interleave;
             public PosixAttributes?      PosixAttributes;
             public PosixAttributesOld?   PosixAttributesOld;
+            public PosixDeviceNumber?    PosixDeviceNumber;
             public DecodedDirectoryEntry ResourceFork;
             public uint                  Size;
             public DateTime?             Timestamp;

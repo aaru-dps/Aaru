@@ -454,6 +454,15 @@ namespace DiscImageChef.Filesystems.ISO9660
                         systemAreaOff += pxLength;
                         break;
                     case RRIP_POSIX_DEV_NO:
+                        byte pnLength = data[systemAreaOff + 2];
+
+                        entry.PosixDeviceNumber =
+                            Marshal.ByteArrayToStructureLittleEndian<PosixDeviceNumber>(data, systemAreaOff,
+                                                                                        Marshal
+                                                                                           .SizeOf<PosixDeviceNumber
+                                                                                            >());
+                        systemAreaOff += pnLength;
+                        break;
                     case RRIP_SYMLINK:
                     case RRIP_NAME:
                     case RRIP_CHILDLINK:
