@@ -594,6 +594,25 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     case SUSP_CONTINUATION:
+                        byte ceLength = data[systemAreaOff + 2];
+
+                        ContinuationArea ca =
+                            Marshal.ByteArrayToStructureLittleEndian<ContinuationArea>(data, systemAreaOff,
+                                                                                       Marshal
+                                                                                          .SizeOf<ContinuationArea>());
+
+                        uint caOffSector    = ca.offset    / 2048;
+                        uint caOff          = ca.offset    % 2048;
+                        uint caLenInSectors = ca.ca_length / 2048;
+                        if((ca.ca_length + caOff) % 2048 > 0) caLenInSectors++;
+
+                        byte[] caData = image.ReadSectors(ca.block + caOffSector, caLenInSectors);
+
+                        DecodeSystemArea(caData, (int)caOff, (int)(caOff + ca.ca_length), ref entry,
+                                         out hasResourceFork);
+
+                        systemAreaOff += ceLength;
+                        break;
                     case SUSP_PADDING:
                     case SUSP_INDICATOR:
                     case SUSP_TERMINATOR:
