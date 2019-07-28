@@ -132,6 +132,21 @@ namespace DiscImageChef.Filesystems.ISO9660
                 stat.Inode = entry.XA.Value.filenumber;
             }
 
+            if(entry.AmigaProtection != null)
+            {
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupExec)) stat.Mode |= 8;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupRead)) stat.Mode |= 32;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupWrite)) stat.Mode |= 16;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherExec)) stat.Mode  |= 1;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherRead)) stat.Mode  |= 4;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherWrite)) stat.Mode |= 2;
+                if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerExec)) stat.Mode  |= 64;
+                if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerRead)) stat.Mode  |= 256;
+                if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerWrite)) stat.Mode |= 128;
+                if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.Archive))
+                    stat.Attributes |= FileAttributes.Archive;
+            }
+
             if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
                 return Errno.NoError;
 

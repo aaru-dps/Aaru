@@ -22,6 +22,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(entry.ResourceFork    != null) xattrs.Add("com.apple.ResourceFork");
             if(entry.FinderInfo      != null) xattrs.Add("com.apple.FinderInfo");
             if(entry.AppleIcon       != null) xattrs.Add("com.apple.Macintosh.Icon");
+            if(entry.AmigaComment != null) xattrs.Add("com.amiga.comments");
 
             return Errno.NoError;
         }
@@ -114,6 +115,13 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     buf = new byte[entry.AppleIcon.Length];
                     Array.Copy(entry.AppleIcon, 0, buf, 0, entry.AppleIcon.Length);
+
+                    return Errno.NoError;
+                case "com.amiga.comments":
+                    if(entry.AmigaComment is null) return Errno.NoSuchExtendedAttribute;
+
+                    buf = new byte[entry.AmigaComment.Length];
+                    Array.Copy(entry.AmigaComment, 0, buf, 0, entry.AmigaComment.Length);
 
                     return Errno.NoError;
                 default: return Errno.NoSuchExtendedAttribute;

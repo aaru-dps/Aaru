@@ -390,6 +390,44 @@ namespace DiscImageChef.Filesystems.ISO9660
                     // All of these follow the SUSP indication of 2 bytes for signature 1 byte for length
                     case AAIP_MAGIC:
                     case AMIGA_MAGIC:
+                        AmigaEntry amiga =
+                            Marshal.ByteArrayToStructureBigEndian<AmigaEntry>(data, systemAreaOff,
+                                                                              Marshal.SizeOf<AmigaEntry>());
+
+                        int protectionLength = 0;
+
+                        if(amiga.flags.HasFlag(AmigaFlags.Protection))
+                        {
+                            entry.AmigaProtection =
+                                Marshal.ByteArrayToStructureBigEndian<AmigaProtection>(data,
+                                                                                       systemAreaOff +
+                                                                                       Marshal.SizeOf<AmigaEntry>(),
+                                                                                       Marshal
+                                                                                          .SizeOf<AmigaProtection>());
+
+                            protectionLength = Marshal.SizeOf<AmigaProtection>();
+                        }
+
+                        if(amiga.flags.HasFlag(AmigaFlags.Comment))
+                        {
+                            if(entry.AmigaComment is null) entry.AmigaComment = new byte[0];
+
+                            byte[] newComment = new byte[entry.AmigaComment.Length +
+                                                         data
+                                                             [systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength] -
+                                                         1];
+
+                            Array.Copy(entry.AmigaComment, 0, newComment, 0, entry.AmigaComment.Length);
+
+                            Array.Copy(data, systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength,
+                                       newComment, entry.AmigaComment.Length,
+                                       data[systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength] - 1);
+
+                            entry.AmigaComment = newComment;
+                        }
+
+                        systemAreaOff += amiga.length;
+                        break;
                     case RRIP_MAGIC:
                     case RRIP_POSIX_ATTRIBUTES:
                     case RRIP_POSIX_DEV_NO:

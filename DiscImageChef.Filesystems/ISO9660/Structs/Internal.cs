@@ -57,6 +57,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
         class DecodedDirectoryEntry
         {
+            public byte[]                AmigaComment;
+            public AmigaProtection?      AmigaProtection;
             public byte?                 AppleDosType;
             public byte[]                AppleIcon;
             public ushort?               AppleProDosType;
