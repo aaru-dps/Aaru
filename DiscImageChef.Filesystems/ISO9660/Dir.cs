@@ -510,8 +510,23 @@ namespace DiscImageChef.Filesystems.ISO9660
                         systemAreaOff += nmLength;
                         break;
                     case RRIP_CHILDLINK:
+                        // TODO
+                        byte clLength = data[systemAreaOff + 2];
+                        systemAreaOff += clLength;
+
+                        break;
                     case RRIP_PARENTLINK:
+                        // TODO
+                        byte plLength = data[systemAreaOff + 2];
+                        systemAreaOff += plLength;
+
+                        break;
                     case RRIP_RELOCATED_DIR:
+                        // TODO
+                        byte reLength = data[systemAreaOff + 2];
+                        systemAreaOff += reLength;
+
+                        break;
                     case RRIP_TIMESTAMPS:
                     case RRIP_SPARSE:
                     case SUSP_CONTINUATION:
