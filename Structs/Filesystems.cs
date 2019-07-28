@@ -147,7 +147,9 @@ namespace DiscImageChef.CommonTypes.Structs
         /// <summary>If file is deleted, contents should be stored, for a possible future undeletion</summary>
         Undeletable = 0x800000000000,
         /// <summary>File is a pipe</summary>
-        Pipe = 0x1000000000000
+        Pipe = 0x1000000000000,
+        /// <summary>File is a socket</summary>
+        Socket = 0x2000000000000
     }
 
     /// <summary>
