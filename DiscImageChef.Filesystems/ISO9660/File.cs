@@ -186,6 +186,15 @@ namespace DiscImageChef.Filesystems.ISO9660
                 stat.DeviceNo = (entry.PosixDeviceNumber.Value.dev_t_high << 32) +
                                 entry.PosixDeviceNumber.Value.dev_t_low;
 
+            if(entry.RripModify != null) stat.LastWriteTimeUtc = DecodeIsoDateTime(entry.RripModify);
+
+            if(entry.RripAccess != null) stat.AccessTimeUtc = DecodeIsoDateTime(entry.RripAccess);
+
+            if(entry.RripAttributeChange != null)
+                stat.StatusChangeTimeUtc = DecodeIsoDateTime(entry.RripAttributeChange);
+
+            if(entry.RripBackup != null) stat.BackupTimeUtc = DecodeIsoDateTime(entry.RripBackup);
+
             if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
                 return Errno.NoError;
 

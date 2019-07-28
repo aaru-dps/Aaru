@@ -1,9 +1,20 @@
 using System;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
+        DateTime? DecodeIsoDateTime(byte[] timestamp)
+        {
+            switch(timestamp?.Length)
+            {
+                case 7:  return DecodeIsoDateTime(Marshal.ByteArrayToStructureLittleEndian<IsoTimestamp>(timestamp));
+                case 17: return DateHandlers.Iso9660ToDateTime(timestamp);
+                default: return null;
+            }
+        }
+
         DateTime? DecodeIsoDateTime(IsoTimestamp timestamp)
         {
             try

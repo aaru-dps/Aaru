@@ -528,6 +528,65 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     case RRIP_TIMESTAMPS:
+                        byte tfLength = data[systemAreaOff + 2];
+
+                        Timestamps timestamps =
+                            Marshal.ByteArrayToStructureLittleEndian<Timestamps>(data, systemAreaOff,
+                                                                                 Marshal.SizeOf<Timestamps>());
+
+                        int tfOff = systemAreaOff + Marshal.SizeOf<Timestamps>();
+                        int tfLen = timestamps.flags.HasFlag(TimestampFlags.LongFormat) ? 17 : 7;
+
+                        if(timestamps.flags.HasFlag(TimestampFlags.Creation))
+                        {
+                            entry.RripCreation = new byte[tfLen];
+                            Array.Copy(data, tfOff, entry.RripCreation, 0, tfLen);
+                            tfOff += tfLen;
+                        }
+
+                        if(timestamps.flags.HasFlag(TimestampFlags.Modification))
+                        {
+                            entry.RripModify = new byte[tfLen];
+                            Array.Copy(data, tfOff, entry.RripModify, 0, tfLen);
+                            tfOff += tfLen;
+                        }
+
+                        if(timestamps.flags.HasFlag(TimestampFlags.Access))
+                        {
+                            entry.RripAccess = new byte[tfLen];
+                            Array.Copy(data, tfOff, entry.RripAccess, 0, tfLen);
+                            tfOff += tfLen;
+                        }
+
+                        if(timestamps.flags.HasFlag(TimestampFlags.AttributeChange))
+                        {
+                            entry.RripAttributeChange = new byte[tfLen];
+                            Array.Copy(data, tfOff, entry.RripAttributeChange, 0, tfLen);
+                            tfOff += tfLen;
+                        }
+
+                        if(timestamps.flags.HasFlag(TimestampFlags.Backup))
+                        {
+                            entry.RripBackup = new byte[tfLen];
+                            Array.Copy(data, tfOff, entry.RripBackup, 0, tfLen);
+                            tfOff += tfLen;
+                        }
+
+                        if(timestamps.flags.HasFlag(TimestampFlags.Expiration))
+                        {
+                            entry.RripExpiration = new byte[tfLen];
+                            Array.Copy(data, tfOff, entry.RripExpiration, 0, tfLen);
+                            tfOff += tfLen;
+                        }
+
+                        if(timestamps.flags.HasFlag(TimestampFlags.Effective))
+                        {
+                            entry.RripEffective = new byte[tfLen];
+                            Array.Copy(data, tfOff, entry.RripEffective, 0, tfLen);
+                        }
+
+                        systemAreaOff += tfLength;
+                        break;
                     case RRIP_SPARSE:
                     case SUSP_CONTINUATION:
                     case SUSP_PADDING:
