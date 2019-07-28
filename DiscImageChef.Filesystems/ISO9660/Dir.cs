@@ -435,6 +435,24 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     case RRIP_POSIX_ATTRIBUTES:
+                        byte pxLength = data[systemAreaOff + 2];
+
+                        if(pxLength == 36)
+                            entry.PosixAttributesOld =
+                                Marshal.ByteArrayToStructureLittleEndian<PosixAttributesOld>(data, systemAreaOff,
+                                                                                             Marshal
+                                                                                                .SizeOf<
+                                                                                                     PosixAttributesOld
+                                                                                                 >());
+                        else if(pxLength >= 44)
+                            entry.PosixAttributes =
+                                Marshal.ByteArrayToStructureLittleEndian<PosixAttributes>(data, systemAreaOff,
+                                                                                          Marshal
+                                                                                             .SizeOf<PosixAttributes
+                                                                                              >());
+
+                        systemAreaOff += pxLength;
+                        break;
                     case RRIP_POSIX_DEV_NO:
                     case RRIP_SYMLINK:
                     case RRIP_NAME:

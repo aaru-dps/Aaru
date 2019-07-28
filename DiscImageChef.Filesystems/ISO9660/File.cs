@@ -132,14 +132,49 @@ namespace DiscImageChef.Filesystems.ISO9660
                 stat.Inode = entry.XA.Value.filenumber;
             }
 
+            if(entry.PosixAttributes != null)
+            {
+                stat.Mode = (uint?)entry.PosixAttributes.Value.st_mode & 0x0FFF;
+                if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Block))
+                    stat.Attributes |= FileAttributes.BlockDevice;
+                if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Character))
+                    stat.Attributes |= FileAttributes.CharDevice;
+                if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Pipe)) stat.Attributes |= FileAttributes.Pipe;
+                if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Socket))
+                    stat.Attributes |= FileAttributes.Socket;
+                if(entry.PosixAttributes.Value.st_mode.HasFlag(PosixMode.Symlink))
+                    stat.Attributes |= FileAttributes.Symlink;
+                stat.Links = entry.PosixAttributes.Value.st_nlink;
+                stat.UID   = entry.PosixAttributes.Value.st_uid;
+                stat.GID   = entry.PosixAttributes.Value.st_gid;
+                stat.Inode = entry.PosixAttributes.Value.st_ino;
+            }
+            else if(entry.PosixAttributesOld != null)
+            {
+                stat.Mode = (uint?)entry.PosixAttributesOld.Value.st_mode & 0x0FFF;
+                if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Block))
+                    stat.Attributes |= FileAttributes.BlockDevice;
+                if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Character))
+                    stat.Attributes |= FileAttributes.CharDevice;
+                if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Pipe))
+                    stat.Attributes |= FileAttributes.Pipe;
+                if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Socket))
+                    stat.Attributes |= FileAttributes.Socket;
+                if(entry.PosixAttributesOld.Value.st_mode.HasFlag(PosixMode.Symlink))
+                    stat.Attributes |= FileAttributes.Symlink;
+                stat.Links = entry.PosixAttributesOld.Value.st_nlink;
+                stat.UID   = entry.PosixAttributesOld.Value.st_uid;
+                stat.GID   = entry.PosixAttributesOld.Value.st_gid;
+            }
+
             if(entry.AmigaProtection != null)
             {
-                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupExec)) stat.Mode |= 8;
-                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupRead)) stat.Mode |= 32;
-                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupWrite)) stat.Mode |= 16;
-                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherExec)) stat.Mode  |= 1;
-                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherRead)) stat.Mode  |= 4;
-                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherWrite)) stat.Mode |= 2;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupExec)) stat.Mode    |= 8;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupRead)) stat.Mode    |= 32;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.GroupWrite)) stat.Mode   |= 16;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherExec)) stat.Mode    |= 1;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherRead)) stat.Mode    |= 4;
+                if(entry.AmigaProtection.Value.Multiuser.HasFlag(AmigaMultiuser.OtherWrite)) stat.Mode   |= 2;
                 if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerExec)) stat.Mode  |= 64;
                 if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerRead)) stat.Mode  |= 256;
                 if(entry.AmigaProtection.Value.Protection.HasFlag(AmigaAttributes.OwnerWrite)) stat.Mode |= 128;

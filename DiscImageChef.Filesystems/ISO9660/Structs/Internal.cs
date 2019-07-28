@@ -69,6 +69,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             public FinderInfo            FinderInfo;
             public FileFlags             Flags;
             public byte                  Interleave;
+            public PosixAttributes?      PosixAttributes;
+            public PosixAttributesOld?   PosixAttributesOld;
             public DecodedDirectoryEntry ResourceFork;
             public uint                  Size;
             public DateTime?             Timestamp;
