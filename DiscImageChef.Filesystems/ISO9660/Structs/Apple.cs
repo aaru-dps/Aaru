@@ -40,66 +40,66 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleProDOSSystemUse
         {
-            public ushort  signature;
-            public byte    length;
-            public AppleId id;
-            public byte    type;
-            public ushort  aux_type;
+            public readonly ushort  signature;
+            public readonly byte    length;
+            public readonly AppleId id;
+            public readonly byte    type;
+            public readonly ushort  aux_type;
         }
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleHFSSystemUse
         {
-            public ushort  signature;
-            public byte    length;
-            public AppleId id;
-            public ushort  type;
-            public ushort  creator;
-            public ushort  finder_flags;
+            public readonly ushort  signature;
+            public readonly byte    length;
+            public readonly AppleId id;
+            public readonly uint    type;
+            public readonly uint    creator;
+            public readonly ushort  finder_flags;
         }
 
         // Little-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleProDOSOldSystemUse
         {
-            public ushort     signature;
-            public AppleOldId id;
-            public byte       type;
-            public ushort     aux_type;
+            public readonly ushort     signature;
+            public readonly AppleOldId id;
+            public readonly byte       type;
+            public readonly ushort     aux_type;
         }
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleHFSTypeCreatorSystemUse
         {
-            public ushort     signature;
-            public AppleOldId id;
-            public ushort     type;
-            public ushort     creator;
+            public readonly ushort     signature;
+            public readonly AppleOldId id;
+            public readonly uint       type;
+            public readonly uint       creator;
         }
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleHFSIconSystemUse
         {
-            public ushort     signature;
-            public AppleOldId id;
-            public ushort     type;
-            public ushort     creator;
+            public readonly ushort     signature;
+            public readonly AppleOldId id;
+            public readonly uint       type;
+            public readonly uint       creator;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] icon;
+            public readonly byte[] icon;
         }
 
         // Big-endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleHFSOldSystemUse
         {
-            public ushort     signature;
-            public AppleOldId id;
-            public ushort     type;
-            public ushort     creator;
-            public ushort     finder_flags;
+            public readonly ushort     signature;
+            public readonly AppleOldId id;
+            public readonly uint       type;
+            public readonly uint       creator;
+            public readonly ushort     finder_flags;
         }
     }
 }
