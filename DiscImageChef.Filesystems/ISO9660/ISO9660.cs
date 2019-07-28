@@ -71,13 +71,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {"romeo", "Primary Volume Descriptor using the specified encoding codepage"}
             };
 
-        public Errno ReadLink(string path, out string dest)
-        {
-            dest = null;
-
-            return Errno.NotSupported;
-        }
-
         static Dictionary<string, string> GetDefaultOptions() =>
             new Dictionary<string, string> {{"debug", false.ToString()}};
     }

@@ -248,6 +248,8 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             int systemAreaOff = start;
             hasResourceFork = false;
+            bool continueSymlink          = false;
+            bool continueSymlinkComponent = false;
 
             while(systemAreaOff + 2 <= end)
             {
@@ -459,10 +461,52 @@ namespace DiscImageChef.Filesystems.ISO9660
                         systemAreaOff += pnLength;
                         break;
                     case RRIP_SYMLINK:
-                        // TODO
                         byte slLength = data[systemAreaOff + 2];
-                        systemAreaOff += slLength;
 
+                        SymbolicLink sl =
+                            Marshal.ByteArrayToStructureLittleEndian<SymbolicLink>(data, systemAreaOff,
+                                                                                   Marshal.SizeOf<SymbolicLink>());
+
+                        SymbolicLinkComponent slc =
+                            Marshal.ByteArrayToStructureLittleEndian<SymbolicLinkComponent>(data,
+                                                                                            systemAreaOff +
+                                                                                            Marshal
+                                                                                               .SizeOf<SymbolicLink>(),
+                                                                                            Marshal
+                                                                                               .SizeOf<
+                                                                                                    SymbolicLinkComponent
+                                                                                                >());
+
+                        if(!continueSymlink || entry.SymbolicLink is null) entry.SymbolicLink = "";
+
+                        if(slc.flags.HasFlag(SymlinkComponentFlags.Root)) entry.SymbolicLink    =  "/";
+                        if(slc.flags.HasFlag(SymlinkComponentFlags.Current)) entry.SymbolicLink += ".";
+                        if(slc.flags.HasFlag(SymlinkComponentFlags.Parent)) entry.SymbolicLink  += "..";
+
+                        if(!continueSymlinkComponent && !slc.flags.HasFlag(SymlinkComponentFlags.Root))
+                            entry.SymbolicLink += "/";
+
+                        entry.SymbolicLink += slc.flags.HasFlag(SymlinkComponentFlags.Networkname)
+                                                  ? Environment.MachineName
+                                                  : joliet
+                                                      ? Encoding.BigEndianUnicode.GetString(data,
+                                                                                            systemAreaOff +
+                                                                                            Marshal
+                                                                                               .SizeOf<SymbolicLink>() +
+                                                                                            Marshal
+                                                                                               .SizeOf<
+                                                                                                    SymbolicLinkComponent
+                                                                                                >(), slc.length)
+                                                      : Encoding.GetString(data,
+                                                                           systemAreaOff                  +
+                                                                           Marshal.SizeOf<SymbolicLink>() +
+                                                                           Marshal.SizeOf<SymbolicLinkComponent>(),
+                                                                           slc.length);
+
+                        continueSymlink          = entry.Flags.HasFlag(SymlinkFlags.Continue);
+                        continueSymlinkComponent = entry.Flags.HasFlag(SymlinkComponentFlags.Continue);
+
+                        systemAreaOff += slLength;
                         break;
                     case RRIP_NAME:
                         byte nmLength = data[systemAreaOff + 2];

@@ -82,6 +82,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public byte[]                RripExpiration;
             public byte[]                RripModify;
             public uint                  Size;
+            public string                SymbolicLink;
             public DateTime?             Timestamp;
             public ushort                VolumeSequenceNumber;
             public CdromXa?              XA;

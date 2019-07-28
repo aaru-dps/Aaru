@@ -40,6 +40,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             return Errno.NoError;
         }
 
+        // TODO: Resolve symbolic link
         public Errno Read(string path, long offset, long size, ref byte[] buf)
         {
             buf = null;
@@ -195,6 +196,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.RripBackup != null) stat.BackupTimeUtc = DecodeIsoDateTime(entry.RripBackup);
 
+            if(entry.SymbolicLink != null) stat.Attributes |= FileAttributes.Symlink;
+
             if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
                 return Errno.NoError;
 
@@ -219,6 +222,20 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             stat.CreationTimeUtc  = DateHandlers.Iso9660ToDateTime(ear.creation_date);
             stat.LastWriteTimeUtc = DateHandlers.Iso9660ToDateTime(ear.modification_date);
+
+            return Errno.NoError;
+        }
+
+        public Errno ReadLink(string path, out string dest)
+        {
+            dest = null;
+
+            Errno err = GetFileEntry(path, out DecodedDirectoryEntry entry);
+            if(err != Errno.NoError) return err;
+
+            if(entry.SymbolicLink is null) return Errno.InvalidArgument;
+
+            dest = entry.SymbolicLink;
 
             return Errno.NoError;
         }
