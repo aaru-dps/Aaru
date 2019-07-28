@@ -221,7 +221,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             XmlFsType.Type = fsFormat;
 
-            if(jolietvd != null && this.@namespace == Namespace.Joliet)
+            if(jolietvd != null && (this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip))
             {
                 rootLocation = jolietvd.Value.root_directory_record.extent;
 

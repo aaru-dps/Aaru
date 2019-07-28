@@ -73,6 +73,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public PosixAttributesOld?   PosixAttributesOld;
             public PosixDeviceNumber?    PosixDeviceNumber;
             public DecodedDirectoryEntry ResourceFork;
+            public byte[]                RockRidgeAlternateName;
             public uint                  Size;
             public DateTime?             Timestamp;
             public ushort                VolumeSequenceNumber;

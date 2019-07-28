@@ -218,13 +218,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                             FileUnitSize         = 0,
                             Interleave           = 0,
                             VolumeSequenceNumber = record.volume_sequence_number,
-                            Filename = joliet
-                                           ? Encoding.BigEndianUnicode.GetString(data,
-                                                                                 entryOff + DirectoryRecordSize,
-                                                                                 record.name_len)
-                                           : Encoding.GetString(data, entryOff + DirectoryRecordSize,
-                                                                record.name_len),
-                            Timestamp = DecodeIsoDateTime(record.date)
+                            Filename             = entry.Filename,
+                            Timestamp            = DecodeIsoDateTime(record.date)
                         };
 
                         if(hasResourceFork) entries[entry.Filename].ResourceFork = entry;
@@ -248,8 +243,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             return entries;
         }
 
-        static void DecodeSystemArea(byte[]   data, int start, int end, ref DecodedDirectoryEntry entry,
-                                     out bool hasResourceFork)
+        void DecodeSystemArea(byte[]   data, int start, int end, ref DecodedDirectoryEntry entry,
+                              out bool hasResourceFork)
         {
             int systemAreaOff = start;
             hasResourceFork = false;
@@ -470,6 +465,50 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     case RRIP_NAME:
+                        byte nmLength = data[systemAreaOff + 2];
+
+                        if(@namespace != Namespace.Rrip)
+                        {
+                            systemAreaOff += nmLength;
+                            break;
+                        }
+
+                        AlternateName alternateName =
+                            Marshal.ByteArrayToStructureLittleEndian<AlternateName>(data, systemAreaOff,
+                                                                                    Marshal.SizeOf<AlternateName>());
+
+                        byte[] nm;
+                        if(alternateName.flags.HasFlag(AlternateNameFlags.Networkname))
+                            nm = joliet
+                                     ? Encoding.BigEndianUnicode.GetBytes(Environment.MachineName)
+                                     : Encoding.GetBytes(Environment.MachineName);
+                        else
+                        {
+                            nm = new byte[nmLength - Marshal.SizeOf<AlternateName>()];
+
+                            Array.Copy(data, systemAreaOff + Marshal.SizeOf<AlternateName>(), nm, 0, nm.Length);
+                        }
+
+                        if(entry.RockRidgeAlternateName is null) entry.RockRidgeAlternateName = new byte[0];
+
+                        byte[] newNm = new byte[entry.RockRidgeAlternateName.Length + nm.Length];
+                        Array.Copy(entry.RockRidgeAlternateName, 0, newNm, 0,
+                                   entry.RockRidgeAlternateName.Length);
+                        Array.Copy(nm, 0, newNm, entry.RockRidgeAlternateName.Length,
+                                   nm.Length);
+
+                        entry.RockRidgeAlternateName = newNm;
+
+                        if(!alternateName.flags.HasFlag(AlternateNameFlags.Continue))
+                        {
+                            entry.Filename = joliet
+                                                 ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
+                                                 : Encoding.GetString(entry.RockRidgeAlternateName);
+                            entry.RockRidgeAlternateName = null;
+                        }
+
+                        systemAreaOff += nmLength;
+                        break;
                     case RRIP_CHILDLINK:
                     case RRIP_PARENTLINK:
                     case RRIP_RELOCATED_DIR:
