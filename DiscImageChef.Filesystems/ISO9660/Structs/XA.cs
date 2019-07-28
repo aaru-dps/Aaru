@@ -40,13 +40,13 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CdromXa
         {
-            public ushort       group;
-            public ushort       user;
             public XaAttributes attributes;
-            public ushort       signature;
             public byte         filenumber;
+            public ushort       group;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public byte[] reserved;
+            public ushort signature;
+            public ushort user;
         }
     }
 }

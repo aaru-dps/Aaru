@@ -118,6 +118,20 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.AppleIcon != null) stat.Attributes |= FileAttributes.HasCustomIcon;
 
+            if(entry.XA != null)
+            {
+                if(entry.XA.Value.attributes.HasFlag(XaAttributes.GroupExecute)) stat.Mode  |= 8;
+                if(entry.XA.Value.attributes.HasFlag(XaAttributes.GroupRead)) stat.Mode     |= 32;
+                if(entry.XA.Value.attributes.HasFlag(XaAttributes.OwnerExecute)) stat.Mode  |= 64;
+                if(entry.XA.Value.attributes.HasFlag(XaAttributes.OwnerRead)) stat.Mode     |= 256;
+                if(entry.XA.Value.attributes.HasFlag(XaAttributes.SystemExecute)) stat.Mode |= 1;
+                if(entry.XA.Value.attributes.HasFlag(XaAttributes.SystemRead)) stat.Mode    |= 4;
+
+                stat.UID   = entry.XA.Value.user;
+                stat.GID   = entry.XA.Value.group;
+                stat.Inode = entry.XA.Value.filenumber;
+            }
+
             if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
                 return Errno.NoError;
 
@@ -133,12 +147,12 @@ namespace DiscImageChef.Filesystems.ISO9660
             stat.GID = ear.group;
 
             stat.Mode = 0;
-            if(ear.permissions.HasFlag(Permissions.GroupExecute)) stat.Mode += 8;
-            if(ear.permissions.HasFlag(Permissions.GroupRead)) stat.Mode    += 32;
-            if(ear.permissions.HasFlag(Permissions.OwnerExecute)) stat.Mode += 64;
-            if(ear.permissions.HasFlag(Permissions.OwnerRead)) stat.Mode    += 256;
-            if(ear.permissions.HasFlag(Permissions.OtherExecute)) stat.Mode += 1;
-            if(ear.permissions.HasFlag(Permissions.OtherRead)) stat.Mode    += 4;
+            if(ear.permissions.HasFlag(Permissions.GroupExecute)) stat.Mode |= 8;
+            if(ear.permissions.HasFlag(Permissions.GroupRead)) stat.Mode    |= 32;
+            if(ear.permissions.HasFlag(Permissions.OwnerExecute)) stat.Mode |= 64;
+            if(ear.permissions.HasFlag(Permissions.OwnerRead)) stat.Mode    |= 256;
+            if(ear.permissions.HasFlag(Permissions.OtherExecute)) stat.Mode |= 1;
+            if(ear.permissions.HasFlag(Permissions.OtherRead)) stat.Mode    |= 4;
 
             stat.CreationTimeUtc  = DateHandlers.Iso9660ToDateTime(ear.creation_date);
             stat.LastWriteTimeUtc = DateHandlers.Iso9660ToDateTime(ear.modification_date);

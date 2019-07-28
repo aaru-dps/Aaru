@@ -71,6 +71,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public uint                  Size;
             public DateTime?             Timestamp;
             public ushort                VolumeSequenceNumber;
+            public CdromXa?              XA;
 
             public override string ToString() => Filename;
         }
