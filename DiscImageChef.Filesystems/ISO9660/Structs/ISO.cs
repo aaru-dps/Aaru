@@ -109,8 +109,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             public readonly ushort          logical_block_size_be;
             public readonly uint            path_table_size;
             public readonly uint            path_table_size_be;
-            public readonly uint            type_1_path_table;
-            public readonly uint            opt_type_1_path_table;
+            public readonly uint            type_l_path_table;
+            public readonly uint            opt_type_l_path_table;
             public readonly uint            type_m_path_table;
             public readonly uint            opt_type_m_path_table;
             public readonly DirectoryRecord root_directory_record;
