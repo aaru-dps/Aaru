@@ -189,8 +189,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 };
 
                 // TODO: XA
-                int systemAreaStart  = entryOff + record.name_len + Marshal.SizeOf<DirectoryRecord>()      + 1;
-                int systemAreaLength = record.length - record.name_len - Marshal.SizeOf<DirectoryRecord>() - 1;
+                int systemAreaStart  = entryOff + record.name_len + Marshal.SizeOf<DirectoryRecord>();
+                int systemAreaLength = record.length - record.name_len - Marshal.SizeOf<DirectoryRecord>();
 
                 bool hasResourceFork = false;
 
@@ -299,6 +299,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         else entries[entry.Filename].AssociatedFile              = entry;
                     }
                     else
+                    {
                         entries[entry.Filename] = new DecodedDirectoryEntry
                         {
                             Extent               = 0,
@@ -313,9 +314,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                                  record.name_len)
                                            : Encoding.GetString(data, entryOff + DirectoryRecordSize,
                                                                 record.name_len),
-                            Timestamp      = DecodeIsoDateTime(record.date),
-                            AssociatedFile = entry
+                            Timestamp      = DecodeIsoDateTime(record.date)
                         };
+
+                        if(hasResourceFork) entries[entry.Filename].ResourceFork = entry;
+                        else entries[entry.Filename].AssociatedFile              = entry;
+                    }
                 }
                 else
                 {
