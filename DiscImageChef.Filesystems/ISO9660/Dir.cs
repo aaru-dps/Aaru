@@ -428,7 +428,12 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         systemAreaOff += amiga.length;
                         break;
+                    // This merely indicates the existence of RRIP extensions, we don't need it
                     case RRIP_MAGIC:
+                        byte rripLength = data[systemAreaOff + 2];
+                        systemAreaOff += rripLength;
+
+                        break;
                     case RRIP_POSIX_ATTRIBUTES:
                     case RRIP_POSIX_DEV_NO:
                     case RRIP_SYMLINK:
