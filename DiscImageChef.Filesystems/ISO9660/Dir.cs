@@ -188,12 +188,116 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Timestamp            = DecodeIsoDateTime(record.date)
                 };
 
+                // TODO: XA
+                int systemAreaStart  = entryOff + record.name_len + Marshal.SizeOf<DirectoryRecord>()      + 1;
+                int systemAreaLength = record.length - record.name_len - Marshal.SizeOf<DirectoryRecord>() - 1;
+
+                bool hasResourceFork = false;
+
+                if(systemAreaLength > 2)
+                {
+                    ushort systemAreaSignature = BigEndianBitConverter.ToUInt16(data, systemAreaStart);
+
+                    if(systemAreaSignature == APPLE_MAGIC)
+                    {
+                        AppleId appleId = (AppleId)data[systemAreaStart + 3];
+
+                        switch(appleId)
+                        {
+                            case AppleId.ProDOS:
+                                AppleProDOSSystemUse appleProDosSystemUse =
+                                    Marshal.ByteArrayToStructureLittleEndian<AppleProDOSSystemUse>(data,
+                                                                                                   systemAreaStart,
+                                                                                                   systemAreaLength);
+
+                                entry.AppleProDosType = appleProDosSystemUse.aux_type;
+                                entry.AppleDosType    = appleProDosSystemUse.type;
+
+                                break;
+                            case AppleId.HFS:
+                                AppleHFSSystemUse appleHfsSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSSystemUse>(data, systemAreaStart,
+                                                                                             systemAreaLength);
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
+                                entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
+                                entry.FinderInfo.fdType    = appleHfsSystemUse.type;
+
+                                break;
+                        }
+                    }
+                    else if(systemAreaSignature == APPLE_MAGIC_OLD)
+                    {
+                        AppleOldId appleId = (AppleOldId)data[systemAreaStart + 2];
+
+                        switch(appleId)
+                        {
+                            case AppleOldId.ProDOS:
+                                AppleProDOSOldSystemUse appleProDosOldSystemUse =
+                                    Marshal.ByteArrayToStructureLittleEndian<AppleProDOSOldSystemUse>(data,
+                                                                                                      systemAreaStart,
+                                                                                                      systemAreaLength);
+                                entry.AppleProDosType = appleProDosOldSystemUse.aux_type;
+                                entry.AppleDosType    = appleProDosOldSystemUse.type;
+
+                                break;
+                            case AppleOldId.TypeCreator:
+                            case AppleOldId.TypeCreatorBundle:
+                                AppleHFSTypeCreatorSystemUse appleHfsTypeCreatorSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSTypeCreatorSystemUse>(data,
+                                                                                                        systemAreaStart,
+                                                                                                        systemAreaLength);
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsTypeCreatorSystemUse.creator;
+                                entry.FinderInfo.fdType    = appleHfsTypeCreatorSystemUse.type;
+
+                                break;
+                            case AppleOldId.TypeCreatorIcon:
+                            case AppleOldId.TypeCreatorIconBundle:
+                                AppleHFSIconSystemUse appleHfsIconSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSIconSystemUse>(data, systemAreaStart,
+                                                                                                 systemAreaLength);
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsIconSystemUse.creator;
+                                entry.FinderInfo.fdType    = appleHfsIconSystemUse.type;
+                                entry.AppleIcon            = appleHfsIconSystemUse.icon;
+
+                                break;
+                            case AppleOldId.HFS:
+                                AppleHFSOldSystemUse appleHfsSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSOldSystemUse>(data, systemAreaStart,
+                                                                                                systemAreaLength);
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
+                                entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
+                                entry.FinderInfo.fdType    = appleHfsSystemUse.type;
+
+                                break;
+                            default: throw new ArgumentOutOfRangeException();
+                        }
+                    }
+                }
+
                 // TODO: Multi-extent files
                 if(entry.Flags.HasFlag(FileFlags.Associated))
                 {
-                    // TODO: Detect if Apple extensions, as associated files contain the resource fork there
-
-                    if(entries.ContainsKey(entry.Filename)) entries[entry.Filename].AssociatedFile = entry;
+                    if(entries.ContainsKey(entry.Filename))
+                    {
+                        if(hasResourceFork) entries[entry.Filename].ResourceFork = entry;
+                        else entries[entry.Filename].AssociatedFile              = entry;
+                    }
                     else
                         entries[entry.Filename] = new DecodedDirectoryEntry
                         {
@@ -216,7 +320,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                 else
                 {
                     if(entries.ContainsKey(entry.Filename))
+                    {
                         entry.AssociatedFile = entries[entry.Filename].AssociatedFile;
+                        entry.ResourceFork   = entries[entry.Filename].ResourceFork;
+                    }
+
                     entries[entry.Filename] = entry;
                 }
 
