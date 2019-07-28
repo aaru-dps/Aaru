@@ -99,6 +99,25 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(entry.Flags.HasFlag(FileFlags.Directory)) stat.Attributes |= FileAttributes.Directory;
             if(entry.Flags.HasFlag(FileFlags.Hidden)) stat.Attributes    |= FileAttributes.Hidden;
 
+            if(entry.FinderInfo != null)
+            {
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsAlias)) stat.Attributes     |= FileAttributes.Alias;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsInvisible)) stat.Attributes |= FileAttributes.Hidden;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasBeenInited))
+                    stat.Attributes |= FileAttributes.HasBeenInited;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasCustomIcon))
+                    stat.Attributes |= FileAttributes.HasCustomIcon;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasNoINITs))
+                    stat.Attributes |= FileAttributes.HasNoINITs;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsOnDesk)) stat.Attributes |= FileAttributes.IsOnDesk;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsShared)) stat.Attributes |= FileAttributes.Shared;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsStationery))
+                    stat.Attributes |= FileAttributes.Stationery;
+                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasBundle)) stat.Attributes |= FileAttributes.Bundle;
+            }
+
+            if(entry.AppleIcon != null) stat.Attributes |= FileAttributes.HasCustomIcon;
+
             if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
                 return Errno.NoError;
 
