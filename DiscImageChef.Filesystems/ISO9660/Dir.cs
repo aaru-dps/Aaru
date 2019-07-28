@@ -150,7 +150,6 @@ namespace DiscImageChef.Filesystems.ISO9660
             return entries;
         }
 
-        // TODO: Implement system area
         Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
@@ -198,150 +197,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     systemAreaLength--;
                 }
 
-                bool hasResourceFork = false;
-
-                int systemAreaOff = systemAreaStart;
-                int systemAreaEnd = systemAreaStart + systemAreaLength;
-
-                while(systemAreaOff + 2 <= systemAreaEnd)
-                {
-                    ushort systemAreaSignature = BigEndianBitConverter.ToUInt16(data, systemAreaOff);
-
-                    if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC)
-                        systemAreaSignature = XA_MAGIC;
-
-                    switch(systemAreaSignature)
-                    {
-                        case APPLE_MAGIC:
-                            byte    appleLength = data[systemAreaOff + 2];
-                            AppleId appleId     = (AppleId)data[systemAreaOff + 3];
-
-                            switch(appleId)
-                            {
-                                case AppleId.ProDOS:
-                                    AppleProDOSSystemUse appleProDosSystemUse =
-                                        Marshal.ByteArrayToStructureLittleEndian<AppleProDOSSystemUse>(data,
-                                                                                                       systemAreaOff,
-                                                                                                       Marshal
-                                                                                                          .SizeOf<
-                                                                                                               AppleProDOSSystemUse
-                                                                                                           >());
-
-                                    entry.AppleProDosType = appleProDosSystemUse.aux_type;
-                                    entry.AppleDosType    = appleProDosSystemUse.type;
-
-                                    break;
-                                case AppleId.HFS:
-                                    AppleHFSSystemUse appleHfsSystemUse =
-                                        Marshal.ByteArrayToStructureBigEndian<AppleHFSSystemUse>(data, systemAreaOff,
-                                                                                                 Marshal
-                                                                                                    .SizeOf<
-                                                                                                         AppleHFSSystemUse
-                                                                                                     >());
-
-                                    hasResourceFork = true;
-
-                                    entry.FinderInfo           = new FinderInfo();
-                                    entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
-                                    entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
-                                    entry.FinderInfo.fdType    = appleHfsSystemUse.type;
-
-                                    break;
-                            }
-
-                            systemAreaOff += appleLength;
-                            break;
-                        case APPLE_MAGIC_OLD:
-                            AppleOldId appleOldId = (AppleOldId)data[systemAreaOff + 2];
-
-                            switch(appleOldId)
-                            {
-                                case AppleOldId.ProDOS:
-                                    AppleProDOSOldSystemUse appleProDosOldSystemUse =
-                                        Marshal.ByteArrayToStructureLittleEndian<AppleProDOSOldSystemUse>(data,
-                                                                                                          systemAreaOff,
-                                                                                                          Marshal
-                                                                                                             .SizeOf<
-                                                                                                                  AppleProDOSOldSystemUse
-                                                                                                              >());
-                                    entry.AppleProDosType = appleProDosOldSystemUse.aux_type;
-                                    entry.AppleDosType    = appleProDosOldSystemUse.type;
-
-                                    systemAreaOff += Marshal.SizeOf<AppleProDOSOldSystemUse>();
-                                    break;
-                                case AppleOldId.TypeCreator:
-                                case AppleOldId.TypeCreatorBundle:
-                                    AppleHFSTypeCreatorSystemUse appleHfsTypeCreatorSystemUse =
-                                        Marshal.ByteArrayToStructureBigEndian<AppleHFSTypeCreatorSystemUse>(data,
-                                                                                                            systemAreaOff,
-                                                                                                            Marshal
-                                                                                                               .SizeOf<
-                                                                                                                    AppleHFSTypeCreatorSystemUse
-                                                                                                                >());
-
-                                    hasResourceFork = true;
-
-                                    entry.FinderInfo           = new FinderInfo();
-                                    entry.FinderInfo.fdCreator = appleHfsTypeCreatorSystemUse.creator;
-                                    entry.FinderInfo.fdType    = appleHfsTypeCreatorSystemUse.type;
-
-                                    systemAreaOff += Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>();
-                                    break;
-                                case AppleOldId.TypeCreatorIcon:
-                                case AppleOldId.TypeCreatorIconBundle:
-                                    AppleHFSIconSystemUse appleHfsIconSystemUse =
-                                        Marshal.ByteArrayToStructureBigEndian<AppleHFSIconSystemUse>(data,
-                                                                                                     systemAreaOff,
-                                                                                                     Marshal
-                                                                                                        .SizeOf<
-                                                                                                             AppleHFSIconSystemUse
-                                                                                                         >());
-
-                                    hasResourceFork = true;
-
-                                    entry.FinderInfo           = new FinderInfo();
-                                    entry.FinderInfo.fdCreator = appleHfsIconSystemUse.creator;
-                                    entry.FinderInfo.fdType    = appleHfsIconSystemUse.type;
-                                    entry.AppleIcon            = appleHfsIconSystemUse.icon;
-
-                                    systemAreaOff += Marshal.SizeOf<AppleHFSIconSystemUse>();
-                                    break;
-                                case AppleOldId.HFS:
-                                    AppleHFSOldSystemUse appleHfsSystemUse =
-                                        Marshal.ByteArrayToStructureBigEndian<AppleHFSOldSystemUse>(data, systemAreaOff,
-                                                                                                    Marshal
-                                                                                                       .SizeOf<
-                                                                                                            AppleHFSOldSystemUse
-                                                                                                        >());
-
-                                    hasResourceFork = true;
-
-                                    entry.FinderInfo           = new FinderInfo();
-                                    entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
-                                    entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
-                                    entry.FinderInfo.fdType    = appleHfsSystemUse.type;
-
-                                    systemAreaOff += Marshal.SizeOf<AppleHFSOldSystemUse>();
-                                    break;
-                                default:
-                                    // Cannot continue as we don't know this structure size
-                                    systemAreaOff = systemAreaEnd;
-                                    break;
-                            }
-
-                            break;
-                        case XA_MAGIC:
-                            entry.XA = Marshal.ByteArrayToStructureBigEndian<CdromXa>(data, systemAreaOff,
-                                                                                      Marshal.SizeOf<CdromXa>());
-
-                            systemAreaOff += Marshal.SizeOf<CdromXa>();
-                            break;
-                        default:
-                            // Cannot continue as we don't know this structure size
-                            systemAreaOff = systemAreaEnd;
-                            break;
-                    }
-                }
+                DecodeSystemArea(data, systemAreaStart, systemAreaStart + systemAreaLength, ref entry,
+                                 out bool hasResourceFork);
 
                 // TODO: Multi-extent files
                 if(entry.Flags.HasFlag(FileFlags.Associated))
@@ -389,6 +246,150 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
 
             return entries;
+        }
+
+        static void DecodeSystemArea(byte[]   data, int start, int end, ref DecodedDirectoryEntry entry,
+                                     out bool hasResourceFork)
+        {
+            int systemAreaOff = start;
+            hasResourceFork = false;
+
+            while(systemAreaOff + 2 <= end)
+            {
+                ushort systemAreaSignature = BigEndianBitConverter.ToUInt16(data, systemAreaOff);
+
+                if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC) systemAreaSignature = XA_MAGIC;
+
+                switch(systemAreaSignature)
+                {
+                    case APPLE_MAGIC:
+                        byte    appleLength = data[systemAreaOff + 2];
+                        AppleId appleId     = (AppleId)data[systemAreaOff + 3];
+
+                        switch(appleId)
+                        {
+                            case AppleId.ProDOS:
+                                AppleProDOSSystemUse appleProDosSystemUse =
+                                    Marshal.ByteArrayToStructureLittleEndian<AppleProDOSSystemUse>(data, systemAreaOff,
+                                                                                                   Marshal
+                                                                                                      .SizeOf<
+                                                                                                           AppleProDOSSystemUse
+                                                                                                       >());
+
+                                entry.AppleProDosType = appleProDosSystemUse.aux_type;
+                                entry.AppleDosType    = appleProDosSystemUse.type;
+
+                                break;
+                            case AppleId.HFS:
+                                AppleHFSSystemUse appleHfsSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSSystemUse>(data, systemAreaOff,
+                                                                                             Marshal
+                                                                                                .SizeOf<
+                                                                                                     AppleHFSSystemUse
+                                                                                                 >());
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
+                                entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
+                                entry.FinderInfo.fdType    = appleHfsSystemUse.type;
+
+                                break;
+                        }
+
+                        systemAreaOff += appleLength;
+                        break;
+                    case APPLE_MAGIC_OLD:
+                        AppleOldId appleOldId = (AppleOldId)data[systemAreaOff + 2];
+
+                        switch(appleOldId)
+                        {
+                            case AppleOldId.ProDOS:
+                                AppleProDOSOldSystemUse appleProDosOldSystemUse =
+                                    Marshal.ByteArrayToStructureLittleEndian<AppleProDOSOldSystemUse>(data,
+                                                                                                      systemAreaOff,
+                                                                                                      Marshal
+                                                                                                         .SizeOf<
+                                                                                                              AppleProDOSOldSystemUse
+                                                                                                          >());
+                                entry.AppleProDosType = appleProDosOldSystemUse.aux_type;
+                                entry.AppleDosType    = appleProDosOldSystemUse.type;
+
+                                systemAreaOff += Marshal.SizeOf<AppleProDOSOldSystemUse>();
+                                break;
+                            case AppleOldId.TypeCreator:
+                            case AppleOldId.TypeCreatorBundle:
+                                AppleHFSTypeCreatorSystemUse appleHfsTypeCreatorSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSTypeCreatorSystemUse>(data,
+                                                                                                        systemAreaOff,
+                                                                                                        Marshal
+                                                                                                           .SizeOf<
+                                                                                                                AppleHFSTypeCreatorSystemUse
+                                                                                                            >());
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsTypeCreatorSystemUse.creator;
+                                entry.FinderInfo.fdType    = appleHfsTypeCreatorSystemUse.type;
+
+                                systemAreaOff += Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>();
+                                break;
+                            case AppleOldId.TypeCreatorIcon:
+                            case AppleOldId.TypeCreatorIconBundle:
+                                AppleHFSIconSystemUse appleHfsIconSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSIconSystemUse>(data, systemAreaOff,
+                                                                                                 Marshal
+                                                                                                    .SizeOf<
+                                                                                                         AppleHFSIconSystemUse
+                                                                                                     >());
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsIconSystemUse.creator;
+                                entry.FinderInfo.fdType    = appleHfsIconSystemUse.type;
+                                entry.AppleIcon            = appleHfsIconSystemUse.icon;
+
+                                systemAreaOff += Marshal.SizeOf<AppleHFSIconSystemUse>();
+                                break;
+                            case AppleOldId.HFS:
+                                AppleHFSOldSystemUse appleHfsSystemUse =
+                                    Marshal.ByteArrayToStructureBigEndian<AppleHFSOldSystemUse>(data, systemAreaOff,
+                                                                                                Marshal
+                                                                                                   .SizeOf<
+                                                                                                        AppleHFSOldSystemUse
+                                                                                                    >());
+
+                                hasResourceFork = true;
+
+                                entry.FinderInfo           = new FinderInfo();
+                                entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
+                                entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
+                                entry.FinderInfo.fdType    = appleHfsSystemUse.type;
+
+                                systemAreaOff += Marshal.SizeOf<AppleHFSOldSystemUse>();
+                                break;
+                            default:
+                                // Cannot continue as we don't know this structure size
+                                systemAreaOff = end;
+                                break;
+                        }
+
+                        break;
+                    case XA_MAGIC:
+                        entry.XA = Marshal.ByteArrayToStructureBigEndian<CdromXa>(data, systemAreaOff,
+                                                                                  Marshal.SizeOf<CdromXa>());
+
+                        systemAreaOff += Marshal.SizeOf<CdromXa>();
+                        break;
+                    default:
+                        // Cannot continue as we don't know this structure size
+                        systemAreaOff = end;
+                        break;
+                }
+            }
         }
     }
 }
