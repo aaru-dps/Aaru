@@ -588,6 +588,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                         systemAreaOff += tfLength;
                         break;
                     case RRIP_SPARSE:
+                        // TODO
+                        byte sfLength = data[systemAreaOff + 2];
+                        systemAreaOff += sfLength;
+
+                        break;
                     case SUSP_CONTINUATION:
                     case SUSP_PADDING:
                     case SUSP_INDICATOR:
