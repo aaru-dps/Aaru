@@ -614,13 +614,39 @@ namespace DiscImageChef.Filesystems.ISO9660
                         systemAreaOff += ceLength;
                         break;
                     case SUSP_PADDING:
+                        // Just padding, skip
+                        byte pdLength = data[systemAreaOff + 2];
+                        systemAreaOff += pdLength;
+
+                        break;
                     case SUSP_INDICATOR:
+                        // Only to be found on CURRENT entry of root directory
+                        byte spLength = data[systemAreaOff + 2];
+                        systemAreaOff += spLength;
+
+                        break;
                     case SUSP_TERMINATOR:
+                        // Not seen on the wild
+                        byte stLength = data[systemAreaOff + 2];
+                        systemAreaOff += stLength;
+
+                        break;
                     case SUSP_REFERENCE:
+                        // Only to be found on CURRENT entry of root directory
+                        byte erLength = data[systemAreaOff + 2];
+                        systemAreaOff += erLength;
+
+                        break;
                     case SUSP_SELECTOR:
+                        // Only to be found on CURRENT entry of root directory
+                        byte esLength = data[systemAreaOff + 2];
+                        systemAreaOff += esLength;
+
+                        break;
                     case ZISO_MAGIC:
-                        byte suspLength = data[systemAreaOff + 2];
-                        systemAreaOff += suspLength;
+                        // TODO: Implement support for zisofs
+                        byte zfLength = data[systemAreaOff + 2];
+                        systemAreaOff += zfLength;
 
                         break;
                     default:
