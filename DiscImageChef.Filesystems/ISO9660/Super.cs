@@ -22,6 +22,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(options == null) options = GetDefaultOptions();
             if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
+            if(options.TryGetValue("use_path_table", out string usePathTableString))
+                bool.TryParse(usePathTableString, out usePathTable);
 
             // Default namespace
             if(@namespace is null) @namespace = "joliet";
@@ -234,6 +236,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(firstRootSector);
                 rootSize = rootEntry.size / fsvd.Value.logical_block_size;
                 if(rootEntry.size         % fsvd.Value.logical_block_size > 0) rootSize++;
+
+                usePathTable = true;
             }
 
             if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
@@ -247,6 +251,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             // TODO: Add IP.BIN to debug root directory
             // TODO: Add volume descriptors to debug root directory
+
+            if(this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip) usePathTable = false;
 
             if(this.@namespace != Namespace.Joliet)
                 rootDirectoryCache = cdi
@@ -382,7 +388,16 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();
             image          = imagePlugin;
-            mounted        = true;
+
+            if(usePathTable)
+                foreach(DecodedDirectoryEntry subDirectory in cdi
+                                                                  ? GetSubdirsFromCdiPathTable("")
+                                                                  : highSierra
+                                                                      ? GetSubdirsFromHighSierraPathTable("")
+                                                                      : GetSubdirsFromIsoPathTable(""))
+                    rootDirectoryCache[subDirectory.Filename] = subDirectory;
+
+            mounted = true;
 
             return Errno.NoError;
         }

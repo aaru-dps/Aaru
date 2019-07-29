@@ -75,6 +75,14 @@ namespace DiscImageChef.Filesystems.ISO9660
                                            ? DecodeHighSierraDirectory(directoryBuffer)
                                            : DecodeIsoDirectory(directoryBuffer);
 
+                if(usePathTable)
+                    foreach(DecodedDirectoryEntry subDirectory in cdi
+                                                                      ? GetSubdirsFromCdiPathTable(currentPath)
+                                                                      : highSierra
+                                                                          ? GetSubdirsFromHighSierraPathTable(currentPath)
+                                                                          : GetSubdirsFromIsoPathTable(currentPath))
+                        currentDirectory[subDirectory.Filename] = subDirectory;
+
                 directoryCache.Add(currentPath, currentDirectory);
             }
 
@@ -142,6 +150,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Timestamp            = DecodeHighSierraDateTime(record.date)
                 };
 
+                if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                {
+                    entryOff += record.length;
+                    continue;
+                }
+
                 if(!entries.ContainsKey(entry.Filename)) entries.Add(entry.Filename, entry);
 
                 entryOff += record.length;
@@ -186,6 +200,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                     VolumeSequenceNumber = record.volume_sequence_number,
                     Timestamp            = DecodeIsoDateTime(record.date)
                 };
+
+                if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
+                {
+                    entryOff += record.length;
+                    continue;
+                }
 
                 // TODO: XA
                 int systemAreaStart  = entryOff + record.name_len      + Marshal.SizeOf<DirectoryRecord>();
@@ -699,6 +719,118 @@ namespace DiscImageChef.Filesystems.ISO9660
                         break;
                 }
             }
+        }
+
+        PathTableEntryInternal[] GetPathTableEntries(string path)
+        {
+            IEnumerable<PathTableEntryInternal> tableEntries  = new PathTableEntryInternal[0];
+            List<PathTableEntryInternal>        pathTableList = new List<PathTableEntryInternal>(pathTable);
+
+            if(path == "" || path == "/") tableEntries = pathTable.Where(p => p.Parent == 1 && p != pathTable[0]);
+            else
+            {
+                string cutPath = path.StartsWith("/", StringComparison.Ordinal)
+                                     ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
+                                     : path.ToLower(CultureInfo.CurrentUICulture);
+
+                string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+
+                int currentParent = 1;
+                int currentPiece  = 0;
+
+                while(currentPiece < pieces.Length)
+                {
+                    PathTableEntryInternal currentEntry = pathTable.FirstOrDefault(p => p.Parent == currentParent &&
+                                                                                        p.Name.ToLower(CultureInfo
+                                                                                                          .CurrentUICulture) ==
+                                                                                        pieces[currentPiece]);
+
+                    if(currentEntry is null) break;
+
+                    currentPiece++;
+                    currentParent = pathTableList.IndexOf(currentEntry) + 1;
+                }
+
+                tableEntries = pathTable.Where(p => p.Parent == currentParent);
+            }
+
+            return tableEntries.ToArray();
+        }
+
+        DecodedDirectoryEntry[] GetSubdirsFromCdiPathTable(string path) => throw new NotImplementedException();
+
+        DecodedDirectoryEntry[] GetSubdirsFromIsoPathTable(string path)
+        {
+            PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
+            List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+            foreach(PathTableEntryInternal tEntry in tableEntries)
+            {
+                byte[] sector = image.ReadSector(tEntry.Extent);
+                DirectoryRecord record =
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, 0,
+                                                                              Marshal.SizeOf<DirectoryRecord>());
+
+                if(record.length == 0) break;
+
+                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                {
+                    Extent               = record.size == 0 ? 0 : record.extent,
+                    Size                 = record.size,
+                    Flags                = record.flags,
+                    Filename             = tEntry.Name,
+                    FileUnitSize         = record.file_unit_size,
+                    Interleave           = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Timestamp            = DecodeIsoDateTime(record.date)
+                };
+
+                // TODO: XA
+                int systemAreaStart  = record.name_len                 + Marshal.SizeOf<DirectoryRecord>();
+                int systemAreaLength = record.length - record.name_len - Marshal.SizeOf<DirectoryRecord>();
+
+                if(systemAreaStart % 2 != 0)
+                {
+                    systemAreaStart++;
+                    systemAreaLength--;
+                }
+
+                DecodeSystemArea(sector, systemAreaStart, systemAreaStart + systemAreaLength, ref entry, out _);
+
+                entries.Add(entry);
+            }
+
+            return entries.ToArray();
+        }
+
+        DecodedDirectoryEntry[] GetSubdirsFromHighSierraPathTable(string path)
+        {
+            PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
+            List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+            foreach(PathTableEntryInternal tEntry in tableEntries)
+            {
+                byte[] sector = image.ReadSector(tEntry.Extent);
+                HighSierraDirectoryRecord record =
+                    Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, 0,
+                                                                                        Marshal
+                                                                                           .SizeOf<
+                                                                                                HighSierraDirectoryRecord
+                                                                                            >());
+
+                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                {
+                    Extent               = record.size == 0 ? 0 : record.extent,
+                    Size                 = record.size,
+                    Flags                = record.flags,
+                    Filename             = tEntry.Name,
+                    Interleave           = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Timestamp            = DecodeHighSierraDateTime(record.date)
+                };
+
+                entries.Add(entry);
+            }
+
+            return entries.ToArray();
         }
     }
 }

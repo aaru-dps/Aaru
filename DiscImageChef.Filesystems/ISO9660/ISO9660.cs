@@ -52,6 +52,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         PathTableEntryInternal[]                  pathTable;
         Dictionary<string, DecodedDirectoryEntry> rootDirectoryCache;
         FileSystemInfo                            statfs;
+        bool                                      usePathTable;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
@@ -60,7 +61,10 @@ namespace DiscImageChef.Filesystems.ISO9660
         public string         Author    => "Natalia Portillo";
 
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[]
+            {
+                ("use_path_table", typeof(bool), "Use path table for directory traversal")
+            };
 
         public Dictionary<string, string> Namespaces =>
             new Dictionary<string, string>
