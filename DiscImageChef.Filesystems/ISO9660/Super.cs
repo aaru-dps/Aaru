@@ -199,7 +199,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 fsFormat = "ISO9660";
             }
 
-            pathTable = DecodePathTable(pathTableData);
+            pathTable = highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
 
             // High Sierra and CD-i do not support Joliet or RRIP
             if((highSierra || cdi) && this.@namespace != Namespace.Normal && this.@namespace != Namespace.Vms)
