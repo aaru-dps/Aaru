@@ -51,15 +51,15 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.Flags.HasFlag(FileFlags.Directory) && !debug) return Errno.IsDirectory;
 
-            if(offset >= entry.Size) return Errno.InvalidArgument;
-
-            if(size + offset >= entry.Size) size = entry.Size - offset;
-
             if(entry.Size == 0)
             {
                 buf = new byte[0];
                 return Errno.NoError;
             }
+
+            if(offset >= entry.Size) return Errno.InvalidArgument;
+
+            if(size + offset >= entry.Size) size = entry.Size - offset;
 
             // TODO: XA
             long firstSector    = offset                  / 2048;
