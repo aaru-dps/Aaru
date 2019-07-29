@@ -207,6 +207,20 @@ namespace DiscImageChef.Filesystems.ISO9660
                     continue;
                 }
 
+                // Mac OS can use slashes, we cannot
+                entry.Filename = entry.Filename.Replace('/', '\u2215');
+
+                // Tailing '.' is only allowed on RRIP. If present it will be recreated below with the alternate name
+                if(entry.Filename.EndsWith(".", StringComparison.Ordinal))
+                    entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 1);
+
+                if(entry.Filename.EndsWith(".;1", StringComparison.Ordinal))
+                    entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 3) + ";1";
+
+                // This is a legal Joliet name, different from VMS version fields, but Nero MAX incorrectly creates these filenames
+                if(joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
+                    entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
+
                 // TODO: XA
                 int systemAreaStart  = entryOff + record.name_len      + Marshal.SizeOf<DirectoryRecord>();
                 int systemAreaLength = record.length - record.name_len - Marshal.SizeOf<DirectoryRecord>();
