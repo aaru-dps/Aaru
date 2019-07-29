@@ -523,8 +523,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                            Marshal.SizeOf<SymbolicLinkComponent>(),
                                                                            slc.length);
 
-                        continueSymlink          = entry.Flags.HasFlag(SymlinkFlags.Continue);
-                        continueSymlinkComponent = entry.Flags.HasFlag(SymlinkComponentFlags.Continue);
+                        continueSymlink          = sl.flags.HasFlag(SymlinkFlags.Continue);
+                        continueSymlinkComponent = slc.flags.HasFlag(SymlinkComponentFlags.Continue);
 
                         systemAreaOff += slLength;
                         break;
