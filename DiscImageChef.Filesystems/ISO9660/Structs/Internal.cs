@@ -74,6 +74,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public PosixDeviceNumber?    PosixDeviceNumber;
             public DecodedDirectoryEntry ResourceFork;
             public byte[]                RockRidgeAlternateName;
+            public bool                  RockRidgeRelocated;
             public byte[]                RripAccess;
             public byte[]                RripAttributeChange;
             public byte[]                RripBackup;

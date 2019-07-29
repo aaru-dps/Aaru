@@ -274,7 +274,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                 entryOff += record.length;
             }
 
-            return entries;
+            // Relocated directories should be shown in correct place when using Rock Ridge namespace
+            return @namespace == Namespace.Rrip
+                       ? entries.Where(e => !e.Value.RockRidgeRelocated).ToDictionary(x => x.Key, x => x.Value)
+                       : entries;
         }
 
         void DecodeSystemArea(byte[]   data, int start, int end, ref DecodedDirectoryEntry entry,
@@ -590,19 +593,46 @@ namespace DiscImageChef.Filesystems.ISO9660
                     case RRIP_CHILDLINK:
                         // TODO
                         byte clLength = data[systemAreaOff + 2];
+
+                        // If we are not in Rock Ridge namespace, or we are using the Path Table, skip it
+                        if(@namespace != Namespace.Rrip || usePathTable)
+                        {
+                            systemAreaOff += clLength;
+                            break;
+                        }
+
+                        ChildLink cl =
+                            Marshal.ByteArrayToStructureLittleEndian<ChildLink>(data, systemAreaOff,
+                                                                                Marshal.SizeOf<ChildLink>());
+
+                        byte[] childSector = image.ReadSector(cl.child_dir_lba);
+                        DirectoryRecord childRecord =
+                            Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector);
+
+                        // As per RRIP 4.1.5.1, we leave name as in previous entry, substitute location with the one in
+                        // the CL, and replace all other fields with the ones found in the first entry of the child
+                        entry.Extent               = cl.child_dir_lba;
+                        entry.Size                 = childRecord.size;
+                        entry.Flags                = childRecord.flags;
+                        entry.FileUnitSize         = childRecord.file_unit_size;
+                        entry.Interleave           = childRecord.interleave;
+                        entry.VolumeSequenceNumber = childRecord.volume_sequence_number;
+                        entry.Timestamp            = DecodeIsoDateTime(childRecord.date);
+
                         systemAreaOff += clLength;
 
                         break;
                     case RRIP_PARENTLINK:
-                        // TODO
+                        // SKip, we don't need it
                         byte plLength = data[systemAreaOff + 2];
                         systemAreaOff += plLength;
 
                         break;
                     case RRIP_RELOCATED_DIR:
-                        // TODO
                         byte reLength = data[systemAreaOff + 2];
                         systemAreaOff += reLength;
+
+                        entry.RockRidgeRelocated = true;
 
                         break;
                     case RRIP_TIMESTAMPS:
