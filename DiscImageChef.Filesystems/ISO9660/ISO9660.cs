@@ -49,6 +49,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         bool                                      joliet;
         bool                                      mounted;
         Namespace                                 @namespace;
+        PathTableEntryInternal[]                  pathTable;
         Dictionary<string, DecodedDirectoryEntry> rootDirectoryCache;
         FileSystemInfo                            statfs;
 

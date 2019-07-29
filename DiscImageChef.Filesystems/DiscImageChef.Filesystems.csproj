@@ -75,6 +75,7 @@
     <Compile Include="ISO9660\Date.cs" />
     <Compile Include="ISO9660\Dir.cs" />
     <Compile Include="ISO9660\File.cs" />
+    <Compile Include="ISO9660\PathTable.cs" />
     <Compile Include="ISO9660\Super.cs" />
     <Compile Include="ISO9660\Xattr.cs" />
     <Compile Include="PCFX.cs" />

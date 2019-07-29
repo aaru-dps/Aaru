@@ -160,15 +160,44 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(jolietvd != null) decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
+            if(this.@namespace != Namespace.Romeo) Encoding = Encoding.ASCII;
+
             string fsFormat;
-            if(highSierra) fsFormat = "High Sierra Format";
+            byte[] pathTableData;
+            uint   pathTableSizeInSectors = 0;
+            if(highSierra)
+            {
+                pathTableSizeInSectors = hsvd.Value.path_table_size / 2048;
+                if(hsvd.Value.path_table_size                       % 2048 > 0) pathTableSizeInSectors++;
+
+                pathTableData =
+                    imagePlugin.ReadSectors(Swapping.Swap(hsvd.Value.mandatory_path_table_msb), pathTableSizeInSectors);
+
+                fsFormat = "High Sierra Format";
+            }
             else if(cdi)
             {
+                pathTableSizeInSectors = fsvd.Value.path_table_size / 2048;
+                if(fsvd.Value.path_table_size                       % 2048 > 0) pathTableSizeInSectors++;
+
+                pathTableData = imagePlugin.ReadSectors(fsvd.Value.path_table_addr, pathTableSizeInSectors);
+
                 fsFormat = "CD-i";
                 // TODO: Implement CD-i
                 return Errno.NotImplemented;
             }
-            else fsFormat = "ISO9660";
+            else
+            {
+                pathTableSizeInSectors = pvd.Value.path_table_size / 2048;
+                if(pvd.Value.path_table_size                       % 2048 > 0) pathTableSizeInSectors++;
+
+                pathTableData =
+                    imagePlugin.ReadSectors(Swapping.Swap(pvd.Value.type_m_path_table), pathTableSizeInSectors);
+
+                fsFormat = "ISO9660";
+            }
+
+            pathTable = DecodePathTable(pathTableData);
 
             // High Sierra and CD-i do not support Joliet or RRIP
             if((highSierra || cdi) && this.@namespace != Namespace.Normal && this.@namespace != Namespace.Vms)
@@ -179,7 +208,6 @@ namespace DiscImageChef.Filesystems.ISO9660
             uint rootLocation = 0;
             uint rootSize     = 0;
 
-            // TODO: Read CD-i root directory
             if(!cdi)
             {
                 rootLocation = highSierra
@@ -197,6 +225,16 @@ namespace DiscImageChef.Filesystems.ISO9660
                     if(pvd.Value.root_directory_record.size         % pvd.Value.logical_block_size > 0) rootSize++;
                 }
             }
+            else
+            {
+                rootLocation = pathTable[0].Extent;
+
+                byte[] firstRootSector = imagePlugin.ReadSector(rootLocation);
+                CdiDirectoryRecord rootEntry =
+                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(firstRootSector);
+                rootSize = rootEntry.size / fsvd.Value.logical_block_size;
+                if(rootEntry.size         % fsvd.Value.logical_block_size > 0) rootSize++;
+            }
 
             if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
 
@@ -209,8 +247,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             // TODO: Add IP.BIN to debug root directory
             // TODO: Add volume descriptors to debug root directory
-
-            if(this.@namespace != Namespace.Romeo) Encoding = Encoding.ASCII;
 
             if(this.@namespace != Namespace.Joliet)
                 rootDirectoryCache = cdi

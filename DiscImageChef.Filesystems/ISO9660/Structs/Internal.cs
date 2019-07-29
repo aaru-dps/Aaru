@@ -123,5 +123,14 @@ namespace DiscImageChef.Filesystems.ISO9660
             public Point       fdLocation;
             public uint        fdType;
         }
+
+        class PathTableEntryInternal
+        {
+            public uint   Extent;
+            public string Name;
+            public ushort Parent;
+
+            public override string ToString() => Name;
+        }
     }
 }
