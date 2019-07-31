@@ -24,6 +24,8 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
             if(options.TryGetValue("use_path_table", out string usePathTableString))
                 bool.TryParse(usePathTableString, out usePathTable);
+            if(options.TryGetValue("use_trans_tbl", out string useTransTblString))
+                bool.TryParse(useTransTblString, out useTransTbl);
 
             // Default namespace
             if(@namespace is null) @namespace = "joliet";
@@ -252,7 +254,14 @@ namespace DiscImageChef.Filesystems.ISO9660
             // TODO: Add IP.BIN to debug root directory
             // TODO: Add volume descriptors to debug root directory
 
-            if(this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip) usePathTable = false;
+            if(this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip)
+            {
+                usePathTable = false;
+                useTransTbl  = false;
+            }
+
+            // Cannot traverse path table if we substitute the names for the ones in TRANS.TBL
+            if(useTransTbl) usePathTable = false;
 
             if(this.@namespace != Namespace.Joliet)
                 rootDirectoryCache = cdi

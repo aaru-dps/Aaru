@@ -53,6 +53,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         Dictionary<string, DecodedDirectoryEntry> rootDirectoryCache;
         FileSystemInfo                            statfs;
         bool                                      usePathTable;
+        bool                                      useTransTbl;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
@@ -63,7 +64,8 @@ namespace DiscImageChef.Filesystems.ISO9660
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
             new (string name, Type type, string description)[]
             {
-                ("use_path_table", typeof(bool), "Use path table for directory traversal")
+                ("use_path_table", typeof(bool), "Use path table for directory traversal"),
+                ("use_trans_tbl", typeof(bool), "Use TRANS.TBL for filenames")
             };
 
         public Dictionary<string, string> Namespaces =>

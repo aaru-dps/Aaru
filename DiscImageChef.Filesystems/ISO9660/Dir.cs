@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes.Structs;
@@ -161,6 +162,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 entryOff += record.length;
             }
 
+            if(useTransTbl) DecodeTransTable(entries);
+
             return entries;
         }
 
@@ -274,10 +277,69 @@ namespace DiscImageChef.Filesystems.ISO9660
                 entryOff += record.length;
             }
 
+            if(useTransTbl) DecodeTransTable(entries);
+
             // Relocated directories should be shown in correct place when using Rock Ridge namespace
             return @namespace == Namespace.Rrip
                        ? entries.Where(e => !e.Value.RockRidgeRelocated).ToDictionary(x => x.Key, x => x.Value)
                        : entries;
+        }
+
+        void DecodeTransTable(Dictionary<string, DecodedDirectoryEntry> entries)
+        {
+            KeyValuePair<string, DecodedDirectoryEntry> transTblEntry =
+                entries.FirstOrDefault(e => !e.Value.Flags.HasFlag(FileFlags.Directory) &&
+                                            (e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) == "trans.tbl" ||
+                                             e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) == "trans.tbl;1"));
+
+            if(transTblEntry.Value == null) return;
+
+            uint transTblSectors = transTblEntry.Value.Size / 2048;
+            if(transTblEntry.Value.Size % 2048 > 0) transTblSectors++;
+
+            byte[] transTbl = image.ReadSectors(transTblEntry.Value.Extent, transTblSectors);
+
+            MemoryStream mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
+            StreamReader sr = new StreamReader(mr, Encoding);
+
+            string line = sr.ReadLine();
+
+            while(line != null)
+            {
+                // Skip the type field and the first space
+                string cutLine      = line.Substring(2);
+                int    spaceIndex   = cutLine.IndexOf(' ');
+                string originalName = cutLine.Substring(0, spaceIndex);
+                string originalNameWithVersion;
+                string newName = cutLine.Substring(spaceIndex + 1);
+
+                if(originalName.EndsWith(";1", StringComparison.Ordinal))
+                {
+                    originalNameWithVersion = originalName.ToLower(CultureInfo.CurrentUICulture);
+                    originalName            = originalNameWithVersion.Substring(0, originalName.Length - 2);
+                }
+                else
+                {
+                    originalName            = originalName.ToLower(CultureInfo.CurrentUICulture);
+                    originalNameWithVersion = originalName + ";1";
+                }
+
+                // Pre-read next line
+                line = sr.ReadLine();
+
+                KeyValuePair<string, DecodedDirectoryEntry> originalEntry =
+                    entries.FirstOrDefault(e => !e.Value.Flags.HasFlag(FileFlags.Directory) &&
+                                                (e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) ==
+                                                 originalName ||
+                                                 e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) ==
+                                                 originalNameWithVersion));
+
+                originalEntry.Value.Filename = newName;
+                entries.Remove(originalEntry.Key);
+                entries[newName] = originalEntry.Value;
+            }
+
+            entries.Remove(transTblEntry.Key);
         }
 
         void DecodeSystemArea(byte[]   data, int start, int end, ref DecodedDirectoryEntry entry,
