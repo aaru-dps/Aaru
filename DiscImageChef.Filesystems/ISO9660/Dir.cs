@@ -148,7 +148,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
                     Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                    Timestamp            = DecodeHighSierraDateTime(record.date)
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = record.xattr_len
                 };
 
                 if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
@@ -201,7 +202,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     FileUnitSize         = record.file_unit_size,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeIsoDateTime(record.date)
+                    Timestamp            = DecodeIsoDateTime(record.date),
+                    XattrLength          = record.xattr_len
                 };
 
                 if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
@@ -256,7 +258,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                             Interleave           = 0,
                             VolumeSequenceNumber = record.volume_sequence_number,
                             Filename             = entry.Filename,
-                            Timestamp            = DecodeIsoDateTime(record.date)
+                            Timestamp            = DecodeIsoDateTime(record.date),
+                            XattrLength          = 0
                         };
 
                         if(hasResourceFork) entries[entry.Filename].ResourceFork = entry;

@@ -51,15 +51,17 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.Flags.HasFlag(FileFlags.Directory) && !debug) return Errno.IsDirectory;
 
-            if(entry.Size == 0)
+            if(entry.Size - entry.XattrLength == 0)
             {
                 buf = new byte[0];
                 return Errno.NoError;
             }
 
-            if(offset >= entry.Size) return Errno.InvalidArgument;
+            if(offset >= entry.Size - entry.XattrLength) return Errno.InvalidArgument;
 
-            if(size + offset >= entry.Size) size = entry.Size - offset;
+            if(size + offset + entry.XattrLength >= entry.Size) size = entry.Size - offset - entry.XattrLength;
+
+            offset += entry.XattrLength;
 
             // TODO: XA
             long firstSector    = offset                  / 2048;
@@ -89,7 +91,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 Attributes       = new FileAttributes(),
                 Blocks           = entry.Size / 2048, // TODO: XA
                 BlockSize        = 2048,
-                Length           = entry.Size,
+                Length           = entry.Size - entry.XattrLength,
                 Inode            = entry.Extent,
                 Links            = 1,
                 LastWriteTimeUtc = entry.Timestamp
@@ -198,14 +200,13 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.SymbolicLink != null) stat.Attributes |= FileAttributes.Symlink;
 
-            if(entry.AssociatedFile is null || entry.AssociatedFile.Extent == 0 || entry.AssociatedFile.Size == 0)
-                return Errno.NoError;
+            if(entry.XattrLength == 0) return Errno.NoError;
 
             // TODO: XA
-            uint eaSizeInSectors = entry.AssociatedFile.Size / 2048;
-            if(entry.AssociatedFile.Size % 2048 > 0) eaSizeInSectors++;
+            uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
+            if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
 
-            byte[] ea = image.ReadSectors(entry.AssociatedFile.Extent, eaSizeInSectors);
+            byte[] ea = image.ReadSectors(entry.Extent, eaSizeInSectors);
 
             ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
 

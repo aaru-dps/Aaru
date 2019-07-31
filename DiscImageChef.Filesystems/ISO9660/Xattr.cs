@@ -16,13 +16,14 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             xattrs = new List<string>();
 
-            if(entry.AssociatedFile  != null) xattrs.Add("org.iso.9660.ea");
+            if(entry.XattrLength     > 0) xattrs.Add("org.iso.9660.ea");
+            if(entry.AssociatedFile  != null) xattrs.Add("org.iso.9660.AssociatedFile");
             if(entry.AppleDosType    != null) xattrs.Add("com.apple.dos.type");
             if(entry.AppleProDosType != null) xattrs.Add("com.apple.prodos.type");
             if(entry.ResourceFork    != null) xattrs.Add("com.apple.ResourceFork");
             if(entry.FinderInfo      != null) xattrs.Add("com.apple.FinderInfo");
             if(entry.AppleIcon       != null) xattrs.Add("com.apple.Macintosh.Icon");
-            if(entry.AmigaComment != null) xattrs.Add("com.amiga.comments");
+            if(entry.AmigaComment    != null) xattrs.Add("com.amiga.comments");
 
             return Errno.NoError;
         }
@@ -38,6 +39,19 @@ namespace DiscImageChef.Filesystems.ISO9660
             switch(xattr)
             {
                 case "org.iso.9660.ea":
+                    if(entry.XattrLength == 0) return Errno.NoSuchExtendedAttribute;
+
+                    // TODO: XA
+                    uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
+                    if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
+
+                    byte[] ea = image.ReadSectors(entry.Extent, eaSizeInSectors);
+
+                    buf = new byte[entry.AssociatedFile.Size];
+                    Array.Copy(ea, 0, buf, 0, buf.LongLength);
+
+                    return Errno.NoError;
+                case "org.iso.9660.AssociatedFile":
                     if(entry.AssociatedFile is null) return Errno.NoSuchExtendedAttribute;
 
                     if(entry.AssociatedFile.Extent == 0) return Errno.InvalidArgument;
@@ -49,13 +63,13 @@ namespace DiscImageChef.Filesystems.ISO9660
                     }
 
                     // TODO: XA
-                    uint eaSizeInSectors = entry.AssociatedFile.Size / 2048;
-                    if(entry.AssociatedFile.Size % 2048 > 0) eaSizeInSectors++;
+                    uint associatedFileSize = entry.AssociatedFile.Size / 2048;
+                    if(entry.AssociatedFile.Size % 2048 > 0) associatedFileSize++;
 
-                    byte[] ea = image.ReadSectors(entry.AssociatedFile.Extent, eaSizeInSectors);
+                    byte[] associatedFile = image.ReadSectors(entry.AssociatedFile.Extent, associatedFileSize);
 
                     buf = new byte[entry.AssociatedFile.Size];
-                    Array.Copy(ea, 0, buf, 0, buf.LongLength);
+                    Array.Copy(associatedFile, 0, buf, 0, buf.LongLength);
 
                     return Errno.NoError;
                 case "com.apple.dos.type":
