@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : Common.cs
+// Filename       : Internal.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : ISO9660 filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Common structures.
+//     Internal structures.
 //
 // --[ License ] --------------------------------------------------------------
 //

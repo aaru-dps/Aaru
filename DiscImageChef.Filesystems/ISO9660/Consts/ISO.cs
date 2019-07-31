@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     ISO9660 extensions constants and enumerations.
+//     ISO9660 filesystem constants and enumerations.
 //
 // --[ License ] --------------------------------------------------------------
 //

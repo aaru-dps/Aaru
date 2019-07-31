@@ -2,14 +2,14 @@
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
-// Filename       : AAIP.cs
+// Filename       : Internal.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : ISO9660 filesystem plugin.
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     AAIP extensions constants and enumerations.
+//     Internal constants and enumerations.
 //
 // --[ License ] --------------------------------------------------------------
 //

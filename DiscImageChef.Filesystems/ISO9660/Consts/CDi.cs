@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     CDi filesystem constants and enumerations.
+//     CD-i filesystem constants and enumerations.
 //
 // --[ License ] --------------------------------------------------------------
 //
