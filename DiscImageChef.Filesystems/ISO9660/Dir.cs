@@ -195,10 +195,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                              CdiDirectoryRecordSize, CdiSystemAreaSize);
 
                     if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
-                    {
                         entry.Flags |= FileFlags.Directory;
-                        continue;
-                    }
 
                     if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) || !usePathTable)
                         entries[entry.Filename] = entry;
