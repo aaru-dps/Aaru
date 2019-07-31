@@ -228,6 +228,9 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 pathTableMsbLocation = fsvd.Value.path_table_addr;
 
+                // TODO: Until escape sequences are implemented this is the default CD-i encoding.
+                Encoding = System.Text.Encoding.GetEncoding("iso8859-1");
+
                 // TODO: Implement CD-i
                 return Errno.NotImplemented;
             }
