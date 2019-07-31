@@ -259,6 +259,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(rootEntry.size         % fsvd.Value.logical_block_size > 0) rootSize++;
 
                 usePathTable = true;
+                useTransTbl = false;
             }
 
             if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
