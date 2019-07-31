@@ -132,6 +132,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public uint   Extent;
             public string Name;
             public ushort Parent;
+            public byte   XattrLength;
 
             public override string ToString() => Name;
         }

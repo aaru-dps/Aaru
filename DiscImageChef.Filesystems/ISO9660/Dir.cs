@@ -71,10 +71,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 // TODO: Decode Joliet
                 currentDirectory = cdi
-                                       ? DecodeCdiDirectory(directoryBuffer)
+                                       ? DecodeCdiDirectory(directoryBuffer, entry.Value.XattrLength)
                                        : highSierra
-                                           ? DecodeHighSierraDirectory(directoryBuffer)
-                                           : DecodeIsoDirectory(directoryBuffer);
+                                           ? DecodeHighSierraDirectory(directoryBuffer, entry.Value.XattrLength)
+                                           : DecodeIsoDirectory(directoryBuffer, entry.Value.XattrLength);
 
                 if(usePathTable)
                     foreach(DecodedDirectoryEntry subDirectory in cdi
@@ -115,10 +115,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             return contents;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data)
+        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data, byte XattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = 0;
+            int                                       entryOff = XattrLength;
 
             while(entryOff + DirectoryRecordSize < data.Length)
             {
@@ -167,10 +167,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             return entries;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(byte[] data)
+        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(byte[] data, byte XattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = 0;
+            int                                       entryOff = XattrLength;
 
             while(entryOff + DirectoryRecordSize < data.Length)
             {
@@ -217,10 +217,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             return entries;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data)
+        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data, byte XattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = 0;
+            int                                       entryOff = XattrLength;
 
             while(entryOff + DirectoryRecordSize < data.Length)
             {
@@ -732,6 +732,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         entry.Interleave           = childRecord.interleave;
                         entry.VolumeSequenceNumber = childRecord.volume_sequence_number;
                         entry.Timestamp            = DecodeIsoDateTime(childRecord.date);
+                        entry.XattrLength          = childRecord.xattr_len;
 
                         systemAreaOff += clLength;
 
@@ -923,7 +924,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 byte[] sector = image.ReadSector(tEntry.Extent);
                 CdiDirectoryRecord record =
-                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, 0,
+                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
                                                                               Marshal.SizeOf<CdiDirectoryRecord>());
 
                 if(record.length == 0) break;
@@ -934,7 +935,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Size                 = record.size,
                     Filename             = tEntry.Name,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeHighSierraDateTime(record.date)
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = tEntry.XattrLength
                 };
 
                 if(record.flags.HasFlag(CdiFileFlags.Hidden)) entry.Flags |= FileFlags.Hidden;
@@ -962,7 +964,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 byte[] sector = image.ReadSector(tEntry.Extent);
                 DirectoryRecord record =
-                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, 0,
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
                                                                               Marshal.SizeOf<DirectoryRecord>());
 
                 if(record.length == 0) break;
@@ -976,7 +978,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     FileUnitSize         = record.file_unit_size,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeIsoDateTime(record.date)
+                    Timestamp            = DecodeIsoDateTime(record.date),
+                    XattrLength          = tEntry.XattrLength
                 };
 
                 // TODO: XA
@@ -1005,7 +1008,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 byte[] sector = image.ReadSector(tEntry.Extent);
                 HighSierraDirectoryRecord record =
-                    Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, 0,
+                    Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,
                                                                                         Marshal
                                                                                            .SizeOf<
                                                                                                 HighSierraDirectoryRecord
@@ -1019,7 +1022,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Filename             = tEntry.Name,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeHighSierraDateTime(record.date)
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = tEntry.XattrLength
                 };
 
                 entries.Add(entry);

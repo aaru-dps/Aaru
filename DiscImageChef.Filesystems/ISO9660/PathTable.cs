@@ -25,7 +25,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 table.Add(new PathTableEntryInternal
                 {
-                    Extent = entry.start_lbn, Name = name, Parent = entry.parent_dirno
+                    Extent      = entry.start_lbn,
+                    Name        = name,
+                    Parent      = entry.parent_dirno,
+                    XattrLength = entry.xattr_len
                 });
 
                 off += entry.name_len;
@@ -59,7 +62,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 table.Add(new PathTableEntryInternal
                 {
-                    Extent = entry.start_lbn, Name = name, Parent = entry.parent_dirno
+                    Extent      = entry.start_lbn,
+                    Name        = name,
+                    Parent      = entry.parent_dirno,
+                    XattrLength = entry.xattr_len
                 });
 
                 off += entry.name_len;

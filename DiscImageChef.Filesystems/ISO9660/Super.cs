@@ -229,7 +229,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 pathTableMsbLocation = fsvd.Value.path_table_addr;
 
                 // TODO: Until escape sequences are implemented this is the default CD-i encoding.
-                Encoding = System.Text.Encoding.GetEncoding("iso8859-1");
+                Encoding = Encoding.GetEncoding("iso8859-1");
 
                 // TODO: Implement CD-i
                 return Errno.NotImplemented;
@@ -256,14 +256,19 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(jolietvd is null && this.@namespace == Namespace.Joliet) this.@namespace = Namespace.Normal;
 
-            uint rootLocation = 0;
-            uint rootSize     = 0;
+            uint rootLocation    = 0;
+            uint rootSize        = 0;
+            byte rootXattrLength = 0;
 
             if(!cdi)
             {
                 rootLocation = highSierra
                                    ? hsvd.Value.root_directory_record.extent
                                    : pvd.Value.root_directory_record.extent;
+
+                rootXattrLength = highSierra
+                                      ? hsvd.Value.root_directory_record.xattr_len
+                                      : pvd.Value.root_directory_record.xattr_len;
 
                 if(highSierra)
                 {
@@ -310,10 +315,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(this.@namespace != Namespace.Joliet)
                 rootDirectoryCache = cdi
-                                         ? DecodeCdiDirectory(rootDir)
+                                         ? DecodeCdiDirectory(rootDir, rootXattrLength)
                                          : highSierra
-                                             ? DecodeHighSierraDirectory(rootDir)
-                                             : DecodeIsoDirectory(rootDir);
+                                             ? DecodeHighSierraDirectory(rootDir, rootXattrLength)
+                                             : DecodeIsoDirectory(rootDir, rootXattrLength);
 
             XmlFsType.Type = fsFormat;
 
@@ -430,7 +435,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(jolietvd != null && (this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip))
             {
-                rootLocation = jolietvd.Value.root_directory_record.extent;
+                rootLocation    = jolietvd.Value.root_directory_record.extent;
+                rootXattrLength = jolietvd.Value.root_directory_record.xattr_len;
 
                 rootSize = jolietvd.Value.root_directory_record.size / jolietvd.Value.logical_block_size;
                 if(pvd.Value.root_directory_record.size % jolietvd.Value.logical_block_size > 0)
@@ -442,7 +448,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
 
-                rootDirectoryCache = DecodeIsoDirectory(rootDir);
+                rootDirectoryCache = DecodeIsoDirectory(rootDir, rootXattrLength);
 
                 XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
