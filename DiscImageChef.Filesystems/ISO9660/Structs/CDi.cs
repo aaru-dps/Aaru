@@ -85,90 +85,89 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct FileStructureVolumeDescriptor
         {
-            public byte type;
+            public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] id;
-            public byte           version;
-            public CdiVolumeFlags flags;
+            public readonly byte[] id;
+            public readonly byte           version;
+            public readonly CdiVolumeFlags flags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
+            public readonly byte[] system_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] volume_id;
+            public readonly byte[] volume_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-            public byte[] reserved1;
-            public uint volume_space_size;
+            public readonly byte[] reserved1;
+            public readonly uint volume_space_size;
             // Only used in SVDs
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] escape_sequences;
-            public ushort reserved2;
-            public ushort volume_set_size;
-            public ushort reserved3;
-            public ushort volume_sequence_number;
-            public ushort reserved4;
-            public ushort logical_block_size;
-            public uint   reserved5;
-            public uint   path_table_size;
-            public ulong  reserved6;
-            public uint   path_table_addr;
+            public readonly byte[] escape_sequences;
+            public readonly ushort reserved2;
+            public readonly ushort volume_set_size;
+            public readonly ushort reserved3;
+            public readonly ushort volume_sequence_number;
+            public readonly ushort reserved4;
+            public readonly ushort logical_block_size;
+            public readonly uint   reserved5;
+            public readonly uint   path_table_size;
+            public readonly ulong  reserved6;
+            public readonly uint   path_table_addr;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 38)]
-            public byte[] reserved7;
+            public readonly byte[] reserved7;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] volume_set_id;
+            public readonly byte[] volume_set_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] publisher_id;
+            public readonly byte[] publisher_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] preparer_id;
+            public readonly byte[] preparer_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-            public byte[] application_id;
+            public readonly byte[] application_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] copyright_file_id;
+            public readonly byte[] copyright_file_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] reserved8;
+            public readonly byte[] reserved8;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] abstract_file_id;
+            public readonly byte[] abstract_file_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] reserved9;
+            public readonly byte[] reserved9;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] bibliographic_file_id;
+            public readonly byte[] bibliographic_file_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] reserved10;
+            public readonly byte[] reserved10;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] creation_date;
-            public byte reserved11;
+            public readonly byte[] creation_date;
+            public readonly byte reserved11;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] modification_date;
-            public byte reserved12;
+            public readonly byte[] modification_date;
+            public readonly byte reserved12;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] expiration_date;
-            public byte reserved13;
+            public readonly byte[] expiration_date;
+            public readonly byte reserved13;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public byte[] effective_date;
-            public byte reserved14;
-            public byte file_structure_version;
-            public byte reserved15;
+            public readonly byte[] effective_date;
+            public readonly byte reserved14;
+            public readonly byte file_structure_version;
+            public readonly byte reserved15;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-            public byte[] application_data;
+            public readonly byte[] application_data;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 653)]
-            public byte[] reserved16;
+            public readonly byte[] reserved16;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CdiDirectoryRecord
         {
-            public byte length;
-            public byte xattr_len;
-            public uint reserved1;
-            public uint start_lbn;
-            public uint reserved2;
-            public uint size;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] date;
-            public byte         reserved3;
-            public CdiFileFlags flags;
-            public ushort       file_unit_size;
-            public ushort       reserved4;
-            public ushort       volume_sequence_number;
-            public byte         name_len;
+            public readonly byte                length;
+            public readonly byte                xattr_len;
+            public readonly uint                reserved1;
+            public readonly uint                start_lbn;
+            public readonly uint                reserved2;
+            public readonly uint                size;
+            public readonly HighSierraTimestamp date;
+            public readonly byte                reserved3;
+            public readonly CdiFileFlags        flags;
+            public readonly ushort              file_unit_size;
+            public readonly ushort              reserved4;
+            public readonly ushort              volume_sequence_number;
+            public readonly byte                name_len;
             // Followed by name[name_len] and then CdiSystemArea until length arrives
         }
 
@@ -176,11 +175,11 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CdiSystemArea
         {
-            public uint          owner;
-            public CdiAttributes attributes;
-            public ushort        reserved1;
-            public byte          file_no;
-            public byte          reserved2;
+            public readonly uint          owner;
+            public readonly CdiAttributes attributes;
+            public readonly ushort        reserved1;
+            public readonly byte          file_no;
+            public readonly byte          reserved2;
         }
     }
 }

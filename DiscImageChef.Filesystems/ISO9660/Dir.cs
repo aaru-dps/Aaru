@@ -866,7 +866,44 @@ namespace DiscImageChef.Filesystems.ISO9660
             return tableEntries.ToArray();
         }
 
-        DecodedDirectoryEntry[] GetSubdirsFromCdiPathTable(string path) => throw new NotImplementedException();
+        DecodedDirectoryEntry[] GetSubdirsFromCdiPathTable(string path)
+        {
+            PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
+            List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+            foreach(PathTableEntryInternal tEntry in tableEntries)
+            {
+                byte[] sector = image.ReadSector(tEntry.Extent);
+                CdiDirectoryRecord record =
+                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, 0,
+                                                                              Marshal.SizeOf<CdiDirectoryRecord>());
+
+                if(record.length == 0) break;
+
+                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                {
+                    Extent               = record.size == 0 ? 0 : record.start_lbn,
+                    Size                 = record.size,
+                    Filename             = tEntry.Name,
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Timestamp            = DecodeHighSierraDateTime(record.date)
+                };
+
+                if(record.flags.HasFlag(CdiFileFlags.Hidden)) entry.Flags |= FileFlags.Hidden;
+
+                entry.CdiSystemArea =
+                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(sector,
+                                                                         record.name_len +
+                                                                         Marshal.SizeOf<CdiDirectoryRecord>(),
+                                                                         Marshal.SizeOf<CdiSystemArea>());
+
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
+                    entry.Flags |= FileFlags.Directory;
+
+                entries.Add(entry);
+            }
+
+            return entries.ToArray();
+        }
 
         DecodedDirectoryEntry[] GetSubdirsFromIsoPathTable(string path)
         {

@@ -63,6 +63,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public byte[]                AppleIcon;
             public ushort?               AppleProDosType;
             public DecodedDirectoryEntry AssociatedFile;
+            public CdiSystemArea?        CdiSystemArea;
             public uint                  Extent;
             public string                Filename;
             public byte                  FileUnitSize;
