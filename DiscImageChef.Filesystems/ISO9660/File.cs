@@ -21,7 +21,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.Flags.HasFlag(FileFlags.Directory) && !debug) return Errno.IsDirectory;
 
-            deviceBlock = entry.Extent + fileBlock;
+            // TODO: Multi-extents
+            if(entry.Extents.Count > 1) return Errno.NotImplemented;
+
+            deviceBlock = entry.Extents[0].extent + fileBlock;
 
             return Errno.NoError;
         }
@@ -51,15 +54,18 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.Flags.HasFlag(FileFlags.Directory) && !debug) return Errno.IsDirectory;
 
+            if(entry.Extents is null) return Errno.InvalidArgument;
+
             if(entry.Size - entry.XattrLength == 0)
             {
                 buf = new byte[0];
                 return Errno.NoError;
             }
 
-            if(offset >= entry.Size - entry.XattrLength) return Errno.InvalidArgument;
+            if(offset >= (long)entry.Size - entry.XattrLength) return Errno.InvalidArgument;
 
-            if(size + offset + entry.XattrLength >= entry.Size) size = entry.Size - offset - entry.XattrLength;
+            if(size + offset + entry.XattrLength >= (long)entry.Size)
+                size = (long)entry.Size - offset - entry.XattrLength;
 
             offset += entry.XattrLength;
 
@@ -69,12 +75,18 @@ namespace DiscImageChef.Filesystems.ISO9660
             long sizeInSectors  = (size + offsetInSector) / 2048;
             if((size + offsetInSector) % 2048 > 0) sizeInSectors++;
 
-            // No need to check mode, if we know it is CD-DA
-            byte[] buffer = entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true
-                                ? image.ReadSectors((ulong)(entry.Extent + firstSector), (uint)sizeInSectors)
-                                : ReadSectors((ulong)(entry.Extent       + firstSector), (uint)sizeInSectors);
-            buf = new byte[size];
-            Array.Copy(buffer, offsetInSector, buf, 0, size);
+            if(entry.Extents.Count == 1)
+            {
+                // No need to check mode, if we know it is CD-DA
+                byte[] buffer = entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true
+                                    ? image.ReadSectors((ulong)(entry.Extents[0].extent + firstSector),
+                                                        (uint)sizeInSectors)
+                                    : ReadSectors((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors);
+
+                buf = new byte[size];
+                Array.Copy(buffer, offsetInSector, buf, 0, size);
+            }
+            else buf = ReadWithExtents(offset, size, entry.Extents);
 
             return Errno.NoError;
         }
@@ -90,10 +102,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             stat = new FileEntryInfo
             {
                 Attributes       = new FileAttributes(),
-                Blocks           = entry.Size / 2048, // TODO: XA
+                Blocks           = (long)(entry.Size / 2048), // TODO: XA
                 BlockSize        = 2048,
-                Length           = entry.Size - entry.XattrLength,
-                Inode            = entry.Extent,
+                Length           = (long)(entry.Size - entry.XattrLength),
+                Inode            = entry.Extents?[0].extent ?? 0,
                 Links            = 1,
                 LastWriteTimeUtc = entry.Timestamp
             };
@@ -219,7 +231,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
             if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
 
-            byte[] ea = ReadSectors(entry.Extent, eaSizeInSectors);
+            byte[] ea = ReadSectors(entry.Extents[0].extent, eaSizeInSectors);
 
             ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
 
@@ -297,6 +309,55 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             entry = dirent.Value;
             return Errno.NoError;
+        }
+
+        // Cannot think how to make this faster, as we don't know the mode sector until it is read, but we have size in bytes
+        byte[] ReadWithExtents(long offset, long size, List<(uint extent, uint size)> extents)
+        {
+            MemoryStream ms             = new MemoryStream();
+            long         currentFilePos = 0;
+
+            for(int i = 0; i < extents.Count; i++)
+            {
+                if(offset - currentFilePos >= extents[i].size)
+                {
+                    currentFilePos += extents[i].size;
+                    continue;
+                }
+
+                long leftExtentSize      = extents[i].size;
+                uint currentExtentSector = 0;
+
+                while(leftExtentSize > 0)
+                {
+                    byte[] sector = ReadSectors(extents[i].extent + currentExtentSector, 1);
+
+                    if(offset - currentFilePos > sector.Length)
+                    {
+                        currentExtentSector++;
+                        leftExtentSize -= sector.Length;
+                        currentFilePos += sector.Length;
+                        continue;
+                    }
+
+                    if(offset - currentFilePos > 0)
+                        ms.Write(sector, (int)(offset - currentFilePos),
+                                 (int)(sector.Length  - (offset - currentFilePos)));
+                    else ms.Write(sector, 0, sector.Length);
+
+                    currentExtentSector++;
+                    leftExtentSize -= sector.Length;
+                    currentFilePos += sector.Length;
+
+                    if(ms.Length >= size) break;
+                }
+
+                if(ms.Length >= size) break;
+            }
+
+            if(ms.Length >= size) ms.SetLength(size);
+
+            return ms.ToArray();
         }
     }
 }

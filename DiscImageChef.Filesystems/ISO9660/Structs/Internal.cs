@@ -31,6 +31,7 @@
 // ****************************************************************************/
 
 using System;
+using System.Collections.Generic;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
@@ -57,38 +58,38 @@ namespace DiscImageChef.Filesystems.ISO9660
 
         class DecodedDirectoryEntry
         {
-            public byte[]                AmigaComment;
-            public AmigaProtection?      AmigaProtection;
-            public byte?                 AppleDosType;
-            public byte[]                AppleIcon;
-            public ushort?               AppleProDosType;
-            public DecodedDirectoryEntry AssociatedFile;
-            public CdiSystemArea?        CdiSystemArea;
-            public uint                  Extent;
-            public string                Filename;
-            public byte                  FileUnitSize;
-            public FinderInfo            FinderInfo;
-            public FileFlags             Flags;
-            public byte                  Interleave;
-            public PosixAttributes?      PosixAttributes;
-            public PosixAttributesOld?   PosixAttributesOld;
-            public PosixDeviceNumber?    PosixDeviceNumber;
-            public DecodedDirectoryEntry ResourceFork;
-            public byte[]                RockRidgeAlternateName;
-            public bool                  RockRidgeRelocated;
-            public byte[]                RripAccess;
-            public byte[]                RripAttributeChange;
-            public byte[]                RripBackup;
-            public byte[]                RripCreation;
-            public byte[]                RripEffective;
-            public byte[]                RripExpiration;
-            public byte[]                RripModify;
-            public uint                  Size;
-            public string                SymbolicLink;
-            public DateTime?             Timestamp;
-            public ushort                VolumeSequenceNumber;
-            public CdromXa?              XA;
-            public byte                  XattrLength;
+            public byte[]                         AmigaComment;
+            public AmigaProtection?               AmigaProtection;
+            public byte?                          AppleDosType;
+            public byte[]                         AppleIcon;
+            public ushort?                        AppleProDosType;
+            public DecodedDirectoryEntry          AssociatedFile;
+            public CdiSystemArea?                 CdiSystemArea;
+            public List<(uint extent, uint size)> Extents;
+            public string                         Filename;
+            public byte                           FileUnitSize;
+            public FinderInfo                     FinderInfo;
+            public FileFlags                      Flags;
+            public byte                           Interleave;
+            public PosixAttributes?               PosixAttributes;
+            public PosixAttributesOld?            PosixAttributesOld;
+            public PosixDeviceNumber?             PosixDeviceNumber;
+            public DecodedDirectoryEntry          ResourceFork;
+            public byte[]                         RockRidgeAlternateName;
+            public bool                           RockRidgeRelocated;
+            public byte[]                         RripAccess;
+            public byte[]                         RripAttributeChange;
+            public byte[]                         RripBackup;
+            public byte[]                         RripCreation;
+            public byte[]                         RripEffective;
+            public byte[]                         RripExpiration;
+            public byte[]                         RripModify;
+            public ulong                          Size;
+            public string                         SymbolicLink;
+            public DateTime?                      Timestamp;
+            public ushort                         VolumeSequenceNumber;
+            public CdromXa?                       XA;
+            public byte                           XattrLength;
 
             public override string ToString() => Filename;
         }

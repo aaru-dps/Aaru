@@ -41,11 +41,13 @@ namespace DiscImageChef.Filesystems.ISO9660
                 case "org.iso.9660.ea":
                     if(entry.XattrLength == 0) return Errno.NoSuchExtendedAttribute;
 
+                    if(entry.Extents is null) return Errno.InvalidArgument;
+
                     // TODO: XA
                     uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
                     if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
 
-                    byte[] ea = ReadSectors(entry.Extent, eaSizeInSectors);
+                    byte[] ea = ReadSectors(entry.Extents[0].extent, eaSizeInSectors);
 
                     buf = new byte[entry.AssociatedFile.Size];
                     Array.Copy(ea, 0, buf, 0, buf.LongLength);
@@ -54,7 +56,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 case "org.iso.9660.AssociatedFile":
                     if(entry.AssociatedFile is null) return Errno.NoSuchExtendedAttribute;
 
-                    if(entry.AssociatedFile.Extent == 0) return Errno.InvalidArgument;
+                    if(entry.AssociatedFile.Extents is null) return Errno.InvalidArgument;
 
                     if(entry.AssociatedFile.Size == 0)
                     {
@@ -62,14 +64,16 @@ namespace DiscImageChef.Filesystems.ISO9660
                         return Errno.NoError;
                     }
 
-                    // TODO: XA
-                    uint associatedFileSize = entry.AssociatedFile.Size / 2048;
-                    if(entry.AssociatedFile.Size % 2048 > 0) associatedFileSize++;
+                    if(entry.AssociatedFile.Extents.Count == 1)
+                    {
+                        uint associatedFileSize = (uint)(entry.AssociatedFile.Size / 2048);
+                        if(entry.AssociatedFile.Size % 2048 > 0) associatedFileSize++;
+                        byte[] buffer = ReadSectors(entry.AssociatedFile.Extents[0].extent, associatedFileSize);
 
-                    byte[] associatedFile = ReadSectors(entry.AssociatedFile.Extent, associatedFileSize);
-
-                    buf = new byte[entry.AssociatedFile.Size];
-                    Array.Copy(associatedFile, 0, buf, 0, buf.LongLength);
+                        buf = new byte[entry.AssociatedFile.Size];
+                        Array.Copy(buffer, 0, buf, 0, buf.LongLength);
+                    }
+                    else buf = ReadWithExtents(0, (long)entry.AssociatedFile.Size, entry.AssociatedFile.Extents);
 
                     return Errno.NoError;
                 case "com.apple.dos.type":
@@ -88,7 +92,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 case "com.apple.ResourceFork":
                     if(entry.ResourceFork is null) return Errno.NoSuchExtendedAttribute;
 
-                    if(entry.ResourceFork.Extent == 0) return Errno.InvalidArgument;
+                    if(entry.ResourceFork.Extents is null) return Errno.InvalidArgument;
 
                     if(entry.ResourceFork.Size == 0)
                     {
@@ -96,14 +100,16 @@ namespace DiscImageChef.Filesystems.ISO9660
                         return Errno.NoError;
                     }
 
-                    // TODO: XA
-                    uint rsrcSizeInSectors = entry.ResourceFork.Size / 2048;
-                    if(entry.ResourceFork.Size % 2048 > 0) rsrcSizeInSectors++;
+                    if(entry.ResourceFork.Extents.Count == 1)
+                    {
+                        uint rsrcSizeInSectors = (uint)(entry.ResourceFork.Size / 2048);
+                        if(entry.AssociatedFile.Size % 2048 > 0) rsrcSizeInSectors++;
+                        byte[] buffer = ReadSectors(entry.ResourceFork.Extents[0].extent, rsrcSizeInSectors);
 
-                    byte[] rsrc = ReadSectors(entry.ResourceFork.Extent, rsrcSizeInSectors);
-
-                    buf = new byte[entry.ResourceFork.Size];
-                    Array.Copy(rsrc, 0, buf, 0, buf.LongLength);
+                        buf = new byte[entry.ResourceFork.Size];
+                        Array.Copy(buffer, 0, buf, 0, buf.LongLength);
+                    }
+                    else buf = ReadWithExtents(0, (long)entry.ResourceFork.Size, entry.ResourceFork.Extents);
 
                     return Errno.NoError;
                 case "com.apple.FinderInfo":

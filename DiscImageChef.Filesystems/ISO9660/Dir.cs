@@ -57,17 +57,34 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(!entry.Value.Flags.HasFlag(FileFlags.Directory)) return Errno.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
-                uint currentExtent = entry.Value.Extent;
 
                 if(directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
 
-                if(currentExtent == 0) return Errno.InvalidArgument;
+                if(entry.Value.Extents.Count == 0) return Errno.InvalidArgument;
 
-                // TODO: XA, High Sierra
-                uint dirSizeInSectors = entry.Value.Size / 2048;
-                if(entry.Value.Size % 2048 > 0) dirSizeInSectors++;
+                byte[] directoryBuffer;
+                if(entry.Value.Extents.Count == 1)
+                {
+                    uint dirSizeInSectors = entry.Value.Extents[0].size / 2048;
+                    if(entry.Value.Size % 2048 > 0) dirSizeInSectors++;
+                    directoryBuffer = ReadSectors(entry.Value.Extents[0].extent, dirSizeInSectors);
+                }
+                else
+                {
+                    MemoryStream ms = new MemoryStream();
 
-                byte[] directoryBuffer = ReadSectors(currentExtent, dirSizeInSectors);
+                    foreach((uint extent, uint size) extent in entry.Value.Extents)
+                    {
+                        uint extentSizeInSectors = extent.size / 2048;
+                        if(extent.size % 2048 > 0) extentSizeInSectors++;
+
+                        byte[] extentData = ReadSectors(extent.extent, extentSizeInSectors);
+
+                        ms.Write(extentData, 0, extentData.Length);
+                    }
+
+                    directoryBuffer = ms.ToArray();
+                }
 
                 // TODO: Decode Joliet
                 currentDirectory = cdi
@@ -138,13 +155,15 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {
-                    Extent               = record.size == 0 ? 0 : record.start_lbn,
                     Size                 = record.size,
                     Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
                     VolumeSequenceNumber = record.volume_sequence_number,
                     Timestamp            = DecodeHighSierraDateTime(record.date),
                     XattrLength          = record.xattr_len
                 };
+
+                if(record.size != 0)
+                    entry.Extents = new List<(uint extent, uint size)> {(record.start_lbn, record.size)};
 
                 if(record.flags.HasFlag(CdiFileFlags.Hidden))
                 {
@@ -197,7 +216,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {
-                    Extent               = record.size == 0 ? 0 : record.extent,
                     Size                 = record.size,
                     Flags                = record.flags,
                     Interleave           = record.interleave,
@@ -206,6 +224,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Timestamp            = DecodeHighSierraDateTime(record.date),
                     XattrLength          = record.xattr_len
                 };
+
+                if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
 
                 if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
                 {
@@ -246,9 +266,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {
-                    Extent = record.size == 0 ? 0 : record.extent,
-                    Size   = record.size,
-                    Flags  = record.flags,
+                    Size  = record.size,
+                    Flags = record.flags,
                     Filename =
                         joliet
                             ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
@@ -260,6 +279,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Timestamp            = DecodeIsoDateTime(record.date),
                     XattrLength          = record.xattr_len
                 };
+
+                if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
 
                 if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
                 {
@@ -294,19 +315,25 @@ namespace DiscImageChef.Filesystems.ISO9660
                 DecodeSystemArea(data, systemAreaStart, systemAreaStart + systemAreaLength, ref entry,
                                  out bool hasResourceFork);
 
-                // TODO: Multi-extent files
                 if(entry.Flags.HasFlag(FileFlags.Associated))
                 {
                     if(entries.ContainsKey(entry.Filename))
                     {
-                        if(hasResourceFork) entries[entry.Filename].ResourceFork = entry;
-                        else entries[entry.Filename].AssociatedFile              = entry;
+                        if(hasResourceFork)
+                        {
+                            entries[entry.Filename].ResourceFork.Size += entry.Size;
+                            entries[entry.Filename].ResourceFork.Extents.Add(entry.Extents[0]);
+                        }
+                        else
+                        {
+                            entries[entry.Filename].AssociatedFile.Size += entry.Size;
+                            entries[entry.Filename].AssociatedFile.Extents.Add(entry.Extents[0]);
+                        }
                     }
                     else
                     {
                         entries[entry.Filename] = new DecodedDirectoryEntry
                         {
-                            Extent               = 0,
                             Size                 = 0,
                             Flags                = record.flags ^ FileFlags.Associated,
                             FileUnitSize         = 0,
@@ -325,11 +352,24 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {
                     if(entries.ContainsKey(entry.Filename))
                     {
-                        entry.AssociatedFile = entries[entry.Filename].AssociatedFile;
-                        entry.ResourceFork   = entries[entry.Filename].ResourceFork;
-                    }
+                        entries[entry.Filename].Size += entry.Size;
 
-                    entries[entry.Filename] = entry;
+                        // Can appear after an associated file
+                        if(entries[entry.Filename].Extents is null)
+                        {
+                            entries[entry.Filename].Extents              = new List<(uint extent, uint size)>();
+                            entries[entry.Filename].Flags                = entry.Flags;
+                            entries[entry.Filename].FileUnitSize         = entry.FileUnitSize;
+                            entries[entry.Filename].Interleave           = entry.Interleave;
+                            entries[entry.Filename].VolumeSequenceNumber = entry.VolumeSequenceNumber;
+                            entries[entry.Filename].Filename             = entry.Filename;
+                            entries[entry.Filename].Timestamp            = entry.Timestamp;
+                            entries[entry.Filename].XattrLength          = entry.XattrLength;
+                        }
+
+                        entries[entry.Filename].Extents.Add(entry.Extents[0]);
+                    }
+                    else entries[entry.Filename] = entry;
                 }
 
                 entryOff += record.length;
@@ -352,10 +392,11 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(transTblEntry.Value == null) return;
 
-            uint transTblSectors = transTblEntry.Value.Size / 2048;
+            // The probability of a TRANS.TBL to be bigger than 2GiB is nil
+            uint transTblSectors = (uint)transTblEntry.Value.Size / 2048;
             if(transTblEntry.Value.Size % 2048 > 0) transTblSectors++;
 
-            byte[] transTbl = ReadSectors(transTblEntry.Value.Extent, transTblSectors);
+            byte[] transTbl = ReadSectors(transTblEntry.Value.Extents[0].extent, transTblSectors);
 
             MemoryStream mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
             StreamReader sr = new StreamReader(mr, Encoding);
@@ -731,7 +772,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         // As per RRIP 4.1.5.1, we leave name as in previous entry, substitute location with the one in
                         // the CL, and replace all other fields with the ones found in the first entry of the child
-                        entry.Extent               = cl.child_dir_lba;
+                        entry.Extents =
+                            new List<(uint extent, uint size)> {(cl.child_dir_lba, childRecord.size)};
                         entry.Size                 = childRecord.size;
                         entry.Flags                = childRecord.flags;
                         entry.FileUnitSize         = childRecord.file_unit_size;
@@ -937,13 +979,15 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {
-                    Extent               = record.size == 0 ? 0 : record.start_lbn,
                     Size                 = record.size,
                     Filename             = tEntry.Name,
                     VolumeSequenceNumber = record.volume_sequence_number,
                     Timestamp            = DecodeHighSierraDateTime(record.date),
                     XattrLength          = tEntry.XattrLength
                 };
+
+                if(record.size != 0)
+                    entry.Extents = new List<(uint extent, uint size)> {(record.start_lbn, record.size)};
 
                 if(record.flags.HasFlag(CdiFileFlags.Hidden)) entry.Flags |= FileFlags.Hidden;
 
@@ -977,7 +1021,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {
-                    Extent               = record.size == 0 ? 0 : record.extent,
                     Size                 = record.size,
                     Flags                = record.flags,
                     Filename             = tEntry.Name,
@@ -987,6 +1030,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Timestamp            = DecodeIsoDateTime(record.date),
                     XattrLength          = tEntry.XattrLength
                 };
+
+                if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
 
                 // TODO: XA
                 int systemAreaStart  = record.name_len                 + Marshal.SizeOf<DirectoryRecord>();
@@ -1022,7 +1067,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {
-                    Extent               = record.size == 0 ? 0 : record.extent,
                     Size                 = record.size,
                     Flags                = record.flags,
                     Filename             = tEntry.Name,
@@ -1031,6 +1075,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     Timestamp            = DecodeHighSierraDateTime(record.date),
                     XattrLength          = tEntry.XattrLength
                 };
+
+                if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
 
                 entries.Add(entry);
             }

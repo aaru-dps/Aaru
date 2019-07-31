@@ -327,9 +327,13 @@ namespace DiscImageChef.Filesystems.ISO9660
                 rootDirectoryCache.Add("$",
                                        new DecodedDirectoryEntry
                                        {
-                                           Extent    = rootLocation,
+                                           Extents =
+                                               new List<(uint extent, uint size)>
+                                               {
+                                                   (rootLocation, (uint)rootDir.Length)
+                                               },
                                            Filename  = "$",
-                                           Size      = 2048,
+                                           Size      = (uint)rootDir.Length,
                                            Timestamp = decodedVd.CreationTime
                                        });
 
@@ -337,7 +341,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add("$PATH_TABLE.LSB",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = pathTableLsbLocation,
+                                               Extents =
+                                                   new List<(uint extent, uint size)>
+                                                   {
+                                                       (rootLocation, (uint)pathTableData.Length)
+                                                   },
                                                Filename  = "$PATH_TABLE.LSB",
                                                Size      = (uint)pathTableData.Length,
                                                Timestamp = decodedVd.CreationTime
@@ -346,7 +354,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                 rootDirectoryCache.Add("$PATH_TABLE.MSB",
                                        new DecodedDirectoryEntry
                                        {
-                                           Extent    = pathTableMsbLocation,
+                                           Extents =
+                                               new List<(uint extent, uint size)>
+                                               {
+                                                   (rootLocation, (uint)pathTableData.Length)
+                                               },
                                            Filename  = "$PATH_TABLE.MSB",
                                            Size      = (uint)pathTableData.Length,
                                            Timestamp = decodedVd.CreationTime
@@ -356,7 +368,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = (uint)i,
+                                               Extents   = new List<(uint extent, uint size)> {((uint)i, 2048)},
                                                Filename  = i == 0 ? "$BOOT" : $"$BOOT_{i}",
                                                Size      = 2048,
                                                Timestamp = decodedVd.CreationTime
@@ -366,7 +378,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = (uint)i,
+                                               Extents   = new List<(uint extent, uint size)> {((uint)i, 2048)},
                                                Filename  = i == 0 ? "$PVD" : $"PVD_{i}",
                                                Size      = 2048,
                                                Timestamp = decodedVd.CreationTime
@@ -376,7 +388,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = (uint)i,
+                                               Extents   = new List<(uint extent, uint size)> {((uint)i, 2048)},
                                                Filename  = i == 0 ? "$SVD" : $"$SVD_{i}",
                                                Size      = 2048,
                                                Timestamp = decodedVd.CreationTime
@@ -386,7 +398,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = (uint)i,
+                                               Extents   = new List<(uint extent, uint size)> {((uint)i, 2048)},
                                                Filename  = i == 0 ? "$EVD" : $"$EVD_{i}",
                                                Size      = 2048,
                                                Timestamp = decodedVd.CreationTime
@@ -396,7 +408,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = (uint)i,
+                                               Extents   = new List<(uint extent, uint size)> {((uint)i, 2048)},
                                                Filename  = i == 0 ? "$VPD" : $"$VPD_{i}",
                                                Size      = 2048,
                                                Timestamp = decodedVd.CreationTime
@@ -406,7 +418,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add("$IP.BIN",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = 0,
+                                               Extents = new List<(uint extent, uint size)>
+                                               {
+                                                   ((uint)partition.Start, (uint)Marshal.SizeOf<CD.IPBin>())
+                                               },
                                                Filename  = "$IP.BIN",
                                                Size      = (uint)Marshal.SizeOf<CD.IPBin>(),
                                                Timestamp = decodedVd.CreationTime
@@ -416,7 +431,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add("$IP.BIN",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = 0,
+                                               Extents = new List<(uint extent, uint size)>
+                                               {
+                                                   ((uint)partition.Start, (uint)Marshal.SizeOf<Saturn.IPBin>())
+                                               },
                                                Filename  = "$IP.BIN",
                                                Size      = (uint)Marshal.SizeOf<Saturn.IPBin>(),
                                                Timestamp = decodedVd.CreationTime
@@ -426,7 +444,11 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add("$IP.BIN",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extent    = 0,
+                                               Extents = new List<(uint extent, uint size)>
+                                               {
+                                                   ((uint)partition.Start,
+                                                    (uint)Marshal.SizeOf<Dreamcast.IPBin>())
+                                               },
                                                Filename  = "$IP.BIN",
                                                Size      = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
                                                Timestamp = decodedVd.CreationTime
