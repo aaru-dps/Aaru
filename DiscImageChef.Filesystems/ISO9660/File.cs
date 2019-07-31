@@ -69,9 +69,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             long sizeInSectors  = (size + offsetInSector) / 2048;
             if((size + offsetInSector) % 2048 > 0) sizeInSectors++;
 
-            MemoryStream ms = new MemoryStream();
-
-            byte[] buffer = ReadSectors((ulong)(entry.Extent + firstSector), (uint)sizeInSectors);
+            // No need to check mode, if we know it is CD-DA
+            byte[] buffer = entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true
+                                ? image.ReadSectors((ulong)(entry.Extent + firstSector), (uint)sizeInSectors)
+                                : ReadSectors((ulong)(entry.Extent       + firstSector), (uint)sizeInSectors);
             buf = new byte[size];
             Array.Copy(buffer, offsetInSector, buf, 0, size);
 
@@ -201,6 +202,18 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(entry.SymbolicLink != null) stat.Attributes |= FileAttributes.Symlink;
 
             if(entry.XattrLength == 0 || cdi || highSierra) return Errno.NoError;
+
+            if(entry.CdiSystemArea != null)
+            {
+                stat.UID = entry.CdiSystemArea.Value.owner;
+                stat.GID = entry.CdiSystemArea.Value.group;
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupExecute)) stat.Mode |= 8;
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupRead)) stat.Mode    |= 32;
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherExecute)) stat.Mode |= 1;
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherRead)) stat.Mode    |= 4;
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerExecute)) stat.Mode |= 64;
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerRead)) stat.Mode    |= 256;
+            }
 
             // TODO: XA
             uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);

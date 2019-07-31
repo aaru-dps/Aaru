@@ -202,7 +202,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             uint   pathTableSizeInSectors = 0;
 
             uint pathTableMsbLocation;
-            uint pathTableLsbLocation;
+            uint pathTableLsbLocation = 0; // Initialize to 0 as ignored in CD-i
 
             image = imagePlugin;
 
@@ -231,9 +231,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 // TODO: Until escape sequences are implemented this is the default CD-i encoding.
                 Encoding = Encoding.GetEncoding("iso8859-1");
-
-                // TODO: Implement CD-i
-                return Errno.NotImplemented;
             }
             else
             {
@@ -294,6 +291,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 usePathTable = true;
                 useTransTbl  = false;
             }
+
+            // In case the path table is incomplete
+            if(usePathTable && pathTableData.Length == 1) usePathTable = false;
 
             if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
 
