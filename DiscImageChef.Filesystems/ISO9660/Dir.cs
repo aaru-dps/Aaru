@@ -363,7 +363,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 int    spaceIndex   = cutLine.IndexOf(' ');
                 string originalName = cutLine.Substring(0, spaceIndex);
                 string originalNameWithVersion;
-                string newName = cutLine.Substring(spaceIndex + 1);
+                string newName = cutLine.Substring(spaceIndex + 1).TrimStart();
 
                 if(originalName.EndsWith(";1", StringComparison.Ordinal))
                 {
