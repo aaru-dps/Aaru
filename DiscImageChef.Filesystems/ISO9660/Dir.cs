@@ -120,7 +120,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
             int                                       entryOff = XattrLength;
 
-            while(entryOff + DirectoryRecordSize < data.Length)
+            while(entryOff + Marshal.SizeOf<CdiDirectoryRecord>() < data.Length)
             {
                 CdiDirectoryRecord record =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff,
@@ -157,6 +157,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                          entryOff + record.name_len +
                                                                          Marshal.SizeOf<CdiDirectoryRecord>(),
                                                                          Marshal.SizeOf<CdiSystemArea>());
+
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
+                {
+                    entry.Flags |= FileFlags.Directory;
+                    continue;
+                }
 
                 if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) || !usePathTable)
                     entries[entry.Filename] = entry;
