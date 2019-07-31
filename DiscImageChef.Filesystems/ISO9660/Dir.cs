@@ -67,7 +67,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 uint dirSizeInSectors = entry.Value.Size / 2048;
                 if(entry.Value.Size % 2048 > 0) dirSizeInSectors++;
 
-                byte[] directoryBuffer = image.ReadSectors(currentExtent, dirSizeInSectors);
+                byte[] directoryBuffer = ReadSectors(currentExtent, dirSizeInSectors);
 
                 // TODO: Decode Joliet
                 currentDirectory = cdi
@@ -349,7 +349,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             uint transTblSectors = transTblEntry.Value.Size / 2048;
             if(transTblEntry.Value.Size % 2048 > 0) transTblSectors++;
 
-            byte[] transTbl = image.ReadSectors(transTblEntry.Value.Extent, transTblSectors);
+            byte[] transTbl = ReadSectors(transTblEntry.Value.Extent, transTblSectors);
 
             MemoryStream mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
             StreamReader sr = new StreamReader(mr, Encoding);
@@ -719,7 +719,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                             Marshal.ByteArrayToStructureLittleEndian<ChildLink>(data, systemAreaOff,
                                                                                 Marshal.SizeOf<ChildLink>());
 
-                        byte[] childSector = image.ReadSector(cl.child_dir_lba);
+                        byte[] childSector = ReadSectors(cl.child_dir_lba, 1);
                         DirectoryRecord childRecord =
                             Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector);
 
@@ -829,7 +829,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         uint caLenInSectors = ca.ca_length / 2048;
                         if((ca.ca_length + caOff) % 2048 > 0) caLenInSectors++;
 
-                        byte[] caData = image.ReadSectors(ca.block + caOffSector, caLenInSectors);
+                        byte[] caData = ReadSectors(ca.block + caOffSector, caLenInSectors);
 
                         DecodeSystemArea(caData, (int)caOff, (int)(caOff + ca.ca_length), ref entry,
                                          out hasResourceFork);
@@ -922,7 +922,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = image.ReadSector(tEntry.Extent);
+                byte[] sector = ReadSectors(tEntry.Extent, 1);
                 CdiDirectoryRecord record =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
                                                                               Marshal.SizeOf<CdiDirectoryRecord>());
@@ -962,7 +962,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = image.ReadSector(tEntry.Extent);
+                byte[] sector = ReadSectors(tEntry.Extent, 1);
                 DirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
                                                                               Marshal.SizeOf<DirectoryRecord>());
@@ -1006,7 +1006,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
-                byte[] sector = image.ReadSector(tEntry.Extent);
+                byte[] sector = ReadSectors(tEntry.Extent, 1);
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,
                                                                                         Marshal

@@ -204,13 +204,14 @@ namespace DiscImageChef.Filesystems.ISO9660
             uint pathTableMsbLocation;
             uint pathTableLsbLocation;
 
+            image = imagePlugin;
+
             if(highSierra)
             {
                 pathTableSizeInSectors = hsvd.Value.path_table_size / 2048;
                 if(hsvd.Value.path_table_size                       % 2048 > 0) pathTableSizeInSectors++;
 
-                pathTableData =
-                    imagePlugin.ReadSectors(Swapping.Swap(hsvd.Value.mandatory_path_table_msb), pathTableSizeInSectors);
+                pathTableData = ReadSectors(Swapping.Swap(hsvd.Value.mandatory_path_table_msb), pathTableSizeInSectors);
 
                 fsFormat = "High Sierra Format";
 
@@ -222,7 +223,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 pathTableSizeInSectors = fsvd.Value.path_table_size / 2048;
                 if(fsvd.Value.path_table_size                       % 2048 > 0) pathTableSizeInSectors++;
 
-                pathTableData = imagePlugin.ReadSectors(fsvd.Value.path_table_addr, pathTableSizeInSectors);
+                pathTableData = ReadSectors(fsvd.Value.path_table_addr, pathTableSizeInSectors);
 
                 fsFormat = "CD-i";
 
@@ -239,8 +240,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 pathTableSizeInSectors = pvd.Value.path_table_size / 2048;
                 if(pvd.Value.path_table_size                       % 2048 > 0) pathTableSizeInSectors++;
 
-                pathTableData =
-                    imagePlugin.ReadSectors(Swapping.Swap(pvd.Value.type_m_path_table), pathTableSizeInSectors);
+                pathTableData = ReadSectors(Swapping.Swap(pvd.Value.type_m_path_table), pathTableSizeInSectors);
 
                 fsFormat = "ISO9660";
 
@@ -285,7 +285,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 rootLocation = pathTable[0].Extent;
 
-                byte[] firstRootSector = imagePlugin.ReadSector(rootLocation);
+                byte[] firstRootSector = ReadSectors(rootLocation, 1);
                 CdiDirectoryRecord rootEntry =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(firstRootSector);
                 rootSize = rootEntry.size / fsvd.Value.logical_block_size;
@@ -297,9 +297,9 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
 
-            byte[] rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
+            byte[] rootDir = ReadSectors(rootLocation, rootSize);
 
-            byte[]           ipbinSector = imagePlugin.ReadSector(partition.Start);
+            byte[]           ipbinSector = ReadSectors(partition.Start, 1);
             CD.IPBin?        segaCd      = CD.DecodeIPBin(ipbinSector);
             Saturn.IPBin?    saturn      = Saturn.DecodeIPBin(ipbinSector);
             Dreamcast.IPBin? dreamcast   = Dreamcast.DecodeIPBin(ipbinSector);
@@ -446,7 +446,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 joliet = true;
 
-                rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
+                rootDir = ReadSectors(rootLocation, rootSize);
 
                 rootDirectoryCache = DecodeIsoDirectory(rootDir, rootXattrLength);
 
@@ -558,7 +558,6 @@ namespace DiscImageChef.Filesystems.ISO9660
             };
 
             directoryCache = new Dictionary<string, Dictionary<string, DecodedDirectoryEntry>>();
-            image          = imagePlugin;
 
             if(usePathTable)
                 foreach(DecodedDirectoryEntry subDirectory in cdi

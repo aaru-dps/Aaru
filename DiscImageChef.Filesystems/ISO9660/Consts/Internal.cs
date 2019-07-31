@@ -36,7 +36,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        static readonly int DirectoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
+        const           byte MODE2_FORM2         = 0x20;
+        static readonly int  DirectoryRecordSize = Marshal.SizeOf<DirectoryRecord>();
 
         enum Namespace
         {

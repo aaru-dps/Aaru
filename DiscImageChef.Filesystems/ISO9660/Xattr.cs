@@ -45,7 +45,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
                     if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
 
-                    byte[] ea = image.ReadSectors(entry.Extent, eaSizeInSectors);
+                    byte[] ea = ReadSectors(entry.Extent, eaSizeInSectors);
 
                     buf = new byte[entry.AssociatedFile.Size];
                     Array.Copy(ea, 0, buf, 0, buf.LongLength);
@@ -66,7 +66,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     uint associatedFileSize = entry.AssociatedFile.Size / 2048;
                     if(entry.AssociatedFile.Size % 2048 > 0) associatedFileSize++;
 
-                    byte[] associatedFile = image.ReadSectors(entry.AssociatedFile.Extent, associatedFileSize);
+                    byte[] associatedFile = ReadSectors(entry.AssociatedFile.Extent, associatedFileSize);
 
                     buf = new byte[entry.AssociatedFile.Size];
                     Array.Copy(associatedFile, 0, buf, 0, buf.LongLength);
@@ -100,7 +100,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     uint rsrcSizeInSectors = entry.ResourceFork.Size / 2048;
                     if(entry.ResourceFork.Size % 2048 > 0) rsrcSizeInSectors++;
 
-                    byte[] rsrc = image.ReadSectors(entry.ResourceFork.Extent, rsrcSizeInSectors);
+                    byte[] rsrc = ReadSectors(entry.ResourceFork.Extent, rsrcSizeInSectors);
 
                     buf = new byte[entry.ResourceFork.Size];
                     Array.Copy(rsrc, 0, buf, 0, buf.LongLength);

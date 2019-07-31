@@ -1311,6 +1311,7 @@
           <e p="File.cs" t="Include" />
           <e p="ISO9660.cs" t="Include" />
           <e p="Info.cs" t="Include" />
+          <e p="Mode2.cs" t="Include" />
           <e p="PathTable.cs" t="Include" />
           <e p="Structs" t="Include">
             <e p="Amiga.cs" t="Include" />

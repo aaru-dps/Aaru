@@ -71,7 +71,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             MemoryStream ms = new MemoryStream();
 
-            byte[] buffer = image.ReadSectors((ulong)(entry.Extent + firstSector), (uint)sizeInSectors);
+            byte[] buffer = ReadSectors((ulong)(entry.Extent + firstSector), (uint)sizeInSectors);
             buf = new byte[size];
             Array.Copy(buffer, offsetInSector, buf, 0, size);
 
@@ -206,7 +206,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
             if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
 
-            byte[] ea = image.ReadSectors(entry.Extent, eaSizeInSectors);
+            byte[] ea = ReadSectors(entry.Extent, eaSizeInSectors);
 
             ExtendedAttributeRecord ear = Marshal.ByteArrayToStructureLittleEndian<ExtendedAttributeRecord>(ea);
 
