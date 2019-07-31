@@ -115,8 +115,57 @@ namespace DiscImageChef.Filesystems.ISO9660
             return contents;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data) =>
-            throw new NotImplementedException();
+        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data)
+        {
+            Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
+            int                                       entryOff = 0;
+
+            while(entryOff + DirectoryRecordSize < data.Length)
+            {
+                CdiDirectoryRecord record =
+                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff,
+                                                                              Marshal.SizeOf<CdiDirectoryRecord>());
+
+                if(record.length == 0) break;
+
+                // Special entries for current and parent directories, skip them
+                if(record.name_len == 1)
+                    if(data[entryOff + DirectoryRecordSize] == 0 || data[entryOff + DirectoryRecordSize] == 1)
+                    {
+                        entryOff += record.length;
+                        continue;
+                    }
+
+                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                {
+                    Extent               = record.size == 0 ? 0 : record.start_lbn,
+                    Size                 = record.size,
+                    Filename             = Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
+                    VolumeSequenceNumber = record.volume_sequence_number,
+                    Timestamp            = DecodeHighSierraDateTime(record.date),
+                    XattrLength          = record.xattr_len
+                };
+
+                if(record.flags.HasFlag(CdiFileFlags.Hidden))
+                {
+                    entry.Flags |= FileFlags.Hidden;
+                    continue;
+                }
+
+                entry.CdiSystemArea =
+                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data,
+                                                                         entryOff + record.name_len +
+                                                                         Marshal.SizeOf<CdiDirectoryRecord>(),
+                                                                         Marshal.SizeOf<CdiSystemArea>());
+
+                if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) || !usePathTable)
+                    entries[entry.Filename] = entry;
+
+                entryOff += record.length;
+            }
+
+            return entries;
+        }
 
         Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(byte[] data)
         {
