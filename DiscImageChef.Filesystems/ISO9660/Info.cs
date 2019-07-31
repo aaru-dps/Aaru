@@ -110,6 +110,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             int  hsOff           = 0;
             if(highSierra) hsOff = 8;
             bool cdi             = false;
+            bool evd             = false;
 
             while(true)
             {
@@ -181,11 +182,16 @@ namespace DiscImageChef.Filesystems.ISO9660
                             Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
 
                         // Check if this is Joliet
-                        if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
-                            if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
-                               svd.escape_sequences[2] == 'E') jolietvd = svd;
-                            else
-                                DicConsole.WriteLine("ISO9660 plugin", "Found unknown supplementary volume descriptor");
+                        if(svd.version == 1)
+                        {
+                            if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
+                                if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
+                                   svd.escape_sequences[2] == 'E') jolietvd = svd;
+                                else
+                                    DicConsole.WriteLine("ISO9660 plugin",
+                                                         "Found unknown supplementary volume descriptor");
+                        }
+                        else evd = true;
 
                         break;
                     }
@@ -469,6 +475,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(rrip) isoMetadata.AppendLine("Rock Ridge Interchange Protocol present.");
             if(aaip) isoMetadata.AppendLine("Arbitrary Attribute Interchange Protocol present.");
             if(ziso) isoMetadata.AppendLine("zisofs compression present.");
+            if(evd) isoMetadata.AppendLine("Contains Enhanved Volume Descriptor.");
             if(bvd != null)
                 isoMetadata.AppendFormat("Disc bootable following {0} specifications.", bootSpec).AppendLine();
             if(segaCd != null)

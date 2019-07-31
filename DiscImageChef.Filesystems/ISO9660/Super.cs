@@ -26,6 +26,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 bool.TryParse(usePathTableString, out usePathTable);
             if(options.TryGetValue("use_trans_tbl", out string useTransTblString))
                 bool.TryParse(useTransTblString, out useTransTbl);
+            if(options.TryGetValue("use_evd", out string useEvdString)) bool.TryParse(useEvdString, out useEvd);
 
             // Default namespace
             if(@namespace is null) @namespace = "joliet";
@@ -133,12 +134,24 @@ namespace DiscImageChef.Filesystems.ISO9660
                         PrimaryVolumeDescriptor svd =
                             Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
 
+                        // TODO: Other escape sequences
                         // Check if this is Joliet
-                        if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
-                            if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
-                               svd.escape_sequences[2] == 'E') jolietvd = svd;
-                            else
-                                DicConsole.WriteLine("ISO9660 plugin", "Found unknown supplementary volume descriptor");
+                        if(svd.version == 1)
+                        {
+                            if(svd.escape_sequences[0] == '%' && svd.escape_sequences[1] == '/')
+                                if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
+                                   svd.escape_sequences[2] == 'E') jolietvd = svd;
+                                else
+                                    DicConsole.WriteLine("ISO9660 plugin",
+                                                         "Found unknown supplementary volume descriptor");
+                        }
+                        else if(useEvd)
+                        {
+                            // Basically until escape sequences are implemented, let the user chose the encoding.
+                            // This is the same as user chosing Romeo namespace, but using the EVD instead of the PVD
+                            this.@namespace = Namespace.Romeo;
+                            pvd             = svd;
+                        }
 
                         break;
                     }
