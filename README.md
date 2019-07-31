@@ -158,7 +158,10 @@ Supported file systems for read-only operations
 * Apple DOS file system
 * Apple Lisa file system
 * Apple Macintosh File System (MFS)
+* CD-i file system
 * CP/M file system
+* High Sierra Format
+* ISO9660, including Apple, Amiga, Rock Ridge, Joliet and Romeo extensions
 * Microsoft 12-bit File Allocation Table (FAT12), including Atari ST extensions
 * Microsoft 16-bit File Allocation Table (FAT16)
 * Microsoft 32-bit File Allocation Table (FAT32), including FAT+ extension
@@ -182,7 +185,6 @@ Supported file systems for identification and information only
 * BSD Fast File System (FFS) / Unix File System (UFS)
 * BSD Unix File System 2 (UFS2)
 * B-tree file system (btrfs)
-* CD-i file system
 * Coherent UNIX file system
 * Commodore 1540/1541/1571/1581 filesystems
 * Cram file system
@@ -194,10 +196,8 @@ Supported file systems for identification and information only
 * Fossil file system (from Plan9)
 * HAMMER file system
 * High Performance Optical File System (HPOFS)
-* High Sierra Format
 * HP Logical Interchange Format
 * IBM Journaling File System (JFS)
-* ISO9660
 * Linux extended file system
 * Linux extended file system 2
 * Linux extended file system 3
