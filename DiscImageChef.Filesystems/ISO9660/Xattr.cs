@@ -43,7 +43,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     if(entry.Extents is null) return Errno.InvalidArgument;
 
-                    // TODO: XA
                     uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
                     if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
 

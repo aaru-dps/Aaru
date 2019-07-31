@@ -39,24 +39,24 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZisofsHeader
         {
-            public ulong magic;
-            public uint  uncomp_len;
-            public uint  uncomp_len_be;
-            public byte  header_size;    // Shifted >> 2
-            public byte  block_size_log; // log2(block_size)
+            public readonly ulong magic;
+            public readonly uint  uncomp_len;
+            public readonly uint  uncomp_len_be;
+            public readonly byte  header_size;    // Shifted >> 2
+            public readonly byte  block_size_log; // log2(block_size)
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ZisofsEntry
         {
-            public ushort signature;
-            public byte   length;
-            public byte   version;
-            public ushort alogirhtm;
-            public byte   header_size;    // Shifted >> 2
-            public byte   block_size_log; // log2(block_size)
-            public uint   uncomp_len;
-            public uint   uncomp_len_be;
+            public readonly ushort signature;
+            public readonly byte   length;
+            public readonly byte   version;
+            public readonly ushort alogirhtm;
+            public readonly byte   header_size;    // Shifted >> 2
+            public readonly byte   block_size_log; // log2(block_size)
+            public readonly uint   uncomp_len;
+            public readonly uint   uncomp_len_be;
         }
     }
 }

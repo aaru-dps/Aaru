@@ -106,12 +106,12 @@ namespace DiscImageChef.Filesystems.ISO9660
             byte[] vdSector = imagePlugin.ReadSector(16 + counter + partition.Start);
             int    xaOff    = vdSector.Length == 2336 ? 8 : 0;
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
-            bool highSierra      = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
-            int  hsOff           = 0;
-            if(highSierra) hsOff = 8;
-            bool cdi             = false;
-            bool evd             = false;
-            bool vpd             = false;
+            bool highSierraInfo      = Encoding.GetString(hsMagic) == HIGH_SIERRA_MAGIC;
+            int  hsOff               = 0;
+            if(highSierraInfo) hsOff = 8;
+            bool cdiInfo             = false;
+            bool evd                 = false;
+            bool vpd                 = false;
 
             while(true)
             {
@@ -144,7 +144,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     break;
                 }
 
-                cdi |= Encoding.GetString(vdMagic) == CDI_MAGIC;
+                cdiInfo |= Encoding.GetString(vdMagic) == CDI_MAGIC;
 
                 switch(vdType)
                 {
@@ -167,10 +167,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     case 1:
                     {
-                        if(highSierra)
+                        if(highSierraInfo)
                             hsvd = Marshal
                                .ByteArrayToStructureLittleEndian<HighSierraPrimaryVolumeDescriptor>(vdSector);
-                        else if(cdi)
+                        else if(cdiInfo)
                             fsvd = Marshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
                         else pvd = Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
 
@@ -218,9 +218,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 return;
             }
 
-            if(highSierra) decodedVd = DecodeVolumeDescriptor(hsvd.Value);
-            else if(cdi) decodedVd   = DecodeVolumeDescriptor(fsvd.Value);
-            else decodedVd           = DecodeVolumeDescriptor(pvd.Value);
+            if(highSierraInfo) decodedVd = DecodeVolumeDescriptor(hsvd.Value);
+            else if(cdiInfo) decodedVd   = DecodeVolumeDescriptor(fsvd.Value);
+            else decodedVd               = DecodeVolumeDescriptor(pvd.Value);
 
             if(jolietvd != null) decodedJolietVd = DecodeJolietDescriptor(jolietvd.Value);
 
@@ -228,13 +228,13 @@ namespace DiscImageChef.Filesystems.ISO9660
             uint rootSize     = 0;
 
             // No need to read root on CD-i, as extensions are not supported...
-            if(!cdi)
+            if(!cdiInfo)
             {
-                rootLocation = highSierra
+                rootLocation = highSierraInfo
                                    ? hsvd.Value.root_directory_record.extent
                                    : pvd.Value.root_directory_record.extent;
 
-                if(highSierra)
+                if(highSierraInfo)
                 {
                     rootSize = hsvd.Value.root_directory_record.size / hsvd.Value.logical_block_size;
                     if(hsvd.Value.root_directory_record.size         % hsvd.Value.logical_block_size > 0) rootSize++;
@@ -263,7 +263,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
 
             // Walk thru root directory to see system area extensions in use
-            while(rootOff + Marshal.SizeOf<DirectoryRecord>() < rootDir.Length && !cdi)
+            while(rootOff + Marshal.SizeOf<DirectoryRecord>() < rootDir.Length && !cdiInfo)
             {
                 DirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(rootDir, rootOff,
@@ -397,9 +397,9 @@ namespace DiscImageChef.Filesystems.ISO9660
             foreach(ContinuationArea ca in contareas)
             {
                 uint caLen = (ca.ca_length_be + ca.offset_be) /
-                             (highSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size);
+                             (highSierraInfo ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size);
                 if((ca.ca_length_be + ca.offset_be) %
-                   (highSierra ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) > 0) caLen++;
+                   (highSierraInfo ? hsvd.Value.logical_block_size : pvd.Value.logical_block_size) > 0) caLen++;
 
                 byte[] caSectors = imagePlugin.ReadSectors(ca.block_be, caLen);
                 byte[] caData    = new byte[ca.ca_length_be];
@@ -469,9 +469,9 @@ namespace DiscImageChef.Filesystems.ISO9660
             Dreamcast.IPBin? dreamcast   = Dreamcast.DecodeIPBin(ipbinSector);
 
             string fsFormat;
-            if(highSierra) fsFormat = "High Sierra Format";
-            else if(cdi) fsFormat   = "CD-i";
-            else fsFormat           = "ISO9660";
+            if(highSierraInfo) fsFormat = "High Sierra Format";
+            else if(cdiInfo) fsFormat   = "CD-i";
+            else fsFormat               = "ISO9660";
 
             isoMetadata.AppendFormat("{0} file system", fsFormat).AppendLine();
             if(xaExtensions) isoMetadata.AppendLine("CD-ROM XA extensions present.");
@@ -504,9 +504,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                 isoMetadata.AppendLine(Dreamcast.Prettify(dreamcast));
             }
 
-            isoMetadata.AppendFormat("{0}------------------------------", cdi ? "---------------" : "").AppendLine();
-            isoMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", cdi ? "FILE STRUCTURE " : "").AppendLine();
-            isoMetadata.AppendFormat("{0}------------------------------", cdi ? "---------------" : "").AppendLine();
+            isoMetadata.AppendFormat("{0}------------------------------", cdiInfo ? "---------------" : "")
+                       .AppendLine();
+            isoMetadata.AppendFormat("{0}VOLUME DESCRIPTOR INFORMATION:", cdiInfo ? "FILE STRUCTURE " : "")
+                       .AppendLine();
+            isoMetadata.AppendFormat("{0}------------------------------", cdiInfo ? "---------------" : "")
+                       .AppendLine();
             isoMetadata.AppendFormat("System identifier: {0}", decodedVd.SystemIdentifier).AppendLine();
             isoMetadata.AppendFormat("Volume identifier: {0}", decodedVd.VolumeIdentifier).AppendLine();
             isoMetadata.AppendFormat("Volume set identifier: {0}", decodedVd.VolumeSetIdentifier).AppendLine();

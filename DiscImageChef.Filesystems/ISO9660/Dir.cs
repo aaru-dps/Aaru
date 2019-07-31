@@ -13,7 +13,6 @@ namespace DiscImageChef.Filesystems.ISO9660
     {
         Dictionary<string, Dictionary<string, DecodedDirectoryEntry>> directoryCache;
 
-        // TODO: Implement path table traversal
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
@@ -86,7 +85,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                     directoryBuffer = ms.ToArray();
                 }
 
-                // TODO: Decode Joliet
                 currentDirectory = cdi
                                        ? DecodeCdiDirectory(directoryBuffer, entry.Value.XattrLength)
                                        : highSierra
@@ -132,10 +130,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             return contents;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data, byte XattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeCdiDirectory(byte[] data, byte xattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = XattrLength;
+            int                                       entryOff = xattrLength;
 
             while(entryOff + CdiDirectoryRecordSize < data.Length)
             {
@@ -190,10 +188,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             return entries;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(byte[] data, byte XattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeHighSierraDirectory(byte[] data, byte xattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = XattrLength;
+            int                                       entryOff = xattrLength;
 
             while(entryOff + DirectoryRecordSize < data.Length)
             {
@@ -240,10 +238,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             return entries;
         }
 
-        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data, byte XattrLength)
+        Dictionary<string, DecodedDirectoryEntry> DecodeIsoDirectory(byte[] data, byte xattrLength)
         {
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
-            int                                       entryOff = XattrLength;
+            int                                       entryOff = xattrLength;
 
             while(entryOff + DirectoryRecordSize < data.Length)
             {
@@ -298,7 +296,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(joliet && entry.Filename.EndsWith(";1", StringComparison.Ordinal))
                     entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
 
-                // TODO: XA
                 int systemAreaStart  = entryOff + record.name_len      + DirectoryRecordSize;
                 int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
 
@@ -748,7 +745,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                         systemAreaOff += nmLength;
                         break;
                     case RRIP_CHILDLINK:
-                        // TODO
                         byte clLength = data[systemAreaOff + 2];
 
                         // If we are not in Rock Ridge namespace, or we are using the Path Table, skip it
@@ -926,7 +922,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
         PathTableEntryInternal[] GetPathTableEntries(string path)
         {
-            IEnumerable<PathTableEntryInternal> tableEntries  = new PathTableEntryInternal[0];
+            IEnumerable<PathTableEntryInternal> tableEntries;
             List<PathTableEntryInternal>        pathTableList = new List<PathTableEntryInternal>(pathTable);
 
             if(path == "" || path == "/") tableEntries = pathTable.Where(p => p.Parent == 1 && p != pathTable[0]);
@@ -1028,7 +1024,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
 
-                // TODO: XA
                 int systemAreaStart  = record.name_len                 + DirectoryRecordSize;
                 int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
 

@@ -199,7 +199,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             string fsFormat;
             byte[] pathTableData;
-            uint   pathTableSizeInSectors = 0;
+            uint   pathTableSizeInSectors;
 
             uint pathTableMsbLocation;
             uint pathTableLsbLocation = 0; // Initialize to 0 as ignored in CD-i
@@ -253,8 +253,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(jolietvd is null && this.@namespace == Namespace.Joliet) this.@namespace = Namespace.Normal;
 
-            uint rootLocation    = 0;
-            uint rootSize        = 0;
+            uint rootLocation;
+            uint rootSize;
             byte rootXattrLength = 0;
 
             if(!cdi)
@@ -341,11 +341,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                     rootDirectoryCache.Add("$PATH_TABLE.LSB",
                                            new DecodedDirectoryEntry
                                            {
-                                               Extents =
-                                                   new List<(uint extent, uint size)>
-                                                   {
-                                                       (rootLocation, (uint)pathTableData.Length)
-                                                   },
+                                               Extents = new List<(uint extent, uint size)>
+                                               {
+                                                   (pathTableLsbLocation, (uint)pathTableData.Length)
+                                               },
                                                Filename  = "$PATH_TABLE.LSB",
                                                Size      = (uint)pathTableData.Length,
                                                Timestamp = decodedVd.CreationTime
@@ -357,7 +356,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                            Extents =
                                                new List<(uint extent, uint size)>
                                                {
-                                                   (rootLocation, (uint)pathTableData.Length)
+                                                   (pathTableMsbLocation, (uint)pathTableData.Length)
                                                },
                                            Filename  = "$PATH_TABLE.MSB",
                                            Size      = (uint)pathTableData.Length,

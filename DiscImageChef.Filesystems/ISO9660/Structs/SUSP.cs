@@ -39,53 +39,53 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ContinuationArea
         {
-            public ushort signature;
-            public byte   length;
-            public byte   version;
-            public uint   block;
-            public uint   block_be;
-            public uint   offset;
-            public uint   offset_be;
-            public uint   ca_length;
-            public uint   ca_length_be;
+            public readonly ushort signature;
+            public readonly byte   length;
+            public readonly byte   version;
+            public readonly uint   block;
+            public readonly uint   block_be;
+            public readonly uint   offset;
+            public readonly uint   offset_be;
+            public readonly uint   ca_length;
+            public readonly uint   ca_length_be;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct PaddingArea
         {
-            public ushort signature;
-            public byte   length;
-            public byte   version;
+            public readonly ushort signature;
+            public readonly byte   length;
+            public readonly byte   version;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct IndicatorArea
         {
-            public ushort signature;
-            public byte   length;
-            public byte   version;
-            public ushort magic;
-            public byte   skipped;
+            public readonly ushort signature;
+            public readonly byte   length;
+            public readonly byte   version;
+            public readonly ushort magic;
+            public readonly byte   skipped;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct TerminatorArea
         {
-            public ushort signature;
-            public byte   length;
-            public byte   version;
+            public readonly ushort signature;
+            public readonly byte   length;
+            public readonly byte   version;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ReferenceArea
         {
-            public ushort signature;
-            public byte   length;
-            public byte   version;
-            public byte   id_len;
-            public byte   des_len;
-            public byte   src_len;
-            public byte   ext_ver;
+            public readonly ushort signature;
+            public readonly byte   length;
+            public readonly byte   version;
+            public readonly byte   id_len;
+            public readonly byte   des_len;
+            public readonly byte   src_len;
+            public readonly byte   ext_ver;
             // Follows extension identifier for id_len bytes
             // Follows extension descriptor for des_len bytes
             // Follows extension source for src_len bytes
@@ -94,10 +94,10 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct SelectorArea
         {
-            public ushort signature;
-            public byte   length;
-            public byte   version;
-            public byte   sequence;
+            public readonly ushort signature;
+            public readonly byte   length;
+            public readonly byte   version;
+            public readonly byte   sequence;
         }
     }
 }

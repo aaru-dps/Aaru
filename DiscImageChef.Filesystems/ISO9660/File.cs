@@ -69,7 +69,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             offset += entry.XattrLength;
 
-            // TODO: XA
             long firstSector    = offset                  / 2048;
             long offsetInSector = offset                  % 2048;
             long sizeInSectors  = (size + offsetInSector) / 2048;
@@ -227,7 +226,6 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerRead)) stat.Mode    |= 256;
             }
 
-            // TODO: XA
             uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
             if(entry.XattrLength % 2048 > 0) eaSizeInSectors++;
 
@@ -270,7 +268,7 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             entry = null;
 
-            string cutPath = path.StartsWith("/")
+            string cutPath = path.StartsWith("/", StringComparison.Ordinal)
                                  ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
                                  : path.ToLower(CultureInfo.CurrentUICulture);
             string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
@@ -296,7 +294,6 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(string.IsNullOrEmpty(dirent.Key))
             {
-                // TODO: RRIP
                 if(!joliet && !pieces[pieces.Length - 1].EndsWith(";1", StringComparison.Ordinal))
                 {
                     dirent = parent.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) ==

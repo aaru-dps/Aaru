@@ -5,7 +5,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        DateTime? DecodeIsoDateTime(byte[] timestamp)
+        static DateTime? DecodeIsoDateTime(byte[] timestamp)
         {
             switch(timestamp?.Length)
             {
@@ -15,7 +15,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
         }
 
-        DateTime? DecodeIsoDateTime(IsoTimestamp timestamp)
+        static DateTime? DecodeIsoDateTime(IsoTimestamp timestamp)
         {
             try
             {
@@ -26,14 +26,14 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 return TimeZoneInfo.ConvertTimeToUtc(date, TimeZoneInfo.FindSystemTimeZoneById("GMT"));
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 // ISO says timestamp can be unspecified
                 return null;
             }
         }
 
-        DateTime? DecodeHighSierraDateTime(HighSierraTimestamp timestamp)
+        static DateTime? DecodeHighSierraDateTime(HighSierraTimestamp timestamp)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 return TimeZoneInfo.ConvertTimeToUtc(date, TimeZoneInfo.FindSystemTimeZoneById("GMT"));
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 // ISO says timestamp can be unspecified, suppose same for High Sierra
                 return null;

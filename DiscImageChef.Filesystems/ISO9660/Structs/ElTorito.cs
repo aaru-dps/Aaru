@@ -39,77 +39,77 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ElToritoBootRecord
         {
-            public byte type;
+            public readonly byte type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] id;
-            public byte version;
+            public readonly byte[] id;
+            public readonly byte version;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] system_id;
+            public readonly byte[] system_id;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public byte[] boot_id;
-            public uint catalog_sector;
+            public readonly byte[] boot_id;
+            public readonly uint catalog_sector;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1974)]
-            public byte[] boot_use;
+            public readonly byte[] boot_use;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ElToritoValidationEntry
         {
-            public ElToritoIndicator header_id;
-            public ElToritoPlatform  platform_id;
-            public ushort            reserved;
+            public readonly ElToritoIndicator header_id;
+            public readonly ElToritoPlatform  platform_id;
+            public readonly ushort            reserved;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-            public byte[] developer_id;
-            public ushort checksum;
-            public ushort signature;
+            public readonly byte[] developer_id;
+            public readonly ushort checksum;
+            public readonly ushort signature;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ElToritoInitialEntry
         {
-            public ElToritoIndicator bootable;
-            public ElToritoEmulation boot_type;
-            public ushort            load_seg;
-            public byte              system_type;
-            public byte              reserved1;
-            public ushort            sector_count;
-            public uint              load_rba;
+            public readonly ElToritoIndicator bootable;
+            public          ElToritoEmulation boot_type;
+            public readonly ushort            load_seg;
+            public readonly byte              system_type;
+            public readonly byte              reserved1;
+            public readonly ushort            sector_count;
+            public readonly uint              load_rba;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)]
-            public byte[] reserved2;
+            public readonly byte[] reserved2;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ElToritoSectionHeaderEntry
         {
-            public ElToritoIndicator header_id;
-            public ElToritoPlatform  platform_id;
-            public ushort            entries;
+            public readonly ElToritoIndicator header_id;
+            public readonly ElToritoPlatform  platform_id;
+            public readonly ushort            entries;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 28)]
-            public byte[] identifier;
+            public readonly byte[] identifier;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ElToritoSectionEntry
         {
-            public ElToritoIndicator bootable;
-            public ElToritoEmulation boot_type;
-            public ushort            load_seg;
-            public byte              system_type;
-            public byte              reserved1;
-            public ushort            sector_count;
-            public uint              load_rba;
-            public byte              selection_criteria_type;
+            public readonly ElToritoIndicator bootable;
+            public readonly ElToritoEmulation boot_type;
+            public readonly ushort            load_seg;
+            public readonly byte              system_type;
+            public readonly byte              reserved1;
+            public readonly ushort            sector_count;
+            public readonly uint              load_rba;
+            public readonly byte              selection_criteria_type;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 19)]
-            public byte[] selection_criterias;
+            public readonly byte[] selection_criterias;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct ElToritoSectionEntryExtension
         {
-            public ElToritoIndicator extension_indicator;
-            public ElToritoFlags     extension_flags;
+            public readonly ElToritoIndicator extension_indicator;
+            public readonly ElToritoFlags     extension_flags;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 30)]
-            public byte[] selection_criterias;
+            public readonly byte[] selection_criterias;
         }
     }
 }
