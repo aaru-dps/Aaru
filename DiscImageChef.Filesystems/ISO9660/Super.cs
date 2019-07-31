@@ -348,10 +348,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(this.@namespace != Namespace.Joliet)
                 rootDirectoryCache = cdi
-                                         ? DecodeCdiDirectory(rootDir, rootXattrLength)
+                                         ? DecodeCdiDirectory(rootLocation, rootSize, rootXattrLength)
                                          : highSierra
-                                             ? DecodeHighSierraDirectory(rootDir, rootXattrLength)
-                                             : DecodeIsoDirectory(rootDir, rootXattrLength);
+                                             ? DecodeHighSierraDirectory(rootLocation, rootSize, rootXattrLength)
+                                             : DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
 
             XmlFsType.Type = fsFormat;
 
@@ -500,9 +500,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 joliet = true;
 
-                rootDir = ReadSectors(rootLocation, rootSize);
-
-                rootDirectoryCache = DecodeIsoDirectory(rootDir, rootXattrLength);
+                rootDirectoryCache = DecodeIsoDirectory(rootLocation, rootSize, rootXattrLength);
 
                 XmlFsType.VolumeName = decodedJolietVd.VolumeIdentifier;
 
