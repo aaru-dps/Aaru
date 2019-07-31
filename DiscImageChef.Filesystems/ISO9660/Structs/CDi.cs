@@ -176,12 +176,12 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CdiSystemArea
         {
-            public readonly ushort        group;
-            public readonly ushort        owner;
-            public readonly CdiAttributes attributes;
-            public readonly ushort        reserved1;
-            public readonly byte          file_no;
-            public readonly byte          reserved2;
+            public readonly ushort group;
+            public readonly ushort owner;
+            public readonly ushort attributes;
+            public readonly ushort reserved1;
+            public readonly byte   file_no;
+            public readonly byte   reserved2;
         }
     }
 }

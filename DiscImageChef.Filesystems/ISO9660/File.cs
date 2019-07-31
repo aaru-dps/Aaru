@@ -109,10 +109,11 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(entry.Extents.Count == 1)
             {
                 // No need to check mode, if we know it is CD-DA
-                byte[] buffer = entry.CdiSystemArea?.attributes.HasFlag(CdiAttributes.DigitalAudio) == true
-                                    ? image.ReadSectors((ulong)(entry.Extents[0].extent + firstSector),
-                                                        (uint)sizeInSectors)
-                                    : ReadSectors((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors);
+                byte[] buffer =
+                    entry.CdiSystemArea != null &&
+                    ((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.DigitalAudio)
+                        ? image.ReadSectors((ulong)(entry.Extents[0].extent + firstSector), (uint)sizeInSectors)
+                        : ReadSectors((ulong)(entry.Extents[0].extent       + firstSector), (uint)sizeInSectors);
 
                 buf = new byte[size];
                 Array.Copy(buffer, offsetInSector, buf, 0, size);
@@ -250,12 +251,18 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 stat.UID = entry.CdiSystemArea.Value.owner;
                 stat.GID = entry.CdiSystemArea.Value.group;
-                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupExecute)) stat.Mode |= 8;
-                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.GroupRead)) stat.Mode    |= 32;
-                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherExecute)) stat.Mode |= 1;
-                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OtherRead)) stat.Mode    |= 4;
-                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerExecute)) stat.Mode |= 64;
-                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.OwnerRead)) stat.Mode    |= 256;
+                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.GroupExecute))
+                    stat.Mode |= 8;
+                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.GroupRead))
+                    stat.Mode |= 32;
+                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.OtherExecute))
+                    stat.Mode |= 1;
+                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.OtherRead))
+                    stat.Mode |= 4;
+                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.OwnerExecute))
+                    stat.Mode |= 64;
+                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.OwnerRead))
+                    stat.Mode |= 256;
             }
 
             uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);

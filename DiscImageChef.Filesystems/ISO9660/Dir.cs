@@ -189,16 +189,17 @@ namespace DiscImageChef.Filesystems.ISO9660
                         continue;
                     }
 
-                    entry.CdiSystemArea =
-                        Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data,
-                                                                             entryOff + record.name_len +
-                                                                             CdiDirectoryRecordSize, CdiSystemAreaSize);
+                    int systemAreaStart = entryOff + record.name_len + CdiDirectoryRecordSize;
 
-                    if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
+                    if(systemAreaStart % 2 != 0) systemAreaStart++;
+                    entry.CdiSystemArea =
+                        Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data, systemAreaStart, CdiSystemAreaSize);
+
+                    if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.Directory))
                         entry.Flags |= FileFlags.Directory;
 
-                    if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) || !usePathTable)
-                        entries[entry.Filename] = entry;
+                    if(!((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.Directory) ||
+                       !usePathTable) entries[entry.Filename] = entry;
 
                     entryOff += record.length;
                 }
@@ -1021,12 +1022,14 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 if(record.flags.HasFlag(CdiFileFlags.Hidden)) entry.Flags |= FileFlags.Hidden;
 
-                entry.CdiSystemArea =
-                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(sector,
-                                                                         record.name_len + CdiDirectoryRecordSize,
-                                                                         CdiSystemAreaSize);
+                int systemAreaStart = record.name_len + CdiDirectoryRecordSize;
 
-                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
+                if(systemAreaStart % 2 != 0) systemAreaStart++;
+
+                entry.CdiSystemArea =
+                    Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(sector, systemAreaStart, CdiSystemAreaSize);
+
+                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.Directory))
                     entry.Flags |= FileFlags.Directory;
 
                 entries.Add(entry);
