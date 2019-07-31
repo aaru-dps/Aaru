@@ -155,6 +155,12 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         break;
                     }
+
+                    case 3:
+                    {
+                        // Unused
+                        break;
+                    }
                 }
 
                 counter++;

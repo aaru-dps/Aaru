@@ -111,6 +111,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(highSierra) hsOff = 8;
             bool cdi             = false;
             bool evd             = false;
+            bool vpd             = false;
 
             while(true)
             {
@@ -193,6 +194,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                         }
                         else evd = true;
 
+                        break;
+                    }
+
+                    case 3:
+                    {
+                        vpd = true;
                         break;
                     }
                 }
@@ -476,6 +483,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(aaip) isoMetadata.AppendLine("Arbitrary Attribute Interchange Protocol present.");
             if(ziso) isoMetadata.AppendLine("zisofs compression present.");
             if(evd) isoMetadata.AppendLine("Contains Enhanved Volume Descriptor.");
+            if(vpd) isoMetadata.AppendLine("Contains Volume Partition Descriptor.");
             if(bvd != null)
                 isoMetadata.AppendFormat("Disc bootable following {0} specifications.", bootSpec).AppendLine();
             if(segaCd != null)
