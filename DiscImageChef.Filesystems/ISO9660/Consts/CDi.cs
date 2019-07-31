@@ -31,12 +31,15 @@
 // ****************************************************************************/
 
 using System;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const string CDI_MAGIC = "CD-I ";
+        const           string CDI_MAGIC              = "CD-I ";
+        static readonly int    CdiDirectoryRecordSize = Marshal.SizeOf<CdiDirectoryRecord>();
+        static readonly int    CdiSystemAreaSize      = Marshal.SizeOf<CdiSystemArea>();
 
         [Flags]
         enum CdiVolumeFlags : byte

@@ -137,11 +137,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             Dictionary<string, DecodedDirectoryEntry> entries  = new Dictionary<string, DecodedDirectoryEntry>();
             int                                       entryOff = XattrLength;
 
-            while(entryOff + Marshal.SizeOf<CdiDirectoryRecord>() < data.Length)
+            while(entryOff + CdiDirectoryRecordSize < data.Length)
             {
                 CdiDirectoryRecord record =
-                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff,
-                                                                              Marshal.SizeOf<CdiDirectoryRecord>());
+                    Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff, CdiDirectoryRecordSize);
 
                 if(record.length == 0) break;
 
@@ -174,8 +173,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 entry.CdiSystemArea =
                     Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data,
                                                                          entryOff + record.name_len +
-                                                                         Marshal.SizeOf<CdiDirectoryRecord>(),
-                                                                         Marshal.SizeOf<CdiSystemArea>());
+                                                                         CdiDirectoryRecordSize, CdiSystemAreaSize);
 
                 if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
                 {
@@ -201,8 +199,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(data, entryOff,
-                                                                                        Marshal
-                                                                                           .SizeOf<DirectoryRecord>());
+                                                                                        HighSierraDirectoryRecordSize);
 
                 if(record.length == 0) break;
 
@@ -251,8 +248,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             while(entryOff + DirectoryRecordSize < data.Length)
             {
                 DirectoryRecord record =
-                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff,
-                                                                              Marshal.SizeOf<DirectoryRecord>());
+                    Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff, DirectoryRecordSize);
 
                 if(record.length == 0) break;
 
@@ -303,8 +299,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                     entry.Filename = entry.Filename.Substring(0, entry.Filename.Length - 2);
 
                 // TODO: XA
-                int systemAreaStart  = entryOff + record.name_len      + Marshal.SizeOf<DirectoryRecord>();
-                int systemAreaLength = record.length - record.name_len - Marshal.SizeOf<DirectoryRecord>();
+                int systemAreaStart  = entryOff + record.name_len      + DirectoryRecordSize;
+                int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
                 {
@@ -973,7 +969,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 byte[] sector = ReadSectors(tEntry.Extent, 1);
                 CdiDirectoryRecord record =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
-                                                                              Marshal.SizeOf<CdiDirectoryRecord>());
+                                                                              CdiDirectoryRecordSize);
 
                 if(record.length == 0) break;
 
@@ -993,9 +989,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                 entry.CdiSystemArea =
                     Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(sector,
-                                                                         record.name_len +
-                                                                         Marshal.SizeOf<CdiDirectoryRecord>(),
-                                                                         Marshal.SizeOf<CdiSystemArea>());
+                                                                         record.name_len + CdiDirectoryRecordSize,
+                                                                         CdiSystemAreaSize);
 
                 if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
                     entry.Flags |= FileFlags.Directory;
@@ -1015,7 +1010,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 byte[] sector = ReadSectors(tEntry.Extent, 1);
                 DirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
-                                                                              Marshal.SizeOf<DirectoryRecord>());
+                                                                              DirectoryRecordSize);
 
                 if(record.length == 0) break;
 
@@ -1034,8 +1029,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
 
                 // TODO: XA
-                int systemAreaStart  = record.name_len                 + Marshal.SizeOf<DirectoryRecord>();
-                int systemAreaLength = record.length - record.name_len - Marshal.SizeOf<DirectoryRecord>();
+                int systemAreaStart  = record.name_len                 + DirectoryRecordSize;
+                int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
 
                 if(systemAreaStart % 2 != 0)
                 {
@@ -1060,10 +1055,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 byte[] sector = ReadSectors(tEntry.Extent, 1);
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,
-                                                                                        Marshal
-                                                                                           .SizeOf<
-                                                                                                HighSierraDirectoryRecord
-                                                                                            >());
+                                                                                        HighSierraDirectoryRecordSize);
 
                 DecodedDirectoryEntry entry = new DecodedDirectoryEntry
                 {

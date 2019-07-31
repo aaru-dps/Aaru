@@ -30,10 +30,13 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using DiscImageChef.Helpers;
+
 namespace DiscImageChef.Filesystems.ISO9660
 {
     public partial class ISO9660
     {
-        const string HIGH_SIERRA_MAGIC = "CDROM";
+        const           string HIGH_SIERRA_MAGIC             = "CDROM";
+        static readonly int    HighSierraDirectoryRecordSize = Marshal.SizeOf<HighSierraDirectoryRecord>();
     }
 }
