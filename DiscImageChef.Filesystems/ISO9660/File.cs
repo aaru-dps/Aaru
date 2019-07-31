@@ -200,7 +200,7 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.SymbolicLink != null) stat.Attributes |= FileAttributes.Symlink;
 
-            if(entry.XattrLength == 0) return Errno.NoError;
+            if(entry.XattrLength == 0 || cdi || highSierra) return Errno.NoError;
 
             // TODO: XA
             uint eaSizeInSectors = (uint)(entry.XattrLength / 2048);
