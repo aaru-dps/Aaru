@@ -321,7 +321,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 rootSize = rootEntry.size / fsvd.Value.logical_block_size;
                 if(rootEntry.size         % fsvd.Value.logical_block_size > 0) rootSize++;
 
-                usePathTable = true;
+                usePathTable = usePathTable || pathTable.Length == 1;
                 useTransTbl  = false;
             }
 
