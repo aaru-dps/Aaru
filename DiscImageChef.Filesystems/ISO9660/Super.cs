@@ -72,6 +72,11 @@ namespace DiscImageChef.Filesystems.ISO9660
             int hsOff            = 0;
             if(highSierra) hsOff = 8;
             cdi = false;
+            List<ulong> bvdSectors = new List<ulong>();
+            List<ulong> pvdSectors = new List<ulong>();
+            List<ulong> svdSectors = new List<ulong>();
+            List<ulong> evdSectors = new List<ulong>();
+            List<ulong> vpdSectors = new List<ulong>();
 
             while(true)
             {
@@ -110,9 +115,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 {
                     case 0:
                     {
-                        bvd = Marshal.ByteArrayToStructureLittleEndian<BootRecord>(vdSector, hsOff, 2048 - hsOff);
-
-                        // TODO: Add boot file to debug root directory
+                        if(debug) bvdSectors.Add(16 + counter + partition.Start);
 
                         break;
                     }
@@ -125,6 +128,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                         else if(cdi)
                             fsvd = Marshal.ByteArrayToStructureBigEndian<FileStructureVolumeDescriptor>(vdSector);
                         else pvd = Marshal.ByteArrayToStructureLittleEndian<PrimaryVolumeDescriptor>(vdSector);
+
+                        if(debug) pvdSectors.Add(16 + counter + partition.Start);
 
                         break;
                     }
@@ -144,13 +149,19 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 else
                                     DicConsole.WriteLine("ISO9660 plugin",
                                                          "Found unknown supplementary volume descriptor");
+                            if(debug) svdSectors.Add(16 + counter + partition.Start);
                         }
-                        else if(useEvd)
+                        else
                         {
-                            // Basically until escape sequences are implemented, let the user chose the encoding.
-                            // This is the same as user chosing Romeo namespace, but using the EVD instead of the PVD
-                            this.@namespace = Namespace.Romeo;
-                            pvd             = svd;
+                            if(debug) evdSectors.Add(16 + counter + partition.Start);
+
+                            if(useEvd)
+                            {
+                                // Basically until escape sequences are implemented, let the user chose the encoding.
+                                // This is the same as user chosing Romeo namespace, but using the EVD instead of the PVD
+                                this.@namespace = Namespace.Romeo;
+                                pvd             = svd;
+                            }
                         }
 
                         break;
@@ -158,7 +169,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                     case 3:
                     {
-                        // Unused
+                        if(debug) vpdSectors.Add(16 + counter + partition.Start);
+
                         break;
                     }
                 }
@@ -188,6 +200,10 @@ namespace DiscImageChef.Filesystems.ISO9660
             string fsFormat;
             byte[] pathTableData;
             uint   pathTableSizeInSectors = 0;
+
+            uint pathTableMsbLocation;
+            uint pathTableLsbLocation;
+
             if(highSierra)
             {
                 pathTableSizeInSectors = hsvd.Value.path_table_size / 2048;
@@ -197,6 +213,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                     imagePlugin.ReadSectors(Swapping.Swap(hsvd.Value.mandatory_path_table_msb), pathTableSizeInSectors);
 
                 fsFormat = "High Sierra Format";
+
+                pathTableMsbLocation = hsvd.Value.mandatory_path_table_msb;
+                pathTableLsbLocation = hsvd.Value.mandatory_path_table_lsb;
             }
             else if(cdi)
             {
@@ -206,6 +225,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                 pathTableData = imagePlugin.ReadSectors(fsvd.Value.path_table_addr, pathTableSizeInSectors);
 
                 fsFormat = "CD-i";
+
+                pathTableMsbLocation = fsvd.Value.path_table_addr;
+
                 // TODO: Implement CD-i
                 return Errno.NotImplemented;
             }
@@ -218,6 +240,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                     imagePlugin.ReadSectors(Swapping.Swap(pvd.Value.type_m_path_table), pathTableSizeInSectors);
 
                 fsFormat = "ISO9660";
+
+                pathTableMsbLocation = pvd.Value.type_m_path_table;
+                pathTableLsbLocation = pvd.Value.type_l_path_table;
             }
 
             pathTable = highSierra ? DecodeHighSierraPathTable(pathTableData) : DecodePathTable(pathTableData);
@@ -259,20 +284,17 @@ namespace DiscImageChef.Filesystems.ISO9660
                 if(rootEntry.size         % fsvd.Value.logical_block_size > 0) rootSize++;
 
                 usePathTable = true;
-                useTransTbl = false;
+                useTransTbl  = false;
             }
 
             if(rootLocation + rootSize >= imagePlugin.Info.Sectors) return Errno.InvalidArgument;
 
             byte[] rootDir = imagePlugin.ReadSectors(rootLocation, rootSize);
 
-            byte[]           ipbinSector = imagePlugin.ReadSector(0 + partition.Start);
+            byte[]           ipbinSector = imagePlugin.ReadSector(partition.Start);
             CD.IPBin?        segaCd      = CD.DecodeIPBin(ipbinSector);
             Saturn.IPBin?    saturn      = Saturn.DecodeIPBin(ipbinSector);
             Dreamcast.IPBin? dreamcast   = Dreamcast.DecodeIPBin(ipbinSector);
-
-            // TODO: Add IP.BIN to debug root directory
-            // TODO: Add volume descriptors to debug root directory
 
             if(this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip)
             {
@@ -291,6 +313,117 @@ namespace DiscImageChef.Filesystems.ISO9660
                                              : DecodeIsoDirectory(rootDir);
 
             XmlFsType.Type = fsFormat;
+
+            if(debug)
+            {
+                rootDirectoryCache.Add("$",
+                                       new DecodedDirectoryEntry
+                                       {
+                                           Extent    = rootLocation,
+                                           Filename  = "$",
+                                           Size      = 2048,
+                                           Timestamp = decodedVd.CreationTime
+                                       });
+
+                if(!cdi)
+                    rootDirectoryCache.Add("$PATH_TABLE.LSB",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = pathTableLsbLocation,
+                                               Filename  = "$PATH_TABLE.LSB",
+                                               Size      = (uint)pathTableData.Length,
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                rootDirectoryCache.Add("$PATH_TABLE.MSB",
+                                       new DecodedDirectoryEntry
+                                       {
+                                           Extent    = pathTableMsbLocation,
+                                           Filename  = "$PATH_TABLE.MSB",
+                                           Size      = (uint)pathTableData.Length,
+                                           Timestamp = decodedVd.CreationTime
+                                       });
+
+                for(int i = 0; i < bvdSectors.Count; i++)
+                    rootDirectoryCache.Add(i == 0 ? "$BOOT" : $"$BOOT_{i}",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = (uint)i,
+                                               Filename  = i == 0 ? "$BOOT" : $"$BOOT_{i}",
+                                               Size      = 2048,
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                for(int i = 0; i < pvdSectors.Count; i++)
+                    rootDirectoryCache.Add(i == 0 ? "$PVD" : $"$PVD{i}",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = (uint)i,
+                                               Filename  = i == 0 ? "$PVD" : $"PVD_{i}",
+                                               Size      = 2048,
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                for(int i = 0; i < svdSectors.Count; i++)
+                    rootDirectoryCache.Add(i == 0 ? "$SVD" : $"$SVD_{i}",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = (uint)i,
+                                               Filename  = i == 0 ? "$SVD" : $"$SVD_{i}",
+                                               Size      = 2048,
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                for(int i = 0; i < evdSectors.Count; i++)
+                    rootDirectoryCache.Add(i == 0 ? "$EVD" : $"$EVD_{i}",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = (uint)i,
+                                               Filename  = i == 0 ? "$EVD" : $"$EVD_{i}",
+                                               Size      = 2048,
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                for(int i = 0; i < vpdSectors.Count; i++)
+                    rootDirectoryCache.Add(i == 0 ? "$VPD" : $"$VPD_{i}",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = (uint)i,
+                                               Filename  = i == 0 ? "$VPD" : $"$VPD_{i}",
+                                               Size      = 2048,
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                if(segaCd != null)
+                    rootDirectoryCache.Add("$IP.BIN",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = 0,
+                                               Filename  = "$IP.BIN",
+                                               Size      = (uint)Marshal.SizeOf<CD.IPBin>(),
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                if(saturn != null)
+                    rootDirectoryCache.Add("$IP.BIN",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = 0,
+                                               Filename  = "$IP.BIN",
+                                               Size      = (uint)Marshal.SizeOf<Saturn.IPBin>(),
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+
+                if(dreamcast != null)
+                    rootDirectoryCache.Add("$IP.BIN",
+                                           new DecodedDirectoryEntry
+                                           {
+                                               Extent    = 0,
+                                               Filename  = "$IP.BIN",
+                                               Size      = (uint)Marshal.SizeOf<Dreamcast.IPBin>(),
+                                               Timestamp = decodedVd.CreationTime
+                                           });
+            }
 
             if(jolietvd != null && (this.@namespace == Namespace.Joliet || this.@namespace == Namespace.Rrip))
             {
