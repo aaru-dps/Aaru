@@ -89,16 +89,15 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.Extents is null) return Errno.InvalidArgument;
 
-            if(entry.Size - entry.XattrLength == 0)
+            if(entry.Size == 0)
             {
                 buf = new byte[0];
                 return Errno.NoError;
             }
 
-            if(offset >= (long)entry.Size - entry.XattrLength) return Errno.InvalidArgument;
+            if(offset >= (long)entry.Size) return Errno.InvalidArgument;
 
-            if(size + offset + entry.XattrLength >= (long)entry.Size)
-                size = (long)entry.Size - offset - entry.XattrLength;
+            if(size + offset >= (long)entry.Size) size = (long)entry.Size - offset;
 
             offset += entry.XattrLength;
 
@@ -136,7 +135,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                 Attributes       = new FileAttributes(),
                 Blocks           = (long)(entry.Size / 2048), // TODO: XA
                 BlockSize        = 2048,
-                Length           = (long)(entry.Size - entry.XattrLength),
+                Length           = (long)entry.Size,
                 Inode            = entry.Extents?[0].extent ?? 0,
                 Links            = 1,
                 LastWriteTimeUtc = entry.Timestamp
