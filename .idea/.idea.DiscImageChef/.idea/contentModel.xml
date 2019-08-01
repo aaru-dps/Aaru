@@ -1350,7 +1350,10 @@
         <e p="NTFS.cs" t="Include" />
         <e p="Nintendo.cs" t="Include" />
         <e p="ODS.cs" t="Include" />
-        <e p="Opera.cs" t="Include" />
+        <e p="Opera" t="Include">
+          <e p="Consts.cs" t="Include" />
+          <e p="Opera.cs" t="Include" />
+        </e>
         <e p="PCEngine.cs" t="Include" />
         <e p="PCFX.cs" t="Include" />
         <e p="PFS.cs" t="Include" />
