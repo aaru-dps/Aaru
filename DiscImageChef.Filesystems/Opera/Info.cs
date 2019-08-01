@@ -23,7 +23,7 @@ namespace DiscImageChef.Filesystems
 
             if(recordType != 1 || recordVersion != 1) return false;
 
-            return Encoding.ASCII.GetString(syncBytes) == "ZZZZZ";
+            return Encoding.ASCII.GetString(syncBytes) == SYNC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -36,11 +36,11 @@ namespace DiscImageChef.Filesystems
 
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
-            OperaSuperBlock sb = Marshal.ByteArrayToStructureBigEndian<OperaSuperBlock>(sbSector);
+            SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
             sb.sync_bytes = new byte[5];
 
             if(sb.record_type != 1 || sb.record_version != 1) return;
-            if(Encoding.ASCII.GetString(sb.sync_bytes) != "ZZZZZ") return;
+            if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC) return;
 
             superBlockMetadata.AppendFormat("Opera filesystem disc.").AppendLine();
             if(!string.IsNullOrEmpty(StringHandlers.CToString(sb.volume_label, Encoding)))
@@ -68,7 +68,7 @@ namespace DiscImageChef.Filesystems
             superBlockMetadata
                .AppendFormat("Volume size: {0} blocks, {1} bytes", sb.block_count, sb.block_size * sb.block_count)
                .AppendLine();
-            if((ulong)sb.block_count > imagePlugin.Info.Sectors)
+            if(sb.block_count > imagePlugin.Info.Sectors)
                 superBlockMetadata
                    .AppendFormat("WARNING: Filesystem indicates {0} blocks while device indicates {1} blocks",
                                  sb.block_count, imagePlugin.Info.Sectors);
@@ -84,8 +84,8 @@ namespace DiscImageChef.Filesystems
             {
                 Type        = "Opera",
                 VolumeName  = StringHandlers.CToString(sb.volume_label, Encoding),
-                ClusterSize = (uint)sb.block_size,
-                Clusters    = (ulong)sb.block_count
+                ClusterSize = sb.block_size,
+                Clusters    = sb.block_count
             };
         }
     }
