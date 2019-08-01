@@ -109,7 +109,7 @@ namespace DiscImageChef.Filesystems
             public readonly uint last_copy;
         }
 
-        struct DirectoryEntryWithPointers
+        class DirectoryEntryWithPointers
         {
             public DirectoryEntry entry;
             public uint[]         pointers;
