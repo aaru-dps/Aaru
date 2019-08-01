@@ -10,7 +10,19 @@ namespace DiscImageChef.Filesystems
     {
         public Errno MapBlock(string path, long fileBlock, out long deviceBlock) => throw new NotImplementedException();
 
-        public Errno GetAttributes(string path, out FileAttributes attributes) => throw new NotImplementedException();
+        public Errno GetAttributes(string path, out FileAttributes attributes)
+        {
+            attributes = new FileAttributes();
+            if(!mounted) return Errno.AccessDenied;
+
+            Errno err = Stat(path, out FileEntryInfo stat);
+
+            if(err != Errno.NoError) return err;
+
+            attributes = stat.Attributes;
+
+            return Errno.NoError;
+        }
 
         public Errno Read(string path, long offset, long size, ref byte[] buf) => throw new NotImplementedException();
 
