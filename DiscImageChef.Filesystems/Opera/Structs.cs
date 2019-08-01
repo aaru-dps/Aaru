@@ -11,7 +11,7 @@ namespace DiscImageChef.Filesystems
             public readonly byte record_type;
             /// <summary>0x001, 5 bytes, "ZZZZZ"</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-            public byte[] sync_bytes;
+            public readonly byte[] sync_bytes;
             /// <summary>0x006, Record version, must be 1</summary>
             public readonly byte record_version;
             /// <summary>0x007, Volume flags</summary>
@@ -83,6 +83,10 @@ namespace DiscImageChef.Filesystems
             /// </summary>
             public readonly uint block_size;
             /// <summary>
+            ///     Size in bytes
+            /// </summary>
+            public readonly uint byte_count;
+            /// <summary>
             ///     Block count
             /// </summary>
             public readonly uint block_count;
@@ -103,6 +107,12 @@ namespace DiscImageChef.Filesystems
             ///     Last copy
             /// </summary>
             public readonly uint last_copy;
+        }
+
+        struct DirectoryEntryWithPointers
+        {
+            public DirectoryEntry entry;
+            public uint[]         pointers;
         }
     }
 }
