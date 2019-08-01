@@ -37,7 +37,6 @@ namespace DiscImageChef.Filesystems
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
             SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);
-            sb.sync_bytes = new byte[5];
 
             if(sb.record_type != 1 || sb.record_version != 1) return;
             if(Encoding.ASCII.GetString(sb.sync_bytes) != SYNC) return;
