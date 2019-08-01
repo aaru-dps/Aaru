@@ -17,6 +17,9 @@ namespace DiscImageChef.Filesystems
             // TODO: Find correct default encoding
             Encoding = Encoding.ASCII;
 
+            if(options == null) options = GetDefaultOptions();
+            if(options.TryGetValue("debug", out string debugString)) bool.TryParse(debugString, out debug);
+
             byte[] sbSector = imagePlugin.ReadSector(0 + partition.Start);
 
             SuperBlock sb = Marshal.ByteArrayToStructureBigEndian<SuperBlock>(sbSector);

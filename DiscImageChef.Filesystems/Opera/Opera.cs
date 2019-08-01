@@ -41,6 +41,7 @@ namespace DiscImageChef.Filesystems
 {
     public partial class OperaFS : IReadOnlyFilesystem
     {
+        bool                                                               debug;
         Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> directoryCache;
         IMediaImage                                                        image;
         bool                                                               mounted;
