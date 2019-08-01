@@ -41,11 +41,12 @@ namespace DiscImageChef.Filesystems
 {
     public partial class OperaFS : IReadOnlyFilesystem
     {
-        IMediaImage                                    image;
-        bool                                           mounted;
-        Dictionary<string, DirectoryEntryWithPointers> rootDirectoryCache;
-        FileSystemInfo                                 statfs;
-        uint                                           volumeBlockSizeRatio;
+        Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>> directoryCache;
+        IMediaImage                                                        image;
+        bool                                                               mounted;
+        Dictionary<string, DirectoryEntryWithPointers>                     rootDirectoryCache;
+        FileSystemInfo                                                     statfs;
+        uint                                                               volumeBlockSizeRatio;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
