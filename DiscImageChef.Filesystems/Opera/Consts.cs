@@ -1,3 +1,5 @@
+using DiscImageChef.Helpers;
+
 namespace DiscImageChef.Filesystems
 {
     public partial class OperaFS
@@ -18,6 +20,7 @@ namespace DiscImageChef.Filesystems
         ///     Catapult
         /// </summary>
         const uint TYPE_ZAP = 0x2A7A6170;
+        static readonly int DirectoryEntrySize = Marshal.SizeOf<DirectoryEntry>();
 
         enum FileFlags : uint
         {
