@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -54,9 +53,10 @@ namespace DiscImageChef.Filesystems
             image = imagePlugin;
             int firstRootBlock = BigEndianBitConverter.ToInt32(sbSector, Marshal.SizeOf<SuperBlock>());
             rootDirectoryCache = DecodeDirectory(firstRootBlock);
+            directoryCache     = new Dictionary<string, Dictionary<string, DirectoryEntryWithPointers>>();
             mounted            = true;
 
-            throw new NotImplementedException();
+            return Errno.NoError;
         }
 
         public Errno Unmount()
