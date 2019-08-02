@@ -73,12 +73,13 @@ namespace DiscImageChef.Filesystems
 
             int nextBlock = firstBlock;
 
+            DirectoryHeader header;
+
             do
             {
-                byte[] data =
-                    image.ReadSectors((ulong)(nextBlock * volumeBlockSizeRatio), volumeBlockSizeRatio);
-                DirectoryHeader header = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
-                nextBlock = header.next_block;
+                byte[] data = image.ReadSectors((ulong)(nextBlock * volumeBlockSizeRatio), volumeBlockSizeRatio);
+                header    = Marshal.ByteArrayToStructureBigEndian<DirectoryHeader>(data);
+                nextBlock = header.next_block + firstBlock;
 
                 int off = (int)header.first_used;
 
@@ -106,7 +107,7 @@ namespace DiscImageChef.Filesystems
 
                 if((entry.flags & (uint)FileFlags.LastEntry) != 0) break;
             }
-            while(nextBlock != -1);
+            while(header.next_block != -1);
 
             return entries;
         }
