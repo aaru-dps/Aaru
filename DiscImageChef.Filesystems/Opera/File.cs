@@ -37,7 +37,46 @@ namespace DiscImageChef.Filesystems
             return Errno.NoError;
         }
 
-        public Errno Read(string path, long offset, long size, ref byte[] buf) => throw new NotImplementedException();
+        public Errno Read(string path, long offset, long size, ref byte[] buf)
+        {
+            buf = null;
+            if(!mounted) return Errno.AccessDenied;
+
+            Errno err = GetFileEntry(path, out DirectoryEntryWithPointers entry);
+            if(err != Errno.NoError) return err;
+
+            if((entry.entry.flags & FLAGS_MASK) == (uint)FileFlags.Directory && !debug) return Errno.IsDirectory;
+
+            if(entry.pointers.Length < 1) return Errno.InvalidArgument;
+
+            if(entry.entry.byte_count == 0)
+            {
+                buf = new byte[0];
+                return Errno.NoError;
+            }
+
+            if(offset >= entry.entry.byte_count) return Errno.InvalidArgument;
+
+            if(size + offset >= entry.entry.byte_count) size = entry.entry.byte_count - offset;
+
+            long firstBlock    = offset                 / entry.entry.block_size;
+            long offsetInBlock = offset                 % entry.entry.block_size;
+            long sizeInBlocks  = (size + offsetInBlock) / entry.entry.block_size;
+            if((size + offsetInBlock) % entry.entry.block_size > 0) sizeInBlocks++;
+
+            uint fileBlockSizeRatio;
+            if(image.Info.SectorSize == 2336 || image.Info.SectorSize == 2352 || image.Info.SectorSize == 2448)
+                fileBlockSizeRatio  = entry.entry.block_size / 2048;
+            else fileBlockSizeRatio = entry.entry.block_size / image.Info.SectorSize;
+
+            byte[] buffer = image.ReadSectors((ulong)(entry.pointers[0] + firstBlock * fileBlockSizeRatio),
+                                              (uint)(sizeInBlocks * fileBlockSizeRatio));
+
+            buf = new byte[size];
+            Array.Copy(buffer, offsetInBlock, buf, 0, size);
+
+            return Errno.NoError;
+        }
 
         public Errno Stat(string path, out FileEntryInfo stat)
         {
