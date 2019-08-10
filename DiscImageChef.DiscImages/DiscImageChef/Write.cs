@@ -1612,6 +1612,13 @@ namespace DiscImageChef.DiscImages
             foreach(KeyValuePair<MediaTagType, byte[]> mediaTag in mediaTags)
             {
                 DataType dataType = GetDataTypeForMediaTag(mediaTag.Key);
+
+                if(mediaTag.Value is null)
+                {
+                    DicConsole.ErrorWriteLine("Tag type {0} is null, skipping...", dataType);
+                    continue;
+                }
+
                 idxEntry = new IndexEntry
                 {
                     blockType = BlockType.DataBlock, dataType = dataType, offset = (ulong)imageStream.Position

@@ -539,7 +539,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             sidecar               = preSidecar;
                         }
 
-                        if(dev.IsUsb)
+                        if(dev.IsUsb && dev.UsbDescriptors != null)
                         {
                             dumpLog.WriteLine("Reading USB descriptors.");
                             UpdateStatus?.Invoke("Reading USB descriptors.");
@@ -559,7 +559,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 };
                         }
 
-                        if(dev.IsPcmcia)
+                        if(dev.IsPcmcia && dev.Cis != null)
                         {
                             dumpLog.WriteLine("Reading PCMCIA CIS.");
                             UpdateStatus?.Invoke("Reading PCMCIA CIS.");

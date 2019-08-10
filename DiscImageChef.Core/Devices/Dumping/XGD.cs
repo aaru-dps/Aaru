@@ -883,6 +883,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
             {
+                if(tag.Value is null)
+                {
+                    DicConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                    continue;
+                }
+
                 ret = outputPlugin.WriteMediaTag(tag.Value, tag.Key);
                 if(ret || force) continue;
 

@@ -684,6 +684,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(opticalDisc)
                     foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                     {
+                        if(tag.Value is null)
+                        {
+                            DicConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                            continue;
+                        }
+
                         ret = outputPlugin.WriteMediaTag(tag.Value, tag.Key);
 
                         if(ret || force) continue;
@@ -698,7 +704,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     if(!dev.IsRemovable || dev.IsUsb)
                     {
-                        if(dev.IsUsb)
+                        if(dev.IsUsb && dev.UsbDescriptors != null)
                         {
                             UpdateStatus?.Invoke("Reading USB descriptors.");
                             dumpLog.WriteLine("Reading USB descriptors.");

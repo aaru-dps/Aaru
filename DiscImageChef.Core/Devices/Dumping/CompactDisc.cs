@@ -1801,6 +1801,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(!aborted)
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                 {
+                    if(tag.Value is null)
+                    {
+                        DicConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                        continue;
+                    }
+
                     ret = outputPlugin.WriteMediaTag(tag.Value, tag.Key);
 
                     if(ret || force) continue;
@@ -1873,7 +1879,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                          from partition in xmlTrack.FileSystemInformation
                                          where partition.FileSystems != null
                                          from fileSystem in partition.FileSystems
-                                         select ((ulong)partition.StartSector, fileSystem.Type));
+                                         select (partition.StartSector, fileSystem.Type));
 
                 if(filesystems.Count > 0)
                     foreach(var filesystem in filesystems.Select(o => new {o.start, o.type}).Distinct())
