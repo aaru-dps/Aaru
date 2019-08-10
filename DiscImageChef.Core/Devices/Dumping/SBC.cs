@@ -911,7 +911,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // All USB flash drives report as removable, even if the media is not removable
                     if(!dev.IsRemovable || dev.IsUsb)
                     {
-                        if(dev.IsUsb)
+                        if(dev.IsUsb && dev.UsbDescriptors != null)
                             if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
                                 sidecar.BlockMedia[0].USB = new USBType
                                 {
