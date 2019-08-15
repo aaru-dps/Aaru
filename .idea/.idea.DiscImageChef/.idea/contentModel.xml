@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.1/system/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.1/system/resharper-host/local/Transient/ReSharperHost/v191/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
     <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
@@ -174,12 +174,6 @@
       </e>
       <e p="DiscImageChef.Compression" t="IncludeRecursive">
         <e p="AppleRle.cs" t="Include" />
-        <e p="CUETools.Codecs" t="Include">
-          <e p="CRC" t="Include" />
-        </e>
-        <e p="CUETools.Codecs.FLAKE" t="Include">
-          <e p="Properties" t="Include" />
-        </e>
         <e p="DiscImageChef.Compression.csproj" t="IncludeRecursive" />
         <e p="TeleDiskLzh.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
@@ -1352,7 +1346,12 @@
         <e p="ODS.cs" t="Include" />
         <e p="Opera" t="Include">
           <e p="Consts.cs" t="Include" />
+          <e p="Dir.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
           <e p="Opera.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Super.cs" t="Include" />
         </e>
         <e p="PCEngine.cs" t="Include" />
         <e p="PCFX.cs" t="Include" />
@@ -2259,64 +2258,72 @@
       <e p="NEEDINFO.md" t="Include" />
       <e p="README.md" t="Include" />
       <e p="TODO.md" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/AudioBuffer.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/AudioDecoderClass.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/AudioEncoderClass.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/AudioEncoderSettings.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/AudioPCMConfig.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/AudioPipe.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/AudioSamples.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/BitReader.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/BitWriter.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CRC/CRC16.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CRC/CRC16CCITT.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CRC/CRC32.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CRC/CRC8.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CUEToolsCodecsConfig.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CUEToolsFormat.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CUEToolsTagger.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CUEToolsUDC.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CUEToolsUDCList.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CyclicBuffer.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CyclicBufferInputStream.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/CyclicBufferOutputStream.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/DefaultValueForMode.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/DummyWriter.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/IAudioDest.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/IAudioFilter.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/IAudioSource.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/IWavePlayer.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/LPC.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/LpcContext.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/NullStream.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/PlaybackState.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/SRDescriptionAttribute.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/SilenceGenerator.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/UserDefinedEncoderSettings.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/UserDefinedReader.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/UserDefinedWriter.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/WAVReader.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/WAVWriter.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs/WAVWriterSettings.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/ChannelMode.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/FlacFrame.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/FlacSubframe.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/FlacSubframeInfo.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/Flake.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/FlakeReader.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/FlakeWriter.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/MetadataType.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/OrderMethod.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/PredictionType.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/Properties/Resources.Designer.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/Properties/Resources.resx" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/Properties/Resources.ru-RU.resx" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/RiceContext.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/SeekPoint.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/StereoMethod.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/SubframeType.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/WindowFunction.cs" t="Include" />
-      <e p="cuetoolsnet/CUETools.Codecs.FLAKE/WindowMethod.cs" t="Include" />
+      <e p="cuetoolsnet/CUETools.Codecs" t="Include">
+        <e p="AudioBuffer.cs" t="Include" />
+        <e p="AudioDecoderClass.cs" t="Include" />
+        <e p="AudioEncoderClass.cs" t="Include" />
+        <e p="AudioEncoderSettings.cs" t="Include" />
+        <e p="AudioPCMConfig.cs" t="Include" />
+        <e p="AudioPipe.cs" t="Include" />
+        <e p="AudioSamples.cs" t="Include" />
+        <e p="BitReader.cs" t="Include" />
+        <e p="BitWriter.cs" t="Include" />
+        <e p="CRC" t="Include">
+          <e p="CRC16.cs" t="Include" />
+          <e p="CRC16CCITT.cs" t="Include" />
+          <e p="CRC32.cs" t="Include" />
+          <e p="CRC8.cs" t="Include" />
+        </e>
+        <e p="CUEToolsCodecsConfig.cs" t="Include" />
+        <e p="CUEToolsFormat.cs" t="Include" />
+        <e p="CUEToolsTagger.cs" t="Include" />
+        <e p="CUEToolsUDC.cs" t="Include" />
+        <e p="CUEToolsUDCList.cs" t="Include" />
+        <e p="CyclicBuffer.cs" t="Include" />
+        <e p="CyclicBufferInputStream.cs" t="Include" />
+        <e p="CyclicBufferOutputStream.cs" t="Include" />
+        <e p="DefaultValueForMode.cs" t="Include" />
+        <e p="DummyWriter.cs" t="Include" />
+        <e p="IAudioDest.cs" t="Include" />
+        <e p="IAudioFilter.cs" t="Include" />
+        <e p="IAudioSource.cs" t="Include" />
+        <e p="IWavePlayer.cs" t="Include" />
+        <e p="LPC.cs" t="Include" />
+        <e p="LpcContext.cs" t="Include" />
+        <e p="NullStream.cs" t="Include" />
+        <e p="PlaybackState.cs" t="Include" />
+        <e p="SRDescriptionAttribute.cs" t="Include" />
+        <e p="SilenceGenerator.cs" t="Include" />
+        <e p="UserDefinedEncoderSettings.cs" t="Include" />
+        <e p="UserDefinedReader.cs" t="Include" />
+        <e p="UserDefinedWriter.cs" t="Include" />
+        <e p="WAVReader.cs" t="Include" />
+        <e p="WAVWriter.cs" t="Include" />
+        <e p="WAVWriterSettings.cs" t="Include" />
+      </e>
+      <e p="cuetoolsnet/CUETools.Codecs.FLAKE" t="Include">
+        <e p="ChannelMode.cs" t="Include" />
+        <e p="FlacFrame.cs" t="Include" />
+        <e p="FlacSubframe.cs" t="Include" />
+        <e p="FlacSubframeInfo.cs" t="Include" />
+        <e p="Flake.cs" t="Include" />
+        <e p="FlakeReader.cs" t="Include" />
+        <e p="FlakeWriter.cs" t="Include" />
+        <e p="MetadataType.cs" t="Include" />
+        <e p="OrderMethod.cs" t="Include" />
+        <e p="PredictionType.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+          <e p="Resources.ru-RU.resx" t="Include" />
+        </e>
+        <e p="RiceContext.cs" t="Include" />
+        <e p="SeekPoint.cs" t="Include" />
+        <e p="StereoMethod.cs" t="Include" />
+        <e p="SubframeType.cs" t="Include" />
+        <e p="WindowFunction.cs" t="Include" />
+        <e p="WindowMethod.cs" t="Include" />
+      </e>
       <e p="packages" t="ExcludeRecursive" />
     </e>
   </component>

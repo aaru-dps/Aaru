@@ -1486,6 +1486,13 @@ namespace DiscImageChef.DiscImages
                                     if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.Mode2Form2Ok)
                                         ReconstructEcc(ref sector, TrackType.CdMode2Form2);
                                 }
+                                else if((sectorSuffixDdt[sectorAddress] & CD_XFIX_MASK) == (uint)CdFixFlags.NotDumped)
+                                {
+                                    // Do nothing
+                                }
+                                else
+                                    // Mode 2 where ECC failed
+                                    Array.Copy(data, 0, sector, 24, 2328);
                             }
                             else if(mode2Subheaders != null)
                             {
