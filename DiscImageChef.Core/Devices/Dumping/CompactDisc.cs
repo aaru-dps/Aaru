@@ -470,7 +470,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 dskType = MediaType.CDI;
                                 break;
                             case 0x20:
-                                if(dskType == MediaType.CD) dskType = MediaType.CDROMXA;
+                                if(dskType == MediaType.CD || dskType == MediaType.CDROM) dskType = MediaType.CDROMXA;
                                 break;
                         }
 
@@ -748,6 +748,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                         UpdateStatus?.Invoke($"Track {tracks[t].TrackSequence} is MODE2 FORM 1");
                         dumpLog.WriteLine("Track {0} is MODE2 FORM 1", tracks[t].TrackSequence);
                         tracks[t].TrackType = TrackType.CdMode2Form1;
+
+                        // These media type specifications do not legally allow mode 2 tracks to be present
+                        if(dskType == MediaType.CDROM || dskType == MediaType.CDPLUS || dskType == MediaType.CDV)
+                            dskType = MediaType.CD;
+
                         break;
                     default:
                         UpdateStatus?.Invoke($"Track {tracks[t].TrackSequence} is unknown mode {readBuffer[15]}");
