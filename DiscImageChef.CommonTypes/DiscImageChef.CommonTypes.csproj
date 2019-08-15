@@ -66,6 +66,7 @@
     <Compile Include="Geometry.cs" />
     <Compile Include="Interfaces\IChecksum.cs" />
     <Compile Include="Interfaces\IFilesystem.cs" />
+    <Compile Include="Interfaces\IArchive.cs" />
     <Compile Include="Interfaces\IFilter.cs" />
     <Compile Include="Interfaces\IFloppyImage.cs" />
     <Compile Include="Interfaces\IMediaImage.cs" />
