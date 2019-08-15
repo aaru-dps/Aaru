@@ -137,7 +137,7 @@ namespace DiscImageChef.Commands
                 return (int)ErrorNumber.NotVerificable;
             }
 
-            if(verifyDisc)
+            if(verifyDisc && verifiableImage != null)
             {
                 DateTime startCheck      = DateTime.UtcNow;
                 bool?    discCheckStatus = verifiableImage.VerifyMediaImage();
@@ -169,7 +169,7 @@ namespace DiscImageChef.Commands
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
 
-                if(inputFormat is IOpticalMediaImage opticalMediaImage)
+                if(verifiableSectorsImage is IOpticalMediaImage opticalMediaImage)
                 {
                     List<Track> inputTracks      = opticalMediaImage.Tracks;
                     ulong       currentSectorAll = 0;
