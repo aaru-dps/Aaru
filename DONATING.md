@@ -12,7 +12,7 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - AIT drive and tapes
 - Apple twiggy and media
 - Caleb UHD144 drive
-- Castlewood Orb 2.2 and 5.7
+- Castlewood Orb 2.2 (media only) and 5.7
 - DLT drive and tapes
 - DiscFerret
 - HD-DVD media
@@ -29,7 +29,6 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - Mammoth drive and tapes
 - Panasonic Blu-ray recorder
 - Plasmon UDO and UDO2 drives and media
-- SCSI floppy drive (e.g. Teac FD235JS806-U)
 - SLR drive and tapes
 - Sony HiFD
 - Sony MD-DATA and media (e.g. MDM-111, MDH-10)
@@ -47,7 +46,6 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - Syquest SQ5110 drive and SQ800 media
 - Syquest SQ5200C drive and SQ2000 media
 - Syquest SQ555 drive and SQ400 media
-- Syquest SparQ drive and media
 - Syquest SyJet drive and media
 - T9840, T9940, T10000 drive and tapes
 - Travan drive and tapes
