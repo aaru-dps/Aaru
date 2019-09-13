@@ -87,7 +87,6 @@ are copy protections.
   - Codename: Eagle
   - Command & Conquer: Generals
   - FIFA Football 2002
-  - Football Manager 2007
 - SecuROM
   - Arabian Nights
   - Arcania: Gothic 4
@@ -167,4 +166,3 @@ are copy protections.
   - Shift 2 Unleashed
   - Still Life 2
   - Warfare
-  - X3: Terran Conflict

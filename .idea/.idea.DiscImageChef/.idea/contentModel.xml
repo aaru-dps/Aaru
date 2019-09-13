@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
-      <e p=".git/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
-      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
