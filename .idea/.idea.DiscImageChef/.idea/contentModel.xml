@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
+    <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p=".git/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
@@ -112,6 +117,7 @@
         <e p="Filters.cs" t="Include" />
         <e p="Geometry.cs" t="Include" />
         <e p="Interfaces" t="Include">
+          <e p="IArchive.cs" t="Include" />
           <e p="IChecksum.cs" t="Include" />
           <e p="IFilesystem.cs" t="Include" />
           <e p="IFilter.cs" t="Include" />
@@ -1867,193 +1873,7 @@
           </e>
         </e>
       </e>
-      <e p="DiscImageChef.Server" t="IncludeRecursive">
-        <e p="App_Start" t="Include">
-          <e p="Ata.cs" t="Include" />
-          <e p="RouteConfig.cs" t="Include" />
-          <e p="ScsiEvpd.cs" t="Include" />
-          <e p="ScsiInquiry.cs" t="Include" />
-          <e p="ScsiMmcFeatures.cs" t="Include" />
-          <e p="ScsiMmcMode.cs" t="Include" />
-          <e p="ScsiModeSense.cs" t="Include" />
-          <e p="SscTestedMedia.cs" t="Include" />
-          <e p="StatsConverter.cs" t="Include" />
-          <e p="TestedMedia.cs" t="Include" />
-          <e p="WebApiConfig.cs" t="Include" />
-        </e>
-        <e p="Controllers" t="Include">
-          <e p="HomeController.cs" t="Include" />
-          <e p="ReportController.cs" t="Include" />
-          <e p="StatsController.cs" t="Include" />
-          <e p="UpdateController.cs" t="Include" />
-          <e p="UploadReportController.cs" t="Include" />
-          <e p="UploadStatsController.cs" t="Include" />
-        </e>
-        <e p="DiscImageChef.Server.csproj" t="IncludeRecursive" />
-        <e p="Global.asax" t="Include" />
-        <e p="Global.asax.cs" t="Include" />
-        <e p="Migrations" t="Include">
-          <e p="201812201613369_InitialMigration.Designer.cs" t="Include" />
-          <e p="201812201613369_InitialMigration.cs" t="Include" />
-          <e p="201812201613369_InitialMigration.resx" t="Include" />
-          <e p="201812220029427_AddStatistics.Designer.cs" t="Include" />
-          <e p="201812220029427_AddStatistics.cs" t="Include" />
-          <e p="201812220029427_AddStatistics.resx" t="Include" />
-          <e p="201812221606592_LinkDeviceStatsToReport.Designer.cs" t="Include" />
-          <e p="201812221606592_LinkDeviceStatsToReport.cs" t="Include" />
-          <e p="201812221606592_LinkDeviceStatsToReport.resx" t="Include" />
-          <e p="201812231612080_FixUnsignedFields.Designer.cs" t="Include" />
-          <e p="201812231612080_FixUnsignedFields.cs" t="Include" />
-          <e p="201812231612080_FixUnsignedFields.resx" t="Include" />
-          <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.Designer.cs" t="Include" />
-          <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.cs" t="Include" />
-          <e p="201812232250198_UseBinaryDataForIdentifyInquiryAndModesInReports.resx" t="Include" />
-          <e p="201812240552109_StoreUsbIdsInDatabase.Designer.cs" t="Include" />
-          <e p="201812240552109_StoreUsbIdsInDatabase.cs" t="Include" />
-          <e p="201812240552109_StoreUsbIdsInDatabase.resx" t="Include" />
-          <e p="201812241719441_FixUsbIdsAndIndexes.Designer.cs" t="Include" />
-          <e p="201812241719441_FixUsbIdsAndIndexes.cs" t="Include" />
-          <e p="201812241719441_FixUsbIdsAndIndexes.resx" t="Include" />
-          <e p="201812250223002_AddCdOffsets.Designer.cs" t="Include" />
-          <e p="201812250223002_AddCdOffsets.cs" t="Include" />
-          <e p="201812250223002_AddCdOffsets.resx" t="Include" />
-          <e p="201812251556377_StoreMmcGetConfigurationResponse.Designer.cs" t="Include" />
-          <e p="201812251556377_StoreMmcGetConfigurationResponse.cs" t="Include" />
-          <e p="201812251556377_StoreMmcGetConfigurationResponse.resx" t="Include" />
-          <e p="201812252219066_StoreReadResultsInReportDatabase.Designer.cs" t="Include" />
-          <e p="201812252219066_StoreReadResultsInReportDatabase.cs" t="Include" />
-          <e p="201812252219066_StoreReadResultsInReportDatabase.resx" t="Include" />
-          <e p="201901022133012_AddMultisessionLeadTest.Designer.cs" t="Include" />
-          <e p="201901022133012_AddMultisessionLeadTest.cs" t="Include" />
-          <e p="201901022133012_AddMultisessionLeadTest.resx" t="Include" />
-          <e p="201901030344456_AddOptimalReadMultipleCount.Designer.cs" t="Include" />
-          <e p="201901030344456_AddOptimalReadMultipleCount.cs" t="Include" />
-          <e p="201901030344456_AddOptimalReadMultipleCount.resx" t="Include" />
-          <e p="201901081359499_AddChangeableScsiModes.Designer.cs" t="Include" />
-          <e p="201901081359499_AddChangeableScsiModes.cs" t="Include" />
-          <e p="201901081359499_AddChangeableScsiModes.resx" t="Include" />
-          <e p="201905252122267_IdForDensityCode.Designer.cs" t="Include" />
-          <e p="201905252122267_IdForDensityCode.cs" t="Include" />
-          <e p="201905252122267_IdForDensityCode.resx" t="Include" />
-          <e p="201905252245072_MakeEntityFrameworkHappy.Designer.cs" t="Include" />
-          <e p="201905252245072_MakeEntityFrameworkHappy.cs" t="Include" />
-          <e p="201905252245072_MakeEntityFrameworkHappy.resx" t="Include" />
-          <e p="Configuration.cs" t="Include" />
-        </e>
-        <e p="Models" t="Include">
-          <e p="CdOffset.cs" t="Include" />
-          <e p="Command.cs" t="Include" />
-          <e p="Context.cs" t="Include" />
-          <e p="Device.cs" t="Include" />
-          <e p="DeviceItem.cs" t="Include" />
-          <e p="DeviceStat.cs" t="Include" />
-          <e p="Filesystem.cs" t="Include" />
-          <e p="Filter.cs" t="Include" />
-          <e p="Media.cs" t="Include" />
-          <e p="MediaFormat.cs" t="Include" />
-          <e p="MediaItem.cs" t="Include" />
-          <e p="OperatingSystem.cs" t="Include" />
-          <e p="Partition.cs" t="Include" />
-          <e p="UploadedReport.cs" t="Include" />
-          <e p="UsbProduct.cs" t="Include" />
-          <e p="UsbVendor.cs" t="Include" />
-          <e p="Version.cs" t="Include" />
-        </e>
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
-        <e p="Reports" t="Include">
-          <e p=".htaccess" t="Include" />
-        </e>
-        <e p="Views" t="Include">
-          <e p="Home" t="Include">
-            <e p="CODE_OF_CONDUCT.cshtml" t="Include" />
-            <e p="CONTRIBUTING.cshtml" t="Include" />
-            <e p="Changelog.cshtml" t="Include" />
-            <e p="DONATING.cshtml" t="Include" />
-            <e p="ISSUE_TEMPLATE.cshtml" t="Include" />
-            <e p="Index.cshtml" t="Include" />
-            <e p="PULL_REQUEST_TEMPLATE.cshtml" t="Include" />
-            <e p="TODO.cshtml" t="Include" />
-          </e>
-          <e p="Report" t="Include">
-            <e p="View.cshtml" t="Include" />
-          </e>
-          <e p="Shared" t="Include">
-            <e p="_Layout.cshtml" t="Include" />
-          </e>
-          <e p="Stats" t="Include">
-            <e p="Index.cshtml" t="Include" />
-          </e>
-          <e p="Web.config" t="Include" />
-        </e>
-        <e p="Web.Debug.config" t="Include" />
-        <e p="Web.Release.config" t="Include" />
-        <e p="Web.config" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="docs" t="Include">
-          <e p="CODE_OF_CONDUCT.md" t="Include" />
-          <e p="CONTRIBUTING.md" t="Include" />
-          <e p="Changelog.md" t="Include" />
-          <e p="DONATING.md" t="Include" />
-          <e p="ISSUE_TEMPLATE.md" t="Include" />
-          <e p="NEEDINFO.md" t="Include" />
-          <e p="PULL_REQUEST_TEMPLATE.md" t="Include" />
-          <e p="README.md" t="Include" />
-          <e p="TODO.md" t="Include" />
-        </e>
-        <e p="fonts" t="Include">
-          <e p=".htaccess" t="Include" />
-          <e p="ChicagoFLF.eot" t="Include" />
-          <e p="ChicagoFLF.ttf" t="Include" />
-          <e p="ChicagoFLF.woff" t="Include" />
-          <e p="ChicagoFLF.woff2" t="Include" />
-          <e p="vga_squarepx.eot" t="Include" />
-          <e p="vga_squarepx.ttf" t="Include" />
-          <e p="vga_squarepx.woff" t="Include" />
-          <e p="vga_squarepx.woff2" t="Include" />
-        </e>
-        <e p="node_modules/bootstrap" t="IncludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
-        <e p="package-lock.json" t="Include" />
-        <e p="package.json" t="Include" />
-        <e p="packages.config" t="Include" />
-        <e p="styles" t="Include">
-          <e p="_highcharts.scss" t="Include" />
-          <e p="dos" t="Include">
-            <e p="_colors.scss" t="Include" />
-            <e p="_font.scss" t="Include" />
-            <e p="_fontstyles.scss" t="Include" />
-            <e p="dicserver.css" t="Include" />
-            <e p="dicserver.css.map" t="Include" />
-            <e p="dicserver.scss" t="Include" />
-            <e p="dicserver_highcharts.css" t="Include" />
-            <e p="dicserver_highcharts.css.map" t="Include" />
-            <e p="dicserver_highcharts.scss" t="Include" />
-          </e>
-          <e p="mac" t="Include">
-            <e p="_colors.scss" t="Include" />
-            <e p="_font.scss" t="Include" />
-            <e p="_fontstyles.scss" t="Include" />
-            <e p="dicserver.css" t="Include" />
-            <e p="dicserver.css.map" t="Include" />
-            <e p="dicserver.scss" t="Include" />
-            <e p="dicserver_highcharts.css" t="Include" />
-            <e p="dicserver_highcharts.css.map" t="Include" />
-            <e p="dicserver_highcharts.scss" t="Include" />
-          </e>
-        </e>
-      </e>
-      <e p="DiscImageChef.Server.Task" t="IncludeRecursive">
-        <e p="App.config" t="Include" />
-        <e p="DiscImageChef.Server.Task.csproj" t="IncludeRecursive" />
-        <e p="Program.cs" t="Include" />
-        <e p="Properties" t="Include">
-          <e p="AssemblyInfo.cs" t="Include" />
-        </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
-      </e>
+      <e p="DiscImageChef.Server/node_modules/bootstrap" t="IncludeRecursive" />
       <e p="DiscImageChef.Settings" t="IncludeRecursive">
         <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
         <e p="Settings.cs" t="Include" />
