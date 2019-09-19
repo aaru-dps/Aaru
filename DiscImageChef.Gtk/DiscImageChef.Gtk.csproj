@@ -12,7 +12,7 @@
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <ReleaseVersion>$(Version)</ReleaseVersion>
-        <Copyright>Copyright © {copyright:2011} Natalia Portillo</Copyright>
+        <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
         <AssemblyTitle>DiscImageChef</AssemblyTitle>
         <AssemblyName>DiscImageChefGui</AssemblyName>
         <RuntimeIdentifiers>alpine-x64;linux-arm;linux-arm64;linux-x64;linux-x86</RuntimeIdentifiers>

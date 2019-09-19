@@ -57,7 +57,13 @@
         </e>
         <e p="Settings.StyleCop" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Checksums" t="IncludeRecursive">
         <e p="Adler32Context.cs" t="Include" />
@@ -1793,7 +1799,16 @@
           <e p="tabXboxInfo.xeto.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Gui.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netstandard2.0" t="Include">
+              <e p="DiscImageChef.Gui.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Helpers" t="IncludeRecursive">
         <e p="ArrayFill.cs" t="Include" />
