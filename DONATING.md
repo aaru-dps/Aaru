@@ -21,7 +21,7 @@ After adding enhanced support all drives will be given to the Canary Islands Com
 - Iomega Bernoulli
 - Iomega Ditto drive and tapes
 - Iomega JAZ and JAZ 2
-- Iomega REV 70Gb and 120Gb
+- Iomega REV 70Gb
 - Iomega ZIP750 drive
 - LD-ROM drive and media
 - LTO drive and tapes
