@@ -51,11 +51,11 @@
   <ItemGroup>
     <PackageReference Include="Claunia.Encoding" Version="1.7.0" />
     <PackageReference Include="Claunia.RsrcFork" Version="1.1.0" />
-    <PackageReference Include="DotNetZip" Version="1.13.3" />
+    <PackageReference Include="DotNetZip" Version="1.13.4" />
     <PackageReference Include="plist-cil" Version="1.60.0" />
-    <PackageReference Include="SharpCompress" Version="0.23.0" />
+    <PackageReference Include="SharpCompress" Version="0.24.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alcohol120\Alcohol120.cs" />

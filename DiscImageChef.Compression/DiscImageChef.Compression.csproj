@@ -236,7 +236,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
          Other similar extension points exist, see Microsoft.Common.targets.

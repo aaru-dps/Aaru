@@ -20,9 +20,9 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Claunia.Encoding" Version="1.7.0" />
-        <PackageReference Include="Eto.Forms" Version="2.5.0-beta.1" />
-        <PackageReference Include="Eto.Serialization.Xaml" Version="2.5.0-beta.1" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+        <PackageReference Include="Eto.Forms" Version="2.5.0-rc.4" />
+        <PackageReference Include="Eto.Serialization.Xaml" Version="2.5.0-rc.4" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj" />

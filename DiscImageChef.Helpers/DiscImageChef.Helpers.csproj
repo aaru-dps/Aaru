@@ -72,8 +72,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.2" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

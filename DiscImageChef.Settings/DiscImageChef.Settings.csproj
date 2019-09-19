@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="plist-cil" Version="1.60.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

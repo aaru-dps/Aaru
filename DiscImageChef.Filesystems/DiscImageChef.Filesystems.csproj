@@ -51,7 +51,7 @@
   <ItemGroup>
     <PackageReference Include="Claunia.Encoding" Version="1.7.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FATX\Consts.cs" />

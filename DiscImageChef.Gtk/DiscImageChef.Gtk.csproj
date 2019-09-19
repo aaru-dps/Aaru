@@ -29,17 +29,19 @@
         <ProjectReference Include="..\DiscImageChef.Settings\DiscImageChef.Settings.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Eto.Platform.Gtk" Version="2.5.0-beta.1" />
-        <PackageReference Include="GtkSharp" Version="3.22.24.37" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.4" />
+        <PackageReference Include="Eto.Platform.Gtk" Version="2.5.0-rc.4" />
+        <PackageReference Include="GtkSharp" Version="3.22.25.24" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
-        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.2.5" />
+        <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
         <PackageReference Include="System.Collections" Version="4.3.0" />
         <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
         <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-        <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+        <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
         <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
         <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+        <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
+        <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     </ItemGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
         <DebugSymbols>True</DebugSymbols>
