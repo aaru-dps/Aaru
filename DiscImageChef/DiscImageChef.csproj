@@ -177,8 +177,8 @@
       <Link>CONTRIBUTING.md</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\DONATING.md">
-      <Link>DONATING.md</Link>
+    <None Include="..\NEEDED.md">
+      <Link>NEEDED.md</Link>
     </None>
     <None Include="..\NEEDINFO.md">
       <Link>NEEDINFO.md</Link>

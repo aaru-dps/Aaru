@@ -17,7 +17,6 @@
       <e p="CICMMetadata/dotnet/cicm.cs" t="Include" />
       <e p="CONTRIBUTING.md" t="Include" />
       <e p="Changelog.md" t="Include" />
-      <e p="DONATING.md" t="Include" />
       <e p="DiscImageChef" t="IncludeRecursive">
         <e p="Commands" t="Include">
           <e p="Analyze.cs" t="Include" />
@@ -2070,6 +2069,7 @@
       <e p="LICENSE" t="Include" />
       <e p="LICENSE.LGPL" t="Include" />
       <e p="LICENSE.MIT" t="Include" />
+      <e p="NEEDED.md" t="Include" />
       <e p="NEEDINFO.md" t="Include" />
       <e p="README.md" t="Include" />
       <e p="TODO.md" t="Include" />
