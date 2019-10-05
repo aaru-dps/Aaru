@@ -163,6 +163,12 @@ namespace DiscImageChef.Commands
                                                 imageFormat.Id);
                 else DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
+                if (outputDir == null)
+                {
+                    DicConsole.WriteLine("Output directory missing.");
+                    return (int)ErrorNumber.MissingArgument;
+                }
+
                 if(Directory.Exists(outputDir) || File.Exists(outputDir))
                 {
                     DicConsole.ErrorWriteLine("Destination exists, aborting.");
