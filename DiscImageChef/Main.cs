@@ -47,58 +47,58 @@ using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef
 {
-    class MainClass
+    internal class MainClass
     {
-        internal static bool                                  Verbose;
-        internal static bool                                  Debug;
-        internal static string                                AssemblyCopyright;
-        internal static string                                AssemblyTitle;
+        internal static bool Verbose;
+        internal static bool Debug;
+        internal static string AssemblyCopyright;
+        internal static string AssemblyTitle;
         internal static AssemblyInformationalVersionAttribute AssemblyVersion;
 
         [STAThread]
         public static int Main(string[] args)
         {
-            object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-            AssemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
-            attributes    = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+            var attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+            AssemblyTitle = ((AssemblyTitleAttribute) attributes[0]).Title;
+            attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
             AssemblyVersion =
                 Attribute.GetCustomAttribute(typeof(MainClass).Assembly, typeof(AssemblyInformationalVersionAttribute))
                     as AssemblyInformationalVersionAttribute;
-            AssemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+            AssemblyCopyright = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
 
-            DicConsole.WriteLineEvent      += System.Console.WriteLine;
-            DicConsole.WriteEvent          += System.Console.Write;
+            DicConsole.WriteLineEvent += System.Console.WriteLine;
+            DicConsole.WriteEvent += System.Console.Write;
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             Settings.Settings.LoadSettings();
 
-            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
             ctx.Database.Migrate();
             ctx.SaveChanges();
 
-            bool masterDbUpdate = false;
-            if(!File.Exists(Settings.Settings.MasterDbPath))
+            var masterDbUpdate = false;
+            if (!File.Exists(Settings.Settings.MasterDbPath))
             {
                 masterDbUpdate = true;
                 UpdateCommand.DoUpdate(true);
             }
 
-            DicContext mctx = DicContext.Create(Settings.Settings.MasterDbPath);
+            var mctx = DicContext.Create(Settings.Settings.MasterDbPath);
             mctx.Database.Migrate();
             mctx.SaveChanges();
 
-            if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
-               Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+            if ((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
+                Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
                 new ConfigureCommand(true, true).Invoke(args);
             Statistics.LoadStats();
-            if(Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
+            if (Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
                 Task.Run(() => { Statistics.SubmitStats(); });
 
-            PlatformID currentPlatform = DetectOS.GetRealPlatformID();
+            var currentPlatform = DetectOS.GetRealPlatformID();
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            CommandSet commands = new CommandSet("DiscImageChef")
+            var commands = new CommandSet("DiscImageChef")
             {
                 $"{AssemblyTitle} {AssemblyVersion?.InformationalVersion}",
                 $"{AssemblyCopyright}",
@@ -106,7 +106,7 @@ namespace DiscImageChef
                 "usage: DiscImageChef COMMAND [OPTIONS]",
                 "",
                 "Global options:",
-                {"verbose|v", "Shows verbose output.", b => Verbose = b        != null},
+                {"verbose|v", "Shows verbose output.", b => Verbose = b != null},
                 {"debug|d", "Shows debug output from plugins.", b => Debug = b != null},
                 "",
                 "Available commands:",
@@ -120,8 +120,8 @@ namespace DiscImageChef
                 new DecodeCommand()
             };
 
-            if(currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
-               currentPlatform == PlatformID.Win32NT)
+            if (currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
+                currentPlatform == PlatformID.Win32NT)
             {
                 commands.Add(new DeviceInfoCommand());
                 commands.Add(new DeviceReportCommand());
@@ -133,16 +133,16 @@ namespace DiscImageChef
             commands.Add(new FormatsCommand());
             commands.Add(new ImageInfoCommand());
 
-            if(currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
-               currentPlatform == PlatformID.Win32NT) commands.Add(new ListDevicesCommand());
+            if (currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
+                currentPlatform == PlatformID.Win32NT) commands.Add(new ListDevicesCommand());
 
             commands.Add(new ListEncodingsCommand());
             commands.Add(new ListNamespacesCommand());
             commands.Add(new ListOptionsCommand());
             commands.Add(new LsCommand());
 
-            if(currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
-               currentPlatform == PlatformID.Win32NT)
+            if (currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
+                currentPlatform == PlatformID.Win32NT)
             {
                 commands.Add(new MediaInfoCommand());
                 commands.Add(new MediaScanCommand());
@@ -152,8 +152,9 @@ namespace DiscImageChef
             commands.Add(new StatisticsCommand());
             commands.Add(new UpdateCommand(masterDbUpdate));
             commands.Add(new VerifyCommand());
+            commands.Add(new RemoteCommand());
 
-            int ret = commands.Run(args);
+            var ret = commands.Run(args);
 
             Statistics.SaveStats();
 
@@ -163,7 +164,7 @@ namespace DiscImageChef
         internal static void PrintCopyright()
         {
             DicConsole.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion?.InformationalVersion);
-            DicConsole.WriteLine("{0}",     AssemblyCopyright);
+            DicConsole.WriteLine("{0}", AssemblyCopyright);
             DicConsole.WriteLine();
         }
     }

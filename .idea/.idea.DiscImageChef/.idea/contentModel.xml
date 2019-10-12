@@ -42,6 +42,7 @@
           <e p="MediaInfo.cs" t="Include" />
           <e p="MediaScan.cs" t="Include" />
           <e p="PrintHex.cs" t="Include" />
+          <e p="Remote.cs" t="Include" />
           <e p="Statistics.cs" t="Include" />
           <e p="Update.cs" t="Include" />
           <e p="Verify.cs" t="Include" />
@@ -589,6 +590,11 @@
           <e p="Enums.cs" t="Include" />
           <e p="Extern.cs" t="Include" />
           <e p="ListDevices.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+        </e>
+        <e p="Remote" t="Include">
+          <e p="Consts.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
         </e>
         <e p="Windows" t="Include">

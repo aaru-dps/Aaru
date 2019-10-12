@@ -53,6 +53,9 @@
     <Compile Include="Linux\Structs.cs" />
     <Compile Include="Linux\Enums.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Remote\Consts.cs" />
+    <Compile Include="Remote\Enums.cs" />
+    <Compile Include="Remote\Structs.cs" />
     <Compile Include="Windows\Extern.cs" />
     <Compile Include="Windows\ListDevices.cs" />
     <Compile Include="Windows\Structs.cs" />
