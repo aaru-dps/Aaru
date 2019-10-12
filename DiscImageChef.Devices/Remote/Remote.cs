@@ -143,7 +143,7 @@ namespace DiscImageChef.Devices.Remote
 
             var len = _socket.Send(buf, SocketFlags.None);
 
-            if (len >= buf.Length)
+            if (len != buf.Length)
             {
                 DicConsole.ErrorWriteLine("Could not write to the network...");
 
