@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Marshal = DiscImageChef.Helpers.Marshal;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Devices.Remote
@@ -88,7 +90,7 @@ namespace DiscImageChef.Devices.Remote
                 sysname = DetectOS.GetPlatformName(
                     DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
                 release = DetectOS.GetVersion(),
-                machine = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString(),
+                machine = RuntimeInformation.ProcessArchitecture.ToString(),
                 hdr = new DicPacketHeader
                 {
                     id = Consts.PacketId,
@@ -150,7 +152,58 @@ namespace DiscImageChef.Devices.Remote
                 return new DeviceInfo[0];
             }
 
-            return new DeviceInfo[0];
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return new DeviceInfo[0];
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return new DeviceInfo[0];
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseListDevices)
+            {
+                DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return new DeviceInfo[0];
+            }
+
+            if (hdr.version != Consts.PacketVersion)
+            {
+                DicConsole.ErrorWriteLine("Unrecognized packet version...");
+                return new DeviceInfo[0];
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return new DeviceInfo[0];
+            }
+
+            var response = Marshal.ByteArrayToStructureLittleEndian<DicPacketResponseListDevices>(buf);
+            var devices = new List<DeviceInfo>();
+            var offset = Marshal.SizeOf<DicPacketResponseListDevices>();
+            var devInfoLen = Marshal.SizeOf<DeviceInfo>();
+
+            for (ushort i = 0; i < response.devices; i++)
+            {
+                devices.Add(Marshal.ByteArrayToStructureLittleEndian<DeviceInfo>(buf, offset, devInfoLen));
+                offset += devInfoLen;
+            }
+
+            return devices.ToArray();
         }
     }
 }
