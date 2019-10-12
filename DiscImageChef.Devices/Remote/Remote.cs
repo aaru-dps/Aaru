@@ -10,7 +10,7 @@ using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Devices.Remote
 {
-    public class Remote
+    public class Remote : IDisposable
     {
         private readonly Socket _socket;
 
@@ -115,10 +115,20 @@ namespace DiscImageChef.Devices.Remote
         public string ServerArchitecture { get; }
         public int ServerProtocolVersion { get; }
 
+        public void Dispose()
+        {
+            Disconnect();
+        }
+
         public void Disconnect()
         {
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
+        }
+
+        public DeviceInfo[] ListDevices()
+        {
+            return new DeviceInfo[0];
         }
     }
 }
