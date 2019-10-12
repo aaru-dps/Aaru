@@ -88,7 +88,7 @@ namespace DiscImageChef.Devices.Remote
                 sysname = DetectOS.GetPlatformName(
                     DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
                 release = DetectOS.GetVersion(),
-                machine = "", // TODO: Get architecture
+                machine = System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture.ToString(),
                 hdr = new DicPacketHeader
                 {
                     id = Consts.PacketId,
