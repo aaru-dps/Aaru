@@ -57,6 +57,7 @@
     <Compile Include="Commands\ImageInfo.cs" />
     <Compile Include="Commands\ListNamespaces.cs" />
     <Compile Include="Commands\ListOptions.cs" />
+    <Compile Include="Commands\Remote.cs" />
     <Compile Include="Commands\Update.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Commands\Formats.cs" />
