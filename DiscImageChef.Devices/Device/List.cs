@@ -33,6 +33,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interop;
+using DiscImageChef.Console;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
@@ -60,15 +61,30 @@ namespace DiscImageChef.Devices
 
     public partial class Device
     {
-        public static DeviceInfo[] ListDevices()
+        public static DeviceInfo[] ListDevices(string dicRemote = null)
         {
-            switch (DetectOS.GetRealPlatformID())
+            if (dicRemote is null)
+                switch (DetectOS.GetRealPlatformID())
+                {
+                    case PlatformID.Win32NT: return Windows.ListDevices.GetList();
+                    case PlatformID.Linux: return Linux.ListDevices.GetList();
+                    case PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
+                    default:
+                        throw new InvalidOperationException(
+                            $"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
+                }
+
+            try
             {
-                case PlatformID.Win32NT: return Windows.ListDevices.GetList();
-                case PlatformID.Linux: return Linux.ListDevices.GetList();
-                case PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
-                default:
-                    throw new InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
+                using (var remote = new Remote.Remote(dicRemote))
+                {
+                    return remote.ListDevices();
+                }
+            }
+            catch (Exception)
+            {
+                DicConsole.ErrorWriteLine("Error connecting to host.");
+                return new DeviceInfo[0];
             }
         }
     }
