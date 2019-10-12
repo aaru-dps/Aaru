@@ -31,29 +31,41 @@
 // ****************************************************************************/
 
 using System;
+using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interop;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef.Devices
 {
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DeviceInfo
     {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
         public string Path;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Vendor;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Model;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Serial;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Bus;
-        public bool   Supported;
+
+        [MarshalAs(UnmanagedType.U1)] public bool Supported;
     }
 
     public partial class Device
     {
         public static DeviceInfo[] ListDevices()
         {
-            switch(DetectOS.GetRealPlatformID())
+            switch (DetectOS.GetRealPlatformID())
             {
                 case PlatformID.Win32NT: return Windows.ListDevices.GetList();
-                case PlatformID.Linux:   return Linux.ListDevices.GetList();
+                case PlatformID.Linux: return Linux.ListDevices.GetList();
                 case PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
                 default:
                     throw new InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
