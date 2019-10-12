@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 namespace DiscImageChef.Devices.Remote
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    internal struct DicPacketHeader
+    public struct DicPacketHeader
     {
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 8)]
-        public string id;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public byte[] id;
 
         public uint len;
         public byte version;
@@ -17,7 +17,7 @@ namespace DiscImageChef.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    internal struct DicPacketHello
+    public struct DicPacketHello
     {
         public DicPacketHeader hdr;
 

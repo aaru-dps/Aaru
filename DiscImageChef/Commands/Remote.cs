@@ -30,14 +30,19 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+// TODO: Fix errors returned
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
+using DiscImageChef.Devices.Remote;
+using DiscImageChef.Helpers;
 using Mono.Options;
 
 namespace DiscImageChef.Commands
@@ -109,6 +114,55 @@ namespace DiscImageChef.Commands
             try
             {
                 socket.Connect(ipEndPoint);
+
+                DicConsole.WriteLine("Connected to {0}", host);
+
+                var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+                var len = socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+                if (len < hdrBuf.Length)
+                {
+                    DicConsole.ErrorWriteLine("Could not read from the network, exiting...");
+                    return (int) Errno.EIO;
+                }
+
+                var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+                if (Encoding.ASCII.GetString(hdr.id) != Consts.PacketId)
+                {
+                    DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet, exiting...");
+                    return (int) Errno.EINVAL;
+                }
+
+                if (hdr.packetType != DicPacketType.Hello)
+                {
+                    DicConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}, exiting...", hdr.packetType);
+                    return (int) Errno.EINVAL;
+                }
+
+                if (hdr.version != Consts.PacketVersion)
+                {
+                    DicConsole.ErrorWriteLine("Unrecognized packet version, exiting...");
+                    return (int) Errno.EINVAL;
+                }
+
+                var buf = new byte[hdr.len];
+                len = socket.Receive(buf, buf.Length, SocketFlags.None);
+
+                if (len < buf.Length)
+                {
+                    DicConsole.ErrorWriteLine("Could not read from the network, exiting...");
+                    return (int) Errno.EIO;
+                }
+
+                var serverHello = Marshal.ByteArrayToStructureLittleEndian<DicPacketHello>(buf);
+
+                DicConsole.WriteLine("Server application: {0} {1}", serverHello.application, serverHello.version);
+                DicConsole.WriteLine("Server operating system: {0} {1} ({2})", serverHello.sysname, serverHello.release,
+                    serverHello.machine);
+                DicConsole.WriteLine("Server maximum protocol: {0}", serverHello.maxProtocol);
+
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
             }
