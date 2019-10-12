@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Devices.Remote
 {
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketHeader
     {
         public ulong id;
@@ -12,10 +12,10 @@ namespace DiscImageChef.Devices.Remote
         public DicPacketType packetType;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-        public byte[] spare;
+        public readonly byte[] spare;
     }
 
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketHello
     {
         public DicPacketHeader hdr;
@@ -29,7 +29,7 @@ namespace DiscImageChef.Devices.Remote
         public byte maxProtocol;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-        public byte[] spare;
+        public readonly byte[] spare;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string sysname;
@@ -39,5 +39,18 @@ namespace DiscImageChef.Devices.Remote
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string machine;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCommandListDevices
+    {
+        public DicPacketHeader hdr;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResponseListDevices
+    {
+        public readonly DicPacketHeader hdr;
+        public readonly ushort devices;
     }
 }
