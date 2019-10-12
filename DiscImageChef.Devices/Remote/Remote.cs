@@ -128,6 +128,28 @@ namespace DiscImageChef.Devices.Remote
 
         public DeviceInfo[] ListDevices()
         {
+            var cmdPkt = new DicPacketCommandListDevices
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCommandListDevices>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandListDevices
+                }
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len >= buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+
+                return new DeviceInfo[0];
+            }
+
             return new DeviceInfo[0];
         }
     }
