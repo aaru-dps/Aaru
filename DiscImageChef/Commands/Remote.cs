@@ -34,15 +34,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Devices.Remote;
-using DiscImageChef.Helpers;
 using Mono.Options;
 
 namespace DiscImageChef.Commands
@@ -99,104 +93,22 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Remote command", "--host={0}", host);
             DicConsole.DebugWriteLine("Remote command", "--verbose={0}", MainClass.Verbose);
 
-            var ipHostEntry = Dns.GetHostEntry(host);
-            var ipAddress = ipHostEntry.AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
-
-            if (ipAddress is null)
-            {
-                DicConsole.ErrorWriteLine("Host not found");
-                return (int) Errno.ENODEV;
-            }
-
-            var ipEndPoint = new IPEndPoint(ipAddress, 6666);
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
             try
             {
-                socket.Connect(ipEndPoint);
-
-                DicConsole.WriteLine("Connected to {0}", host);
-
-                var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
-
-                var len = socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
-
-                if (len < hdrBuf.Length)
-                {
-                    DicConsole.ErrorWriteLine("Could not read from the network, exiting...");
-                    return (int) Errno.EIO;
-                }
-
-                var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
-
-                if (hdr.id != Consts.PacketId)
-                {
-                    DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet, exiting...");
-                    return (int) Errno.EINVAL;
-                }
-
-                if (hdr.packetType != DicPacketType.Hello)
-                {
-                    DicConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}, exiting...", hdr.packetType);
-                    return (int) Errno.EINVAL;
-                }
-
-                if (hdr.version != Consts.PacketVersion)
-                {
-                    DicConsole.ErrorWriteLine("Unrecognized packet version, exiting...");
-                    return (int) Errno.EINVAL;
-                }
-
-                var buf = new byte[hdr.len];
-                len = socket.Receive(buf, buf.Length, SocketFlags.None);
-
-                if (len < buf.Length)
-                {
-                    DicConsole.ErrorWriteLine("Could not read from the network, exiting...");
-                    return (int) Errno.EIO;
-                }
-
-                var serverHello = Marshal.ByteArrayToStructureLittleEndian<DicPacketHello>(buf);
-
-                DicConsole.WriteLine("Server application: {0} {1}", serverHello.application, serverHello.version);
-                DicConsole.WriteLine("Server operating system: {0} {1} ({2})", serverHello.sysname, serverHello.release,
-                    serverHello.machine);
-                DicConsole.WriteLine("Server maximum protocol: {0}", serverHello.maxProtocol);
-
-                var clientHello = new DicPacketHello
-                {
-                    application = MainClass.AssemblyTitle,
-                    version = MainClass.AssemblyVersion?.InformationalVersion,
-                    maxProtocol = Consts.MaxProtocol,
-                    sysname = DetectOS.GetPlatformName(
-                        DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
-                    release = DetectOS.GetVersion(),
-                    machine = "", // TODO: Get architecture
-                    hdr = new DicPacketHeader
-                    {
-                        id = Consts.PacketId,
-                        len = (uint) Marshal.SizeOf<DicPacketHello>(),
-                        version = Consts.PacketVersion,
-                        packetType = DicPacketType.Hello
-                    }
-                };
-
-                buf = Marshal.StructureToByteArrayLittleEndian(clientHello);
-
-                len = socket.Send(buf, SocketFlags.None);
-                if (len < buf.Length)
-                {
-                    DicConsole.ErrorWriteLine("Could not write to the network, exiting...");
-                    return (int) Errno.EIO;
-                }
-
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Close();
+                var remote = new Remote(host);
+                DicConsole.WriteLine("Server application: {0} {1}", remote.ServerApplication, remote.ServerVersion);
+                DicConsole.WriteLine("Server operating system: {0} {1} ({2})", remote.ServerOperatingSystem,
+                    remote.ServerOperatingSystemVersion,
+                    remote.ServerArchitecture);
+                DicConsole.WriteLine("Server maximum protocol: {0}", remote.ServerProtocolVersion);
+                remote.Disconnect();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                DicConsole.Write(e.Message);
+                DicConsole.ErrorWriteLine("Error connecting to host.");
+                return (int) ErrorNumber.CannotOpenDevice;
             }
+
 
             return (int) ErrorNumber.NoError;
         }
