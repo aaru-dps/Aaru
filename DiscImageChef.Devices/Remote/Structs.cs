@@ -5,8 +5,7 @@ namespace DiscImageChef.Devices.Remote
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct DicPacketHeader
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-        public byte[] id;
+        public ulong id;
 
         public uint len;
         public byte version;

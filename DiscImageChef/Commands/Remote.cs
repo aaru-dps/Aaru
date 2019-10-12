@@ -37,8 +37,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Devices.Remote;
@@ -129,7 +129,7 @@ namespace DiscImageChef.Commands
 
                 var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-                if (Encoding.ASCII.GetString(hdr.id) != Consts.PacketId)
+                if (hdr.id != Consts.PacketId)
                 {
                     DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet, exiting...");
                     return (int) Errno.EINVAL;
@@ -162,6 +162,33 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Server operating system: {0} {1} ({2})", serverHello.sysname, serverHello.release,
                     serverHello.machine);
                 DicConsole.WriteLine("Server maximum protocol: {0}", serverHello.maxProtocol);
+
+                var clientHello = new DicPacketHello
+                {
+                    application = MainClass.AssemblyTitle,
+                    version = MainClass.AssemblyVersion?.InformationalVersion,
+                    maxProtocol = Consts.MaxProtocol,
+                    sysname = DetectOS.GetPlatformName(
+                        DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
+                    release = DetectOS.GetVersion(),
+                    machine = "", // TODO: Get architecture
+                    hdr = new DicPacketHeader
+                    {
+                        id = Consts.PacketId,
+                        len = (uint) Marshal.SizeOf<DicPacketHello>(),
+                        version = Consts.PacketVersion,
+                        packetType = DicPacketType.Hello
+                    }
+                };
+
+                buf = Marshal.StructureToByteArrayLittleEndian(clientHello);
+
+                len = socket.Send(buf, SocketFlags.None);
+                if (len < buf.Length)
+                {
+                    DicConsole.ErrorWriteLine("Could not write to the network, exiting...");
+                    return (int) Errno.EIO;
+                }
 
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
