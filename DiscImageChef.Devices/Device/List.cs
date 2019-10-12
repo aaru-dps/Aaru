@@ -57,6 +57,9 @@ namespace DiscImageChef.Devices
         public string Bus;
 
         [MarshalAs(UnmanagedType.U1)] public bool Supported;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] Padding;
     }
 
     public partial class Device
