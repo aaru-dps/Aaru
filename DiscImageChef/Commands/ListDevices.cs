@@ -96,14 +96,29 @@ namespace DiscImageChef.Commands
             {
                 devices = devices.OrderBy(d => d.Path).ToArray();
 
-                DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
-                    "Serial", "Bus", "Supported?");
-                DicConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
-                    "----------------", "------------------------", "------------------------",
-                    "----------", "----------");
-                foreach (var dev in devices)
-                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
-                        dev.Model, dev.Serial, dev.Bus, dev.Supported);
+                if (dicRemote is null)
+                {
+                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
+                        "Serial", "Bus", "Supported?");
+                    DicConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
+                        "----------------", "------------------------", "------------------------",
+                        "----------", "----------");
+                    foreach (var dev in devices)
+                        DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
+                            dev.Model, dev.Serial, dev.Bus, dev.Supported);
+                }
+                else
+                {
+                    DicConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
+                        "Serial", "Bus", "Supported?");
+                    DicConsole.WriteLine("{0,-48}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
+                        "------------------------------------------------",
+                        "----------------", "------------------------", "------------------------",
+                        "----------", "----------");
+                    foreach (var dev in devices)
+                        DicConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
+                            dev.Model, dev.Serial, dev.Bus, dev.Supported);
+                }
             }
 
             return (int) ErrorNumber.NoError;
