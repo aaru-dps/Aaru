@@ -30,8 +30,11 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using System.Runtime.InteropServices;
+
 namespace DiscImageChef.Decoders.ATA
 {
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaRegistersChs
     {
         public byte Feature;
@@ -43,6 +46,7 @@ namespace DiscImageChef.Decoders.ATA
         public byte Command;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaRegistersLba28
     {
         public byte Feature;
@@ -54,6 +58,7 @@ namespace DiscImageChef.Decoders.ATA
         public byte Command;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaRegistersLba48
     {
         public ushort Feature;
@@ -61,10 +66,11 @@ namespace DiscImageChef.Decoders.ATA
         public ushort LbaLow;
         public ushort LbaMid;
         public ushort LbaHigh;
-        public byte   DeviceHead;
-        public byte   Command;
+        public byte DeviceHead;
+        public byte Command;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaErrorRegistersChs
     {
         public byte Status;
@@ -76,6 +82,7 @@ namespace DiscImageChef.Decoders.ATA
         public byte DeviceHead;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaErrorRegistersLba28
     {
         public byte Status;
@@ -87,14 +94,15 @@ namespace DiscImageChef.Decoders.ATA
         public byte DeviceHead;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaErrorRegistersLba48
     {
-        public byte   Status;
-        public byte   Error;
+        public byte Status;
+        public byte Error;
         public ushort SectorCount;
         public ushort LbaLow;
         public ushort LbaMid;
         public ushort LbaHigh;
-        public byte   DeviceHead;
+        public byte DeviceHead;
     }
 }
