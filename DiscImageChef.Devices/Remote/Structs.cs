@@ -58,7 +58,7 @@ namespace DiscImageChef.Devices.Remote
     public struct DicPacketNop
     {
         public DicPacketHeader hdr;
-        public byte reasonCode;
+        public DicNopReason reasonCode;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly byte[] spare;
