@@ -76,7 +76,7 @@ namespace DiscImageChef.Devices
 
                 remote = new Remote.Remote(host);
 
-                Error = remote.Open(devicePath, out var errno);
+                Error = !remote.Open(devicePath, out var errno);
                 LastError = errno;
             }
             else
