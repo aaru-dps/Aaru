@@ -15,9 +15,11 @@ namespace DiscImageChef.Devices.Remote
     public class Remote : IDisposable
     {
         private readonly Socket _socket;
+        private readonly string _host;
 
         public Remote(string host)
         {
+            _host = host;
             var ipHostEntry = Dns.GetHostEntry(host);
             var ipAddress = ipHostEntry.AddressList.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
 
@@ -199,7 +201,9 @@ namespace DiscImageChef.Devices.Remote
 
             for (ushort i = 0; i < response.devices; i++)
             {
-                devices.Add(Marshal.ByteArrayToStructureLittleEndian<DeviceInfo>(buf, offset, devInfoLen));
+                var dev = Marshal.ByteArrayToStructureLittleEndian<DeviceInfo>(buf, offset, devInfoLen);
+                dev.Path = dev.Path[0] == '/' ? $"dic://{_host}{dev.Path}" : $"dic://{_host}/{dev.Path}";
+                devices.Add(dev);
                 offset += devInfoLen;
             }
 
