@@ -245,5 +245,85 @@ namespace DiscImageChef.Devices.Remote
 
             return devices.ToArray();
         }
+
+        public bool Open(string devicePath, out int LastError)
+        {
+            LastError = 0;
+
+            var cmdPkt = new DicPacketCommandOpenDevice
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCommandOpenDevice>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandOpen
+                },
+                device_path = devicePath
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                LastError = -1;
+                return false;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                LastError = -1;
+                return false;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                LastError = -1;
+                return false;
+            }
+
+            if (hdr.packetType != DicPacketType.Nop)
+            {
+                DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                LastError = -1;
+                return false;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                LastError = -1;
+                return false;
+            }
+
+            var nop = Marshal.ByteArrayToStructureLittleEndian<DicPacketNop>(buf);
+
+            switch (nop.reasonCode)
+            {
+                case DicNopReason.OpenOk:
+                    return true;
+                case DicNopReason.NotImplemented:
+                    throw new NotImplementedException($"{nop.reason}");
+            }
+
+            DicConsole.ErrorWriteLine($"{nop.reason}");
+            LastError = nop.errno;
+            return false;
+        }
     }
 }

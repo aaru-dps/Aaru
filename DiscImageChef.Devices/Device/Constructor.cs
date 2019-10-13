@@ -76,75 +76,78 @@ namespace DiscImageChef.Devices
 
                 remote = new Remote.Remote(host);
 
-                throw new NotImplementedException("Remote devices not yet implemented...");
+                Error = remote.Open(devicePath, out var errno);
+                LastError = errno;
             }
-
-            switch (PlatformId)
+            else
             {
-                case PlatformID.Win32NT:
+                switch (PlatformId)
                 {
-                    FileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                        FileShare.Read | FileShare.Write, IntPtr.Zero,
-                        FileMode.OpenExisting,
-                        FileAttributes.Normal, IntPtr.Zero);
-
-                    if (((SafeFileHandle) FileHandle).IsInvalid)
+                    case PlatformID.Win32NT:
                     {
-                        Error = true;
-                        LastError = Marshal.GetLastWin32Error();
-                    }
+                        FileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
+                            FileShare.Read | FileShare.Write, IntPtr.Zero,
+                            FileMode.OpenExisting,
+                            FileAttributes.Normal, IntPtr.Zero);
 
-                    break;
-                }
-                case PlatformID.Linux:
-                {
-                    FileHandle =
-                        Linux.Extern.open(devicePath,
-                            FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
-
-                    if ((int) FileHandle < 0)
-                    {
-                        LastError = Marshal.GetLastWin32Error();
-
-                        if (LastError == 13 || LastError == 30) // EACCES or EROFS
-                        {
-                            FileHandle = Linux.Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
-                            if ((int) FileHandle < 0)
-                            {
-                                Error = true;
-                                LastError = Marshal.GetLastWin32Error();
-                            }
-                        }
-                        else
+                        if (((SafeFileHandle) FileHandle).IsInvalid)
                         {
                             Error = true;
+                            LastError = Marshal.GetLastWin32Error();
                         }
 
-                        LastError = Marshal.GetLastWin32Error();
+                        break;
                     }
-
-                    break;
-                }
-                case PlatformID.FreeBSD:
-                {
-                    FileHandle = FreeBSD.Extern.cam_open_device(devicePath, FreeBSD.FileFlags.ReadWrite);
-
-                    if (((IntPtr) FileHandle).ToInt64() == 0)
+                    case PlatformID.Linux:
                     {
-                        Error = true;
-                        LastError = Marshal.GetLastWin32Error();
+                        FileHandle =
+                            Linux.Extern.open(devicePath,
+                                FileFlags.ReadWrite | FileFlags.NonBlocking | FileFlags.CreateNew);
+
+                        if ((int) FileHandle < 0)
+                        {
+                            LastError = Marshal.GetLastWin32Error();
+
+                            if (LastError == 13 || LastError == 30) // EACCES or EROFS
+                            {
+                                FileHandle = Linux.Extern.open(devicePath, FileFlags.Readonly | FileFlags.NonBlocking);
+                                if ((int) FileHandle < 0)
+                                {
+                                    Error = true;
+                                    LastError = Marshal.GetLastWin32Error();
+                                }
+                            }
+                            else
+                            {
+                                Error = true;
+                            }
+
+                            LastError = Marshal.GetLastWin32Error();
+                        }
+
+                        break;
                     }
+                    case PlatformID.FreeBSD:
+                    {
+                        FileHandle = FreeBSD.Extern.cam_open_device(devicePath, FreeBSD.FileFlags.ReadWrite);
 
-                    var camDevice = (CamDevice) Marshal.PtrToStructure((IntPtr) FileHandle, typeof(CamDevice));
+                        if (((IntPtr) FileHandle).ToInt64() == 0)
+                        {
+                            Error = true;
+                            LastError = Marshal.GetLastWin32Error();
+                        }
 
-                    if (StringHandlers.CToString(camDevice.SimName) == "ata")
-                        throw new
-                            InvalidOperationException(
-                                "Parallel ATA devices are not supported on FreeBSD due to upstream bug #224250.");
+                        var camDevice = (CamDevice) Marshal.PtrToStructure((IntPtr) FileHandle, typeof(CamDevice));
 
-                    break;
+                        if (StringHandlers.CToString(camDevice.SimName) == "ata")
+                            throw new
+                                InvalidOperationException(
+                                    "Parallel ATA devices are not supported on FreeBSD due to upstream bug #224250.");
+
+                        break;
+                    }
+                    default: throw new InvalidOperationException($"Platform {PlatformId} not yet supported.");
                 }
-                default: throw new InvalidOperationException($"Platform {PlatformId} not yet supported.");
             }
 
             if (Error) throw new SystemException($"Error {LastError} opening device.");
