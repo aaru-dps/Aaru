@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices.Remote
 {
@@ -76,5 +77,128 @@ namespace DiscImageChef.Devices.Remote
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
         public string device_path;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdScsi
+    {
+        public DicPacketHeader hdr;
+        public uint cdb_len;
+        public uint buf_len;
+        public int direction;
+        public uint timeout;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResScsi
+    {
+        public DicPacketHeader hdr;
+        public uint sense_len;
+        public uint buf_len;
+        public uint duration;
+        public uint sense;
+        public uint errno;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdAtaChs
+    {
+        public DicPacketHeader hdr;
+        public uint buf_len;
+        public AtaRegistersChs registers;
+        public byte protocol;
+        public byte transferRegister;
+        public byte transferBlocks;
+        public byte spare;
+        public uint timeout;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResAtaChs
+    {
+        public DicPacketHeader hdr;
+        public uint buf_len;
+        public AtaErrorRegistersChs registers;
+        public uint duration;
+        public uint sense;
+        public uint errno;
+    }
+
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdAtaLba28
+    {
+        public DicPacketHeader hdr;
+        public uint buf_len;
+        public AtaRegistersLba28 registers;
+        public byte protocol;
+        public byte transferRegister;
+        public byte transferBlocks;
+        public byte spare;
+        public uint timeout;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResAtaLba28
+    {
+        public DicPacketHeader hdr;
+        public uint buf_len;
+        public AtaErrorRegistersLba28 registers;
+        public uint duration;
+        public uint sense;
+        public uint errno;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdAtaLba48
+    {
+        public DicPacketHeader hdr;
+        public uint buf_len;
+        public AtaRegistersLba48 registers;
+        public byte protocol;
+        public byte transferRegister;
+        public byte transferBlocks;
+        public byte spare;
+        public uint timeout;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResAtaLba48
+    {
+        public DicPacketHeader hdr;
+        public uint buf_len;
+        public AtaErrorRegistersLba48 registers;
+        public uint duration;
+        public uint sense;
+        public uint errno;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdSdhci
+    {
+        public DicPacketHeader hdr;
+        public MmcCommands command;
+        [MarshalAs(UnmanagedType.U1)] public bool write;
+        [MarshalAs(UnmanagedType.U1)] public bool application;
+        public MmcFlags flags;
+        public uint argument;
+        public uint block_size;
+        public uint blocks;
+        public uint buf_len;
+        public uint timeout;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResSdhci
+    {
+        public DicPacketHeader hdr;
+        public uint buf_len;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public uint[] response;
+
+        public uint duration;
+        public uint sense;
+        public uint errno;
     }
 }
