@@ -38,18 +38,18 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        readonly ushort usbVendor;
-        readonly ushort usbProduct;
-        readonly ulong  firewireGuid;
-        readonly uint   firewireModel;
-        readonly uint   firewireVendor;
+        private readonly ushort usbVendor;
+        private readonly ushort usbProduct;
+        private readonly ulong firewireGuid;
+        private readonly uint firewireModel;
+        private readonly uint firewireVendor;
 
         // MMC and SecureDigital, values that need to be get with card idle, something that may
         // not be possible to do but usually is already done by the SDHCI driver.
-        readonly byte[] cachedCsd;
-        readonly byte[] cachedCid;
-        readonly byte[] cachedScr;
-        readonly byte[] cachedOcr;
+        private readonly byte[] cachedCsd;
+        private readonly byte[] cachedCid;
+        private readonly byte[] cachedScr;
+        private readonly byte[] cachedOcr;
 
         /// <summary>
         ///     Gets the Platform ID for this device
@@ -217,5 +217,7 @@ namespace DiscImageChef.Devices
         ///     Contains the PCMCIA CIS if applicable
         /// </summary>
         public byte[] Cis { get; }
+
+        private readonly Remote.Remote remote;
     }
 }
