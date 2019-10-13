@@ -53,4 +53,17 @@ namespace DiscImageChef.Devices.Remote
         public readonly DicPacketHeader hdr;
         public readonly ushort devices;
     }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketNop
+    {
+        public DicPacketHeader hdr;
+        public byte reasonCode;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public readonly byte[] spare;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string reason;
+    }
 }

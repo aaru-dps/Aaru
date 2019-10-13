@@ -14,8 +14,8 @@ namespace DiscImageChef.Devices.Remote
 {
     public class Remote : IDisposable
     {
-        private readonly Socket _socket;
         private readonly string _host;
+        private readonly Socket _socket;
 
         public Remote(string host)
         {
@@ -54,9 +54,28 @@ namespace DiscImageChef.Devices.Remote
                 throw new ArgumentException();
             }
 
+            byte[] buf;
+
             if (hdr.packetType != DicPacketType.Hello)
             {
-                DicConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}...", hdr.packetType);
+                if (hdr.packetType != DicPacketType.Nop)
+                {
+                    DicConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}...", hdr.packetType);
+                    throw new ArgumentException();
+                }
+
+                buf = new byte[hdr.len];
+                len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+                if (len < buf.Length)
+                {
+                    DicConsole.ErrorWriteLine("Could not read from the network...");
+                    throw new IOException();
+                }
+
+                var nop = Marshal.ByteArrayToStructureLittleEndian<DicPacketNop>(buf);
+
+                DicConsole.ErrorWriteLine($"{nop.reason}");
                 throw new ArgumentException();
             }
 
@@ -66,7 +85,7 @@ namespace DiscImageChef.Devices.Remote
                 throw new ArgumentException();
             }
 
-            var buf = new byte[hdr.len];
+            buf = new byte[hdr.len];
             len = _socket.Receive(buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
@@ -174,8 +193,25 @@ namespace DiscImageChef.Devices.Remote
 
             if (hdr.packetType != DicPacketType.ResponseListDevices)
             {
-                DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
-                    hdr.packetType);
+                if (hdr.packetType != DicPacketType.Nop)
+                {
+                    DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
+                        hdr.packetType);
+                    return new DeviceInfo[0];
+                }
+
+                buf = new byte[hdr.len];
+                len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+                if (len < buf.Length)
+                {
+                    DicConsole.ErrorWriteLine("Could not read from the network...");
+                    return new DeviceInfo[0];
+                }
+
+                var nop = Marshal.ByteArrayToStructureLittleEndian<DicPacketNop>(buf);
+
+                DicConsole.ErrorWriteLine($"{nop.reason}");
                 return new DeviceInfo[0];
             }
 
