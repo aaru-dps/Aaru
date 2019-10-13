@@ -68,4 +68,13 @@ namespace DiscImageChef.Devices.Remote
 
         public int errno;
     }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCommandOpenDevice
+    {
+        public DicPacketHeader hdr;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
+        public string device_path;
+    }
 }
