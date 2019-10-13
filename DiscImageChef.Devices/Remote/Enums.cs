@@ -5,6 +5,7 @@ namespace DiscImageChef.Devices.Remote
         Nop = -1,
         Hello = 1,
         CommandListDevices = 2,
-        ResponseListDevices = 3
+        ResponseListDevices = 3,
+        CommandOpen = 4
     }
 }
