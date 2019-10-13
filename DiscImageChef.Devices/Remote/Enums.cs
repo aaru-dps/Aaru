@@ -6,7 +6,17 @@ namespace DiscImageChef.Devices.Remote
         Hello = 1,
         CommandListDevices = 2,
         ResponseListDevices = 3,
-        CommandOpen = 4
+        CommandOpen = 4,
+        CommandScsi = 5,
+        ResponseScsi = 6,
+        CommandAtaChs = 7,
+        ResponseAtaChs = 8,
+        CommandAtaLba28 = 9,
+        ResponseAtaLba28 = 10,
+        CommandAtaLba48 = 11,
+        ResponseAtaLba48 = 12,
+        CommandSdhci = 13,
+        ResponseSdhci = 14
     }
 
     public enum DicNopReason : byte
