@@ -53,10 +53,16 @@ namespace DiscImageChef.Devices
         ///     <c>True</c> if SCSI command returned non-OK status and <paramref name="senseBuffer" /> contains
         ///     SCSI sense
         /// </param>
-        public int SendScsiCommand(byte[]        cdb,       ref byte[] buffer,   out byte[] senseBuffer, uint timeout,
-                                   ScsiDirection direction, out double duration, out bool   sense) =>
-            Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
-                                    out duration, out sense);
+        public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+            ScsiDirection direction, out double duration, out bool sense)
+        {
+            if (!(remote is null))
+                return remote.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout,
+                    direction, out duration, out sense);
+
+            return Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
+                out duration, out sense);
+        }
 
         /// <summary>
         ///     Sends an ATA/ATAPI command to this device using CHS addressing
@@ -75,12 +81,17 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
-                                  AtaProtocol     protocol,  AtaTransferRegister      transferRegister,
-                                  ref byte[]      buffer,
-                                  uint            timeout,  bool     transferBlocks,
-                                  out double      duration, out bool sense) =>
-            Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
-                                   ref buffer, timeout, transferBlocks, out duration, out sense);
+            AtaProtocol protocol, AtaTransferRegister transferRegister,
+            ref byte[] buffer,
+            uint timeout, bool transferBlocks,
+            out double duration, out bool sense)
+        {
+            if (!(remote is null)) throw new NotImplementedException("Remote CHS ATA commands not yet implemented...");
+
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
+                transferRegister,
+                ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
 
         /// <summary>
         ///     Sends an ATA/ATAPI command to this device using 28-bit LBA addressing
@@ -99,12 +110,22 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
-                                  AtaProtocol       protocol,  AtaTransferRegister        transferRegister,
-                                  ref byte[]        buffer,
-                                  uint              timeout,  bool     transferBlocks,
-                                  out double        duration, out bool sense) =>
-            Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
-                                   ref buffer, timeout, transferBlocks, out duration, out sense);
+            AtaProtocol protocol, AtaTransferRegister transferRegister,
+            ref byte[] buffer,
+            uint timeout, bool transferBlocks,
+            out double duration, out bool sense)
+        {
+            if (!(remote is null))
+                remote.SendAtaCommand(registers, out errorRegisters,
+                    protocol, transferRegister,
+                    ref buffer,
+                    timeout, transferBlocks,
+                    out duration, out sense);
+
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
+                transferRegister,
+                ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
 
         /// <summary>
         ///     Sends an ATA/ATAPI command to this device using 48-bit LBA addressing
@@ -123,12 +144,22 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Time it took to execute the command in milliseconds</param>
         /// <param name="sense"><c>True</c> if ATA/ATAPI command returned non-OK status</param>
         public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
-                                  AtaProtocol       protocol,  AtaTransferRegister        transferRegister,
-                                  ref byte[]        buffer,
-                                  uint              timeout,  bool     transferBlocks,
-                                  out double        duration, out bool sense) =>
-            Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol, transferRegister,
-                                   ref buffer, timeout, transferBlocks, out duration, out sense);
+            AtaProtocol protocol, AtaTransferRegister transferRegister,
+            ref byte[] buffer,
+            uint timeout, bool transferBlocks,
+            out double duration, out bool sense)
+        {
+            if (!(remote is null))
+                remote.SendAtaCommand(registers, out errorRegisters,
+                    protocol, transferRegister,
+                    ref buffer,
+                    timeout, transferBlocks,
+                    out duration, out sense);
+
+            return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
+                transferRegister,
+                ref buffer, timeout, transferBlocks, out duration, out sense);
+        }
 
         /// <summary>
         ///     Sends a MMC/SD command to this device
@@ -147,63 +178,68 @@ namespace DiscImageChef.Devices
         /// <param name="response">Response registers</param>
         /// <param name="blockSize">Size of block in bytes</param>
         public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
-                                  uint        argument,
-                                  uint        blockSize, uint     blocks, ref byte[] buffer, out uint[] response,
-                                  out double  duration,  out bool sense,  uint       timeout = 0)
+            uint argument,
+            uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
+            out double duration, out bool sense, uint timeout = 0)
         {
-            switch(command)
+            switch (command)
             {
                 case MmcCommands.SendCid when cachedCid != null:
                 {
-                    DateTime start = DateTime.Now;
+                    var start = DateTime.Now;
                     buffer = new byte[cachedCid.Length];
                     Array.Copy(cachedCid, buffer, buffer.Length);
                     response = new uint[4];
-                    sense    = false;
-                    DateTime end = DateTime.Now;
+                    sense = false;
+                    var end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
                 }
                 case MmcCommands.SendCsd when cachedCid != null:
                 {
-                    DateTime start = DateTime.Now;
+                    var start = DateTime.Now;
                     buffer = new byte[cachedCsd.Length];
                     Array.Copy(cachedCsd, buffer, buffer.Length);
                     response = new uint[4];
-                    sense    = false;
-                    DateTime end = DateTime.Now;
+                    sense = false;
+                    var end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
                 }
-                case (MmcCommands)SecureDigitalCommands.SendScr when cachedScr != null:
+                case (MmcCommands) SecureDigitalCommands.SendScr when cachedScr != null:
                 {
-                    DateTime start = DateTime.Now;
+                    var start = DateTime.Now;
                     buffer = new byte[cachedScr.Length];
                     Array.Copy(cachedScr, buffer, buffer.Length);
                     response = new uint[4];
-                    sense    = false;
-                    DateTime end = DateTime.Now;
+                    sense = false;
+                    var end = DateTime.Now;
+                    duration = (end - start).TotalMilliseconds;
+                    return 0;
+                }
+                case (MmcCommands) SecureDigitalCommands.SendOperatingCondition when cachedOcr != null:
+                case MmcCommands.SendOpCond when cachedOcr != null:
+                {
+                    var start = DateTime.Now;
+                    buffer = new byte[cachedOcr.Length];
+                    Array.Copy(cachedOcr, buffer, buffer.Length);
+                    response = new uint[4];
+                    sense = false;
+                    var end = DateTime.Now;
                     duration = (end - start).TotalMilliseconds;
                     return 0;
                 }
             }
 
-            if(command != (MmcCommands)SecureDigitalCommands.SendOperatingCondition &&
-               command != MmcCommands.SendOpCond || cachedOcr == null)
-                return Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument,
-                                              blockSize, blocks, ref buffer, out response, out duration, out sense,
-                                              timeout);
+            if (!(remote is null))
+                remote.SendMmcCommand(command, write, isApplication, flags,
+                    argument,
+                    blockSize, blocks, ref buffer, out response,
+                    out duration, out sense, timeout);
 
-            {
-                DateTime start = DateTime.Now;
-                buffer = new byte[cachedOcr.Length];
-                Array.Copy(cachedOcr, buffer, buffer.Length);
-                response = new uint[4];
-                sense    = false;
-                DateTime end = DateTime.Now;
-                duration = (end - start).TotalMilliseconds;
-                return 0;
-            }
+            return Command.SendMmcCommand(PlatformId, FileHandle, command, write, isApplication, flags, argument,
+                blockSize, blocks, ref buffer, out response, out duration, out sense,
+                timeout);
         }
     }
 }

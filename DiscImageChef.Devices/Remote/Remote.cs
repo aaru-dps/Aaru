@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.ATA;
 using Marshal = DiscImageChef.Helpers.Marshal;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
@@ -324,6 +325,47 @@ namespace DiscImageChef.Devices.Remote
             DicConsole.ErrorWriteLine($"{nop.reason}");
             LastError = nop.errno;
             return false;
+        }
+
+        public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
+            ScsiDirection direction, out double duration, out bool sense)
+        {
+            throw new NotImplementedException("Remote SCSI commands not yet implemented...");
+        }
+
+        public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
+            AtaProtocol protocol, AtaTransferRegister transferRegister,
+            ref byte[] buffer,
+            uint timeout, bool transferBlocks,
+            out double duration, out bool sense)
+        {
+            throw new NotImplementedException("Remote CHS ATA commands not yet implemented...");
+        }
+
+        public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
+            AtaProtocol protocol, AtaTransferRegister transferRegister,
+            ref byte[] buffer,
+            uint timeout, bool transferBlocks,
+            out double duration, out bool sense)
+        {
+            throw new NotImplementedException("Remote 28-bit ATA commands not yet implemented...");
+        }
+
+        public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
+            AtaProtocol protocol, AtaTransferRegister transferRegister,
+            ref byte[] buffer,
+            uint timeout, bool transferBlocks,
+            out double duration, out bool sense)
+        {
+            throw new NotImplementedException("Remote 48-bit ATA commands not yet implemented...");
+        }
+
+        public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
+            uint argument,
+            uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
+            out double duration, out bool sense, uint timeout = 0)
+        {
+            throw new NotImplementedException("Remote SDHCI commands not yet implemented...");
         }
     }
 }
