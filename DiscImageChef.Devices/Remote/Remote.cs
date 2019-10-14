@@ -378,5 +378,22 @@ namespace DiscImageChef.Devices.Remote
         {
             throw new NotImplementedException("Getting SDHCI registers not yet implemented...");
         }
+
+        public bool GetUsbData(out byte[] descriptors, out ushort idVendor, out ushort idProduct,
+            out string manufacturer, out string product, out string serial)
+        {
+            throw new NotImplementedException("Getting USB data not yet implemented...");
+        }
+
+        public bool GetFirewireData(out uint idVendor, out uint idProduct,
+            out ulong guid, out string vendor, out string model)
+        {
+            throw new NotImplementedException("Getting FireWire data not yet implemented...");
+        }
+
+        public bool GetPcmciaData(out byte[] cis)
+        {
+            throw new NotImplementedException("Getting PCMCIA data not yet implemented...");
+        }
     }
 }

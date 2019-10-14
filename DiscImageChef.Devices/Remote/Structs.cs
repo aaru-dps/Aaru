@@ -206,24 +206,24 @@ namespace DiscImageChef.Devices.Remote
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketCmdGetDeviceType
     {
-        private readonly DicPacketHeader hdr;
+        public DicPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketResGetDeviceType
     {
-        private readonly DicPacketHeader hdr;
-        private readonly DeviceType device_type;
+        public DicPacketHeader hdr;
+        public DeviceType device_type;
     }
 
     public struct DicPacketCmdGetSdhciRegisters
     {
-        private DicPacketHeader hdr;
+        public DicPacketHeader hdr;
     }
 
     public struct DicPacketResGetSdhciRegisters
     {
-        private DicPacketHeader hdr;
+        public DicPacketHeader hdr;
         [MarshalAs(UnmanagedType.U1)] public bool isSdhci;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
@@ -237,5 +237,67 @@ namespace DiscImageChef.Devices.Remote
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public byte[] scr;
+    }
+
+    public struct DicPacketCmdGetUsbData
+    {
+        public DicPacketHeader hdr;
+    }
+
+    public struct DicPacketResGetUsbData
+    {
+        public DicPacketHeader hdr;
+        [MarshalAs(UnmanagedType.U1)] public bool isUsb;
+        public ushort descLen;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 65536)]
+        public byte[] descriptors;
+
+        public ushort idVendor;
+        public ushort idProduct;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public string manufacturer;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public string product;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public string serial;
+    }
+
+    public struct DicPacketCmdGetFireWireData
+    {
+        public DicPacketHeader hdr;
+    }
+
+    public struct DicPacketResGetFireWireData
+    {
+        public DicPacketHeader hdr;
+        [MarshalAs(UnmanagedType.U1)] public bool isFireWire;
+        public uint idModel;
+        public uint idVendor;
+        public ulong guid;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public string vendor;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        public string model;
+    }
+
+    public struct DicPacketCmdGetPcmciaData
+    {
+        public DicPacketHeader hdr;
+    }
+
+    public struct DicPacketResGetPcmciaData
+    {
+        public DicPacketHeader hdr;
+        [MarshalAs(UnmanagedType.U1)] public bool isPcmcia;
+        public ushort cis_len;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 65536)]
+        public byte[] cis;
     }
 }
