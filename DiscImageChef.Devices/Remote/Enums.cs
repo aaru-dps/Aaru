@@ -20,7 +20,13 @@ namespace DiscImageChef.Devices.Remote
         CommandGetType = 15,
         ResponseGetType = 16,
         CommandGetSdhciRegisters = 17,
-        ResponseGetSdhciRegisters = 18
+        ResponseGetSdhciRegisters = 18,
+        CommandGetUsbData = 19,
+        ResponseGetUsbData = 20,
+        CommandGetFireWireData = 21,
+        ResponseGetFireWireData = 22,
+        CommandGetPcmciaData = 23,
+        ResponseGetPcmciaData = 24
     }
 
     public enum DicNopReason : byte
