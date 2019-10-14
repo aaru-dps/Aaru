@@ -40,12 +40,12 @@ namespace DiscImageChef.CommonTypes.Enums
 {
     public enum DeviceType
     {
-        Unknown,
-        ATA,
-        ATAPI,
-        SCSI,
-        SecureDigital,
-        MMC,
-        NVMe
+        Unknown = -1,
+        ATA = 1,
+        ATAPI = 2,
+        SCSI = 3,
+        SecureDigital = 4,
+        MMC = 5,
+        NVMe = 6
     }
 }

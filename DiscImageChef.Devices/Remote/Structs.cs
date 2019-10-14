@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Devices.Remote
@@ -200,5 +201,18 @@ namespace DiscImageChef.Devices.Remote
         public uint duration;
         public uint sense;
         public uint errno;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdGetDeviceType
+    {
+        private readonly DicPacketHeader hdr;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResGetDeviceType
+    {
+        private readonly DicPacketHeader hdr;
+        private readonly DeviceType device_type;
     }
 }

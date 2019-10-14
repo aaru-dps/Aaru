@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
@@ -366,6 +367,11 @@ namespace DiscImageChef.Devices.Remote
             out double duration, out bool sense, uint timeout = 0)
         {
             throw new NotImplementedException("Remote SDHCI commands not yet implemented...");
+        }
+
+        public DeviceType GetDeviceType()
+        {
+            throw new NotImplementedException("Getting remote device type not yet implemented...");
         }
     }
 }
