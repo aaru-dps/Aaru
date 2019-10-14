@@ -215,4 +215,27 @@ namespace DiscImageChef.Devices.Remote
         private readonly DicPacketHeader hdr;
         private readonly DeviceType device_type;
     }
+
+    public struct DicPacketCmdGetSdhciRegisters
+    {
+        private DicPacketHeader hdr;
+    }
+
+    public struct DicPacketResGetSdhciRegisters
+    {
+        private DicPacketHeader hdr;
+        [MarshalAs(UnmanagedType.U1)] public bool isSdhci;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] csd;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public byte[] cid;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public byte[] ocr;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public byte[] scr;
+    }
 }

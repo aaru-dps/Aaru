@@ -373,5 +373,10 @@ namespace DiscImageChef.Devices.Remote
         {
             throw new NotImplementedException("Getting remote device type not yet implemented...");
         }
+
+        public bool GetSdhciRegisters(out byte[] csd, out byte[] cid, out byte[] ocr, out byte[] scr)
+        {
+            throw new NotImplementedException("Getting SDHCI registers not yet implemented...");
+        }
     }
 }
