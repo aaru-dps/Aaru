@@ -371,7 +371,64 @@ namespace DiscImageChef.Devices.Remote
 
         public DeviceType GetDeviceType()
         {
-            throw new NotImplementedException("Getting remote device type not yet implemented...");
+            var cmdPkt = new DicPacketCmdGetDeviceType
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCommandOpenDevice>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandGetType
+                }
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return DeviceType.Unknown;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return DeviceType.Unknown;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return DeviceType.Unknown;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseGetType)
+            {
+                DicConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return DeviceType.Unknown;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return DeviceType.Unknown;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetDeviceType>(buf);
+
+            return res.device_type;
         }
 
         public bool GetSdhciRegisters(out byte[] csd, out byte[] cid, out byte[] ocr, out byte[] scr)
