@@ -401,8 +401,24 @@ namespace DiscImageChef.Devices
             else
             {
                 Type = remote.GetDeviceType();
-                // TODO: Get INQUIRY if SCSI or ATAPI
                 // TODO: Get SD/MMC registers if SD/MMC
+
+                switch (Type)
+                {
+                    case DeviceType.ATAPI:
+                    case DeviceType.SCSI:
+                        scsiSense = ScsiInquiry(out inqBuf, out _);
+                        break;
+                    case DeviceType.SecureDigital:
+                    case DeviceType.MMC:
+                        if (!remote.GetSdhciRegisters(out cachedCsd, out cachedCid, out cachedOcr, out cachedScr))
+                        {
+                            Type = DeviceType.SCSI;
+                            ScsiType = PeripheralDeviceTypes.DirectAccess;
+                        }
+
+                        break;
+                }
             }
 
             #region SecureDigital / MultiMediaCard
