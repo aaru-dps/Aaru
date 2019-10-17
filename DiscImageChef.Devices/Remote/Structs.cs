@@ -98,7 +98,7 @@ namespace DiscImageChef.Devices.Remote
         public uint buf_len;
         public uint duration;
         public uint sense;
-        public uint errno;
+        public uint error_no;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -122,7 +122,7 @@ namespace DiscImageChef.Devices.Remote
         public AtaErrorRegistersChs registers;
         public uint duration;
         public uint sense;
-        public uint errno;
+        public uint error_no;
     }
 
 
@@ -147,7 +147,7 @@ namespace DiscImageChef.Devices.Remote
         public AtaErrorRegistersLba28 registers;
         public uint duration;
         public uint sense;
-        public uint errno;
+        public uint error_no;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -171,7 +171,7 @@ namespace DiscImageChef.Devices.Remote
         public AtaErrorRegistersLba48 registers;
         public uint duration;
         public uint sense;
-        public uint errno;
+        public uint error_no;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -200,7 +200,7 @@ namespace DiscImageChef.Devices.Remote
 
         public uint duration;
         public uint sense;
-        public uint errno;
+        public uint error_no;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]

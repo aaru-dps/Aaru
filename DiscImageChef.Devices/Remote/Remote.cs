@@ -331,7 +331,91 @@ namespace DiscImageChef.Devices.Remote
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
             ScsiDirection direction, out double duration, out bool sense)
         {
-            throw new NotImplementedException("Remote SCSI commands not yet implemented...");
+            senseBuffer = null;
+            duration = 0;
+            sense = true;
+
+            var cmdPkt = new DicPacketCmdScsi
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandScsi
+                },
+                direction = (int) direction,
+                timeout = timeout * 1000
+            };
+
+            if (cdb != null)
+                cmdPkt.cdb_len = (uint) cdb.Length;
+            if (buffer != null)
+                cmdPkt.buf_len = (uint) buffer.Length;
+
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdScsi>() + cmdPkt.cdb_len + cmdPkt.buf_len);
+
+            var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+            var buf = new byte[cmdPkt.hdr.len];
+
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdScsi>());
+
+            if (cdb != null)
+                Array.Copy(cdb, 0, buf, Marshal.SizeOf<DicPacketCmdScsi>(), cmdPkt.cdb_len);
+            if (buffer != null)
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdScsi>() + cmdPkt.cdb_len, cmdPkt.buf_len);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return -1;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return -1;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseScsi)
+            {
+                DicConsole.ErrorWriteLine("Expected SCSI Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return -1;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResScsi>(buf);
+
+            senseBuffer = new byte[res.sense_len];
+            Array.Copy(buf, Marshal.SizeOf<DicPacketResScsi>(), senseBuffer, 0, res.sense_len);
+            buffer = new byte[res.buf_len];
+            Array.Copy(buf, Marshal.SizeOf<DicPacketResScsi>() + res.sense_len, buffer, 0, res.buf_len);
+            duration = res.duration;
+            sense = res.sense != 0;
+
+            return (int) res.error_no;
         }
 
         public int SendAtaCommand(AtaRegistersChs registers, out AtaErrorRegistersChs errorRegisters,
@@ -376,7 +460,7 @@ namespace DiscImageChef.Devices.Remote
                 hdr = new DicPacketHeader
                 {
                     id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCommandOpenDevice>(),
+                    len = (uint) Marshal.SizeOf<DicPacketCmdGetDeviceType>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandGetType
                 }
