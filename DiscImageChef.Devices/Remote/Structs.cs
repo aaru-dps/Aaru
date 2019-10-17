@@ -237,6 +237,11 @@ namespace DiscImageChef.Devices.Remote
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public byte[] scr;
+
+        public uint csd_len;
+        public uint cid_len;
+        public uint ocr_len;
+        public uint scr_len;
     }
 
     public struct DicPacketCmdGetUsbData

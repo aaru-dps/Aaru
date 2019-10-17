@@ -401,7 +401,6 @@ namespace DiscImageChef.Devices
             else
             {
                 Type = remote.GetDeviceType();
-                // TODO: Get SD/MMC registers if SD/MMC
 
                 switch (Type)
                 {
@@ -449,7 +448,6 @@ namespace DiscImageChef.Devices
             }
 
             #endregion SecureDigital / MultiMediaCard
-
 
             #region USB
 
