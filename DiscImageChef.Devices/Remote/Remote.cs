@@ -517,7 +517,109 @@ namespace DiscImageChef.Devices.Remote
 
         public bool GetSdhciRegisters(out byte[] csd, out byte[] cid, out byte[] ocr, out byte[] scr)
         {
-            throw new NotImplementedException("Getting SDHCI registers not yet implemented...");
+            csd = null;
+            cid = null;
+            ocr = null;
+            scr = null;
+
+            var cmdPkt = new DicPacketCmdGetSdhciRegisters
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCmdGetSdhciRegisters>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandGetSdhciRegisters
+                }
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return false;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return false;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseGetSdhciRegisters)
+            {
+                DicConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return false;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetSdhciRegisters>(buf);
+
+            if (res.csd_len > 0)
+            {
+                if (res.csd_len > 16)
+                    res.csd_len = 16;
+
+                csd = new byte[res.csd_len];
+
+                Array.Copy(res.csd, 0, csd, 0, res.csd_len);
+            }
+
+            if (res.cid_len > 0)
+            {
+                if (res.cid_len > 16)
+                    res.cid_len = 16;
+
+                cid = new byte[res.cid_len];
+
+                Array.Copy(res.cid, 0, cid, 0, res.cid_len);
+            }
+
+            if (res.ocr_len > 0)
+            {
+                if (res.ocr_len > 16)
+                    res.ocr_len = 16;
+
+                ocr = new byte[res.ocr_len];
+
+                Array.Copy(res.ocr, 0, ocr, 0, res.ocr_len);
+            }
+
+            if (res.scr_len > 0)
+            {
+                if (res.scr_len > 16)
+                    res.scr_len = 16;
+
+                scr = new byte[res.scr_len];
+
+                Array.Copy(res.scr, 0, scr, 0, res.scr_len);
+            }
+
+            return res.isSdhci;
         }
 
         public bool GetUsbData(out byte[] descriptors, out ushort idVendor, out ushort idProduct,
