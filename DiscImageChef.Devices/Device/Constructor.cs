@@ -576,66 +576,80 @@ namespace DiscImageChef.Devices
 
             #region FireWire
 
-            if (PlatformId == PlatformID.Linux)
+            if (!(remote is null))
             {
-                if (devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
-                    devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
-                    devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                if (remote.GetFirewireData(out firewireVendor, out firewireModel,
+                    out firewireGuid, out var remoteFireWireVendorName, out var remoteFireWireModelName))
                 {
-                    var devPath = devicePath.Substring(5);
-                    if (Directory.Exists("/sys/block/" + devPath))
-                    {
-                        var resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
-                        resolvedLink = "/sys" + resolvedLink.Substring(2);
-                        if (!string.IsNullOrEmpty(resolvedLink))
-                            while (resolvedLink.Contains("firewire"))
-                            {
-                                resolvedLink = Path.GetDirectoryName(resolvedLink);
-                                if (!File.Exists(resolvedLink + "/model") || !File.Exists(resolvedLink + "/vendor") ||
-                                    !File.Exists(resolvedLink + "/guid")) continue;
-
-                                var fwSr = new StreamReader(resolvedLink + "/model");
-                                var fwTemp = fwSr.ReadToEnd();
-                                uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                    out firewireModel);
-                                fwSr.Close();
-
-                                fwSr = new StreamReader(resolvedLink + "/vendor");
-                                fwTemp = fwSr.ReadToEnd();
-                                uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                    out firewireVendor);
-                                fwSr.Close();
-
-                                fwSr = new StreamReader(resolvedLink + "/guid");
-                                fwTemp = fwSr.ReadToEnd();
-                                ulong.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                    out firewireGuid);
-                                fwSr.Close();
-
-                                if (File.Exists(resolvedLink + "/model_name"))
-                                {
-                                    fwSr = new StreamReader(resolvedLink + "/model_name");
-                                    FireWireModelName = fwSr.ReadToEnd().Trim();
-                                    fwSr.Close();
-                                }
-
-                                if (File.Exists(resolvedLink + "/vendor_name"))
-                                {
-                                    fwSr = new StreamReader(resolvedLink + "/vendor_name");
-                                    FireWireVendorName = fwSr.ReadToEnd().Trim();
-                                    fwSr.Close();
-                                }
-
-                                IsFireWire = true;
-                                break;
-                            }
-                    }
+                    IsFireWire = true;
+                    FireWireVendorName = remoteFireWireVendorName;
+                    FireWireModelName = remoteFireWireModelName;
                 }
             }
-            // TODO: Implement for other operating systems
             else
             {
-                IsFireWire = false;
+                if (PlatformId == PlatformID.Linux)
+                {
+                    if (devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
+                        devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
+                        devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                    {
+                        var devPath = devicePath.Substring(5);
+                        if (Directory.Exists("/sys/block/" + devPath))
+                        {
+                            var resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
+                            resolvedLink = "/sys" + resolvedLink.Substring(2);
+                            if (!string.IsNullOrEmpty(resolvedLink))
+                                while (resolvedLink.Contains("firewire"))
+                                {
+                                    resolvedLink = Path.GetDirectoryName(resolvedLink);
+                                    if (!File.Exists(resolvedLink + "/model") ||
+                                        !File.Exists(resolvedLink + "/vendor") ||
+                                        !File.Exists(resolvedLink + "/guid")) continue;
+
+                                    var fwSr = new StreamReader(resolvedLink + "/model");
+                                    var fwTemp = fwSr.ReadToEnd();
+                                    uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                        out firewireModel);
+                                    fwSr.Close();
+
+                                    fwSr = new StreamReader(resolvedLink + "/vendor");
+                                    fwTemp = fwSr.ReadToEnd();
+                                    uint.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                        out firewireVendor);
+                                    fwSr.Close();
+
+                                    fwSr = new StreamReader(resolvedLink + "/guid");
+                                    fwTemp = fwSr.ReadToEnd();
+                                    ulong.TryParse(fwTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                        out firewireGuid);
+                                    fwSr.Close();
+
+                                    if (File.Exists(resolvedLink + "/model_name"))
+                                    {
+                                        fwSr = new StreamReader(resolvedLink + "/model_name");
+                                        FireWireModelName = fwSr.ReadToEnd().Trim();
+                                        fwSr.Close();
+                                    }
+
+                                    if (File.Exists(resolvedLink + "/vendor_name"))
+                                    {
+                                        fwSr = new StreamReader(resolvedLink + "/vendor_name");
+                                        FireWireVendorName = fwSr.ReadToEnd().Trim();
+                                        fwSr.Close();
+                                    }
+
+                                    IsFireWire = true;
+                                    break;
+                                }
+                        }
+                    }
+                }
+                // TODO: Implement for other operating systems
+                else
+                {
+                    IsFireWire = false;
+                }
             }
 
             #endregion FireWire

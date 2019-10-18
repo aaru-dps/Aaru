@@ -632,7 +632,7 @@ namespace DiscImageChef.Devices.Remote
             product = null;
             serial = null;
 
-            var cmdPkt = new DicPacketCmdGetSdhciRegisters
+            var cmdPkt = new DicPacketCmdGetUsbData
             {
                 hdr = new DicPacketHeader
                 {
@@ -706,7 +706,79 @@ namespace DiscImageChef.Devices.Remote
         public bool GetFirewireData(out uint idVendor, out uint idProduct,
             out ulong guid, out string vendor, out string model)
         {
-            throw new NotImplementedException("Getting FireWire data not yet implemented...");
+            idVendor = 0;
+            idProduct = 0;
+            guid = 0;
+            vendor = null;
+            model = null;
+
+            var cmdPkt = new DicPacketCmdGetFireWireData
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCmdGetFireWireData>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandGetFireWireData
+                }
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return false;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return false;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseGetUsbData)
+            {
+                DicConsole.ErrorWriteLine("Expected FireWire Data Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return false;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetFireWireData>(buf);
+
+            if (!res.isFireWire)
+                return false;
+
+            idVendor = res.idVendor;
+            idProduct = res.idModel;
+            guid = res.guid;
+            vendor = res.vendor;
+            model = res.model;
+
+            return true;
         }
 
         public bool GetPcmciaData(out byte[] cis)
