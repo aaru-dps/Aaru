@@ -261,13 +261,13 @@ namespace DiscImageChef.Devices.Remote
         public ushort idVendor;
         public ushort idProduct;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string manufacturer;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string product;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string serial;
     }
 
@@ -284,10 +284,10 @@ namespace DiscImageChef.Devices.Remote
         public uint idVendor;
         public ulong guid;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string vendor;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string model;
     }
 
