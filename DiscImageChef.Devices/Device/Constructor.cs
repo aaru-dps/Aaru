@@ -451,106 +451,125 @@ namespace DiscImageChef.Devices
 
             #region USB
 
-            switch (PlatformId)
+            if (remote is null)
             {
-                case PlatformID.Linux:
-                    if (devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
-                        devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
-                        devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
-                    {
-                        var devPath = devicePath.Substring(5);
-                        if (Directory.Exists("/sys/block/" + devPath))
+                switch (PlatformId)
+                {
+                    case PlatformID.Linux:
+                        if (devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
+                            devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
+                            devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                         {
-                            var resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
-                            if (!string.IsNullOrEmpty(resolvedLink))
+                            var devPath = devicePath.Substring(5);
+                            if (Directory.Exists("/sys/block/" + devPath))
                             {
-                                resolvedLink = "/sys" + resolvedLink.Substring(2);
-
-                                while (resolvedLink.Contains("usb"))
+                                var resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
+                                if (!string.IsNullOrEmpty(resolvedLink))
                                 {
-                                    resolvedLink = Path.GetDirectoryName(resolvedLink);
-                                    if (!File.Exists(resolvedLink + "/descriptors") ||
-                                        !File.Exists(resolvedLink + "/idProduct") ||
-                                        !File.Exists(resolvedLink + "/idVendor")) continue;
+                                    resolvedLink = "/sys" + resolvedLink.Substring(2);
 
-                                    var usbFs = new FileStream(resolvedLink + "/descriptors",
-                                        System.IO.FileMode.Open,
-                                        System.IO.FileAccess.Read);
-                                    var usbBuf = new byte[65536];
-                                    var usbCount = usbFs.Read(usbBuf, 0, 65536);
-                                    UsbDescriptors = new byte[usbCount];
-                                    Array.Copy(usbBuf, 0, UsbDescriptors, 0, usbCount);
-                                    usbFs.Close();
-
-                                    var usbSr = new StreamReader(resolvedLink + "/idProduct");
-                                    var usbTemp = usbSr.ReadToEnd();
-                                    ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                        out usbProduct);
-                                    usbSr.Close();
-
-                                    usbSr = new StreamReader(resolvedLink + "/idVendor");
-                                    usbTemp = usbSr.ReadToEnd();
-                                    ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
-                                        out usbVendor);
-                                    usbSr.Close();
-
-                                    if (File.Exists(resolvedLink + "/manufacturer"))
+                                    while (resolvedLink.Contains("usb"))
                                     {
-                                        usbSr = new StreamReader(resolvedLink + "/manufacturer");
-                                        UsbManufacturerString = usbSr.ReadToEnd().Trim();
-                                        usbSr.Close();
-                                    }
+                                        resolvedLink = Path.GetDirectoryName(resolvedLink);
+                                        if (!File.Exists(resolvedLink + "/descriptors") ||
+                                            !File.Exists(resolvedLink + "/idProduct") ||
+                                            !File.Exists(resolvedLink + "/idVendor")) continue;
 
-                                    if (File.Exists(resolvedLink + "/product"))
-                                    {
-                                        usbSr = new StreamReader(resolvedLink + "/product");
-                                        UsbProductString = usbSr.ReadToEnd().Trim();
-                                        usbSr.Close();
-                                    }
+                                        var usbFs = new FileStream(resolvedLink + "/descriptors",
+                                            System.IO.FileMode.Open,
+                                            System.IO.FileAccess.Read);
+                                        var usbBuf = new byte[65536];
+                                        var usbCount = usbFs.Read(usbBuf, 0, 65536);
+                                        UsbDescriptors = new byte[usbCount];
+                                        Array.Copy(usbBuf, 0, UsbDescriptors, 0, usbCount);
+                                        usbFs.Close();
 
-                                    if (File.Exists(resolvedLink + "/serial"))
-                                    {
-                                        usbSr = new StreamReader(resolvedLink + "/serial");
-                                        UsbSerialString = usbSr.ReadToEnd().Trim();
+                                        var usbSr = new StreamReader(resolvedLink + "/idProduct");
+                                        var usbTemp = usbSr.ReadToEnd();
+                                        ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                            out usbProduct);
                                         usbSr.Close();
-                                    }
 
-                                    IsUsb = true;
-                                    break;
+                                        usbSr = new StreamReader(resolvedLink + "/idVendor");
+                                        usbTemp = usbSr.ReadToEnd();
+                                        ushort.TryParse(usbTemp, NumberStyles.HexNumber, CultureInfo.InvariantCulture,
+                                            out usbVendor);
+                                        usbSr.Close();
+
+                                        if (File.Exists(resolvedLink + "/manufacturer"))
+                                        {
+                                            usbSr = new StreamReader(resolvedLink + "/manufacturer");
+                                            UsbManufacturerString = usbSr.ReadToEnd().Trim();
+                                            usbSr.Close();
+                                        }
+
+                                        if (File.Exists(resolvedLink + "/product"))
+                                        {
+                                            usbSr = new StreamReader(resolvedLink + "/product");
+                                            UsbProductString = usbSr.ReadToEnd().Trim();
+                                            usbSr.Close();
+                                        }
+
+                                        if (File.Exists(resolvedLink + "/serial"))
+                                        {
+                                            usbSr = new StreamReader(resolvedLink + "/serial");
+                                            UsbSerialString = usbSr.ReadToEnd().Trim();
+                                            usbSr.Close();
+                                        }
+
+                                        IsUsb = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    break;
-                case PlatformID.Win32NT:
-                    Usb.UsbDevice usbDevice = null;
+                        break;
+                    case PlatformID.Win32NT:
+                        Usb.UsbDevice usbDevice = null;
 
-                    // I have to search for USB disks, floppies and CD-ROMs as separate device types
-                    foreach (var devGuid in new[]
-                    {
-                        Usb.GuidDevinterfaceFloppy, Usb.GuidDevinterfaceCdrom, Usb.GuidDevinterfaceDisk
-                    })
-                    {
-                        usbDevice = Usb.FindDrivePath(devicePath, devGuid);
-                        if (usbDevice != null) break;
-                    }
+                        // I have to search for USB disks, floppies and CD-ROMs as separate device types
+                        foreach (var devGuid in new[]
+                        {
+                            Usb.GuidDevinterfaceFloppy, Usb.GuidDevinterfaceCdrom, Usb.GuidDevinterfaceDisk
+                        })
+                        {
+                            usbDevice = Usb.FindDrivePath(devicePath, devGuid);
+                            if (usbDevice != null) break;
+                        }
 
-                    if (usbDevice != null)
-                    {
-                        UsbDescriptors = usbDevice.BinaryDescriptors;
-                        usbVendor = (ushort) usbDevice.DeviceDescriptor.idVendor;
-                        usbProduct = (ushort) usbDevice.DeviceDescriptor.idProduct;
-                        UsbManufacturerString = usbDevice.Manufacturer;
-                        UsbProductString = usbDevice.Product;
-                        UsbSerialString =
-                            usbDevice.SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
-                    }
+                        if (usbDevice != null)
+                        {
+                            UsbDescriptors = usbDevice.BinaryDescriptors;
+                            usbVendor = (ushort) usbDevice.DeviceDescriptor.idVendor;
+                            usbProduct = (ushort) usbDevice.DeviceDescriptor.idProduct;
+                            UsbManufacturerString = usbDevice.Manufacturer;
+                            UsbProductString = usbDevice.Product;
+                            UsbSerialString =
+                                usbDevice
+                                    .SerialNumber; // This is incorrect filled by Windows with SCSI/ATA serial number
+                        }
 
-                    break;
-                default:
-                    IsUsb = false;
-                    break;
+                        break;
+                    default:
+                        IsUsb = false;
+                        break;
+                }
+            }
+            else
+            {
+                if (remote.GetUsbData(out var remoteUsbDescriptors, out var remoteUsbVendor,
+                    out var remoteUsbProduct, out var remoteUsbManufacturer, out var remoteUsbProductString,
+                    out var remoteUsbSerial))
+                {
+                    IsUsb = true;
+                    UsbDescriptors = remoteUsbDescriptors;
+                    usbVendor = remoteUsbVendor;
+                    usbProduct = remoteUsbProduct;
+                    UsbManufacturerString = remoteUsbManufacturer;
+                    UsbProductString = remoteUsbProductString;
+                    UsbSerialString = remoteUsbSerial;
+                }
             }
 
             #endregion USB

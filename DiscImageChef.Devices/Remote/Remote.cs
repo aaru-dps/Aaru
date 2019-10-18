@@ -625,7 +625,82 @@ namespace DiscImageChef.Devices.Remote
         public bool GetUsbData(out byte[] descriptors, out ushort idVendor, out ushort idProduct,
             out string manufacturer, out string product, out string serial)
         {
-            throw new NotImplementedException("Getting USB data not yet implemented...");
+            descriptors = null;
+            idVendor = 0;
+            idProduct = 0;
+            manufacturer = null;
+            product = null;
+            serial = null;
+
+            var cmdPkt = new DicPacketCmdGetSdhciRegisters
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCmdGetUsbData>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandGetUsbData
+                }
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return false;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return false;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseGetUsbData)
+            {
+                DicConsole.ErrorWriteLine("Expected USB Data Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return false;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetUsbData>(buf);
+
+            if (!res.isUsb)
+                return false;
+
+            descriptors = new byte[res.descLen];
+            Array.Copy(res.descriptors, 0, descriptors, 0, res.descLen);
+            idVendor = res.idVendor;
+            idProduct = res.idProduct;
+            manufacturer = res.manufacturer;
+            product = res.product;
+            serial = res.serial;
+
+            return true;
         }
 
         public bool GetFirewireData(out uint idVendor, out uint idProduct,
