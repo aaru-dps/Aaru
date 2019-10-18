@@ -462,8 +462,10 @@ namespace DiscImageChef.Devices
                         if (Directory.Exists("/sys/block/" + devPath))
                         {
                             var resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
-                            resolvedLink = "/sys" + resolvedLink.Substring(2);
                             if (!string.IsNullOrEmpty(resolvedLink))
+                            {
+                                resolvedLink = "/sys" + resolvedLink.Substring(2);
+
                                 while (resolvedLink.Contains("usb"))
                                 {
                                     resolvedLink = Path.GetDirectoryName(resolvedLink);
@@ -516,6 +518,7 @@ namespace DiscImageChef.Devices
                                     IsUsb = true;
                                     break;
                                 }
+                            }
                         }
                     }
 
