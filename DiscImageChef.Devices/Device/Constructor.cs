@@ -656,51 +656,62 @@ namespace DiscImageChef.Devices
 
             #region PCMCIA
 
-            if (PlatformId == PlatformID.Linux)
+            if(remote is null)
             {
-                if (devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
-                    devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
-                    devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
+                if (PlatformId == PlatformID.Linux)
                 {
-                    var devPath = devicePath.Substring(5);
-                    if (Directory.Exists("/sys/block/" + devPath))
+                    if (devicePath.StartsWith("/dev/sd", StringComparison.Ordinal) ||
+                        devicePath.StartsWith("/dev/sr", StringComparison.Ordinal) ||
+                        devicePath.StartsWith("/dev/st", StringComparison.Ordinal))
                     {
-                        var resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
-                        resolvedLink = "/sys" + resolvedLink.Substring(2);
-                        if (!string.IsNullOrEmpty(resolvedLink))
-                            while (resolvedLink.Contains("/sys/devices"))
-                            {
-                                resolvedLink = Path.GetDirectoryName(resolvedLink);
-                                if (!Directory.Exists(resolvedLink + "/pcmcia_socket")) continue;
+                        var devPath = devicePath.Substring(5);
+                        if (Directory.Exists("/sys/block/" + devPath))
+                        {
+                            var resolvedLink = Linux.Command.ReadLink("/sys/block/" + devPath);
+                            resolvedLink = "/sys" + resolvedLink.Substring(2);
+                            if (!string.IsNullOrEmpty(resolvedLink))
+                                while (resolvedLink.Contains("/sys/devices"))
+                                {
+                                    resolvedLink = Path.GetDirectoryName(resolvedLink);
+                                    if (!Directory.Exists(resolvedLink + "/pcmcia_socket")) continue;
 
-                                var subdirs = Directory.GetDirectories(resolvedLink + "/pcmcia_socket",
-                                    "pcmcia_socket*",
-                                    SearchOption.TopDirectoryOnly);
+                                    var subdirs = Directory.GetDirectories(resolvedLink + "/pcmcia_socket",
+                                        "pcmcia_socket*",
+                                        SearchOption.TopDirectoryOnly);
 
-                                if (subdirs.Length <= 0) continue;
+                                    if (subdirs.Length <= 0) continue;
 
-                                var possibleDir = Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
-                                if (!File.Exists(possibleDir + "/card_type") || !File.Exists(possibleDir + "/cis"))
-                                    continue;
+                                    var possibleDir = Path.Combine(resolvedLink, "pcmcia_socket", subdirs[0]);
+                                    if (!File.Exists(possibleDir + "/card_type") || !File.Exists(possibleDir + "/cis"))
+                                        continue;
 
-                                var cisFs = new FileStream(possibleDir + "/cis", System.IO.FileMode.Open,
-                                    System.IO.FileAccess.Read);
-                                var cisBuf = new byte[65536];
-                                var cisCount = cisFs.Read(cisBuf, 0, 65536);
-                                Cis = new byte[cisCount];
-                                Array.Copy(cisBuf, 0, Cis, 0, cisCount);
-                                cisFs.Close();
+                                    var cisFs = new FileStream(possibleDir + "/cis", System.IO.FileMode.Open,
+                                        System.IO.FileAccess.Read);
+                                    var cisBuf = new byte[65536];
+                                    var cisCount = cisFs.Read(cisBuf, 0, 65536);
+                                    Cis = new byte[cisCount];
+                                    Array.Copy(cisBuf, 0, Cis, 0, cisCount);
+                                    cisFs.Close();
 
-                                IsPcmcia = true;
-                                break;
-                            }
+                                    IsPcmcia = true;
+                                    break;
+                                }
+                        }
                     }
                 }
+                // TODO: Implement for other operating systems
+                else
+                {
+                    IsPcmcia = false;
+                }
             }
-            // TODO: Implement for other operating systems
             else
             {
-                IsPcmcia = false;
+                if (remote.GetPcmciaData(out var cisBuf))
+                {
+                    IsPcmcia = true;
+                    Cis = cisBuf;
+                }
             }
 
             #endregion PCMCIA

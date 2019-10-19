@@ -751,7 +751,7 @@ namespace DiscImageChef.Devices.Remote
                 return false;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseGetUsbData)
+            if (hdr.packetType != DicPacketType.ResponseGetFireWireData)
             {
                 DicConsole.ErrorWriteLine("Expected FireWire Data Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -783,7 +783,71 @@ namespace DiscImageChef.Devices.Remote
 
         public bool GetPcmciaData(out byte[] cis)
         {
-            throw new NotImplementedException("Getting PCMCIA data not yet implemented...");
+            cis = null;
+
+            var cmdPkt = new DicPacketCmdGetPcmciaData()
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCmdGetPcmciaData>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandGetPcmciaData
+                }
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return false;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return false;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseGetPcmciaData)
+            {
+                DicConsole.ErrorWriteLine("Expected PCMCIA Data Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return false;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return false;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetPcmciaData>(buf);
+
+            if (!res.isPcmcia)
+                return false;
+
+            cis = res.cis;
+
+            return true;
         }
     }
 }
