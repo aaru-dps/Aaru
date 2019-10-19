@@ -424,7 +424,89 @@ namespace DiscImageChef.Devices.Remote
             uint timeout, bool transferBlocks,
             out double duration, out bool sense)
         {
-            throw new NotImplementedException("Remote CHS ATA commands not yet implemented...");
+            duration = 0;
+            sense = true;
+            errorRegisters = new AtaErrorRegistersChs();
+
+            var cmdPkt = new DicPacketCmdAtaChs
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandAtaChs
+                },
+                registers = registers,
+                protocol = (byte) protocol,
+                transferRegister = (byte) transferRegister,
+                transferBlocks = transferBlocks,
+                timeout = timeout * 1000
+            };
+
+            if (buffer != null)
+                cmdPkt.buf_len = (uint) buffer.Length;
+
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdAtaChs>() + cmdPkt.buf_len);
+
+            var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+            var buf = new byte[cmdPkt.hdr.len];
+
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdAtaChs>());
+
+            if (buffer != null)
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdAtaChs>(), cmdPkt.buf_len);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return -1;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return -1;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseAtaChs)
+            {
+                DicConsole.ErrorWriteLine("Expected ATA CHS Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return -1;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAtaChs>(buf);
+
+            buffer = new byte[res.buf_len];
+            Array.Copy(buf, Marshal.SizeOf<DicPacketResAtaChs>(), buffer, 0, res.buf_len);
+            duration = res.duration;
+            sense = res.sense != 0;
+            errorRegisters = res.registers;
+
+            return (int) res.error_no;
         }
 
         public int SendAtaCommand(AtaRegistersLba28 registers, out AtaErrorRegistersLba28 errorRegisters,
@@ -433,7 +515,89 @@ namespace DiscImageChef.Devices.Remote
             uint timeout, bool transferBlocks,
             out double duration, out bool sense)
         {
-            throw new NotImplementedException("Remote 28-bit ATA commands not yet implemented...");
+            duration = 0;
+            sense = true;
+            errorRegisters = new AtaErrorRegistersLba28();
+
+            var cmdPkt = new DicPacketCmdAtaLba28
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandAtaLba28
+                },
+                registers = registers,
+                protocol = (byte) protocol,
+                transferRegister = (byte) transferRegister,
+                transferBlocks = transferBlocks,
+                timeout = timeout * 1000
+            };
+
+            if (buffer != null)
+                cmdPkt.buf_len = (uint) buffer.Length;
+
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdAtaLba28>() + cmdPkt.buf_len);
+
+            var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+            var buf = new byte[cmdPkt.hdr.len];
+
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdAtaLba28>());
+
+            if (buffer != null)
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdAtaLba28>(), cmdPkt.buf_len);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return -1;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return -1;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseAtaLba28)
+            {
+                DicConsole.ErrorWriteLine("Expected ATA LBA28 Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return -1;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAtaLba28>(buf);
+
+            buffer = new byte[res.buf_len];
+            Array.Copy(buf, Marshal.SizeOf<DicPacketResAtaLba28>(), buffer, 0, res.buf_len);
+            duration = res.duration;
+            sense = res.sense != 0;
+            errorRegisters = res.registers;
+
+            return (int) res.error_no;
         }
 
         public int SendAtaCommand(AtaRegistersLba48 registers, out AtaErrorRegistersLba48 errorRegisters,
@@ -442,7 +606,89 @@ namespace DiscImageChef.Devices.Remote
             uint timeout, bool transferBlocks,
             out double duration, out bool sense)
         {
-            throw new NotImplementedException("Remote 48-bit ATA commands not yet implemented...");
+            duration = 0;
+            sense = true;
+            errorRegisters = new AtaErrorRegistersLba48();
+
+            var cmdPkt = new DicPacketCmdAtaLba48
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandAtaLba48
+                },
+                registers = registers,
+                protocol = (byte) protocol,
+                transferRegister = (byte) transferRegister,
+                transferBlocks = transferBlocks,
+                timeout = timeout * 1000
+            };
+
+            if (buffer != null)
+                cmdPkt.buf_len = (uint) buffer.Length;
+
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdAtaLba48>() + cmdPkt.buf_len);
+
+            var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+            var buf = new byte[cmdPkt.hdr.len];
+
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdAtaLba48>());
+
+            if (buffer != null)
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdAtaLba48>(), cmdPkt.buf_len);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return -1;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return -1;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseAtaLba48)
+            {
+                DicConsole.ErrorWriteLine("Expected ATA LBA48 Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return -1;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAtaLba48>(buf);
+
+            buffer = new byte[res.buf_len];
+            Array.Copy(buf, Marshal.SizeOf<DicPacketResAtaLba48>(), buffer, 0, res.buf_len);
+            duration = res.duration;
+            sense = res.sense != 0;
+            errorRegisters = res.registers;
+
+            return (int) res.error_no;
         }
 
         public int SendMmcCommand(MmcCommands command, bool write, bool isApplication, MmcFlags flags,
@@ -785,7 +1031,7 @@ namespace DiscImageChef.Devices.Remote
         {
             cis = null;
 
-            var cmdPkt = new DicPacketCmdGetPcmciaData()
+            var cmdPkt = new DicPacketCmdGetPcmciaData
             {
                 hdr = new DicPacketHeader
                 {
