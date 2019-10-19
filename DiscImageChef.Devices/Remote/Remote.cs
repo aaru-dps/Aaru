@@ -248,9 +248,9 @@ namespace DiscImageChef.Devices.Remote
             return devices.ToArray();
         }
 
-        public bool Open(string devicePath, out int LastError)
+        public bool Open(string devicePath, out int lastError)
         {
-            LastError = 0;
+            lastError = 0;
 
             var cmdPkt = new DicPacketCommandOpenDevice
             {
@@ -271,7 +271,7 @@ namespace DiscImageChef.Devices.Remote
             if (len != buf.Length)
             {
                 DicConsole.ErrorWriteLine("Could not write to the network...");
-                LastError = -1;
+                lastError = -1;
                 return false;
             }
 
@@ -282,7 +282,7 @@ namespace DiscImageChef.Devices.Remote
             if (len < hdrBuf.Length)
             {
                 DicConsole.ErrorWriteLine("Could not read from the network...");
-                LastError = -1;
+                lastError = -1;
                 return false;
             }
 
@@ -291,7 +291,7 @@ namespace DiscImageChef.Devices.Remote
             if (hdr.id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
-                LastError = -1;
+                lastError = -1;
                 return false;
             }
 
@@ -299,7 +299,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
                     hdr.packetType);
-                LastError = -1;
+                lastError = -1;
                 return false;
             }
 
@@ -309,7 +309,7 @@ namespace DiscImageChef.Devices.Remote
             if (len < buf.Length)
             {
                 DicConsole.ErrorWriteLine("Could not read from the network...");
-                LastError = -1;
+                lastError = -1;
                 return false;
             }
 
@@ -324,7 +324,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             DicConsole.ErrorWriteLine($"{nop.reason}");
-            LastError = nop.errno;
+            lastError = nop.errno;
             return false;
         }
 
@@ -1038,7 +1038,7 @@ namespace DiscImageChef.Devices.Remote
             return true;
         }
 
-        public bool GetFirewireData(out uint idVendor, out uint idProduct,
+        public bool GetFireWireData(out uint idVendor, out uint idProduct,
             out ulong guid, out string vendor, out string model)
         {
             idVendor = 0;
