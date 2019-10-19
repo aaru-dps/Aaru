@@ -109,7 +109,7 @@ namespace DiscImageChef.Devices.Remote
         public AtaRegistersChs registers;
         public byte protocol;
         public byte transferRegister;
-        public byte transferBlocks;
+        [MarshalAs(UnmanagedType.U1)] public bool transferBlocks;
         public byte spare;
         public uint timeout;
     }
@@ -134,7 +134,7 @@ namespace DiscImageChef.Devices.Remote
         public AtaRegistersLba28 registers;
         public byte protocol;
         public byte transferRegister;
-        public byte transferBlocks;
+        [MarshalAs(UnmanagedType.U1)] public bool transferBlocks;
         public byte spare;
         public uint timeout;
     }
@@ -158,7 +158,7 @@ namespace DiscImageChef.Devices.Remote
         public AtaRegistersLba48 registers;
         public byte protocol;
         public byte transferRegister;
-        public byte transferBlocks;
+        [MarshalAs(UnmanagedType.U1)] public bool transferBlocks;
         public byte spare;
         public uint timeout;
     }
