@@ -86,7 +86,12 @@ namespace DiscImageChef.Devices
             uint timeout, bool transferBlocks,
             out double duration, out bool sense)
         {
-            if (!(remote is null)) throw new NotImplementedException("Remote CHS ATA commands not yet implemented...");
+            if (!(remote is null))
+                return remote.SendAtaCommand(registers, out errorRegisters,
+                    protocol, transferRegister,
+                    ref buffer,
+                    timeout, transferBlocks,
+                    out duration, out sense);
 
             return Command.SendAtaCommand(PlatformId, FileHandle, registers, out errorRegisters, protocol,
                 transferRegister,
@@ -116,7 +121,7 @@ namespace DiscImageChef.Devices
             out double duration, out bool sense)
         {
             if (!(remote is null))
-                remote.SendAtaCommand(registers, out errorRegisters,
+                return remote.SendAtaCommand(registers, out errorRegisters,
                     protocol, transferRegister,
                     ref buffer,
                     timeout, transferBlocks,
@@ -150,7 +155,7 @@ namespace DiscImageChef.Devices
             out double duration, out bool sense)
         {
             if (!(remote is null))
-                remote.SendAtaCommand(registers, out errorRegisters,
+                return remote.SendAtaCommand(registers, out errorRegisters,
                     protocol, transferRegister,
                     ref buffer,
                     timeout, transferBlocks,
@@ -232,7 +237,7 @@ namespace DiscImageChef.Devices
             }
 
             if (!(remote is null))
-                remote.SendMmcCommand(command, write, isApplication, flags,
+                return remote.SendMmcCommand(command, write, isApplication, flags,
                     argument,
                     blockSize, blocks, ref buffer, out response,
                     out duration, out sense, timeout);

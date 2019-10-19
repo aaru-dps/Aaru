@@ -578,7 +578,7 @@ namespace DiscImageChef.Devices
 
             if (!(remote is null))
             {
-                if (remote.GetFirewireData(out firewireVendor, out firewireModel,
+                if (remote.GetFireWireData(out firewireVendor, out firewireModel,
                     out firewireGuid, out var remoteFireWireVendorName, out var remoteFireWireModelName))
                 {
                     IsFireWire = true;
@@ -656,7 +656,7 @@ namespace DiscImageChef.Devices
 
             #region PCMCIA
 
-            if(remote is null)
+            if (remote is null)
             {
                 if (PlatformId == PlatformID.Linux)
                 {
