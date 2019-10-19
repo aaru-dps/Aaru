@@ -696,7 +696,96 @@ namespace DiscImageChef.Devices.Remote
             uint blockSize, uint blocks, ref byte[] buffer, out uint[] response,
             out double duration, out bool sense, uint timeout = 0)
         {
-            throw new NotImplementedException("Remote SDHCI commands not yet implemented...");
+            duration = 0;
+            sense = true;
+            response = null;
+
+            var cmdPkt = new DicPacketCmdSdhci
+            {
+                hdr = new DicPacketHeader
+                {
+                    id = Consts.PacketId,
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandAtaLba48
+                },
+                command = command,
+                write = write,
+                application = isApplication,
+                flags = flags,
+                argument = argument,
+                block_size = blockSize,
+                blocks = blocks,
+                timeout = timeout * 1000
+            };
+
+            if (buffer != null)
+                cmdPkt.buf_len = (uint) buffer.Length;
+
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdSdhci>() + cmdPkt.buf_len);
+
+            var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+            var buf = new byte[cmdPkt.hdr.len];
+
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdSdhci>());
+
+            if (buffer != null)
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdSdhci>(), cmdPkt.buf_len);
+
+            var len = _socket.Send(buf, SocketFlags.None);
+
+            if (len != buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not write to the network...");
+                return -1;
+            }
+
+            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+
+            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+
+            if (len < hdrBuf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+
+            if (hdr.id != Consts.PacketId)
+            {
+                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                return -1;
+            }
+
+            if (hdr.packetType != DicPacketType.ResponseSdhci)
+            {
+                DicConsole.ErrorWriteLine("Expected SDHCI Response Packet, got packet type {0}...",
+                    hdr.packetType);
+                return -1;
+            }
+
+            buf = new byte[hdr.len];
+            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+
+            if (len < buf.Length)
+            {
+                DicConsole.ErrorWriteLine("Could not read from the network...");
+                return -1;
+            }
+
+            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResSdhci>(buf);
+
+            buffer = new byte[res.buf_len];
+            Array.Copy(buf, Marshal.SizeOf<DicPacketResSdhci>(), buffer, 0, res.buf_len);
+            duration = res.duration;
+            sense = res.sense != 0;
+            response = new uint[4];
+            response[0] = res.response[0];
+            response[1] = res.response[1];
+            response[2] = res.response[2];
+            response[3] = res.response[3];
+
+            return (int) res.error_no;
         }
 
         public DeviceType GetDeviceType()
