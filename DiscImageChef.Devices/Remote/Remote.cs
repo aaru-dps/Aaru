@@ -40,7 +40,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            var len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            var len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -67,7 +67,7 @@ namespace DiscImageChef.Devices.Remote
                 }
 
                 buf = new byte[hdr.len];
-                len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+                len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
                 if (len < buf.Length)
                 {
@@ -88,7 +88,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -177,7 +177,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -203,7 +203,7 @@ namespace DiscImageChef.Devices.Remote
                 }
 
                 buf = new byte[hdr.len];
-                len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+                len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
                 if (len < buf.Length)
                 {
@@ -224,7 +224,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -277,7 +277,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -304,7 +304,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -374,7 +374,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -398,7 +398,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -466,7 +466,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -490,7 +490,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -557,7 +557,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -581,7 +581,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -648,7 +648,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -672,7 +672,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -741,7 +741,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -765,7 +765,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -813,7 +813,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -837,7 +837,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -880,7 +880,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -904,7 +904,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -990,7 +990,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -1014,7 +1014,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -1070,7 +1070,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -1094,7 +1094,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -1143,7 +1143,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
 
-            len = _socket.Receive(hdrBuf, hdrBuf.Length, SocketFlags.Peek);
+            len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
             if (len < hdrBuf.Length)
             {
@@ -1167,7 +1167,7 @@ namespace DiscImageChef.Devices.Remote
             }
 
             buf = new byte[hdr.len];
-            len = _socket.Receive(buf, buf.Length, SocketFlags.None);
+            len = Receive(_socket, buf, buf.Length, SocketFlags.None);
 
             if (len < buf.Length)
             {
@@ -1183,6 +1183,24 @@ namespace DiscImageChef.Devices.Remote
             cis = res.cis;
 
             return true;
+        }
+
+        private static int Receive(Socket socket, byte[] buffer, int size, SocketFlags socketFlags)
+        {
+            int gotten;
+            var offset = 0;
+
+            while (size > 0)
+            {
+                gotten = socket.Receive(buffer, offset, size, socketFlags);
+
+                if (gotten <= 0) break;
+
+                offset += gotten;
+                size -= gotten;
+            }
+
+            return offset;
         }
     }
 }
