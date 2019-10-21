@@ -74,9 +74,9 @@ namespace DiscImageChef.Devices
                 var host = pieces[0];
                 devicePath = devicePath.Substring(host.Length);
 
-                remote = new Remote.Remote(host);
+                _remote = new Remote.Remote(host);
 
-                Error = !remote.Open(devicePath, out var errno);
+                Error = !_remote.Open(devicePath, out var errno);
                 LastError = errno;
             }
             else
@@ -162,7 +162,7 @@ namespace DiscImageChef.Devices
 
             var scsiSense = true;
 
-            if (remote is null)
+            if (_remote is null)
             {
                 // Windows is answering SCSI INQUIRY for all device types so it needs to be detected first
                 switch (PlatformId)
@@ -400,7 +400,7 @@ namespace DiscImageChef.Devices
             }
             else
             {
-                Type = remote.GetDeviceType();
+                Type = _remote.GetDeviceType();
 
                 switch (Type)
                 {
@@ -410,7 +410,7 @@ namespace DiscImageChef.Devices
                         break;
                     case DeviceType.SecureDigital:
                     case DeviceType.MMC:
-                        if (!remote.GetSdhciRegisters(out cachedCsd, out cachedCid, out cachedOcr, out cachedScr))
+                        if (!_remote.GetSdhciRegisters(out cachedCsd, out cachedCid, out cachedOcr, out cachedScr))
                         {
                             Type = DeviceType.SCSI;
                             ScsiType = PeripheralDeviceTypes.DirectAccess;
@@ -451,7 +451,7 @@ namespace DiscImageChef.Devices
 
             #region USB
 
-            if (remote is null)
+            if (_remote is null)
             {
                 switch (PlatformId)
                 {
@@ -558,7 +558,7 @@ namespace DiscImageChef.Devices
             }
             else
             {
-                if (remote.GetUsbData(out var remoteUsbDescriptors, out var remoteUsbVendor,
+                if (_remote.GetUsbData(out var remoteUsbDescriptors, out var remoteUsbVendor,
                     out var remoteUsbProduct, out var remoteUsbManufacturer, out var remoteUsbProductString,
                     out var remoteUsbSerial))
                 {
@@ -576,9 +576,9 @@ namespace DiscImageChef.Devices
 
             #region FireWire
 
-            if (!(remote is null))
+            if (!(_remote is null))
             {
-                if (remote.GetFireWireData(out firewireVendor, out firewireModel,
+                if (_remote.GetFireWireData(out firewireVendor, out firewireModel,
                     out firewireGuid, out var remoteFireWireVendorName, out var remoteFireWireModelName))
                 {
                     IsFireWire = true;
@@ -656,7 +656,7 @@ namespace DiscImageChef.Devices
 
             #region PCMCIA
 
-            if (remote is null)
+            if (_remote is null)
             {
                 if (PlatformId == PlatformID.Linux)
                 {
@@ -707,7 +707,7 @@ namespace DiscImageChef.Devices
             }
             else
             {
-                if (remote.GetPcmciaData(out var cisBuf))
+                if (_remote.GetPcmciaData(out var cisBuf))
                 {
                     IsPcmcia = true;
                     Cis = cisBuf;

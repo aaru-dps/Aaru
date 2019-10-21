@@ -56,8 +56,8 @@ namespace DiscImageChef.Devices
         public int SendScsiCommand(byte[] cdb, ref byte[] buffer, out byte[] senseBuffer, uint timeout,
             ScsiDirection direction, out double duration, out bool sense)
         {
-            if (!(remote is null))
-                return remote.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout,
+            if (!(_remote is null))
+                return _remote.SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout,
                     direction, out duration, out sense);
 
             return Command.SendScsiCommand(PlatformId, FileHandle, cdb, ref buffer, out senseBuffer, timeout, direction,
@@ -86,8 +86,8 @@ namespace DiscImageChef.Devices
             uint timeout, bool transferBlocks,
             out double duration, out bool sense)
         {
-            if (!(remote is null))
-                return remote.SendAtaCommand(registers, out errorRegisters,
+            if (!(_remote is null))
+                return _remote.SendAtaCommand(registers, out errorRegisters,
                     protocol, transferRegister,
                     ref buffer,
                     timeout, transferBlocks,
@@ -120,8 +120,8 @@ namespace DiscImageChef.Devices
             uint timeout, bool transferBlocks,
             out double duration, out bool sense)
         {
-            if (!(remote is null))
-                return remote.SendAtaCommand(registers, out errorRegisters,
+            if (!(_remote is null))
+                return _remote.SendAtaCommand(registers, out errorRegisters,
                     protocol, transferRegister,
                     ref buffer,
                     timeout, transferBlocks,
@@ -154,8 +154,8 @@ namespace DiscImageChef.Devices
             uint timeout, bool transferBlocks,
             out double duration, out bool sense)
         {
-            if (!(remote is null))
-                return remote.SendAtaCommand(registers, out errorRegisters,
+            if (!(_remote is null))
+                return _remote.SendAtaCommand(registers, out errorRegisters,
                     protocol, transferRegister,
                     ref buffer,
                     timeout, transferBlocks,
@@ -236,8 +236,8 @@ namespace DiscImageChef.Devices
                 }
             }
 
-            if (!(remote is null))
-                return remote.SendMmcCommand(command, write, isApplication, flags,
+            if (!(_remote is null))
+                return _remote.SendMmcCommand(command, write, isApplication, flags,
                     argument,
                     blockSize, blocks, ref buffer, out response,
                     out duration, out sense, timeout);
