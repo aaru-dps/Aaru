@@ -219,5 +219,13 @@ namespace DiscImageChef.Devices
         public byte[] Cis { get; }
 
         private readonly Remote.Remote remote;
+
+        public bool IsRemote => remote != null;
+        public string RemoteApplication => remote?.ServerApplication;
+        public string RemoteVersion => remote?.ServerVersion;
+        public string RemoteOperatingSystem => remote?.ServerOperatingSystem;
+        public string RemoteOperatingSystemVersion => remote?.ServerOperatingSystemVersion;
+        public string RemoteArchitecture => remote?.ServerArchitecture;
+        public int RemoteProtocolVersion => remote?.ServerProtocolVersion ?? 0;
     }
 }
