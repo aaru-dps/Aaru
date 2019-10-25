@@ -11,13 +11,13 @@ pkgdesc='Disc image management and creation tool for disks, tapes, optical and s
 arch=('x86_64' 'armv7h' 'aarch64')
 url='http://www.discimagechef.app'
 license=('GPL')
-source=('git://github.com/DiscImageChef/discimagechef'
-        )
+source=('git://github.com/DiscImageChef/discimagechef')
 makedepends=('dotnet-sdk>=2.0.0' 'git')
 options=('!strip')
 sha256sums=('SKIP')
 provides=('discimagechef')
 conflicts=('discimagechef')
+depends=('icu' 'krb5' 'libcurl.so' 'libunwind' 'openssl-1.0' 'zlib')
 
 if [ $arch == 'aarch64' ]; then
     dotnet_rid=linux-arm64
