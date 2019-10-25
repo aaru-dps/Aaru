@@ -16,7 +16,7 @@
     <Product>The Disc Image Chef</Product>
     <Title>DiscImageChef.Database</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0;netcoreapp2.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <NrtRevisionFormat>$(Version)-{chash:8} built by {mname} in $(Configuration){!:, modified}</NrtRevisionFormat>

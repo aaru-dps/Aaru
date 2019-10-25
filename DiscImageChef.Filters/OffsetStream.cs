@@ -377,7 +377,7 @@ namespace DiscImageChef.Filters
             baseStream.Write(buffer, offset, count);
         }
 
-        #if !NETSTANDARD2_0
+        #if !NETSTANDARD2_0 && !NETCOREAPP
         public OffsetStream(string      path, FileMode mode, FileSystemRights rights, FileShare share,
                             int         bufferSize,
                             FileOptions options, long start, long end)

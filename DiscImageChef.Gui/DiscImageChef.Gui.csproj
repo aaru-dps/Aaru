@@ -10,7 +10,7 @@
         <Product>The Disc Image Chef</Product>
         <Title>The Disc Image Chef</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
-        <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+        <TargetFrameworks>net461;netstandard2.0;netcoreapp2.0</TargetFrameworks>
         <NoWarn>CS0649,CS0169</NoWarn>
     </PropertyGroup>
     <PropertyGroup>

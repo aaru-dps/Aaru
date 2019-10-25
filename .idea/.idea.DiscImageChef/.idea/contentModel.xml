@@ -87,6 +87,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Checksums.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Checksums.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Checksums.AssemblyInfo.cs" t="Include" />
             </e>
@@ -167,6 +170,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
             </e>
@@ -183,6 +189,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Compression.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Compression.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Compression.AssemblyInfo.cs" t="Include" />
             </e>
@@ -196,6 +205,9 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
+              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
             </e>
             <e p="netstandard2.0" t="Include">
@@ -295,6 +307,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Core.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Core.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Core.AssemblyInfo.cs" t="Include" />
             </e>
@@ -368,6 +383,9 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
+              <e p="DiscImageChef.Database.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.Database.AssemblyInfo.cs" t="Include" />
             </e>
             <e p="netstandard2.0" t="Include">
@@ -529,6 +547,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Decoders.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Decoders.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Decoders.AssemblyInfo.cs" t="Include" />
             </e>
@@ -611,6 +632,9 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
+              <e p="DiscImageChef.Devices.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.Devices.AssemblyInfo.cs" t="Include" />
             </e>
             <e p="netstandard2.0" t="Include">
@@ -1183,6 +1207,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.DiscImages.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.DiscImages.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.DiscImages.AssemblyInfo.cs" t="Include" />
             </e>
@@ -1202,6 +1229,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
             </e>
@@ -1214,7 +1244,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp2.1" t="Include">
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.EntityFramework.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
@@ -1404,6 +1434,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Filesystems.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Filesystems.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Filesystems.AssemblyInfo.cs" t="Include" />
             </e>
@@ -1428,6 +1461,9 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
+              <e p="DiscImageChef.Filters.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.Filters.AssemblyInfo.cs" t="Include" />
             </e>
             <e p="netstandard2.0" t="Include">
@@ -1810,6 +1846,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Gui.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Gui.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Gui.AssemblyInfo.cs" t="Include" />
             </e>
@@ -1835,6 +1874,9 @@
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="net461" t="Include">
+              <e p="DiscImageChef.Helpers.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.Helpers.AssemblyInfo.cs" t="Include" />
             </e>
             <e p="netstandard2.0" t="Include">
@@ -1873,6 +1915,9 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Partitions.AssemblyInfo.cs" t="Include" />
             </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Partitions.AssemblyInfo.cs" t="Include" />
+            </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Partitions.AssemblyInfo.cs" t="Include" />
             </e>
@@ -1889,185 +1934,11 @@
             <e p="net461" t="Include">
               <e p="DiscImageChef.Settings.AssemblyInfo.cs" t="Include" />
             </e>
-            <e p="netstandard2.0" t="Include">
+            <e p="netcoreapp2.0" t="Include">
               <e p="DiscImageChef.Settings.AssemblyInfo.cs" t="Include" />
             </e>
-          </e>
-        </e>
-      </e>
-      <e p="DiscImageChef.Tests" t="IncludeRecursive">
-        <e p="Checksums" t="Include">
-          <e p="Adler32.cs" t="Include" />
-          <e p="CRC16.cs" t="Include" />
-          <e p="CRC32.cs" t="Include" />
-          <e p="CRC64.cs" t="Include" />
-          <e p="MD5.cs" t="Include" />
-          <e p="SHA1.cs" t="Include" />
-          <e p="SHA256.cs" t="Include" />
-          <e p="SHA384.cs" t="Include" />
-          <e p="SHA512.cs" t="Include" />
-          <e p="SpamSum.cs" t="Include" />
-        </e>
-        <e p="Consts.cs" t="Include" />
-        <e p="Devices" t="Include">
-          <e p="IomegaJaz.cs" t="Include" />
-          <e p="LS120.cs" t="Include" />
-          <e p="PocketZip.cs" t="Include" />
-        </e>
-        <e p="DiscImageChef.Tests.csproj" t="IncludeRecursive" />
-        <e p="Filesystems" t="Include">
-          <e p="ADFS.cs" t="Include" />
-          <e p="AFFS.cs" t="Include" />
-          <e p="AFFS2.cs" t="Include" />
-          <e p="AFS.cs" t="Include" />
-          <e p="AOFS.cs" t="Include" />
-          <e p="Atheos.cs" t="Include" />
-          <e p="BeFS.cs" t="Include" />
-          <e p="COHERENT.cs" t="Include" />
-          <e p="DTFS.cs" t="Include" />
-          <e p="EAFS.cs" t="Include" />
-          <e p="F2FS.cs" t="Include" />
-          <e p="FAT12.cs" t="Include" />
-          <e p="FAT16.cs" t="Include" />
-          <e p="FAT32.cs" t="Include" />
-          <e p="FATX.cs" t="Include" />
-          <e p="HAMMER.cs" t="Include" />
-          <e p="HFS.cs" t="Include" />
-          <e p="HFSPlus.cs" t="Include" />
-          <e p="HFSX.cs" t="Include" />
-          <e p="HPFS.cs" t="Include" />
-          <e p="HPOFS.cs" t="Include" />
-          <e p="HTFS.cs" t="Include" />
-          <e p="ISO9660.cs" t="Include" />
-          <e p="JFS2.cs" t="Include" />
-          <e p="LFS.cs" t="Include" />
-          <e p="LisaFS.cs" t="Include" />
-          <e p="Locus.cs" t="Include" />
-          <e p="MFS.cs" t="Include" />
-          <e p="MINIX.cs" t="Include" />
-          <e p="NILFS2.cs" t="Include" />
-          <e p="NTFS.cs" t="Include" />
-          <e p="NWFS386.cs" t="Include" />
-          <e p="OCFS2.cs" t="Include" />
-          <e p="PFS3.cs" t="Include" />
-          <e p="ProDOS.cs" t="Include" />
-          <e p="QNX4.cs" t="Include" />
-          <e p="ReFS.cs" t="Include" />
-          <e p="Reiser3.cs" t="Include" />
-          <e p="Reiser4.cs" t="Include" />
-          <e p="SFS.cs" t="Include" />
-          <e p="SysV.cs" t="Include" />
-          <e p="UDF.cs" t="Include" />
-          <e p="UFS.cs" t="Include" />
-          <e p="UNIXBFS.cs" t="Include" />
-          <e p="XENIX.cs" t="Include" />
-          <e p="XFS.cs" t="Include" />
-          <e p="Xia.cs" t="Include" />
-          <e p="ZFS.cs" t="Include" />
-          <e p="btrfs.cs" t="Include" />
-          <e p="exFAT.cs" t="Include" />
-          <e p="ext2.cs" t="Include" />
-        </e>
-        <e p="Filters" t="Include">
-          <e p="AppleDoubleDave.cs" t="Include" />
-          <e p="AppleDoubleDos.cs" t="Include" />
-          <e p="AppleDoubleNetatalk.cs" t="Include" />
-          <e p="AppleDoubleOsX.cs" t="Include" />
-          <e p="AppleDoubleProDos.cs" t="Include" />
-          <e p="AppleDoubleUnAr.cs" t="Include" />
-          <e p="AppleDoubleUnix.cs" t="Include" />
-          <e p="AppleSingle.cs" t="Include" />
-          <e p="BZip2.cs" t="Include" />
-          <e p="GZip.cs" t="Include" />
-          <e p="LZip.cs" t="Include" />
-          <e p="MacBinary1.cs" t="Include" />
-          <e p="MacBinary2.cs" t="Include" />
-          <e p="MacBinary3.cs" t="Include" />
-          <e p="PCExchange.cs" t="Include" />
-          <e p="XZ.cs" t="Include" />
-        </e>
-        <e p="Images" t="Include">
-          <e p="2MG.cs" t="Include" />
-          <e p="Anex86.cs" t="Include" />
-          <e p="CisCopy.cs" t="Include" />
-          <e p="CopyQM.cs" t="Include" />
-          <e p="D88.cs" t="Include" />
-          <e p="DART.cs" t="Include" />
-          <e p="DiskCopy42.cs" t="Include" />
-        </e>
-        <e p="Partitions" t="Include">
-          <e p="Acorn.cs" t="Include" />
-          <e p="AppleMap.cs" t="Include" />
-          <e p="Atari.cs" t="Include" />
-          <e p="BSD.cs" t="Include" />
-          <e p="GPT.cs" t="Include" />
-          <e p="MBR.cs" t="Include" />
-          <e p="MINIX.cs" t="Include" />
-          <e p="PC98.cs" t="Include" />
-          <e p="RDB.cs" t="Include" />
-          <e p="SGI.cs" t="Include" />
-          <e p="Sun.cs" t="Include" />
-          <e p="VTOC.cs" t="Include" />
-          <e p="Xbox.cs" t="Include" />
-        </e>
-        <e p="Program.cs" t="Include" />
-        <e p="TestResult.xml" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="DiscImageChef.Tests.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-      </e>
-      <e p="DiscImageChef.Tests.Devices" t="IncludeRecursive">
-        <e p="ATA" t="Include">
-          <e p="Ata28.cs" t="Include" />
-          <e p="Ata48.cs" t="Include" />
-          <e p="AtaCHS.cs" t="Include" />
-          <e p="Atapi.cs" t="Include" />
-          <e p="Cfa.cs" t="Include" />
-          <e p="MCPT.cs" t="Include" />
-          <e p="Smart.cs" t="Include" />
-        </e>
-        <e p="ATA.cs" t="Include" />
-        <e p="Command.cs" t="Include" />
-        <e p="DecodeATARegisters.cs" t="Include" />
-        <e p="Device.cs" t="Include" />
-        <e p="DiscImageChef.Tests.Devices.csproj" t="IncludeRecursive" />
-        <e p="Main.cs" t="Include" />
-        <e p="NVMe.cs" t="Include" />
-        <e p="SCSI" t="Include">
-          <e p="Adaptec.cs" t="Include" />
-          <e p="ArchiveCorp.cs" t="Include" />
-          <e p="Certance.cs" t="Include" />
-          <e p="Fujitsu.cs" t="Include" />
-          <e p="HL-DT-ST.cs" t="Include" />
-          <e p="HP.cs" t="Include" />
-          <e p="Kreon.cs" t="Include" />
-          <e p="MMC.cs" t="Include" />
-          <e p="NEC.cs" t="Include" />
-          <e p="Pioneer.cs" t="Include" />
-          <e p="Plasmon.cs" t="Include" />
-          <e p="Plextor.cs" t="Include" />
-          <e p="SBC.cs" t="Include" />
-          <e p="SMC.cs" t="Include" />
-          <e p="SPC.cs" t="Include" />
-          <e p="SSC.cs" t="Include" />
-          <e p="SyQuest.cs" t="Include" />
-        </e>
-        <e p="SCSI.cs" t="Include" />
-        <e p="SecureDigital" t="Include">
-          <e p="MultiMediaCard.cs" t="Include" />
-          <e p="SecureDigital.cs" t="Include" />
-        </e>
-        <e p="SecureDigital.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="DiscImageChef.Tests.Devices.AssemblyInfo.cs" t="Include" />
+            <e p="netstandard2.0" t="Include">
+              <e p="DiscImageChef.Settings.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>

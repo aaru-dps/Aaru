@@ -82,7 +82,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Highcharts, Version=7.1.3.1, Culture=neutral, PublicKeyToken=90b74bd27a557bd3">
-      <HintPath>..\packages\Highsoft.Highcharts.7.1.3.1\lib\netstandard2.0\Highcharts.dll</HintPath>
+      <HintPath>..\packages\Highsoft.Highcharts.7.1.3.1\lib\netstandard2.0;netcoreapp2.0\Highcharts.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MailKit, Version=2.3.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b">
