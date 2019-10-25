@@ -583,3 +583,10 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+pkg/**/pkg
+pkg/**/src
+pkg/**/*.asc
+pkg/**/*.sig
+pkg/**/*.tar.xz
+pkg/**/*.zip
