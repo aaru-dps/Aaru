@@ -29,10 +29,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Filters", "Di
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Core", "DiscImageChef.Core\DiscImageChef.Core.csproj", "{679659B8-25D0-4279-B632-56EF8F94ADC0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Tests", "DiscImageChef.Tests\DiscImageChef.Tests.csproj", "{B2ABC1F2-C365-4515-9F23-A5725050CC48}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Tests.Devices", "DiscImageChef.Tests.Devices\DiscImageChef.Tests.Devices.csproj", "{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Compression", "DiscImageChef.Compression\DiscImageChef.Compression.csproj", "{858398D1-7321-4763-8BAB-56BBFEC74E29}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Database", "DiscImageChef.Database\DiscImageChef.Database.csproj", "{FA0749B5-EFE0-4148-9545-CD420B45BC36}"
@@ -165,22 +161,6 @@ Global
 		{679659B8-25D0-4279-B632-56EF8F94ADC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{679659B8-25D0-4279-B632-56EF8F94ADC0}.Release|x86.ActiveCfg = Release|Any CPU
 		{679659B8-25D0-4279-B632-56EF8F94ADC0}.Release|x86.Build.0 = Release|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Debug|x86.Build.0 = Debug|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Release|x86.ActiveCfg = Release|Any CPU
-		{B2ABC1F2-C365-4515-9F23-A5725050CC48}.Release|x86.Build.0 = Release|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Debug|x86.Build.0 = Debug|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Release|x86.ActiveCfg = Release|Any CPU
-		{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}.Release|x86.Build.0 = Release|Any CPU
 		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{858398D1-7321-4763-8BAB-56BBFEC74E29}.Debug|x86.ActiveCfg = Debug|Any CPU
