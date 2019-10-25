@@ -590,3 +590,6 @@ pkg/**/*.asc
 pkg/**/*.sig
 pkg/**/*.tar.xz
 pkg/**/*.zip
+pkg/**/discimagechef
+
+.sonarqube
