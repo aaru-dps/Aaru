@@ -217,11 +217,13 @@ namespace DiscImageChef.Devices.Remote
         public DeviceType device_type;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketCmdGetSdhciRegisters
     {
         public DicPacketHeader hdr;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketResGetSdhciRegisters
     {
         public DicPacketHeader hdr;
@@ -245,11 +247,13 @@ namespace DiscImageChef.Devices.Remote
         public uint scr_len;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketCmdGetUsbData
     {
         public DicPacketHeader hdr;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketResGetUsbData
     {
         public DicPacketHeader hdr;
@@ -272,11 +276,13 @@ namespace DiscImageChef.Devices.Remote
         public string serial;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketCmdGetFireWireData
     {
         public DicPacketHeader hdr;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketResGetFireWireData
     {
         public DicPacketHeader hdr;
@@ -292,11 +298,13 @@ namespace DiscImageChef.Devices.Remote
         public string model;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketCmdGetPcmciaData
     {
         public DicPacketHeader hdr;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketResGetPcmciaData
     {
         public DicPacketHeader hdr;
