@@ -50,18 +50,25 @@ namespace DiscImageChef.Devices
 
         public void Close()
         {
-            if(FileHandle == null) return;
+            if (_remote != null)
+            {
+                _remote.Close();
+                _remote.Disconnect();
+                return;
+            }
 
-            switch(PlatformId)
+            if (FileHandle == null) return;
+
+            switch (PlatformId)
             {
                 case PlatformID.Win32NT:
                     (FileHandle as SafeFileHandle)?.Close();
                     break;
                 case PlatformID.Linux:
-                    Extern.close((int)FileHandle);
+                    Extern.close((int) FileHandle);
                     break;
                 case PlatformID.FreeBSD:
-                    FreeBSD.Extern.cam_close_device((IntPtr)FileHandle);
+                    FreeBSD.Extern.cam_close_device((IntPtr) FileHandle);
                     break;
             }
 

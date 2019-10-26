@@ -306,4 +306,10 @@ namespace DiscImageChef.Devices.Remote
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 65536)]
         public byte[] cis;
     }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdClose
+    {
+        public DicPacketHeader hdr;
+    }
 }

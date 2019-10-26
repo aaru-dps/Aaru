@@ -1202,5 +1202,23 @@ namespace DiscImageChef.Devices.Remote
 
             return offset;
         }
+
+        public void Close()
+        {
+            var cmdPkt = new DicPacketCmdClose
+            {
+                hdr = new DicPacketHeader
+                {
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
+                    len = (uint) Marshal.SizeOf<DicPacketCmdClose>(),
+                    version = Consts.PacketVersion,
+                    packetType = DicPacketType.CommandCloseDevice
+                }
+            };
+
+            var buf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
+
+            _socket.Send(buf, SocketFlags.None);
+        }
     }
 }
