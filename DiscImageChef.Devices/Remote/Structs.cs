@@ -320,4 +320,17 @@ namespace DiscImageChef.Devices.Remote
     {
         public DicPacketHeader hdr;
     }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketCmdAmIRoot
+    {
+        public DicPacketHeader hdr;
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
+    public struct DicPacketResAmIRoot
+    {
+        public DicPacketHeader hdr;
+        [MarshalAs(UnmanagedType.U4)] public bool am_i_root;
+    }
 }

@@ -74,7 +74,7 @@ namespace DiscImageChef.Commands
 
         public override int Invoke(IEnumerable<string> arguments)
         {
-            List<string> extra = Options.Parse(arguments);
+            var extra = Options.Parse(arguments);
 
             if (showHelp)
             {
@@ -105,15 +105,6 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Device-Report command", "--device={0}", devicePath);
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", MainClass.Verbose);
 
-            if (!DetectOS.IsAdmin)
-            {
-                DicConsole
-                    .ErrorWriteLine(
-                        "Because of the commands sent to a device, device report must be run with administrative privileges.");
-                DicConsole.ErrorWriteLine("Not continuing.");
-                return (int) ErrorNumber.NotEnoughPermissions;
-            }
-
             if (devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
@@ -127,11 +118,27 @@ namespace DiscImageChef.Commands
 
             Statistics.AddDevice(dev);
 
+            bool isAdmin;
+
+            if (dev.IsRemote)
+                isAdmin = dev.IsRemoteAdmin;
+            else isAdmin = DetectOS.IsAdmin;
+
+            if (!isAdmin)
+            {
+                DicConsole
+                    .ErrorWriteLine(
+                        "Because of the commands sent to a device, device report must be run with administrative privileges.");
+                DicConsole.ErrorWriteLine("Not continuing.");
+                return (int) ErrorNumber.NotEnoughPermissions;
+            }
+
+
             var report = new DeviceReportV2
             {
                 Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.Revision, Type = dev.Type
             };
-            bool removable = false;
+            var removable = false;
             string jsonFile;
 
             if (!string.IsNullOrWhiteSpace(dev.Manufacturer) && !string.IsNullOrWhiteSpace(dev.Revision))
@@ -249,7 +256,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("Querying ATA IDENTIFY...");
                         dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
                         report.ATA.Identify = DeviceReport.ClearIdentify(buffer);
-                        List<TestedMedia> mediaTests = new List<TestedMedia>();
+                        var mediaTests = new List<TestedMedia>();
 
                         pressedKey = new ConsoleKeyInfo();
                         while (pressedKey.Key != ConsoleKey.N)
@@ -349,7 +356,7 @@ namespace DiscImageChef.Commands
                             .CToString(report.SCSI.Inquiry?.VendorIdentification)?.Trim()
                             .ToLowerInvariant());
 
-                    reporter.ReportScsiModes(ref report, out byte[] cdromMode);
+                    reporter.ReportScsiModes(ref report, out var cdromMode);
 
                     string mediumManufacturer;
                     byte[] senseBuffer;
@@ -359,10 +366,10 @@ namespace DiscImageChef.Commands
                     {
                         case PeripheralDeviceTypes.MultiMediaDevice:
                         {
-                            bool iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" &&
-                                             dev.Model.ToLowerInvariant().StartsWith("rrd");
+                            var iomegaRev = dev.Manufacturer.ToLowerInvariant() == "iomega" &&
+                                            dev.Model.ToLowerInvariant().StartsWith("rrd");
 
-                            List<string> mediaTypes = new List<string>();
+                            var mediaTypes = new List<string>();
 
                             report.SCSI.MultiMediaDevice = new Mmc
                             {
@@ -584,8 +591,8 @@ namespace DiscImageChef.Commands
 
                             if (dev.Model.StartsWith("PD-", StringComparison.Ordinal)) mediaTypes.Add("PD-650");
 
-                            List<TestedMedia> mediaTests = new List<TestedMedia>();
-                            foreach (string mediaType in mediaTypes)
+                            var mediaTests = new List<TestedMedia>();
+                            foreach (var mediaType in mediaTypes)
                             {
                                 pressedKey = new ConsoleKeyInfo();
                                 while (pressedKey.Key != ConsoleKey.Y && pressedKey.Key != ConsoleKey.N)
@@ -604,17 +611,17 @@ namespace DiscImageChef.Commands
                                     .WriteLine("Please insert it in the drive and press any key when it is ready.");
                                 System.Console.ReadKey(true);
 
-                                bool mediaIsRecognized = true;
+                                var mediaIsRecognized = true;
 
                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
                                 if (sense)
                                 {
-                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                    var decSense = Sense.DecodeFixed(senseBuffer);
                                     if (decSense.HasValue)
                                     {
                                         if (decSense.Value.ASC == 0x3A)
                                         {
-                                            int leftRetries = 50;
+                                            var leftRetries = 50;
                                             while (leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -629,7 +636,7 @@ namespace DiscImageChef.Commands
                                         }
                                         else if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                         {
-                                            int leftRetries = 50;
+                                            var leftRetries = 50;
                                             while (leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -645,7 +652,7 @@ namespace DiscImageChef.Commands
                                         // These should be trapped by the OS but seems in some cases they're not
                                         else if (decSense.Value.ASC == 0x28)
                                         {
-                                            int leftRetries = 50;
+                                            var leftRetries = 50;
                                             while (leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -698,7 +705,7 @@ namespace DiscImageChef.Commands
 
                                         if (pressedKey.Key == ConsoleKey.Y)
                                         {
-                                            for (ushort i = (ushort) mediaTest.BlockSize;; i++)
+                                            for (var i = (ushort) mediaTest.BlockSize;; i++)
                                             {
                                                 DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
                                                     i);
@@ -745,7 +752,7 @@ namespace DiscImageChef.Commands
                         {
                             report.SCSI.SequentialDevice = reporter.ReportScsiSsc();
 
-                            List<TestedSequentialMedia> seqTests = new List<TestedSequentialMedia>();
+                            var seqTests = new List<TestedSequentialMedia>();
 
                             pressedKey = new ConsoleKeyInfo();
                             while (pressedKey.Key != ConsoleKey.N)
@@ -771,18 +778,18 @@ namespace DiscImageChef.Commands
                                 DicConsole.Write("Please write the media model and press enter: ");
                                 mediumModel = System.Console.ReadLine();
 
-                                bool mediaIsRecognized = true;
+                                var mediaIsRecognized = true;
 
                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
                                 DicConsole.DebugWriteLine("Device reporting", "sense = {0}", sense);
                                 if (sense)
                                 {
-                                    FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                    var decSense = Sense.DecodeFixed(senseBuffer);
                                     if (decSense.HasValue)
                                     {
                                         if (decSense.Value.ASC == 0x3A)
                                         {
-                                            int leftRetries = 50;
+                                            var leftRetries = 50;
                                             while (leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -797,7 +804,7 @@ namespace DiscImageChef.Commands
                                         }
                                         else if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                         {
-                                            int leftRetries = 50;
+                                            var leftRetries = 50;
                                             while (leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -813,7 +820,7 @@ namespace DiscImageChef.Commands
                                         // These should be trapped by the OS but seems in some cases they're not
                                         else if (decSense.Value.ASC == 0x28)
                                         {
-                                            int leftRetries = 50;
+                                            var leftRetries = 50;
                                             while (leftRetries > 0)
                                             {
                                                 DicConsole.Write("\rWaiting for drive to become ready");
@@ -867,7 +874,7 @@ namespace DiscImageChef.Commands
                         {
                             if (removable)
                             {
-                                List<TestedMedia> mediaTests = new List<TestedMedia>();
+                                var mediaTests = new List<TestedMedia>();
 
                                 pressedKey = new ConsoleKeyInfo();
                                 while (pressedKey.Key != ConsoleKey.N)
@@ -893,16 +900,16 @@ namespace DiscImageChef.Commands
                                     DicConsole.Write("Please write the media model and press enter: ");
                                     mediumModel = System.Console.ReadLine();
 
-                                    bool mediaIsRecognized = true;
+                                    var mediaIsRecognized = true;
 
                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
                                     if (sense)
                                     {
-                                        FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
+                                        var decSense = Sense.DecodeFixed(senseBuffer);
                                         if (decSense.HasValue)
                                             if (decSense.Value.ASC == 0x3A)
                                             {
-                                                int leftRetries = 20;
+                                                var leftRetries = 20;
                                                 while (leftRetries > 0)
                                                 {
                                                     DicConsole.Write("\rWaiting for drive to become ready");
@@ -917,7 +924,7 @@ namespace DiscImageChef.Commands
                                             }
                                             else if (decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
                                             {
-                                                int leftRetries = 20;
+                                                var leftRetries = 20;
                                                 while (leftRetries > 0)
                                                 {
                                                     DicConsole.Write("\rWaiting for drive to become ready");
@@ -958,7 +965,7 @@ namespace DiscImageChef.Commands
 
                                             if (pressedKey.Key == ConsoleKey.Y)
                                             {
-                                                for (ushort i = (ushort) mediaTest.BlockSize;; i++)
+                                                for (var i = (ushort) mediaTest.BlockSize;; i++)
                                                 {
                                                     DicConsole
                                                         .Write("\rTrying to READ LONG with a size of {0} bytes...", i);
@@ -1016,7 +1023,7 @@ namespace DiscImageChef.Commands
 
                                     if (pressedKey.Key == ConsoleKey.Y)
                                     {
-                                        for (ushort i = (ushort) report.SCSI.ReadCapabilities.BlockSize;; i++)
+                                        for (var i = (ushort) report.SCSI.ReadCapabilities.BlockSize;; i++)
                                         {
                                             DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
@@ -1056,8 +1063,8 @@ namespace DiscImageChef.Commands
                 default: throw new NotSupportedException("Unknown device type.");
             }
 
-            FileStream jsonFs = new FileStream(jsonFile, FileMode.Create);
-            StreamWriter jsonSw = new StreamWriter(jsonFs);
+            var jsonFs = new FileStream(jsonFile, FileMode.Create);
+            var jsonSw = new StreamWriter(jsonFs);
             jsonSw.Write(JsonConvert.SerializeObject(report, Formatting.Indented,
                 new JsonSerializerSettings
                 {

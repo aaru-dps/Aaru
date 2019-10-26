@@ -219,6 +219,17 @@ namespace DiscImageChef.Devices
         public byte[] Cis { get; }
 
         private readonly Remote.Remote _remote;
+        private bool? _isRemoteAdmin;
+
+        public bool IsRemoteAdmin
+        {
+            get
+            {
+                if (_isRemoteAdmin is null) _isRemoteAdmin = _remote.IsRoot;
+
+                return _isRemoteAdmin == true;
+            }
+        }
 
         public bool IsRemote => _remote != null;
         public string RemoteApplication => _remote?.ServerApplication;

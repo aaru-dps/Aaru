@@ -27,7 +27,9 @@ namespace DiscImageChef.Devices.Remote
         ResponseGetFireWireData = 22,
         CommandGetPcmciaData = 23,
         ResponseGetPcmciaData = 24,
-        CommandCloseDevice = 25
+        CommandCloseDevice = 25,
+        CommandAmIRoot = 26,
+        ResponseAmIRoot = 27
     }
 
     public enum DicNopReason : byte
