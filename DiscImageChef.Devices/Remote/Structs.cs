@@ -7,7 +7,8 @@ namespace DiscImageChef.Devices.Remote
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketHeader
     {
-        public ulong id;
+        public uint remote_id;
+        public uint packet_id;
 
         public uint len;
         public byte version;

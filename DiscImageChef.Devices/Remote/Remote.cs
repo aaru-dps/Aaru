@@ -50,7 +50,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 throw new ArgumentException();
@@ -116,7 +116,7 @@ namespace DiscImageChef.Devices.Remote
                 machine = RuntimeInformation.ProcessArchitecture.ToString(),
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketHello>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.Hello
@@ -157,7 +157,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketCommandListDevices>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandListDevices
@@ -187,7 +187,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return new DeviceInfo[0];
@@ -256,7 +256,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketCommandOpenDevice>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandOpen
@@ -288,7 +288,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 lastError = -1;
@@ -339,7 +339,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandScsi
                 },
@@ -384,7 +384,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
@@ -432,7 +432,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandAtaChs
                 },
@@ -476,7 +476,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
@@ -523,7 +523,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandAtaLba28
                 },
@@ -567,7 +567,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
@@ -614,7 +614,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandAtaLba48
                 },
@@ -658,7 +658,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
@@ -704,7 +704,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandAtaLba48
                 },
@@ -751,7 +751,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
@@ -794,7 +794,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketCmdGetDeviceType>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandGetType
@@ -823,7 +823,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return DeviceType.Unknown;
@@ -861,7 +861,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketCmdGetSdhciRegisters>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandGetSdhciRegisters
@@ -890,7 +890,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
@@ -971,7 +971,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketCmdGetUsbData>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandGetUsbData
@@ -1000,7 +1000,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
@@ -1051,7 +1051,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketCmdGetFireWireData>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandGetFireWireData
@@ -1080,7 +1080,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
@@ -1124,7 +1124,7 @@ namespace DiscImageChef.Devices.Remote
             {
                 hdr = new DicPacketHeader
                 {
-                    id = Consts.PacketId,
+                    remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     len = (uint) Marshal.SizeOf<DicPacketCmdGetPcmciaData>(),
                     version = Consts.PacketVersion,
                     packetType = DicPacketType.CommandGetPcmciaData
@@ -1153,7 +1153,7 @@ namespace DiscImageChef.Devices.Remote
 
             var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
 
-            if (hdr.id != Consts.PacketId)
+            if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
                 DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
