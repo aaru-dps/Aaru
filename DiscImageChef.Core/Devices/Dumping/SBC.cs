@@ -311,7 +311,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     return;
                 }
             }
-            else if (decMode.HasValue)
+            else if (decMode?.Pages != null)
             {
                 var setGeometry = false;
 
@@ -520,7 +520,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             var dcMode10 = Modes.DecodeMode10(readBuffer, dev.ScsiType);
 
-                            if (dcMode10.HasValue)
+                            if (dcMode10.HasValue && dcMode10.Value.Pages != null)
                                 foreach (var modePage in dcMode10.Value.Pages)
                                     if (modePage.Page == 0x01 && modePage.Subpage == 0x00)
                                         currentModePage = modePage;
@@ -530,7 +530,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         var dcMode6 = Modes.DecodeMode6(readBuffer, dev.ScsiType);
 
-                        if (dcMode6.HasValue)
+                        if (dcMode6.HasValue && dcMode6.Value.Pages != null)
                             foreach (var modePage in dcMode6.Value.Pages)
                                 if (modePage.Page == 0x01 && modePage.Subpage == 0x00)
                                     currentModePage = modePage;
