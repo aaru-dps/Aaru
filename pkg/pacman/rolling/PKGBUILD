@@ -5,7 +5,7 @@ _dicbase=discimagechef
 packager='Natalia Portillo <claunia@claunia.com>'
 pkgbase='discimagechef-git'
 pkgname=('discimagechef-git' 'discimagechef-gtk-git')
-pkgver=v4.5.1.1692.r811.g16849ea2
+pkgver=v4.5.1.1692.r813.gb1a6c363
 pkgrel=1
 pkgdesc='Disc image management and creation tool for disks, tapes, optical and solid state media'
 arch=('x86_64' 'armv7h' 'aarch64')
@@ -13,7 +13,7 @@ url='http://www.discimagechef.app'
 license=('GPL')
 source=('git://github.com/DiscImageChef/discimagechef')
 makedepends=('dotnet-sdk>=2.0.0' 'git')
-options=('!strip')
+options=('!strip' 'staticlibs')
 sha256sums=('SKIP')
 provides=('discimagechef')
 conflicts=('discimagechef')
