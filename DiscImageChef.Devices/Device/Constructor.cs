@@ -316,38 +316,21 @@ namespace DiscImageChef.Devices
                                 Array.Copy(sdBuffer, 0, cachedScr, 0, 8);
                             }
 
-                            if (cachedScr != null)
+                            sdBuffer = new byte[4];
+
+                            LastError = Windows.Command.SendMmcCommand((SafeFileHandle) FileHandle,
+                                cachedScr != null
+                                    ? (MmcCommands) SecureDigitalCommands
+                                        .SendOperatingCondition
+                                    : MmcCommands.SendOpCond, false, true,
+                                MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 |
+                                MmcFlags.CommandBcr, 0, 4, 1, ref sdBuffer,
+                                out _, out _, out sense);
+
+                            if (!sense)
                             {
-                                sdBuffer = new byte[4];
-
-                                LastError = Windows.Command.SendMmcCommand((SafeFileHandle) FileHandle,
-                                    (MmcCommands) SecureDigitalCommands
-                                        .SendOperatingCondition, false, true,
-                                    MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 |
-                                    MmcFlags.CommandBcr, 0, 4, 1, ref sdBuffer,
-                                    out _, out _, out sense);
-
-                                if (!sense)
-                                {
-                                    cachedScr = new byte[4];
-                                    Array.Copy(sdBuffer, 0, cachedScr, 0, 4);
-                                }
-                            }
-                            else
-                            {
-                                sdBuffer = new byte[4];
-
-                                LastError = Windows.Command.SendMmcCommand((SafeFileHandle) FileHandle,
-                                    MmcCommands.SendOpCond, false, true,
-                                    MmcFlags.ResponseSpiR3 | MmcFlags.ResponseR3 |
-                                    MmcFlags.CommandBcr, 0, 4, 1, ref sdBuffer,
-                                    out _, out _, out sense);
-
-                                if (!sense)
-                                {
-                                    cachedScr = new byte[4];
-                                    Array.Copy(sdBuffer, 0, cachedScr, 0, 4);
-                                }
+                                cachedScr = new byte[4];
+                                Array.Copy(sdBuffer, 0, cachedScr, 0, 4);
                             }
                         }
 
