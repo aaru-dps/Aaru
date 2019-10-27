@@ -37,7 +37,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace DiscImageChef.Devices.Windows
 {
     [Flags]
-    enum FileAttributes : uint
+    internal enum FileAttributes : uint
     {
         /// <summary>
         ///     FILE_ATTRIBUTE_ARCHIVE
@@ -181,76 +181,93 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [Flags]
-    enum FileAccess : uint
+    internal enum FileAccess : uint
     {
         /// <summary>
         ///     FILE_READ_DATA
         /// </summary>
         ReadData = 0x0001,
+
         /// <summary>
         ///     FILE_LIST_DIRECTORY
         /// </summary>
         ListDirectory = ReadData,
+
         /// <summary>
         ///     FILE_WRITE_DATA
         /// </summary>
         WriteData = 0x0002,
+
         /// <summary>
         ///     FILE_ADD_FILE
         /// </summary>
         AddFile = WriteData,
+
         /// <summary>
         ///     FILE_APPEND_DATA
         /// </summary>
         AppendData = 0x0004,
+
         /// <summary>
         ///     FILE_ADD_SUBDIRECTORY
         /// </summary>
         AddSubdirectory = AppendData,
+
         /// <summary>
         ///     FILE_CREATE_PIPE_INSTANCE
         /// </summary>
         CreatePipeInstance = AppendData,
+
         /// <summary>
         ///     FILE_READ_EA
         /// </summary>
         ReadEa = 0x0008,
+
         /// <summary>
         ///     FILE_WRITE_EA
         /// </summary>
         WriteEa = 0x0010,
+
         /// <summary>
         ///     FILE_EXECUTE
         /// </summary>
         Execute = 0x0020,
+
         /// <summary>
         ///     FILE_TRAVERSE
         /// </summary>
         Traverse = Execute,
+
         /// <summary>
         ///     FILE_DELETE_CHILD
         /// </summary>
         DeleteChild = 0x0040,
+
         /// <summary>
         ///     FILE_READ_ATTRIBUTES
         /// </summary>
         ReadAttributes = 0x0080,
+
         /// <summary>
         ///     FILE_WRITE_ATTRIBUTES
         /// </summary>
         WriteAttributes = 0x0100,
+
         /// <summary>
         ///     GENERIC_READ
         /// </summary>
         GenericRead = 0x80000000,
+
         /// <summary>
         ///     GENERIC_WRITE
         /// </summary>
         GenericWrite = 0x40000000,
+
         /// <summary>
         ///     GENERIC_EXECUTE
         /// </summary>
         GenericExecute = 0x20000000,
+
         /// <summary>
         ///     GENERIC_ALL
         /// </summary>
@@ -258,20 +275,23 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [Flags]
-    enum FileShare : uint
+    internal enum FileShare : uint
     {
         /// <summary>
         ///     FILE_SHARE_NONE
         /// </summary>
         None = 0x00,
+
         /// <summary>
         ///     FILE_SHARE_READ
         /// </summary>
         Read = 0x01,
+
         /// <summary>
         ///     FILE_SHARE_WRITE
         /// </summary>
         Write = 0x02,
+
         /// <summary>
         ///     FILE_SHARE_DELETE
         /// </summary>
@@ -279,24 +299,28 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [Flags]
-    enum FileMode : uint
+    internal enum FileMode : uint
     {
         /// <summary>
         ///     NEW
         /// </summary>
         New = 0x01,
+
         /// <summary>
         ///     CREATE_ALWAYS
         /// </summary>
         CreateAlways = 0x02,
+
         /// <summary>
         ///     OPEN_EXISTING
         /// </summary>
         OpenExisting = 0x03,
+
         /// <summary>
         ///     OPEN_ALWAYS
         /// </summary>
         OpenAlways = 0x04,
+
         /// <summary>
         ///     TRUNCATE_EXISTING
         /// </summary>
@@ -306,18 +330,20 @@ namespace DiscImageChef.Devices.Windows
     /// <summary>
     ///     Direction of SCSI transfer
     /// </summary>
-    enum ScsiIoctlDirection : byte
+    internal enum ScsiIoctlDirection : byte
     {
         /// <summary>
         ///     From host to device
         ///     SCSI_IOCTL_DATA_OUT
         /// </summary>
         Out = 0,
+
         /// <summary>
         ///     From device to host
         ///     SCSI_IOCTL_DATA_IN
         /// </summary>
         In = 1,
+
         /// <summary>
         ///     Unspecified direction, or bidirectional, or no data
         ///     SCSI_IOCTL_DATA_UNSPECIFIED
@@ -325,146 +351,163 @@ namespace DiscImageChef.Devices.Windows
         Unspecified = 2
     }
 
-    enum WindowsIoctl : uint
+    internal enum WindowsIoctl : uint
     {
-        IoctlAtaPassThrough       = 0x4D02C,
+        IoctlAtaPassThrough = 0x4D02C,
         IoctlAtaPassThroughDirect = 0x4D030,
+
         /// <summary>
         ///     ScsiPassThrough
         /// </summary>
         IoctlScsiPassThrough = 0x4D004,
+
         /// <summary>
         ///     ScsiPassThroughDirect
         /// </summary>
         IoctlScsiPassThroughDirect = 0x4D014,
+
         /// <summary>
         ///     ScsiGetAddress
         /// </summary>
         IoctlScsiGetAddress = 0x41018,
-        IoctlStorageQueryProperty       = 0x2D1400,
-        IoctlIdePassThrough             = 0x4D028,
-        IoctlStorageGetDeviceNumber     = 0x2D1080,
+        IoctlStorageQueryProperty = 0x2D1400,
+        IoctlIdePassThrough = 0x4D028,
+        IoctlStorageGetDeviceNumber = 0x2D1080,
         IoctlSffdiskQueryDeviceProtocol = 0x71E80,
-        IoctlSffdiskDeviceCommand       = 0x79E84
+        IoctlSffdiskDeviceCommand = 0x79E84
     }
 
     [Flags]
-    enum AtaFlags : ushort
+    internal enum AtaFlags : ushort
     {
         /// <summary>
         ///     ATA_FLAGS_DRDY_REQUIRED
         /// </summary>
         DrdyRequired = 0x01,
+
         /// <summary>
         ///     ATA_FLAGS_DATA_IN
         /// </summary>
         DataIn = 0x02,
+
         /// <summary>
         ///     ATA_FLAGS_DATA_OUT
         /// </summary>
         DataOut = 0x04,
+
         /// <summary>
         ///     ATA_FLAGS_48BIT_COMMAND
         /// </summary>
         ExtendedCommand = 0x08,
+
         /// <summary>
         ///     ATA_FLAGS_USE_DMA
         /// </summary>
         Dma = 0x10,
+
         /// <summary>
         ///     ATA_FLAGS_NO_MULTIPLE
         /// </summary>
         NoMultiple = 0x20
     }
 
-    enum StoragePropertyId
+    internal enum StoragePropertyId
     {
-        Device           = 0,
-        Adapter          = 1,
-        Id               = 2,
-        UniqueId         = 3,
-        WriteCache       = 4,
-        Miniport         = 5,
-        AccessAlignment  = 6,
-        SeekPenalty      = 7,
-        Trim             = 8,
+        Device = 0,
+        Adapter = 1,
+        Id = 2,
+        UniqueId = 3,
+        WriteCache = 4,
+        Miniport = 5,
+        AccessAlignment = 6,
+        SeekPenalty = 7,
+        Trim = 8,
         WriteAggregation = 9,
-        Telemetry        = 10,
-        LbProvisioning   = 11,
-        Power            = 12,
-        Copyoffload      = 13,
-        Resiliency       = 14
+        Telemetry = 10,
+        LbProvisioning = 11,
+        Power = 12,
+        Copyoffload = 13,
+        Resiliency = 14
     }
 
-    enum StorageQueryType
+    internal enum StorageQueryType
     {
         Standard = 0,
-        Exists   = 1,
-        Mask     = 2,
-        Max      = 3
+        Exists = 1,
+        Mask = 2,
+        Max = 3
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    enum StorageBusType
+    internal enum StorageBusType
     {
-        Unknown           = 0,
-        SCSI              = 1,
-        ATAPI             = 2,
-        ATA               = 3,
-        FireWire          = 4,
-        SSA               = 5,
-        Fibre             = 6,
-        USB               = 7,
-        RAID              = 8,
-        iSCSI             = 9,
-        SAS               = 0xA,
-        SATA              = 0xB,
-        SecureDigital     = 0xC,
-        MultiMediaCard    = 0xD,
-        Virtual           = 0xE,
+        Unknown = 0,
+        SCSI = 1,
+        ATAPI = 2,
+        ATA = 3,
+        FireWire = 4,
+        SSA = 5,
+        Fibre = 6,
+        USB = 7,
+        RAID = 8,
+        iSCSI = 9,
+        SAS = 0xA,
+        SATA = 0xB,
+        SecureDigital = 0xC,
+        MultiMediaCard = 0xD,
+        Virtual = 0xE,
         FileBackedVirtual = 0xF,
-        NVMe              = 0x11
+        Spaces = 16,
+        SCM = 18,
+        UFS = 19,
+        Max = 20,
+        MaxReserved = 127,
+        NVMe = 0x11
     }
 
     [Flags]
-    enum DeviceGetClassFlags : uint
+    internal enum DeviceGetClassFlags : uint
     {
         /// <summary>
         ///     DIGCF_DEFAULT
         /// </summary>
         Default = 0x01,
+
         /// <summary>
         ///     DIGCF_PRESENT
         /// </summary>
         Present = 0x02,
+
         /// <summary>
         ///     DIGCF_ALLCLASSES
         /// </summary>
         AllClasses = 0x04,
+
         /// <summary>
         ///     DIGCF_PROFILE
         /// </summary>
         Profile = 0x08,
+
         /// <summary>
         ///     DIGCF_DEVICEINTERFACE
         /// </summary>
         DeviceInterface = 0x10
     }
 
-    enum SdCommandClass : uint
+    internal enum SdCommandClass : uint
     {
         Standard,
         AppCmd
     }
 
-    enum SdTransferDirection : uint
+    internal enum SdTransferDirection : uint
     {
         Unspecified,
         Read,
         Write
     }
 
-    enum SdTransferType : uint
+    internal enum SdTransferType : uint
     {
         Unspecified,
         CmdOnly,
@@ -474,7 +517,7 @@ namespace DiscImageChef.Devices.Windows
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
-    enum SdResponseType : uint
+    internal enum SdResponseType : uint
     {
         Unspecified,
         None,
@@ -488,7 +531,7 @@ namespace DiscImageChef.Devices.Windows
         R6
     }
 
-    enum SffdiskDcmd : uint
+    internal enum SffdiskDcmd : uint
     {
         GetVersion,
         LockChannel,
