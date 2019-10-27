@@ -37,24 +37,23 @@ using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32.SafeHandles;
 
 namespace DiscImageChef.Devices.Windows
 {
-    static class ListDevices
+    internal static class ListDevices
     {
         /// <summary>
         ///     Converts a hex dump string to the ASCII string it represents
         /// </summary>
         /// <param name="hex">Hex dump</param>
         /// <returns>Decoded string</returns>
-        static string HexStringToString(string hex)
+        private static string HexStringToString(string hex)
         {
-            StringBuilder result   = new StringBuilder();
-            const string  HEXTABLE = "0123456789abcdef";
+            var result = new StringBuilder();
+            const string HEXTABLE = "0123456789abcdef";
 
-            for(int i = 0; i < hex.Length / 2; i++)
-                result.Append((char)(16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
+            for (var i = 0; i < hex.Length / 2; i++)
+                result.Append((char) (16 * HEXTABLE.IndexOf(hex[2 * i]) + HEXTABLE.IndexOf(hex[2 * i + 1])));
 
             return result.ToString();
         }
@@ -66,120 +65,120 @@ namespace DiscImageChef.Devices.Windows
         [SuppressMessage("ReSharper", "RedundantCatchClause")]
         internal static DeviceInfo[] GetList()
         {
-            List<string> deviceIDs = new List<string>();
+            var deviceIDs = new List<string>();
 
             try
             {
-                ManagementObjectSearcher mgmtObjSearcher =
+                var mgmtObjSearcher =
                     new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive");
-                ManagementObjectCollection objCol = mgmtObjSearcher.Get();
+                var objCol = mgmtObjSearcher.Get();
 
-                deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["DeviceID"]);
+                deviceIDs.AddRange(from ManagementObject drive in objCol select (string) drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_TapeDrive");
-                objCol          = mgmtObjSearcher.Get();
+                objCol = mgmtObjSearcher.Get();
 
-                deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["DeviceID"]);
+                deviceIDs.AddRange(from ManagementObject drive in objCol select (string) drive["DeviceID"]);
 
                 mgmtObjSearcher = new ManagementObjectSearcher("SELECT * FROM Win32_CDROMDrive");
-                objCol          = mgmtObjSearcher.Get();
+                objCol = mgmtObjSearcher.Get();
 
-                deviceIDs.AddRange(from ManagementObject drive in objCol select (string)drive["Drive"]);
+                deviceIDs.AddRange(from ManagementObject drive in objCol select (string) drive["Drive"]);
             }
-            catch(Exception)
+            catch (Exception)
             {
-                #if DEBUG
+#if DEBUG
                 throw;
-                #else
+#else
                 return null;
-                #endif
+#endif
             }
 
-            List<DeviceInfo> devList = new List<DeviceInfo>();
+            var devList = new List<DeviceInfo>();
 
-            foreach(string devId in deviceIDs)
+            foreach (var devId in deviceIDs)
             {
-                if(devId is null) continue;
+                if (devId is null) continue;
 
-                string physId = devId;
+                var physId = devId;
                 // TODO: This can be done better
-                if(devId.Length == 2 && devId[1] == ':') physId = "\\\\?\\" + devId;
-                SafeFileHandle fd = Extern.CreateFile(physId, 0, FileShare.Read | FileShare.Write, IntPtr.Zero,
-                                                      FileMode.OpenExisting, 0, IntPtr.Zero);
-                if(fd.IsInvalid) continue;
+                if (devId.Length == 2 && devId[1] == ':') physId = "\\\\?\\" + devId;
+                var fd = Extern.CreateFile(physId, 0, FileShare.Read | FileShare.Write, IntPtr.Zero,
+                    FileMode.OpenExisting, 0, IntPtr.Zero);
+                if (fd.IsInvalid) continue;
 
-                StoragePropertyQuery query = new StoragePropertyQuery
+                var query = new StoragePropertyQuery
                 {
-                    PropertyId           = StoragePropertyId.Device,
-                    QueryType            = StorageQueryType.Standard,
+                    PropertyId = StoragePropertyId.Device,
+                    QueryType = StorageQueryType.Standard,
                     AdditionalParameters = new byte[1]
                 };
 
                 //StorageDeviceDescriptor descriptor = new StorageDeviceDescriptor();
                 //descriptor.RawDeviceProperties = new byte[16384];
 
-                IntPtr descriptorPtr = Marshal.AllocHGlobal(1000);
-                byte[] descriptorB   = new byte[1000];
+                var descriptorPtr = Marshal.AllocHGlobal(1000);
+                var descriptorB = new byte[1000];
 
                 uint returned = 0;
-                int  error    = 0;
+                var error = 0;
 
-                bool hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty,
-                                                                    ref query, (uint)Marshal.SizeOf(query),
-                                                                    descriptorPtr, 1000, ref returned, IntPtr.Zero);
+                var hasError = !Extern.DeviceIoControlStorageQuery(fd, WindowsIoctl.IoctlStorageQueryProperty,
+                    ref query, (uint) Marshal.SizeOf(query),
+                    descriptorPtr, 1000, ref returned, IntPtr.Zero);
 
-                if(hasError) error = Marshal.GetLastWin32Error();
+                if (hasError) error = Marshal.GetLastWin32Error();
 
                 Marshal.Copy(descriptorPtr, descriptorB, 0, 1000);
 
-                if(hasError && error != 0) continue;
+                if (hasError && error != 0) continue;
 
-                StorageDeviceDescriptor descriptor = new StorageDeviceDescriptor
+                var descriptor = new StorageDeviceDescriptor
                 {
-                    Version               = BitConverter.ToUInt32(descriptorB, 0),
-                    Size                  = BitConverter.ToUInt32(descriptorB, 4),
-                    DeviceType            = descriptorB[8],
-                    DeviceTypeModifier    = descriptorB[9],
-                    RemovableMedia        = BitConverter.ToBoolean(descriptorB, 10),
-                    CommandQueueing       = BitConverter.ToBoolean(descriptorB, 11),
-                    VendorIdOffset        = BitConverter.ToInt32(descriptorB, 12),
-                    ProductIdOffset       = BitConverter.ToInt32(descriptorB, 16),
+                    Version = BitConverter.ToUInt32(descriptorB, 0),
+                    Size = BitConverter.ToUInt32(descriptorB, 4),
+                    DeviceType = descriptorB[8],
+                    DeviceTypeModifier = descriptorB[9],
+                    RemovableMedia = BitConverter.ToBoolean(descriptorB, 10),
+                    CommandQueueing = BitConverter.ToBoolean(descriptorB, 11),
+                    VendorIdOffset = BitConverter.ToInt32(descriptorB, 12),
+                    ProductIdOffset = BitConverter.ToInt32(descriptorB, 16),
                     ProductRevisionOffset = BitConverter.ToInt32(descriptorB, 20),
-                    SerialNumberOffset    = BitConverter.ToInt32(descriptorB, 24),
-                    BusType               = (StorageBusType)BitConverter.ToUInt32(descriptorB, 28),
-                    RawPropertiesLength   = BitConverter.ToUInt32(descriptorB, 32)
+                    SerialNumberOffset = BitConverter.ToInt32(descriptorB, 24),
+                    BusType = (StorageBusType) BitConverter.ToUInt32(descriptorB, 28),
+                    RawPropertiesLength = BitConverter.ToUInt32(descriptorB, 32)
                 };
 
-                DeviceInfo info = new DeviceInfo {Path = physId, Bus = descriptor.BusType.ToString()};
+                var info = new DeviceInfo {Path = physId, Bus = descriptor.BusType.ToString()};
 
-                if(descriptor.VendorIdOffset > 0)
+                if (descriptor.VendorIdOffset > 0)
                     info.Vendor =
                         StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.VendorIdOffset);
-                if(descriptor.ProductIdOffset > 0)
+                if (descriptor.ProductIdOffset > 0)
                     info.Model =
                         StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.ProductIdOffset);
                 // TODO: Get serial number of SCSI and USB devices, probably also FireWire (untested)
-                if(descriptor.SerialNumberOffset > 0)
+                if (descriptor.SerialNumberOffset > 0)
                 {
                     info.Serial =
                         StringHandlers.CToString(descriptorB, Encoding.ASCII, start: descriptor.SerialNumberOffset);
 
                     // fix any serial numbers that are returned as hex-strings
-                    if(Array.TrueForAll(info.Serial.ToCharArray(), c => "0123456789abcdef".IndexOf(c) >= 0) &&
-                       info.Serial.Length == 40) info.Serial = HexStringToString(info.Serial).Trim();
+                    if (Array.TrueForAll(info.Serial.ToCharArray(), c => "0123456789abcdef".IndexOf(c) >= 0) &&
+                        info.Serial.Length == 40) info.Serial = HexStringToString(info.Serial).Trim();
                 }
 
-                if((string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA") && info.Model != null)
+                if ((string.IsNullOrEmpty(info.Vendor) || info.Vendor == "ATA") && info.Model != null)
                 {
-                    string[] pieces = info.Model.Split(' ');
-                    if(pieces.Length > 1)
+                    var pieces = info.Model.Split(' ');
+                    if (pieces.Length > 1)
                     {
                         info.Vendor = pieces[0];
-                        info.Model  = info.Model.Substring(pieces[0].Length + 1);
+                        info.Model = info.Model.Substring(pieces[0].Length + 1);
                     }
                 }
 
-                switch(descriptor.BusType)
+                switch (descriptor.BusType)
                 {
                     case StorageBusType.SCSI:
                     case StorageBusType.ATAPI:
@@ -191,6 +190,8 @@ namespace DiscImageChef.Devices.Windows
                     case StorageBusType.iSCSI:
                     case StorageBusType.SAS:
                     case StorageBusType.SATA:
+                    case StorageBusType.SecureDigital:
+                    case StorageBusType.MultiMediaCard:
                         info.Supported = true;
                         break;
                 }
@@ -199,7 +200,7 @@ namespace DiscImageChef.Devices.Windows
                 devList.Add(info);
             }
 
-            DeviceInfo[] devices = devList.ToArray();
+            var devices = devList.ToArray();
 
             return devices;
         }
