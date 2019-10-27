@@ -496,9 +496,11 @@ namespace DiscImageChef.Devices.Windows
         DeviceCommand
     }
 
-    static class Consts
+    internal static class Consts
     {
         public static Guid GuidSffProtocolSd = new Guid("AD7536A8-D055-4C40-AA4D-96312DDB6B38");
+        public static Guid GuidSffProtocolMmc = new Guid("77274D3F-2365-4491-A030-8BB44AE60097");
+
         public static Guid GuidDevinterfaceDisk =
             new Guid(0x53F56307, 0xB6BF, 0x11D0, 0x94, 0xF2, 0x00, 0xA0, 0xC9, 0x1E, 0xFB, 0x8B);
     }
