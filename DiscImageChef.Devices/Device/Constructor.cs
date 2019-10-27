@@ -531,7 +531,8 @@ namespace DiscImageChef.Devices
                         // I have to search for USB disks, floppies and CD-ROMs as separate device types
                         foreach (var devGuid in new[]
                         {
-                            Usb.GuidDevinterfaceFloppy, Usb.GuidDevinterfaceCdrom, Usb.GuidDevinterfaceDisk
+                            Usb.GuidDevinterfaceFloppy, Usb.GuidDevinterfaceCdrom, Usb.GuidDevinterfaceDisk,
+                            Usb.GuidDevinterfaceTape
                         })
                         {
                             usbDevice = Usb.FindDrivePath(devicePath, devGuid);

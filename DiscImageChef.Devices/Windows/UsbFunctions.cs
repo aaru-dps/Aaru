@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -47,10 +47,11 @@ namespace DiscImageChef.Devices.Windows
     /// </summary>
     static partial class Usb
     {
-        const          int    IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
-        internal const string GuidDevinterfaceDisk            = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GuidDevinterfaceCdrom           = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
-        internal const string GuidDevinterfaceFloppy          = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+        private const int IOCTL_STORAGE_GET_DEVICE_NUMBER = 0x2D1080;
+        internal const string GuidDevinterfaceDisk = "53f56307-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceCdrom = "53f56308-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceFloppy = "53f56311-b6bf-11d0-94f2-00a0c91efb8b";
+        internal const string GuidDevinterfaceTape = "53f5630b-b6bf-11d0-94f2-00a0c91efb8b";
 
         /// <summary>
         ///     Get a list of all connected devices
