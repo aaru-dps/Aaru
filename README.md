@@ -6,7 +6,7 @@ Copyright © 2011-2019 Natalia Portillo <claunia@claunia.com>
 
 [![Build status](https://dev.azure.com/DiscImageChef/DiscImageChef/_apis/build/status/DiscImageChef-.NET%20Desktop-CI)](https://dev.azure.com/DiscImageChef/DiscImageChef/_build/latest?definitionId=4)
 [![Build Status](https://travis-ci.org/claunia/DiscImageChef.svg?branch=master)](https://travis-ci.org/claunia/DiscImageChef)
-[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
+[![Financial Contributors on Open Collective](https://opencollective.com/DiscImageChef/all/badge.svg?label=financial+contributors)](https://opencollective.com/DiscImageChef) [![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
 
 You can see statistics and device reports [here](https://www.discimagechef.app/Stats)
@@ -270,3 +270,32 @@ These disk image formats cannot be read, but their contents can be checksummed o
 License
 =======
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_large)
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/discimagechef/DiscImageChef/graphs/contributors"><img src="https://opencollective.com/DiscImageChef/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/DiscImageChef/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/DiscImageChef"><img src="https://opencollective.com/DiscImageChef/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/DiscImageChef/contribute)]
+
+<a href="https://opencollective.com/DiscImageChef/organization/0/website"><img src="https://opencollective.com/DiscImageChef/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/1/website"><img src="https://opencollective.com/DiscImageChef/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/2/website"><img src="https://opencollective.com/DiscImageChef/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/3/website"><img src="https://opencollective.com/DiscImageChef/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/4/website"><img src="https://opencollective.com/DiscImageChef/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/5/website"><img src="https://opencollective.com/DiscImageChef/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/6/website"><img src="https://opencollective.com/DiscImageChef/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/7/website"><img src="https://opencollective.com/DiscImageChef/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/8/website"><img src="https://opencollective.com/DiscImageChef/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/DiscImageChef/organization/9/website"><img src="https://opencollective.com/DiscImageChef/organization/9/avatar.svg"></a>
