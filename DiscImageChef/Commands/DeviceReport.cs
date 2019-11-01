@@ -605,8 +605,6 @@ namespace DiscImageChef.Commands
 
                                 if (pressedKey.Key != ConsoleKey.Y) continue;
 
-                                dev.AllowMediumRemoval(out senseBuffer, dev.Timeout, out _);
-                                dev.EjectTray(out senseBuffer, dev.Timeout, out _);
                                 DicConsole
                                     .WriteLine("Please insert it in the drive and press any key when it is ready.");
                                 System.Console.ReadKey(true);
@@ -999,6 +997,9 @@ namespace DiscImageChef.Commands
                                     mediaTest.MediaIsRecognized = mediaIsRecognized;
 
                                     mediaTests.Add(mediaTest);
+
+                                    dev.AllowMediumRemoval(out buffer, dev.Timeout, out _);
+                                    dev.EjectTray(out buffer, dev.Timeout, out _);
                                 }
 
                                 report.SCSI.RemovableMedias = mediaTests;
