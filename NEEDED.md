@@ -68,6 +68,7 @@ This is the media for the drives listed above, or media for drives we do have, b
 - Apple FileWare "twiggy" floppies
 - Caleb UHD144 floppy
 - Castlewood Orb 5.7
+- DLTtape, DLTtapeII, DLTtapeIII
 - Recordable and rewritable HD-DVD
 - Iomega Bernoulli (not the 90MiB one)
 - Iomega Ditto drive and tapes
