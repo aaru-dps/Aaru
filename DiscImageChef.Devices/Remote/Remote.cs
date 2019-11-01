@@ -201,7 +201,7 @@ namespace DiscImageChef.Devices.Remote
 
                 var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAmIRoot>(buf);
 
-                return res.am_i_root;
+                return res.am_i_root != 0;
             }
         }
 

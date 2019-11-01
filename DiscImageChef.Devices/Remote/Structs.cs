@@ -331,6 +331,6 @@ namespace DiscImageChef.Devices.Remote
     public struct DicPacketResAmIRoot
     {
         public DicPacketHeader hdr;
-        [MarshalAs(UnmanagedType.U4)] public bool am_i_root;
+        public uint am_i_root;
     }
 }
