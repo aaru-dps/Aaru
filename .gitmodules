@@ -4,3 +4,6 @@
 [submodule "cuetoolsnet"]
 	path = cuetoolsnet
 	url = https://github.com/claunia/cuetoolsnet.git
+[submodule "DiscImageChef.CommonTypes"]
+	path = DiscImageChef.CommonTypes
+	url = git@github.com:discimagechef/DiscImageChef.CommonTypes.git

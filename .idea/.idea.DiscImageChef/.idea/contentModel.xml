@@ -97,6 +97,7 @@
         </e>
       </e>
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
+        <e p=".git" t="Include" />
         <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
         <e p="Enums" t="Include">
           <e p="DeviceType.cs" t="Include" />
@@ -165,19 +166,7 @@
           <e p="TapePartition.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="netcoreapp2.0" t="Include">
-              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="netstandard2.0" t="Include">
-              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.Compression" t="IncludeRecursive">
         <e p="AppleRle.cs" t="Include" />
@@ -1926,7 +1915,6 @@
           </e>
         </e>
       </e>
-      <e p="DiscImageChef.Server/node_modules/bootstrap" t="IncludeRecursive" />
       <e p="DiscImageChef.Settings" t="IncludeRecursive">
         <e p="DiscImageChef.Settings.csproj" t="IncludeRecursive" />
         <e p="Settings.cs" t="Include" />
