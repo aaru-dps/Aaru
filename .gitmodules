@@ -6,16 +6,16 @@
 	url = https://github.com/claunia/cuetoolsnet.git
 [submodule "DiscImageChef.CommonTypes"]
 	path = DiscImageChef.CommonTypes
-	url = git@github.com:discimagechef/DiscImageChef.CommonTypes.git
+	url = https://github.com/discimagechef/DiscImageChef.CommonTypes.git
 [submodule "DiscImageChef.Console"]
 	path = DiscImageChef.Console
-	url = git@github.com:discimagechef/DiscImageChef.Console.git
+	url = https://github.com/discimagechef/DiscImageChef.Console.git
 [submodule "DiscImageChef.Decoders"]
 	path = DiscImageChef.Decoders
-	url = git@github.com:discimagechef/DiscImageChef.Decoders.git
+	url = https://github.com/discimagechef/DiscImageChef.Decoders.git
 [submodule "DiscImageChef.Dto"]
 	path = DiscImageChef.Dto
-	url = git@github.com:discimagechef/DiscImageChef.Dto.git
+	url = https://github.com/discimagechef/DiscImageChef.Dto.git
 [submodule "DiscImageChef.Helpers"]
 	path = DiscImageChef.Helpers
-	url = git@github.com:discimagechef/DiscImageChef.Helpers.git
+	url = https://github.com/discimagechef/DiscImageChef.Helpers.git
