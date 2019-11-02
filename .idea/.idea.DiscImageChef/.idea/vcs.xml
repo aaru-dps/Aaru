@@ -8,6 +8,11 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/CICMMetadata" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DiscImageChef.CommonTypes" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DiscImageChef.Console" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DiscImageChef.Decoders" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DiscImageChef.Dto" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/DiscImageChef.Helpers" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cuetoolsnet" vcs="Git" />
   </component>
 </project>

@@ -9,6 +9,11 @@
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
       <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.CommonTypes/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Console/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Decoders/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Dto/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Helpers/info/exclude" t="IncludeRecursive" />
       <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
@@ -167,7 +172,19 @@
           <e p="TapePartition.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netstandard2.0" t="Include">
+              <e p="DiscImageChef.CommonTypes.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Compression" t="IncludeRecursive">
         <e p="AppleRle.cs" t="Include" />
@@ -194,7 +211,19 @@
         <e p="DicConsole.cs" t="Include" />
         <e p="DiscImageChef.Console.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netstandard2.0" t="Include">
+              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Core" t="IncludeRecursive">
         <e p="Benchmark.cs" t="Include" />
@@ -525,7 +554,19 @@
           <e p="SS.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Decoders.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Decoders.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netstandard2.0" t="Include">
+              <e p="DiscImageChef.Decoders.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.Devices" t="IncludeRecursive">
         <e p="Command.cs" t="Include" />
@@ -1198,7 +1239,19 @@
         <e p="UsbProductDto.cs" t="Include" />
         <e p="UsbVendorDto.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netstandard2.0" t="Include">
+              <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
       </e>
       <e p="DiscImageChef.EntityFramework" t="IncludeRecursive">
         <e p="DiscImageChef.EntityFramework.csproj" t="IncludeRecursive" />
@@ -1818,6 +1871,8 @@
         </e>
       </e>
       <e p="DiscImageChef.Helpers" t="IncludeRecursive">
+        <e p=".git" t="Include" />
+        <e p=".gitignore" t="Include" />
         <e p="ArrayFill.cs" t="Include" />
         <e p="ArrayIsEmpty.cs" t="Include" />
         <e p="BigEndianBitConverter.cs" t="Include" />
