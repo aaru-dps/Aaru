@@ -16,3 +16,6 @@
 [submodule "DiscImageChef.Dto"]
 	path = DiscImageChef.Dto
 	url = git@github.com:discimagechef/DiscImageChef.Dto.git
+[submodule "DiscImageChef.Helpers"]
+	path = DiscImageChef.Helpers
+	url = git@github.com:discimagechef/DiscImageChef.Helpers.git
