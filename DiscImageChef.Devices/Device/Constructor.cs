@@ -141,16 +141,16 @@ namespace DiscImageChef.Devices
 
                         if (StringHandlers.CToString(camDevice.SimName) == "ata")
                             throw new
-                                InvalidOperationException(
+                                DeviceException(
                                     "Parallel ATA devices are not supported on FreeBSD due to upstream bug #224250.");
 
                         break;
                     }
-                    default: throw new InvalidOperationException($"Platform {PlatformId} not yet supported.");
+                    default: throw new DeviceException($"Platform {PlatformId} not yet supported.");
                 }
             }
 
-            if (Error) throw new SystemException($"Error {LastError} opening device.");
+            if (Error) throw new DeviceException(LastError);
 
             Type = DeviceType.Unknown;
             ScsiType = PeripheralDeviceTypes.UnknownDevice;
@@ -158,7 +158,7 @@ namespace DiscImageChef.Devices
             byte[] ataBuf;
             byte[] inqBuf = null;
 
-            if (Error) throw new SystemException($"Error {LastError} trying device.");
+            if (Error) throw new DeviceException(LastError);
 
             var scsiSense = true;
 

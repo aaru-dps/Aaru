@@ -43,6 +43,7 @@ using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.Devices;
 using Mono.Options;
 using Newtonsoft.Json;
 using Command = Mono.Options.Command;
@@ -108,11 +109,20 @@ namespace DiscImageChef.Commands
             if (devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            var dev = new Device(devicePath);
-
-            if (dev.Error)
+            Device dev;
+            try
             {
-                DicConsole.ErrorWriteLine("Error {0} opening device.", dev.LastError);
+                dev = new Device(devicePath);
+
+                if (dev.Error)
+                {
+                    DicConsole.ErrorWriteLine(Error.Print(dev.LastError));
+                    return (int) ErrorNumber.CannotOpenDevice;
+                }
+            }
+            catch (DeviceException e)
+            {
+                DicConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
                 return (int) ErrorNumber.CannotOpenDevice;
             }
 

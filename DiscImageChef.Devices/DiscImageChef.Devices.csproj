@@ -48,6 +48,7 @@
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Device\DeviceException.cs" />
     <Compile Include="FreeBSD\ListDevices.cs" />
     <Compile Include="Linux\Extern.cs" />
     <Compile Include="Linux\Structs.cs" />

@@ -65,6 +65,7 @@
     <Compile Include="Media\Info\XgdInfo.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="ImageFormat.cs" />
+    <Compile Include="Error.cs" />
     <Compile Include="PrintScsiModePages.cs" />
     <Compile Include="Sidecar\Files.cs" />
     <Compile Include="Statistics.cs" />
