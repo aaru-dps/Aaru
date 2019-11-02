@@ -170,20 +170,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Product        { get; set; }
         public bool   RemovableMedia { get; set; }
         public byte[] Descriptors    { get; set; }
-
-        [JsonIgnore]
-        public short VendorIDSql
-        {
-            get => (short)VendorID;
-            set => VendorID = (ushort)value;
-        }
-
-        [JsonIgnore]
-        public short ProductIDSql
-        {
-            get => (short)ProductID;
-            set => ProductID = (ushort)value;
-        }
     }
 
     public class FireWire
@@ -206,20 +192,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Manufacturer   { get; set; }
         public string Product        { get; set; }
         public bool   RemovableMedia { get; set; }
-
-        [JsonIgnore]
-        public int VendorIDSql
-        {
-            get => (int)VendorID;
-            set => VendorID = (uint)value;
-        }
-
-        [JsonIgnore]
-        public int ProductIDSql
-        {
-            get => (int)ProductID;
-            set => ProductID = (uint)value;
-        }
     }
 
     public class Ata
@@ -433,25 +405,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public ushort Cylinders { get; set; }
         public ushort Heads     { get; set; }
         public ushort Sectors   { get; set; }
-
-        [JsonIgnore]
-        public short CylindersSql
-        {
-            get => (short)Cylinders;
-            set => Cylinders = (ushort)value;
-        }
-        [JsonIgnore]
-        public short HeadsSql
-        {
-            get => (short)Heads;
-            set => Heads = (ushort)value;
-        }
-        [JsonIgnore]
-        public short SectorsSql
-        {
-            get => (short)Sectors;
-            set => Sectors = (ushort)value;
-        }
     }
 
     public class Scsi
@@ -635,19 +588,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte   Density     { get; set; }
         public ulong? Blocks      { get; set; }
         public uint?  BlockLength { get; set; }
-
-        [JsonIgnore]
-        public long? BlocksSql
-        {
-            get => (long?)Blocks;
-            set => Blocks = (ulong?)value;
-        }
-        [JsonIgnore]
-        public int? BlockLengthSql
-        {
-            get => (int?)BlockLength;
-            set => BlockLength = (uint?)value;
-        }
     }
 
     public class ScsiPage
@@ -1037,31 +977,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public bool    SupportsWriteProtectPAC         { get; set; }
         public ushort? VolumeLevels                    { get; set; }
         public byte[]  BinaryData                      { get; set; }
-
-        [JsonIgnore]
-        public short? BlocksPerReadableUnitSql
-        {
-            get => (short?)BlocksPerReadableUnit;
-            set => BlocksPerReadableUnit = (ushort?)value;
-        }
-        [JsonIgnore]
-        public int? LogicalBlockSizeSql
-        {
-            get => (int?)LogicalBlockSize;
-            set => LogicalBlockSize = (uint?)value;
-        }
-        [JsonIgnore]
-        public int? PhysicalInterfaceStandardNumberSql
-        {
-            get => (int?)PhysicalInterfaceStandardNumber;
-            set => PhysicalInterfaceStandardNumber = (uint?)value;
-        }
-        [JsonIgnore]
-        public short? VolumeLevelsSql
-        {
-            get => (short?)VolumeLevels;
-            set => VolumeLevels = (ushort?)value;
-        }
     }
 
     public class TestedMedia
@@ -1347,67 +1262,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte[] IntersessionLeadInData        { get; set; }
         public byte[] IntersessionLeadOutData       { get; set; }
 
-        [JsonIgnore]
-        public long? BlocksSql
-        {
-            get => (long?)Blocks;
-            set => Blocks = (ulong?)value;
-        }
-        [JsonIgnore]
-        public int? BlockSizeSql
-        {
-            get => (int?)BlockSize;
-            set => BlockSize = (uint?)value;
-        }
-        [JsonIgnore]
-        public int? LongBlockSizeSql
-        {
-            get => (int?)LongBlockSize;
-            set => LongBlockSize = (uint?)value;
-        }
-        [JsonIgnore]
-        public int? LBASectorsSql
-        {
-            get => (int?)LBASectors;
-            set => LBASectors = (uint?)value;
-        }
-        [JsonIgnore]
-        public long? LBA48SectorsSql
-        {
-            get => (long?)LBA48Sectors;
-            set => LBA48Sectors = (ulong?)value;
-        }
-        [JsonIgnore]
-        public short? LogicalAlignmentSql
-        {
-            get => (short?)LogicalAlignment;
-            set => LogicalAlignment = (ushort?)value;
-        }
-        [JsonIgnore]
-        public short? NominalRotationRateSql
-        {
-            get => (short?)NominalRotationRate;
-            set => NominalRotationRate = (ushort?)value;
-        }
-        [JsonIgnore]
-        public int? PhysicalBlockSizeSql
-        {
-            get => (int?)PhysicalBlockSize;
-            set => PhysicalBlockSize = (uint?)value;
-        }
-        [JsonIgnore]
-        public short? UnformattedBPTSql
-        {
-            get => (short?)UnformattedBPT;
-            set => UnformattedBPT = (ushort?)value;
-        }
-        [JsonIgnore]
-        public short? UnformattedBPSSql
-        {
-            get => (short?)UnformattedBPS;
-            set => UnformattedBPS = (ushort?)value;
-        }
-
         #region SCSI data
         public byte[] Read6Data      { get; set; }
         public byte[] Read10Data     { get; set; }
@@ -1524,18 +1378,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public virtual List<SupportedDensity>      SupportedDensities  { get; set; }
         public virtual List<SscSupportedMedia>     SupportedMediaTypes { get; set; }
         public virtual List<TestedSequentialMedia> TestedMedia         { get; set; }
-        [JsonIgnore]
-        public int? MaxBlockLengthSql
-        {
-            get => (int?)MaxBlockLength;
-            set => MaxBlockLength = (uint?)value;
-        }
-        [JsonIgnore]
-        public int? MinBlockLengthSql
-        {
-            get => (int?)MinBlockLength;
-            set => MinBlockLength = (uint?)value;
-        }
     }
 
     public class TestedSequentialMedia
@@ -1606,18 +1448,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public ushort? CardCode         { get; set; }
         public string  Manufacturer     { get; set; }
         public string  ProductName      { get; set; }
-        [JsonIgnore]
-        public short? ManufacturerCodeSql
-        {
-            get => (short?)ManufacturerCode;
-            set => ManufacturerCode = (ushort?)value;
-        }
-        [JsonIgnore]
-        public short? CardCodeSql
-        {
-            get => (short?)CardCode;
-            set => CardCode = (ushort?)value;
-        }
     }
 
     public class MmcSd
@@ -1669,18 +1499,6 @@ namespace DiscImageChef.CommonTypes.Metadata
         public         string            Organization { get; set; }
         public         string            Name         { get; set; }
         public         string            Description  { get; set; }
-        [JsonIgnore]
-        public short WidthSql
-        {
-            get => (short)Width;
-            set => Width = (ushort)value;
-        }
-        [JsonIgnore]
-        public short LengthSql
-        {
-            get => (short)Length;
-            set => Length = (ushort)value;
-        }
     }
 
     public class DensityCode : IEquatable<DensityCode>
