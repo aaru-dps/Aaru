@@ -10,3 +10,6 @@
 [submodule "DiscImageChef.Console"]
 	path = DiscImageChef.Console
 	url = git@github.com:discimagechef/DiscImageChef.Console.git
+[submodule "DiscImageChef.Decoders"]
+	path = DiscImageChef.Decoders
+	url = git@github.com:discimagechef/DiscImageChef.Decoders.git
