@@ -7,3 +7,6 @@
 [submodule "DiscImageChef.CommonTypes"]
 	path = DiscImageChef.CommonTypes
 	url = git@github.com:discimagechef/DiscImageChef.CommonTypes.git
+[submodule "DiscImageChef.Console"]
+	path = DiscImageChef.Console
+	url = git@github.com:discimagechef/DiscImageChef.Console.git

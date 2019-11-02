@@ -98,6 +98,7 @@
       </e>
       <e p="DiscImageChef.CommonTypes" t="IncludeRecursive">
         <e p=".git" t="Include" />
+        <e p=".gitignore" t="Include" />
         <e p="DiscImageChef.CommonTypes.csproj" t="IncludeRecursive" />
         <e p="Enums" t="Include">
           <e p="DeviceType.cs" t="Include" />
@@ -188,22 +189,12 @@
         </e>
       </e>
       <e p="DiscImageChef.Console" t="IncludeRecursive">
+        <e p=".git" t="Include" />
+        <e p=".gitignore" t="Include" />
         <e p="DicConsole.cs" t="Include" />
         <e p="DiscImageChef.Console.csproj" t="IncludeRecursive" />
         <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="netcoreapp2.0" t="Include">
-              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="netstandard2.0" t="Include">
-              <e p="DiscImageChef.Console.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
+        <e p="obj" t="ExcludeRecursive" />
       </e>
       <e p="DiscImageChef.Core" t="IncludeRecursive">
         <e p="Benchmark.cs" t="Include" />
