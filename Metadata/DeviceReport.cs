@@ -48,8 +48,7 @@ using Newtonsoft.Json;
 
 namespace DiscImageChef.CommonTypes.Metadata
 {
-    [Serializable]
-    [XmlRoot("DicDeviceReport", Namespace = "", IsNullable = false)]
+    [Serializable, XmlRoot("DicDeviceReport", Namespace = "", IsNullable = false)]
     public class DeviceReport
     {
         public usbType      USB            { get; set; }
@@ -981,8 +980,7 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class SupportedDensity
     {
-        [XmlIgnore]
-        [JsonIgnore]
+        [XmlIgnore, JsonIgnore]
         public int Id { get;                set; }
         public byte   PrimaryCode    { get; set; }
         public byte   SecondaryCode  { get; set; }
@@ -1000,8 +998,7 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class SupportedMedia
     {
-        [XmlIgnore]
-        [JsonIgnore]
+        [XmlIgnore, JsonIgnore]
         public int Id { get;              set; }
         public byte   MediumType   { get; set; }
         public int[]  DensityCodes { get; set; }

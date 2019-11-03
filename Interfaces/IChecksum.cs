@@ -40,27 +40,19 @@ namespace DiscImageChef.CommonTypes.Interfaces
 {
     public interface IChecksum
     {
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
         void Update(byte[] data, uint len);
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         void Update(byte[] data);
 
-        /// <summary>
-        ///     Returns a byte array of the hash value.
-        /// </summary>
+        /// <summary>Returns a byte array of the hash value.</summary>
         byte[] Final();
 
-        /// <summary>
-        ///     Returns a hexadecimal representation of the hash value.
-        /// </summary>
+        /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         string End();
     }
 }

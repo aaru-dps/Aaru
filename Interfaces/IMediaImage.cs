@@ -45,9 +45,7 @@ using Schemas;
 
 namespace DiscImageChef.CommonTypes.Interfaces
 {
-    /// <summary>
-    ///     Abstract class to implement disk image reading plugins.
-    /// </summary>
+    /// <summary>Abstract class to implement disk image reading plugins.</summary>
     public interface IMediaImage
     {
         /// <summary>Image information</summary>
@@ -58,9 +56,7 @@ namespace DiscImageChef.CommonTypes.Interfaces
         Guid Id { get; }
         /// <summary>Plugin author</summary>
         string Author { get; }
-        /// <summary>
-        ///     Gets the image format.
-        /// </summary>
+        /// <summary>Gets the image format.</summary>
         /// <value>The image format.</value>
         string Format { get; }
         /// <summary>List of dump hardware used to create the image from real media</summary>
@@ -68,69 +64,51 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <summary>Gets the CICM XML metadata for the image</summary>
         CICMMetadataType CicmMetadata { get; }
 
-        /// <summary>
-        ///     Identifies the image.
-        /// </summary>
+        /// <summary>Identifies the image.</summary>
         /// <returns><c>true</c>, if image was identified, <c>false</c> otherwise.</returns>
         /// <param name="imageFilter">Image filter.</param>
         bool Identify(IFilter imageFilter);
 
-        /// <summary>
-        ///     Opens the image.
-        /// </summary>
+        /// <summary>Opens the image.</summary>
         /// <returns><c>true</c>, if image was opened, <c>false</c> otherwise.</returns>
         /// <param name="imageFilter">Image filter.</param>
         bool Open(IFilter imageFilter);
 
-        /// <summary>
-        ///     Reads a disk tag.
-        /// </summary>
+        /// <summary>Reads a disk tag.</summary>
         /// <returns>Disk tag</returns>
         /// <param name="tag">Tag type to read.</param>
         byte[] ReadDiskTag(MediaTagType tag);
 
-        /// <summary>
-        ///     Reads a sector's user data.
-        /// </summary>
+        /// <summary>Reads a sector's user data.</summary>
         /// <returns>The sector's user data.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
         byte[] ReadSector(ulong sectorAddress);
 
-        /// <summary>
-        ///     Reads a sector's tag.
-        /// </summary>
+        /// <summary>Reads a sector's tag.</summary>
         /// <returns>The sector's tag.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
         /// <param name="tag">Tag type.</param>
         byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag);
 
-        /// <summary>
-        ///     Reads user data from several sectors.
-        /// </summary>
+        /// <summary>Reads user data from several sectors.</summary>
         /// <returns>The sectors user data.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         byte[] ReadSectors(ulong sectorAddress, uint length);
 
-        /// <summary>
-        ///     Reads tag from several sectors.
-        /// </summary>
+        /// <summary>Reads tag from several sectors.</summary>
         /// <returns>The sectors tag.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="tag">Tag type.</param>
         byte[] ReadSectorsTag(ulong sectorAddress, uint length, SectorTagType tag);
 
-        /// <summary>
-        ///     Reads a complete sector (user data + all tags).
-        /// </summary>
+        /// <summary>Reads a complete sector (user data + all tags).</summary>
         /// <returns>The complete sector. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
         byte[] ReadSectorLong(ulong sectorAddress);
 
-        /// <summary>
-        ///     Reads several complete sector (user data + all tags).
-        /// </summary>
+        /// <summary>Reads several complete sector (user data + all tags).</summary>
         /// <returns>The complete sectors. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>

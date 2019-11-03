@@ -43,8 +43,7 @@ using Schemas;
 
 namespace DiscImageChef.CommonTypes.Metadata
 {
-    [Serializable]
-    [XmlRoot("DicResume", Namespace = "", IsNullable = false)]
+    [Serializable, XmlRoot("DicResume", Namespace = "", IsNullable = false)]
     public class Resume
     {
         [XmlElement(DataType = "dateTime")]

@@ -35,25 +35,18 @@
 // ----------------------------------------------------------------------------
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
+
 namespace DiscImageChef.CommonTypes.Structs
 {
     public struct TapeFile
     {
-        /// <summary>
-        /// File number
-        /// </summary>
+        /// <summary>File number</summary>
         public uint File;
-        /// <summary>
-        /// Partition number
-        /// </summary>
+        /// <summary>Partition number</summary>
         public byte Partition;
-        /// <summary>
-        /// First block, inclusive, of the file
-        /// </summary>
+        /// <summary>First block, inclusive, of the file</summary>
         public ulong FirstBlock;
-        /// <summary>
-        /// Last block, inclusive, of the file
-        /// </summary>
+        /// <summary>Last block, inclusive, of the file</summary>
         public ulong LastBlock;
     }
 }

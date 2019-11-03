@@ -40,9 +40,7 @@ using System;
 
 namespace DiscImageChef.CommonTypes
 {
-    /// <summary>
-    ///     Partition structure.
-    /// </summary>
+    /// <summary>Partition structure.</summary>
     public struct Partition : IEquatable<Partition>, IComparable<Partition>
     {
         /// <summary>Partition number, 0-started</summary>
@@ -66,9 +64,7 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Name of partition scheme that contains this partition</summary>
         public string Scheme;
 
-        /// <summary>
-        ///     Compares two partitions
-        /// </summary>
+        /// <summary>Compares two partitions</summary>
         /// <param name="other">Partition to compare with</param>
         /// <returns>0 if both partitions start and end at the same sector</returns>
         public bool Equals(Partition other) => Start == other.Start && Length == other.Length;
@@ -78,18 +74,22 @@ namespace DiscImageChef.CommonTypes
         public override int GetHashCode() => Start.GetHashCode() + End.GetHashCode();
 
         /// <summary>
-        ///     Compares this partition with another and returns an integer that indicates whether the current partition precedes,
-        ///     follows, or is in the same place as the other partition.
+        ///     Compares this partition with another and returns an integer that indicates whether the current partition
+        ///     precedes, follows, or is in the same place as the other partition.
         /// </summary>
         /// <param name="other">Partition to compare with</param>
         /// <returns>A value that indicates the relative equality of the partitions being compared.</returns>
         public int CompareTo(Partition other)
         {
-            if(Start == other.Start && End == other.End) return 0;
+            if(Start == other.Start &&
+               End   == other.End)
+                return 0;
 
-            if(Start > other.Start || End > other.End) return 1;
+            if(Start > other.Start ||
+               End   > other.End)
+                return 1;
 
-            return -1;
+            return-1;
         }
 
         // Define the equality operator.

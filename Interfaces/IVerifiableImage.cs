@@ -41,9 +41,7 @@ namespace DiscImageChef.CommonTypes.Interfaces
 {
     public interface IVerifiableImage
     {
-        /// <summary>
-        ///     Verifies media image internal checksum.
-        /// </summary>
+        /// <summary>Verifies media image internal checksum.</summary>
         /// <returns>True if correct, false if incorrect, null if there is no internal checksum available</returns>
         bool? VerifyMediaImage();
     }

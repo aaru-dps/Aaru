@@ -43,16 +43,12 @@ namespace DiscImageChef.CommonTypes.Metadata
 {
     public static class Version
     {
-        /// <summary>
-        ///     Gets XML software type for the running version
-        /// </summary>
+        /// <summary>Gets XML software type for the running version</summary>
         /// <returns>XML software type</returns>
-        public static SoftwareType GetSoftwareType() =>
-            new SoftwareType
-            {
-                Name            = "DiscImageChef",
-                OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
-                Version         = typeof(Version).Assembly.GetName().Version.ToString()
-            };
+        public static SoftwareType GetSoftwareType() => new SoftwareType
+        {
+            Name    = "DiscImageChef", OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
+            Version = typeof(Version).Assembly.GetName().Version.ToString()
+        };
     }
 }

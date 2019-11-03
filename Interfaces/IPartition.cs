@@ -44,9 +44,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Partitions
 {
-    /// <summary>
-    ///     Abstract class to implement partitioning schemes interpreting plugins.
-    /// </summary>
+    /// <summary>Abstract class to implement partitioning schemes interpreting plugins.</summary>
     public interface IPartition
     {
         /// <summary>Plugin name.</summary>
@@ -56,9 +54,7 @@ namespace DiscImageChef.Partitions
         /// <summary>Plugin author</summary>
         string Author { get; }
 
-        /// <summary>
-        ///     Interprets a partitioning scheme.
-        /// </summary>
+        /// <summary>Interprets a partitioning scheme.</summary>
         /// <returns><c>true</c>, if partitioning scheme is recognized, <c>false</c> otherwise.</returns>
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partitions">Returns list of partitions.</param>

@@ -42,10 +42,10 @@ using DiscImageChef.CommonTypes.Structs;
 namespace DiscImageChef.CommonTypes.Interfaces
 {
     /// <summary>
-    ///     Abstract class to implement disk image reading plugins that can contain floppy images.
-    ///     This interface is needed because floppy formatting characteristics are not necesarily compatible with the whole
-    ///     LBA-oriented interface defined by <see cref="IMediaImage" />.
-    ///     All data expected by these methods is already decoded from its corresponding bitstream.
+    ///     Abstract class to implement disk image reading plugins that can contain floppy images. This interface is
+    ///     needed because floppy formatting characteristics are not necesarily compatible with the whole LBA-oriented
+    ///     interface defined by <see cref="IMediaImage" />. All data expected by these methods is already decoded from its
+    ///     corresponding bitstream.
     /// </summary>
     public interface IWritableFloppyImage : IFloppyImage, IWritableImage
     {
@@ -60,14 +60,11 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool SetFloppyCharacteristics(FloppyInfo info);
 
-        /// <summary>
-        ///     Writes a sector's user data.
-        /// </summary>
+        /// <summary>Writes a sector's user data.</summary>
         /// <param name="data">
-        ///     If <see cref="status" /> is <see cref="FloppySectorStatus.Duplicated" /> one of the duplicates.
-        ///     If <see cref="status" /> is <see cref="FloppySectorStatus.Demagnetized" />, <see cref="FloppySectorStatus.Hole" />,
-        ///     <see cref="FloppySectorStatus.NotFound" /> it will be ignored.
-        ///     Otherwise, whatever data should be in the sector.
+        ///     If <see cref="status" /> is <see cref="FloppySectorStatus.Duplicated" /> one of the duplicates. If
+        ///     <see cref="status" /> is <see cref="FloppySectorStatus.Demagnetized" />, <see cref="FloppySectorStatus.Hole" />,
+        ///     <see cref="FloppySectorStatus.NotFound" /> it will be ignored. Otherwise, whatever data should be in the sector.
         /// </param>
         /// <param name="track">Physical track (position of the heads over the floppy media, 0-based).</param>
         /// <param name="head">Physical head (0-based).</param>
@@ -76,23 +73,18 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool WriteSector(byte[] data, ushort track, byte head, ushort sector, FloppySectorStatus status);
 
-        /// <summary>
-        ///     Writes a whole track, including all gaps, address marks, sectors data, etc.
-        /// </summary>
+        /// <summary>Writes a whole track, including all gaps, address marks, sectors data, etc.</summary>
         /// <param name="data">The track data.</param>
         /// <param name="track">Physical track (position of the heads over the floppy media, 0-based).</param>
         /// <param name="head">Physical head (0-based).</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool WriteTrack(byte[] data, ushort track, byte head);
 
-        /// <summary>
-        ///     Writes a sector's data including all tags, address mark, and so, in a format dependent of represented media.
-        /// </summary>
+        /// <summary>Writes a sector's data including all tags, address mark, and so, in a format dependent of represented media.</summary>
         /// <param name="data">
-        ///     If <see cref="status" /> is <see cref="FloppySectorStatus.Duplicated" /> one of the duplicates.
-        ///     If <see cref="status" /> is <see cref="FloppySectorStatus.Demagnetized" />, <see cref="FloppySectorStatus.Hole" />,
-        ///     <see cref="FloppySectorStatus.NotFound" /> it will be ignored.
-        ///     Otherwise, whatever data should be in the sector.
+        ///     If <see cref="status" /> is <see cref="FloppySectorStatus.Duplicated" /> one of the duplicates. If
+        ///     <see cref="status" /> is <see cref="FloppySectorStatus.Demagnetized" />, <see cref="FloppySectorStatus.Hole" />,
+        ///     <see cref="FloppySectorStatus.NotFound" /> it will be ignored. Otherwise, whatever data should be in the sector.
         /// </param>
         /// <param name="track">Physical track (position of the heads over the floppy media, 0-based).</param>
         /// <param name="head">Physical head (0-based).</param>

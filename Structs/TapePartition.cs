@@ -40,17 +40,11 @@ namespace DiscImageChef.CommonTypes.Structs
 {
     public struct TapePartition
     {
-        /// <summary>
-        ///     Partition number
-        /// </summary>
+        /// <summary>Partition number</summary>
         public byte Number;
-        /// <summary>
-        ///     First block, inclusive, of the partition
-        /// </summary>
+        /// <summary>First block, inclusive, of the partition</summary>
         public ulong FirstBlock;
-        /// <summary>
-        ///     Last block, inclusive, of the partition
-        /// </summary>
+        /// <summary>Last block, inclusive, of the partition</summary>
         public ulong LastBlock;
     }
 }

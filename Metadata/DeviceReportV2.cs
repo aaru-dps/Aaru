@@ -61,10 +61,18 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public DeviceReportV2(DeviceReport reportV1)
         {
-            if(reportV1.USB      != null) USB               = new Usb(reportV1.USB);
-            if(reportV1.FireWire != null) FireWire          = new FireWire(reportV1.FireWire);
-            if(reportV1.PCMCIA   != null) PCMCIA            = new Pcmcia(reportV1.PCMCIA);
-            if(reportV1.CompactFlashSpecified) CompactFlash = reportV1.CompactFlash;
+            if(reportV1.USB != null)
+                USB = new Usb(reportV1.USB);
+
+            if(reportV1.FireWire != null)
+                FireWire = new FireWire(reportV1.FireWire);
+
+            if(reportV1.PCMCIA != null)
+                PCMCIA = new Pcmcia(reportV1.PCMCIA);
+
+            if(reportV1.CompactFlashSpecified)
+                CompactFlash = reportV1.CompactFlash;
+
             if(reportV1.ATA != null)
             {
                 ATA  = new Ata(reportV1.ATA);
@@ -113,7 +121,8 @@ namespace DiscImageChef.CommonTypes.Metadata
                 Model        = reportV1.SCSI.Inquiry.ProductIdentification;
                 Revision     = reportV1.SCSI.Inquiry.ProductRevisionLevel;
             }
-            else if(reportV1.ATA != null || reportV1.ATAPI != null)
+            else if(reportV1.ATA   != null ||
+                    reportV1.ATAPI != null)
             {
                 ataType ata = reportV1.ATA ?? reportV1.ATAPI;
 
@@ -124,7 +133,8 @@ namespace DiscImageChef.CommonTypes.Metadata
                     Manufacturer = split[0];
                     Model        = string.Join(" ", split, 1, split.Length - 1);
                 }
-                else Model = ata.Model;
+                else
+                    Model = ata.Model;
 
                 Revision = ata.FirmwareRevision;
             }
@@ -202,7 +212,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         {
             Identify = ata.Identify;
 
-            if(ata.ReadCapabilities != null) ReadCapabilities = new TestedMedia(ata.ReadCapabilities, true);
+            if(ata.ReadCapabilities != null)
+                ReadCapabilities = new TestedMedia(ata.ReadCapabilities, true);
 
             if(ata.RemovableMedias != null)
             {
@@ -212,170 +223,247 @@ namespace DiscImageChef.CommonTypes.Metadata
                     RemovableMedias.Add(new TestedMedia(ataRemovableMedia, true));
             }
 
-            if(Identify != null) return;
+            if(Identify != null)
+                return;
 
-            Identify.IdentifyDevice identifyDevice = new Identify.IdentifyDevice();
+            var identifyDevice = new Identify.IdentifyDevice();
 
-            if(ata.AdditionalPIDSpecified) identifyDevice.AdditionalPID = ata.AdditionalPID;
+            if(ata.AdditionalPIDSpecified)
+                identifyDevice.AdditionalPID = ata.AdditionalPID;
 
-            if(ata.APIOSupportedSpecified) identifyDevice.APIOSupported = ata.APIOSupported;
+            if(ata.APIOSupportedSpecified)
+                identifyDevice.APIOSupported = ata.APIOSupported;
 
-            if(ata.ATAPIByteCountSpecified) identifyDevice.ATAPIByteCount = ata.ATAPIByteCount;
+            if(ata.ATAPIByteCountSpecified)
+                identifyDevice.ATAPIByteCount = ata.ATAPIByteCount;
 
-            if(ata.BufferTypeSpecified) identifyDevice.BufferType = ata.BufferType;
+            if(ata.BufferTypeSpecified)
+                identifyDevice.BufferType = ata.BufferType;
 
-            if(ata.BufferSizeSpecified) identifyDevice.BufferSize = ata.BufferSize;
+            if(ata.BufferSizeSpecified)
+                identifyDevice.BufferSize = ata.BufferSize;
 
-            if(ata.CapabilitiesSpecified) identifyDevice.Capabilities = ata.Capabilities;
+            if(ata.CapabilitiesSpecified)
+                identifyDevice.Capabilities = ata.Capabilities;
 
-            if(ata.Capabilities2Specified) identifyDevice.Capabilities2 = ata.Capabilities2;
+            if(ata.Capabilities2Specified)
+                identifyDevice.Capabilities2 = ata.Capabilities2;
 
-            if(ata.Capabilities3Specified) identifyDevice.Capabilities3 = ata.Capabilities3;
+            if(ata.Capabilities3Specified)
+                identifyDevice.Capabilities3 = ata.Capabilities3;
 
-            if(ata.CFAPowerModeSpecified) identifyDevice.CFAPowerMode = ata.CFAPowerMode;
+            if(ata.CFAPowerModeSpecified)
+                identifyDevice.CFAPowerMode = ata.CFAPowerMode;
 
-            if(ata.CommandSetSpecified) identifyDevice.CommandSet = ata.CommandSet;
+            if(ata.CommandSetSpecified)
+                identifyDevice.CommandSet = ata.CommandSet;
 
-            if(ata.CommandSet2Specified) identifyDevice.CommandSet2 = ata.CommandSet2;
+            if(ata.CommandSet2Specified)
+                identifyDevice.CommandSet2 = ata.CommandSet2;
 
-            if(ata.CommandSet3Specified) identifyDevice.CommandSet3 = ata.CommandSet3;
+            if(ata.CommandSet3Specified)
+                identifyDevice.CommandSet3 = ata.CommandSet3;
 
-            if(ata.CommandSet4Specified) identifyDevice.CommandSet4 = ata.CommandSet4;
+            if(ata.CommandSet4Specified)
+                identifyDevice.CommandSet4 = ata.CommandSet4;
 
-            if(ata.CommandSet5Specified) identifyDevice.CommandSet4 = ata.CommandSet4;
+            if(ata.CommandSet5Specified)
+                identifyDevice.CommandSet4 = ata.CommandSet4;
 
-            if(ata.CurrentAAMSpecified) identifyDevice.CurrentAAM = ata.CurrentAAM;
+            if(ata.CurrentAAMSpecified)
+                identifyDevice.CurrentAAM = ata.CurrentAAM;
 
-            if(ata.CurrentAPMSpecified) identifyDevice.CurrentAPM = ata.CurrentAPM;
+            if(ata.CurrentAPMSpecified)
+                identifyDevice.CurrentAPM = ata.CurrentAPM;
 
-            if(ata.DataSetMgmtSpecified) identifyDevice.DataSetMgmt = ata.DataSetMgmt;
+            if(ata.DataSetMgmtSpecified)
+                identifyDevice.DataSetMgmt = ata.DataSetMgmt;
 
-            if(ata.DataSetMgmtSizeSpecified) identifyDevice.DataSetMgmtSize = ata.DataSetMgmtSize;
+            if(ata.DataSetMgmtSizeSpecified)
+                identifyDevice.DataSetMgmtSize = ata.DataSetMgmtSize;
 
-            if(ata.DeviceFormFactorSpecified) identifyDevice.DeviceFormFactor = ata.DeviceFormFactor;
+            if(ata.DeviceFormFactorSpecified)
+                identifyDevice.DeviceFormFactor = ata.DeviceFormFactor;
 
-            if(ata.DMAActiveSpecified) identifyDevice.DMAActive = ata.DMAActive;
+            if(ata.DMAActiveSpecified)
+                identifyDevice.DMAActive = ata.DMAActive;
 
-            if(ata.DMASupportedSpecified) identifyDevice.DMASupported = ata.DMASupported;
+            if(ata.DMASupportedSpecified)
+                identifyDevice.DMASupported = ata.DMASupported;
 
-            if(ata.DMATransferTimingModeSpecified) identifyDevice.DMATransferTimingMode = ata.DMATransferTimingMode;
+            if(ata.DMATransferTimingModeSpecified)
+                identifyDevice.DMATransferTimingMode = ata.DMATransferTimingMode;
 
             if(ata.EnhancedSecurityEraseTimeSpecified)
                 identifyDevice.EnhancedSecurityEraseTime = ata.EnhancedSecurityEraseTime;
 
-            if(ata.EnabledCommandSetSpecified) identifyDevice.EnabledCommandSet = ata.EnabledCommandSet;
+            if(ata.EnabledCommandSetSpecified)
+                identifyDevice.EnabledCommandSet = ata.EnabledCommandSet;
 
-            if(ata.EnabledCommandSet2Specified) identifyDevice.EnabledCommandSet2 = ata.EnabledCommandSet2;
+            if(ata.EnabledCommandSet2Specified)
+                identifyDevice.EnabledCommandSet2 = ata.EnabledCommandSet2;
 
-            if(ata.EnabledCommandSet3Specified) identifyDevice.EnabledCommandSet3 = ata.EnabledCommandSet3;
+            if(ata.EnabledCommandSet3Specified)
+                identifyDevice.EnabledCommandSet3 = ata.EnabledCommandSet3;
 
-            if(ata.EnabledCommandSet4Specified) identifyDevice.EnabledCommandSet4 = ata.EnabledCommandSet4;
+            if(ata.EnabledCommandSet4Specified)
+                identifyDevice.EnabledCommandSet4 = ata.EnabledCommandSet4;
 
-            if(ata.EnabledSATAFeaturesSpecified) identifyDevice.EnabledSATAFeatures = ata.EnabledSATAFeatures;
+            if(ata.EnabledSATAFeaturesSpecified)
+                identifyDevice.EnabledSATAFeatures = ata.EnabledSATAFeatures;
 
-            if(ata.ExtendedUserSectorsSpecified) identifyDevice.ExtendedUserSectors = ata.ExtendedUserSectors;
+            if(ata.ExtendedUserSectorsSpecified)
+                identifyDevice.ExtendedUserSectors = ata.ExtendedUserSectors;
 
-            if(ata.FreeFallSensitivitySpecified) identifyDevice.FreeFallSensitivity = ata.FreeFallSensitivity;
+            if(ata.FreeFallSensitivitySpecified)
+                identifyDevice.FreeFallSensitivity = ata.FreeFallSensitivity;
 
-            if(ata.FirmwareRevisionSpecified) identifyDevice.FirmwareRevision = ata.FirmwareRevision;
+            if(ata.FirmwareRevisionSpecified)
+                identifyDevice.FirmwareRevision = ata.FirmwareRevision;
 
-            if(ata.GeneralConfigurationSpecified) identifyDevice.GeneralConfiguration = ata.GeneralConfiguration;
+            if(ata.GeneralConfigurationSpecified)
+                identifyDevice.GeneralConfiguration = ata.GeneralConfiguration;
 
-            if(ata.HardwareResetResultSpecified) identifyDevice.HardwareResetResult = ata.HardwareResetResult;
+            if(ata.HardwareResetResultSpecified)
+                identifyDevice.HardwareResetResult = ata.HardwareResetResult;
 
-            if(ata.InterseekDelaySpecified) identifyDevice.InterseekDelay = ata.InterseekDelay;
+            if(ata.InterseekDelaySpecified)
+                identifyDevice.InterseekDelay = ata.InterseekDelay;
 
-            if(ata.MajorVersionSpecified) identifyDevice.MajorVersion = ata.MajorVersion;
+            if(ata.MajorVersionSpecified)
+                identifyDevice.MajorVersion = ata.MajorVersion;
 
             if(ata.MasterPasswordRevisionCodeSpecified)
                 identifyDevice.MasterPasswordRevisionCode = ata.MasterPasswordRevisionCode;
 
-            if(ata.MaxDownloadMicroMode3Specified) identifyDevice.MaxDownloadMicroMode3 = ata.MaxDownloadMicroMode3;
+            if(ata.MaxDownloadMicroMode3Specified)
+                identifyDevice.MaxDownloadMicroMode3 = ata.MaxDownloadMicroMode3;
 
-            if(ata.MaxQueueDepthSpecified) identifyDevice.MaxQueueDepth = ata.MaxQueueDepth;
+            if(ata.MaxQueueDepthSpecified)
+                identifyDevice.MaxQueueDepth = ata.MaxQueueDepth;
 
-            if(ata.MDMAActiveSpecified) identifyDevice.MDMAActive = ata.MDMAActive;
+            if(ata.MDMAActiveSpecified)
+                identifyDevice.MDMAActive = ata.MDMAActive;
 
-            if(ata.MDMASupportedSpecified) identifyDevice.MDMASupported = ata.MDMASupported;
+            if(ata.MDMASupportedSpecified)
+                identifyDevice.MDMASupported = ata.MDMASupported;
 
-            if(ata.MinDownloadMicroMode3Specified) identifyDevice.MinDownloadMicroMode3 = ata.MinDownloadMicroMode3;
+            if(ata.MinDownloadMicroMode3Specified)
+                identifyDevice.MinDownloadMicroMode3 = ata.MinDownloadMicroMode3;
 
-            if(ata.MinMDMACycleTimeSpecified) identifyDevice.MinMDMACycleTime = ata.MinMDMACycleTime;
+            if(ata.MinMDMACycleTimeSpecified)
+                identifyDevice.MinMDMACycleTime = ata.MinMDMACycleTime;
 
-            if(ata.MinorVersionSpecified) identifyDevice.MinorVersion = ata.MinorVersion;
+            if(ata.MinorVersionSpecified)
+                identifyDevice.MinorVersion = ata.MinorVersion;
 
-            if(ata.MinPIOCycleTimeNoFlowSpecified) identifyDevice.MinPIOCycleTimeNoFlow = ata.MinPIOCycleTimeNoFlow;
+            if(ata.MinPIOCycleTimeNoFlowSpecified)
+                identifyDevice.MinPIOCycleTimeNoFlow = ata.MinPIOCycleTimeNoFlow;
 
-            if(ata.MinPIOCycleTimeFlowSpecified) identifyDevice.MinPIOCycleTimeFlow = ata.MinPIOCycleTimeFlow;
+            if(ata.MinPIOCycleTimeFlowSpecified)
+                identifyDevice.MinPIOCycleTimeFlow = ata.MinPIOCycleTimeFlow;
 
-            if(ata.ModelSpecified) identifyDevice.Model = ata.Model;
+            if(ata.ModelSpecified)
+                identifyDevice.Model = ata.Model;
 
-            if(ata.MultipleMaxSectorsSpecified) identifyDevice.MultipleMaxSectors = ata.MultipleMaxSectors;
+            if(ata.MultipleMaxSectorsSpecified)
+                identifyDevice.MultipleMaxSectors = ata.MultipleMaxSectors;
 
-            if(ata.MultipleSectorNumberSpecified) identifyDevice.MultipleSectorNumber = ata.MultipleSectorNumber;
+            if(ata.MultipleSectorNumberSpecified)
+                identifyDevice.MultipleSectorNumber = ata.MultipleSectorNumber;
 
-            if(ata.NVCacheCapsSpecified) identifyDevice.NVCacheCaps = ata.NVCacheCaps;
+            if(ata.NVCacheCapsSpecified)
+                identifyDevice.NVCacheCaps = ata.NVCacheCaps;
 
-            if(ata.NVCacheSizeSpecified) identifyDevice.NVCacheSize = ata.NVCacheSize;
+            if(ata.NVCacheSizeSpecified)
+                identifyDevice.NVCacheSize = ata.NVCacheSize;
 
-            if(ata.NVCacheWriteSpeedSpecified) identifyDevice.NVCacheWriteSpeed = ata.NVCacheWriteSpeed;
+            if(ata.NVCacheWriteSpeedSpecified)
+                identifyDevice.NVCacheWriteSpeed = ata.NVCacheWriteSpeed;
 
-            if(ata.NVEstimatedSpinUpSpecified) identifyDevice.NVEstimatedSpinUp = ata.NVEstimatedSpinUp;
+            if(ata.NVEstimatedSpinUpSpecified)
+                identifyDevice.NVEstimatedSpinUp = ata.NVEstimatedSpinUp;
 
-            if(ata.PacketBusReleaseSpecified) identifyDevice.PacketBusRelease = ata.PacketBusRelease;
+            if(ata.PacketBusReleaseSpecified)
+                identifyDevice.PacketBusRelease = ata.PacketBusRelease;
 
-            if(ata.PIOTransferTimingModeSpecified) identifyDevice.PIOTransferTimingMode = ata.PIOTransferTimingMode;
+            if(ata.PIOTransferTimingModeSpecified)
+                identifyDevice.PIOTransferTimingMode = ata.PIOTransferTimingMode;
 
-            if(ata.RecommendedAAMSpecified) identifyDevice.RecommendedAAM = ata.RecommendedAAM;
+            if(ata.RecommendedAAMSpecified)
+                identifyDevice.RecommendedAAM = ata.RecommendedAAM;
 
-            if(ata.RecommendedMDMACycleTimeSpecified) identifyDevice.RecMDMACycleTime = ata.RecommendedMDMACycleTime;
+            if(ata.RecommendedMDMACycleTimeSpecified)
+                identifyDevice.RecMDMACycleTime = ata.RecommendedMDMACycleTime;
 
-            if(ata.RemovableStatusSetSpecified) identifyDevice.RemovableStatusSet = ata.RemovableStatusSet;
+            if(ata.RemovableStatusSetSpecified)
+                identifyDevice.RemovableStatusSet = ata.RemovableStatusSet;
 
-            if(ata.SATACapabilitiesSpecified) identifyDevice.SATACapabilities = ata.SATACapabilities;
+            if(ata.SATACapabilitiesSpecified)
+                identifyDevice.SATACapabilities = ata.SATACapabilities;
 
-            if(ata.SATACapabilities2Specified) identifyDevice.SATACapabilities2 = ata.SATACapabilities2;
+            if(ata.SATACapabilities2Specified)
+                identifyDevice.SATACapabilities2 = ata.SATACapabilities2;
 
-            if(ata.SATAFeaturesSpecified) identifyDevice.SATAFeatures = ata.SATAFeatures;
+            if(ata.SATAFeaturesSpecified)
+                identifyDevice.SATAFeatures = ata.SATAFeatures;
 
-            if(ata.SCTCommandTransportSpecified) identifyDevice.SCTCommandTransport = ata.SCTCommandTransport;
+            if(ata.SCTCommandTransportSpecified)
+                identifyDevice.SCTCommandTransport = ata.SCTCommandTransport;
 
-            if(ata.SectorsPerCardSpecified) identifyDevice.SectorsPerCard = ata.SectorsPerCard;
+            if(ata.SectorsPerCardSpecified)
+                identifyDevice.SectorsPerCard = ata.SectorsPerCard;
 
-            if(ata.SecurityEraseTimeSpecified) identifyDevice.SecurityEraseTime = ata.SecurityEraseTime;
+            if(ata.SecurityEraseTimeSpecified)
+                identifyDevice.SecurityEraseTime = ata.SecurityEraseTime;
 
-            if(ata.SecurityStatusSpecified) identifyDevice.SecurityStatus = ata.SecurityStatus;
+            if(ata.SecurityStatusSpecified)
+                identifyDevice.SecurityStatus = ata.SecurityStatus;
 
-            if(ata.ServiceBusyClearSpecified) identifyDevice.ServiceBusyClear = ata.ServiceBusyClear;
+            if(ata.ServiceBusyClearSpecified)
+                identifyDevice.ServiceBusyClear = ata.ServiceBusyClear;
 
-            if(ata.SpecificConfigurationSpecified) identifyDevice.SpecificConfiguration = ata.SpecificConfiguration;
+            if(ata.SpecificConfigurationSpecified)
+                identifyDevice.SpecificConfiguration = ata.SpecificConfiguration;
 
-            if(ata.StreamAccessLatencySpecified) identifyDevice.StreamAccessLatency = ata.StreamAccessLatency;
+            if(ata.StreamAccessLatencySpecified)
+                identifyDevice.StreamAccessLatency = ata.StreamAccessLatency;
 
-            if(ata.StreamMinReqSizeSpecified) identifyDevice.StreamMinReqSize = ata.StreamMinReqSize;
+            if(ata.StreamMinReqSizeSpecified)
+                identifyDevice.StreamMinReqSize = ata.StreamMinReqSize;
 
             if(ata.StreamPerformanceGranularitySpecified)
                 identifyDevice.StreamPerformanceGranularity = ata.StreamPerformanceGranularity;
 
-            if(ata.StreamTransferTimeDMASpecified) identifyDevice.StreamTransferTimeDMA = ata.StreamTransferTimeDMA;
+            if(ata.StreamTransferTimeDMASpecified)
+                identifyDevice.StreamTransferTimeDMA = ata.StreamTransferTimeDMA;
 
-            if(ata.StreamTransferTimePIOSpecified) identifyDevice.StreamTransferTimePIO = ata.StreamTransferTimePIO;
+            if(ata.StreamTransferTimePIOSpecified)
+                identifyDevice.StreamTransferTimePIO = ata.StreamTransferTimePIO;
 
-            if(ata.TransportMajorVersionSpecified) identifyDevice.TransportMajorVersion = ata.TransportMajorVersion;
+            if(ata.TransportMajorVersionSpecified)
+                identifyDevice.TransportMajorVersion = ata.TransportMajorVersion;
 
-            if(ata.TransportMinorVersionSpecified) identifyDevice.TransportMinorVersion = ata.TransportMinorVersion;
+            if(ata.TransportMinorVersionSpecified)
+                identifyDevice.TransportMinorVersion = ata.TransportMinorVersion;
 
-            if(ata.TrustedComputingSpecified) identifyDevice.TrustedComputing = ata.TrustedComputing;
+            if(ata.TrustedComputingSpecified)
+                identifyDevice.TrustedComputing = ata.TrustedComputing;
 
-            if(ata.UDMAActiveSpecified) identifyDevice.UDMAActive = ata.UDMAActive;
+            if(ata.UDMAActiveSpecified)
+                identifyDevice.UDMAActive = ata.UDMAActive;
 
-            if(ata.UDMASupportedSpecified) identifyDevice.UDMASupported = ata.UDMASupported;
+            if(ata.UDMASupportedSpecified)
+                identifyDevice.UDMASupported = ata.UDMASupported;
 
-            if(ata.WRVModeSpecified) identifyDevice.WRVMode = ata.WRVMode;
+            if(ata.WRVModeSpecified)
+                identifyDevice.WRVMode = ata.WRVMode;
 
-            if(ata.WRVSectorCountMode3Specified) identifyDevice.WRVSectorCountMode3 = ata.WRVSectorCountMode3;
+            if(ata.WRVSectorCountMode3Specified)
+                identifyDevice.WRVSectorCountMode3 = ata.WRVSectorCountMode3;
 
-            if(ata.WRVSectorCountMode2Specified) identifyDevice.WRVSectorCountMode2 = ata.WRVSectorCountMode2;
+            if(ata.WRVSectorCountMode2Specified)
+                identifyDevice.WRVSectorCountMode2 = ata.WRVSectorCountMode2;
 
             Identify = Decoders.ATA.Identify.Encode(identifyDevice);
         }
@@ -417,12 +505,15 @@ namespace DiscImageChef.CommonTypes.Metadata
             SupportsModeSense6   = scsi.SupportsModeSense6;
             SupportsModeSense10  = scsi.SupportsModeSense10;
             SupportsModeSubpages = scsi.SupportsModeSubpages;
-            if(scsi.ReadCapabilitiesSpecified && scsi.ReadCapabilities != null)
+
+            if(scsi.ReadCapabilitiesSpecified &&
+               scsi.ReadCapabilities != null)
                 ReadCapabilities = new TestedMedia(scsi.ReadCapabilities, false);
 
             if(scsi.RemovableMedias != null)
             {
                 RemovableMedias = new List<TestedMedia>();
+
                 foreach(testedMediaType scsiRemovableMedia in scsi.RemovableMedias)
                     RemovableMedias.Add(new TestedMedia(scsiRemovableMedia, false));
             }
@@ -433,26 +524,36 @@ namespace DiscImageChef.CommonTypes.Metadata
             if(scsi.EVPDPages != null)
             {
                 EVPDPages = new List<ScsiPage>();
-                foreach(pageType evpdPage in scsi.EVPDPages) EVPDPages.Add(new ScsiPage(evpdPage));
+
+                foreach(pageType evpdPage in scsi.EVPDPages)
+                    EVPDPages.Add(new ScsiPage(evpdPage));
             }
 
-            if(scsi.ModeSense != null) ModeSense = new ScsiMode(scsi.ModeSense);
+            if(scsi.ModeSense != null)
+                ModeSense = new ScsiMode(scsi.ModeSense);
 
-            if(scsi.MultiMediaDevice != null) MultiMediaDevice = new Mmc(scsi.MultiMediaDevice);
+            if(scsi.MultiMediaDevice != null)
+                MultiMediaDevice = new Mmc(scsi.MultiMediaDevice);
 
-            if(scsi.SequentialDevice != null) SequentialDevice = new Ssc(scsi.SequentialDevice);
+            if(scsi.SequentialDevice != null)
+                SequentialDevice = new Ssc(scsi.SequentialDevice);
 
-            if(InquiryData != null) return;
+            if(InquiryData != null)
+                return;
 
-            Inquiry.SCSIInquiry inq = new Inquiry.SCSIInquiry();
+            var inq = new Inquiry.SCSIInquiry();
 
-            if(scsi.Inquiry.ANSIVersionSpecified) inq.ANSIVersion = scsi.Inquiry.ANSIVersion;
+            if(scsi.Inquiry.ANSIVersionSpecified)
+                inq.ANSIVersion = scsi.Inquiry.ANSIVersion;
 
-            if(scsi.Inquiry.ECMAVersionSpecified) inq.ECMAVersion = scsi.Inquiry.ECMAVersion;
+            if(scsi.Inquiry.ECMAVersionSpecified)
+                inq.ECMAVersion = scsi.Inquiry.ECMAVersion;
 
-            if(scsi.Inquiry.DeviceTypeModifierSpecified) inq.DeviceTypeModifier = scsi.Inquiry.DeviceTypeModifier;
+            if(scsi.Inquiry.DeviceTypeModifierSpecified)
+                inq.DeviceTypeModifier = scsi.Inquiry.DeviceTypeModifier;
 
-            if(scsi.Inquiry.ISOVersionSpecified) inq.ISOVersion = scsi.Inquiry.ISOVersion;
+            if(scsi.Inquiry.ISOVersionSpecified)
+                inq.ISOVersion = scsi.Inquiry.ISOVersion;
 
             if(scsi.Inquiry.ProductIdentificationSpecified)
             {
@@ -468,7 +569,8 @@ namespace DiscImageChef.CommonTypes.Metadata
                 Array.Copy(tmp, 0, inq.ProductRevisionLevel, 0, tmp.Length);
             }
 
-            if(scsi.Inquiry.ResponseDataFormatSpecified) inq.ResponseDataFormat = scsi.Inquiry.ResponseDataFormat;
+            if(scsi.Inquiry.ResponseDataFormatSpecified)
+                inq.ResponseDataFormat = scsi.Inquiry.ResponseDataFormat;
 
             if(scsi.Inquiry.VendorIdentificationSpecified)
             {
@@ -540,22 +642,33 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public ScsiMode(modeType mode)
         {
-            if(mode.MediumTypeSpecified) MediumType = mode.MediumType;
+            if(mode.MediumTypeSpecified)
+                MediumType = mode.MediumType;
+
             WriteProtected = mode.WriteProtected;
-            if(mode.SpeedSpecified) Speed               = mode.Speed;
-            if(mode.BufferedModeSpecified) BufferedMode = mode.BufferedMode;
+
+            if(mode.SpeedSpecified)
+                Speed = mode.Speed;
+
+            if(mode.BufferedModeSpecified)
+                BufferedMode = mode.BufferedMode;
+
             BlankCheckEnabled = mode.BlankCheckEnabled;
             DPOandFUA         = mode.DPOandFUA;
 
             if(mode.ModePages != null)
             {
                 ModePages = new List<ScsiPage>();
-                foreach(modePageType modePage in mode.ModePages) ModePages.Add(new ScsiPage(modePage));
+
+                foreach(modePageType modePage in mode.ModePages)
+                    ModePages.Add(new ScsiPage(modePage));
             }
 
-            if(mode.BlockDescriptors == null) return;
+            if(mode.BlockDescriptors == null)
+                return;
 
             BlockDescriptors = new List<BlockDescriptor>();
+
             foreach(blockDescriptorType blockDescriptor in mode.BlockDescriptors)
                 BlockDescriptors.Add(new BlockDescriptor(blockDescriptor));
         }
@@ -579,8 +692,12 @@ namespace DiscImageChef.CommonTypes.Metadata
         public BlockDescriptor(blockDescriptorType descriptor)
         {
             Density = descriptor.Density;
-            if(descriptor.BlocksSpecified) Blocks           = descriptor.Blocks;
-            if(descriptor.BlockLengthSpecified) BlockLength = descriptor.BlockLength;
+
+            if(descriptor.BlocksSpecified)
+                Blocks = descriptor.Blocks;
+
+            if(descriptor.BlockLengthSpecified)
+                BlockLength = descriptor.BlockLength;
         }
 
         [JsonIgnore]
@@ -623,76 +740,67 @@ namespace DiscImageChef.CommonTypes.Metadata
             if(mmc.ModeSense2A != null)
                 ModeSense2AData = Modes.EncodeModePage_2A(new Modes.ModePage_2A
                 {
-                    AccurateCDDA = mmc.ModeSense2A.AccurateCDDA,
-                    BCK          = mmc.ModeSense2A.BCK,
-                    BufferSize   = mmc.ModeSense2A.BufferSize,
-                    BUF          = mmc.ModeSense2A.BufferUnderRunProtection,
-                    Eject        = mmc.ModeSense2A.CanEject,
-                    Lock         = mmc.ModeSense2A.CanLockMedia,
-                    CDDACommand  = mmc.ModeSense2A.CDDACommand,
-                    Composite    = mmc.ModeSense2A.CompositeAudioVideo,
-                    CMRSupported =
-                        (ushort)(mmc.ModeSense2A.CSSandCPPMSupported
-                                     ? 1
-                                     : 0),
-                    CurrentSpeed      = mmc.ModeSense2A.CurrentSpeed,
-                    CurrentWriteSpeed = mmc.ModeSense2A.CurrentWriteSpeed,
-                    CurrentWriteSpeedSelected =
-                        mmc.ModeSense2A.CurrentWriteSpeedSelected,
-                    SDP          = mmc.ModeSense2A.DeterministicSlotChanger,
-                    DigitalPort1 = mmc.ModeSense2A.DigitalPort1,
-                    DigitalPort2 = mmc.ModeSense2A.DigitalPort2,
-                    LeadInPW     = mmc.ModeSense2A.LeadInPW,
-                    LoadingMechanism =
-                        mmc.ModeSense2A.LoadingMechanismType,
-                    LockState     = mmc.ModeSense2A.LockStatus,
-                    LSBF          = mmc.ModeSense2A.LSBF,
-                    MaximumSpeed  = mmc.ModeSense2A.MaximumSpeed,
-                    MaxWriteSpeed = mmc.ModeSense2A.MaximumWriteSpeed,
-                    AudioPlay     = mmc.ModeSense2A.PlaysAudio,
-                    PreventJumper = mmc.ModeSense2A.PreventJumperStatus,
-                    RCK           = mmc.ModeSense2A.RCK,
-                    ReadBarcode   = mmc.ModeSense2A.ReadsBarcode,
-                    SCC           = mmc.ModeSense2A.ReadsBothSides,
-                    ReadCDR       = mmc.ModeSense2A.ReadsCDR,
-                    ReadCDRW      = mmc.ModeSense2A.ReadsCDRW,
-                    DeinterlaveSubchannel =
-                        mmc.ModeSense2A.ReadsDeinterlavedSubchannel,
-                    ReadDVDR   = mmc.ModeSense2A.ReadsDVDR,
-                    ReadDVDRAM = mmc.ModeSense2A.ReadsDVDRAM,
-                    ReadDVDROM = mmc.ModeSense2A.ReadsDVDROM,
-                    ISRC       = mmc.ModeSense2A.ReadsISRC,
-                    Mode2Form2 = mmc.ModeSense2A.ReadsMode2Form2,
-                    Mode2Form1 = mmc.ModeSense2A.ReadsMode2Form1,
-                    Method2    = mmc.ModeSense2A.ReadsPacketCDR,
-                    Subchannel = mmc.ModeSense2A.ReadsSubchannel,
-                    UPC        = mmc.ModeSense2A.ReadsUPC,
-                    C2Pointer  = mmc.ModeSense2A.ReturnsC2Pointers,
-                    RotationControlSelected =
-                        mmc.ModeSense2A.RotationControlSelected,
-                    SeparateChannelMute =
-                        mmc.ModeSense2A.SeparateChannelMute,
-                    SeparateChannelVolume =
-                        mmc.ModeSense2A.SeparateChannelVolume,
-                    SSS          = mmc.ModeSense2A.SSS,
-                    MultiSession = mmc.ModeSense2A.SupportsMultiSession,
-                    SupportedVolumeLevels =
-                        mmc.ModeSense2A.SupportedVolumeLevels,
-                    TestWrite   = mmc.ModeSense2A.TestWrite,
-                    WriteCDR    = mmc.ModeSense2A.WritesCDR,
-                    WriteCDRW   = mmc.ModeSense2A.WritesCDRW,
-                    WriteDVDR   = mmc.ModeSense2A.WritesDVDR,
-                    WriteDVDRAM = mmc.ModeSense2A.WritesDVDRAM,
-                    WriteSpeedPerformanceDescriptors =
-                        mmc.ModeSense2A.WriteSpeedPerformanceDescriptors
+                    AccurateCDDA                     = mmc.ModeSense2A.AccurateCDDA, BCK = mmc.ModeSense2A.BCK,
+                    BufferSize                       = mmc.ModeSense2A.BufferSize,
+                    BUF                              = mmc.ModeSense2A.BufferUnderRunProtection,
+                    Eject                            = mmc.ModeSense2A.CanEject,
+                    Lock                             = mmc.ModeSense2A.CanLockMedia,
+                    CDDACommand                      = mmc.ModeSense2A.CDDACommand,
+                    Composite                        = mmc.ModeSense2A.CompositeAudioVideo,
+                    CMRSupported                     = (ushort)(mmc.ModeSense2A.CSSandCPPMSupported ? 1 : 0),
+                    CurrentSpeed                     = mmc.ModeSense2A.CurrentSpeed,
+                    CurrentWriteSpeed                = mmc.ModeSense2A.CurrentWriteSpeed,
+                    CurrentWriteSpeedSelected        = mmc.ModeSense2A.CurrentWriteSpeedSelected,
+                    SDP                              = mmc.ModeSense2A.DeterministicSlotChanger,
+                    DigitalPort1                     = mmc.ModeSense2A.DigitalPort1,
+                    DigitalPort2                     = mmc.ModeSense2A.DigitalPort2,
+                    LeadInPW                         = mmc.ModeSense2A.LeadInPW,
+                    LoadingMechanism                 = mmc.ModeSense2A.LoadingMechanismType,
+                    LockState                        = mmc.ModeSense2A.LockStatus,
+                    LSBF                             = mmc.ModeSense2A.LSBF,
+                    MaximumSpeed                     = mmc.ModeSense2A.MaximumSpeed,
+                    MaxWriteSpeed                    = mmc.ModeSense2A.MaximumWriteSpeed,
+                    AudioPlay                        = mmc.ModeSense2A.PlaysAudio,
+                    PreventJumper                    = mmc.ModeSense2A.PreventJumperStatus,
+                    RCK                              = mmc.ModeSense2A.RCK,
+                    ReadBarcode                      = mmc.ModeSense2A.ReadsBarcode,
+                    SCC                              = mmc.ModeSense2A.ReadsBothSides,
+                    ReadCDR                          = mmc.ModeSense2A.ReadsCDR,
+                    ReadCDRW                         = mmc.ModeSense2A.ReadsCDRW,
+                    DeinterlaveSubchannel            = mmc.ModeSense2A.ReadsDeinterlavedSubchannel,
+                    ReadDVDR                         = mmc.ModeSense2A.ReadsDVDR,
+                    ReadDVDRAM                       = mmc.ModeSense2A.ReadsDVDRAM,
+                    ReadDVDROM                       = mmc.ModeSense2A.ReadsDVDROM,
+                    ISRC                             = mmc.ModeSense2A.ReadsISRC,
+                    Mode2Form2                       = mmc.ModeSense2A.ReadsMode2Form2,
+                    Mode2Form1                       = mmc.ModeSense2A.ReadsMode2Form1,
+                    Method2                          = mmc.ModeSense2A.ReadsPacketCDR,
+                    Subchannel                       = mmc.ModeSense2A.ReadsSubchannel,
+                    UPC                              = mmc.ModeSense2A.ReadsUPC,
+                    C2Pointer                        = mmc.ModeSense2A.ReturnsC2Pointers,
+                    RotationControlSelected          = mmc.ModeSense2A.RotationControlSelected,
+                    SeparateChannelMute              = mmc.ModeSense2A.SeparateChannelMute,
+                    SeparateChannelVolume            = mmc.ModeSense2A.SeparateChannelVolume, SSS = mmc.ModeSense2A.SSS,
+                    MultiSession                     = mmc.ModeSense2A.SupportsMultiSession,
+                    SupportedVolumeLevels            = mmc.ModeSense2A.SupportedVolumeLevels,
+                    TestWrite                        = mmc.ModeSense2A.TestWrite,
+                    WriteCDR                         = mmc.ModeSense2A.WritesCDR,
+                    WriteCDRW                        = mmc.ModeSense2A.WritesCDRW,
+                    WriteDVDR                        = mmc.ModeSense2A.WritesDVDR,
+                    WriteDVDRAM                      = mmc.ModeSense2A.WritesDVDRAM,
+                    WriteSpeedPerformanceDescriptors = mmc.ModeSense2A.WriteSpeedPerformanceDescriptors
                 });
 
-            if(mmc.Features != null) Features = new MmcFeatures(mmc.Features);
+            if(mmc.Features != null)
+                Features = new MmcFeatures(mmc.Features);
 
-            if(mmc.TestedMedia == null) return;
+            if(mmc.TestedMedia == null)
+                return;
 
             TestedMedia = new List<TestedMedia>();
-            foreach(testedMediaType mediaType in mmc.TestedMedia) TestedMedia.Add(new TestedMedia(mediaType, false));
+
+            foreach(testedMediaType mediaType in mmc.TestedMedia)
+                TestedMedia.Add(new TestedMedia(mediaType, false));
         }
 
         [JsonIgnore]
@@ -709,31 +817,42 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public MmcFeatures(mmcFeaturesType features)
         {
-            if(features.PhysicalInterfaceStandardSpecified && !features.PhysicalInterfaceStandardNumberSpecified)
+            if(features.PhysicalInterfaceStandardSpecified &&
+               !features.PhysicalInterfaceStandardNumberSpecified)
                 PhysicalInterfaceStandardNumber = (uint?)features.PhysicalInterfaceStandard;
 
             if(features.PhysicalInterfaceStandardNumberSpecified)
                 PhysicalInterfaceStandardNumber = features.PhysicalInterfaceStandardNumber;
 
-            if(features.AACSVersionSpecified) AACSVersion = features.AACSVersion;
+            if(features.AACSVersionSpecified)
+                AACSVersion = features.AACSVersion;
 
-            if(features.AGIDsSpecified) AGIDs = features.AGIDs;
+            if(features.AGIDsSpecified)
+                AGIDs = features.AGIDs;
 
-            if(features.BindingNonceBlocksSpecified) BindingNonceBlocks = features.BindingNonceBlocks;
+            if(features.BindingNonceBlocksSpecified)
+                BindingNonceBlocks = features.BindingNonceBlocks;
 
-            if(features.CPRMVersionSpecified) CPRMVersion = features.CPRMVersion;
+            if(features.CPRMVersionSpecified)
+                CPRMVersion = features.CPRMVersion;
 
-            if(features.CSSVersionSpecified) CSSVersion = features.CSSVersion;
+            if(features.CSSVersionSpecified)
+                CSSVersion = features.CSSVersion;
 
-            if(features.LoadingMechanismTypeSpecified) LoadingMechanismType = features.LoadingMechanismType;
+            if(features.LoadingMechanismTypeSpecified)
+                LoadingMechanismType = features.LoadingMechanismType;
 
-            if(features.LogicalBlockSizeSpecified) LogicalBlockSize = features.LogicalBlockSize;
+            if(features.LogicalBlockSizeSpecified)
+                LogicalBlockSize = features.LogicalBlockSize;
 
-            if(features.BlocksPerReadableUnitSpecified) BlocksPerReadableUnit = features.BlocksPerReadableUnit;
+            if(features.BlocksPerReadableUnitSpecified)
+                BlocksPerReadableUnit = features.BlocksPerReadableUnit;
 
-            if(features.FirmwareDateSpecified) FirmwareDate = features.FirmwareDate;
+            if(features.FirmwareDateSpecified)
+                FirmwareDate = features.FirmwareDate;
 
-            if(features.VolumeLevelsSpecified) VolumeLevels = features.VolumeLevels;
+            if(features.VolumeLevelsSpecified)
+                VolumeLevels = features.VolumeLevels;
 
             BufferUnderrunFreeInDVD       = features.BufferUnderrunFreeInDVD;
             BufferUnderrunFreeInSAO       = features.BufferUnderrunFreeInSAO;
@@ -987,21 +1106,29 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public TestedMedia(testedMediaType mediaType, bool ata)
         {
-            if(mediaType.BlocksSpecified) Blocks = mediaType.Blocks;
+            if(mediaType.BlocksSpecified)
+                Blocks = mediaType.Blocks;
 
-            if(mediaType.BlockSizeSpecified) BlockSize = mediaType.BlockSize;
+            if(mediaType.BlockSizeSpecified)
+                BlockSize = mediaType.BlockSize;
 
-            if(mediaType.CanReadAACSSpecified) CanReadAACS = mediaType.CanReadAACS;
+            if(mediaType.CanReadAACSSpecified)
+                CanReadAACS = mediaType.CanReadAACS;
 
-            if(mediaType.CanReadADIPSpecified) CanReadADIP = mediaType.CanReadADIP;
+            if(mediaType.CanReadADIPSpecified)
+                CanReadADIP = mediaType.CanReadADIP;
 
-            if(mediaType.CanReadATIPSpecified) CanReadATIP = mediaType.CanReadATIP;
+            if(mediaType.CanReadATIPSpecified)
+                CanReadATIP = mediaType.CanReadATIP;
 
-            if(mediaType.CanReadBCASpecified) CanReadBCA = mediaType.CanReadBCA;
+            if(mediaType.CanReadBCASpecified)
+                CanReadBCA = mediaType.CanReadBCA;
 
-            if(mediaType.CanReadC2PointersSpecified) CanReadC2Pointers = mediaType.CanReadC2Pointers;
+            if(mediaType.CanReadC2PointersSpecified)
+                CanReadC2Pointers = mediaType.CanReadC2Pointers;
 
-            if(mediaType.CanReadCMISpecified) CanReadCMI = mediaType.CanReadCMI;
+            if(mediaType.CanReadCMISpecified)
+                CanReadCMI = mediaType.CanReadCMI;
 
             if(mediaType.CanReadCorrectedSubchannelSpecified)
                 CanReadCorrectedSubchannel = mediaType.CanReadCorrectedSubchannel;
@@ -1009,153 +1136,217 @@ namespace DiscImageChef.CommonTypes.Metadata
             if(mediaType.CanReadCorrectedSubchannelWithC2Specified)
                 CanReadCorrectedSubchannelWithC2 = mediaType.CanReadCorrectedSubchannelWithC2;
 
-            if(mediaType.CanReadDCBSpecified) CanReadDCB = mediaType.CanReadDCB;
+            if(mediaType.CanReadDCBSpecified)
+                CanReadDCB = mediaType.CanReadDCB;
 
-            if(mediaType.CanReadDDSSpecified) CanReadDDS = mediaType.CanReadDDS;
+            if(mediaType.CanReadDDSSpecified)
+                CanReadDDS = mediaType.CanReadDDS;
 
-            if(mediaType.CanReadDMISpecified) CanReadDMI = mediaType.CanReadDMI;
+            if(mediaType.CanReadDMISpecified)
+                CanReadDMI = mediaType.CanReadDMI;
 
-            if(mediaType.CanReadDiscInformationSpecified) CanReadDiscInformation = mediaType.CanReadDiscInformation;
+            if(mediaType.CanReadDiscInformationSpecified)
+                CanReadDiscInformation = mediaType.CanReadDiscInformation;
 
-            if(mediaType.CanReadFullTOCSpecified) CanReadFullTOC = mediaType.CanReadFullTOC;
+            if(mediaType.CanReadFullTOCSpecified)
+                CanReadFullTOC = mediaType.CanReadFullTOC;
 
-            if(mediaType.CanReadHDCMISpecified) CanReadHDCMI = mediaType.CanReadHDCMI;
+            if(mediaType.CanReadHDCMISpecified)
+                CanReadHDCMI = mediaType.CanReadHDCMI;
 
-            if(mediaType.CanReadLayerCapacitySpecified) CanReadLayerCapacity = mediaType.CanReadLayerCapacity;
+            if(mediaType.CanReadLayerCapacitySpecified)
+                CanReadLayerCapacity = mediaType.CanReadLayerCapacity;
 
-            if(mediaType.CanReadLeadInSpecified) CanReadFirstTrackPreGap = mediaType.CanReadLeadIn;
+            if(mediaType.CanReadLeadInSpecified)
+                CanReadFirstTrackPreGap = mediaType.CanReadLeadIn;
 
-            if(mediaType.CanReadLeadOutSpecified) CanReadLeadOut = mediaType.CanReadLeadOut;
+            if(mediaType.CanReadLeadOutSpecified)
+                CanReadLeadOut = mediaType.CanReadLeadOut;
 
-            if(mediaType.CanReadMediaIDSpecified) CanReadMediaID = mediaType.CanReadMediaID;
+            if(mediaType.CanReadMediaIDSpecified)
+                CanReadMediaID = mediaType.CanReadMediaID;
 
-            if(mediaType.CanReadMediaSerialSpecified) CanReadMediaSerial = mediaType.CanReadMediaSerial;
+            if(mediaType.CanReadMediaSerialSpecified)
+                CanReadMediaSerial = mediaType.CanReadMediaSerial;
 
-            if(mediaType.CanReadPACSpecified) CanReadPAC = mediaType.CanReadPAC;
+            if(mediaType.CanReadPACSpecified)
+                CanReadPAC = mediaType.CanReadPAC;
 
-            if(mediaType.CanReadPFISpecified) CanReadPFI = mediaType.CanReadPFI;
+            if(mediaType.CanReadPFISpecified)
+                CanReadPFI = mediaType.CanReadPFI;
 
-            if(mediaType.CanReadPMASpecified) CanReadPMA = mediaType.CanReadPMA;
+            if(mediaType.CanReadPMASpecified)
+                CanReadPMA = mediaType.CanReadPMA;
 
-            if(mediaType.CanReadPQSubchannelSpecified) CanReadPQSubchannel = mediaType.CanReadPQSubchannel;
+            if(mediaType.CanReadPQSubchannelSpecified)
+                CanReadPQSubchannel = mediaType.CanReadPQSubchannel;
 
             if(mediaType.CanReadPQSubchannelWithC2Specified)
                 CanReadPQSubchannelWithC2 = mediaType.CanReadPQSubchannelWithC2;
 
-            if(mediaType.CanReadPRISpecified) CanReadPRI = mediaType.CanReadPRI;
+            if(mediaType.CanReadPRISpecified)
+                CanReadPRI = mediaType.CanReadPRI;
 
-            if(mediaType.CanReadRWSubchannelSpecified) CanReadRWSubchannel = mediaType.CanReadRWSubchannel;
+            if(mediaType.CanReadRWSubchannelSpecified)
+                CanReadRWSubchannel = mediaType.CanReadRWSubchannel;
 
             if(mediaType.CanReadRWSubchannelWithC2Specified)
                 CanReadRWSubchannelWithC2 = mediaType.CanReadRWSubchannelWithC2;
 
-            if(mediaType.CanReadRecordablePFISpecified) CanReadRecordablePFI = mediaType.CanReadRecordablePFI;
+            if(mediaType.CanReadRecordablePFISpecified)
+                CanReadRecordablePFI = mediaType.CanReadRecordablePFI;
 
             if(mediaType.CanReadSpareAreaInformationSpecified)
                 CanReadSpareAreaInformation = mediaType.CanReadSpareAreaInformation;
 
-            if(mediaType.CanReadTOCSpecified) CanReadTOC = mediaType.CanReadTOC;
+            if(mediaType.CanReadTOCSpecified)
+                CanReadTOC = mediaType.CanReadTOC;
 
-            if(mediaType.DensitySpecified) Density = mediaType.Density;
+            if(mediaType.DensitySpecified)
+                Density = mediaType.Density;
 
-            if(mediaType.LongBlockSizeSpecified) LongBlockSize = mediaType.LongBlockSize;
+            if(mediaType.LongBlockSizeSpecified)
+                LongBlockSize = mediaType.LongBlockSize;
 
-            if(mediaType.ManufacturerSpecified) Manufacturer = mediaType.Manufacturer;
+            if(mediaType.ManufacturerSpecified)
+                Manufacturer = mediaType.Manufacturer;
 
-            if(mediaType.MediumTypeSpecified) MediumType = mediaType.MediumType;
+            if(mediaType.MediumTypeSpecified)
+                MediumType = mediaType.MediumType;
 
-            if(mediaType.ModelSpecified) Model = mediaType.Model;
+            if(mediaType.ModelSpecified)
+                Model = mediaType.Model;
 
             if(mediaType.SupportsHLDTSTReadRawDVDSpecified)
                 SupportsHLDTSTReadRawDVD = mediaType.SupportsHLDTSTReadRawDVD;
 
-            if(mediaType.SupportsNECReadCDDASpecified) SupportsNECReadCDDA = mediaType.SupportsNECReadCDDA;
+            if(mediaType.SupportsNECReadCDDASpecified)
+                SupportsNECReadCDDA = mediaType.SupportsNECReadCDDA;
 
-            if(mediaType.SupportsPioneerReadCDDASpecified) SupportsPioneerReadCDDA = mediaType.SupportsPioneerReadCDDA;
+            if(mediaType.SupportsPioneerReadCDDASpecified)
+                SupportsPioneerReadCDDA = mediaType.SupportsPioneerReadCDDA;
 
             if(mediaType.SupportsPioneerReadCDDAMSFSpecified)
                 SupportsPioneerReadCDDAMSF = mediaType.SupportsPioneerReadCDDAMSF;
 
-            if(mediaType.SupportsPlextorReadCDDASpecified) SupportsPlextorReadCDDA = mediaType.SupportsPlextorReadCDDA;
+            if(mediaType.SupportsPlextorReadCDDASpecified)
+                SupportsPlextorReadCDDA = mediaType.SupportsPlextorReadCDDA;
 
             if(mediaType.SupportsPlextorReadRawDVDSpecified)
                 SupportsPlextorReadRawDVD = mediaType.SupportsPlextorReadRawDVD;
 
-            if(mediaType.SupportsRead10Specified) SupportsRead10 = mediaType.SupportsRead10;
+            if(mediaType.SupportsRead10Specified)
+                SupportsRead10 = mediaType.SupportsRead10;
 
-            if(mediaType.SupportsRead12Specified) SupportsRead12 = mediaType.SupportsRead12;
+            if(mediaType.SupportsRead12Specified)
+                SupportsRead12 = mediaType.SupportsRead12;
 
-            if(mediaType.SupportsRead16Specified) SupportsRead16 = mediaType.SupportsRead16;
+            if(mediaType.SupportsRead16Specified)
+                SupportsRead16 = mediaType.SupportsRead16;
 
             if(mediaType.SupportsReadSpecified)
             {
-                if(ata) SupportsReadSectors = mediaType.SupportsRead;
-                else SupportsRead6          = mediaType.SupportsRead;
+                if(ata)
+                    SupportsReadSectors = mediaType.SupportsRead;
+                else
+                    SupportsRead6 = mediaType.SupportsRead;
             }
 
-            if(mediaType.SupportsReadCapacity16Specified) SupportsReadCapacity16 = mediaType.SupportsReadCapacity16;
+            if(mediaType.SupportsReadCapacity16Specified)
+                SupportsReadCapacity16 = mediaType.SupportsReadCapacity16;
 
-            if(mediaType.SupportsReadCapacitySpecified) SupportsReadCapacity = mediaType.SupportsReadCapacity;
+            if(mediaType.SupportsReadCapacitySpecified)
+                SupportsReadCapacity = mediaType.SupportsReadCapacity;
 
-            if(mediaType.SupportsReadCdSpecified) SupportsReadCd = mediaType.SupportsReadCd;
+            if(mediaType.SupportsReadCdSpecified)
+                SupportsReadCd = mediaType.SupportsReadCd;
 
-            if(mediaType.SupportsReadCdMsfSpecified) SupportsReadCdMsf = mediaType.SupportsReadCdMsf;
+            if(mediaType.SupportsReadCdMsfSpecified)
+                SupportsReadCdMsf = mediaType.SupportsReadCdMsf;
 
-            if(mediaType.SupportsReadCdRawSpecified) SupportsReadCdRaw = mediaType.SupportsReadCdRaw;
+            if(mediaType.SupportsReadCdRawSpecified)
+                SupportsReadCdRaw = mediaType.SupportsReadCdRaw;
 
-            if(mediaType.SupportsReadCdMsfRawSpecified) SupportsReadCdMsfRaw = mediaType.SupportsReadCdMsfRaw;
+            if(mediaType.SupportsReadCdMsfRawSpecified)
+                SupportsReadCdMsfRaw = mediaType.SupportsReadCdMsfRaw;
 
-            if(mediaType.SupportsReadLong16Specified) SupportsReadLong16 = mediaType.SupportsReadLong16;
+            if(mediaType.SupportsReadLong16Specified)
+                SupportsReadLong16 = mediaType.SupportsReadLong16;
 
-            if(mediaType.SupportsReadLongSpecified) SupportsReadLong = mediaType.SupportsReadLong;
+            if(mediaType.SupportsReadLongSpecified)
+                SupportsReadLong = mediaType.SupportsReadLong;
 
-            if(mediaType.LBASectorsSpecified) LBASectors = mediaType.LBASectors;
+            if(mediaType.LBASectorsSpecified)
+                LBASectors = mediaType.LBASectors;
 
-            if(mediaType.LBA48SectorsSpecified) LBA48Sectors = mediaType.LBA48Sectors;
+            if(mediaType.LBA48SectorsSpecified)
+                LBA48Sectors = mediaType.LBA48Sectors;
 
-            if(mediaType.LogicalAlignmentSpecified) LogicalAlignment = mediaType.LogicalAlignment;
+            if(mediaType.LogicalAlignmentSpecified)
+                LogicalAlignment = mediaType.LogicalAlignment;
 
-            if(mediaType.NominalRotationRateSpecified) NominalRotationRate = mediaType.NominalRotationRate;
+            if(mediaType.NominalRotationRateSpecified)
+                NominalRotationRate = mediaType.NominalRotationRate;
 
-            if(mediaType.PhysicalBlockSizeSpecified) PhysicalBlockSize = mediaType.PhysicalBlockSize;
+            if(mediaType.PhysicalBlockSizeSpecified)
+                PhysicalBlockSize = mediaType.PhysicalBlockSize;
 
-            if(mediaType.SolidStateDeviceSpecified) SolidStateDevice = mediaType.SolidStateDevice;
+            if(mediaType.SolidStateDeviceSpecified)
+                SolidStateDevice = mediaType.SolidStateDevice;
 
-            if(mediaType.UnformattedBPTSpecified) UnformattedBPT = mediaType.UnformattedBPT;
+            if(mediaType.UnformattedBPTSpecified)
+                UnformattedBPT = mediaType.UnformattedBPT;
 
-            if(mediaType.UnformattedBPSSpecified) UnformattedBPS = mediaType.UnformattedBPS;
+            if(mediaType.UnformattedBPSSpecified)
+                UnformattedBPS = mediaType.UnformattedBPS;
 
-            if(mediaType.SupportsReadDmaLbaSpecified) SupportsReadDmaLba = mediaType.SupportsReadDmaLba;
+            if(mediaType.SupportsReadDmaLbaSpecified)
+                SupportsReadDmaLba = mediaType.SupportsReadDmaLba;
 
-            if(mediaType.SupportsReadDmaRetryLbaSpecified) SupportsReadDmaRetryLba = mediaType.SupportsReadDmaRetryLba;
+            if(mediaType.SupportsReadDmaRetryLbaSpecified)
+                SupportsReadDmaRetryLba = mediaType.SupportsReadDmaRetryLba;
 
-            if(mediaType.SupportsReadLbaSpecified) SupportsReadLba = mediaType.SupportsReadLba;
+            if(mediaType.SupportsReadLbaSpecified)
+                SupportsReadLba = mediaType.SupportsReadLba;
 
-            if(mediaType.SupportsReadRetryLbaSpecified) SupportsReadRetryLba = mediaType.SupportsReadRetryLba;
+            if(mediaType.SupportsReadRetryLbaSpecified)
+                SupportsReadRetryLba = mediaType.SupportsReadRetryLba;
 
-            if(mediaType.SupportsReadLongLbaSpecified) SupportsReadLongLba = mediaType.SupportsReadLongLba;
+            if(mediaType.SupportsReadLongLbaSpecified)
+                SupportsReadLongLba = mediaType.SupportsReadLongLba;
 
             if(mediaType.SupportsReadLongRetryLbaSpecified)
                 SupportsReadLongRetryLba = mediaType.SupportsReadLongRetryLba;
 
-            if(mediaType.SupportsSeekLbaSpecified) SupportsSeekLba = mediaType.SupportsSeekLba;
+            if(mediaType.SupportsSeekLbaSpecified)
+                SupportsSeekLba = mediaType.SupportsSeekLba;
 
-            if(mediaType.SupportsReadDmaLba48Specified) SupportsReadDmaLba48 = mediaType.SupportsReadDmaLba48;
+            if(mediaType.SupportsReadDmaLba48Specified)
+                SupportsReadDmaLba48 = mediaType.SupportsReadDmaLba48;
 
-            if(mediaType.SupportsReadLba48Specified) SupportsReadLba48 = mediaType.SupportsReadLba48;
+            if(mediaType.SupportsReadLba48Specified)
+                SupportsReadLba48 = mediaType.SupportsReadLba48;
 
-            if(mediaType.SupportsReadDmaSpecified) SupportsReadDma = mediaType.SupportsReadDma;
+            if(mediaType.SupportsReadDmaSpecified)
+                SupportsReadDma = mediaType.SupportsReadDma;
 
-            if(mediaType.SupportsReadDmaRetrySpecified) SupportsReadDmaRetry = mediaType.SupportsReadDmaRetry;
+            if(mediaType.SupportsReadDmaRetrySpecified)
+                SupportsReadDmaRetry = mediaType.SupportsReadDmaRetry;
 
-            if(mediaType.SupportsReadRetrySpecified) SupportsReadRetry = mediaType.SupportsReadRetry;
+            if(mediaType.SupportsReadRetrySpecified)
+                SupportsReadRetry = mediaType.SupportsReadRetry;
 
-            if(mediaType.SupportsReadLongRetrySpecified) SupportsReadLongRetry = mediaType.SupportsReadLongRetry;
+            if(mediaType.SupportsReadLongRetrySpecified)
+                SupportsReadLongRetry = mediaType.SupportsReadLongRetry;
 
-            if(mediaType.SupportsSeekSpecified) SupportsSeek = mediaType.SupportsSeek;
+            if(mediaType.SupportsSeekSpecified)
+                SupportsSeek = mediaType.SupportsSeek;
 
-            if(mediaType.CHS        != null) CHS        = new Chs(mediaType.CHS);
-            if(mediaType.CurrentCHS != null) CurrentCHS = new Chs(mediaType.CurrentCHS);
+            if(mediaType.CHS != null)
+                CHS = new Chs(mediaType.CHS);
+
+            if(mediaType.CurrentCHS != null)
+                CurrentCHS = new Chs(mediaType.CurrentCHS);
 
             MediaIsRecognized = mediaType.MediaIsRecognized;
             MediumTypeName    = mediaType.MediumTypeName;
@@ -1349,22 +1540,31 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public Ssc(sscType ssc)
         {
-            if(ssc.BlockSizeGranularitySpecified) BlockSizeGranularity = ssc.BlockSizeGranularity;
-            if(ssc.MaxBlockLengthSpecified) MaxBlockLength             = ssc.MaxBlockLength;
-            if(ssc.MinBlockLengthSpecified) MinBlockLength             = ssc.MinBlockLength;
+            if(ssc.BlockSizeGranularitySpecified)
+                BlockSizeGranularity = ssc.BlockSizeGranularity;
 
-            if(ssc.SupportedDensities != null) SupportedDensities = new List<SupportedDensity>(ssc.SupportedDensities);
+            if(ssc.MaxBlockLengthSpecified)
+                MaxBlockLength = ssc.MaxBlockLength;
+
+            if(ssc.MinBlockLengthSpecified)
+                MinBlockLength = ssc.MinBlockLength;
+
+            if(ssc.SupportedDensities != null)
+                SupportedDensities = new List<SupportedDensity>(ssc.SupportedDensities);
 
             if(ssc.SupportedMediaTypes != null)
             {
                 SupportedMediaTypes = new List<SscSupportedMedia>();
+
                 foreach(SupportedMedia mediaType in ssc.SupportedMediaTypes)
                     SupportedMediaTypes.Add(new SscSupportedMedia(mediaType));
             }
 
-            if(ssc.TestedMedia == null) return;
+            if(ssc.TestedMedia == null)
+                return;
 
             TestedMedia = new List<TestedSequentialMedia>();
+
             foreach(SequentialMedia testedMedia in ssc.TestedMedia)
                 TestedMedia.Add(new TestedSequentialMedia(testedMedia));
         }
@@ -1386,19 +1586,28 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public TestedSequentialMedia(SequentialMedia media)
         {
-            if(media.CanReadMediaSerialSpecified) CanReadMediaSerial = media.CanReadMediaSerial;
-            if(media.DensitySpecified) Density                       = media.Density;
+            if(media.CanReadMediaSerialSpecified)
+                CanReadMediaSerial = media.CanReadMediaSerial;
+
+            if(media.DensitySpecified)
+                Density = media.Density;
+
             Manufacturer      = media.Manufacturer;
             MediaIsRecognized = media.MediaIsRecognized;
-            if(media.MediumTypeSpecified) MediumType = media.MediumType;
+
+            if(media.MediumTypeSpecified)
+                MediumType = media.MediumType;
+
             MediumTypeName = media.MediumTypeName;
             Model          = media.Model;
+
             if(media.SupportedDensities != null)
                 SupportedDensities = new List<SupportedDensity>(media.SupportedDensities);
 
             if(media.SupportedMediaTypes != null)
             {
                 SupportedMediaTypes = new List<SscSupportedMedia>();
+
                 foreach(SupportedMedia supportedMedia in media.SupportedMediaTypes)
                     SupportedMediaTypes.Add(new SscSupportedMedia(supportedMedia));
             }
@@ -1434,8 +1643,13 @@ namespace DiscImageChef.CommonTypes.Metadata
             AdditionalInformation = pcmcia.AdditionalInformation;
             CIS                   = pcmcia.CIS;
             Compliance            = pcmcia.Compliance;
-            if(pcmcia.ManufacturerCodeSpecified) ManufacturerCode = pcmcia.ManufacturerCode;
-            if(pcmcia.CardCodeSpecified) CardCode                 = pcmcia.CardCode;
+
+            if(pcmcia.ManufacturerCodeSpecified)
+                ManufacturerCode = pcmcia.ManufacturerCode;
+
+            if(pcmcia.CardCodeSpecified)
+                CardCode = pcmcia.CardCode;
+
             Manufacturer = pcmcia.Manufacturer;
             ProductName  = pcmcia.ProductName;
         }
@@ -1484,10 +1698,17 @@ namespace DiscImageChef.CommonTypes.Metadata
             Organization = media.Organization;
             Name         = media.Name;
             Description  = media.Description;
-            if(media.DensityCodes == null) return;
+
+            if(media.DensityCodes == null)
+                return;
 
             DensityCodes = new List<DensityCode>();
-            foreach(int densityCode in media.DensityCodes) DensityCodes.Add(new DensityCode {Code = densityCode});
+
+            foreach(int densityCode in media.DensityCodes)
+                DensityCodes.Add(new DensityCode
+                {
+                    Code = densityCode
+                });
         }
 
         [JsonIgnore]
@@ -1503,24 +1724,29 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class DensityCode : IEquatable<DensityCode>
     {
-        [JsonIgnore]
-        [Key]
+        [JsonIgnore, Key]
         public int Id { get; set; }
 
         public int Code { get; set; }
 
         public bool Equals(DensityCode other)
         {
-            if(ReferenceEquals(null, other)) return false;
-            if(ReferenceEquals(this, other)) return true;
+            if(ReferenceEquals(null, other))
+                return false;
+
+            if(ReferenceEquals(this, other))
+                return true;
 
             return Code == other.Code;
         }
 
         public override bool Equals(object obj)
         {
-            if(ReferenceEquals(null, obj)) return false;
-            if(ReferenceEquals(this, obj)) return true;
+            if(ReferenceEquals(null, obj))
+                return false;
+
+            if(ReferenceEquals(this, obj))
+                return true;
 
             return obj.GetType() == GetType() && Equals((DensityCode)obj);
         }

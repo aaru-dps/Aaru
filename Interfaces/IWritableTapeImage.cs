@@ -43,23 +43,19 @@ namespace DiscImageChef.CommonTypes.Interfaces
 {
     public interface IWritableTapeImage : ITapeImage, IWritableImage
     {
-        /// <summary>
-        ///     Registers a new file in the image
-        /// </summary>
+        /// <summary>Registers a new file in the image</summary>
         /// <param name="file">Tape file descriptor</param>
         /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
         bool AddFile(TapeFile file);
 
-        /// <summary>
-        ///     Registers a new partition
-        /// </summary>
+        /// <summary>Registers a new partition</summary>
         /// <param name="partition">Tape partition descriptor</param>
         /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
         bool AddPartition(TapePartition partition);
 
         /// <summary>
-        /// Tells the image plugin to set the internal structures to expect a tape (e.g. unknown block count and size).
-        /// Must be called before <see cref="IWritableImage.Create"/>
+        ///     Tells the image plugin to set the internal structures to expect a tape (e.g. unknown block count and size).
+        ///     Must be called before <see cref="IWritableImage.Create" />
         /// </summary>
         /// <returns><c>true</c> if successful, <c>false</c> otherwise</returns>
         bool SetTape();

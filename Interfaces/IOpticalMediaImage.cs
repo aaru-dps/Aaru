@@ -42,51 +42,37 @@ using DiscImageChef.CommonTypes.Structs;
 
 namespace DiscImageChef.CommonTypes.Interfaces
 {
-    /// <summary>
-    ///     Abstract class to implement disk image reading plugins.
-    /// </summary>
+    /// <summary>Abstract class to implement disk image reading plugins.</summary>
     public interface IOpticalMediaImage : IMediaImage, IPartitionableMediaImage, IVerifiableSectorsImage
     {
-        /// <summary>
-        ///     Gets the disc track extents (start, length).
-        /// </summary>
+        /// <summary>Gets the disc track extents (start, length).</summary>
         /// <value>The track extents.</value>
         List<Track> Tracks { get; }
-        /// <summary>
-        ///     Gets the sessions (optical discs only).
-        /// </summary>
+        /// <summary>Gets the sessions (optical discs only).</summary>
         /// <value>The sessions.</value>
         List<Session> Sessions { get; }
 
-        /// <summary>
-        ///     Reads a sector's user data, relative to track.
-        /// </summary>
+        /// <summary>Reads a sector's user data, relative to track.</summary>
         /// <returns>The sector's user data.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
         byte[] ReadSector(ulong sectorAddress, uint track);
 
-        /// <summary>
-        ///     Reads a sector's tag, relative to track.
-        /// </summary>
+        /// <summary>Reads a sector's tag, relative to track.</summary>
         /// <returns>The sector's tag.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
         /// <param name="tag">Tag type.</param>
         byte[] ReadSectorTag(ulong sectorAddress, uint track, SectorTagType tag);
 
-        /// <summary>
-        ///     Reads user data from several sectors, relative to track.
-        /// </summary>
+        /// <summary>Reads user data from several sectors, relative to track.</summary>
         /// <returns>The sectors user data.</returns>
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
         byte[] ReadSectors(ulong sectorAddress, uint length, uint track);
 
-        /// <summary>
-        ///     Reads tag from several sectors, relative to track.
-        /// </summary>
+        /// <summary>Reads tag from several sectors, relative to track.</summary>
         /// <returns>The sectors tag.</returns>
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
@@ -94,47 +80,37 @@ namespace DiscImageChef.CommonTypes.Interfaces
         /// <param name="tag">Tag type.</param>
         byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag);
 
-        /// <summary>
-        ///     Reads a complete sector (user data + all tags), relative to track.
-        /// </summary>
+        /// <summary>Reads a complete sector (user data + all tags), relative to track.</summary>
         /// <returns>The complete sector. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Sector address (relative LBA).</param>
         /// <param name="track">Track.</param>
         byte[] ReadSectorLong(ulong sectorAddress, uint track);
 
-        /// <summary>
-        ///     Reads several complete sector (user data + all tags), relative to track.
-        /// </summary>
+        /// <summary>Reads several complete sector (user data + all tags), relative to track.</summary>
         /// <returns>The complete sectors. Format depends on disk type.</returns>
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
         byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track);
 
-        /// <summary>
-        ///     Gets the disc track extents for a specified session.
-        /// </summary>
+        /// <summary>Gets the disc track extents for a specified session.</summary>
         /// <returns>The track exents for that session.</returns>
         /// <param name="session">Session.</param>
         List<Track> GetSessionTracks(Session session);
 
-        /// <summary>
-        ///     Gets the disc track extents for a specified session.
-        /// </summary>
+        /// <summary>Gets the disc track extents for a specified session.</summary>
         /// <returns>The track exents for that session.</returns>
         /// <param name="session">Session.</param>
         List<Track> GetSessionTracks(ushort session);
 
-        /// <summary>
-        ///     Verifies several sectors, relative to track.
-        /// </summary>
+        /// <summary>Verifies several sectors, relative to track.</summary>
         /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
         /// <param name="sectorAddress">Starting sector address (relative LBA).</param>
         /// <param name="length">How many sectors to read.</param>
         /// <param name="track">Track.</param>
         /// <param name="failingLbas">List of incorrect sectors</param>
         /// <param name="unknownLbas">List of uncheckable sectors</param>
-        bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                             out List<ulong> unknownLbas);
     }
 }

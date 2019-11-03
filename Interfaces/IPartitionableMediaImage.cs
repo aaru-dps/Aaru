@@ -44,9 +44,8 @@ namespace DiscImageChef.CommonTypes.Interfaces
     public interface IPartitionableMediaImage
     {
         /// <summary>
-        ///     Gets an array partitions. Typically only useful for optical disc
-        ///     images where each track and index means a different partition, as
-        ///     reads can be relative to them.
+        ///     Gets an array partitions. Typically only useful for optical disc images where each track and index means a
+        ///     different partition, as reads can be relative to them.
         /// </summary>
         /// <value>The partitions.</value>
         List<Partition> Partitions { get; }

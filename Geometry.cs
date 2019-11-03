@@ -42,7 +42,7 @@ namespace DiscImageChef.CommonTypes
 {
     public static class Geometry
     {
-        static readonly (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
+        static readonly(ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding
             encoding, bool variableSectorsPerTrack, MediaType type)[] KnownGeometries =
             {
                 (32, 1, 8, 319, MediaEncoding.FM, false, MediaType.IBM23FD),
@@ -107,6 +107,7 @@ namespace DiscImageChef.CommonTypes
                 (82, 2, 21, 512, MediaEncoding.MFM, false, MediaType.FDFORMAT_35_HD),
                 (240, 2, 38, 512, MediaEncoding.MFM, false, MediaType.NEC_35_TD),
                 (753, 2, 27, 512, MediaEncoding.MFM, false, MediaType.Floptical),
+
                 // Following ones are what the device itself report, not the physical geometry
                 (154, 16, 32, 512, MediaEncoding.MFM, false, MediaType.PocketZip),
                 (262, 32, 56, 512, MediaEncoding.MFM, false, MediaType.LS240),
@@ -117,18 +118,18 @@ namespace DiscImageChef.CommonTypes
 
         public static MediaType GetMediaType(
             (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding, bool
-                variableSectorsPerTrack) geometry) =>
-            (from geom in KnownGeometries
-             where geom.cylinders               == geometry.cylinders       &&
-                   geom.heads                   == geometry.heads           &&
-                   geom.sectorsPerTrack         == geometry.sectorsPerTrack &&
-                   geom.bytesPerSector          == geometry.bytesPerSector  &&
-                   geom.encoding                == geometry.encoding        &&
-                   geom.variableSectorsPerTrack == geometry.variableSectorsPerTrack
-             select geom.type).FirstOrDefault();
+                variableSectorsPerTrack) geometry) => (from geom in KnownGeometries
+                                                       where geom.cylinders       == geometry.cylinders       &&
+                                                             geom.heads           == geometry.heads           &&
+                                                             geom.sectorsPerTrack == geometry.sectorsPerTrack &&
+                                                             geom.bytesPerSector  == geometry.bytesPerSector  &&
+                                                             geom.encoding        == geometry.encoding        &&
+                                                             geom.variableSectorsPerTrack ==
+                                                             geometry.variableSectorsPerTrack select geom.type).
+            FirstOrDefault();
 
-        public static (ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding
-          , bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
+        public static(ushort cylinders, byte heads, ushort sectorsPerTrack, uint bytesPerSector, MediaEncoding encoding,
+            bool variableSectorsPerTrack, MediaType type) GetGeometry(MediaType mediaType) =>
             (from geom in KnownGeometries where geom.type == mediaType select geom).FirstOrDefault();
     }
 }

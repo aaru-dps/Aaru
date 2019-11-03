@@ -50,9 +50,7 @@ namespace DiscImageChef.CommonTypes
     {
         public SortedDictionary<string, IFilter> Filters;
 
-        /// <summary>
-        ///     Fills the list of all known filters
-        /// </summary>
+        /// <summary>Fills the list of all known filters</summary>
         public FiltersList()
         {
             Assembly assembly = Assembly.Load("DiscImageChef.Filters");
@@ -61,16 +59,20 @@ namespace DiscImageChef.CommonTypes
             foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
                 try
                 {
-                    IFilter filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
-                    if(filter != null && !Filters.ContainsKey(filter.Name.ToLower()))
+                    var filter = (IFilter)type.GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
+                                                                                           { });
+
+                    if(filter != null &&
+                       !Filters.ContainsKey(filter.Name.ToLower()))
                         Filters.Add(filter.Name.ToLower(), filter);
                 }
-                catch(Exception exception) { DicConsole.ErrorWriteLine("Exception {0}", exception); }
+                catch(Exception exception)
+                {
+                    DicConsole.ErrorWriteLine("Exception {0}", exception);
+                }
         }
 
-        /// <summary>
-        ///     Gets the filter that allows to read the specified path
-        /// </summary>
+        /// <summary>Gets the filter that allows to read the specified path</summary>
         /// <param name="path">Path</param>
         /// <returns>The filter that allows reading the specified path</returns>
         public IFilter GetFilter(string path)
@@ -78,33 +80,38 @@ namespace DiscImageChef.CommonTypes
             try
             {
                 IFilter noFilter = null;
+
                 foreach(IFilter filter in Filters.Values)
                     if(filter.Id != new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
                     {
-                        if(!filter.Identify(path)) continue;
+                        if(!filter.Identify(path))
+                            continue;
 
-                        IFilter foundFilter =
-                            (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[] { });
+                        var foundFilter = (IFilter)filter.GetType().GetConstructor(Type.EmptyTypes)?.Invoke(new object[]
+                                                                                                                { });
 
                         foundFilter?.Open(path);
 
-                        if(foundFilter?.IsOpened() == true) return foundFilter;
+                        if(foundFilter?.IsOpened() == true)
+                            return foundFilter;
                     }
                     else
                         noFilter = filter;
 
-                if(!noFilter?.Identify(path) == true) return noFilter;
+                if(!noFilter?.Identify(path) == true)
+                    return noFilter;
 
                 noFilter?.Open(path);
 
                 return noFilter;
             }
-            catch(IOException) { return null; }
+            catch(IOException)
+            {
+                return null;
+            }
         }
 
-        /// <summary>
-        ///     Gets all known filters
-        /// </summary>
+        /// <summary>Gets all known filters</summary>
         /// <returns>Known filters</returns>
         public SortedDictionary<string, IFilter> GetFiltersList() => Filters;
     }

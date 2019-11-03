@@ -43,9 +43,7 @@ namespace DiscImageChef.CommonTypes.Interfaces
 {
     public interface IWritableOpticalImage : IWritableImage, IOpticalMediaImage
     {
-        /// <summary>
-        ///     Sets tracks for optical media
-        /// </summary>
+        /// <summary>Sets tracks for optical media</summary>
         /// <param name="tracks">List of tracks</param>
         /// <returns><c>true</c> if operating completed successfully, <c>false</c> otherwise</returns>
         bool SetTracks(List<Track> tracks);

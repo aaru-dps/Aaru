@@ -43,9 +43,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.CommonTypes.Structs
 {
-    /// <summary>
-    ///     Contains information about a dump image and its contents
-    /// </summary>
+    /// <summary>Contains information about a dump image and its contents</summary>
     public struct ImageInfo
     {
         /// <summary>Image contains partitions (or tracks for optical media)</summary>
@@ -104,6 +102,7 @@ namespace DiscImageChef.CommonTypes.Structs
         public string DriveFirmwareRevision;
         /// <summary>Type of the media represented by the image to use in XML sidecars</summary>
         public XmlMediaType XmlMediaType;
+
         // CHS geometry...
         /// <summary>Cylinders of the media represented by the image</summary>
         public uint Cylinders;
@@ -113,9 +112,7 @@ namespace DiscImageChef.CommonTypes.Structs
         public uint SectorsPerTrack;
     }
 
-    /// <summary>
-    ///     Session defining structure.
-    /// </summary>
+    /// <summary>Session defining structure.</summary>
     public struct Session
     {
         /// <summary>Session number, 1-started</summary>
@@ -130,9 +127,7 @@ namespace DiscImageChef.CommonTypes.Structs
         public ulong EndSector;
     }
 
-    /// <summary>
-    ///     Track defining structure.
-    /// </summary>
+    /// <summary>Track defining structure.</summary>
     public struct Track
     {
         /// <summary>Track number, 1-started</summary>
@@ -173,9 +168,7 @@ namespace DiscImageChef.CommonTypes.Structs
         public TrackSubchannelType TrackSubchannelType;
     }
 
-    /// <summary>
-    ///     Floppy physical characteristics structure.
-    /// </summary>
+    /// <summary>Floppy physical characteristics structure.</summary>
     public struct FloppyInfo
     {
         /// <summary>Physical floppy type.</summary>

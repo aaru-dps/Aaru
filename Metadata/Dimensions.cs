@@ -44,7 +44,7 @@ namespace DiscImageChef.CommonTypes.Metadata
     {
         public static DimensionsType DimensionsFromMediaType(CommonTypes.MediaType dskType)
         {
-            DimensionsType dmns = new DimensionsType();
+            var dmns = new DimensionsType();
 
             switch(dskType)
             {
@@ -87,6 +87,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 133.3;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.65;
+
                     return dmns;
                 #endregion 5.25" floppy disk
 
@@ -121,6 +122,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 90;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.3;
+
                     return dmns;
                 #endregion 3.5" floppy disk
 
@@ -149,6 +151,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 203.2;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.65;
+
                     return dmns;
                 #endregion 8" floppy disk
 
@@ -161,6 +164,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 443.76;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 25.4;
+
                     return dmns;
                 #endregion 356mm magneto optical
 
@@ -174,6 +178,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 320;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 17;
+
                     return dmns;
                 #endregion 300mm magneto optical
 
@@ -199,6 +204,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 135;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 11;
+
                     return dmns;
                 #endregion 5.25" magneto optical
 
@@ -216,6 +222,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 90;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 6;
+
                     return dmns;
                 #endregion 3.5" magneto optical
 
@@ -226,6 +233,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 124;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 7.8;
+
                     return dmns;
                 case CommonTypes.MediaType.ECMA_239:
                     dmns.Height          = 97;
@@ -233,6 +241,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 92;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 5;
+
                     return dmns;
                 case CommonTypes.MediaType.MMCmicro:
                     dmns.Height          = 14;
@@ -240,6 +249,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 12;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.1;
+
                     return dmns;
                 case CommonTypes.MediaType.MemoryStickMicro:
                     dmns.Height          = 15;
@@ -247,6 +257,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 12.5;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.2;
+
                     return dmns;
                 case CommonTypes.MediaType.microSD:
                     dmns.Height          = 11;
@@ -254,6 +265,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 15;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1;
+
                     return dmns;
                 case CommonTypes.MediaType.miniSD:
                     dmns.Height          = 21.5;
@@ -261,6 +273,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 20;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.4;
+
                     return dmns;
                 case CommonTypes.MediaType.QIC3010:
                 case CommonTypes.MediaType.QIC3020:
@@ -274,6 +287,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 21.5;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.6;
+
                     return dmns;
                 case CommonTypes.MediaType.RSMMC:
                     dmns.Height          = 18;
@@ -281,6 +295,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 24;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.4;
+
                     return dmns;
                 case CommonTypes.MediaType.MMC:
                     dmns.Height          = 32;
@@ -288,6 +303,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 24;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.4;
+
                     return dmns;
                 case CommonTypes.MediaType.SecureDigital:
                     dmns.Height          = 32;
@@ -295,6 +311,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 24;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 2.1;
+
                     return dmns;
                 case CommonTypes.MediaType.xD:
                     dmns.Height          = 20;
@@ -302,6 +319,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 25;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.78;
+
                     return dmns;
                 case CommonTypes.MediaType.XQD:
                     dmns.Height          = 38.5;
@@ -309,6 +327,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 29.8;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.8;
+
                     return dmns;
                 case CommonTypes.MediaType.MemoryStickDuo:
                 case CommonTypes.MediaType.MemoryStickProDuo:
@@ -317,6 +336,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 31;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 1.6;
+
                     return dmns;
                 case CommonTypes.MediaType.Nintendo3DSGameCard:
                 case CommonTypes.MediaType.NintendoDSGameCard:
@@ -326,6 +346,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 33;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.8;
+
                     return dmns;
                 case CommonTypes.MediaType.DataPlay:
                     dmns.Height          = 42;
@@ -333,6 +354,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 33.5;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3;
+
                     return dmns;
                 case CommonTypes.MediaType.Microdrive:
                     dmns.Height          = 44;
@@ -340,6 +362,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 34;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 8;
+
                     return dmns;
                 case CommonTypes.MediaType.ExpressCard34:
                     dmns.Height          = 75;
@@ -347,6 +370,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 34;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 5;
+
                     return dmns;
                 case CommonTypes.MediaType.SmartMedia:
                     dmns.Height          = 45;
@@ -354,6 +378,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 37;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 0.76;
+
                     return dmns;
                 case CommonTypes.MediaType.MiniCard:
                     dmns.Height          = 45;
@@ -361,6 +386,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 37;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.5;
+
                     return dmns;
                 case CommonTypes.MediaType.PlayStationMemoryCard:
                 case CommonTypes.MediaType.PlayStationMemoryCard2:
@@ -369,6 +395,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 41.5;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 7;
+
                     return dmns;
                 case CommonTypes.MediaType.CFast:
                 case CommonTypes.MediaType.CompactFlash:
@@ -377,6 +404,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 43;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.3;
+
                     return dmns;
                 case CommonTypes.MediaType.CompactFlashType2:
                     dmns.Height          = 36;
@@ -384,6 +412,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 43;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 5;
+
                     return dmns;
                 case CommonTypes.MediaType.ZXMicrodrive:
                     dmns.Height          = 36;
@@ -391,6 +420,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 43;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 5;
+
                     return dmns;
                 case CommonTypes.MediaType.MemoryStick:
                 case CommonTypes.MediaType.MemoryStickPro:
@@ -399,6 +429,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 50;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 2.6;
+
                     return dmns;
                 case CommonTypes.MediaType.PocketZip:
                     dmns.Height          = 54.5;
@@ -406,6 +437,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 50;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 2;
+
                     return dmns;
                 case CommonTypes.MediaType.ExpressCard54:
                     dmns.Height          = 75;
@@ -413,6 +445,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 54;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 5;
+
                     return dmns;
                 case CommonTypes.MediaType.PCCardTypeI:
                     dmns.Height          = 85.6;
@@ -420,6 +453,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 54;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.3;
+
                     return dmns;
                 case CommonTypes.MediaType.PCCardTypeII:
                     dmns.Height          = 85.6;
@@ -427,6 +461,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 54;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 5;
+
                     return dmns;
                 case CommonTypes.MediaType.PCCardTypeIII:
                     dmns.Height          = 85.6;
@@ -434,6 +469,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 54;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 10.5;
+
                     return dmns;
                 case CommonTypes.MediaType.PCCardTypeIV:
                     dmns.Height          = 85.6;
@@ -441,6 +477,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 54;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 16;
+
                     return dmns;
                 case CommonTypes.MediaType.DataStore:
                     dmns.Height          = 86.5;
@@ -448,6 +485,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 54;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 2.5;
+
                     return dmns;
                 case CommonTypes.MediaType.VideoFloppy:
                     dmns.Height          = 54;
@@ -455,6 +493,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 60;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.5;
+
                     return dmns;
                 case CommonTypes.MediaType.VXA1:
                 case CommonTypes.MediaType.VXA2:
@@ -464,6 +503,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 62.5;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 15;
+
                     return dmns;
                 case CommonTypes.MediaType.MiniDV:
                     dmns.Height          = 47.5;
@@ -471,6 +511,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 66;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 12;
+
                     return dmns;
                 case CommonTypes.MediaType.Wafer:
                     dmns.Height          = 46.8;
@@ -478,6 +519,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 67.1;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 7.9;
+
                     return dmns;
                 case CommonTypes.MediaType.NintendoDiskCard:
                     dmns.Height          = 76.2;
@@ -485,6 +527,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 71.12;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 0;
+
                     return dmns;
                 case CommonTypes.MediaType.HiMD:
                 case CommonTypes.MediaType.MD:
@@ -495,6 +538,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 71.5;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 4.8;
+
                     return dmns;
                 case CommonTypes.MediaType.DAT160:
                 case CommonTypes.MediaType.DAT320:
@@ -509,6 +553,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 73;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 10.5;
+
                     return dmns;
                 case CommonTypes.MediaType.CompactFloppy:
                     dmns.Height          = 100;
@@ -516,6 +561,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 80;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 5;
+
                     return dmns;
                 case CommonTypes.MediaType.DECtapeII:
                     dmns.Height          = 60;
@@ -523,6 +569,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 81;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 13;
+
                     return dmns;
                 case CommonTypes.MediaType.Ditto:
                     dmns.Height          = 60;
@@ -530,6 +577,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 81;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 14;
+
                     return dmns;
                 case CommonTypes.MediaType.DittoMax:
                     dmns.Height          = 126;
@@ -537,6 +585,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 81;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 14;
+
                     return dmns;
                 case CommonTypes.MediaType.RDX:
                 case CommonTypes.MediaType.RDX320:
@@ -545,6 +594,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 87;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 23;
+
                     return dmns;
                 case CommonTypes.MediaType.LS120:
                 case CommonTypes.MediaType.LS240:
@@ -553,6 +603,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 90;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 3.5;
+
                     return dmns;
                 case CommonTypes.MediaType.Travan:
                 case CommonTypes.MediaType.Travan3:
@@ -564,6 +615,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 92;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 15;
+
                     return dmns;
                 case CommonTypes.MediaType.Travan1Ex:
                     dmns.Height          = 0;
@@ -571,6 +623,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 92;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 15;
+
                     return dmns;
                 case CommonTypes.MediaType.Travan3Ex:
                     dmns.Height          = 0;
@@ -578,6 +631,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 92;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 15;
+
                     return dmns;
                 case CommonTypes.MediaType.ADR2120:
                 case CommonTypes.MediaType.ADR260:
@@ -588,6 +642,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 93;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 14.5;
+
                     return dmns;
                 case CommonTypes.MediaType.Data8:
                 case CommonTypes.MediaType.AIT1:
@@ -622,6 +677,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 95;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 15;
+
                     return dmns;
                 case CommonTypes.MediaType.EZ135:
                 case CommonTypes.MediaType.EZ230:
@@ -630,6 +686,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 98;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 9.5;
+
                     return dmns;
                 case CommonTypes.MediaType.ZIP100:
                 case CommonTypes.MediaType.ZIP250:
@@ -639,6 +696,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 98;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 6.5;
+
                     return dmns;
                 case CommonTypes.MediaType.Jaz:
                 case CommonTypes.MediaType.Jaz2:
@@ -647,6 +705,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 98;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 12;
+
                     return dmns;
                 case CommonTypes.MediaType.Orb:
                 case CommonTypes.MediaType.Orb5:
@@ -655,6 +714,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 98;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 8;
+
                     return dmns;
                 case CommonTypes.MediaType.SparQ:
                     dmns.Height          = 98;
@@ -662,6 +722,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 100;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 9.7;
+
                     return dmns;
                 case CommonTypes.MediaType.SLR1:
                 case CommonTypes.MediaType.SLR2:
@@ -687,6 +748,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 100;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 18;
+
                     return dmns;
                 case CommonTypes.MediaType.N64DD:
                     dmns.Height          = 103.124;
@@ -694,6 +756,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 101.092;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 10.16;
+
                     return dmns;
                 case CommonTypes.MediaType.CompactTapeI:
                 case CommonTypes.MediaType.CompactTapeII:
@@ -709,6 +772,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 105;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 25;
+
                     return dmns;
                 case CommonTypes.MediaType.LTO:
                 case CommonTypes.MediaType.LTO2:
@@ -727,6 +791,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 105.41;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 21.59;
+
                     return dmns;
                 case CommonTypes.MediaType.IBM3480:
                 case CommonTypes.MediaType.IBM3490:
@@ -737,6 +802,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 107.95;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 25.4;
+
                     return dmns;
                 case CommonTypes.MediaType.T9840A:
                 case CommonTypes.MediaType.T9840B:
@@ -749,6 +815,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 109.22;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 25.4;
+
                     return dmns;
                 case CommonTypes.MediaType.CompactCassette:
                 case CommonTypes.MediaType.Dcas25:
@@ -759,6 +826,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 128;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 12;
+
                     return dmns;
                 case CommonTypes.MediaType.IBM3470:
                     dmns.Height          = 58.42;
@@ -766,6 +834,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 137.16;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 16.51;
+
                     return dmns;
                 case CommonTypes.MediaType.Bernoulli2:
                     dmns.Height          = 136;
@@ -773,6 +842,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 140;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 9;
+
                     return dmns;
                 case CommonTypes.MediaType.MLR1:
                 case CommonTypes.MediaType.MLR3:
@@ -782,6 +852,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 152.4;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 15.24;
+
                     return dmns;
                 case CommonTypes.MediaType.QIC11:
                 case CommonTypes.MediaType.QIC120:
@@ -794,6 +865,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 154.2;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 16.6;
+
                     return dmns;
                 case CommonTypes.MediaType.Bernoulli:
                     dmns.Height          = 275;
@@ -801,6 +873,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 210;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 0;
+
                     return dmns;
                 case CommonTypes.MediaType.DTF:
                 case CommonTypes.MediaType.DTF2:
@@ -809,6 +882,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 254;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 25.4;
+
                     return dmns;
                 case CommonTypes.MediaType.LD:
                 case CommonTypes.MediaType.LDROM:
@@ -818,6 +892,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Diameter          = 300;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 2.5;
+
                     return dmns;
                 case CommonTypes.MediaType.REV35:
                 case CommonTypes.MediaType.REV70:
@@ -827,6 +902,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 76.8;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 10;
+
                     return dmns;
 
                 #region CD/DVD/BD
@@ -905,22 +981,26 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Diameter          = 120;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 1.2;
+
                     return dmns;
                 case CommonTypes.MediaType.GOD:
                     dmns.Diameter          = 80;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 1.2;
+
                     return dmns;
                 case CommonTypes.MediaType.VideoNow:
                     dmns.Diameter          = 85;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 1.2;
+
                     return dmns;
                 case CommonTypes.MediaType.VideoNowColor:
                 case CommonTypes.MediaType.VideoNowXp:
                     dmns.Diameter          = 108;
                     dmns.DiameterSpecified = true;
                     dmns.Thickness         = 1.2;
+
                     return dmns;
                 #endregion CD/DVD/BD
 
@@ -932,6 +1012,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 438.9;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 111.5;
+
                     return dmns;
                 case CommonTypes.MediaType.AppleHD20:
                     dmns.Height          = 246.4;
@@ -939,6 +1020,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 266.7;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 78.7;
+
                     return dmns;
                 #endregion Apple Hard Disks
 
@@ -948,6 +1030,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 63;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 4;
+
                     return dmns;
                 default: return null;
             }

@@ -43,16 +43,12 @@ namespace DiscImageChef.CommonTypes.Interfaces
 {
     public interface IVerifiableSectorsImage
     {
-        /// <summary>
-        ///     Verifies a sector.
-        /// </summary>
+        /// <summary>Verifies a sector.</summary>
         /// <returns>True if correct, false if incorrect, null if uncheckable.</returns>
         /// <param name="sectorAddress">Sector address (LBA).</param>
         bool? VerifySector(ulong sectorAddress);
 
-        /// <summary>
-        ///     Verifies several sectors.
-        /// </summary>
+        /// <summary>Verifies several sectors.</summary>
         /// <returns>True if all are correct, false if any is incorrect, null if any is uncheckable.</returns>
         /// <param name="sectorAddress">Starting sector address (LBA).</param>
         /// <param name="length">How many sectors to read.</param>

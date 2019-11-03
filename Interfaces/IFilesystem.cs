@@ -42,9 +42,7 @@ using Schemas;
 
 namespace DiscImageChef.CommonTypes.Interfaces
 {
-    /// <summary>
-    ///     Interface to implement filesystem plugins.
-    /// </summary>
+    /// <summary>Interface to implement filesystem plugins.</summary>
     public interface IFilesystem
     {
         Encoding Encoding { get; }
@@ -52,25 +50,19 @@ namespace DiscImageChef.CommonTypes.Interfaces
         string Name { get; }
         /// <summary>Plugin UUID.</summary>
         Guid Id { get; }
-        /// <summary>
-        ///     Information about the filesystem as expected by CICM Metadata XML
-        /// </summary>
+        /// <summary>Information about the filesystem as expected by CICM Metadata XML</summary>
         /// <value>Information about the filesystem as expected by CICM Metadata XML</value>
         FileSystemType XmlFsType { get; }
         /// <summary>Plugin author</summary>
         string Author { get; }
 
-        /// <summary>
-        ///     Identifies the filesystem in the specified LBA
-        /// </summary>
+        /// <summary>Identifies the filesystem in the specified LBA</summary>
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <returns><c>true</c>, if the filesystem is recognized, <c>false</c> otherwise.</returns>
         bool Identify(IMediaImage imagePlugin, Partition partition);
 
-        /// <summary>
-        ///     Gets information about the identified filesystem.
-        /// </summary>
+        /// <summary>Gets information about the identified filesystem.</summary>
         /// <param name="imagePlugin">Disk image.</param>
         /// <param name="partition">Partition.</param>
         /// <param name="information">Filesystem information.</param>
