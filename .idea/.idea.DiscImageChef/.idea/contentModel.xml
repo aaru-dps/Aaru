@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
+    <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.2/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.2/system/resharper-host/local/Transient/ReSharperHost/v192/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
     <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
@@ -371,6 +373,8 @@
           <e p="20190108013456_AddChangeableScsiModes.cs" t="Include" />
           <e p="20190525183723_IdForDensityCode.Designer.cs" t="Include" />
           <e p="20190525183723_IdForDensityCode.cs" t="Include" />
+          <e p="20191103000828_MakeFieldsUnsigned.Designer.cs" t="Include" />
+          <e p="20191103000828_MakeFieldsUnsigned.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
