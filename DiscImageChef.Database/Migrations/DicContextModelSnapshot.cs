@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 namespace DiscImageChef.Database.Migrations
 {
     [DbContext(typeof(DicContext))]
-    class DicContextModelSnapshot : ModelSnapshot
+    internal class DicContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
             #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata", b =>
             {
@@ -35,11 +35,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("BlockLength");
 
-                b.Property<int?>("BlockLengthSql");
-
                 b.Property<ulong?>("Blocks");
-
-                b.Property<long?>("BlocksSql");
 
                 b.Property<byte>("Density");
 
@@ -58,15 +54,9 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("Cylinders");
 
-                b.Property<short>("CylindersSql");
-
                 b.Property<ushort>("Heads");
 
-                b.Property<short>("HeadsSql");
-
                 b.Property<ushort>("Sectors");
-
-                b.Property<short>("SectorsSql");
 
                 b.HasKey("Id");
 
@@ -98,13 +88,9 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint>("ProductID");
 
-                b.Property<int>("ProductIDSql");
-
                 b.Property<bool>("RemovableMedia");
 
                 b.Property<uint>("VendorID");
-
-                b.Property<int>("VendorIDSql");
 
                 b.HasKey("Id");
 
@@ -139,8 +125,6 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<byte?>("BindingNonceBlocks");
 
                 b.Property<ushort?>("BlocksPerReadableUnit");
-
-                b.Property<short?>("BlocksPerReadableUnitSql");
 
                 b.Property<bool>("BufferUnderrunFreeInDVD");
 
@@ -338,13 +322,9 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("LogicalBlockSize");
 
-                b.Property<int?>("LogicalBlockSizeSql");
-
                 b.Property<bool>("MultiRead");
 
                 b.Property<uint?>("PhysicalInterfaceStandardNumber");
-
-                b.Property<int?>("PhysicalInterfaceStandardNumberSql");
 
                 b.Property<bool>("PreventJumper");
 
@@ -384,8 +364,6 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("VolumeLevels");
 
-                b.Property<short?>("VolumeLevelsSql");
-
                 b.HasKey("Id");
 
                 b.ToTable("MmcFeatures");
@@ -418,15 +396,11 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("CardCode");
 
-                b.Property<short?>("CardCodeSql");
-
                 b.Property<string>("Compliance");
 
                 b.Property<string>("Manufacturer");
 
                 b.Property<ushort?>("ManufacturerCode");
-
-                b.Property<short?>("ManufacturerCodeSql");
 
                 b.Property<string>("ProductName");
 
@@ -532,11 +506,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("MaxBlockLength");
 
-                b.Property<int?>("MaxBlockLengthSql");
-
                 b.Property<uint?>("MinBlockLength");
-
-                b.Property<int?>("MinBlockLengthSql");
 
                 b.HasKey("Id");
 
@@ -551,8 +521,6 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("Length");
 
-                b.Property<short>("LengthSql");
-
                 b.Property<byte>("MediumType");
 
                 b.Property<string>("Name");
@@ -564,8 +532,6 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<int?>("TestedSequentialMediaId");
 
                 b.Property<ushort>("Width");
-
-                b.Property<short>("WidthSql");
 
                 b.HasKey("Id");
 
@@ -582,11 +548,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint>("BitsPerMm");
 
-                b.Property<int>("BitsPerMmSql");
-
                 b.Property<uint>("Capacity");
-
-                b.Property<int>("CapacitySql");
 
                 b.Property<bool>("DefaultDensity");
 
@@ -608,11 +570,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("Tracks");
 
-                b.Property<short>("TracksSql");
-
                 b.Property<ushort>("Width");
-
-                b.Property<short>("WidthSql");
 
                 b.Property<bool>("Writable");
 
@@ -637,11 +595,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<uint?>("BlockSize");
 
-                b.Property<int?>("BlockSizeSql");
-
                 b.Property<ulong?>("Blocks");
-
-                b.Property<long?>("BlocksSql");
 
                 b.Property<byte[]>("BluBcaData");
 
@@ -763,11 +717,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ulong?>("LBA48Sectors");
 
-                b.Property<long?>("LBA48SectorsSql");
-
                 b.Property<uint?>("LBASectors");
-
-                b.Property<int?>("LBASectorsSql");
 
                 b.Property<byte[]>("LeadInData");
 
@@ -775,11 +725,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("LogicalAlignment");
 
-                b.Property<short?>("LogicalAlignmentSql");
-
                 b.Property<uint?>("LongBlockSize");
-
-                b.Property<int?>("LongBlockSizeSql");
 
                 b.Property<string>("Manufacturer");
 
@@ -801,8 +747,6 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("NominalRotationRate");
 
-                b.Property<short?>("NominalRotationRateSql");
-
                 b.Property<byte[]>("PQSubchannelData");
 
                 b.Property<byte[]>("PQSubchannelWithC2Data");
@@ -810,8 +754,6 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<byte[]>("PfiData");
 
                 b.Property<uint?>("PhysicalBlockSize");
-
-                b.Property<int?>("PhysicalBlockSizeSql");
 
                 b.Property<byte[]>("PioneerReadCddaData");
 
@@ -953,11 +895,7 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort?>("UnformattedBPS");
 
-                b.Property<short?>("UnformattedBPSSql");
-
                 b.Property<ushort?>("UnformattedBPT");
-
-                b.Property<short?>("UnformattedBPTSql");
 
                 b.HasKey("Id");
 
@@ -1017,13 +955,9 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ushort>("ProductID");
 
-                b.Property<short>("ProductIDSql");
-
                 b.Property<bool>("RemovableMedia");
 
                 b.Property<ushort>("VendorID");
-
-                b.Property<short>("VendorIDSql");
 
                 b.HasKey("Id");
 
@@ -1342,73 +1276,69 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Versions");
             });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata",
-                                b =>
-                                {
-                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedMedia", "ReadCapabilities")
-                                     .WithMany().HasForeignKey("ReadCapabilitiesId");
-                                });
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Ata", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany().
+                  HasForeignKey("ReadCapabilitiesId");
+            });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.BlockDescriptor",
-                                b =>
-                                {
-                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode").WithMany("BlockDescriptors")
-                                     .HasForeignKey("ScsiModeId");
-                                });
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.BlockDescriptor", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode").WithMany("BlockDescriptors").
+                  HasForeignKey("ScsiModeId");
+            });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DensityCode",
-                                b =>
-                                {
-                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia")
-                                     .WithMany("DensityCodes").HasForeignKey("SscSupportedMediaId");
-                                });
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.DensityCode", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia").WithMany("DensityCodes").
+                  HasForeignKey("SscSupportedMediaId");
+            });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc",
-                                b =>
-                                {
-                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcFeatures", "Features").WithMany()
-                                     .HasForeignKey("FeaturesId");
-                                });
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Mmc", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcFeatures", "Features").WithMany().
+                  HasForeignKey("FeaturesId");
+            });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.Scsi", b =>
             {
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode", "ModeSense").WithMany()
-                 .HasForeignKey("ModeSenseId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode", "ModeSense").WithMany().
+                  HasForeignKey("ModeSenseId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Mmc", "MultiMediaDevice").WithMany()
-                 .HasForeignKey("MultiMediaDeviceId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Mmc", "MultiMediaDevice").WithMany().
+                  HasForeignKey("MultiMediaDeviceId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany()
-                 .HasForeignKey("ReadCapabilitiesId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedMedia", "ReadCapabilities").WithMany().
+                  HasForeignKey("ReadCapabilitiesId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc", "SequentialDevice").WithMany()
-                 .HasForeignKey("SequentialDeviceId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc", "SequentialDevice").WithMany().
+                  HasForeignKey("SequentialDeviceId");
             });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.ScsiPage", b =>
             {
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi").WithMany("EVPDPages").HasForeignKey("ScsiId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode").WithMany("ModePages")
-                 .HasForeignKey("ScsiModeId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.ScsiMode").WithMany("ModePages").
+                  HasForeignKey("ScsiModeId");
             });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.SscSupportedMedia", b =>
             {
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("SupportedMediaTypes")
-                 .HasForeignKey("SscId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("SupportedMediaTypes").
+                  HasForeignKey("SscId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedMediaTypes")
-                 .HasForeignKey("TestedSequentialMediaId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedMediaTypes").
+                  HasForeignKey("TestedSequentialMediaId");
             });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.SupportedDensity", b =>
             {
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("SupportedDensities")
-                 .HasForeignKey("SscId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("SupportedDensities").
+                  HasForeignKey("SscId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedDensities")
-                 .HasForeignKey("TestedSequentialMediaId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia").WithMany("SupportedDensities").
+                  HasForeignKey("TestedSequentialMediaId");
             });
 
             modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.TestedMedia", b =>
@@ -1417,20 +1347,18 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Chs", "CHS").WithMany().HasForeignKey("CHSId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.Chs", "CurrentCHS").WithMany()
-                 .HasForeignKey("CurrentCHSId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Chs", "CurrentCHS").WithMany().
+                  HasForeignKey("CurrentCHSId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Mmc").WithMany("TestedMedia").HasForeignKey("MmcId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi").WithMany("RemovableMedias").HasForeignKey("ScsiId");
             });
 
-            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia",
-                                b =>
-                                {
-                                    b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("TestedMedia")
-                                     .HasForeignKey("SscId");
-                                });
+            modelBuilder.Entity("DiscImageChef.CommonTypes.Metadata.TestedSequentialMedia", b =>
+            {
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.Ssc").WithMany("TestedMedia").HasForeignKey("SscId");
+            });
 
             modelBuilder.Entity("DiscImageChef.Database.Models.Device", b =>
             {
@@ -1438,18 +1366,18 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany()
-                 .HasForeignKey("FireWireId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany().
+                  HasForeignKey("FireWireId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany()
-                 .HasForeignKey("MultiMediaCardId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
+                  HasForeignKey("MultiMediaCardId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany()
-                 .HasForeignKey("SecureDigitalId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany().
+                  HasForeignKey("SecureDigitalId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
             });
@@ -1460,28 +1388,27 @@ namespace DiscImageChef.Database.Migrations
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Ata", "ATAPI").WithMany().HasForeignKey("ATAPIId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany()
-                 .HasForeignKey("FireWireId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.FireWire", "FireWire").WithMany().
+                  HasForeignKey("FireWireId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany()
-                 .HasForeignKey("MultiMediaCardId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "MultiMediaCard").WithMany().
+                  HasForeignKey("MultiMediaCardId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Pcmcia", "PCMCIA").WithMany().HasForeignKey("PCMCIAId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Scsi", "SCSI").WithMany().HasForeignKey("SCSIId");
 
-                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany()
-                 .HasForeignKey("SecureDigitalId");
+                b.HasOne("DiscImageChef.CommonTypes.Metadata.MmcSd", "SecureDigital").WithMany().
+                  HasForeignKey("SecureDigitalId");
 
                 b.HasOne("DiscImageChef.CommonTypes.Metadata.Usb", "USB").WithMany().HasForeignKey("USBId");
             });
 
-            modelBuilder.Entity("DiscImageChef.Database.Models.UsbProduct",
-                                b =>
-                                {
-                                    b.HasOne("DiscImageChef.Database.Models.UsbVendor", "Vendor").WithMany("Products")
-                                     .HasForeignKey("VendorId").OnDelete(DeleteBehavior.Cascade);
-                                });
+            modelBuilder.Entity("DiscImageChef.Database.Models.UsbProduct", b =>
+            {
+                b.HasOne("DiscImageChef.Database.Models.UsbVendor", "Vendor").WithMany("Products").
+                  HasForeignKey("VendorId").OnDelete(DeleteBehavior.Cascade);
+            });
             #pragma warning restore 612, 618
         }
     }
