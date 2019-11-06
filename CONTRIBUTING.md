@@ -260,7 +260,7 @@ If you want to donate money you can become a patron at https://www.patreon.com/D
 This money will be used to get more hardware on which to test DiscImageChef.
 
 ### Donating
-You may donate us one of the [devices we need](DONATING.md).
+You may donate us one of the [devices we need](NEEDED.md).
 
 ### Needed information
 If you have test images, imaging applications that generate formats we do not support, or
