@@ -36,6 +36,8 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
+using System.ComponentModel.DataAnnotations;
+
 namespace DiscImageChef.CommonTypes.Metadata
 {
     public class CdOffset
@@ -44,6 +46,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Model        { get; set; }
         public short  Offset       { get; set; }
         public int    Submissions  { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode =true, DataFormatString = "{0:P0}")]
         public float  Agreement    { get; set; }
     }
 }
