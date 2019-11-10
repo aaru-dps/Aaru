@@ -1453,6 +1453,9 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte[] IntersessionLeadInData        { get; set; }
         public byte[] IntersessionLeadOutData       { get; set; }
 
+        [JsonIgnore]
+        public int AtaId { get; set; }
+
         #region SCSI data
         public byte[] Read6Data      { get; set; }
         public byte[] Read10Data     { get; set; }
