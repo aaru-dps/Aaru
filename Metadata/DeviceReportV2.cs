@@ -38,6 +38,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -196,12 +197,17 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                set; }
-        public uint   VendorID       { get; set; }
-        public uint   ProductID      { get; set; }
-        public string Manufacturer   { get; set; }
-        public string Product        { get; set; }
-        public bool   RemovableMedia { get; set; }
+        public int Id { get; set; }
+        [DisplayName("Vendor ID"), DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "0x{0:X8}")]
+        public uint VendorID { get; set; }
+        [DisplayName("Product ID"), DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "0x{0:X8}")]
+        public uint ProductID { get; set; }
+        [DisplayFormat(NullDisplayText = "Unknown")]
+        public string Manufacturer { get; set; }
+        [DisplayFormat(NullDisplayText = "Unknown")]
+        public string Product { get; set; }
+        [DisplayName("Is media removable?")]
+        public bool RemovableMedia { get; set; }
     }
 
     public class Ata
