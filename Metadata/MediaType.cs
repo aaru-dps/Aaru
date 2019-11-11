@@ -40,8 +40,11 @@ namespace DiscImageChef.CommonTypes.Metadata
 {
     public static class MediaType
     {
-        public static void MediaTypeToString(CommonTypes.MediaType dskType, out string discType, out string discSubType)
+        public static (string type, string subType) MediaTypeToString(CommonTypes.MediaType dskType)
         {
+            string discType;
+            string discSubType;
+
             switch(dskType)
             {
                 case CommonTypes.MediaType.BDR:
@@ -2331,6 +2334,8 @@ namespace DiscImageChef.CommonTypes.Metadata
 
                     break;
             }
+
+            return(discType, discSubType);
         }
     }
 }
