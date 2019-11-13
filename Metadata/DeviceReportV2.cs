@@ -815,6 +815,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         public virtual MmcFeatures       Features        { get; set; }
         public virtual List<TestedMedia> TestedMedia     { get; set; }
         public         byte[]            ModeSense2AData { get; set; }
+        [JsonIgnore]
+        public int? FeaturesId { get; set; }
     }
 
     public class MmcFeatures
