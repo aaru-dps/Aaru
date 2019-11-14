@@ -67,7 +67,7 @@ namespace DiscImageChef.Commands
         private bool persistent;
 
         // TODO: Disabled temporarily
-        private bool raw = false;
+        //private bool raw = false;
         private ushort retryPasses = 5;
         private bool showHelp;
         private int skip = 512;
