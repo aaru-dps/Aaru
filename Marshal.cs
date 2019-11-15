@@ -257,13 +257,11 @@ namespace DiscImageChef.Helpers
                         ? ByteArrayToStructureLittleEndian<T>(bytes)
                         : SpanToStructureLittleEndian<T>(bytes);
 
-                    break;
                 case BitEndian.Big:
                     return properties.HasReferences
                         ? ByteArrayToStructureBigEndian<T>(bytes)
                         : SpanToStructureBigEndian<T>(bytes);
 
-                    break;
 
                 case BitEndian.Pdp:
                     return properties.HasReferences
