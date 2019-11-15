@@ -1077,8 +1077,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 bool runningPersistent = false;
 
                 Modes.ModePage? currentModePage = null;
-                //byte[]          md6;
-                //byte[]          md10;
 
                 if(persistent)
                 {

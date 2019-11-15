@@ -61,7 +61,6 @@ namespace DiscImageChef.Gui.Forms
 
         public frmMediaScan(string devicePath, DeviceInfo deviceInfo, ScsiInfo scsiInfo = null)
         {
-            //MediaType mediaType;
             XamlReader.Load(this);
 
             this.devicePath = devicePath;

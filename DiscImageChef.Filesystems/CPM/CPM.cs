@@ -112,7 +112,6 @@ namespace DiscImageChef.Filesystems.CPM
         ///     If <see cref="Identify" /> thinks this is a CP/M filesystem, this is the definition for it
         /// </summary>
         CpmDefinition workingDefinition;
-        //IReadOnlyFilesystem readOnlyFilesystemImplementation;
 
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
