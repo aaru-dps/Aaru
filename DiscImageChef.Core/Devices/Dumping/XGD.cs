@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -77,9 +77,32 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(mediaTags.ContainsKey(MediaTagType.DVD_DMI))
                 mediaTags.Remove(MediaTagType.DVD_DMI);
 
+            // Drive shall move to lock state when a new disc is inserted. Old kreon versions do not lock correctly so save this
+            sense = dev.ReadCapacity(out byte[] coldReadCapacity, out byte[] senseBuf, dev.Timeout, out _);
+
+            if(sense)
+            {
+                dumpLog.WriteLine("Cannot get disc capacity.");
+                StoppingErrorMessage?.Invoke("Cannot get disc capacity.");
+
+                return;
+            }
+
+            // Drive shall move to lock state when a new disc is inserted. Old kreon versions do not lock correctly so save this
+            sense = dev.ReadDiscStructure(out byte[] coldPfi, out senseBuf, MmcDiscStructureMediaType.Dvd, 0, 0,
+                                          MmcDiscStructureFormat.PhysicalInformation, 0, 0, out _);
+
+            if(sense)
+            {
+                dumpLog.WriteLine("Cannot get PFI.");
+                StoppingErrorMessage?.Invoke("Cannot get PFI.");
+
+                return;
+            }
+
             UpdateStatus?.Invoke("Reading Xbox Security Sector.");
             dumpLog.WriteLine("Reading Xbox Security Sector.");
-            sense = dev.KreonExtractSs(out byte[] ssBuf, out byte[] senseBuf, dev.Timeout, out _);
+            sense = dev.KreonExtractSs(out byte[] ssBuf, out senseBuf, dev.Timeout, out _);
 
             if(sense)
             {
@@ -174,6 +197,36 @@ namespace DiscImageChef.Core.Devices.Dumping
             tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.DVD_DMI, tmpBuf);
+
+            // Should be a safe value to detect the lock command was ignored, and we're indeed getting the whole size and not the locked one
+            if(totalSize > 300000)
+            {
+                UpdateStatus?.Invoke("Video partition is too big, did lock work? Trying cold values.");
+                dumpLog.WriteLine("Video partition is too big, did lock work? Trying cold values.");
+
+                totalSize = (ulong)((coldReadCapacity[0] << 24) + (coldReadCapacity[1] << 16) +
+                                    (coldReadCapacity[2] << 8)  + coldReadCapacity[3]);
+
+                tmpBuf = new byte[coldPfi.Length - 4];
+                Array.Copy(coldPfi, 4, tmpBuf, 0, coldPfi.Length - 4);
+                mediaTags.Remove(MediaTagType.DVD_PFI);
+                mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
+                DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
+
+                l0Video = PFI.Decode(coldPfi).Value.Layer0EndPSN - PFI.Decode(coldPfi).Value.DataAreaStartPSN + 1;
+
+                l1Video = totalSize - l0Video + 1;
+
+                if(totalSize > 300000)
+                {
+                    dumpLog.WriteLine("Cannot get video partition size, not continuing. Try to eject and reinsert the drive, if it keeps happening, contact support.");
+
+                    StoppingErrorMessage?.
+                        Invoke("Cannot get video partition size, not continuing. Try to eject and reinsert the drive, if it keeps happening, contact support.");
+
+                    return;
+                }
+            }
 
             // Get game partition size
             DicConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
