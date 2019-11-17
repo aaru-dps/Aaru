@@ -174,9 +174,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         }
 
         [JsonIgnore]
-        public int Id { get;                set; }
-        public ushort VendorID       { get; set; }
-        public ushort ProductID      { get; set; }
+        public int Id { get; set; }
+        [DisplayName("Vendor ID"), DisplayFormat(DataFormatString = "0x{0:X4}")]
+        public ushort VendorID { get; set; }
+        [DisplayName("Product ID"), DisplayFormat(DataFormatString = "0x{0:X4}")]
+        public ushort ProductID { get;      set; }
         public string Manufacturer   { get; set; }
         public string Product        { get; set; }
         public bool   RemovableMedia { get; set; }
