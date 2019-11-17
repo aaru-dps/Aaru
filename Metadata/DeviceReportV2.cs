@@ -1643,6 +1643,9 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         public byte[] ModeSense6Data  { get; set; }
         public byte[] ModeSense10Data { get; set; }
+
+        [JsonIgnore]
+        public int? SscId { get; set; }
     }
 
     public class Pcmcia
