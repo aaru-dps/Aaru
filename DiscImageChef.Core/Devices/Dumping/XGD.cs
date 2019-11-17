@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
@@ -49,6 +50,7 @@ using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 namespace DiscImageChef.Core.Devices.Dumping
@@ -71,6 +73,19 @@ namespace DiscImageChef.Core.Devices.Dumping
             double     maxSpeed      = double.MinValue;
             double     minSpeed      = double.MaxValue;
 
+            if(DetectOS.GetRealPlatformID() != PlatformID.Win32NT)
+            {
+                bool isAdmin = dev.IsRemote ? dev.IsRemoteAdmin : DetectOS.IsAdmin;
+
+                if(!isAdmin)
+                {
+                    DicConsole.
+                        ErrorWriteLine("Because of the commands sent to a device, dumping XGD must be done with administrative privileges. Cannot continue.");
+                    dumpLog.WriteLine("Cannot dump XGD without administrative privileges.");
+
+                    return;
+                }
+            }
             if(mediaTags.ContainsKey(MediaTagType.DVD_PFI))
                 mediaTags.Remove(MediaTagType.DVD_PFI);
 
@@ -1217,8 +1232,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.OpticalDisc[0].Sessions   = 1;
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
 
-                CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
-                                                                 out string xmlDskSubTyp);
+                var xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
                 sidecar.OpticalDisc[0].DiscType    = xmlDskTyp;
                 sidecar.OpticalDisc[0].DiscSubType = xmlDskSubTyp;
