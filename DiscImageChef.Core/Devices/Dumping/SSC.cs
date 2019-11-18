@@ -400,8 +400,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
                         dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
 
-                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout,
-                                                   out duration);
+                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
 
                         totalDuration += duration;
 
@@ -891,8 +890,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         UpdateStatus?.Invoke($"Blocksize changed to {blockSize} bytes at block {currentBlock}");
                         dumpLog.WriteLine("Blocksize changed to {0} bytes at block {1}", blockSize, currentBlock);
 
-                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout,
-                                                   out duration);
+                        sense = dev.Space(out senseBuf, SscSpaceCodes.LogicalBlock, -1, dev.Timeout, out duration);
 
                         totalDuration += duration;
 
@@ -1314,11 +1312,10 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
 
-                CommonTypes.Metadata.MediaType.MediaTypeToString(dskType, out string xmlDskTyp,
-                                                                 out string xmlDskSubTyp);
+                (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
-                sidecar.BlockMedia[0].DiskType    = xmlDskTyp;
-                sidecar.BlockMedia[0].DiskSubType = xmlDskSubTyp;
+                sidecar.BlockMedia[0].DiskType    = xmlType.type;
+                sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
 
                 // TODO: Implement device firmware revision
                 if(!dev.IsRemovable ||

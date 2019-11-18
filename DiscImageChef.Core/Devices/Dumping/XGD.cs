@@ -81,11 +81,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     DicConsole.
                         ErrorWriteLine("Because of the commands sent to a device, dumping XGD must be done with administrative privileges. Cannot continue.");
+
                     dumpLog.WriteLine("Cannot dump XGD without administrative privileges.");
 
                     return;
                 }
             }
+
             if(mediaTags.ContainsKey(MediaTagType.DVD_PFI))
                 mediaTags.Remove(MediaTagType.DVD_PFI);
 
@@ -1232,10 +1234,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 sidecar.OpticalDisc[0].Sessions   = 1;
                 sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
 
-                var xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
+                (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
 
-                sidecar.OpticalDisc[0].DiscType    = xmlDskTyp;
-                sidecar.OpticalDisc[0].DiscSubType = xmlDskSubTyp;
+                sidecar.OpticalDisc[0].DiscType    = xmlType.type;
+                sidecar.OpticalDisc[0].DiscSubType = xmlType.subType;
 
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
                     if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
