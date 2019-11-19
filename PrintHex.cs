@@ -37,61 +37,91 @@ namespace DiscImageChef
 {
     public static class PrintHex
     {
-        /// <summary>
-        ///     Prints a byte array as hexadecimal values to the console
-        /// </summary>
+        /// <summary>Prints a byte array as hexadecimal values to the console</summary>
         /// <param name="array">Array</param>
         /// <param name="width">Width of line</param>
-        public static void PrintHexArray(byte[] array, int width)
-        {
+        public static void PrintHexArray(byte[] array, int width = 16) =>
             DicConsole.WriteLine(ByteArrayToHexArrayString(array, width));
-        }
 
-        /// <summary>
-        ///     Prints a byte array as hexadecimal values to a string
-        /// </summary>
+        /// <summary>Prints a byte array as hexadecimal values to a string</summary>
         /// <param name="array">Array</param>
         /// <param name="width">Width of line</param>
+        /// <param name="color">Use ANSI escape colors for sections</param>
         /// <returns>String containing hexadecimal values</returns>
-        public static string ByteArrayToHexArrayString(byte[] array, int width)
+        public static string ByteArrayToHexArrayString(byte[] array, int width = 16, bool color = false)
         {
-            StringBuilder sb = new StringBuilder();
+            // TODO: Color list
+            // TODO: Allow to change width
+            string str  = "Offset";
+            int    rows = array.Length / 16;
+            int    last = array.Length % 16;
+            int offsetLength = $"{array.Length:X}".Length;
+            var sb = new StringBuilder();
 
-            int counter    = 0;
-            int subcounter = 0;
-            for(long i = 0; i < array.LongLength; i++)
+            if(last == 0)
+                last = 16;
+
+            if(offsetLength < str.Length)
+                offsetLength = str.Length;
+
+            while(str.Length < offsetLength)
+                str += ' ';
+
+            if(color)
+                sb.Append("\u001b[36m");
+
+            sb.Append(str);
+            sb.Append("  ");
+
+            for(int i = 0; i < 16; i++)
             {
-                if(counter == 0)
-                {
-                    sb.AppendLine();
-                    sb.AppendFormat("{0:X16}   ", i);
-                }
-                else
-                {
-                    if(subcounter == 3)
-                    {
-                        sb.Append("  ");
-                        subcounter = 0;
-                    }
-                    else
-                    {
-                        sb.Append(" ");
-                        subcounter++;
-                    }
-                }
-
-                sb.AppendFormat("{0:X2}", array[i]);
-
-                if(counter == width - 1)
-                {
-                    counter    = 0;
-                    subcounter = 0;
-                }
-                else counter++;
+                sb.AppendFormat(" {0:X2}", i);
             }
 
+            if(color)
+                sb.Append("\u001b[0m");
+
             sb.AppendLine();
-            sb.AppendLine();
+
+            int b = 0;
+
+            string format = $"{{0:X{offsetLength}}}";
+
+            for(int i = 0; i < rows; i++)
+            {
+                if(color)
+                    sb.Append("\u001b[36m");
+
+                sb.AppendFormat(format, b);
+
+                if(color)
+                    sb.Append("\u001b[0m");
+
+                sb.Append("  ");
+                int lastBytes = i == rows - 1 ? last : 16;
+                int lastSpaces = 16 - lastBytes;
+
+                for(int j = 0; j < lastBytes; j++)
+                {
+                    sb.AppendFormat(" {0:X2}", array[b]);
+                    b++;
+                }
+
+                for(int j = 0; j < lastSpaces; j++)
+                    sb.Append("   ");
+
+                b -= lastBytes;
+                sb.Append("   ");
+
+                for(int j = 0; j < lastBytes; j++)
+                {
+                    int v = array[b];
+                    sb.Append(v > 31 && v < 127 || v > 159 ? (char)v : '.');
+                    b++;
+                }
+
+                sb.AppendLine();
+            }
 
             return sb.ToString();
         }
