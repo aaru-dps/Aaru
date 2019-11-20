@@ -50,6 +50,9 @@ namespace DiscImageChef
         /// <returns>String containing hexadecimal values</returns>
         public static string ByteArrayToHexArrayString(byte[] array, int width = 16, bool color = false)
         {
+            if(array is null)
+                return null;
+
             // TODO: Color list
             // TODO: Allow to change width
             string str  = "Offset";
