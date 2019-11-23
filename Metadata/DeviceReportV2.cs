@@ -1467,6 +1467,8 @@ namespace DiscImageChef.CommonTypes.Metadata
         public int? AtaId { get; set; }
         [JsonIgnore]
         public int? ScsiId { get; set; }
+        [JsonIgnore]
+        public int? MmcId { get; set; }
 
         #region SCSI data
         public byte[] Read6Data      { get; set; }
