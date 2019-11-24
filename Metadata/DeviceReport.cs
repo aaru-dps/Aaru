@@ -37,6 +37,7 @@
 // ****************************************************************************/
 
 using System;
+using System.ComponentModel;
 using System.Xml.Serialization;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
@@ -981,19 +982,24 @@ namespace DiscImageChef.CommonTypes.Metadata
     public class SupportedDensity
     {
         [XmlIgnore, JsonIgnore]
-        public int Id { get;                set; }
-        public byte   PrimaryCode    { get; set; }
-        public byte   SecondaryCode  { get; set; }
-        public bool   Writable       { get; set; }
-        public bool   Duplicate      { get; set; }
-        public bool   DefaultDensity { get; set; }
-        public uint   BitsPerMm      { get; set; }
-        public ushort Width          { get; set; }
-        public ushort Tracks         { get; set; }
-        public uint   Capacity       { get; set; }
-        public string Organization   { get; set; }
-        public string Name           { get; set; }
-        public string Description    { get; set; }
+        public int Id { get; set; }
+        [DisplayName("Primary density code")]
+        public byte PrimaryCode { get; set; }
+        [DisplayName("Secondary density code")]
+        public byte SecondaryCode { get; set; }
+        public bool Writable  { get;     set; }
+        public bool Duplicate { get;     set; }
+        [DisplayName("Default density code")]
+        public bool DefaultDensity { get; set; }
+        [DisplayName("Bits per mm")]
+        public uint BitsPerMm { get; set; }
+        public ushort Width  { get;  set; }
+        public ushort Tracks { get;  set; }
+        [DisplayName("Nominal capacity (MiB)")]
+        public uint Capacity { get;       set; }
+        public string Organization { get; set; }
+        public string Name         { get; set; }
+        public string Description  { get; set; }
     }
 
     public class SupportedMedia
