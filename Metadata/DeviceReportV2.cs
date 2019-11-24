@@ -1692,6 +1692,11 @@ namespace DiscImageChef.CommonTypes.Metadata
         [DisplayName("Data from inter-session Lead-Out")]
         public byte[] IntersessionLeadOutData { get; set; }
 
+        [DisplayName("Can read scrambled data using READ CD command")]
+        public bool? CanReadCdScrambled { get; set; }
+        [DisplayName("Data from scrambled READ CD command")]
+        public byte[] ReadCdScrambledData { get; set; }
+
         [JsonIgnore]
         public int? AtaId { get; set; }
         [JsonIgnore]
