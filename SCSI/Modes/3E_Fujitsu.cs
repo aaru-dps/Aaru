@@ -36,68 +36,51 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static partial class Modes
     {
         #region Fujitsu Mode Page 0x3E: Verify Control page
         public enum Fujitsu_VerifyModes : byte
         {
-            /// <summary>
-            ///     Always verify after writing
-            /// </summary>
-            Always = 0,
-            /// <summary>
-            ///     Never verify after writing
-            /// </summary>
-            Never = 1,
-            /// <summary>
-            ///     Verify after writing depending on condition
-            /// </summary>
-            Depends = 2,
-            Reserved = 4
+            /// <summary>Always verify after writing</summary>
+            Always = 0, /// <summary>Never verify after writing</summary>
+            Never = 1, /// <summary>Verify after writing depending on condition</summary>
+            Depends = 2, Reserved = 4
         }
 
         public struct Fujitsu_ModePage_3E
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
-            /// <summary>
-            ///     If set, AV data support mode is applied
-            /// </summary>
+            /// <summary>If set, AV data support mode is applied</summary>
             public bool audioVisualMode;
-            /// <summary>
-            ///     If set the test write operation is restricted
-            /// </summary>
+            /// <summary>If set the test write operation is restricted</summary>
             public bool streamingMode;
             public byte Reserved1;
-            /// <summary>
-            ///     Verify mode for WRITE commands
-            /// </summary>
+            /// <summary>Verify mode for WRITE commands</summary>
             public Fujitsu_VerifyModes verifyMode;
             public byte Reserved2;
-            /// <summary>
-            ///     Device type provided in response to INQUIRY
-            /// </summary>
+            /// <summary>Device type provided in response to INQUIRY</summary>
             public PeripheralDeviceTypes devType;
             public byte[] Reserved3;
         }
 
         public static Fujitsu_ModePage_3E? DecodeFujitsuModePage_3E(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x3E) return null;
+            if((pageResponse?[0] & 0x3F) != 0x3E)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length != 8) return null;
+            if(pageResponse.Length != 8)
+                return null;
 
-            Fujitsu_ModePage_3E decoded = new Fujitsu_ModePage_3E();
+            var decoded = new Fujitsu_ModePage_3E();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
@@ -120,16 +103,20 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyFujitsuModePage_3E(Fujitsu_ModePage_3E? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             Fujitsu_ModePage_3E page = modePage.Value;
-            StringBuilder       sb   = new StringBuilder();
+            var                 sb   = new StringBuilder();
 
             sb.AppendLine("Fujitsu Verify Control Page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
-            if(page.audioVisualMode) sb.AppendLine("\tAudio/Visual data support mode is applied");
+            if(page.audioVisualMode)
+                sb.AppendLine("\tAudio/Visual data support mode is applied");
+
             if(page.streamingMode)
                 sb.AppendLine("\tTest write operation is restricted during read or write operations.");
 
@@ -137,17 +124,20 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case Fujitsu_VerifyModes.Always:
                     sb.AppendLine("\tAlways apply the verify operation");
+
                     break;
                 case Fujitsu_VerifyModes.Never:
                     sb.AppendLine("\tNever apply the verify operation");
+
                     break;
                 case Fujitsu_VerifyModes.Depends:
                     sb.AppendLine("\tApply the verify operation depending on the condition");
+
                     break;
             }
 
-            sb.AppendFormat("\tThe device type that would be provided in the INQUIRY response is {0}", page.devType)
-              .AppendLine();
+            sb.AppendFormat("\tThe device type that would be provided in the INQUIRY response is {0}", page.devType).
+               AppendLine();
 
             return sb.ToString();
         }

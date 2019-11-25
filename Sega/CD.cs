@@ -40,11 +40,257 @@ using Marshal = DiscImageChef.Helpers.Marshal;
 
 namespace DiscImageChef.Decoders.Sega
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class CD
     {
+        public static IPBin? DecodeIPBin(byte[] ipbin_sector)
+        {
+            if(ipbin_sector == null)
+                return null;
+
+            if(ipbin_sector.Length < 512)
+                return null;
+
+            var ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_name = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.volume_name));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_name = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.system_name));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_version = \"{0:X}\"",
+                                      ipbin.volume_version);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}",
+                                      ipbin.volume_type);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_version = 0x{0:X8}",
+                                      ipbin.system_version);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_loadsize = {0}", ipbin.ip_loadsize);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
+                                      ipbin.ip_entry_address);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_work_ram_size = {0}",
+                                      ipbin.ip_work_ram_size);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_loadsize = {0}", ipbin.sp_loadsize);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
+                                      ipbin.sp_entry_address);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_work_ram_size = {0}",
+                                      ipbin.sp_work_ram_size);
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.release_date));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date2 = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.release_date2));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.developer_code = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.developer_code));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.domestic_title = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.domestic_title));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.overseas_title = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.overseas_title));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.product_code = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.product_code));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.peripherals = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.peripherals));
+
+            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.region_codes = \"{0}\"",
+                                      Encoding.ASCII.GetString(ipbin.region_codes));
+
+            string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
+
+            return id == "SEGADISCSYSTEM  " || id == "SEGADATADISC    " || id == "SEGAOS          " ? ipbin
+                       : (IPBin?)null;
+        }
+
+        public static string Prettify(IPBin? decoded)
+        {
+            if(decoded == null)
+                return null;
+
+            IPBin ipbin = decoded.Value;
+
+            var IPBinInformation = new StringBuilder();
+
+            IPBinInformation.AppendLine("--------------------------------");
+            IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
+            IPBinInformation.AppendLine("--------------------------------");
+
+            // Decoding all data
+            DateTime    ipbindate = DateTime.MinValue;
+            CultureInfo provider  = CultureInfo.InvariantCulture;
+
+            try
+            {
+                ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "MMddyyyy", provider);
+            }
+            catch
+            {
+                try
+                {
+                    ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date2), "yyyy.MMM",
+                                                    provider);
+                }
+                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
+                catch
+                {
+                    // ignored
+                }
+                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
+            }
+
+            /*
+            switch (Encoding.ASCII.GetString(application_type))
+            {
+                case "GM":
+                    IPBinInformation.AppendLine("Disc is a game.");
+                    break;
+                case "AI":
+                    IPBinInformation.AppendLine("Disc is an application.");
+                    break;
+                default:
+                    IPBinInformation.AppendLine("Disc is from unknown type.");
+                    break;
+            }
+            */
+
+            IPBinInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(ipbin.volume_name)).AppendLine();
+
+            //IPBinInformation.AppendFormat("Volume version: {0}", Encoding.ASCII.GetString(ipbin.volume_version)).AppendLine();
+            //IPBinInformation.AppendFormat("{0}", Encoding.ASCII.GetString(ipbin.volume_type)).AppendLine();
+            IPBinInformation.AppendFormat("System name: {0}", Encoding.ASCII.GetString(ipbin.system_name)).AppendLine();
+
+            //IPBinInformation.AppendFormat("System version: {0}", Encoding.ASCII.GetString(ipbin.system_version)).AppendLine();
+            IPBinInformation.AppendFormat("Initial program address: 0x{0:X8}", ipbin.ip_address).AppendLine();
+            IPBinInformation.AppendFormat("Initial program load size: {0} bytes", ipbin.ip_loadsize).AppendLine();
+
+            IPBinInformation.AppendFormat("Initial program entry address: 0x{0:X8}", ipbin.ip_entry_address).
+                             AppendLine();
+
+            IPBinInformation.AppendFormat("Initial program work RAM: {0} bytes", ipbin.ip_work_ram_size).AppendLine();
+            IPBinInformation.AppendFormat("System program address: 0x{0:X8}", ipbin.sp_address).AppendLine();
+            IPBinInformation.AppendFormat("System program load size: {0} bytes", ipbin.sp_loadsize).AppendLine();
+
+            IPBinInformation.AppendFormat("System program entry address: 0x{0:X8}", ipbin.sp_entry_address).
+                             AppendLine();
+
+            IPBinInformation.AppendFormat("System program work RAM: {0} bytes", ipbin.sp_work_ram_size).AppendLine();
+
+            if(ipbindate != DateTime.MinValue)
+                IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
+
+            //IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
+            IPBinInformation.AppendFormat("Hardware ID: {0}", Encoding.ASCII.GetString(ipbin.hardware_id)).AppendLine();
+
+            IPBinInformation.AppendFormat("Developer code: {0}", Encoding.ASCII.GetString(ipbin.developer_code)).
+                             AppendLine();
+
+            IPBinInformation.AppendFormat("Domestic title: {0}", Encoding.ASCII.GetString(ipbin.domestic_title)).
+                             AppendLine();
+
+            IPBinInformation.AppendFormat("Overseas title: {0}", Encoding.ASCII.GetString(ipbin.overseas_title)).
+                             AppendLine();
+
+            IPBinInformation.AppendFormat("Product code: {0}", Encoding.ASCII.GetString(ipbin.product_code)).
+                             AppendLine();
+
+            IPBinInformation.AppendFormat("Peripherals:").AppendLine();
+
+            foreach(byte peripheral in ipbin.peripherals)
+                switch((char)peripheral)
+                {
+                    case'A':
+                        IPBinInformation.AppendLine("Game supports analog controller.");
+
+                        break;
+                    case'B':
+                        IPBinInformation.AppendLine("Game supports trackball.");
+
+                        break;
+                    case'G':
+                        IPBinInformation.AppendLine("Game supports light gun.");
+
+                        break;
+                    case'J':
+                        IPBinInformation.AppendLine("Game supports JoyPad.");
+
+                        break;
+                    case'K':
+                        IPBinInformation.AppendLine("Game supports keyboard.");
+
+                        break;
+                    case'M':
+                        IPBinInformation.AppendLine("Game supports mouse.");
+
+                        break;
+                    case'O':
+                        IPBinInformation.AppendLine("Game supports Master System's JoyPad.");
+
+                        break;
+                    case'P':
+                        IPBinInformation.AppendLine("Game supports printer interface.");
+
+                        break;
+                    case'R':
+                        IPBinInformation.AppendLine("Game supports serial (RS-232C) interface.");
+
+                        break;
+                    case'T':
+                        IPBinInformation.AppendLine("Game supports tablet interface.");
+
+                        break;
+                    case'V':
+                        IPBinInformation.AppendLine("Game supports paddle controller.");
+
+                        break;
+                    case' ': break;
+                    default:
+                        IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
+
+                        break;
+                }
+
+            IPBinInformation.AppendLine("Regions supported:");
+
+            foreach(byte region in ipbin.region_codes)
+                switch((char)region)
+                {
+                    case'J':
+                        IPBinInformation.AppendLine("Japanese NTSC.");
+
+                        break;
+                    case'U':
+                        IPBinInformation.AppendLine("USA NTSC.");
+
+                        break;
+                    case'E':
+                        IPBinInformation.AppendLine("Europe PAL.");
+
+                        break;
+                    case' ': break;
+                    default:
+                        IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
+
+                        break;
+                }
+
+            return IPBinInformation.ToString();
+        }
+
         // TODO: Check if it is big or little endian
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct IPBin
@@ -127,198 +373,6 @@ namespace DiscImageChef.Decoders.Sega
             /// <summary>0x1F0, Region codes, space-filled</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] region_codes;
-        }
-
-        public static IPBin? DecodeIPBin(byte[] ipbin_sector)
-        {
-            if(ipbin_sector == null) return null;
-
-            if(ipbin_sector.Length < 512) return null;
-
-            IPBin ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
-
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_name = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.volume_name));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_name = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.system_name));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_version = \"{0:X}\"",
-                                      ipbin.volume_version);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}",
-                                      ipbin.volume_type);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_version = 0x{0:X8}",
-                                      ipbin.system_version);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_loadsize = {0}",     ipbin.ip_loadsize);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
-                                      ipbin.ip_entry_address);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_work_ram_size = {0}",
-                                      ipbin.ip_work_ram_size);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_loadsize = {0}",     ipbin.sp_loadsize);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
-                                      ipbin.sp_entry_address);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_work_ram_size = {0}",
-                                      ipbin.sp_work_ram_size);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.release_date));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date2 = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.release_date2));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.developer_code = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.developer_code));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.domestic_title = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.domestic_title));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.overseas_title = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.overseas_title));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.product_code = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.product_code));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.peripherals = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.peripherals));
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.region_codes = \"{0}\"",
-                                      Encoding.ASCII.GetString(ipbin.region_codes));
-
-            string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);
-
-            return id == "SEGADISCSYSTEM  " || id == "SEGADATADISC    " || id == "SEGAOS          "
-                       ? ipbin
-                       : (IPBin?)null;
-        }
-
-        public static string Prettify(IPBin? decoded)
-        {
-            if(decoded == null) return null;
-
-            IPBin ipbin = decoded.Value;
-
-            StringBuilder IPBinInformation = new StringBuilder();
-
-            IPBinInformation.AppendLine("--------------------------------");
-            IPBinInformation.AppendLine("SEGA IP.BIN INFORMATION:");
-            IPBinInformation.AppendLine("--------------------------------");
-
-            // Decoding all data
-            DateTime    ipbindate = DateTime.MinValue;
-            CultureInfo provider  = CultureInfo.InvariantCulture;
-            try { ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date), "MMddyyyy", provider); }
-            catch
-            {
-                try
-                {
-                    ipbindate = DateTime.ParseExact(Encoding.ASCII.GetString(ipbin.release_date2), "yyyy.MMM",
-                                                    provider);
-                }
-                #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
-                catch
-                {
-                    // ignored
-                }
-                #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
-            }
-
-            /*
-            switch (Encoding.ASCII.GetString(application_type))
-            {
-                case "GM":
-                    IPBinInformation.AppendLine("Disc is a game.");
-                    break;
-                case "AI":
-                    IPBinInformation.AppendLine("Disc is an application.");
-                    break;
-                default:
-                    IPBinInformation.AppendLine("Disc is from unknown type.");
-                    break;
-            }
-            */
-
-            IPBinInformation.AppendFormat("Volume name: {0}", Encoding.ASCII.GetString(ipbin.volume_name)).AppendLine();
-            //IPBinInformation.AppendFormat("Volume version: {0}", Encoding.ASCII.GetString(ipbin.volume_version)).AppendLine();
-            //IPBinInformation.AppendFormat("{0}", Encoding.ASCII.GetString(ipbin.volume_type)).AppendLine();
-            IPBinInformation.AppendFormat("System name: {0}", Encoding.ASCII.GetString(ipbin.system_name)).AppendLine();
-            //IPBinInformation.AppendFormat("System version: {0}", Encoding.ASCII.GetString(ipbin.system_version)).AppendLine();
-            IPBinInformation.AppendFormat("Initial program address: 0x{0:X8}", ipbin.ip_address).AppendLine();
-            IPBinInformation.AppendFormat("Initial program load size: {0} bytes", ipbin.ip_loadsize).AppendLine();
-            IPBinInformation.AppendFormat("Initial program entry address: 0x{0:X8}", ipbin.ip_entry_address)
-                            .AppendLine();
-            IPBinInformation.AppendFormat("Initial program work RAM: {0} bytes", ipbin.ip_work_ram_size).AppendLine();
-            IPBinInformation.AppendFormat("System program address: 0x{0:X8}", ipbin.sp_address).AppendLine();
-            IPBinInformation.AppendFormat("System program load size: {0} bytes", ipbin.sp_loadsize).AppendLine();
-            IPBinInformation.AppendFormat("System program entry address: 0x{0:X8}", ipbin.sp_entry_address)
-                            .AppendLine();
-            IPBinInformation.AppendFormat("System program work RAM: {0} bytes", ipbin.sp_work_ram_size).AppendLine();
-            if(ipbindate != DateTime.MinValue)
-                IPBinInformation.AppendFormat("Release date: {0}", ipbindate).AppendLine();
-            //IPBinInformation.AppendFormat("Release date (other format): {0}", Encoding.ASCII.GetString(release_date2)).AppendLine();
-            IPBinInformation.AppendFormat("Hardware ID: {0}", Encoding.ASCII.GetString(ipbin.hardware_id)).AppendLine();
-            IPBinInformation.AppendFormat("Developer code: {0}", Encoding.ASCII.GetString(ipbin.developer_code))
-                            .AppendLine();
-            IPBinInformation.AppendFormat("Domestic title: {0}", Encoding.ASCII.GetString(ipbin.domestic_title))
-                            .AppendLine();
-            IPBinInformation.AppendFormat("Overseas title: {0}", Encoding.ASCII.GetString(ipbin.overseas_title))
-                            .AppendLine();
-            IPBinInformation.AppendFormat("Product code: {0}", Encoding.ASCII.GetString(ipbin.product_code))
-                            .AppendLine();
-            IPBinInformation.AppendFormat("Peripherals:").AppendLine();
-            foreach(byte peripheral in ipbin.peripherals)
-                switch((char)peripheral)
-                {
-                    case 'A':
-                        IPBinInformation.AppendLine("Game supports analog controller.");
-                        break;
-                    case 'B':
-                        IPBinInformation.AppendLine("Game supports trackball.");
-                        break;
-                    case 'G':
-                        IPBinInformation.AppendLine("Game supports light gun.");
-                        break;
-                    case 'J':
-                        IPBinInformation.AppendLine("Game supports JoyPad.");
-                        break;
-                    case 'K':
-                        IPBinInformation.AppendLine("Game supports keyboard.");
-                        break;
-                    case 'M':
-                        IPBinInformation.AppendLine("Game supports mouse.");
-                        break;
-                    case 'O':
-                        IPBinInformation.AppendLine("Game supports Master System's JoyPad.");
-                        break;
-                    case 'P':
-                        IPBinInformation.AppendLine("Game supports printer interface.");
-                        break;
-                    case 'R':
-                        IPBinInformation.AppendLine("Game supports serial (RS-232C) interface.");
-                        break;
-                    case 'T':
-                        IPBinInformation.AppendLine("Game supports tablet interface.");
-                        break;
-                    case 'V':
-                        IPBinInformation.AppendLine("Game supports paddle controller.");
-                        break;
-                    case ' ': break;
-                    default:
-                        IPBinInformation.AppendFormat("Game supports unknown peripheral {0}.", peripheral).AppendLine();
-                        break;
-                }
-
-            IPBinInformation.AppendLine("Regions supported:");
-            foreach(byte region in ipbin.region_codes)
-                switch((char)region)
-                {
-                    case 'J':
-                        IPBinInformation.AppendLine("Japanese NTSC.");
-                        break;
-                    case 'U':
-                        IPBinInformation.AppendLine("USA NTSC.");
-                        break;
-                    case 'E':
-                        IPBinInformation.AppendLine("Europe PAL.");
-                        break;
-                    case ' ': break;
-                    default:
-                        IPBinInformation.AppendFormat("Game supports unknown region {0}.", region).AppendLine();
-                        break;
-                }
-
-            return IPBinInformation.ToString();
         }
     }
 }

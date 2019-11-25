@@ -35,32 +35,33 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region IBM Mode Page 0x3D: Behaviour Configuration Mode page
         public struct IBM_ModePage_3D
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
             public ushort NumberOfWraps;
         }
 
         public static IBM_ModePage_3D? DecodeIBMModePage_3D(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x3D) return null;
+            if((pageResponse?[0] & 0x3F) != 0x3D)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length != 5) return null;
+            if(pageResponse.Length != 5)
+                return null;
 
-            IBM_ModePage_3D decoded = new IBM_ModePage_3D();
+            var decoded = new IBM_ModePage_3D();
 
             decoded.PS            |= (pageResponse[0] & 0x80) == 0x80;
             decoded.NumberOfWraps =  (ushort)((pageResponse[3] << 8) + pageResponse[4]);
@@ -73,14 +74,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyIBMModePage_3D(IBM_ModePage_3D? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             IBM_ModePage_3D page = modePage.Value;
-            StringBuilder   sb   = new StringBuilder();
+            var             sb   = new StringBuilder();
 
             sb.AppendLine("IBM LEOT Mode Page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\t{0} wraps", page.NumberOfWraps).AppendLine();
 

@@ -35,17 +35,14 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x1D: Medium Configuration Mode Page
         public struct ModePage_1D
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
             public bool WORMM;
             public byte WormModeLabelRestrictions;
@@ -54,15 +51,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_1D? DecodeModePage_1D(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x1D) return null;
+            if((pageResponse?[0] & 0x3F) != 0x1D)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length < 32) return null;
+            if(pageResponse.Length < 32)
+                return null;
 
-            ModePage_1D decoded = new ModePage_1D();
+            var decoded = new ModePage_1D();
 
             decoded.PS                           |= (pageResponse[0] & 0x80) == 0x80;
             decoded.WORMM                        |= (pageResponse[2] & 0x01) == 0x01;
@@ -77,31 +78,38 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_1D(ModePage_1D? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
-            ModePage_1D   page = modePage.Value;
-            StringBuilder sb   = new StringBuilder();
+            ModePage_1D page = modePage.Value;
+            var         sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Medium Configuration Mode Page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
-            if(page.WORMM) sb.AppendLine("\tDrive is operating in WORM mode");
+            if(page.WORMM)
+                sb.AppendLine("\tDrive is operating in WORM mode");
 
             switch(page.WormModeLabelRestrictions)
             {
                 case 0:
                     sb.AppendLine("\tDrive does not allow any logical blocks to be overwritten");
+
                     break;
                 case 1:
                     sb.AppendLine("\tDrive allows a tape header to be overwritten");
+
                     break;
                 case 2:
                     sb.AppendLine("\tDrive allows all format labels to be overwritten");
+
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown WORM mode label restrictions code {0}", page.WormModeLabelRestrictions)
-                      .AppendLine();
+                    sb.AppendFormat("\tUnknown WORM mode label restrictions code {0}", page.WormModeLabelRestrictions).
+                       AppendLine();
+
                     break;
             }
 
@@ -109,13 +117,16 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case 2:
                     sb.AppendLine("\tDrive allows any number of filemarks immediately preceding EOD to be overwritten except filemark closes to BOP");
+
                     break;
                 case 3:
                     sb.AppendLine("\tDrive allows any number of filemarks immediately preceding EOD to be overwritten");
+
                     break;
                 default:
                     sb.AppendFormat("\tUnknown WORM mode filemark restrictions code {0}",
                                     page.WormModeLabelRestrictions).AppendLine();
+
                     break;
             }
 

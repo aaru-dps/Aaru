@@ -35,54 +35,33 @@ using System.Runtime.InteropServices;
 
 namespace DiscImageChef.Decoders.Floppy
 {
-    /// <summary>
-    ///     Methods and structures for Commodore Amiga decoding
-    /// </summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    /// <summary>Methods and structures for Commodore Amiga decoding</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class Amiga
     {
         public struct Sector
         {
-            /// <summary>
-            ///     Set to 0x00
-            /// </summary>
+            /// <summary>Set to 0x00</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public byte[] zero;
-            /// <summary>
-            ///     Set to 0xA1
-            /// </summary>
+            /// <summary>Set to 0xA1</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
             public byte[] sync;
-            /// <summary>
-            ///     Set to 0xFF
-            /// </summary>
+            /// <summary>Set to 0xFF</summary>
             public byte amiga;
-            /// <summary>
-            ///     Track number
-            /// </summary>
+            /// <summary>Track number</summary>
             public byte track;
-            /// <summary>
-            ///     Sector number
-            /// </summary>
+            /// <summary>Sector number</summary>
             public byte sector;
-            /// <summary>
-            ///     Remaining sectors til end of writing
-            /// </summary>
+            /// <summary>Remaining sectors til end of writing</summary>
             public byte remaining;
-            /// <summary>
-            ///     OS dependent tag
-            /// </summary>
+            /// <summary>OS dependent tag</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
             public byte[] label;
-            /// <summary>
-            ///     Checksum from <see cref="amiga" /> to <see cref="label" />
-            /// </summary>
+            /// <summary>Checksum from <see cref="amiga" /> to <see cref="label" /></summary>
             public uint headerChecksum;
-            /// <summary>
-            ///     Checksum from <see cref="data" />
-            /// </summary>
+            /// <summary>Checksum from <see cref="data" /></summary>
             public uint dataChecksum;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
             public byte[] data;

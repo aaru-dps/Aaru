@@ -35,17 +35,14 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region IBM Mode Page 0x24: Drive Capabilities Control Mode page
         public struct IBM_ModePage_24
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
             public byte ModeControl;
             public byte VelocitySetting;
@@ -55,15 +52,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static IBM_ModePage_24? DecodeIBMModePage_24(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x24) return null;
+            if((pageResponse?[0] & 0x3F) != 0x24)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length != 8) return null;
+            if(pageResponse.Length != 8)
+                return null;
 
-            IBM_ModePage_24 decoded = new IBM_ModePage_24();
+            var decoded = new IBM_ModePage_24();
 
             decoded.PS                |= (pageResponse[0] & 0x80) == 0x80;
             decoded.ModeControl       =  pageResponse[2];
@@ -79,22 +80,27 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyIBMModePage_24(IBM_ModePage_24? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             IBM_ModePage_24 page = modePage.Value;
-            StringBuilder   sb   = new StringBuilder();
+            var             sb   = new StringBuilder();
 
             sb.AppendLine("IBM Vendor-Specific Control Mode Page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
-            sb.AppendFormat("\tVendor-specific mode control: {0}",     page.ModeControl);
+            sb.AppendFormat("\tVendor-specific mode control: {0}", page.ModeControl);
             sb.AppendFormat("\tVendor-specific velocity setting: {0}", page.VelocitySetting);
 
-            if(!page.EncryptionCapable) return sb.ToString();
+            if(!page.EncryptionCapable)
+                return sb.ToString();
 
             sb.AppendLine("\tDrive supports encryption");
-            if(page.EncryptionEnabled) sb.AppendLine("\tDrive has encryption enabled");
+
+            if(page.EncryptionEnabled)
+                sb.AppendLine("\tDrive has encryption enabled");
 
             return sb.ToString();
         }

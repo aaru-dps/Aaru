@@ -36,29 +36,33 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.Xbox
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class DMI
     {
         public static bool IsXbox(byte[] dmi)
         {
-            if(dmi?.Length != 2052) return false;
+            if(dmi?.Length != 2052)
+                return false;
 
             // Version is 1
-            if(BitConverter.ToUInt32(dmi, 4) != 1) return false;
+            if(BitConverter.ToUInt32(dmi, 4) != 1)
+                return false;
 
             // Catalogue number is two letters, five numbers, one letter
             for(int i = 12; i < 14; i++)
-                if(dmi[i] < 0x41 || dmi[i] > 0x5A)
+                if(dmi[i] < 0x41 ||
+                   dmi[i] > 0x5A)
                     return false;
 
             for(int i = 14; i < 19; i++)
-                if(dmi[i] < 0x30 || dmi[i] > 0x39)
+                if(dmi[i] < 0x30 ||
+                   dmi[i] > 0x39)
                     return false;
 
-            if(dmi[19] < 0x41 || dmi[19] > 0x5A) return false;
+            if(dmi[19] < 0x41 ||
+               dmi[19] > 0x5A)
+                return false;
 
             long timestamp = BitConverter.ToInt64(dmi, 20);
 
@@ -68,7 +72,8 @@ namespace DiscImageChef.Decoders.Xbox
 
         public static bool IsXbox360(byte[] dmi)
         {
-            if(dmi?.Length != 2052) return false;
+            if(dmi?.Length != 2052)
+                return false;
 
             uint signature = BitConverter.ToUInt32(dmi, 0x7EC);
 
@@ -76,97 +81,17 @@ namespace DiscImageChef.Decoders.Xbox
             return signature == 0x584F4258;
         }
 
-        public struct XboxDMI
-        {
-            /// <summary>
-            ///     Bytes 0 to 1
-            ///     Data length
-            /// </summary>
-            public ushort DataLength;
-            /// <summary>
-            ///     Byte 2
-            ///     Reserved
-            /// </summary>
-            public byte Reserved1;
-            /// <summary>
-            ///     Byte 3
-            ///     Reserved
-            /// </summary>
-            public byte Reserved2;
-
-            /// <summary>
-            ///     Bytes 4 to 7
-            ///     0x01 in XGD
-            /// </summary>
-            public uint Version;
-
-            /// <summary>
-            ///     Bytes 12 to 16
-            ///     Catalogue number in XX-XXXXX-X
-            /// </summary>
-            public string CatalogNumber;
-
-            /// <summary>
-            ///     Bytes 20 to 27
-            ///     DMI timestamp
-            /// </summary>
-            public long Timestamp;
-        }
-
-        public struct Xbox360DMI
-        {
-            /// <summary>
-            ///     Bytes 0 to 1
-            ///     Data length
-            /// </summary>
-            public ushort DataLength;
-            /// <summary>
-            ///     Byte 2
-            ///     Reserved
-            /// </summary>
-            public byte Reserved1;
-            /// <summary>
-            ///     Byte 3
-            ///     Reserved
-            /// </summary>
-            public byte Reserved2;
-
-            /// <summary>
-            ///     Bytes 4 to 7
-            ///     0x02 in XGD2 and XGD3
-            /// </summary>
-            public uint Version;
-
-            /// <summary>
-            ///     Bytes 20 to 27
-            ///     DMI timestamp
-            /// </summary>
-            public long Timestamp;
-
-            /// <summary>
-            ///     Bytes 36 to 51
-            ///     Media ID in hex XXXXXXXXXXXX-XXXXXXXX
-            /// </summary>
-            public byte[] MediaID;
-
-            /// <summary>
-            ///     Bytes 68 to 83
-            ///     Catalogue number in XX-XXXX-XX-XXY-XXX, Y not always exists
-            /// </summary>
-            public string CatalogNumber;
-        }
-
         public static XboxDMI? DecodeXbox(byte[] response)
         {
             bool isXbox = IsXbox(response);
-            if(!isXbox) return null;
 
-            XboxDMI dmi = new XboxDMI
+            if(!isXbox)
+                return null;
+
+            var dmi = new XboxDMI
             {
-                DataLength = (ushort)((response[0] << 8) + response[1]),
-                Reserved1  = response[2],
-                Reserved2  = response[3],
-                Version    = BitConverter.ToUInt32(response, 4),
+                DataLength = (ushort)((response[0] << 8) + response[1]), Reserved1 = response[2],
+                Reserved2  = response[3], Version                                  = BitConverter.ToUInt32(response, 4),
                 Timestamp  = BitConverter.ToInt64(response, 20)
             };
 
@@ -180,16 +105,15 @@ namespace DiscImageChef.Decoders.Xbox
         public static Xbox360DMI? DecodeXbox360(byte[] response)
         {
             bool isX360 = IsXbox360(response);
-            if(!isX360) return null;
 
-            Xbox360DMI dmi = new Xbox360DMI
+            if(!isX360)
+                return null;
+
+            var dmi = new Xbox360DMI
             {
-                DataLength = (ushort)((response[0] << 8) + response[1]),
-                Reserved1  = response[2],
-                Reserved2  = response[3],
-                Version    = BitConverter.ToUInt32(response, 4),
-                Timestamp  = BitConverter.ToInt64(response, 20),
-                MediaID    = new byte[16]
+                DataLength = (ushort)((response[0] << 8) + response[1]), Reserved1 = response[2],
+                Reserved2  = response[3], Version                                  = BitConverter.ToUInt32(response, 4),
+                Timestamp  = BitConverter.ToInt64(response, 20), MediaID           = new byte[16]
             };
 
             Array.Copy(response, 36, dmi.MediaID, 0, 16);
@@ -202,16 +126,21 @@ namespace DiscImageChef.Decoders.Xbox
 
         public static string PrettifyXbox(XboxDMI? dmi)
         {
-            if(dmi == null) return null;
+            if(dmi == null)
+                return null;
 
-            XboxDMI       decoded = dmi.Value;
-            StringBuilder sb      = new StringBuilder();
+            XboxDMI decoded = dmi.Value;
+            var     sb      = new StringBuilder();
 
             sb.Append("Catalogue number: ");
-            for(int i = 0; i < 2; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+            for(int i = 0; i < 2; i++)
+                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
             sb.Append("-");
-            for(int i = 2; i < 7; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+            for(int i = 2; i < 7; i++)
+                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
             sb.Append("-");
             sb.AppendFormat("{0}", decoded.CatalogNumber[7]);
@@ -224,36 +153,49 @@ namespace DiscImageChef.Decoders.Xbox
 
         public static string PrettifyXbox360(Xbox360DMI? dmi)
         {
-            if(dmi == null) return null;
+            if(dmi == null)
+                return null;
 
-            Xbox360DMI    decoded = dmi.Value;
-            StringBuilder sb      = new StringBuilder();
+            Xbox360DMI decoded = dmi.Value;
+            var        sb      = new StringBuilder();
 
             sb.Append("Catalogue number: ");
-            for(int i = 0; i < 2; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+            for(int i = 0; i < 2; i++)
+                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
             sb.Append("-");
-            for(int i = 2; i < 6; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+            for(int i = 2; i < 6; i++)
+                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
             sb.Append("-");
-            for(int i = 6; i < 8; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+            for(int i = 6; i < 8; i++)
+                sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
             sb.Append("-");
 
             switch(decoded.CatalogNumber.Length)
             {
                 case 13:
-                    for(int i = 8; i < 10; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    for(int i = 8; i < 10; i++)
+                        sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                     sb.Append("-");
-                    for(int i = 10; i < 13; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+                    for(int i = 10; i < 13; i++)
+                        sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                     break;
                 case 14:
-                    for(int i = 8; i < 11; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+                    for(int i = 8; i < 11; i++)
+                        sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                     sb.Append("-");
-                    for(int i = 11; i < 14; i++) sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
+
+                    for(int i = 11; i < 14; i++)
+                        sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                     break;
                 default:
@@ -261,6 +203,7 @@ namespace DiscImageChef.Decoders.Xbox
                         sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
                     sb.Append("-");
+
                     for(int i = decoded.CatalogNumber.Length - 3; i < decoded.CatalogNumber.Length; i++)
                         sb.AppendFormat("{0}", decoded.CatalogNumber[i]);
 
@@ -270,10 +213,14 @@ namespace DiscImageChef.Decoders.Xbox
             sb.AppendLine();
 
             sb.Append("Media ID: ");
-            for(int i = 0; i < 12; i++) sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+
+            for(int i = 0; i < 12; i++)
+                sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
 
             sb.Append("-");
-            for(int i = 12; i < 16; i++) sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
+
+            for(int i = 12; i < 16; i++)
+                sb.AppendFormat("{0:X2}", decoded.MediaID[i]);
 
             sb.AppendLine();
 
@@ -285,5 +232,46 @@ namespace DiscImageChef.Decoders.Xbox
         public static string PrettifyXbox(byte[] response) => PrettifyXbox(DecodeXbox(response));
 
         public static string PrettifyXbox360(byte[] response) => PrettifyXbox360(DecodeXbox360(response));
+
+        public struct XboxDMI
+        {
+            /// <summary>Bytes 0 to 1 Data length</summary>
+            public ushort DataLength;
+            /// <summary>Byte 2 Reserved</summary>
+            public byte Reserved1;
+            /// <summary>Byte 3 Reserved</summary>
+            public byte Reserved2;
+
+            /// <summary>Bytes 4 to 7 0x01 in XGD</summary>
+            public uint Version;
+
+            /// <summary>Bytes 12 to 16 Catalogue number in XX-XXXXX-X</summary>
+            public string CatalogNumber;
+
+            /// <summary>Bytes 20 to 27 DMI timestamp</summary>
+            public long Timestamp;
+        }
+
+        public struct Xbox360DMI
+        {
+            /// <summary>Bytes 0 to 1 Data length</summary>
+            public ushort DataLength;
+            /// <summary>Byte 2 Reserved</summary>
+            public byte Reserved1;
+            /// <summary>Byte 3 Reserved</summary>
+            public byte Reserved2;
+
+            /// <summary>Bytes 4 to 7 0x02 in XGD2 and XGD3</summary>
+            public uint Version;
+
+            /// <summary>Bytes 20 to 27 DMI timestamp</summary>
+            public long Timestamp;
+
+            /// <summary>Bytes 36 to 51 Media ID in hex XXXXXXXXXXXX-XXXXXXXX</summary>
+            public byte[] MediaID;
+
+            /// <summary>Bytes 68 to 83 Catalogue number in XX-XXXX-XX-XXY-XXX, Y not always exists</summary>
+            public string CatalogNumber;
+        }
     }
 }

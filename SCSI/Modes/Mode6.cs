@@ -37,21 +37,26 @@ using System.Linq;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         public static ModeHeader? DecodeModeHeader6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
-            if(modeResponse == null || modeResponse.Length < 4 || modeResponse.Length < modeResponse[0] + 1)
+            if(modeResponse        == null ||
+               modeResponse.Length < 4     ||
+               modeResponse.Length < modeResponse[0] + 1)
                 return null;
 
-            ModeHeader header = new ModeHeader {MediumType = (MediumTypes)modeResponse[1]};
+            var header = new ModeHeader
+            {
+                MediumType = (MediumTypes)modeResponse[1]
+            };
 
             if(modeResponse[3] > 0)
             {
                 header.BlockDescriptors = new BlockDescriptor[modeResponse[3] / 8];
+
                 for(int i = 0; i < header.BlockDescriptors.Length; i++)
                 {
                     header.BlockDescriptors[i].Density     =  (DensityType)modeResponse[0 + i * 8 + 4];
@@ -70,19 +75,23 @@ namespace DiscImageChef.Decoders.SCSI
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
                     header.DPOFUA         = (modeResponse[2] & 0x10) == 0x10;
+
                     break;
                 case PeripheralDeviceTypes.SequentialAccess:
                     header.WriteProtected = (modeResponse[2]       & 0x80) == 0x80;
                     header.Speed          = (byte)(modeResponse[2] & 0x0F);
                     header.BufferedMode   = (byte)((modeResponse[2] & 0x70) >> 4);
+
                     break;
                 case PeripheralDeviceTypes.PrinterDevice:
                     header.BufferedMode = (byte)((modeResponse[2] & 0x70) >> 4);
+
                     break;
                 case PeripheralDeviceTypes.OpticalDevice:
                     header.WriteProtected = (modeResponse[2] & 0x80) == 0x80;
                     header.EBC            = (modeResponse[2] & 0x01) == 0x01;
                     header.DPOFUA         = (modeResponse[2] & 0x10) == 0x10;
+
                     break;
             }
 
@@ -95,24 +104,33 @@ namespace DiscImageChef.Decoders.SCSI
         public static DecodedMode? DecodeMode6(byte[] modeResponse, PeripheralDeviceTypes deviceType)
         {
             ModeHeader? hdr = DecodeModeHeader6(modeResponse, deviceType);
-            if(!hdr.HasValue) return null;
 
-            DecodedMode decoded                                     = new DecodedMode {Header = hdr.Value};
-            int         blkDrLength                                 = 0;
-            if(decoded.Header.BlockDescriptors != null) blkDrLength = decoded.Header.BlockDescriptors.Length;
+            if(!hdr.HasValue)
+                return null;
+
+            var decoded = new DecodedMode
+            {
+                Header = hdr.Value
+            };
+
+            int blkDrLength = 0;
+
+            if(decoded.Header.BlockDescriptors != null)
+                blkDrLength = decoded.Header.BlockDescriptors.Length;
 
             int offset = 4               + blkDrLength * 8;
             int length = modeResponse[0] + 1;
 
-            if(length != modeResponse.Length) return decoded;
+            if(length != modeResponse.Length)
+                return decoded;
 
             List<ModePage> listpages = new List<ModePage>();
 
             while(offset < modeResponse.Length)
             {
-                bool     isSubpage = (modeResponse[offset] & 0x40) == 0x40;
-                ModePage pg        = new ModePage();
-                byte     pageNo    = (byte)(modeResponse[offset] & 0x3F);
+                bool isSubpage = (modeResponse[offset] & 0x40) == 0x40;
+                var  pg        = new ModePage();
+                byte pageNo    = (byte)(modeResponse[offset] & 0x3F);
 
                 if(pageNo == 0)
                 {
@@ -126,10 +144,13 @@ namespace DiscImageChef.Decoders.SCSI
                 {
                     if(isSubpage)
                     {
-                        if(offset + 3 >= modeResponse.Length) break;
+                        if(offset + 3 >= modeResponse.Length)
+                            break;
 
                         pg.PageResponse = new byte[(modeResponse[offset + 2] << 8) + modeResponse[offset + 3] + 4];
-                        if(pg.PageResponse.Length + offset > modeResponse.Length) return decoded;
+
+                        if(pg.PageResponse.Length + offset > modeResponse.Length)
+                            return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
@@ -138,10 +159,13 @@ namespace DiscImageChef.Decoders.SCSI
                     }
                     else
                     {
-                        if(offset + 1 >= modeResponse.Length) break;
+                        if(offset + 1 >= modeResponse.Length)
+                            break;
 
                         pg.PageResponse = new byte[modeResponse[offset + 1] + 2];
-                        if(pg.PageResponse.Length + offset > modeResponse.Length) return decoded;
+
+                        if(pg.PageResponse.Length + offset > modeResponse.Length)
+                            return decoded;
 
                         Array.Copy(modeResponse, offset, pg.PageResponse, 0, pg.PageResponse.Length);
                         pg.Page    =  (byte)(modeResponse[offset] & 0x3F);
@@ -160,8 +184,7 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static byte[] EncodeModeHeader6(ModeHeader header, PeripheralDeviceTypes deviceType)
         {
-            byte[] hdr = header.BlockDescriptors != null
-                             ? new byte[4 + header.BlockDescriptors.Length * 8]
+            byte[] hdr = header.BlockDescriptors != null ? new byte[4 + header.BlockDescriptors.Length * 8]
                              : new byte[4];
 
             hdr[1] = (byte)header.MediumType;
@@ -170,25 +193,40 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case PeripheralDeviceTypes.DirectAccess:
                 case PeripheralDeviceTypes.MultiMediaDevice:
-                    if(header.WriteProtected) hdr[2] += 0x80;
-                    if(header.DPOFUA) hdr[2]         += 0x10;
+                    if(header.WriteProtected)
+                        hdr[2] += 0x80;
+
+                    if(header.DPOFUA)
+                        hdr[2] += 0x10;
+
                     break;
                 case PeripheralDeviceTypes.SequentialAccess:
-                    if(header.WriteProtected) hdr[2] += 0x80;
+                    if(header.WriteProtected)
+                        hdr[2] += 0x80;
+
                     hdr[2] += (byte)(header.Speed               & 0x0F);
                     hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
+
                     break;
                 case PeripheralDeviceTypes.PrinterDevice:
                     hdr[2] += (byte)((header.BufferedMode << 4) & 0x70);
+
                     break;
                 case PeripheralDeviceTypes.OpticalDevice:
-                    if(header.WriteProtected) hdr[2] += 0x80;
-                    if(header.EBC) hdr[2]            += 0x01;
-                    if(header.DPOFUA) hdr[2]         += 0x10;
+                    if(header.WriteProtected)
+                        hdr[2] += 0x80;
+
+                    if(header.EBC)
+                        hdr[2] += 0x01;
+
+                    if(header.DPOFUA)
+                        hdr[2] += 0x10;
+
                     break;
             }
 
-            if(header.BlockDescriptors == null) return hdr;
+            if(header.BlockDescriptors == null)
+                return hdr;
 
             hdr[3] = (byte)(header.BlockDescriptors.Length * 8);
 
@@ -208,8 +246,10 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static byte[] EncodeMode6(DecodedMode mode, PeripheralDeviceTypes deviceType)
         {
-            int modeSize                    = 0;
-            if(mode.Pages != null) modeSize += mode.Pages.Sum(page => page.PageResponse.Length);
+            int modeSize = 0;
+
+            if(mode.Pages != null)
+                modeSize += mode.Pages.Sum(page => page.PageResponse.Length);
 
             byte[] hdr = EncodeModeHeader6(mode.Header, deviceType);
             modeSize += hdr.Length;
@@ -217,10 +257,12 @@ namespace DiscImageChef.Decoders.SCSI
 
             Array.Copy(hdr, 0, md, 0, hdr.Length);
 
-            if(mode.Pages == null) return md;
+            if(mode.Pages == null)
+                return md;
 
             {
                 int offset = hdr.Length;
+
                 foreach(ModePage page in mode.Pages)
                 {
                     Array.Copy(page.PageResponse, 0, md, offset, page.PageResponse.Length);

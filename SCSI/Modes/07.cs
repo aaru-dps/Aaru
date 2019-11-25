@@ -35,65 +35,47 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x07: Verify error recovery page
-        /// <summary>
-        ///     Disconnect-reconnect page
-        ///     Page code 0x07
-        ///     12 bytes in SCSI-2, SBC-1, SBC-2
-        /// </summary>
+        /// <summary>Disconnect-reconnect page Page code 0x07 12 bytes in SCSI-2, SBC-1, SBC-2</summary>
         public struct ModePage_07
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
-            /// <summary>
-            ///     Enable early recovery
-            /// </summary>
+            /// <summary>Enable early recovery</summary>
             public bool EER;
-            /// <summary>
-            ///     Post error reporting
-            /// </summary>
+            /// <summary>Post error reporting</summary>
             public bool PER;
-            /// <summary>
-            ///     Disable transfer on error
-            /// </summary>
+            /// <summary>Disable transfer on error</summary>
             public bool DTE;
-            /// <summary>
-            ///     Disable correction
-            /// </summary>
+            /// <summary>Disable correction</summary>
             public bool DCR;
-            /// <summary>
-            ///     How many times to retry a verify operation
-            /// </summary>
+            /// <summary>How many times to retry a verify operation</summary>
             public byte VerifyRetryCount;
-            /// <summary>
-            ///     How many bits of largest data burst error is maximum to apply error correction on it
-            /// </summary>
+            /// <summary>How many bits of largest data burst error is maximum to apply error correction on it</summary>
             public byte CorrectionSpan;
-            /// <summary>
-            ///     Maximum time in ms to use in data error recovery procedures
-            /// </summary>
+            /// <summary>Maximum time in ms to use in data error recovery procedures</summary>
             public ushort RecoveryTimeLimit;
         }
 
         public static ModePage_07? DecodeModePage_07(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x07) return null;
+            if((pageResponse?[0] & 0x3F) != 0x07)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length < 12) return null;
+            if(pageResponse.Length < 12)
+                return null;
 
-            ModePage_07 decoded = new ModePage_07();
+            var decoded = new ModePage_07();
 
             decoded.PS  |= (pageResponse[0] & 0x80) == 0x80;
             decoded.EER |= (pageResponse[2] & 0x08) == 0x08;
@@ -113,24 +95,35 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_07(ModePage_07? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
-            ModePage_07   page = modePage.Value;
-            StringBuilder sb   = new StringBuilder();
+            ModePage_07 page = modePage.Value;
+            var         sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Verify error recovery page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
-            if(page.EER) sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
-            if(page.PER) sb.AppendLine("\tDrive shall report recovered errors");
-            if(page.DTE) sb.AppendLine("\tTransfer will be terminated upon error detection");
-            if(page.DCR) sb.AppendLine("\tError correction is disabled");
+            if(page.EER)
+                sb.AppendLine("\tDrive will use the most expedient form of error recovery first");
+
+            if(page.PER)
+                sb.AppendLine("\tDrive shall report recovered errors");
+
+            if(page.DTE)
+                sb.AppendLine("\tTransfer will be terminated upon error detection");
+
+            if(page.DCR)
+                sb.AppendLine("\tError correction is disabled");
+
             if(page.VerifyRetryCount > 0)
                 sb.AppendFormat("\tDrive will repeat verify operations {0} times", page.VerifyRetryCount).AppendLine();
+
             if(page.RecoveryTimeLimit > 0)
-                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit)
-                  .AppendLine();
+                sb.AppendFormat("\tDrive will employ a maximum of {0} ms to recover data", page.RecoveryTimeLimit).
+                   AppendLine();
 
             return sb.ToString();
         }

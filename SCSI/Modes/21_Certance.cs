@@ -35,17 +35,14 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Certance Mode Page 0x21: Drive Capabilities Control Mode page
         public struct Certance_ModePage_21
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
             public byte OperatingSystemsSupport;
             public byte FirmwareTestControl2;
@@ -59,15 +56,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Certance_ModePage_21? DecodeCertanceModePage_21(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x21) return null;
+            if((pageResponse?[0] & 0x3F) != 0x21)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length != 9) return null;
+            if(pageResponse.Length != 9)
+                return null;
 
-            Certance_ModePage_21 decoded = new Certance_ModePage_21();
+            var decoded = new Certance_ModePage_21();
 
             decoded.PS                      |= (pageResponse[0] & 0x80) == 0x80;
             decoded.OperatingSystemsSupport =  pageResponse[2];
@@ -87,23 +88,27 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyCertanceModePage_21(Certance_ModePage_21? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             Certance_ModePage_21 page = modePage.Value;
-            StringBuilder        sb   = new StringBuilder();
+            var                  sb   = new StringBuilder();
 
             sb.AppendLine("Certance Drive Capabilities Control Mode Page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
             switch(page.OperatingSystemsSupport)
             {
                 case 0:
                     sb.AppendLine("\tOperating systems support is standard LTO");
+
                     break;
                 default:
-                    sb.AppendFormat("\tOperating systems support is unknown code {0}", page.OperatingSystemsSupport)
-                      .AppendLine();
+                    sb.AppendFormat("\tOperating systems support is unknown code {0}", page.OperatingSystemsSupport).
+                       AppendLine();
+
                     break;
             }
 
@@ -112,15 +117,19 @@ namespace DiscImageChef.Decoders.SCSI
                 {
                     case 0:
                         sb.AppendLine("\tFactory test code is disabled");
+
                         break;
                     case 1:
                         sb.AppendLine("\tFactory test code 1 is disabled");
+
                         break;
                     case 2:
                         sb.AppendLine("\tFactory test code 2 is disabled");
+
                         break;
                     default:
                         sb.AppendFormat("\tUnknown factory test code {0}", page.FirmwareTestControl).AppendLine();
+
                         break;
                 }
 
@@ -128,12 +137,15 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case 0:
                     sb.AppendLine("\tPower-On Self-Test is enabled");
+
                     break;
                 case 1:
                     sb.AppendLine("\tPower-On Self-Test is disable");
+
                     break;
                 default:
                     sb.AppendFormat("\tUnknown Power-On Self-Test code {0}", page.ExtendedPOSTMode).AppendLine();
+
                     break;
             }
 
@@ -141,37 +153,48 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case 0:
                     sb.AppendLine("\tCompression is controlled using mode pages 0Fh and 10h");
+
                     break;
                 case 1:
                     sb.AppendLine("\tCompression is enabled and not controllable");
+
                     break;
                 case 2:
                     sb.AppendLine("\tCompression is disabled and not controllable");
+
                     break;
                 default:
                     sb.AppendFormat("\tUnknown compression control code {0}", page.DataCompressionControl).AppendLine();
+
                     break;
             }
 
-            if(page.HostUnloadOverride) sb.AppendLine("\tSCSI UNLOAD command will not eject the cartridge");
+            if(page.HostUnloadOverride)
+                sb.AppendLine("\tSCSI UNLOAD command will not eject the cartridge");
 
             sb.Append("\tHow should tapes be unloaded in a power cycle, tape incompatibility, firmware download or cleaning end: ");
+
             switch(page.AutoUnloadMode)
             {
                 case 0:
                     sb.AppendLine("\tTape will stay threaded at beginning");
+
                     break;
                 case 1:
                     sb.AppendLine("\tTape will be unthreaded");
+
                     break;
                 case 2:
                     sb.AppendLine("\tTape will be unthreaded and unloaded");
+
                     break;
                 case 3:
                     sb.AppendLine("\tData tapes will be threaded at beginning, rest will be unloaded");
+
                     break;
                 default:
                     sb.AppendFormat("\tUnknown auto unload code {0}", page.AutoUnloadMode).AppendLine();
+
                     break;
             }
 

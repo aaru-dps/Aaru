@@ -42,138 +42,35 @@ namespace DiscImageChef.Decoders.Floppy
     // Information from:
     // Inside Macintosh, Volume II, ISBN 0-201-17732-3
 
-    /// <summary>
-    ///     Methods and structures for Apple Sony GCR floppy decoding
-    /// </summary>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    /// <summary>Methods and structures for Apple Sony GCR floppy decoding</summary>
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static class AppleSony
     {
-        /// <summary>
-        ///     GCR-encoded Apple Sony GCR floppy track
-        /// </summary>
-        public class RawTrack
-        {
-            /// <summary>
-            ///     Track preamble, set to self-sync 0xFF, 36 bytes
-            /// </summary>
-            public byte[] gap;
-            public RawSector[] sectors;
-        }
-
-        /// <summary>
-        ///     GCR-encoded Apple Sony GCR floppy sector
-        /// </summary>
-        public class RawSector
-        {
-            /// <summary>
-            ///     Address field
-            /// </summary>
-            public RawAddressField addressField;
-            /// <summary>
-            ///     Data field
-            /// </summary>
-            public RawDataField dataField;
-            /// <summary>
-            ///     Track preamble, set to self-sync 0xFF, unknown size
-            /// </summary>
-            public byte[] gap;
-            /// <summary>
-            ///     Track preamble, set to self-sync 0xFF, 6 bytes
-            /// </summary>
-            public byte[] innerGap;
-        }
-
-        /// <summary>
-        ///     GCR-encoded Apple Sony GCR floppy sector address field
-        /// </summary>
-        public class RawAddressField
-        {
-            /// <summary>
-            ///     Checksum
-            /// </summary>
-            public byte checksum;
-            /// <summary>
-            ///     Always 0xDE, 0xAA
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] epilogue;
-            /// <summary>
-            ///     Disk format
-            /// </summary>
-            public AppleEncodedFormat format;
-            /// <summary>
-            ///     Always 0xD5, 0xAA, 0x96
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] prologue;
-            /// <summary>
-            ///     Encoded sector number
-            /// </summary>
-            public byte sector;
-            /// <summary>
-            ///     Encoded side number
-            /// </summary>
-            public byte side;
-            /// <summary>
-            ///     Encoded (decodedTrack &amp; 0x3F)
-            /// </summary>
-            public byte track;
-        }
-
-        /// <summary>
-        ///     GCR-encoded Apple ][ GCR floppy sector data field
-        /// </summary>
-        public class RawDataField
-        {
-            /// <summary>
-            ///     Checksum
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public byte[] checksum;
-            /// <summary>
-            ///     Encoded data bytes.
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 698)]
-            public byte[] data;
-            /// <summary>
-            ///     Always 0xDE, 0xAA
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public byte[] epilogue;
-            /// <summary>
-            ///     Always 0xD5, 0xAA, 0xAD
-            /// </summary>
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            public byte[] prologue;
-            /// <summary>
-            ///     Spare, usually <see cref="RawAddressField.sector" />
-            /// </summary>
-            public byte spare;
-        }
-
         public static byte[] DecodeSector(RawSector sector)
         {
-            if(sector.addressField.prologue[0] != 0xD5 || sector.addressField.prologue[1] != 0xAA ||
-               sector.addressField.prologue[2] != 0x96) return null;
+            if(sector.addressField.prologue[0] != 0xD5 ||
+               sector.addressField.prologue[1] != 0xAA ||
+               sector.addressField.prologue[2] != 0x96)
+                return null;
 
-            byte[]       bf1      = new byte[175];
-            byte[]       bf2      = new byte[175];
-            byte[]       bf3      = new byte[175];
-            byte[]       nib_data = sector.dataField.data;
-            MemoryStream ms       = new MemoryStream();
+            byte[] bf1      = new byte[175];
+            byte[] bf2      = new byte[175];
+            byte[] bf3      = new byte[175];
+            byte[] nib_data = sector.dataField.data;
+            var    ms       = new MemoryStream();
 
             int  j  = 0;
             byte w3 = 0;
+
             for(int i = 0; i <= 174; i++)
             {
                 byte w4 = nib_data[j++];
                 byte w1 = nib_data[j++];
                 byte w2 = nib_data[j++];
 
-                if(i != 174) w3 = nib_data[j++];
+                if(i != 174)
+                    w3 = nib_data[j++];
 
                 bf1[i] = (byte)(((w1 & 0x3F) | ((w4 << 2) & 0xC0)) & 0x0F);
                 bf2[i] = (byte)(((w2 & 0x3F) | ((w4 << 4) & 0xC0)) & 0x0F);
@@ -184,13 +81,17 @@ namespace DiscImageChef.Decoders.Floppy
             uint ck1 = 0;
             uint ck2 = 0;
             uint ck3 = 0;
+
             while(true)
             {
                 ck1 = (ck1 & 0xFF) << 1;
-                if((ck1 & 0x0100) > 0) ck1++;
+
+                if((ck1 & 0x0100) > 0)
+                    ck1++;
 
                 byte carry = (byte)((bf1[j] ^ ck1) & 0xFF);
                 ck3 += carry;
+
                 if((ck1 & 0x0100) > 0)
                 {
                     ck3++;
@@ -201,6 +102,7 @@ namespace DiscImageChef.Decoders.Floppy
 
                 carry =  (byte)((bf2[j] ^ ck3) & 0xFF);
                 ck2   += carry;
+
                 if(ck3 > 0xFF)
                 {
                     ck2++;
@@ -209,10 +111,12 @@ namespace DiscImageChef.Decoders.Floppy
 
                 ms.WriteByte(carry);
 
-                if(ms.Length == 524) break;
+                if(ms.Length == 524)
+                    break;
 
                 carry =  (byte)((bf3[j] ^ ck2) & 0xFF);
                 ck1   += carry;
+
                 if(ck2 > 0xFF)
                 {
                     ck1++;
@@ -235,7 +139,9 @@ namespace DiscImageChef.Decoders.Floppy
             endOffset = offset;
 
             // Not an Apple ][ GCR sector
-            if(data == null || data.Length < 363) return null;
+            if(data        == null ||
+               data.Length < 363)
+                return null;
 
             int position = offset;
 
@@ -244,29 +150,37 @@ namespace DiscImageChef.Decoders.Floppy
                 while(position < data.Length)
                 {
                     // Prologue found
-                    if(data[position] == 0xD5 && data[position + 1] == 0xAA && data[position + 2] == 0x96)
+                    if(data[position]     == 0xD5 &&
+                       data[position + 1] == 0xAA &&
+                       data[position + 2] == 0x96)
                     {
                         // Epilogue not in correct position
-                        if(data[position + 8] != 0xDE || data[position + 9] != 0xAA) return null;
+                        if(data[position + 8] != 0xDE ||
+                           data[position + 9] != 0xAA)
+                            return null;
 
-                        RawSector sector = new RawSector
+                        var sector = new RawSector
                         {
                             addressField = new RawAddressField
                             {
-                                prologue = new[] {data[position], data[position + 1], data[position + 2]},
-                                track    = data[position + 3],
-                                sector   = data[position + 4],
-                                side     = data[position + 5],
-                                format   = (AppleEncodedFormat)data[position + 6],
-                                checksum = data[position + 7],
-                                epilogue = new[] {data[position + 8], data[position + 9]}
+                                prologue = new[]
+                                {
+                                    data[position], data[position + 1], data[position + 2]
+                                },
+                                track  = data[position                                                    + 3], sector = data[position + 4],
+                                side   = data[position                                                    + 5],
+                                format = (AppleEncodedFormat)data[position + 6], checksum = data[position + 7],
+                                epilogue = new[]
+                                {
+                                    data[position + 8], data[position + 9]
+                                }
                             }
                         };
 
                         position += 10;
-                        int          syncCount = 0;
-                        bool         onSync    = false;
-                        MemoryStream gaps      = new MemoryStream();
+                        int  syncCount = 0;
+                        bool onSync    = false;
+                        var  gaps      = new MemoryStream();
 
                         while(data[position] == 0xFF)
                         {
@@ -277,29 +191,40 @@ namespace DiscImageChef.Decoders.Floppy
                         }
 
                         // Lost sync
-                        if(!onSync) return null;
+                        if(!onSync)
+                            return null;
 
                         // Prologue not found
-                        if(data[position] != 0xDE || data[position + 1] != 0xAA || data[position + 2] != 0xAD)
+                        if(data[position]     != 0xDE ||
+                           data[position + 1] != 0xAA ||
+                           data[position + 2] != 0xAD)
                             return null;
 
                         sector.innerGap = gaps.ToArray();
+
                         sector.dataField = new RawDataField
                         {
-                            prologue = new[] {data[position], data[position + 1], data[position + 2]},
-                            spare    = data[position + 3]
+                            prologue = new[]
+                            {
+                                data[position], data[position + 1], data[position + 2]
+                            },
+                            spare = data[position + 3]
                         };
+
                         position += 4;
 
                         gaps = new MemoryStream();
+
                         // Read data until epilogue is found
-                        while(data[position + 4] != 0xD5 || data[position + 5] != 0xAA)
+                        while(data[position + 4] != 0xD5 ||
+                              data[position + 5] != 0xAA)
                         {
                             gaps.WriteByte(data[position]);
                             position++;
 
                             // No space left for epilogue
-                            if(position + 7 > data.Length) return null;
+                            if(position + 7 > data.Length)
+                                return null;
                         }
 
                         sector.dataField.data        = gaps.ToArray();
@@ -314,8 +239,10 @@ namespace DiscImageChef.Decoders.Floppy
 
                         position += 7;
                         gaps     =  new MemoryStream();
+
                         // Read gap, if any
-                        while(position < data.Length && data[position] == 0xFF)
+                        while(position       < data.Length &&
+                              data[position] == 0xFF)
                         {
                             gaps.WriteByte(data[position]);
                             position++;
@@ -329,26 +256,35 @@ namespace DiscImageChef.Decoders.Floppy
                         }
 
                         sector.gap = gaps.ToArray();
+
                         // Return current position to be able to read separate sectors
                         endOffset = position;
+
                         return sector;
                     }
 
-                    if(data[position] == 0xFF) position++;
+                    if(data[position] == 0xFF)
+                        position++;
+
                     // Found data that is not sync or a prologue
-                    else return null;
+                    else
+                        return null;
                 }
             }
-            catch(IndexOutOfRangeException) { return null; }
+            catch(IndexOutOfRangeException)
+            {
+                return null;
+            }
 
             return null;
         }
 
         public static byte[] MarshalAddressField(RawAddressField addressField)
         {
-            if(addressField == null) return null;
+            if(addressField == null)
+                return null;
 
-            MemoryStream raw = new MemoryStream();
+            var raw = new MemoryStream();
             raw.Write(addressField.prologue, 0, addressField.prologue.Length);
             raw.WriteByte(addressField.track);
             raw.WriteByte(addressField.sector);
@@ -361,22 +297,23 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] MarshalSector(RawSector sector)
         {
-            if(sector == null) return null;
+            if(sector == null)
+                return null;
 
-            MemoryStream raw = new MemoryStream();
+            var raw = new MemoryStream();
             raw.Write(sector.addressField.prologue, 0, sector.addressField.prologue.Length);
             raw.WriteByte(sector.addressField.track);
             raw.WriteByte(sector.addressField.sector);
             raw.WriteByte(sector.addressField.side);
             raw.WriteByte((byte)sector.addressField.format);
             raw.WriteByte(sector.addressField.checksum);
-            raw.Write(sector.innerGap,           0, sector.innerGap.Length);
+            raw.Write(sector.innerGap, 0, sector.innerGap.Length);
             raw.Write(sector.dataField.prologue, 0, sector.dataField.prologue.Length);
             raw.WriteByte(sector.dataField.spare);
-            raw.Write(sector.dataField.data,     0, sector.dataField.data.Length);
+            raw.Write(sector.dataField.data, 0, sector.dataField.data.Length);
             raw.Write(sector.dataField.checksum, 0, sector.dataField.checksum.Length);
             raw.Write(sector.dataField.epilogue, 0, sector.dataField.epilogue.Length);
-            raw.Write(sector.gap,                0, sector.gap.Length);
+            raw.Write(sector.gap, 0, sector.gap.Length);
 
             return raw.ToArray();
         }
@@ -388,14 +325,15 @@ namespace DiscImageChef.Decoders.Floppy
             int             position    = offset;
             bool            firstSector = true;
             bool            onSync      = false;
-            MemoryStream    gaps        = new MemoryStream();
+            var             gaps        = new MemoryStream();
             int             count       = 0;
             List<RawSector> sectors     = new List<RawSector>();
             byte            trackNumber = 0;
             byte            sideNumber  = 0;
             endOffset = offset;
 
-            while(position < data.Length && data[position] == 0xFF)
+            while(position       < data.Length &&
+                  data[position] == 0xFF)
             {
                 gaps.WriteByte(data[position]);
                 count++;
@@ -403,15 +341,19 @@ namespace DiscImageChef.Decoders.Floppy
                 onSync = count >= 5;
             }
 
-            if(position >= data.Length) return null;
+            if(position >= data.Length)
+                return null;
 
-            if(!onSync) return null;
+            if(!onSync)
+                return null;
 
             while(position < data.Length)
             {
                 int       oldPosition = position;
                 RawSector sector      = MarshalSector(data, out position, position);
-                if(sector == null) break;
+
+                if(sector == null)
+                    break;
 
                 if(firstSector)
                 {
@@ -420,29 +362,40 @@ namespace DiscImageChef.Decoders.Floppy
                     firstSector = false;
                 }
 
-                if(sector.addressField.track != trackNumber || sector.addressField.side != sideNumber)
+                if(sector.addressField.track != trackNumber ||
+                   sector.addressField.side  != sideNumber)
                 {
                     position = oldPosition;
+
                     break;
                 }
 
                 sectors.Add(sector);
             }
 
-            if(sectors.Count == 0) return null;
+            if(sectors.Count == 0)
+                return null;
 
-            RawTrack track = new RawTrack {gap = gaps.ToArray(), sectors = sectors.ToArray()};
+            var track = new RawTrack
+            {
+                gap = gaps.ToArray(), sectors = sectors.ToArray()
+            };
+
             endOffset = position;
+
             return track;
         }
 
         public static byte[] MarshalTrack(RawTrack track)
         {
-            if(track == null) return null;
+            if(track == null)
+                return null;
 
-            MemoryStream raw = new MemoryStream();
+            var raw = new MemoryStream();
             raw.Write(track.gap, 0, track.gap.Length);
-            foreach(byte[] rawSector in track.sectors.Select(MarshalSector)) raw.Write(rawSector, 0, rawSector.Length);
+
+            foreach(byte[] rawSector in track.sectors.Select(MarshalSector))
+                raw.Write(rawSector, 0, rawSector.Length);
 
             return raw.ToArray();
         }
@@ -456,15 +409,18 @@ namespace DiscImageChef.Decoders.Floppy
             int            position = offset;
 
             RawTrack track = MarshalTrack(data, out position, position);
+
             while(track != null)
             {
                 tracks.Add(track);
                 track = MarshalTrack(data, out position, position);
             }
 
-            if(tracks.Count == 0) return null;
+            if(tracks.Count == 0)
+                return null;
 
             endOffset = position;
+
             return tracks;
         }
 
@@ -472,10 +428,13 @@ namespace DiscImageChef.Decoders.Floppy
 
         public static byte[] MarshalDisk(RawTrack[] disk)
         {
-            if(disk == null) return null;
+            if(disk == null)
+                return null;
 
-            MemoryStream raw = new MemoryStream();
-            foreach(byte[] rawTrack in disk.Select(MarshalTrack)) raw.Write(rawTrack, 0, rawTrack.Length);
+            var raw = new MemoryStream();
+
+            foreach(byte[] rawTrack in disk.Select(MarshalTrack))
+                raw.Write(rawTrack, 0, rawTrack.Length);
 
             return raw.ToArray();
         }
@@ -485,6 +444,67 @@ namespace DiscImageChef.Decoders.Floppy
             RawSector sector = MarshalSector(data, out int position);
 
             return sector != null && position != 0;
+        }
+
+        /// <summary>GCR-encoded Apple Sony GCR floppy track</summary>
+        public class RawTrack
+        {
+            /// <summary>Track preamble, set to self-sync 0xFF, 36 bytes</summary>
+            public byte[] gap;
+            public RawSector[] sectors;
+        }
+
+        /// <summary>GCR-encoded Apple Sony GCR floppy sector</summary>
+        public class RawSector
+        {
+            /// <summary>Address field</summary>
+            public RawAddressField addressField;
+            /// <summary>Data field</summary>
+            public RawDataField dataField;
+            /// <summary>Track preamble, set to self-sync 0xFF, unknown size</summary>
+            public byte[] gap;
+            /// <summary>Track preamble, set to self-sync 0xFF, 6 bytes</summary>
+            public byte[] innerGap;
+        }
+
+        /// <summary>GCR-encoded Apple Sony GCR floppy sector address field</summary>
+        public class RawAddressField
+        {
+            /// <summary>Checksum</summary>
+            public byte checksum;
+            /// <summary>Always 0xDE, 0xAA</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] epilogue;
+            /// <summary>Disk format</summary>
+            public AppleEncodedFormat format;
+            /// <summary>Always 0xD5, 0xAA, 0x96</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] prologue;
+            /// <summary>Encoded sector number</summary>
+            public byte sector;
+            /// <summary>Encoded side number</summary>
+            public byte side;
+            /// <summary>Encoded (decodedTrack &amp; 0x3F)</summary>
+            public byte track;
+        }
+
+        /// <summary>GCR-encoded Apple ][ GCR floppy sector data field</summary>
+        public class RawDataField
+        {
+            /// <summary>Checksum</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public byte[] checksum;
+            /// <summary>Encoded data bytes.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 698)]
+            public byte[] data;
+            /// <summary>Always 0xDE, 0xAA</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] epilogue;
+            /// <summary>Always 0xD5, 0xAA, 0xAD</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public byte[] prologue;
+            /// <summary>Spare, usually <see cref="RawAddressField.sector" /></summary>
+            public byte spare;
         }
     }
 }

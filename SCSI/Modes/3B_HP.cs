@@ -36,17 +36,14 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region HP Mode Page 0x3B: Serial Number Override Mode page
         public struct HP_ModePage_3B
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
             public byte   MSN;
             public byte[] SerialNumber;
@@ -54,15 +51,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static HP_ModePage_3B? DecodeHPModePage_3B(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x3B) return null;
+            if((pageResponse?[0] & 0x3F) != 0x3B)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length != 16) return null;
+            if(pageResponse.Length != 16)
+                return null;
 
-            HP_ModePage_3B decoded = new HP_ModePage_3B();
+            var decoded = new HP_ModePage_3B();
 
             decoded.PS           |= (pageResponse[0]       & 0x80) == 0x80;
             decoded.MSN          =  (byte)(pageResponse[2] & 0x03);
@@ -77,22 +78,26 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyHPModePage_3B(HP_ModePage_3B? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             HP_ModePage_3B page = modePage.Value;
-            StringBuilder  sb   = new StringBuilder();
+            var            sb   = new StringBuilder();
 
             sb.AppendLine("HP Serial Number Override Mode Page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
             switch(page.MSN)
             {
                 case 1:
                     sb.AppendLine("\tSerial number is the manufacturer's default value");
+
                     break;
                 case 3:
                     sb.AppendLine("\tSerial number is not the manufacturer's default value");
+
                     break;
             }
 

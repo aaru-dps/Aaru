@@ -35,18 +35,14 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]
     public static partial class Modes
     {
         #region Certance Mode Page 0x22: Interface Control Mode Page
         public struct Certance_ModePage_22
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
             public byte BaudRate;
             public byte CmdFwd;
@@ -63,15 +59,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static Certance_ModePage_22? DecodeCertanceModePage_22(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x22) return null;
+            if((pageResponse?[0] & 0x3F) != 0x22)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length != 16) return null;
+            if(pageResponse.Length != 16)
+                return null;
 
-            Certance_ModePage_22 decoded = new Certance_ModePage_22();
+            var decoded = new Certance_ModePage_22();
 
             decoded.PS                        |= (pageResponse[0] & 0x80) == 0x80;
             decoded.BaudRate                  =  pageResponse[2];
@@ -94,14 +94,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyCertanceModePage_22(Certance_ModePage_22? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             Certance_ModePage_22 page = modePage.Value;
-            StringBuilder        sb   = new StringBuilder();
+            var                  sb   = new StringBuilder();
 
             sb.AppendLine("Certance Interface Control Mode Page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
             switch(page.BaudRate)
             {
@@ -109,38 +111,46 @@ namespace DiscImageChef.Decoders.SCSI
                 case 1:
                 case 2:
                     sb.AppendLine("\tLibrary interface will operate at 9600 baud on next reset");
+
                     break;
                 case 3:
                     sb.AppendLine("\tLibrary interface will operate at 19200 baud on next reset");
+
                     break;
                 case 4:
                     sb.AppendLine("\tLibrary interface will operate at 38400 baud on next reset");
+
                     break;
                 case 5:
                     sb.AppendLine("\tLibrary interface will operate at 57600 baud on next reset");
+
                     break;
                 case 6:
                     sb.AppendLine("\tLibrary interface will operate at 115200 baud on next reset");
+
                     break;
                 default:
                     sb.AppendFormat("\tUnknown library interface baud rate code {0}", page.BaudRate).AppendLine();
+
                     break;
             }
 
-            sb.AppendLine(page.StopBits
-                              ? "Library interface transmits 2 stop bits per byte"
+            sb.AppendLine(page.StopBits ? "Library interface transmits 2 stop bits per byte"
                               : "Library interface transmits 1 stop bits per byte");
 
             switch(page.CmdFwd)
             {
                 case 0:
                     sb.AppendLine("\tCommand forwarding is disabled");
+
                     break;
                 case 1:
                     sb.AppendLine("\tCommand forwarding is enabled");
+
                     break;
                 default:
                     sb.AppendFormat("\tUnknown command forwarding code {0}", page.CmdFwd).AppendLine();
+
                     break;
             }
 
@@ -148,26 +158,29 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case 0:
                     sb.AppendLine("\tPort A link is down");
+
                     break;
                 case 3:
                     sb.AppendLine("\tPort A uses Parallel SCSI Ultra-160 interface");
+
                     break;
                 default:
                     sb.AppendFormat("\tUnknown port A transport type code {0}", page.PortATransportType).AppendLine();
+
                     break;
             }
 
             if(page.PortATransportType > 0)
                 sb.AppendFormat("\tDrive responds to SCSI ID {0}", page.PortAPresentSelectionID).AppendLine();
 
-            sb.AppendFormat("\tDrive will respond to SCSI ID {0} on Port A enabling", page.NextSelectionID)
-              .AppendLine();
+            sb.AppendFormat("\tDrive will respond to SCSI ID {0} on Port A enabling", page.NextSelectionID).
+               AppendLine();
+
             sb.AppendFormat("\tDrive jumpers choose SCSI ID {0}", page.JumperedSelectionID).AppendLine();
 
             sb.AppendLine(page.PortAEnabled ? "\tSCSI port is enabled" : "\tSCSI port is disabled");
 
-            sb.AppendLine(page.PortAEnabledOnPower
-                              ? "\tSCSI port will be enabled on next power up"
+            sb.AppendLine(page.PortAEnabledOnPower ? "\tSCSI port will be enabled on next power up"
                               : "\tSCSI port will be disabled on next power up");
 
             return sb.ToString();

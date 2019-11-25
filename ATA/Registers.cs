@@ -66,8 +66,8 @@ namespace DiscImageChef.Decoders.ATA
         public ushort LbaLow;
         public ushort LbaMid;
         public ushort LbaHigh;
-        public byte DeviceHead;
-        public byte Command;
+        public byte   DeviceHead;
+        public byte   Command;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -97,12 +97,12 @@ namespace DiscImageChef.Decoders.ATA
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaErrorRegistersLba48
     {
-        public byte Status;
-        public byte Error;
+        public byte   Status;
+        public byte   Error;
         public ushort SectorCount;
         public ushort LbaLow;
         public ushort LbaMid;
         public ushort LbaHigh;
-        public byte DeviceHead;
+        public byte   DeviceHead;
     }
 }

@@ -35,42 +35,40 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Pages 0x12, 0x13, 0x14: Medium partition page (2-4)
-        /// <summary>
-        ///     Medium partition page (2-4)
-        ///     Page codes 0x12, 0x13 and 0x14
-        /// </summary>
+        /// <summary>Medium partition page (2-4) Page codes 0x12, 0x13 and 0x14</summary>
         public struct ModePage_12_13_14
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
-            /// <summary>
-            ///     Array of partition sizes in units defined in mode page 11
-            /// </summary>
+            /// <summary>Array of partition sizes in units defined in mode page 11</summary>
             public ushort[] PartitionSizes;
         }
 
         public static ModePage_12_13_14? DecodeModePage_12_13_14(byte[] pageResponse)
         {
-            if(pageResponse == null) return null;
+            if(pageResponse == null)
+                return null;
 
-            if((pageResponse[0] & 0x40) == 0x40) return null;
+            if((pageResponse[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse[0] & 0x3F) != 0x12 && (pageResponse[0] & 0x3F) != 0x13 &&
-               (pageResponse[0] & 0x3F) != 0x14) return null;
+            if((pageResponse[0] & 0x3F) != 0x12 &&
+               (pageResponse[0] & 0x3F) != 0x13 &&
+               (pageResponse[0] & 0x3F) != 0x14)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length < 2) return null;
+            if(pageResponse.Length < 2)
+                return null;
 
-            ModePage_12_13_14 decoded = new ModePage_12_13_14();
+            var decoded = new ModePage_12_13_14();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
@@ -90,14 +88,16 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_12_13_14(ModePage_12_13_14? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             ModePage_12_13_14 page = modePage.Value;
-            StringBuilder     sb   = new StringBuilder();
+            var               sb   = new StringBuilder();
 
             sb.AppendLine("SCSI medium partition page (extra):");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\tMedium has defined {0} partitions", page.PartitionSizes.Length).AppendLine();
 

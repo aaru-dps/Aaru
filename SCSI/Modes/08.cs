@@ -35,104 +35,56 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x08: Caching page
-        /// <summary>
-        ///     Disconnect-reconnect page
-        ///     Page code 0x08
-        ///     12 bytes in SCSI-2
-        ///     20 bytes in SBC-1, SBC-2, SBC-3
-        /// </summary>
+        /// <summary>Disconnect-reconnect page Page code 0x08 12 bytes in SCSI-2 20 bytes in SBC-1, SBC-2, SBC-3</summary>
         public struct ModePage_08
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
-            /// <summary>
-            ///     <c>true</c> if write cache is enabled
-            /// </summary>
+            /// <summary><c>true</c> if write cache is enabled</summary>
             public bool WCE;
-            /// <summary>
-            ///     Multiplication factor
-            /// </summary>
+            /// <summary>Multiplication factor</summary>
             public bool MF;
-            /// <summary>
-            ///     <c>true</c> if read cache is enabled
-            /// </summary>
+            /// <summary><c>true</c> if read cache is enabled</summary>
             public bool RCD;
-            /// <summary>
-            ///     Advices on reading-cache retention priority
-            /// </summary>
+            /// <summary>Advices on reading-cache retention priority</summary>
             public byte DemandReadRetentionPrio;
-            /// <summary>
-            ///     Advices on writing-cache retention priority
-            /// </summary>
+            /// <summary>Advices on writing-cache retention priority</summary>
             public byte WriteRetentionPriority;
-            /// <summary>
-            ///     If requested read blocks are more than this, no pre-fetch is done
-            /// </summary>
+            /// <summary>If requested read blocks are more than this, no pre-fetch is done</summary>
             public ushort DisablePreFetch;
-            /// <summary>
-            ///     Minimum pre-fetch
-            /// </summary>
+            /// <summary>Minimum pre-fetch</summary>
             public ushort MinimumPreFetch;
-            /// <summary>
-            ///     Maximum pre-fetch
-            /// </summary>
+            /// <summary>Maximum pre-fetch</summary>
             public ushort MaximumPreFetch;
-            /// <summary>
-            ///     Upper limit on maximum pre-fetch value
-            /// </summary>
+            /// <summary>Upper limit on maximum pre-fetch value</summary>
             public ushort MaximumPreFetchCeiling;
 
-            /// <summary>
-            ///     Manual cache controlling
-            /// </summary>
+            /// <summary>Manual cache controlling</summary>
             public bool IC;
-            /// <summary>
-            ///     Abort pre-fetch
-            /// </summary>
+            /// <summary>Abort pre-fetch</summary>
             public bool ABPF;
-            /// <summary>
-            ///     Caching analysis permitted
-            /// </summary>
+            /// <summary>Caching analysis permitted</summary>
             public bool CAP;
-            /// <summary>
-            ///     Pre-fetch over discontinuities
-            /// </summary>
+            /// <summary>Pre-fetch over discontinuities</summary>
             public bool Disc;
-            /// <summary>
-            ///     <see cref="CacheSegmentSize" /> is to be used to control caching segmentation
-            /// </summary>
+            /// <summary><see cref="CacheSegmentSize" /> is to be used to control caching segmentation</summary>
             public bool Size;
-            /// <summary>
-            ///     Force sequential write
-            /// </summary>
+            /// <summary>Force sequential write</summary>
             public bool FSW;
-            /// <summary>
-            ///     Logical block cache segment size
-            /// </summary>
+            /// <summary>Logical block cache segment size</summary>
             public bool LBCSS;
-            /// <summary>
-            ///     Disable read-ahead
-            /// </summary>
+            /// <summary>Disable read-ahead</summary>
             public bool DRA;
-            /// <summary>
-            ///     How many segments should the cache be divided upon
-            /// </summary>
+            /// <summary>How many segments should the cache be divided upon</summary>
             public byte CacheSegments;
-            /// <summary>
-            ///     How many bytes should the cache be divided upon
-            /// </summary>
+            /// <summary>How many bytes should the cache be divided upon</summary>
             public ushort CacheSegmentSize;
-            /// <summary>
-            ///     How many bytes should be used as a buffer when all other cached data cannot be evicted
-            /// </summary>
+            /// <summary>How many bytes should be used as a buffer when all other cached data cannot be evicted</summary>
             public uint NonCacheSegmentSize;
 
             public bool NV_DIS;
@@ -140,15 +92,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static ModePage_08? DecodeModePage_08(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x08) return null;
+            if((pageResponse?[0] & 0x3F) != 0x08)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length < 12) return null;
+            if(pageResponse.Length < 12)
+                return null;
 
-            ModePage_08 decoded = new ModePage_08();
+            var decoded = new ModePage_08();
 
             decoded.PS  |= (pageResponse[0] & 0x80) == 0x80;
             decoded.WCE |= (pageResponse[2] & 0x04) == 0x04;
@@ -162,7 +118,8 @@ namespace DiscImageChef.Decoders.SCSI
             decoded.MaximumPreFetch         = (ushort)((pageResponse[8]  << 8) + pageResponse[9]);
             decoded.MaximumPreFetchCeiling  = (ushort)((pageResponse[10] << 8) + pageResponse[11]);
 
-            if(pageResponse.Length < 20) return decoded;
+            if(pageResponse.Length < 20)
+                return decoded;
 
             decoded.IC   |= (pageResponse[2] & 0x80) == 0x80;
             decoded.ABPF |= (pageResponse[2] & 0x40) == 0x40;
@@ -188,31 +145,41 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_08(ModePage_08? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
-            ModePage_08   page = modePage.Value;
-            StringBuilder sb   = new StringBuilder();
+            ModePage_08 page = modePage.Value;
+            var         sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Caching mode page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
-            if(page.RCD) sb.AppendLine("\tRead-cache is enabled");
-            if(page.WCE) sb.AppendLine("\tWrite-cache is enabled");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if(page.RCD)
+                sb.AppendLine("\tRead-cache is enabled");
+
+            if(page.WCE)
+                sb.AppendLine("\tWrite-cache is enabled");
 
             switch(page.DemandReadRetentionPrio)
             {
                 case 0:
                     sb.AppendLine("\tDrive does not distinguish between cached read data");
+
                     break;
                 case 1:
                     sb.AppendLine("\tData put by READ commands should be evicted from cache sooner than data put in read cache by other means");
+
                     break;
                 case 0xF:
                     sb.AppendLine("\tData put by READ commands should not be evicted if there is data cached by other means that can be evicted");
+
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown demand read retention priority value {0}", page.DemandReadRetentionPrio)
-                      .AppendLine();
+                    sb.AppendFormat("\tUnknown demand read retention priority value {0}", page.DemandReadRetentionPrio).
+                       AppendLine();
+
                     break;
             }
 
@@ -220,61 +187,76 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case 0:
                     sb.AppendLine("\tDrive does not distinguish between cached write data");
+
                     break;
                 case 1:
                     sb.AppendLine("\tData put by WRITE commands should be evicted from cache sooner than data put in write cache by other means");
+
                     break;
                 case 0xF:
                     sb.AppendLine("\tData put by WRITE commands should not be evicted if there is data cached by other means that can be evicted");
+
                     break;
                 default:
-                    sb.AppendFormat("\tUnknown demand write retention priority value {0}", page.DemandReadRetentionPrio)
-                      .AppendLine();
+                    sb.AppendFormat("\tUnknown demand write retention priority value {0}",
+                                    page.DemandReadRetentionPrio).AppendLine();
+
                     break;
             }
 
-            if(page.DRA) sb.AppendLine("\tRead-ahead is disabled");
+            if(page.DRA)
+                sb.AppendLine("\tRead-ahead is disabled");
             else
             {
-                if(page.MF) sb.AppendLine("\tPre-fetch values indicate a block multiplier");
+                if(page.MF)
+                    sb.AppendLine("\tPre-fetch values indicate a block multiplier");
 
-                if(page.DisablePreFetch == 0) sb.AppendLine("\tNo pre-fetch will be done");
+                if(page.DisablePreFetch == 0)
+                    sb.AppendLine("\tNo pre-fetch will be done");
                 else
                 {
                     sb.AppendFormat("\tPre-fetch will be done for READ commands of {0} blocks or less",
                                     page.DisablePreFetch).AppendLine();
 
                     if(page.MinimumPreFetch > 0)
-                        sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch)
-                          .AppendLine();
+                        sb.AppendFormat("At least {0} blocks will be always pre-fetched", page.MinimumPreFetch).
+                           AppendLine();
+
                     if(page.MaximumPreFetch > 0)
-                        sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch)
-                          .AppendLine();
+                        sb.AppendFormat("\tA maximum of {0} blocks will be pre-fetched", page.MaximumPreFetch).
+                           AppendLine();
+
                     if(page.MaximumPreFetchCeiling > 0)
-                        sb
-                           .AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more",
+                        sb.
+                            AppendFormat("\tA maximum of {0} blocks will be pre-fetched even if it is commanded to pre-fetch more",
                                          page.MaximumPreFetchCeiling).AppendLine();
 
                     if(page.IC)
                         sb.AppendLine("\tDevice should use number of cache segments or cache segment size for caching");
-                    if(page.ABPF) sb.AppendLine("\tPre-fetch should be aborted upong receiving a new command");
-                    if(page.CAP) sb.AppendLine("\tCaching analysis is permitted");
+
+                    if(page.ABPF)
+                        sb.AppendLine("\tPre-fetch should be aborted upong receiving a new command");
+
+                    if(page.CAP)
+                        sb.AppendLine("\tCaching analysis is permitted");
+
                     if(page.Disc)
                         sb.AppendLine("\tPre-fetch can continue across discontinuities (such as cylinders or tracks)");
                 }
             }
 
-            if(page.FSW) sb.AppendLine("\tDrive should not reorder the sequence of write commands to be faster");
+            if(page.FSW)
+                sb.AppendLine("\tDrive should not reorder the sequence of write commands to be faster");
 
             if(page.Size)
             {
                 if(page.CacheSegmentSize > 0)
                     if(page.LBCSS)
-                        sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize)
-                          .AppendLine();
+                        sb.AppendFormat("\tDrive cache segments should be {0} blocks long", page.CacheSegmentSize).
+                           AppendLine();
                     else
-                        sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize)
-                          .AppendLine();
+                        sb.AppendFormat("\tDrive cache segments should be {0} bytes long", page.CacheSegmentSize).
+                           AppendLine();
             }
             else
             {
@@ -283,11 +265,12 @@ namespace DiscImageChef.Decoders.SCSI
             }
 
             if(page.NonCacheSegmentSize > 0)
-                sb
-                   .AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
+                sb.
+                    AppendFormat("\tDrive shall allocate {0} bytes to buffer even when all cached data cannot be evicted",
                                  page.NonCacheSegmentSize).AppendLine();
 
-            if(page.NV_DIS) sb.AppendLine("\tNon-Volatile cache is disabled");
+            if(page.NV_DIS)
+                sb.AppendLine("\tNon-Volatile cache is disabled");
 
             return sb.ToString();
         }

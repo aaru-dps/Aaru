@@ -35,52 +35,41 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x00: Drive Operation Mode page
-        /// <summary>
-        ///     Drive Operation Mode page
-        ///     Page code 0x00
-        ///     4 bytes in INF-8070
-        /// </summary>
+        /// <summary>Drive Operation Mode page Page code 0x00 4 bytes in INF-8070</summary>
         public struct ModePage_00_SFF
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
-            /// <summary>
-            ///     Select LUN Mode
-            /// </summary>
+            /// <summary>Select LUN Mode</summary>
             public bool SLM;
-            /// <summary>
-            ///     Select LUN for rewritable
-            /// </summary>
+            /// <summary>Select LUN for rewritable</summary>
             public bool SLR;
-            /// <summary>
-            ///     Disable verify for WRITE
-            /// </summary>
+            /// <summary>Disable verify for WRITE</summary>
             public bool DVW;
-            /// <summary>
-            ///     Disable deferred error
-            /// </summary>
+            /// <summary>Disable deferred error</summary>
             public bool DDE;
         }
 
         public static ModePage_00_SFF? DecodeModePage_00_SFF(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x00) return null;
+            if((pageResponse?[0] & 0x3F) != 0x00)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length < 4) return null;
+            if(pageResponse.Length < 4)
+                return null;
 
-            ModePage_00_SFF decoded = new ModePage_00_SFF();
+            var decoded = new ModePage_00_SFF();
 
             decoded.PS |= (pageResponse[0] & 0x80) == 0x80;
 
@@ -98,19 +87,25 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_00_SFF(ModePage_00_SFF? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
             ModePage_00_SFF page = modePage.Value;
-            StringBuilder   sb   = new StringBuilder();
+            var             sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Drive Operation Mode page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
-            if(page.DVW) sb.AppendLine("\tVerifying after writing is disabled");
-            if(page.DDE) sb.AppendLine("\tDrive will abort when a writing error is detected");
+            if(page.DVW)
+                sb.AppendLine("\tVerifying after writing is disabled");
 
-            if(!page.SLM) return sb.ToString();
+            if(page.DDE)
+                sb.AppendLine("\tDrive will abort when a writing error is detected");
+
+            if(!page.SLM)
+                return sb.ToString();
 
             sb.Append("\tDrive has two LUNs with rewritable being ");
             sb.AppendLine(page.SLR ? "LUN 1" : "LUN 0");

@@ -35,81 +35,63 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x04: Rigid disk drive geometry page
-        /// <summary>
-        ///     Disconnect-reconnect page
-        ///     Page code 0x04
-        ///     24 bytes in SCSI-2, SBC-1
-        /// </summary>
+        /// <summary>Disconnect-reconnect page Page code 0x04 24 bytes in SCSI-2, SBC-1</summary>
         public struct ModePage_04
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
-            /// <summary>
-            ///     Cylinders used for data storage
-            /// </summary>
+            /// <summary>Cylinders used for data storage</summary>
             public uint Cylinders;
-            /// <summary>
-            ///     Heads for reading and/or writing
-            /// </summary>
+            /// <summary>Heads for reading and/or writing</summary>
             public byte Heads;
-            /// <summary>
-            ///     Cylinder where write precompensation starts
-            /// </summary>
+            /// <summary>Cylinder where write precompensation starts</summary>
             public uint WritePrecompCylinder;
-            /// <summary>
-            ///     Cylinder where write current reduction starts
-            /// </summary>
+            /// <summary>Cylinder where write current reduction starts</summary>
             public uint WriteReduceCylinder;
-            /// <summary>
-            ///     Step rate in 100 ns units
-            /// </summary>
+            /// <summary>Step rate in 100 ns units</summary>
             public ushort DriveStepRate;
-            /// <summary>
-            ///     Cylinder where the heads park
-            /// </summary>
+            /// <summary>Cylinder where the heads park</summary>
             public int LandingCylinder;
-            /// <summary>
-            ///     Rotational position locking
-            /// </summary>
+            /// <summary>Rotational position locking</summary>
             public byte RPL;
-            /// <summary>
-            ///     Rotational skew to apply when synchronized
-            /// </summary>
+            /// <summary>Rotational skew to apply when synchronized</summary>
             public byte RotationalOffset;
-            /// <summary>
-            ///     Medium speed in rpm
-            /// </summary>
+            /// <summary>Medium speed in rpm</summary>
             public ushort MediumRotationRate;
         }
 
         public static ModePage_04? DecodeModePage_04(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x04) return null;
+            if((pageResponse?[0] & 0x3F) != 0x04)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length < 20) return null;
+            if(pageResponse.Length < 20)
+                return null;
 
-            ModePage_04 decoded = new ModePage_04();
+            var decoded = new ModePage_04();
 
             decoded.PS                   |= (pageResponse[0] & 0x80) == 0x80;
             decoded.Cylinders            =  (uint)((pageResponse[2] << 16) + (pageResponse[3] << 8) + pageResponse[4]);
             decoded.Heads                =  pageResponse[5];
             decoded.WritePrecompCylinder =  (uint)((pageResponse[6] << 16) + (pageResponse[7] << 8) + pageResponse[8]);
+
             decoded.WriteReduceCylinder =
                 (uint)((pageResponse[9] << 16) + (pageResponse[10] << 8) + pageResponse[11]);
+
             decoded.DriveStepRate =
                 (ushort)((pageResponse[12] << 8) + pageResponse[13]);
+
             decoded.LandingCylinder  = (pageResponse[14] << 16) + (pageResponse[15] << 8) + pageResponse[16];
             decoded.RPL              = (byte)(pageResponse[17] & 0x03);
             decoded.RotationalOffset = pageResponse[18];
@@ -125,23 +107,28 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_04(ModePage_04? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
-            ModePage_04   page = modePage.Value;
-            StringBuilder sb   = new StringBuilder();
+            ModePage_04 page = modePage.Value;
+            var         sb   = new StringBuilder();
 
             sb.AppendLine("SCSI Rigid disk drive geometry page:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
 
             sb.AppendFormat("\t{0} heads", page.Heads).AppendLine();
             sb.AppendFormat("\t{0} cylinders", page.Cylinders).AppendLine();
+
             if(page.WritePrecompCylinder < page.Cylinders)
-                sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder)
-                  .AppendLine();
+                sb.AppendFormat("\tWrite pre-compensation starts at cylinder {0}", page.WritePrecompCylinder).
+                   AppendLine();
+
             if(page.WriteReduceCylinder < page.Cylinders)
-                sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder)
-                  .AppendLine();
+                sb.AppendFormat("\tWrite current reduction starts at cylinder {0}", page.WriteReduceCylinder).
+                   AppendLine();
+
             if(page.DriveStepRate > 0)
                 sb.AppendFormat("\tDrive steps in {0} ns", (uint)page.DriveStepRate * 100).AppendLine();
 
@@ -154,15 +141,19 @@ namespace DiscImageChef.Decoders.SCSI
             {
                 case 0:
                     sb.AppendLine("\tSpindle synchronization is disable or unsupported");
+
                     break;
                 case 1:
                     sb.AppendLine("\tTarget operates as a synchronized-spindle slave");
+
                     break;
                 case 2:
                     sb.AppendLine("\tTarget operates as a synchronized-spindle master");
+
                     break;
                 case 3:
                     sb.AppendLine("\tTarget operates as a synchronized-spindle master control");
+
                     break;
             }
 

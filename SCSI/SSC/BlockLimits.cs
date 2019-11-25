@@ -36,30 +36,14 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI.SSC
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class BlockLimits
     {
-        public struct BlockLimitsData
-        {
-            /// <summary>
-            ///     All blocks size must be multiple of 2^<cref name="granularity" />
-            /// </summary>
-            public byte granularity;
-            /// <summary>
-            ///     Maximum block length in bytes
-            /// </summary>
-            public uint maxBlockLen;
-            /// <summary>
-            ///     Minimum block length in bytes
-            /// </summary>
-            public ushort minBlockLen;
-        }
-
         public static BlockLimitsData? Decode(byte[] response)
         {
-            if(response?.Length != 6) return null;
+            if(response?.Length != 6)
+                return null;
 
             return new BlockLimitsData
             {
@@ -71,9 +55,10 @@ namespace DiscImageChef.Decoders.SCSI.SSC
 
         public static string Prettify(BlockLimitsData? decoded)
         {
-            if(decoded == null) return null;
+            if(decoded == null)
+                return null;
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if(decoded.Value.maxBlockLen == decoded.Value.minBlockLen)
                 sb.AppendFormat("Device's block size is fixed at {0} bytes", decoded.Value.minBlockLen).AppendLine();
@@ -81,7 +66,9 @@ namespace DiscImageChef.Decoders.SCSI.SSC
             {
                 if(decoded.Value.maxBlockLen > 0)
                     sb.AppendFormat("Device's maximum block size is {0} bytes", decoded.Value.maxBlockLen).AppendLine();
-                else sb.AppendLine("Device does not specify a maximum block size");
+                else
+                    sb.AppendLine("Device does not specify a maximum block size");
+
                 sb.AppendFormat("Device's minimum block size is {0} bytes", decoded.Value.minBlockLen).AppendLine();
 
                 if(decoded.Value.granularity > 0)
@@ -93,5 +80,15 @@ namespace DiscImageChef.Decoders.SCSI.SSC
         }
 
         public static string Prettify(byte[] response) => Prettify(Decode(response));
+
+        public struct BlockLimitsData
+        {
+            /// <summary>All blocks size must be multiple of 2^<cref name="granularity" /></summary>
+            public byte granularity;
+            /// <summary>Maximum block length in bytes</summary>
+            public uint maxBlockLen;
+            /// <summary>Minimum block length in bytes</summary>
+            public ushort minBlockLen;
+        }
     }
 }

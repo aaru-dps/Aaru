@@ -35,352 +35,20 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace DiscImageChef.Decoders
 {
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Global")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class LisaTag
     {
-        /// <summary>
-        ///     LisaOS tag as stored on Apple Profile and FileWare disks (20 bytes)
-        /// </summary>
-        public struct ProfileTag
-        {
-            /// <summary>0x00, Lisa OS version number</summary>
-            public ushort Version;
-            /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
-            public byte Kind;
-            /// <summary>0x02 bits 5 to 0, reserved</summary>
-            public byte Reserved;
-            /// <summary>0x03, disk volume number</summary>
-            public byte Volume;
-            /// <summary>0x04, file ID</summary>
-            public short FileId;
-            /// <summary>
-            ///     0x06 bit 7, checksum valid?
-            /// </summary>
-            public bool ValidChk;
-            /// <summary>
-            ///     0x06 bits 6 to 0, used bytes in block
-            /// </summary>
-            public ushort UsedBytes;
-            /// <summary>
-            ///     0x08, 3 bytes, absolute page number
-            /// </summary>
-            public uint AbsPage;
-            /// <summary>
-            ///     0x0B, checksum of data
-            /// </summary>
-            public byte Checksum;
-            /// <summary>
-            ///     0x0C, relative page number
-            /// </summary>
-            public ushort RelPage;
-            /// <summary>
-            ///     0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
-            /// </summary>
-            public uint NextBlock;
-            /// <summary>
-            ///     0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
-            /// </summary>
-            public uint PrevBlock;
-
-            /// <summary>On-memory value for easy first block search.</summary>
-            public bool IsFirst;
-            /// <summary>On-memory value for easy last block search.</summary>
-            public bool IsLast;
-
-            /// <summary>
-            ///     Converts this tag to Priam DataTower format
-            /// </summary>
-            public PriamTag ToPriam() =>
-                new PriamTag
-                {
-                    AbsPage   = AbsPage,
-                    Checksum  = Checksum,
-                    FileId    = FileId,
-                    IsFirst   = IsFirst,
-                    IsLast    = IsLast,
-                    Kind      = Kind,
-                    NextBlock = IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF,
-                    PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF,
-                    RelPage   = RelPage,
-                    UsedBytes = UsedBytes,
-                    ValidChk  = ValidChk,
-                    Version   = Version,
-                    Volume    = Volume
-                };
-
-            /// <summary>
-            ///     Converts this tag to Sony format
-            /// </summary>
-            public SonyTag ToSony() =>
-                new SonyTag
-                {
-                    FileId    = FileId,
-                    IsFirst   = IsFirst,
-                    IsLast    = IsLast,
-                    Kind      = Kind,
-                    NextBlock = (ushort)NextBlock,
-                    PrevBlock = (ushort)PrevBlock,
-                    RelPage   = RelPage,
-                    Version   = Version,
-                    Volume    = Volume
-                };
-
-            /// <summary>
-            ///     Gets a byte array representation of this tag
-            /// </summary>
-            public byte[] GetBytes()
-            {
-                byte[] tagBytes = new byte[20];
-
-                byte[] tmp = BigEndianBitConverter.GetBytes(Version);
-                Array.Copy(tmp, 0, tagBytes, 0, 2);
-                tagBytes[2] = (byte)(Kind << 6);
-                tagBytes[3] = Volume;
-                tmp         = BigEndianBitConverter.GetBytes(FileId);
-                Array.Copy(tmp, 0, tagBytes, 4, 2);
-                tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
-                Array.Copy(tmp, 0, tagBytes, 6, 2);
-                if(ValidChk) tagBytes[6] += 0x80;
-                tmp = BigEndianBitConverter.GetBytes(AbsPage);
-                Array.Copy(tmp, 1, tagBytes, 8, 3);
-                tagBytes[11] = Checksum;
-                tmp          = BigEndianBitConverter.GetBytes(RelPage);
-                Array.Copy(tmp, 0, tagBytes, 12, 2);
-                tmp = BigEndianBitConverter.GetBytes(IsLast ? 0xFFFFFF : NextBlock);
-                Array.Copy(tmp, 1, tagBytes, 14, 3);
-                tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0xFFFFFF : PrevBlock);
-                Array.Copy(tmp, 1, tagBytes, 17, 3);
-
-                return tagBytes;
-            }
-        }
-
-        /// <summary>
-        ///     LisaOS tag as stored on Priam DataTower disks (24 bytes)
-        /// </summary>
-        public struct PriamTag
-        {
-            /// <summary>0x00, Lisa OS version number</summary>
-            public ushort Version;
-            /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
-            public byte Kind;
-            /// <summary>0x02 bits 5 to 0, reserved</summary>
-            public byte Reserved;
-            /// <summary>0x03, disk volume number</summary>
-            public byte Volume;
-            /// <summary>0x04, file ID</summary>
-            public short FileId;
-            /// <summary>
-            ///     0x06 bit 7, checksum valid?
-            /// </summary>
-            public bool ValidChk;
-            /// <summary>
-            ///     0x06 bits 6 to 0, used bytes in block
-            /// </summary>
-            public ushort UsedBytes;
-            /// <summary>
-            ///     0x08, 3 bytes, absolute page number
-            /// </summary>
-            public uint AbsPage;
-            /// <summary>
-            ///     0x0B, checksum of data
-            /// </summary>
-            public byte Checksum;
-            /// <summary>
-            ///     0x0C, relative page number
-            /// </summary>
-            public ushort RelPage;
-            /// <summary>
-            ///     0x0E, 3 bytes, next block, 0xFFFFFF if it's last block
-            /// </summary>
-            public uint NextBlock;
-            /// <summary>
-            ///     0x11, 3 bytes, previous block, 0xFFFFFF if it's first block
-            /// </summary>
-            public uint PrevBlock;
-            /// <summary>
-            ///     0x14, disk size
-            /// </summary>
-            public uint DiskSize;
-
-            /// <summary>On-memory value for easy first block search.</summary>
-            public bool IsFirst;
-            /// <summary>On-memory value for easy last block search.</summary>
-            public bool IsLast;
-
-            /// <summary>
-            ///     Converts this tag to Apple Profile format
-            /// </summary>
-            public ProfileTag ToProfile() =>
-                new ProfileTag
-                {
-                    AbsPage   = AbsPage,
-                    Checksum  = Checksum,
-                    FileId    = FileId,
-                    IsFirst   = IsFirst,
-                    IsLast    = IsLast,
-                    Kind      = Kind,
-                    NextBlock = IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF,
-                    PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF,
-                    RelPage   = RelPage,
-                    UsedBytes = UsedBytes,
-                    ValidChk  = ValidChk,
-                    Version   = Version,
-                    Volume    = Volume
-                };
-
-            /// <summary>
-            ///     Converts this tag to Sony format
-            /// </summary>
-            public SonyTag ToSony() =>
-                new SonyTag
-                {
-                    FileId    = FileId,
-                    IsFirst   = IsFirst,
-                    IsLast    = IsLast,
-                    Kind      = Kind,
-                    NextBlock = (ushort)(IsLast ? 0x7FF : NextBlock  & 0x7FF),
-                    PrevBlock = (ushort)(IsFirst ? 0x7FF : PrevBlock & 0x7FF),
-                    RelPage   = RelPage,
-                    Version   = Version,
-                    Volume    = Volume
-                };
-
-            /// <summary>
-            ///     Gets a byte array representation of this tag
-            /// </summary>
-            public byte[] GetBytes()
-            {
-                byte[] tagBytes = new byte[24];
-
-                byte[] tmp = BigEndianBitConverter.GetBytes(Version);
-                Array.Copy(tmp, 0, tagBytes, 0, 2);
-                tagBytes[2] = (byte)(Kind << 6);
-                tagBytes[3] = Volume;
-                tmp         = BigEndianBitConverter.GetBytes(FileId);
-                Array.Copy(tmp, 0, tagBytes, 4, 2);
-                tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
-                Array.Copy(tmp, 0, tagBytes, 6, 2);
-                if(ValidChk) tagBytes[6] += 0x80;
-                tmp = BigEndianBitConverter.GetBytes(AbsPage);
-                Array.Copy(tmp, 1, tagBytes, 8, 3);
-                tagBytes[11] = Checksum;
-                tmp          = BigEndianBitConverter.GetBytes(RelPage);
-                Array.Copy(tmp, 0, tagBytes, 12, 2);
-                tmp = BigEndianBitConverter.GetBytes(IsLast ? 0xFFFFFF : NextBlock);
-                Array.Copy(tmp, 1, tagBytes, 14, 3);
-                tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0xFFFFFF : PrevBlock);
-                Array.Copy(tmp, 1, tagBytes, 17, 3);
-                tmp = BigEndianBitConverter.GetBytes(DiskSize);
-                Array.Copy(tmp, 0, tagBytes, 20, 4);
-
-                return tagBytes;
-            }
-        }
-
-        /// <summary>
-        ///     LisaOS tag as stored on Apple Sony disks (12 bytes)
-        /// </summary>
-        public struct SonyTag
-        {
-            /// <summary>0x00, Lisa OS version number</summary>
-            public ushort Version;
-            /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
-            public byte Kind;
-            /// <summary>0x02 bits 5 to 0, reserved</summary>
-            public byte Reserved;
-            /// <summary>0x03, disk volume number</summary>
-            public byte Volume;
-            /// <summary>0x04, file ID</summary>
-            public short FileId;
-            /// <summary>
-            ///     0x06, relative page number
-            /// </summary>
-            public ushort RelPage;
-            /// <summary>
-            ///     0x08, 3 bytes, next block, 0x7FF if it's last block, 0x8000 set if block is valid
-            /// </summary>
-            public ushort NextBlock;
-            /// <summary>
-            ///     0x0A, 3 bytes, previous block, 0x7FF if it's first block
-            /// </summary>
-            public ushort PrevBlock;
-
-            /// <summary>On-memory value for easy first block search.</summary>
-            public bool IsFirst;
-            /// <summary>On-memory value for easy last block search.</summary>
-            public bool IsLast;
-
-            /// <summary>
-            ///     Converts this tag to Apple Profile format
-            /// </summary>
-            public ProfileTag ToProfile() =>
-                new ProfileTag
-                {
-                    FileId    = FileId,
-                    IsFirst   = IsFirst,
-                    IsLast    = IsLast,
-                    Kind      = Kind,
-                    NextBlock = (uint)(IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF),
-                    PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF),
-                    RelPage   = RelPage,
-                    Version   = Version,
-                    Volume    = Volume
-                };
-
-            /// <summary>
-            ///     Converts this tag to Priam DataTower format
-            /// </summary>
-            public PriamTag ToPriam() =>
-                new PriamTag
-                {
-                    FileId    = FileId,
-                    IsFirst   = IsFirst,
-                    IsLast    = IsLast,
-                    Kind      = Kind,
-                    NextBlock = (uint)(IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF),
-                    PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF),
-                    RelPage   = RelPage,
-                    Version   = Version,
-                    Volume    = Volume
-                };
-
-            /// <summary>
-            ///     Gets a byte array representation of this tag
-            /// </summary>
-            public byte[] GetBytes()
-            {
-                byte[] tagBytes = new byte[12];
-
-                byte[] tmp = BigEndianBitConverter.GetBytes(Version);
-                Array.Copy(tmp, 0, tagBytes, 0, 2);
-                tagBytes[2] = (byte)(Kind << 6);
-                tagBytes[3] = Volume;
-                tmp         = BigEndianBitConverter.GetBytes(FileId);
-                Array.Copy(tmp, 0, tagBytes, 4, 2);
-                tmp = BigEndianBitConverter.GetBytes(RelPage);
-                Array.Copy(tmp, 0, tagBytes, 6, 2);
-                tmp = BigEndianBitConverter.GetBytes(IsLast ? 0x7FF : NextBlock);
-                Array.Copy(tmp, 1, tagBytes, 8, 2);
-                tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0x7FF : PrevBlock);
-                Array.Copy(tmp, 1, tagBytes, 10, 2);
-
-                return tagBytes;
-            }
-        }
-
         public static SonyTag? DecodeSonyTag(byte[] tag)
         {
-            if(tag == null || tag.Length != 12) return null;
+            if(tag        == null ||
+               tag.Length != 12)
+                return null;
 
-            SonyTag snTag = new SonyTag
+            var snTag = new SonyTag
             {
-                Version   = BigEndianBitConverter.ToUInt16(tag, 0),
-                Kind      = (byte)((tag[2] & 0xC0) >> 6),
-                Reserved  = (byte)(tag[2] & 0x3F),
-                Volume    = tag[3],
+                Version   = BigEndianBitConverter.ToUInt16(tag, 0), Kind = (byte)((tag[2] & 0xC0) >> 6),
+                Reserved  = (byte)(tag[2] & 0x3F), Volume                = tag[3],
                 FileId    = BigEndianBitConverter.ToInt16(tag, 4),
                 RelPage   = BigEndianBitConverter.ToUInt16(tag, 6),
                 NextBlock = (ushort)(BigEndianBitConverter.ToUInt16(tag, 8)  & 0x7FF),
@@ -395,9 +63,11 @@ namespace DiscImageChef.Decoders
 
         public static ProfileTag? DecodeProfileTag(byte[] tag)
         {
-            if(tag == null || tag.Length != 20) return null;
+            if(tag        == null ||
+               tag.Length != 20)
+                return null;
 
-            ProfileTag phTag = new ProfileTag();
+            var phTag = new ProfileTag();
 
             byte[] tmp = new byte[4];
 
@@ -438,9 +108,11 @@ namespace DiscImageChef.Decoders
 
         public static PriamTag? DecodePriamTag(byte[] tag)
         {
-            if(tag == null || tag.Length != 24) return null;
+            if(tag        == null ||
+               tag.Length != 24)
+                return null;
 
-            PriamTag pmTag = new PriamTag();
+            var pmTag = new PriamTag();
 
             byte[] tmp = new byte[4];
 
@@ -483,7 +155,8 @@ namespace DiscImageChef.Decoders
 
         public static PriamTag? DecodeTag(byte[] tag)
         {
-            if(tag == null) return null;
+            if(tag == null)
+                return null;
 
             PriamTag pmTag;
 
@@ -492,7 +165,8 @@ namespace DiscImageChef.Decoders
                 case 12:
                     SonyTag? snTag = DecodeSonyTag(tag);
 
-                    if(snTag == null) return null;
+                    if(snTag == null)
+                        return null;
 
                     pmTag           = new PriamTag();
                     pmTag.AbsPage   = 0;
@@ -515,7 +189,8 @@ namespace DiscImageChef.Decoders
                 case 20:
                     ProfileTag? phTag = DecodeProfileTag(tag);
 
-                    if(phTag == null) return null;
+                    if(phTag == null)
+                        return null;
 
                     pmTag           = new PriamTag();
                     pmTag.AbsPage   = phTag.Value.AbsPage;
@@ -537,6 +212,244 @@ namespace DiscImageChef.Decoders
                     return pmTag;
                 case 24: return DecodePriamTag(tag);
                 default: return null;
+            }
+        }
+
+        /// <summary>LisaOS tag as stored on Apple Profile and FileWare disks (20 bytes)</summary>
+        public struct ProfileTag
+        {
+            /// <summary>0x00, Lisa OS version number</summary>
+            public ushort Version;
+            /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
+            public byte Kind;
+            /// <summary>0x02 bits 5 to 0, reserved</summary>
+            public byte Reserved;
+            /// <summary>0x03, disk volume number</summary>
+            public byte Volume;
+            /// <summary>0x04, file ID</summary>
+            public short FileId;
+            /// <summary>0x06 bit 7, checksum valid?</summary>
+            public bool ValidChk;
+            /// <summary>0x06 bits 6 to 0, used bytes in block</summary>
+            public ushort UsedBytes;
+            /// <summary>0x08, 3 bytes, absolute page number</summary>
+            public uint AbsPage;
+            /// <summary>0x0B, checksum of data</summary>
+            public byte Checksum;
+            /// <summary>0x0C, relative page number</summary>
+            public ushort RelPage;
+            /// <summary>0x0E, 3 bytes, next block, 0xFFFFFF if it's last block</summary>
+            public uint NextBlock;
+            /// <summary>0x11, 3 bytes, previous block, 0xFFFFFF if it's first block</summary>
+            public uint PrevBlock;
+
+            /// <summary>On-memory value for easy first block search.</summary>
+            public bool IsFirst;
+            /// <summary>On-memory value for easy last block search.</summary>
+            public bool IsLast;
+
+            /// <summary>Converts this tag to Priam DataTower format</summary>
+            public PriamTag ToPriam() => new PriamTag
+            {
+                AbsPage   = AbsPage, Checksum = Checksum, FileId = FileId, IsFirst = IsFirst,
+                IsLast    = IsLast, Kind      = Kind, NextBlock  = IsLast ? 0xFFFFFF : NextBlock & 0xFFFFFF,
+                PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock                                       & 0xFFFFFF,
+                RelPage   = RelPage, UsedBytes = UsedBytes,
+                ValidChk  = ValidChk,
+                Version   = Version,
+                Volume    = Volume
+            };
+
+            /// <summary>Converts this tag to Sony format</summary>
+            public SonyTag ToSony() => new SonyTag
+            {
+                FileId    = FileId, IsFirst              = IsFirst, IsLast            = IsLast, Kind     = Kind,
+                NextBlock = (ushort)NextBlock, PrevBlock = (ushort)PrevBlock, RelPage = RelPage, Version = Version,
+                Volume    = Volume
+            };
+
+            /// <summary>Gets a byte array representation of this tag</summary>
+            public byte[] GetBytes()
+            {
+                byte[] tagBytes = new byte[20];
+
+                byte[] tmp = BigEndianBitConverter.GetBytes(Version);
+                Array.Copy(tmp, 0, tagBytes, 0, 2);
+                tagBytes[2] = (byte)(Kind << 6);
+                tagBytes[3] = Volume;
+                tmp         = BigEndianBitConverter.GetBytes(FileId);
+                Array.Copy(tmp, 0, tagBytes, 4, 2);
+                tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
+                Array.Copy(tmp, 0, tagBytes, 6, 2);
+
+                if(ValidChk)
+                    tagBytes[6] += 0x80;
+
+                tmp = BigEndianBitConverter.GetBytes(AbsPage);
+                Array.Copy(tmp, 1, tagBytes, 8, 3);
+                tagBytes[11] = Checksum;
+                tmp          = BigEndianBitConverter.GetBytes(RelPage);
+                Array.Copy(tmp, 0, tagBytes, 12, 2);
+                tmp = BigEndianBitConverter.GetBytes(IsLast ? 0xFFFFFF : NextBlock);
+                Array.Copy(tmp, 1, tagBytes, 14, 3);
+                tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0xFFFFFF : PrevBlock);
+                Array.Copy(tmp, 1, tagBytes, 17, 3);
+
+                return tagBytes;
+            }
+        }
+
+        /// <summary>LisaOS tag as stored on Priam DataTower disks (24 bytes)</summary>
+        public struct PriamTag
+        {
+            /// <summary>0x00, Lisa OS version number</summary>
+            public ushort Version;
+            /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
+            public byte Kind;
+            /// <summary>0x02 bits 5 to 0, reserved</summary>
+            public byte Reserved;
+            /// <summary>0x03, disk volume number</summary>
+            public byte Volume;
+            /// <summary>0x04, file ID</summary>
+            public short FileId;
+            /// <summary>0x06 bit 7, checksum valid?</summary>
+            public bool ValidChk;
+            /// <summary>0x06 bits 6 to 0, used bytes in block</summary>
+            public ushort UsedBytes;
+            /// <summary>0x08, 3 bytes, absolute page number</summary>
+            public uint AbsPage;
+            /// <summary>0x0B, checksum of data</summary>
+            public byte Checksum;
+            /// <summary>0x0C, relative page number</summary>
+            public ushort RelPage;
+            /// <summary>0x0E, 3 bytes, next block, 0xFFFFFF if it's last block</summary>
+            public uint NextBlock;
+            /// <summary>0x11, 3 bytes, previous block, 0xFFFFFF if it's first block</summary>
+            public uint PrevBlock;
+            /// <summary>0x14, disk size</summary>
+            public uint DiskSize;
+
+            /// <summary>On-memory value for easy first block search.</summary>
+            public bool IsFirst;
+            /// <summary>On-memory value for easy last block search.</summary>
+            public bool IsLast;
+
+            /// <summary>Converts this tag to Apple Profile format</summary>
+            public ProfileTag ToProfile() => new ProfileTag
+            {
+                AbsPage   = AbsPage, Checksum = Checksum, FileId = FileId, IsFirst = IsFirst,
+                IsLast    = IsLast, Kind      = Kind, NextBlock  = IsLast ? 0xFFFFFF : NextBlock & 0xFFFFFF,
+                PrevBlock = IsFirst ? 0xFFFFFF : PrevBlock                                       & 0xFFFFFF,
+                RelPage   = RelPage, UsedBytes = UsedBytes,
+                ValidChk  = ValidChk,
+                Version   = Version,
+                Volume    = Volume
+            };
+
+            /// <summary>Converts this tag to Sony format</summary>
+            public SonyTag ToSony() => new SonyTag
+            {
+                FileId    = FileId, IsFirst = IsFirst, IsLast = IsLast, Kind = Kind,
+                NextBlock = (ushort)(IsLast ? 0x7FF : NextBlock  & 0x7FF),
+                PrevBlock = (ushort)(IsFirst ? 0x7FF : PrevBlock & 0x7FF), RelPage = RelPage, Version = Version,
+                Volume    = Volume
+            };
+
+            /// <summary>Gets a byte array representation of this tag</summary>
+            public byte[] GetBytes()
+            {
+                byte[] tagBytes = new byte[24];
+
+                byte[] tmp = BigEndianBitConverter.GetBytes(Version);
+                Array.Copy(tmp, 0, tagBytes, 0, 2);
+                tagBytes[2] = (byte)(Kind << 6);
+                tagBytes[3] = Volume;
+                tmp         = BigEndianBitConverter.GetBytes(FileId);
+                Array.Copy(tmp, 0, tagBytes, 4, 2);
+                tmp = BigEndianBitConverter.GetBytes((ushort)(UsedBytes & 0x7FFF));
+                Array.Copy(tmp, 0, tagBytes, 6, 2);
+
+                if(ValidChk)
+                    tagBytes[6] += 0x80;
+
+                tmp = BigEndianBitConverter.GetBytes(AbsPage);
+                Array.Copy(tmp, 1, tagBytes, 8, 3);
+                tagBytes[11] = Checksum;
+                tmp          = BigEndianBitConverter.GetBytes(RelPage);
+                Array.Copy(tmp, 0, tagBytes, 12, 2);
+                tmp = BigEndianBitConverter.GetBytes(IsLast ? 0xFFFFFF : NextBlock);
+                Array.Copy(tmp, 1, tagBytes, 14, 3);
+                tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0xFFFFFF : PrevBlock);
+                Array.Copy(tmp, 1, tagBytes, 17, 3);
+                tmp = BigEndianBitConverter.GetBytes(DiskSize);
+                Array.Copy(tmp, 0, tagBytes, 20, 4);
+
+                return tagBytes;
+            }
+        }
+
+        /// <summary>LisaOS tag as stored on Apple Sony disks (12 bytes)</summary>
+        public struct SonyTag
+        {
+            /// <summary>0x00, Lisa OS version number</summary>
+            public ushort Version;
+            /// <summary>0x02 bits 7 to 6, kind of info in this block</summary>
+            public byte Kind;
+            /// <summary>0x02 bits 5 to 0, reserved</summary>
+            public byte Reserved;
+            /// <summary>0x03, disk volume number</summary>
+            public byte Volume;
+            /// <summary>0x04, file ID</summary>
+            public short FileId;
+            /// <summary>0x06, relative page number</summary>
+            public ushort RelPage;
+            /// <summary>0x08, 3 bytes, next block, 0x7FF if it's last block, 0x8000 set if block is valid</summary>
+            public ushort NextBlock;
+            /// <summary>0x0A, 3 bytes, previous block, 0x7FF if it's first block</summary>
+            public ushort PrevBlock;
+
+            /// <summary>On-memory value for easy first block search.</summary>
+            public bool IsFirst;
+            /// <summary>On-memory value for easy last block search.</summary>
+            public bool IsLast;
+
+            /// <summary>Converts this tag to Apple Profile format</summary>
+            public ProfileTag ToProfile() => new ProfileTag
+            {
+                FileId    = FileId, IsFirst = IsFirst, IsLast = IsLast, Kind = Kind,
+                NextBlock = (uint)(IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF),
+                PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF), RelPage = RelPage, Version = Version,
+                Volume    = Volume
+            };
+
+            /// <summary>Converts this tag to Priam DataTower format</summary>
+            public PriamTag ToPriam() => new PriamTag
+            {
+                FileId    = FileId, IsFirst = IsFirst, IsLast = IsLast, Kind = Kind,
+                NextBlock = (uint)(IsLast ? 0xFFFFFF : NextBlock  & 0xFFFFFF),
+                PrevBlock = (uint)(IsFirst ? 0xFFFFFF : PrevBlock & 0xFFFFFF), RelPage = RelPage, Version = Version,
+                Volume    = Volume
+            };
+
+            /// <summary>Gets a byte array representation of this tag</summary>
+            public byte[] GetBytes()
+            {
+                byte[] tagBytes = new byte[12];
+
+                byte[] tmp = BigEndianBitConverter.GetBytes(Version);
+                Array.Copy(tmp, 0, tagBytes, 0, 2);
+                tagBytes[2] = (byte)(Kind << 6);
+                tagBytes[3] = Volume;
+                tmp         = BigEndianBitConverter.GetBytes(FileId);
+                Array.Copy(tmp, 0, tagBytes, 4, 2);
+                tmp = BigEndianBitConverter.GetBytes(RelPage);
+                Array.Copy(tmp, 0, tagBytes, 6, 2);
+                tmp = BigEndianBitConverter.GetBytes(IsLast ? 0x7FF : NextBlock);
+                Array.Copy(tmp, 1, tagBytes, 8, 2);
+                tmp = BigEndianBitConverter.GetBytes(IsFirst ? 0x7FF : PrevBlock);
+                Array.Copy(tmp, 1, tagBytes, 10, 2);
+
+                return tagBytes;
             }
         }
     }

@@ -35,40 +35,35 @@ using System.Text;
 
 namespace DiscImageChef.Decoders.SCSI
 {
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "MemberCanBeInternal")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
+     SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static partial class Modes
     {
         #region Mode Page 0x06: Optical memory page
-        /// <summary>
-        ///     Optical memory page
-        ///     Page code 0x06
-        ///     4 bytes in SCSI-2
-        /// </summary>
+        /// <summary>Optical memory page Page code 0x06 4 bytes in SCSI-2</summary>
         public struct ModePage_06
         {
-            /// <summary>
-            ///     Parameters can be saved
-            /// </summary>
+            /// <summary>Parameters can be saved</summary>
             public bool PS;
-            /// <summary>
-            ///     Report updated block read
-            /// </summary>
+            /// <summary>Report updated block read</summary>
             public bool RUBR;
         }
 
         public static ModePage_06? DecodeModePage_06(byte[] pageResponse)
         {
-            if((pageResponse?[0] & 0x40) == 0x40) return null;
+            if((pageResponse?[0] & 0x40) == 0x40)
+                return null;
 
-            if((pageResponse?[0] & 0x3F) != 0x06) return null;
+            if((pageResponse?[0] & 0x3F) != 0x06)
+                return null;
 
-            if(pageResponse[1] + 2 != pageResponse.Length) return null;
+            if(pageResponse[1] + 2 != pageResponse.Length)
+                return null;
 
-            if(pageResponse.Length < 4) return null;
+            if(pageResponse.Length < 4)
+                return null;
 
-            ModePage_06 decoded = new ModePage_06();
+            var decoded = new ModePage_06();
 
             decoded.PS   |= (pageResponse[0] & 0x80) == 0x80;
             decoded.RUBR |= (pageResponse[2] & 0x01) == 0x01;
@@ -81,15 +76,19 @@ namespace DiscImageChef.Decoders.SCSI
 
         public static string PrettifyModePage_06(ModePage_06? modePage)
         {
-            if(!modePage.HasValue) return null;
+            if(!modePage.HasValue)
+                return null;
 
-            ModePage_06   page = modePage.Value;
-            StringBuilder sb   = new StringBuilder();
+            ModePage_06 page = modePage.Value;
+            var         sb   = new StringBuilder();
 
             sb.AppendLine("SCSI optical memory:");
 
-            if(page.PS) sb.AppendLine("\tParameters can be saved");
-            if(page.RUBR) sb.AppendLine("\tOn reading an updated block drive will return RECOVERED ERROR");
+            if(page.PS)
+                sb.AppendLine("\tParameters can be saved");
+
+            if(page.RUBR)
+                sb.AppendLine("\tOn reading an updated block drive will return RECOVERED ERROR");
 
             return sb.ToString();
         }
