@@ -59,9 +59,11 @@ namespace DiscImageChef.CommonTypes.Enums
         None = 0, /// <summary>Subchannel is packed and error corrected</summary>
         Packed = 1, /// <summary>Subchannel is interleaved</summary>
         Raw = 2, /// <summary>Subchannel is packed and comes interleaved with main channel in same file</summary>
-        PackedInterleaved = 3, /// <summary>Subchannel is interleaved and comes interleaved with main channel in same file</summary>
+        PackedInterleaved = 3,
+        /// <summary>Subchannel is interleaved and comes interleaved with main channel in same file</summary>
         RawInterleaved = 4, /// <summary>Only Q subchannel is stored as 16 bytes</summary>
-        Q16 = 5, /// <summary>Only Q subchannel is stored as 16 bytes and comes interleaved with main channel in same file</summary>
+        Q16 = 5,
+        /// <summary>Only Q subchannel is stored as 16 bytes and comes interleaved with main channel in same file</summary>
         Q16Interleaved = 6
     }
 

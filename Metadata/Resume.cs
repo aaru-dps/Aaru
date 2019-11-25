@@ -46,18 +46,18 @@ namespace DiscImageChef.CommonTypes.Metadata
     [Serializable, XmlRoot("DicResume", Namespace = "", IsNullable = false)]
     public class Resume
     {
+        [XmlArrayItem("Block")]
+        public List<ulong> BadBlocks;
         [XmlElement(DataType = "dateTime")]
         public DateTime CreationDate;
+        public ulong LastBlock;
         [XmlElement(DataType = "dateTime")]
         public DateTime LastWriteDate;
-        public bool  Removable;
-        public ulong LastBlock;
         public ulong NextBlock;
+        public bool  Removable;
         public bool  Tape;
 
         [XmlArrayItem("DumpTry")]
         public List<DumpHardwareType> Tries;
-        [XmlArrayItem("Block")]
-        public List<ulong> BadBlocks;
     }
 }

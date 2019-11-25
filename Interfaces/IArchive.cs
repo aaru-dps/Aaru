@@ -53,8 +53,10 @@ namespace DiscImageChef.CommonTypes.Interfaces
         ///     The archive supports explicit entries for directories (like Zip, for example). If this flag is not set,
         ///     directories are implicit by the relative name of the files.
         /// </summary>
-        HasExplicitDirectories = 1 << 3, /// <summary>The archive stores a timestamp with each entry if this flag is set.</summary>
-        HasEntryTimestamp = 1 << 4, /// <summary>If this flag is set, individual files or the whole archive might be encrypted or password-protected.</summary>
+        HasExplicitDirectories = 1 << 3,
+        /// <summary>The archive stores a timestamp with each entry if this flag is set.</summary>
+        HasEntryTimestamp = 1 << 4,
+        /// <summary>If this flag is set, individual files or the whole archive might be encrypted or password-protected.</summary>
         SupportsProtection = 1 << 5, // TODO: not implemented yet
 
         /// <summary>If this flag is set, the archive supports returning extended attributes (Xattrs) for each entry.</summary>

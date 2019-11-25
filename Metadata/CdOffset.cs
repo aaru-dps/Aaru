@@ -46,7 +46,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         public string Model        { get; set; }
         public short  Offset       { get; set; }
         public int    Submissions  { get; set; }
-        [DisplayFormat(ApplyFormatInEditMode =true, DataFormatString = "{0:P0}")]
-        public float  Agreement    { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:P0}")]
+        public float Agreement { get; set; }
     }
 }
