@@ -40,19 +40,10 @@ using System;
 
 namespace DiscImageChef.Helpers
 {
-    /// <summary>
-    ///     Defines properties to help marshalling structs from binary data
-    /// </summary>
+    /// <summary>Defines properties to help marshalling structs from binary data</summary>
     [AttributeUsage(AttributeTargets.Struct)]
     public class MarshallingPropertiesAttribute : Attribute
     {
-        /// <summary>c</summary>
-        public BitEndian Endian { get; }
-        /// <summary>
-        ///     Tells if the structure, or any nested structure, has any non-value type (e.g. arrays, strings, etc).
-        /// </summary>
-        public bool HasReferences { get; set; }
-
         /// <summary>Defines properties to help marshalling structs from binary data</summary>
         /// <param name="endian">Defines properties to help marshalling structs from binary data</param>
         public MarshallingPropertiesAttribute(BitEndian endian)
@@ -60,5 +51,10 @@ namespace DiscImageChef.Helpers
             Endian        = endian;
             HasReferences = true;
         }
+
+        /// <summary>c</summary>
+        public BitEndian Endian { get; }
+        /// <summary>Tells if the structure, or any nested structure, has any non-value type (e.g. arrays, strings, etc).</summary>
+        public bool HasReferences { get; set; }
     }
 }

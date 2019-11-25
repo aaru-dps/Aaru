@@ -52,14 +52,16 @@ namespace DiscImageChef
         public static uint Swap(uint x)
         {
             x = ((x << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
-            return (x << 16) | (x >> 16);
+
+            return(x << 16) | (x >> 16);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Swap(int x)
         {
             x = (int)(((x << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
-            return (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
+
+            return(int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -68,6 +70,7 @@ namespace DiscImageChef
             x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
             x = ((x & 0x0000FFFF0000FFFF) << 16) | ((x & 0xFFFF0000FFFF0000) >> 16);
             x = ((x & 0x00FF00FF00FF00FF) << 8)  | ((x & 0xFF00FF00FF00FF00) >> 8);
+
             return x;
         }
 
@@ -77,6 +80,7 @@ namespace DiscImageChef
             x = ((x & 0x00000000FFFFFFFF) << 32) | (long)(((ulong)x & 0xFFFFFFFF00000000) >> 32);
             x = ((x & 0x0000FFFF0000FFFF) << 16) | (long)(((ulong)x & 0xFFFF0000FFFF0000) >> 16);
             x = ((x & 0x00FF00FF00FF00FF) << 8)  | (long)(((ulong)x & 0xFF00FF00FF00FF00) >> 8);
+
             return x;
         }
     }

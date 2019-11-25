@@ -34,9 +34,7 @@ namespace DiscImageChef.Helpers
 {
     public static class CHS
     {
-        /// <summary>
-        ///     Converts a CHS position to a LBA one
-        /// </summary>
+        /// <summary>Converts a CHS position to a LBA one</summary>
         /// <param name="cyl">Cylinder</param>
         /// <param name="head">Head</param>
         /// <param name="sector">Sector</param>
@@ -44,8 +42,7 @@ namespace DiscImageChef.Helpers
         /// <param name="maxSector">Number of sectors per track</param>
         /// <returns></returns>
         public static uint ToLBA(uint cyl, uint head, uint sector, uint maxHead, uint maxSector) =>
-            maxHead == 0 || maxSector == 0
-                ? (cyl * 16      + head) * 63        + sector - 1
-                : (cyl * maxHead + head) * maxSector + sector - 1;
+            maxHead == 0 || maxSector == 0 ? (cyl * 16      + head) * 63        + sector - 1
+                : (cyl                            * maxHead + head) * maxSector + sector - 1;
     }
 }

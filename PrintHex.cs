@@ -55,11 +55,11 @@ namespace DiscImageChef
 
             // TODO: Color list
             // TODO: Allow to change width
-            string str  = "Offset";
-            int    rows = array.Length / 16;
-            int    last = array.Length % 16;
-            int offsetLength = $"{array.Length:X}".Length;
-            var sb = new StringBuilder();
+            string str          = "Offset";
+            int    rows         = array.Length / 16;
+            int    last         = array.Length % 16;
+            int    offsetLength = $"{array.Length:X}".Length;
+            var    sb           = new StringBuilder();
 
             if(last == 0)
                 last = 16;
@@ -101,7 +101,7 @@ namespace DiscImageChef
                     sb.Append("\u001b[0m");
 
                 sb.Append("  ");
-                int lastBytes = i == rows - 1 ? last : 16;
+                int lastBytes  = i == rows - 1 ? last : 16;
                 int lastSpaces = 16 - lastBytes;
 
                 for(int j = 0; j < lastBytes; j++)

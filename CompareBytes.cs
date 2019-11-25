@@ -34,20 +34,19 @@ namespace DiscImageChef
 {
     public static partial class ArrayHelpers
     {
-        /// <summary>
-        ///     Compares two byte arrays
-        /// </summary>
+        /// <summary>Compares two byte arrays</summary>
         /// <param name="different"><c>true</c> if they are different in any way</param>
         /// <param name="sameSize"><c>true</c> if they have the same size</param>
         /// <param name="compareArray1">Left array</param>
         /// <param name="compareArray2">Right array</param>
         public static void CompareBytes(out bool different, out bool sameSize, byte[] compareArray1,
-                                        byte[]   compareArray2)
+                                        byte[] compareArray2)
         {
             different = false;
             sameSize  = true;
 
             long leastBytes;
+
             if(compareArray1.LongLength < compareArray2.LongLength)
             {
                 sameSize   = false;
@@ -58,12 +57,14 @@ namespace DiscImageChef
                 sameSize   = false;
                 leastBytes = compareArray2.LongLength;
             }
-            else leastBytes = compareArray1.LongLength;
+            else
+                leastBytes = compareArray1.LongLength;
 
             for(long i = 0; i < leastBytes; i++)
                 if(compareArray1[i] != compareArray2[i])
                 {
                     different = true;
+
                     return;
                 }
         }

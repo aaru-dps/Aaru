@@ -36,24 +36,15 @@ namespace DiscImageChef
 {
     public static partial class ArrayHelpers
     {
-        /// <summary>
-        ///     Checks if an array is null, filled with the NULL byte (0x00) or ASCII whitespace (0x20)
-        /// </summary>
+        /// <summary>Checks if an array is null, filled with the NULL byte (0x00) or ASCII whitespace (0x20)</summary>
         /// <param name="array">Array</param>
         /// <returns>True if null or whitespace</returns>
-        public static bool ArrayIsNullOrWhiteSpace(byte[] array)
-        {
-            return array == null || array.All(b => b == 0x00 || b == 0x20);
-        }
+        public static bool ArrayIsNullOrWhiteSpace(byte[] array) =>
+            array == null || array.All(b => b == 0x00 || b == 0x20);
 
-        /// <summary>
-        ///     Checks if an array is null or filled with the NULL byte (0x00)
-        /// </summary>
+        /// <summary>Checks if an array is null or filled with the NULL byte (0x00)</summary>
         /// <param name="array">Array</param>
         /// <returns>True if null</returns>
-        public static bool ArrayIsNullOrEmpty(byte[] array)
-        {
-            return array == null || array.All(b => b == 0x00);
-        }
+        public static bool ArrayIsNullOrEmpty(byte[] array) => array == null || array.All(b => b == 0x00);
     }
 }

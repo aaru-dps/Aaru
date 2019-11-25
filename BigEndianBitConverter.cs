@@ -36,101 +36,73 @@ using System.Linq;
 namespace DiscImageChef
 {
     /// <summary>
-    ///     Converts base data types to an array of bytes, and an array of bytes to base
-    ///     data types.
-    ///     All info taken from the meta data of System.BitConverter. This implementation
-    ///     allows for Endianness consideration.
+    ///     Converts base data types to an array of bytes, and an array of bytes to base data types. All info taken from
+    ///     the meta data of System.BitConverter. This implementation allows for Endianness consideration.
     /// </summary>
     public static class BigEndianBitConverter
     {
-        /// <summary>
-        ///     Converts the specified double-precision floating point number to a 64-bit signed integer.
-        /// </summary>
+        /// <summary>Converts the specified double-precision floating point number to a 64-bit signed integer.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>A 64-bit signed integer whose value is equivalent to value.</returns>
         /// <exception cref="NotImplementedException">It is not currently implemented</exception>
         public static long DoubleToInt64Bits(double value) => throw new NotImplementedException();
 
-        /// <summary>
-        ///     Returns the specified Boolean value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified Boolean value as an array of bytes.</summary>
         /// <param name="value">A Boolean value.</param>
         /// <returns>An array of bytes with length 1.</returns>
         public static byte[] GetBytes(bool value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified Unicode character value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified Unicode character value as an array of bytes.</summary>
         /// <param name="value">A character to convert.</param>
         /// <returns>An array of bytes with length 2.</returns>
         public static byte[] GetBytes(char value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified double-precision floating point value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified double-precision floating point value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 8.</returns>
         public static byte[] GetBytes(double value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified single-precision floating point value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified single-precision floating point value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 4.</returns>
         public static byte[] GetBytes(float value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified 32-bit signed integer value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified 32-bit signed integer value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 4.</returns>
         public static byte[] GetBytes(int value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified 64-bit signed integer value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified 64-bit signed integer value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 8.</returns>
         public static byte[] GetBytes(long value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified 16-bit signed integer value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified 16-bit signed integer value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 2.</returns>
         public static byte[] GetBytes(short value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified 32-bit unsigned integer value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified 32-bit unsigned integer value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 4.</returns>
         public static byte[] GetBytes(uint value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified 64-bit unsigned integer value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified 64-bit unsigned integer value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 8.</returns>
         public static byte[] GetBytes(ulong value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Returns the specified 16-bit unsigned integer value as an array of bytes.
-        /// </summary>
+        /// <summary>Returns the specified 16-bit unsigned integer value as an array of bytes.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>An array of bytes with length 2.</returns>
         public static byte[] GetBytes(ushort value) => BitConverter.GetBytes(value).Reverse().ToArray();
 
-        /// <summary>
-        ///     Converts the specified 64-bit signed integer to a double-precision floating point number.
-        /// </summary>
+        /// <summary>Converts the specified 64-bit signed integer to a double-precision floating point number.</summary>
         /// <param name="value">The number to convert.</param>
         /// <returns>A double-precision floating point number whose value is equivalent to value.</returns>
         public static double Int64BitsToDouble(long value) => throw new NotImplementedException();
 
-        /// <summary>
-        ///     Returns a Boolean value converted from one byte at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a Boolean value converted from one byte at a specified position in a byte array.</summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>true if the byte at <see cref="startIndex" /> in value is nonzero; otherwise, false.</returns>
@@ -141,9 +113,7 @@ namespace DiscImageChef
         /// </exception>
         public static bool ToBoolean(byte[] value, int startIndex) => throw new NotImplementedException();
 
-        /// <summary>
-        ///     Returns a Unicode character converted from two bytes at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a Unicode character converted from two bytes at a specified position in a byte array.</summary>
         /// <param name="value">An array.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>A character formed by two bytes beginning at <see cref="startIndex" />.</returns>
@@ -173,9 +143,7 @@ namespace DiscImageChef
         /// </exception>
         public static double ToDouble(byte[] value, int startIndex) => throw new NotImplementedException();
 
-        /// <summary>
-        ///     Returns a 16-bit signed integer converted from two bytes at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a 16-bit signed integer converted from two bytes at a specified position in a byte array.</summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>A 16-bit signed integer formed by two bytes beginning at <see cref="startIndex" />.</returns>
@@ -188,9 +156,7 @@ namespace DiscImageChef
         public static short ToInt16(byte[] value, int startIndex) =>
             BitConverter.ToInt16(value.Reverse().ToArray(), value.Length - sizeof(short) - startIndex);
 
-        /// <summary>
-        ///     Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.</summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>A 32-bit signed integer formed by four bytes beginning at <see cref="startIndex" />.</returns>
@@ -206,9 +172,7 @@ namespace DiscImageChef
         public static int ToInt32(byte[] value, int startIndex) =>
             BitConverter.ToInt32(value.Reverse().ToArray(), value.Length - sizeof(int) - startIndex);
 
-        /// <summary>
-        ///     Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.</summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>A 64-bit signed integer formed by eight bytes beginning at <see cref="startIndex" />.</returns>
@@ -256,8 +220,8 @@ namespace DiscImageChef
         public static string ToString(byte[] value) => BitConverter.ToString(value.Reverse().ToArray());
 
         /// <summary>
-        ///     Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string
-        ///     representation.
+        ///     Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal
+        ///     string representation.
         /// </summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
@@ -274,8 +238,8 @@ namespace DiscImageChef
             BitConverter.ToString(value.Reverse().ToArray(), startIndex);
 
         /// <summary>
-        ///     Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string
-        ///     representation.
+        ///     Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal
+        ///     string representation.
         /// </summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
@@ -296,9 +260,7 @@ namespace DiscImageChef
         public static string ToString(byte[] value, int startIndex, int length) =>
             BitConverter.ToString(value.Reverse().ToArray(), startIndex, length);
 
-        /// <summary>
-        ///     Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.</summary>
         /// <param name="value">The array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>A 16-bit unsigned integer formed by two bytes beginning at startIndex.</returns>
@@ -311,9 +273,7 @@ namespace DiscImageChef
         public static ushort ToUInt16(byte[] value, int startIndex) =>
             BitConverter.ToUInt16(value.Reverse().ToArray(), value.Length - sizeof(ushort) - startIndex);
 
-        /// <summary>
-        ///     Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.</summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>A 32-bit unsigned integer formed by four bytes beginning at startIndex.</returns>
@@ -329,9 +289,7 @@ namespace DiscImageChef
         public static uint ToUInt32(byte[] value, int startIndex) =>
             BitConverter.ToUInt32(value.Reverse().ToArray(), value.Length - sizeof(uint) - startIndex);
 
-        /// <summary>
-        ///     Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.
-        /// </summary>
+        /// <summary>Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.</summary>
         /// <param name="value">An array of bytes.</param>
         /// <param name="startIndex">The starting position within value.</param>
         /// <returns>A 64-bit unsigned integer formed by the eight bytes beginning at startIndex.</returns>
@@ -347,11 +305,16 @@ namespace DiscImageChef
         public static ulong ToUInt64(byte[] value, int startIndex) =>
             BitConverter.ToUInt64(value.Reverse().ToArray(), value.Length - sizeof(ulong) - startIndex);
 
-        public static Guid ToGuid(byte[] value, int startIndex) =>
-            new Guid(ToUInt32(value, 0 + startIndex), ToUInt16(value, 4 + startIndex),
-                     ToUInt16(value,                                  6 + startIndex),
-                     value[8 + startIndex                               + 0], value[8 + startIndex + 1], value[8 + startIndex + 2],
-                     value[8 + startIndex                               + 3], value[8 + startIndex + 5], value[8 + startIndex + 5],
-                     value[8 + startIndex                               + 6], value[8 + startIndex + 7]);
+        public static Guid ToGuid(byte[] value, int startIndex) => new Guid(ToUInt32(value, 0    + startIndex),
+                                                                            ToUInt16(value, 4    + startIndex),
+                                                                            ToUInt16(value, 6    + startIndex),
+                                                                            value[8 + startIndex + 0],
+                                                                            value[8 + startIndex + 1],
+                                                                            value[8 + startIndex + 2],
+                                                                            value[8 + startIndex + 3],
+                                                                            value[8 + startIndex + 5],
+                                                                            value[8 + startIndex + 5],
+                                                                            value[8 + startIndex + 6],
+                                                                            value[8 + startIndex + 7]);
     }
 }
