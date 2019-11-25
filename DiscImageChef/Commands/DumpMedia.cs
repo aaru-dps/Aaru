@@ -71,7 +71,7 @@ namespace DiscImageChef.Commands
         private bool showHelp;
         private int skip = 512;
         private bool stopOnError;
-        private string wanteOutputFormat;
+        private string wantedOutputFormat;
 
         public DumpMediaCommand() : base("dump-media", "Dumps the media inserted on a device to a media image.")
         {
@@ -94,7 +94,7 @@ namespace DiscImageChef.Commands
             Options.Add("force|f", "Continue dump whatever happens.", b => force = b != null);
             Options.Add("format|t=",
                 "Format of the output image, as plugin name or plugin id. If not present, will try to detect it from output image extension.",
-                s => wanteOutputFormat = s);
+                s => wantedOutputFormat = s);
             Options.Add("no-metadata", "Disables creating CICM XML sidecar.", b => noMetadata = b != null);
             Options.Add("no-trim", "Disables trimming errored from skipped sectors.", b => noTrim = b != null);
             Options.Add("options|O=", "Comma separated name=value pairs of options to pass to output image plugin.",
@@ -151,7 +151,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}", firstTrackPregap);
             DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
             DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
-            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}", wanteOutputFormat);
+            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}", wantedOutputFormat);
             DicConsole.DebugWriteLine("Dump-Media command", "--no-metadata={0}", noMetadata);
             DicConsole.DebugWriteLine("Dump-Media command", "--options={0}", Options);
             DicConsole.DebugWriteLine("Dump-Media command", "--output={0}", outputFile);
@@ -257,16 +257,16 @@ namespace DiscImageChef.Commands
             var candidates = new List<IWritableImage>();
 
             // Try extension
-            if (string.IsNullOrEmpty(wanteOutputFormat))
+            if (string.IsNullOrEmpty(wantedOutputFormat))
                 candidates.AddRange(plugins.WritableImages.Values.Where(t =>
                     t.KnownExtensions
                         .Contains(Path.GetExtension(outputFile))));
             // Try Id
-            else if (Guid.TryParse(wanteOutputFormat, out var outId))
+            else if (Guid.TryParse(wantedOutputFormat, out var outId))
                 candidates.AddRange(plugins.WritableImages.Values.Where(t => t.Id.Equals(outId)));
             // Try name
             else
-                candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, wanteOutputFormat,
+                candidates.AddRange(plugins.WritableImages.Values.Where(t => string.Equals(t.Name, wantedOutputFormat,
                     StringComparison
                         .InvariantCultureIgnoreCase)));
 
