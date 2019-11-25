@@ -67,20 +67,13 @@ namespace DiscImageChef.Console
         public static event VerboseWriteHandler VerboseWriteEvent;
         public static event DebugWriteHandler   DebugWriteEvent;
 
-        public static void WriteLine(string format, params object[] arg)
-        {
-            WriteLineEvent?.Invoke(format, arg);
-        }
+        public static void WriteLine(string format, params object[] arg) => WriteLineEvent?.Invoke(format, arg);
 
-        public static void ErrorWriteLine(string format, params object[] arg)
-        {
+        public static void ErrorWriteLine(string format, params object[] arg) =>
             ErrorWriteLineEvent?.Invoke(format, arg);
-        }
 
-        public static void VerboseWriteLine(string format, params object[] arg)
-        {
+        public static void VerboseWriteLine(string format, params object[] arg) =>
             VerboseWriteLineEvent?.Invoke(format, arg);
-        }
 
         public static void DebugWriteLine(string module, string format, params object[] arg)
         {
@@ -88,84 +81,38 @@ namespace DiscImageChef.Console
             DebugWithModuleWriteLineEvent?.Invoke(module, format, arg);
         }
 
-        public static void WriteLine()
-        {
-            WriteLineEvent?.Invoke("", null);
-        }
+        public static void WriteLine() => WriteLineEvent?.Invoke("", null);
 
-        public static void ErrorWriteLine()
-        {
-            ErrorWriteLineEvent?.Invoke("", null);
-        }
+        public static void ErrorWriteLine() => ErrorWriteLineEvent?.Invoke("", null);
 
-        public static void VerboseWriteLine()
-        {
-            VerboseWriteLineEvent?.Invoke("", null);
-        }
+        public static void VerboseWriteLine() => VerboseWriteLineEvent?.Invoke("", null);
 
-        public static void DebugWriteLine()
-        {
-            DebugWriteLineEvent?.Invoke("", null);
-        }
+        public static void DebugWriteLine() => DebugWriteLineEvent?.Invoke("", null);
 
-        public static void Write(string format, params object[] arg)
-        {
-            WriteEvent?.Invoke(format, arg);
-        }
+        public static void Write(string format, params object[] arg) => WriteEvent?.Invoke(format, arg);
 
-        public static void ErrorWrite(string format, params object[] arg)
-        {
-            ErrorWriteEvent?.Invoke(format, arg);
-        }
+        public static void ErrorWrite(string format, params object[] arg) => ErrorWriteEvent?.Invoke(format, arg);
 
-        public static void VerboseWrite(string format, params object[] arg)
-        {
-            VerboseWriteEvent?.Invoke(format, arg);
-        }
+        public static void VerboseWrite(string format, params object[] arg) => VerboseWriteEvent?.Invoke(format, arg);
 
-        public static void DebugWrite(string module, string format, params object[] arg)
-        {
+        public static void DebugWrite(string module, string format, params object[] arg) =>
             DebugWriteEvent?.Invoke("DEBUG (" + module + "): " + format, arg);
-        }
 
-        public static void Write()
-        {
-            WriteEvent?.Invoke("", null);
-        }
+        public static void Write() => WriteEvent?.Invoke("", null);
 
-        public static void ErrorWrite()
-        {
-            ErrorWriteEvent?.Invoke("", null);
-        }
+        public static void ErrorWrite() => ErrorWriteEvent?.Invoke("", null);
 
-        public static void VerboseWrite()
-        {
-            VerboseWriteEvent?.Invoke("", null);
-        }
+        public static void VerboseWrite() => VerboseWriteEvent?.Invoke("", null);
 
-        public static void DebugWrite()
-        {
-            DebugWriteEvent?.Invoke("", null);
-        }
+        public static void DebugWrite() => DebugWriteEvent?.Invoke("", null);
 
-        public static void WriteLine(string format)
-        {
-            WriteLineEvent?.Invoke("{0}", format);
-        }
+        public static void WriteLine(string format) => WriteLineEvent?.Invoke("{0}", format);
 
-        public static void ErrorWriteLine(string format)
-        {
-            ErrorWriteLineEvent?.Invoke("{0}", format);
-        }
+        public static void ErrorWriteLine(string format) => ErrorWriteLineEvent?.Invoke("{0}", format);
 
-        public static void VerboseWriteLine(string format)
-        {
-            VerboseWriteLineEvent?.Invoke("{0}", format);
-        }
+        public static void VerboseWriteLine(string format) => VerboseWriteLineEvent?.Invoke("{0}", format);
 
-        public static void DebugWriteLine(string module, string format)
-        {
+        public static void DebugWriteLine(string module, string format) =>
             DebugWriteLineEvent?.Invoke("{0}", "DEBUG (" + module + "): " + format);
-        }
     }
 }
