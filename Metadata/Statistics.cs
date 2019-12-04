@@ -68,15 +68,18 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class StatsDto
     {
-        public List<NameValueStats> Commands         { get; set; }
-        public List<OsStats>        OperatingSystems { get; set; }
-        public List<NameValueStats> Versions         { get; set; }
-        public List<NameValueStats> Filesystems      { get; set; }
-        public List<NameValueStats> Partitions       { get; set; }
-        public List<NameValueStats> MediaFormats     { get; set; }
-        public List<NameValueStats> Filters          { get; set; }
-        public List<DeviceStats>    Devices          { get; set; }
-        public List<MediaStats>     Medias           { get; set; }
+        public List<NameValueStats> Commands               { get; set; }
+        public List<OsStats>        OperatingSystems       { get; set; }
+        public List<NameValueStats> Versions               { get; set; }
+        public List<NameValueStats> Filesystems            { get; set; }
+        public List<NameValueStats> Partitions             { get; set; }
+        public List<NameValueStats> MediaFormats           { get; set; }
+        public List<NameValueStats> Filters                { get; set; }
+        public List<DeviceStats>    Devices                { get; set; }
+        public List<MediaStats>     Medias                 { get; set; }
+        public List<OsStats>        RemoteApplications     { get; set; }
+        public List<NameValueStats> RemoteArchitectures    { get; set; }
+        public List<OsStats>        RemoteOperatingSystems { get; set; }
     }
 
     public class CommandsStats
