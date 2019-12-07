@@ -103,6 +103,8 @@
     <Compile Include="Migrations\20191103000828_MakeFieldsUnsigned.Designer.cs" />
     <Compile Include="Migrations\20191207175444_SyncWithServerChanges.cs" />
     <Compile Include="Migrations\20191207175444_SyncWithServerChanges.Designer.cs" />
+    <Compile Include="Migrations\20191207183522_AddNameCountModel.cs" />
+    <Compile Include="Migrations\20191207183522_AddNameCountModel.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\CdOffset.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Models\Filter.cs" />
     <Compile Include="Models\Media.cs" />
     <Compile Include="Models\MediaFormat.cs" />
+    <Compile Include="Models\NameCountModel.cs" />
     <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Partition.cs" />
     <Compile Include="Models\Report.cs" />

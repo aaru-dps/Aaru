@@ -32,10 +32,5 @@
 
 namespace DiscImageChef.Database.Models
 {
-    public class Partition : BaseModel<int>
-    {
-        public string Name         { get; set; }
-        public bool   Synchronized { get; set; }
-        public ulong  Count        { get; set; }
-    }
+    public class Partition : NameCountModel<int> { }
 }

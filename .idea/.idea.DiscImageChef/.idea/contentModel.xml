@@ -372,6 +372,8 @@
           <e p="20191103000828_MakeFieldsUnsigned.cs" t="Include" />
           <e p="20191207175444_SyncWithServerChanges.Designer.cs" t="Include" />
           <e p="20191207175444_SyncWithServerChanges.cs" t="Include" />
+          <e p="20191207183522_AddNameCountModel.Designer.cs" t="Include" />
+          <e p="20191207183522_AddNameCountModel.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -384,6 +386,7 @@
           <e p="Filter.cs" t="Include" />
           <e p="Media.cs" t="Include" />
           <e p="MediaFormat.cs" t="Include" />
+          <e p="NameCountModel.cs" t="Include" />
           <e p="OperatingSystem.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
           <e p="Report.cs" t="Include" />

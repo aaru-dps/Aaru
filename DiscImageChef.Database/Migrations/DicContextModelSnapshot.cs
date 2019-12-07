@@ -1271,9 +1271,9 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<ulong>("Count");
 
-                b.Property<bool>("Synchronized");
+                b.Property<string>("Name");
 
-                b.Property<string>("Value");
+                b.Property<bool>("Synchronized");
 
                 b.HasKey("Id");
 
