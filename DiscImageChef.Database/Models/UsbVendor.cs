@@ -32,12 +32,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DiscImageChef.Database.Models
 {
-    public class UsbVendor
+    public class UsbVendor : BaseModel<ushort>
     {
         public UsbVendor() { }
 
@@ -48,8 +47,6 @@ namespace DiscImageChef.Database.Models
             AddedWhen = ModifiedWhen = DateTime.UtcNow;
         }
 
-        [Key]
-        public ushort Id { get;          set; }
         public string   Vendor    { get; set; }
         public DateTime AddedWhen { get; set; }
         [Index]

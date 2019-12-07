@@ -104,6 +104,7 @@
     <Compile Include="Migrations\20191207175444_SyncWithServerChanges.cs" />
     <Compile Include="Migrations\20191207175444_SyncWithServerChanges.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />

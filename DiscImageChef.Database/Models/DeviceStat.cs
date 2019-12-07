@@ -30,14 +30,10 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System.ComponentModel.DataAnnotations;
-
 namespace DiscImageChef.Database.Models
 {
-    public class DeviceStat
+    public class DeviceStat : BaseModel<int>
     {
-        [Key]
-        public int Id { get;              set; }
         public string Manufacturer { get; set; }
         public string Model        { get; set; }
         public string Revision     { get; set; }
