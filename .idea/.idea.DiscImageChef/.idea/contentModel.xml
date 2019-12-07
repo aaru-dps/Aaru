@@ -378,6 +378,7 @@
         </e>
         <e p="Models" t="Include">
           <e p="BaseModel.cs" t="Include" />
+          <e p="BaseOperatingSystem.cs" t="Include" />
           <e p="CdOffset.cs" t="Include" />
           <e p="Command.cs" t="Include" />
           <e p="Device.cs" t="Include" />

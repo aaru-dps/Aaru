@@ -107,6 +107,7 @@
     <Compile Include="Migrations\20191207183522_AddNameCountModel.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\BaseOperatingSystem.cs" />
     <Compile Include="Models\CdOffset.cs" />
     <Compile Include="Models\Command.cs" />
     <Compile Include="Models\Device.cs" />

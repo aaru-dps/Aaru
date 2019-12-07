@@ -32,11 +32,5 @@
 
 namespace DiscImageChef.Database.Models
 {
-    public class OperatingSystem : BaseModel<int>
-    {
-        public string Name         { get; set; }
-        public string Version      { get; set; }
-        public bool   Synchronized { get; set; }
-        public ulong  Count        { get; set; }
-    }
+    public class OperatingSystem : BaseOperatingSystem { }
 }
