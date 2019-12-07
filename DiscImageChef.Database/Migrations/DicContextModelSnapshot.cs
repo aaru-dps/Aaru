@@ -623,6 +623,8 @@ namespace DiscImageChef.Database.Migrations
 
                 b.Property<bool?>("CanReadCMI");
 
+                b.Property<bool?>("CanReadCdScrambled");
+
                 b.Property<bool?>("CanReadCorrectedSubchannel");
 
                 b.Property<bool?>("CanReadCorrectedSubchannelWithC2");
@@ -786,6 +788,8 @@ namespace DiscImageChef.Database.Migrations
                 b.Property<byte[]>("ReadCdMsfData");
 
                 b.Property<byte[]>("ReadCdMsfFullData");
+
+                b.Property<byte[]>("ReadCdScrambledData");
 
                 b.Property<byte[]>("ReadDmaData");
 

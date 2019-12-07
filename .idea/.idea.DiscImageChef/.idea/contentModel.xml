@@ -3,8 +3,17 @@
   <component name="ContentModelStore">
     <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
+      <e p=".git/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/CICMMetadata/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.CommonTypes/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Console/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Decoders/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Dto/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/DiscImageChef.Helpers/info/exclude" t="IncludeRecursive" />
+      <e p=".git/modules/cuetoolsnet/info/exclude" t="IncludeRecursive" />
       <e p=".github/CODE_OF_CONDUCT.md" t="Include" />
       <e p=".github/ISSUE_TEMPLATE.md" t="Include" />
       <e p=".github/PULL_REQUEST_TEMPLATE.md" t="Include" />
@@ -361,6 +370,8 @@
           <e p="20190525183723_IdForDensityCode.cs" t="Include" />
           <e p="20191103000828_MakeFieldsUnsigned.Designer.cs" t="Include" />
           <e p="20191103000828_MakeFieldsUnsigned.cs" t="Include" />
+          <e p="20191207175444_SyncWithServerChanges.Designer.cs" t="Include" />
+          <e p="20191207175444_SyncWithServerChanges.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -1245,6 +1256,7 @@
         <e p="DiscImageChef.EntityFramework.csproj" t="IncludeRecursive" />
         <e p="Program.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="discimagechef.db" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.0" t="Include">
