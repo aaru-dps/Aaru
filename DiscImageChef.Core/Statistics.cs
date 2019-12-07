@@ -539,15 +539,18 @@ namespace DiscImageChef.Core
 
                     submitStatsLock = true;
 
-                    if(ctx.Commands.Any(c => !c.Synchronized)         ||
-                       ctx.Filesystems.Any(c => !c.Synchronized)      ||
-                       ctx.Filters.Any(c => !c.Synchronized)          ||
-                       ctx.MediaFormats.Any(c => !c.Synchronized)     ||
-                       ctx.Partitions.Any(c => !c.Synchronized)       ||
-                       ctx.Medias.Any(c => !c.Synchronized)           ||
-                       ctx.SeenDevices.Any(c => !c.Synchronized)      ||
-                       ctx.OperatingSystems.Any(c => !c.Synchronized) ||
-                       ctx.Versions.Any(c => !c.Synchronized))
+                    if(ctx.Commands.Any(c => !c.Synchronized)            ||
+                       ctx.Filesystems.Any(c => !c.Synchronized)         ||
+                       ctx.Filters.Any(c => !c.Synchronized)             ||
+                       ctx.MediaFormats.Any(c => !c.Synchronized)        ||
+                       ctx.Partitions.Any(c => !c.Synchronized)          ||
+                       ctx.Medias.Any(c => !c.Synchronized)              ||
+                       ctx.SeenDevices.Any(c => !c.Synchronized)         ||
+                       ctx.OperatingSystems.Any(c => !c.Synchronized)    ||
+                       ctx.Versions.Any(c => !c.Synchronized)            ||
+                       ctx.RemoteApplications.Any(c => !c.Synchronized)  ||
+                       ctx.RemoteArchitectures.Any(c => !c.Synchronized) ||
+                       ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
                     {
                         var dto = new StatsDto();
 
@@ -678,6 +681,64 @@ namespace DiscImageChef.Core
                                         Value = ctx.OperatingSystems.LongCount(c => !c.Synchronized     &&
                                                                                     c.Name    == osName &&
                                                                                     c.Version == osVersion)
+                                    });
+                            }
+                        }
+
+                        if(ctx.RemoteApplications.Any(c => !c.Synchronized))
+                        {
+                            dto.RemoteApplications = new List<OsStats>();
+
+                            foreach(string remoteAppName in ctx.
+                                                            RemoteApplications.Where(c => !c.Synchronized).
+                                                            Select(c => c.Name).Distinct())
+                            {
+                                foreach(string remoteAppVersion in ctx.
+                                                                   RemoteApplications.
+                                                                   Where(c => !c.Synchronized &&
+                                                                              c.Name == remoteAppName).
+                                                                   Select(c => c.Version).Distinct())
+                                    dto.RemoteApplications.Add(new OsStats
+                                    {
+                                        name = remoteAppName, version = remoteAppVersion,
+                                        Value = ctx.RemoteApplications.LongCount(c => !c.Synchronized            &&
+                                                                                      c.Name    == remoteAppName &&
+                                                                                      c.Version == remoteAppVersion)
+                                    });
+                            }
+                        }
+
+                        if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
+                        {
+                            dto.RemoteArchitectures = new List<NameValueStats>();
+
+                            foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized).
+                                                      Select(c => c.Name).Distinct())
+                                dto.RemoteArchitectures.Add(new NameValueStats
+                                {
+                                    name  = nvs,
+                                    Value = ctx.RemoteArchitectures.LongCount(c => !c.Synchronized && c.Name == nvs)
+                                });
+                        }
+
+                        if(ctx.RemoteOperatingSystems.Any(c => !c.Synchronized))
+                        {
+                            dto.RemoteOperatingSystems = new List<OsStats>();
+
+                            foreach(string remoteOsName in ctx.
+                                                           RemoteOperatingSystems.Where(c => !c.Synchronized).
+                                                           Select(c => c.Name).Distinct())
+                            {
+                                foreach(string remoteOsVersion in ctx.
+                                                                  RemoteOperatingSystems.
+                                                                  Where(c => !c.Synchronized && c.Name == remoteOsName).
+                                                                  Select(c => c.Version).Distinct())
+                                    dto.RemoteOperatingSystems.Add(new OsStats
+                                    {
+                                        name = remoteOsName, version = remoteOsVersion,
+                                        Value = ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized           &&
+                                                                                          c.Name    == remoteOsName &&
+                                                                                          c.Version == remoteOsVersion)
                                     });
                             }
                         }
@@ -906,6 +967,98 @@ namespace DiscImageChef.Core
                                                                                                      osVersion));
                                 }
                             }
+
+                        if(ctx.RemoteApplications.Any(c => !c.Synchronized))
+                            foreach(string remoteAppName in ctx.
+                                                            RemoteApplications.Where(c => !c.Synchronized).
+                                                            Select(c => c.Name).Distinct())
+                            {
+                                foreach(string remoteAppVersion in ctx.
+                                                                   RemoteApplications.
+                                                                   Where(c => !c.Synchronized &&
+                                                                              c.Name == remoteAppName).
+                                                                   Select(c => c.Version).Distinct())
+                                {
+                                    RemoteApplication existing =
+                                        ctx.RemoteApplications.FirstOrDefault(c => c.Synchronized             &&
+                                                                                   c.Name    == remoteAppName &&
+                                                                                   c.Version == remoteAppVersion) ??
+                                        new RemoteApplication
+                                        {
+                                            Synchronized = true, Version = remoteAppVersion, Name = remoteAppName
+                                        };
+
+                                    existing.Count +=
+                                        (ulong)ctx.RemoteApplications.LongCount(c => !c.Synchronized            &&
+                                                                                     c.Name    == remoteAppName &&
+                                                                                     c.Version == remoteAppVersion);
+
+                                    ctx.RemoteApplications.Update(existing);
+
+                                    ctx.RemoteApplications.RemoveRange(ctx.RemoteApplications.Where(c =>
+                                                                                                        !c.
+                                                                                                            Synchronized &&
+                                                                                                        c.Name ==
+                                                                                                        remoteAppName &&
+                                                                                                        c.Version ==
+                                                                                                        remoteAppVersion));
+                                }
+                            }
+
+                        if(ctx.RemoteArchitectures.Any(c => !c.Synchronized))
+                            foreach(string nvs in ctx.RemoteArchitectures.Where(c => !c.Synchronized).
+                                                      Select(c => c.Name).Distinct())
+                            {
+                                RemoteArchitecture existing =
+                                    ctx.RemoteArchitectures.FirstOrDefault(c => c.Synchronized && c.Name == nvs) ??
+                                    new RemoteArchitecture
+                                    {
+                                        Name = nvs, Synchronized = true
+                                    };
+
+                                existing.Count +=
+                                    (ulong)ctx.RemoteArchitectures.LongCount(c => !c.Synchronized && c.Name == nvs);
+
+                                ctx.RemoteArchitectures.Update(existing);
+
+                                ctx.RemoteArchitectures.RemoveRange(ctx.RemoteArchitectures.
+                                                                        Where(c => !c.Synchronized && c.Name == nvs));
+                            }
+
+                        foreach(string remoteOsName in ctx.
+                                                       RemoteOperatingSystems.Where(c => !c.Synchronized).
+                                                       Select(c => c.Name).Distinct())
+                        {
+                            foreach(string remoteOsVersion in ctx.
+                                                              RemoteOperatingSystems.
+                                                              Where(c => !c.Synchronized && c.Name == remoteOsName).
+                                                              Select(c => c.Version).Distinct())
+                            {
+                                RemoteOperatingSystem existing =
+                                    ctx.RemoteOperatingSystems.FirstOrDefault(c => c.Synchronized            &&
+                                                                                   c.Name    == remoteOsName &&
+                                                                                   c.Version == remoteOsVersion) ??
+                                    new RemoteOperatingSystem
+                                    {
+                                        Synchronized = true, Version = remoteOsVersion, Name = remoteOsName
+                                    };
+
+                                existing.Count +=
+                                    (ulong)ctx.RemoteOperatingSystems.LongCount(c => !c.Synchronized           &&
+                                                                                     c.Name    == remoteOsName &&
+                                                                                     c.Version == remoteOsVersion);
+
+                                ctx.RemoteOperatingSystems.Update(existing);
+
+                                ctx.RemoteOperatingSystems.RemoveRange(ctx.RemoteOperatingSystems.Where(c =>
+                                                                                                            !c.
+                                                                                                                Synchronized &&
+                                                                                                            c.Name ==
+                                                                                                            remoteOsName &&
+                                                                                                            c.Version ==
+                                                                                                            remoteOsVersion));
+                            }
+                        }
 
                         ctx.SaveChanges();
                     }
