@@ -37,10 +37,7 @@ namespace DiscImageChef.Database
 {
     public sealed class DicContext : DbContext
     {
-        public DicContext(DbContextOptions options) : base(options)
-        {
-            Database.Migrate();
-        }
+        public DicContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Device>          Devices          { get; set; }
         public DbSet<Report>          Reports          { get; set; }
@@ -56,12 +53,14 @@ namespace DiscImageChef.Database
         public DbSet<UsbVendor>       UsbVendors       { get; set; }
         public DbSet<UsbProduct>      UsbProducts      { get; set; }
         public DbSet<CdOffset>        CdOffsets        { get; set; }
+
         // Note: If table does not appear check that last migration has been REALLY added to the project
 
         public static DicContext Create(string dbPath)
         {
-            DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder();
+            var optionsBuilder = new DbContextOptionsBuilder();
             optionsBuilder.UseSqlite($"Data Source={dbPath}");
+
             return new DicContext(optionsBuilder.Options);
         }
     }
