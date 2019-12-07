@@ -32,6 +32,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,8 +85,23 @@ namespace DiscImageChef
             }
 
             var mctx = DicContext.Create(Settings.Settings.MasterDbPath);
-            mctx.Database.Migrate();
-            mctx.SaveChanges();
+
+            if(mctx.Database.GetPendingMigrations().Any())
+            {
+                DicConsole.WriteLine("New database version, updating...");
+
+                try
+                {
+                    File.Delete(Settings.Settings.MasterDbPath);
+                }
+                catch(Exception)
+                {
+                    DicConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
+                    DicConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MasterDbPath);
+                }
+
+                UpdateCommand.DoUpdate(true);
+            }
 
             if ((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
                 Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
