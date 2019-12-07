@@ -36,55 +36,61 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
-using DiscImageChef.Devices.Remote;
+using DiscImageChef.Core;
 using Mono.Options;
+using Remote = DiscImageChef.Devices.Remote.Remote;
 
 namespace DiscImageChef.Commands
 {
     internal class RemoteCommand : Command
     {
-        private string host;
-        private bool showHelp;
+        string host;
+        bool   showHelp;
 
-        public RemoteCommand() : base("remote", "Tests connection to a DiscImageChef Remote Server.")
-        {
+        public RemoteCommand() : base("remote", "Tests connection to a DiscImageChef Remote Server.") =>
             Options = new OptionSet
             {
                 $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}",
-                "",
-                $"usage: DiscImageChef {Name} [OPTIONS] host",
-                "",
+                $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} [OPTIONS] host", "",
                 Help,
-                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
+                {
+                    "help|h|?", "Show this message and exit.", v => showHelp = v != null
+                }
             };
-        }
 
         public override int Invoke(IEnumerable<string> arguments)
         {
-            var extra = Options.Parse(arguments);
+            List<string> extra = Options.Parse(arguments);
 
-            if (showHelp)
+            if(showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int) ErrorNumber.HelpRequested;
+
+                return(int)ErrorNumber.HelpRequested;
             }
 
             MainClass.PrintCopyright();
-            if (MainClass.Debug) DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
-            if (MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
-//            Statistics.AddCommand("remote");
 
-            if (extra.Count > 1)
+            if(MainClass.Debug)
+                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+
+            if(MainClass.Verbose)
+                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            //            Statistics.AddCommand("remote");
+
+            if(extra.Count > 1)
             {
                 DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int) ErrorNumber.UnexpectedArgumentCount;
+
+                return(int)ErrorNumber.UnexpectedArgumentCount;
             }
 
-            if (extra.Count == 0)
+            if(extra.Count == 0)
             {
                 DicConsole.ErrorWriteLine("Missing input image.");
-                return (int) ErrorNumber.MissingArgument;
+
+                return(int)ErrorNumber.MissingArgument;
             }
 
             host = extra[0];
@@ -96,21 +102,26 @@ namespace DiscImageChef.Commands
             try
             {
                 var remote = new Remote(host);
+
+                Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,
+                                     remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
+
                 DicConsole.WriteLine("Server application: {0} {1}", remote.ServerApplication, remote.ServerVersion);
+
                 DicConsole.WriteLine("Server operating system: {0} {1} ({2})", remote.ServerOperatingSystem,
-                    remote.ServerOperatingSystemVersion,
-                    remote.ServerArchitecture);
+                                     remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
+
                 DicConsole.WriteLine("Server maximum protocol: {0}", remote.ServerProtocolVersion);
                 remote.Disconnect();
             }
-            catch (Exception)
+            catch(Exception)
             {
                 DicConsole.ErrorWriteLine("Error connecting to host.");
-                return (int) ErrorNumber.CannotOpenDevice;
+
+                return(int)ErrorNumber.CannotOpenDevice;
             }
 
-
-            return (int) ErrorNumber.NoError;
+            return(int)ErrorNumber.NoError;
         }
     }
 }

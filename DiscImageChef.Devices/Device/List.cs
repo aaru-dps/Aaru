@@ -56,7 +56,8 @@ namespace DiscImageChef.Devices
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string Bus;
 
-        [MarshalAs(UnmanagedType.U1)] public bool Supported;
+        [MarshalAs(UnmanagedType.U1)]
+        public bool Supported;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly byte[] Padding;
@@ -64,29 +65,49 @@ namespace DiscImageChef.Devices
 
     public partial class Device
     {
-        public static DeviceInfo[] ListDevices(string dicRemote = null)
+        public static DeviceInfo[] ListDevices() => ListDevices(out _, out _, out _, out _, out _, out _);
+
+        public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication,
+                                               out string serverVersion, out string serverOperatingSystem,
+                                               out string serverOperatingSystemVersion, out string serverArchitecture,
+                                               string dicRemote = null)
         {
-            if (dicRemote is null)
-                switch (DetectOS.GetRealPlatformID())
+            isRemote                     = false;
+            serverApplication            = null;
+            serverVersion                = null;
+            serverOperatingSystem        = null;
+            serverOperatingSystemVersion = null;
+            serverArchitecture           = null;
+
+            if(dicRemote is null)
+                switch(DetectOS.GetRealPlatformID())
                 {
                     case PlatformID.Win32NT: return Windows.ListDevices.GetList();
-                    case PlatformID.Linux: return Linux.ListDevices.GetList();
+                    case PlatformID.Linux:   return Linux.ListDevices.GetList();
                     case PlatformID.FreeBSD: return FreeBSD.ListDevices.GetList();
                     default:
-                        throw new InvalidOperationException(
-                            $"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
+                        throw new
+                            InvalidOperationException($"Platform {DetectOS.GetRealPlatformID()} not yet supported.");
                 }
 
             try
             {
-                using (var remote = new Remote.Remote(dicRemote))
+                using(var remote = new Remote.Remote(dicRemote))
                 {
+                    isRemote                     = true;
+                    serverApplication            = remote.ServerApplication;
+                    serverVersion                = remote.ServerVersion;
+                    serverOperatingSystem        = remote.ServerOperatingSystem;
+                    serverOperatingSystemVersion = remote.ServerOperatingSystemVersion;
+                    serverArchitecture           = remote.ServerArchitecture;
+
                     return remote.ListDevices();
                 }
             }
-            catch (Exception)
+            catch(Exception)
             {
                 DicConsole.ErrorWriteLine("Error connecting to host.");
+
                 return new DeviceInfo[0];
             }
         }

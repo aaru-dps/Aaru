@@ -32,7 +32,6 @@
 
 using System;
 using System.Threading;
-using DiscImageChef.CommonTypes;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Core.Media.Info;
@@ -77,15 +76,9 @@ namespace DiscImageChef.Gui.Forms
             lineChart.LineColor       = Colors.Yellow;
         }
 
-        void OnBtnCancelClick(object sender, EventArgs e)
-        {
-            Close();
-        }
+        void OnBtnCancelClick(object sender, EventArgs e) => Close();
 
-        void OnBtnStopClick(object sender, EventArgs e)
-        {
-            scanner.Abort();
-        }
+        void OnBtnStopClick(object sender, EventArgs e) => scanner.Abort();
 
         void OnBtnScanClick(object sender, EventArgs e)
         {
@@ -100,10 +93,17 @@ namespace DiscImageChef.Gui.Forms
         // TODO: Allow to save MHDD and ImgBurn log files
         void DoWork()
         {
-            if(devicePath.Length == 2 && devicePath[1] == ':' && devicePath[0] != '/' && char.IsLetter(devicePath[0]))
+            if(devicePath.Length == 2   &&
+               devicePath[1]     == ':' &&
+               devicePath[0]     != '/' &&
+               char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Device dev = new Device(devicePath);
+            var dev = new Device(devicePath);
+
+            if(dev.IsRemote)
+                Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
+                                     dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
 
             if(dev.Error)
             {
@@ -137,6 +137,7 @@ namespace DiscImageChef.Gui.Forms
             {
                 lblTotalTime.Text = lblTotalTime.Text =
                                         $"Took a total of {results.TotalTime} seconds ({results.ProcessingTime} processing commands).";
+
                 lblAvgSpeed.Text          = $"Average speed: {results.AvgSpeed:F3} MiB/sec.";
                 lblMaxSpeed.Text          = $"Fastest speed burst: {results.MaxSpeed:F3} MiB/sec.";
                 lblMinSpeed.Text          = $"Slowest speed burst: {results.MinSpeed:F3} MiB/sec.";
@@ -171,18 +172,15 @@ namespace DiscImageChef.Gui.Forms
             WorkFinished();
         }
 
-        void ScanSpeed(ulong sector, double currentspeed)
+        void ScanSpeed(ulong sector, double currentspeed) => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() =>
-            {
-                if(currentspeed > lineChart.MaxY) lineChart.MaxY = (float)(currentspeed + currentspeed / 10);
+            if(currentspeed > lineChart.MaxY)
+                lineChart.MaxY = (float)(currentspeed + (currentspeed / 10));
 
-                lineChart.Values.Add(new PointF(sector, (float)currentspeed));
-            });
-        }
+            lineChart.Values.Add(new PointF(sector, (float)currentspeed));
+        });
 
-        void InitBlockMap(ulong blocks, ulong blocksize, ulong blockstoread, ushort currentProfile)
-        {
+        void InitBlockMap(ulong blocks, ulong blocksize, ulong blockstoread, ushort currentProfile) =>
             Application.Instance.Invoke(() =>
             {
                 blockMap.Sectors       = blocks;
@@ -190,6 +188,7 @@ namespace DiscImageChef.Gui.Forms
                 blocksToRead           = blockstoread;
                 lineChart.MinX         = 0;
                 lineChart.MinY         = 0;
+
                 switch(currentProfile)
                 {
                     case 0x0005: // CD and DDCD
@@ -199,13 +198,19 @@ namespace DiscImageChef.Gui.Forms
                     case 0x0020:
                     case 0x0021:
                     case 0x0022:
-                        if(blocks      <= 360000) lineChart.MaxX = 360000;
-                        else if(blocks <= 405000) lineChart.MaxX = 405000;
-                        else if(blocks <= 445500) lineChart.MaxX = 445500;
-                        else lineChart.MaxX                      = blocks;
+                        if(blocks <= 360000)
+                            lineChart.MaxX = 360000;
+                        else if(blocks <= 405000)
+                            lineChart.MaxX = 405000;
+                        else if(blocks <= 445500)
+                            lineChart.MaxX = 445500;
+                        else
+                            lineChart.MaxX = blocks;
+
                         lineChart.StepsX = lineChart.MaxX   / 10f;
                         lineChart.StepsY = 150              * 4;
                         lineChart.MaxY   = lineChart.StepsY * 12.5f;
+
                         break;
                     case 0x0010: // DVD SL
                     case 0x0011:
@@ -219,6 +224,7 @@ namespace DiscImageChef.Gui.Forms
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 1352.5f;
                         lineChart.MaxY   = lineChart.StepsY * 26;
+
                         break;
                     case 0x0015: // DVD DL
                     case 0x0016:
@@ -229,19 +235,27 @@ namespace DiscImageChef.Gui.Forms
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 1352.5f;
                         lineChart.MaxY   = lineChart.StepsY * 26;
+
                         break;
                     case 0x0041:
                     case 0x0042:
                     case 0x0043:
                     case 0x0040: // BD
-                        if(blocks      <= 12219392) lineChart.MaxX = 12219392;
-                        else if(blocks <= 24438784) lineChart.MaxX = 24438784;
-                        else if(blocks <= 48878592) lineChart.MaxX = 48878592;
-                        else if(blocks <= 62500864) lineChart.MaxX = 62500864;
-                        else lineChart.MaxX                        = blocks;
+                        if(blocks <= 12219392)
+                            lineChart.MaxX = 12219392;
+                        else if(blocks <= 24438784)
+                            lineChart.MaxX = 24438784;
+                        else if(blocks <= 48878592)
+                            lineChart.MaxX = 48878592;
+                        else if(blocks <= 62500864)
+                            lineChart.MaxX = 62500864;
+                        else
+                            lineChart.MaxX = blocks;
+
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 4394.5f;
                         lineChart.MaxY   = lineChart.StepsY * 18;
+
                         break;
                     case 0x0050: // HD DVD
                     case 0x0051:
@@ -249,145 +263,137 @@ namespace DiscImageChef.Gui.Forms
                     case 0x0053:
                     case 0x0058:
                     case 0x005A:
-                        if(blocks      <= 7361599) lineChart.MaxX  = 7361599;
-                        else if(blocks <= 16305407) lineChart.MaxX = 16305407;
-                        else lineChart.MaxX                        = blocks;
+                        if(blocks <= 7361599)
+                            lineChart.MaxX = 7361599;
+                        else if(blocks <= 16305407)
+                            lineChart.MaxX = 16305407;
+                        else
+                            lineChart.MaxX = blocks;
+
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 4394.5f;
                         lineChart.MaxY   = lineChart.StepsY * 8;
+
                         break;
                     default:
                         lineChart.MaxX   = blocks;
                         lineChart.StepsX = lineChart.MaxX / 10f;
                         lineChart.StepsY = 625f;
                         lineChart.MaxY   = lineChart.StepsY;
+
                         break;
                 }
             });
-        }
 
-        void WorkFinished()
+        void WorkFinished() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() =>
+            btnStop.Visible      = false;
+            btnScan.Visible      = true;
+            btnCancel.Visible    = true;
+            stkProgress.Visible  = false;
+            lblTotalTime.Visible = true;
+            lblAvgSpeed.Visible  = true;
+            lblMaxSpeed.Visible  = true;
+            lblMinSpeed.Visible  = true;
+        });
+
+        void EndProgress() => Application.Instance.Invoke(() =>
+        {
+            stkProgress1.Visible = false;
+        });
+
+        void UpdateProgress(string text, long current, long maximum) => Application.Instance.Invoke(() =>
+        {
+            lblProgress.Text          = text;
+            prgProgress.Indeterminate = false;
+            prgProgress.MinValue      = 0;
+
+            if(maximum > int.MaxValue)
             {
-                btnStop.Visible      = false;
-                btnScan.Visible      = true;
-                btnCancel.Visible    = true;
-                stkProgress.Visible  = false;
-                lblTotalTime.Visible = true;
-                lblAvgSpeed.Visible  = true;
-                lblMaxSpeed.Visible  = true;
-                lblMinSpeed.Visible  = true;
-            });
-        }
-
-        void EndProgress()
-        {
-            Application.Instance.Invoke(() => { stkProgress1.Visible = false; });
-        }
-
-        void UpdateProgress(string text, long current, long maximum)
-        {
-            Application.Instance.Invoke(() =>
+                prgProgress.MaxValue = (int)(maximum / int.MaxValue);
+                prgProgress.Value    = (int)(current / int.MaxValue);
+            }
+            else
             {
-                lblProgress.Text          = text;
-                prgProgress.Indeterminate = false;
-                prgProgress.MinValue      = 0;
-                if(maximum > int.MaxValue)
-                {
-                    prgProgress.MaxValue = (int)(maximum / int.MaxValue);
-                    prgProgress.Value    = (int)(current / int.MaxValue);
-                }
-                else
-                {
-                    prgProgress.MaxValue = (int)maximum;
-                    prgProgress.Value    = (int)current;
-                }
-            });
-        }
+                prgProgress.MaxValue = (int)maximum;
+                prgProgress.Value    = (int)current;
+            }
+        });
 
-        void InitProgress()
+        void InitProgress() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { stkProgress1.Visible = true; });
-        }
+            stkProgress1.Visible = true;
+        });
 
-        void PulseProgress(string text)
+        void PulseProgress(string text) => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() =>
+            lblProgress.Text          = text;
+            prgProgress.Indeterminate = true;
+        });
+
+        void StoppingErrorMessage(string text) => Application.Instance.Invoke(() =>
+        {
+            lblProgress.Text = text;
+            MessageBox.Show(text, MessageBoxType.Error);
+            WorkFinished();
+        });
+
+        void UpdateStatus(string text) => Application.Instance.Invoke(() =>
+        {
+            lblProgress.Text = text;
+        });
+
+        void OnScanUnreadable(ulong sector) => Application.Instance.Invoke(() =>
+        {
+            localResults.Errored      += blocksToRead;
+            lblUnreadableSectors.Text =  $"{localResults.Errored} sectors could not be read.";
+            blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
+        });
+
+        void OnScanTime(ulong sector, double duration) => Application.Instance.Invoke(() =>
+        {
+            if(duration < 3)
             {
-                lblProgress.Text          = text;
-                prgProgress.Indeterminate = true;
-            });
-        }
-
-        void StoppingErrorMessage(string text)
-        {
-            Application.Instance.Invoke(() =>
-            {
-                lblProgress.Text = text;
-                MessageBox.Show(text, MessageBoxType.Error);
-                WorkFinished();
-            });
-        }
-
-        void UpdateStatus(string text)
-        {
-            Application.Instance.Invoke(() => { lblProgress.Text = text; });
-        }
-
-        void OnScanUnreadable(ulong sector)
-        {
-            Application.Instance.Invoke(() =>
-            {
-                localResults.Errored      += blocksToRead;
-                lblUnreadableSectors.Text =  $"{localResults.Errored} sectors could not be read.";
+                localResults.A += blocksToRead;
                 blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
-            });
-        }
-
-        void OnScanTime(ulong sector, double duration)
-        {
-            Application.Instance.Invoke(() =>
+            }
+            else if(duration >= 3 &&
+                    duration < 10)
             {
-                if(duration < 3)
-                {
-                    localResults.A += blocksToRead;
-                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, LightGreen));
-                }
-                else if(duration >= 3 && duration < 10)
-                {
-                    localResults.B += blocksToRead;
-                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Green));
-                }
-                else if(duration >= 10 && duration < 50)
-                {
-                    localResults.C += blocksToRead;
-                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, DarkGreen));
-                }
-                else if(duration >= 50 && duration < 150)
-                {
-                    localResults.D += blocksToRead;
-                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Yellow));
-                }
-                else if(duration >= 150 && duration < 500)
-                {
-                    localResults.E += blocksToRead;
-                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Orange));
-                }
-                else if(duration >= 500)
-                {
-                    localResults.F += blocksToRead;
-                    blockMap.ColoredSectors.Add(new ColoredBlock(sector, Red));
-                }
+                localResults.B += blocksToRead;
+                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Green));
+            }
+            else if(duration >= 10 &&
+                    duration < 50)
+            {
+                localResults.C += blocksToRead;
+                blockMap.ColoredSectors.Add(new ColoredBlock(sector, DarkGreen));
+            }
+            else if(duration >= 50 &&
+                    duration < 150)
+            {
+                localResults.D += blocksToRead;
+                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Yellow));
+            }
+            else if(duration >= 150 &&
+                    duration < 500)
+            {
+                localResults.E += blocksToRead;
+                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Orange));
+            }
+            else if(duration >= 500)
+            {
+                localResults.F += blocksToRead;
+                blockMap.ColoredSectors.Add(new ColoredBlock(sector, Red));
+            }
 
-                lblA.Text = $"{localResults.A} sectors took less than 3 ms.";
-                lblB.Text = $"{localResults.B} sectors took less than 10 ms but more than 3 ms.";
-                lblC.Text = $"{localResults.C} sectors took less than 50 ms but more than 10 ms.";
-                lblD.Text = $"{localResults.D} sectors took less than 150 ms but more than 50 ms.";
-                lblE.Text = $"{localResults.E} sectors took less than 500 ms but more than 150 ms.";
-                lblF.Text = $"{localResults.F} sectors took more than 500 ms.";
-            });
-        }
+            lblA.Text = $"{localResults.A} sectors took less than 3 ms.";
+            lblB.Text = $"{localResults.B} sectors took less than 10 ms but more than 3 ms.";
+            lblC.Text = $"{localResults.C} sectors took less than 50 ms but more than 10 ms.";
+            lblD.Text = $"{localResults.D} sectors took less than 150 ms but more than 50 ms.";
+            lblE.Text = $"{localResults.E} sectors took less than 500 ms but more than 150 ms.";
+            lblF.Text = $"{localResults.F} sectors took more than 500 ms.";
+        });
 
         #region XAML IDs
         Label       lblTotalTime;

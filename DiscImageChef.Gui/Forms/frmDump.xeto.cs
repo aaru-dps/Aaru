@@ -82,47 +82,56 @@ namespace DiscImageChef.Gui.Forms
             stpRetries.Value            = 5;
             stpSkipped.Value            = 512;
 
-            if(scsiInfo != null) mediaType = scsiInfo.MediaType;
+            if(scsiInfo != null)
+                mediaType = scsiInfo.MediaType;
             else
                 switch(deviceInfo.Type)
                 {
                     case DeviceType.SecureDigital:
                         mediaType = MediaType.SecureDigital;
+
                         break;
                     case DeviceType.MMC:
                         mediaType = MediaType.MMC;
+
                         break;
                     default:
-                        if(deviceInfo.IsPcmcia) mediaType            = MediaType.PCCardTypeII;
-                        else if(deviceInfo.IsCompactFlash) mediaType = MediaType.CompactFlash;
-                        else mediaType                               = MediaType.GENERIC_HDD;
+                        if(deviceInfo.IsPcmcia)
+                            mediaType = MediaType.PCCardTypeII;
+                        else if(deviceInfo.IsCompactFlash)
+                            mediaType = MediaType.CompactFlash;
+                        else
+                            mediaType = MediaType.GENERIC_HDD;
+
                         break;
                 }
 
             ObservableCollection<IWritableImage> lstPlugins = new ObservableCollection<IWritableImage>();
             PluginBase                           plugins    = GetPluginBase.Instance;
+
             foreach(IWritableImage plugin in
                 plugins.WritableImages.Values.Where(p => p.SupportedMediaTypes.Contains(mediaType)))
                 lstPlugins.Add(plugin);
+
             cmbFormat.ItemTextBinding = Binding.Property((IWritableImage p) => p.Name);
             cmbFormat.ItemKeyBinding  = Binding.Property((IWritableImage p) => p.Id.ToString());
             cmbFormat.DataStore       = lstPlugins;
 
-            List<CommonEncodingInfo> encodings = Encoding
-                                                .GetEncodings().Select(info => new CommonEncodingInfo
-                                                 {
-                                                     Name = info.Name,
-                                                     DisplayName =
-                                                         info.GetEncoding().EncodingName
-                                                 }).ToList();
-            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings()
-                                      .Select(info => new CommonEncodingInfo
-                                       {
-                                           Name = info.Name, DisplayName = info.DisplayName
-                                       }));
+            List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+            {
+                Name = info.Name, DisplayName = info.GetEncoding().EncodingName
+            }).ToList();
+
+            encodings.AddRange(Claunia.Encoding.Encoding.GetEncodings().Select(info => new CommonEncodingInfo
+            {
+                Name = info.Name, DisplayName = info.DisplayName
+            }));
 
             ObservableCollection<CommonEncodingInfo> lstEncodings = new ObservableCollection<CommonEncodingInfo>();
-            foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName)) lstEncodings.Add(info);
+
+            foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
+                lstEncodings.Add(info);
+
             cmbEncoding.ItemTextBinding = Binding.Property((CommonEncodingInfo p) => p.DisplayName);
             cmbEncoding.ItemKeyBinding  = Binding.Property((CommonEncodingInfo p) => p.Name);
             cmbEncoding.DataStore       = lstEncodings;
@@ -172,9 +181,11 @@ namespace DiscImageChef.Gui.Forms
                 case MediaType.VideoNowColor:
                 case MediaType.VideoNowXp:
                     chkTrack1Pregap.Visible = true;
+
                     break;
                 default:
                     chkTrack1Pregap.Visible = false;
+
                     break;
             }
 
@@ -189,6 +200,7 @@ namespace DiscImageChef.Gui.Forms
             {
                 grpOptions.Visible     = false;
                 btnDestination.Enabled = false;
+
                 return;
             }
 
@@ -198,82 +210,91 @@ namespace DiscImageChef.Gui.Forms
             {
                 grpOptions.Content = null;
                 grpOptions.Visible = false;
+
                 return;
             }
 
             grpOptions.Visible = true;
 
-            StackLayout stkOptions = new StackLayout {Orientation = Orientation.Vertical};
+            var stkOptions = new StackLayout
+            {
+                Orientation = Orientation.Vertical
+            };
 
             foreach((string name, Type type, string description, object @default) option in plugin.SupportedOptions)
                 switch(option.type.ToString())
                 {
-                    case "System.Boolean":
-                        CheckBox optBoolean = new CheckBox();
+                    case"System.Boolean":
+                        var optBoolean = new CheckBox();
                         optBoolean.ID      = "opt" + option.name;
                         optBoolean.Text    = option.description;
                         optBoolean.Checked = (bool)option.@default;
                         stkOptions.Items.Add(optBoolean);
+
                         break;
-                    case "System.SByte":
-                    case "System.Int16":
-                    case "System.Int32":
-                    case "System.Int64":
-                        StackLayout stkNumber = new StackLayout();
+                    case"System.SByte":
+                    case"System.Int16":
+                    case"System.Int32":
+                    case"System.Int64":
+                        var stkNumber = new StackLayout();
                         stkNumber.Orientation = Orientation.Horizontal;
-                        NumericStepper optNumber = new NumericStepper();
+                        var optNumber = new NumericStepper();
                         optNumber.ID    = "opt" + option.name;
                         optNumber.Value = Convert.ToDouble(option.@default);
                         stkNumber.Items.Add(optNumber);
-                        Label lblNumber = new Label();
+                        var lblNumber = new Label();
                         lblNumber.Text = option.description;
                         stkNumber.Items.Add(lblNumber);
                         stkOptions.Items.Add(stkNumber);
+
                         break;
-                    case "System.Byte":
-                    case "System.UInt16":
-                    case "System.UInt32":
-                    case "System.UInt64":
-                        StackLayout stkUnsigned = new StackLayout();
+                    case"System.Byte":
+                    case"System.UInt16":
+                    case"System.UInt32":
+                    case"System.UInt64":
+                        var stkUnsigned = new StackLayout();
                         stkUnsigned.Orientation = Orientation.Horizontal;
-                        NumericStepper optUnsigned = new NumericStepper();
+                        var optUnsigned = new NumericStepper();
                         optUnsigned.ID       = "opt" + option.name;
                         optUnsigned.MinValue = 0;
                         optUnsigned.Value    = Convert.ToDouble(option.@default);
                         stkUnsigned.Items.Add(optUnsigned);
-                        Label lblUnsigned = new Label();
+                        var lblUnsigned = new Label();
                         lblUnsigned.Text = option.description;
                         stkUnsigned.Items.Add(lblUnsigned);
                         stkOptions.Items.Add(stkUnsigned);
+
                         break;
-                    case "System.Single":
-                    case "System.Double":
-                        StackLayout stkFloat = new StackLayout();
+                    case"System.Single":
+                    case"System.Double":
+                        var stkFloat = new StackLayout();
                         stkFloat.Orientation = Orientation.Horizontal;
-                        NumericStepper optFloat = new NumericStepper();
+                        var optFloat = new NumericStepper();
                         optFloat.ID            = "opt" + option.name;
                         optFloat.DecimalPlaces = 2;
                         optFloat.Value         = Convert.ToDouble(option.@default);
                         stkFloat.Items.Add(optFloat);
-                        Label lblFloat = new Label();
+                        var lblFloat = new Label();
                         lblFloat.Text = option.description;
                         stkFloat.Items.Add(lblFloat);
                         stkOptions.Items.Add(stkFloat);
+
                         break;
-                    case "System.Guid":
+                    case"System.Guid":
                         // TODO
                         break;
-                    case "System.String":
-                        StackLayout stkString = new StackLayout();
+                    case"System.String":
+                        var stkString = new StackLayout();
                         stkString.Orientation = Orientation.Horizontal;
-                        Label lblString = new Label();
+                        var lblString = new Label();
                         lblString.Text = option.description;
                         stkString.Items.Add(lblString);
-                        TextBox optString = new TextBox();
+                        var optString = new TextBox();
                         optString.ID   = "opt" + option.name;
                         optString.Text = (string)option.@default;
                         stkString.Items.Add(optString);
                         stkOptions.Items.Add(stkString);
+
                         break;
                 }
 
@@ -282,9 +303,14 @@ namespace DiscImageChef.Gui.Forms
 
         void OnBtnDestinationClick(object sender, EventArgs e)
         {
-            if(!(cmbFormat.SelectedValue is IWritableImage plugin)) return;
+            if(!(cmbFormat.SelectedValue is IWritableImage plugin))
+                return;
 
-            SaveFileDialog dlgDestination = new SaveFileDialog {Title = "Choose destination file"};
+            var dlgDestination = new SaveFileDialog
+            {
+                Title = "Choose destination file"
+            };
+
             dlgDestination.Filters.Add(new FileFilter(plugin.Name, plugin.KnownExtensions.ToArray()));
 
             DialogResult result = dlgDestination.ShowDialog(this);
@@ -293,6 +319,7 @@ namespace DiscImageChef.Gui.Forms
             {
                 txtDestination.Text = "";
                 outputPrefix        = null;
+
                 return;
             }
 
@@ -300,8 +327,10 @@ namespace DiscImageChef.Gui.Forms
                 dlgDestination.FileName += plugin.KnownExtensions.First();
 
             txtDestination.Text = dlgDestination.FileName;
+
             outputPrefix = Path.Combine(Path.GetDirectoryName(dlgDestination.FileName),
                                         Path.GetFileNameWithoutExtension(dlgDestination.FileName));
+
             chkResume.Checked = true;
         }
 
@@ -316,11 +345,15 @@ namespace DiscImageChef.Gui.Forms
             if(chkExistingMetadata.Checked == false)
             {
                 sidecar = null;
+
                 return;
             }
 
-            OpenFileDialog dlgMetadata =
-                new OpenFileDialog {Title = "Choose existing metadata sidecar", CheckFileExists = true};
+            var dlgMetadata = new OpenFileDialog
+            {
+                Title = "Choose existing metadata sidecar", CheckFileExists = true
+            };
+
             dlgMetadata.Filters.Add(new FileFilter("CICM XML metadata", ".xml"));
 
             DialogResult result = dlgMetadata.ShowDialog(this);
@@ -328,13 +361,15 @@ namespace DiscImageChef.Gui.Forms
             if(result != DialogResult.Ok)
             {
                 chkExistingMetadata.Checked = false;
+
                 return;
             }
 
-            XmlSerializer sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+            var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
+
             try
             {
-                StreamReader sr = new StreamReader(dlgMetadata.FileName);
+                var sr = new StreamReader(dlgMetadata.FileName);
                 sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
                 sr.Close();
             }
@@ -347,18 +382,21 @@ namespace DiscImageChef.Gui.Forms
 
         void OnChkResumeCheckedChanged(object sender, EventArgs e)
         {
-            if(chkResume.Checked == false) return;
+            if(chkResume.Checked == false)
+                return;
 
-            if(outputPrefix != null) CheckResumeFile();
+            if(outputPrefix != null)
+                CheckResumeFile();
         }
 
         void CheckResumeFile()
         {
             resume = null;
-            XmlSerializer xs = new XmlSerializer(typeof(Resume));
+            var xs = new XmlSerializer(typeof(Resume));
+
             try
             {
-                StreamReader sr = new StreamReader(outputPrefix + ".resume.xml");
+                var sr = new StreamReader(outputPrefix + ".resume.xml");
                 resume = (Resume)xs.Deserialize(sr);
                 sr.Close();
             }
@@ -366,21 +404,22 @@ namespace DiscImageChef.Gui.Forms
             {
                 MessageBox.Show("Incorrect resume file, cannot use it...", MessageBoxType.Error);
                 chkResume.Checked = false;
+
                 return;
             }
 
-            if(resume == null || resume.NextBlock <= resume.LastBlock ||
-               resume.BadBlocks.Count != 0 && !resume.Tape) return;
+            if(resume           == null             ||
+               resume.NextBlock <= resume.LastBlock ||
+               (resume.BadBlocks.Count != 0 && !resume.Tape))
+                return;
 
             MessageBox.Show("Media already dumped correctly, please choose another destination...",
                             MessageBoxType.Warning);
+
             chkResume.Checked = false;
         }
 
-        void OnBtnCloseClick(object sender, EventArgs e)
-        {
-            Close();
-        }
+        void OnBtnCloseClick(object sender, EventArgs e) => Close();
 
         void OnBtnStopClick(object sender, EventArgs e)
         {
@@ -400,19 +439,26 @@ namespace DiscImageChef.Gui.Forms
             stkOptions.Visible     = false;
 
             UpdateStatus("Opening device...");
+
             try
             {
                 dev = new Device(devicePath);
 
+                if(dev.IsRemote)
+                    Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
+                                         dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
+
                 if(dev.Error)
                 {
                     StoppingErrorMessage($"Error {dev.LastError} opening device.");
+
                     return;
                 }
             }
             catch(Exception exception)
             {
                 StoppingErrorMessage($"Exception {exception.Message} opening device.");
+
                 return;
             }
 
@@ -422,16 +468,21 @@ namespace DiscImageChef.Gui.Forms
             if(!(cmbFormat.SelectedValue is IWritableImage outputFormat))
             {
                 StoppingErrorMessage("Cannot open output plugin.");
+
                 return;
             }
 
             Encoding encoding = null;
 
             if(cmbEncoding.SelectedValue is CommonEncodingInfo encodingInfo)
-                try { encoding = Claunia.Encoding.Encoding.GetEncoding(encodingInfo.Name); }
+                try
+                {
+                    encoding = Claunia.Encoding.Encoding.GetEncoding(encodingInfo.Name);
+                }
                 catch(ArgumentException)
                 {
                     StoppingErrorMessage("Specified encoding is not supported.");
+
                     return;
                 }
 
@@ -446,12 +497,15 @@ namespace DiscImageChef.Gui.Forms
                     {
                         case CheckBox optBoolean:
                             value = optBoolean.Checked?.ToString();
+
                             break;
                         case NumericStepper optNumber:
                             value = optNumber.Value.ToString(CultureInfo.CurrentCulture);
+
                             break;
                         case TextBox optString:
                             value = optString.Text;
+
                             break;
                         default: continue;
                     }
@@ -461,7 +515,7 @@ namespace DiscImageChef.Gui.Forms
                     parsedOptions.Add(key, value);
                 }
 
-            DumpLog dumpLog = new DumpLog(outputPrefix + ".log", dev);
+            var dumpLog = new DumpLog(outputPrefix + ".log", dev);
 
             dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
 
@@ -495,105 +549,92 @@ namespace DiscImageChef.Gui.Forms
             WorkFinished();
         }
 
-        void WorkFinished()
+        void WorkFinished() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() =>
+            btnClose.Visible     = true;
+            btnStop.Visible      = false;
+            stkProgress1.Visible = false;
+            stkProgress2.Visible = false;
+        });
+
+        void EndProgress2() => Application.Instance.Invoke(() =>
+        {
+            stkProgress2.Visible = false;
+        });
+
+        void UpdateProgress2(string text, long current, long maximum) => Application.Instance.Invoke(() =>
+        {
+            lblProgress2.Text          = text;
+            prgProgress2.Indeterminate = false;
+            prgProgress2.MinValue      = 0;
+
+            if(maximum > int.MaxValue)
             {
-                btnClose.Visible     = true;
-                btnStop.Visible      = false;
-                stkProgress1.Visible = false;
-                stkProgress2.Visible = false;
-            });
-        }
-
-        void EndProgress2()
-        {
-            Application.Instance.Invoke(() => { stkProgress2.Visible = false; });
-        }
-
-        void UpdateProgress2(string text, long current, long maximum)
-        {
-            Application.Instance.Invoke(() =>
+                prgProgress2.MaxValue = (int)(maximum / int.MaxValue);
+                prgProgress2.Value    = (int)(current / int.MaxValue);
+            }
+            else
             {
-                lblProgress2.Text          = text;
-                prgProgress2.Indeterminate = false;
-                prgProgress2.MinValue      = 0;
-                if(maximum > int.MaxValue)
-                {
-                    prgProgress2.MaxValue = (int)(maximum / int.MaxValue);
-                    prgProgress2.Value    = (int)(current / int.MaxValue);
-                }
-                else
-                {
-                    prgProgress2.MaxValue = (int)maximum;
-                    prgProgress2.Value    = (int)current;
-                }
-            });
-        }
+                prgProgress2.MaxValue = (int)maximum;
+                prgProgress2.Value    = (int)current;
+            }
+        });
 
-        void InitProgress2()
+        void InitProgress2() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { stkProgress2.Visible = true; });
-        }
+            stkProgress2.Visible = true;
+        });
 
-        void EndProgress()
+        void EndProgress() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { stkProgress1.Visible = false; });
-        }
+            stkProgress1.Visible = false;
+        });
 
-        void UpdateProgress(string text, long current, long maximum)
+        void UpdateProgress(string text, long current, long maximum) => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() =>
+            lblProgress.Text          = text;
+            prgProgress.Indeterminate = false;
+            prgProgress.MinValue      = 0;
+
+            if(maximum > int.MaxValue)
             {
-                lblProgress.Text          = text;
-                prgProgress.Indeterminate = false;
-                prgProgress.MinValue      = 0;
-                if(maximum > int.MaxValue)
-                {
-                    prgProgress.MaxValue = (int)(maximum / int.MaxValue);
-                    prgProgress.Value    = (int)(current / int.MaxValue);
-                }
-                else
-                {
-                    prgProgress.MaxValue = (int)maximum;
-                    prgProgress.Value    = (int)current;
-                }
-            });
-        }
-
-        void InitProgress()
-        {
-            Application.Instance.Invoke(() => { stkProgress1.Visible = true; });
-        }
-
-        void PulseProgress(string text)
-        {
-            Application.Instance.Invoke(() =>
+                prgProgress.MaxValue = (int)(maximum / int.MaxValue);
+                prgProgress.Value    = (int)(current / int.MaxValue);
+            }
+            else
             {
-                lblProgress.Text          = text;
-                prgProgress.Indeterminate = true;
-            });
-        }
+                prgProgress.MaxValue = (int)maximum;
+                prgProgress.Value    = (int)current;
+            }
+        });
 
-        void StoppingErrorMessage(string text)
+        void InitProgress() => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() =>
-            {
-                ErrorMessage(text);
-                MessageBox.Show(text, MessageBoxType.Error);
-                WorkFinished();
-            });
-        }
+            stkProgress1.Visible = true;
+        });
 
-        void ErrorMessage(string text)
+        void PulseProgress(string text) => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { txtLog.Append(text + Environment.NewLine, true); });
-        }
+            lblProgress.Text          = text;
+            prgProgress.Indeterminate = true;
+        });
 
-        void UpdateStatus(string text)
+        void StoppingErrorMessage(string text) => Application.Instance.Invoke(() =>
         {
-            Application.Instance.Invoke(() => { txtLog.Append(text + Environment.NewLine, true); });
-        }
+            ErrorMessage(text);
+            MessageBox.Show(text, MessageBoxType.Error);
+            WorkFinished();
+        });
+
+        void ErrorMessage(string text) => Application.Instance.Invoke(() =>
+        {
+            txtLog.Append(text + Environment.NewLine, true);
+        });
+
+        void UpdateStatus(string text) => Application.Instance.Invoke(() =>
+        {
+            txtLog.Append(text + Environment.NewLine, true);
+        });
 
         class CommonEncodingInfo
         {

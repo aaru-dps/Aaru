@@ -1304,5 +1304,33 @@ namespace DiscImageChef.Core
 
             ctx.SaveChanges();
         }
+
+        /// <summary>Adds a new remote to statistics</summary>
+        public static void AddRemote(string serverApplication, string serverVersion, string serverOperatingSystem,
+                                     string serverOperatingSystemVersion, string serverArchitecture)
+        {
+            if(Settings.Settings.Current.Stats == null ||
+               !Settings.Settings.Current.Stats.MediaStats)
+                return;
+
+            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+
+            ctx.RemoteApplications.Add(new RemoteApplication
+            {
+                Count = 1, Name = serverApplication, Synchronized = false, Version = serverVersion
+            });
+
+            ctx.RemoteArchitectures.Add(new RemoteArchitecture
+            {
+                Count = 1, Name = serverArchitecture, Synchronized = false
+            });
+
+            ctx.RemoteOperatingSystems.Add(new RemoteOperatingSystem
+            {
+                Count = 1, Name = serverOperatingSystem, Synchronized = false, Version = serverOperatingSystemVersion
+            });
+
+            ctx.SaveChanges();
+        }
     }
 }
