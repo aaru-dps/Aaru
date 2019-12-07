@@ -39,20 +39,23 @@ namespace DiscImageChef.Database
     {
         public DicContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<Device>          Devices          { get; set; }
-        public DbSet<Report>          Reports          { get; set; }
-        public DbSet<Command>         Commands         { get; set; }
-        public DbSet<Filesystem>      Filesystems      { get; set; }
-        public DbSet<Filter>          Filters          { get; set; }
-        public DbSet<MediaFormat>     MediaFormats     { get; set; }
-        public DbSet<Partition>       Partitions       { get; set; }
-        public DbSet<Media>           Medias           { get; set; }
-        public DbSet<DeviceStat>      SeenDevices      { get; set; }
-        public DbSet<OperatingSystem> OperatingSystems { get; set; }
-        public DbSet<Version>         Versions         { get; set; }
-        public DbSet<UsbVendor>       UsbVendors       { get; set; }
-        public DbSet<UsbProduct>      UsbProducts      { get; set; }
-        public DbSet<CdOffset>        CdOffsets        { get; set; }
+        public DbSet<Device>                Devices                { get; set; }
+        public DbSet<Report>                Reports                { get; set; }
+        public DbSet<Command>               Commands               { get; set; }
+        public DbSet<Filesystem>            Filesystems            { get; set; }
+        public DbSet<Filter>                Filters                { get; set; }
+        public DbSet<MediaFormat>           MediaFormats           { get; set; }
+        public DbSet<Partition>             Partitions             { get; set; }
+        public DbSet<Media>                 Medias                 { get; set; }
+        public DbSet<DeviceStat>            SeenDevices            { get; set; }
+        public DbSet<OperatingSystem>       OperatingSystems       { get; set; }
+        public DbSet<Version>               Versions               { get; set; }
+        public DbSet<UsbVendor>             UsbVendors             { get; set; }
+        public DbSet<UsbProduct>            UsbProducts            { get; set; }
+        public DbSet<CdOffset>              CdOffsets              { get; set; }
+        public DbSet<RemoteApplication>     RemoteApplications     { get; set; }
+        public DbSet<RemoteArchitecture>    RemoteArchitectures    { get; set; }
+        public DbSet<RemoteOperatingSystem> RemoteOperatingSystems { get; set; }
 
         // Note: If table does not appear check that last migration has been REALLY added to the project
 

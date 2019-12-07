@@ -374,6 +374,8 @@
           <e p="20191207175444_SyncWithServerChanges.cs" t="Include" />
           <e p="20191207183522_AddNameCountModel.Designer.cs" t="Include" />
           <e p="20191207183522_AddNameCountModel.cs" t="Include" />
+          <e p="20191207184342_AddRemoteStats.Designer.cs" t="Include" />
+          <e p="20191207184342_AddRemoteStats.cs" t="Include" />
           <e p="DicContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
@@ -390,6 +392,9 @@
           <e p="NameCountModel.cs" t="Include" />
           <e p="OperatingSystem.cs" t="Include" />
           <e p="Partition.cs" t="Include" />
+          <e p="RemoteApplication.cs" t="Include" />
+          <e p="RemoteArchitecture.cs" t="Include" />
+          <e p="RemoteOperatingSystem.cs" t="Include" />
           <e p="Report.cs" t="Include" />
           <e p="UsbProduct.cs" t="Include" />
           <e p="UsbVendor.cs" t="Include" />

@@ -105,6 +105,8 @@
     <Compile Include="Migrations\20191207175444_SyncWithServerChanges.Designer.cs" />
     <Compile Include="Migrations\20191207183522_AddNameCountModel.cs" />
     <Compile Include="Migrations\20191207183522_AddNameCountModel.Designer.cs" />
+    <Compile Include="Migrations\20191207184342_AddRemoteStats.cs" />
+    <Compile Include="Migrations\20191207184342_AddRemoteStats.Designer.cs" />
     <Compile Include="Migrations\DicContextModelSnapshot.cs" />
     <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\BaseOperatingSystem.cs" />
@@ -119,6 +121,9 @@
     <Compile Include="Models\NameCountModel.cs" />
     <Compile Include="Models\OperatingSystem.cs" />
     <Compile Include="Models\Partition.cs" />
+    <Compile Include="Models\RemoteApplication.cs" />
+    <Compile Include="Models\RemoteArchitecture.cs" />
+    <Compile Include="Models\RemoteOperatingSystem.cs" />
     <Compile Include="Models\Report.cs" />
     <Compile Include="Models\UsbProduct.cs" />
     <Compile Include="Models\UsbVendor.cs" />

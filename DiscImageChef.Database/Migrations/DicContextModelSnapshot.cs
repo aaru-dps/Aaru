@@ -1174,6 +1174,55 @@ namespace DiscImageChef.Database.Migrations
                 b.ToTable("Partitions");
             });
 
+            modelBuilder.Entity("DiscImageChef.Database.Models.RemoteApplication", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<ulong>("Count");
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.Property<string>("Version");
+
+                b.HasKey("Id");
+
+                b.ToTable("RemoteApplications");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.RemoteArchitecture", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<ulong>("Count");
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.HasKey("Id");
+
+                b.ToTable("RemoteArchitectures");
+            });
+
+            modelBuilder.Entity("DiscImageChef.Database.Models.RemoteOperatingSystem", b =>
+            {
+                b.Property<int>("Id").ValueGeneratedOnAdd();
+
+                b.Property<ulong>("Count");
+
+                b.Property<string>("Name");
+
+                b.Property<bool>("Synchronized");
+
+                b.Property<string>("Version");
+
+                b.HasKey("Id");
+
+                b.ToTable("RemoteOperatingSystems");
+            });
+
             modelBuilder.Entity("DiscImageChef.Database.Models.Report", b =>
             {
                 b.Property<int>("Id").ValueGeneratedOnAdd();
