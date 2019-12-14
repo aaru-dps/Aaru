@@ -165,6 +165,31 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
                 }
             }
+
+            dumpLog.WriteLine("Reading Disc Information");
+            UpdateStatus?.Invoke("Reading Disc Information");
+
+            sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
+                                            dev.Timeout, out _);
+
+            if(!sense)
+            {
+                DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
+
+                if(discInfo.HasValue &&
+                   dskType == MediaType.CD)
+                    switch(discInfo.Value.DiscType)
+                    {
+                        case 0x10:
+                            dskType = MediaType.CDI;
+
+                            break;
+                        case 0x20:
+                            dskType = MediaType.CDROMXA;
+
+                            break;
+                    }
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -189,33 +214,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]                           senseBuf;
             byte[]                           tmpBuf;
 
-            int sessions = 1;
-
-            dumpLog.WriteLine("Reading Disc Information");
-            UpdateStatus?.Invoke("Reading Disc Information");
-
-            sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
-                                            dev.Timeout, out _);
-
-            if(!sense)
-            {
-                DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
-
-                if(discInfo.HasValue)
-                    if(dskType == MediaType.CD)
-                        switch(discInfo.Value.DiscType)
-                        {
-                            case 0x10:
-                                dskType = MediaType.CDI;
-
-                                break;
-                            case 0x20:
-                                dskType = MediaType.CDROMXA;
-
-                                break;
-                        }
-            }
-
+            int sessions              = 1;
             int firstTrackLastSession = 0;
 
             dumpLog.WriteLine("Reading Session Information");
