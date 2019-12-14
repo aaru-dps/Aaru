@@ -114,6 +114,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             bool                   ret;
             double                 imageWriteDuration = 0;
             bool                   newTrim            = false;
+            MhddLog                mhddLog;
+            IbgLog                 ibgLog;
+            DateTime               start;
+            DateTime               dumpStart = DateTime.UtcNow;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -1020,6 +1024,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Reading first track pregap");
                 UpdateStatus?.Invoke("Reading first track pregap");
                 InitProgress?.Invoke();
+                timeSpeedStart = DateTime.UtcNow;
 
                 for(int firstTrackPregapBlock = -150; firstTrackPregapBlock < 0 && resume.NextBlock == 0;
                     firstTrackPregapBlock++)
@@ -1300,52 +1305,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                 UpdateStatus?.
                     Invoke("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
             }
-        }
 
-        /// <summary>Dumps a compact disc</summary>
-        /// <param name="dskType">Disc type as detected in MMC layer</param>
-        internal void CompactDiscOld(ref MediaType dskType)
-        {
-            bool                             ret;
-            ulong                            blocks         = 0;
-            Track[]                          tracks         = new Track[0];
-            List<Track>                      trackList      = new List<Track>();
-            long                             lastSector     = 0;
-            Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
-            TrackType                        firstTrackType = TrackType.Audio;
-            Dictionary<int, long>            leadOutStarts  = new Dictionary<int, long>();
-            uint                             subSize        = 0;
-            const uint                       SECTOR_SIZE    = 2352;
-            uint                             blockSize      = SECTOR_SIZE + subSize;
-            DateTime                         start;
-            DateTime                         end;
-            bool                             readcd        = false;
-            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
-            bool                             sense         = false;
-            FullTOC.CDFullTOC?               toc           = null;
-            double                           totalDuration = 0;
-            double                           currentSpeed  = 0;
-            double                           maxSpeed      = double.MinValue;
-            double                           minSpeed      = double.MaxValue;
-            uint                             blocksToRead  = 64;
-            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
-            byte[]                           cmdBuf        = null;
-            byte[]                           senseBuf      = null;
-            byte[]                           tmpBuf;
-            MmcSubchannel                    supportedSubchannel   = MmcSubchannel.Raw;
-            TrackSubchannelType              subType               = TrackSubchannelType.None; // Track subchannel type
-            bool                             supportsLongSectors   = true;
-            int                              sessions              = 1;
-            int                              firstTrackLastSession = 0;
-            DumpHardwareType                 currentTry            = null;
-            ExtentsULong                     extents               = null;
-            DateTime                         timeSpeedStart        = DateTime.UtcNow;
-            ulong                            sectorSpeedStart      = 0;
-            double                           imageWriteDuration    = 0;
-            bool                             newTrim               = false;
-
-            var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-            var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
+            mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+            ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
 
             // Start reading
             start            = DateTime.UtcNow;
@@ -1533,6 +1495,53 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             EndProgress?.Invoke();
+        }
+
+        /// <summary>Dumps a compact disc</summary>
+        /// <param name="dskType">Disc type as detected in MMC layer</param>
+        internal void CompactDiscOld(ref MediaType dskType)
+        {
+            DateTime                         dumpStart = DateTime.UtcNow;
+            bool                             ret;
+            ulong                            blocks         = 0;
+            Track[]                          tracks         = new Track[0];
+            List<Track>                      trackList      = new List<Track>();
+            long                             lastSector     = 0;
+            Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
+            TrackType                        firstTrackType = TrackType.Audio;
+            Dictionary<int, long>            leadOutStarts  = new Dictionary<int, long>();
+            uint                             subSize        = 0;
+            const uint                       SECTOR_SIZE    = 2352;
+            uint                             blockSize      = SECTOR_SIZE + subSize;
+            DateTime                         start          = DateTime.UtcNow;
+            DateTime                         end;
+            bool                             readcd        = false;
+            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
+            bool                             sense         = false;
+            FullTOC.CDFullTOC?               toc           = null;
+            double                           totalDuration = 0;
+            double                           currentSpeed  = 0;
+            double                           maxSpeed      = double.MinValue;
+            double                           minSpeed      = double.MaxValue;
+            uint                             blocksToRead  = 64;
+            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
+            byte[]                           cmdBuf        = null;
+            byte[]                           senseBuf      = null;
+            byte[]                           tmpBuf;
+            MmcSubchannel                    supportedSubchannel   = MmcSubchannel.Raw;
+            TrackSubchannelType              subType               = TrackSubchannelType.None; // Track subchannel type
+            bool                             supportsLongSectors   = true;
+            int                              sessions              = 1;
+            int                              firstTrackLastSession = 0;
+            DumpHardwareType                 currentTry            = null;
+            ExtentsULong                     extents               = null;
+            DateTime                         timeSpeedStart        = DateTime.UtcNow;
+            ulong                            sectorSpeedStart      = 0;
+            double                           imageWriteDuration    = 0;
+            bool                             newTrim               = false;
+
+            var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
+            var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
 
             // TODO: Enable when underlying images support lead-outs
             /*
@@ -2281,6 +2290,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 xmlFs.Close();
             }
 
+            end = DateTime.UtcNow;
             UpdateStatus?.Invoke("");
 
             UpdateStatus?.
