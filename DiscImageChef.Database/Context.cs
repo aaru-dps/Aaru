@@ -62,7 +62,7 @@ namespace DiscImageChef.Database
         public static DicContext Create(string dbPath)
         {
             var optionsBuilder = new DbContextOptionsBuilder();
-            optionsBuilder.UseSqlite($"Data Source={dbPath}");
+            optionsBuilder.UseLazyLoadingProxies().UseSqlite($"Data Source={dbPath}");
 
             return new DicContext(optionsBuilder.Options);
         }
