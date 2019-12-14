@@ -106,6 +106,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             ExtentsULong           extents             = null;
             DateTime               timeSpeedStart      = DateTime.UtcNow;
             ulong                  sectorSpeedStart    = 0;
+            double totalDuration = 0;
+            double currentSpeed  = 0;
+            double maxSpeed      = double.MinValue;
+            double minSpeed      = double.MaxValue;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -996,49 +1000,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                     dumpFirstTrackPregap = false;
                 }
             }
-        }
-
-        /// <summary>Dumps a compact disc</summary>
-        /// <param name="dskType">Disc type as detected in MMC layer</param>
-        internal void CompactDiscOld(ref MediaType dskType)
-        {
-            ulong                            blocks         = 0;
-            Track[]                          tracks         = new Track[0];
-            List<Track>                      trackList      = new List<Track>();
-            long                             lastSector     = 0;
-            Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
-            TrackType                        firstTrackType = TrackType.Audio;
-            Dictionary<int, long>            leadOutStarts  = new Dictionary<int, long>();
-            uint                             subSize        = 0;
-            const uint                       SECTOR_SIZE    = 2352;
-            uint                             blockSize      = SECTOR_SIZE + subSize;
-            DateTime                         start;
-            DateTime                         end;
-            bool                             readcd        = false;
-            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
-            bool                             sense         = false;
-            FullTOC.CDFullTOC?               toc           = null;
-            double                           totalDuration = 0;
-            double                           currentSpeed  = 0;
-            double                           maxSpeed      = double.MinValue;
-            double                           minSpeed      = double.MaxValue;
-            uint                             blocksToRead  = 64;
-            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
-            byte[]                           cmdBuf        = null;
-            byte[]                           senseBuf      = null;
-            byte[]                           tmpBuf;
-            MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
-            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
-            bool                             supportsLongSectors = true;
-
-            int sessions              = 1;
-            int firstTrackLastSession = 0;
-
-            DumpHardwareType currentTry = null;
-            ExtentsULong     extents    = null;
-
-            DateTime timeSpeedStart   = DateTime.UtcNow;
-            ulong    sectorSpeedStart = 0;
 
             // Try to read the first track pregap
             if(dumpFirstTrackPregap && readcd)
@@ -1107,6 +1068,49 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 firstTrackPregapMs.Close();
             }
+        }
+
+        /// <summary>Dumps a compact disc</summary>
+        /// <param name="dskType">Disc type as detected in MMC layer</param>
+        internal void CompactDiscOld(ref MediaType dskType)
+        {
+            ulong                            blocks         = 0;
+            Track[]                          tracks         = new Track[0];
+            List<Track>                      trackList      = new List<Track>();
+            long                             lastSector     = 0;
+            Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
+            TrackType                        firstTrackType = TrackType.Audio;
+            Dictionary<int, long>            leadOutStarts  = new Dictionary<int, long>();
+            uint                             subSize        = 0;
+            const uint                       SECTOR_SIZE    = 2352;
+            uint                             blockSize      = SECTOR_SIZE + subSize;
+            DateTime                         start;
+            DateTime                         end;
+            bool                             readcd        = false;
+            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
+            bool                             sense         = false;
+            FullTOC.CDFullTOC?               toc           = null;
+            double                           totalDuration = 0;
+            double                           currentSpeed  = 0;
+            double                           maxSpeed      = double.MinValue;
+            double                           minSpeed      = double.MaxValue;
+            uint                             blocksToRead  = 64;
+            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
+            byte[]                           cmdBuf        = null;
+            byte[]                           senseBuf      = null;
+            byte[]                           tmpBuf;
+            MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
+            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
+            bool                             supportsLongSectors = true;
+
+            int sessions              = 1;
+            int firstTrackLastSession = 0;
+
+            DumpHardwareType currentTry = null;
+            ExtentsULong     extents    = null;
+
+            DateTime timeSpeedStart   = DateTime.UtcNow;
+            ulong    sectorSpeedStart = 0;
 
             // Try how many blocks are readable at once
             while(true)
