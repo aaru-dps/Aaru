@@ -100,6 +100,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             int                    firstTrackLastSession = 0;
             ulong                  blocks;
             Track[]                tracks;
+            var                    leadOutExtents = new ExtentsULong();
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -628,6 +629,31 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                 mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
             }
+
+            if(leadOutStarts.Any())
+            {
+                UpdateStatus?.Invoke("Solving lead-outs...");
+
+                foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
+                    for(int i = 0; i < tracks.Length; i++)
+                    {
+                        if(tracks[i].TrackSession != leadOuts.Key)
+                            continue;
+
+                        if(tracks[i].TrackEndSector >= (ulong)leadOuts.Value)
+                            tracks[i].TrackEndSector = (ulong)leadOuts.Value - 1;
+                    }
+
+                var dataExtents = new ExtentsULong();
+
+                foreach(Track trk in tracks)
+                    dataExtents.Add(trk.TrackStartSector, trk.TrackEndSector);
+
+                Tuple<ulong, ulong>[] dataExtentsArray = dataExtents.ToArray();
+
+                for(int i = 0; i < dataExtentsArray.Length - 1; i++)
+                    leadOutExtents.Add(dataExtentsArray[i].Item2 + 1, dataExtentsArray[i + 1].Item1 - 1);
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -746,33 +772,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(MMC.IsVideoNowColor(videoNowColorFrame))
                 dskType = MediaType.VideoNowColor;
-
-            var leadOutExtents = new ExtentsULong();
-
-            if(leadOutStarts.Any())
-            {
-                UpdateStatus?.Invoke("Solving lead-outs...");
-
-                foreach(KeyValuePair<int, long> leadOuts in leadOutStarts)
-                    for(int i = 0; i < tracks.Length; i++)
-                    {
-                        if(tracks[i].TrackSession != leadOuts.Key)
-                            continue;
-
-                        if(tracks[i].TrackEndSector >= (ulong)leadOuts.Value)
-                            tracks[i].TrackEndSector = (ulong)leadOuts.Value - 1;
-                    }
-
-                var dataExtents = new ExtentsULong();
-
-                foreach(Track trk in tracks)
-                    dataExtents.Add(trk.TrackStartSector, trk.TrackEndSector);
-
-                Tuple<ulong, ulong>[] dataExtentsArray = dataExtents.ToArray();
-
-                for(int i = 0; i < dataExtentsArray.Length - 1; i++)
-                    leadOutExtents.Add(dataExtentsArray[i].Item2 + 1, dataExtentsArray[i + 1].Item1 - 1);
-            }
 
             // Check if output format supports all disc tags we have retrieved so far
             foreach(MediaTagType tag in mediaTags.Keys)
