@@ -903,6 +903,35 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                 }
             }
+
+            if(outputPlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
+            {
+                if(tracks.Length > 1)
+                {
+                    StoppingErrorMessage?.Invoke("Output format does not support more than 1 track, not continuing...");
+                    dumpLog.WriteLine("Output format does not support more than 1 track, not continuing...");
+
+                    return;
+                }
+
+                if(tracks.Any(t => t.TrackType == TrackType.Audio))
+                {
+                    StoppingErrorMessage?.Invoke("Output format does not support audio tracks, not continuing...");
+                    dumpLog.WriteLine("Output format does not support audio tracks, not continuing...");
+
+                    return;
+                }
+
+                if(tracks.Any(t => t.TrackType != TrackType.CdMode1))
+                {
+                    StoppingErrorMessage?.Invoke("Output format only supports MODE 1 tracks, not continuing...");
+                    dumpLog.WriteLine("Output format only supports MODE 1 tracks, not continuing...");
+
+                    return;
+                }
+
+                supportsLongSectors = false;
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -940,35 +969,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             int sessions              = 1;
             int firstTrackLastSession = 0;
-
-            if(outputPlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
-            {
-                if(tracks.Length > 1)
-                {
-                    StoppingErrorMessage?.Invoke("Output format does not support more than 1 track, not continuing...");
-                    dumpLog.WriteLine("Output format does not support more than 1 track, not continuing...");
-
-                    return;
-                }
-
-                if(tracks.Any(t => t.TrackType == TrackType.Audio))
-                {
-                    StoppingErrorMessage?.Invoke("Output format does not support audio tracks, not continuing...");
-                    dumpLog.WriteLine("Output format does not support audio tracks, not continuing...");
-
-                    return;
-                }
-
-                if(tracks.Any(t => t.TrackType != TrackType.CdMode1))
-                {
-                    StoppingErrorMessage?.Invoke("Output format only supports MODE 1 tracks, not continuing...");
-                    dumpLog.WriteLine("Output format only supports MODE 1 tracks, not continuing...");
-
-                    return;
-                }
-
-                supportsLongSectors = false;
-            }
 
             // Check if something prevents from dumping the first track pregap
             if(dumpFirstTrackPregap && readcd)
