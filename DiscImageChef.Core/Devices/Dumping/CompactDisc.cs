@@ -118,6 +118,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             IbgLog                 ibgLog;
             DateTime               start;
             DateTime               dumpStart = DateTime.UtcNow;
+            DateTime               end;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -1595,6 +1596,29 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 EndProgress?.Invoke();
             }*/
+
+            end = DateTime.UtcNow;
+            mhddLog.Close();
+
+            ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                         (blockSize * (double)(blocks + 1)) / 1024                        / (totalDuration / 1000),
+                         devicePath);
+
+            UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
+
+            UpdateStatus?.
+                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+
+            UpdateStatus?.
+                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
+
+            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+
+            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
+                              ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
+
+            dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+                              ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -1642,30 +1666,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-
-
-            end = DateTime.UtcNow;
-            mhddLog.Close();
-
-            ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         (blockSize * (double)(blocks + 1)) / 1024                        / (totalDuration / 1000),
-                         devicePath);
-
-            UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
-
-            UpdateStatus?.
-                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
-
-            UpdateStatus?.
-                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
-
-            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
-
-            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                              ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
-
-            dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                              ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
 
             #region Compact Disc Error trimming
             if(resume.BadBlocks.Count > 0 &&
