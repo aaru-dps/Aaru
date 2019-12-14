@@ -66,6 +66,19 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDisc(ref MediaType dskType)
         {
+            if(dumpRaw)
+            {
+                dumpLog.WriteLine("Raw CD dumping not yet implemented");
+                StoppingErrorMessage?.Invoke("Raw CD dumping not yet implemented");
+
+                return;
+            }
+        }
+
+        /// <summary>Dumps a compact disc</summary>
+        /// <param name="dskType">Disc type as detected in MMC layer</param>
+        internal void CompactDiscOld(ref MediaType dskType)
+        {
             uint                             subSize;
             DateTime                         start;
             DateTime                         end;
@@ -80,14 +93,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             double                           minSpeed      = double.MaxValue;
             uint                             blocksToRead  = 64;
             Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
-
-            if(dumpRaw)
-            {
-                dumpLog.WriteLine("Raw CD dumping not yet implemented");
-                StoppingErrorMessage?.Invoke("Raw CD dumping not yet implemented");
-
-                return;
-            }
 
             dskType = MediaType.CD;
             int sessions = 1;
