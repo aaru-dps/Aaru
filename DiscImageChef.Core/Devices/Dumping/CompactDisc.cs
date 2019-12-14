@@ -73,23 +73,29 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDisc(ref MediaType dskType)
         {
-            DicContext          ctx;                 // Master database context
-            Device              dbDev;               // Device database entry
-            CdOffset            cdOffset;            // Read offset from database
-            bool                readcd;              // Device supports READ CD
-            bool                read6       = false; // Device supports READ(6)
-            bool                read10      = false; //Device supports READ(10)
-            bool                read12      = false; // Device supports READ(12)
-            bool                read16      = false; // Device supports READ(16)
-            const uint          SECTOR_SIZE = 2352;  // Full sector size
-            MmcSubchannel       supportedSubchannel; // Drive's maximum supported subchannel
-            uint                subSize;             // Subchannel size in bytes
-            bool                sense;               // Sense indicator
-            byte[]              cmdBuf;              // Data buffer
-            byte[]              senseBuf;            // Sense buffer
-            byte[]              tmpBuf;              // Temporary buffer
-            FullTOC.CDFullTOC?  toc = null;          // Full CD TOC
-            TrackSubchannelType subType;             // Track subchannel type
+            DicContext             ctx;                 // Master database context
+            Device                 dbDev;               // Device database entry
+            CdOffset               cdOffset;            // Read offset from database
+            bool                   readcd;              // Device supports READ CD
+            bool                   read6       = false; // Device supports READ(6)
+            bool                   read10      = false; //Device supports READ(10)
+            bool                   read12      = false; // Device supports READ(12)
+            bool                   read16      = false; // Device supports READ(16)
+            const uint             SECTOR_SIZE = 2352;  // Full sector size
+            MmcSubchannel          supportedSubchannel; // Drive's maximum supported subchannel
+            uint                   subSize;             // Subchannel size in bytes
+            bool                   sense;               // Sense indicator
+            byte[]                 cmdBuf;              // Data buffer
+            byte[]                 senseBuf;            // Sense buffer
+            byte[]                 tmpBuf;              // Temporary buffer
+            FullTOC.CDFullTOC?     toc = null;          // Full CD TOC
+            TrackSubchannelType    subType;             // Track subchannel type
+            uint                   blockSize;
+            List<Track>            trackList      = new List<Track>();
+            long                   lastSector     = 0;
+            Dictionary<byte, byte> trackFlags     = new Dictionary<byte, byte>();
+            TrackType              firstTrackType = TrackType.Audio;
+            Dictionary<int, long>  leadOutStarts  = new Dictionary<int, long>();
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -276,6 +282,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 subSize             = 0;
             }
 
+            blockSize = SECTOR_SIZE + subSize;
+
             switch(supportedSubchannel)
             {
                 case MmcSubchannel.None:
@@ -317,210 +325,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            // ATIP exists on blank CDs
-            dumpLog.WriteLine("Reading ATIP");
-            UpdateStatus?.Invoke("Reading ATIP");
-            sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense)
-            {
-                ATIP.CDATIP? atip = ATIP.Decode(cmdBuf);
-
-                if(atip.HasValue)
-                {
-                    // Only CD-R and CD-RW have ATIP
-                    dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
-
-                    tmpBuf = new byte[cmdBuf.Length - 4];
-                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
-                }
-            }
-
-            dumpLog.WriteLine("Reading Disc Information");
-            UpdateStatus?.Invoke("Reading Disc Information");
-
-            sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
-                                            dev.Timeout, out _);
-
-            if(!sense)
-            {
-                DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
-
-                if(discInfo.HasValue &&
-                   dskType == MediaType.CD)
-                    switch(discInfo.Value.DiscType)
-                    {
-                        case 0x10:
-                            dskType = MediaType.CDI;
-
-                            break;
-                        case 0x20:
-                            dskType = MediaType.CDROMXA;
-
-                            break;
-                    }
-            }
-
-            dumpLog.WriteLine("Reading PMA");
-            UpdateStatus?.Invoke("Reading PMA");
-            sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense &&
-               PMA.Decode(cmdBuf).HasValue)
-            {
-                tmpBuf = new byte[cmdBuf.Length - 4];
-                Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
-            }
-        }
-
-        /// <summary>Dumps a compact disc</summary>
-        /// <param name="dskType">Disc type as detected in MMC layer</param>
-        internal void CompactDiscOld(ref MediaType dskType)
-        {
-            uint                             subSize = 0;
-            DateTime                         start;
-            DateTime                         end;
-            bool                             readcd        = false;
-            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
-            bool                             sense         = false;
-            const uint                       SECTOR_SIZE   = 2352;
-            FullTOC.CDFullTOC?               toc           = null;
-            double                           totalDuration = 0;
-            double                           currentSpeed  = 0;
-            double                           maxSpeed      = double.MinValue;
-            double                           minSpeed      = double.MaxValue;
-            uint                             blocksToRead  = 64;
-            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
-            byte[]                           cmdBuf;
-            byte[]                           senseBuf;
-            byte[]                           tmpBuf;
-            MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
-            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
-
-            int sessions              = 1;
-            int firstTrackLastSession = 0;
-
-            dumpLog.WriteLine("Reading Session Information");
-            UpdateStatus?.Invoke("Reading Session Information");
-            sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense)
-            {
-                Session.CDSessionInfo? session = Session.Decode(cmdBuf);
-
-                if(session.HasValue)
-                {
-                    sessions              = session.Value.LastCompleteSession;
-                    firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
-                }
-            }
-
-            if(dskType == MediaType.CD ||
-               dskType == MediaType.CDROMXA)
-            {
-                bool hasDataTrack                  = false;
-                bool hasAudioTrack                 = false;
-                bool allFirstSessionTracksAreAudio = true;
-                bool hasVideoTrack                 = false;
-
-                foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
-                {
-                    if(track.TNO == 1 &&
-                       ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
-                        (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental))
-                        allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
-
-                    if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
-                       (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
-                    {
-                        hasDataTrack                  =  true;
-                        allFirstSessionTracksAreAudio &= track.POINT >= firstTrackLastSession;
-                    }
-                    else
-                    {
-                        hasAudioTrack = true;
-                    }
-
-                    hasVideoTrack |= track.ADR == 4;
-                }
-
-                if(hasDataTrack                  &&
-                   hasAudioTrack                 &&
-                   allFirstSessionTracksAreAudio &&
-                   sessions == 2)
-                    dskType = MediaType.CDPLUS;
-
-                if(!hasDataTrack &&
-                   hasAudioTrack &&
-                   sessions == 1)
-                    dskType = MediaType.CDDA;
-
-                if(hasDataTrack   &&
-                   !hasAudioTrack &&
-                   sessions == 1)
-                    dskType = MediaType.CDROM;
-
-                if(hasVideoTrack &&
-                   !hasDataTrack &&
-                   sessions == 1)
-                    dskType = MediaType.CDV;
-            }
-
-            dumpLog.WriteLine("Reading CD-Text from Lead-In");
-            UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
-            sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense)
-                if(CDTextOnLeadIn.Decode(cmdBuf).HasValue)
-                {
-                    tmpBuf = new byte[cmdBuf.Length - 4];
-                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
-                }
-
-            // TODO: Add other detectors here
-            dumpLog.WriteLine("Detecting disc type...");
-            UpdateStatus?.Invoke("Detecting disc type...");
-            byte[] videoNowColorFrame = new byte[9 * 2352];
-
-            for(int i = 0; i < 9; i++)
-            {
-                sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false,
-                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                   dev.Timeout, out _);
-
-                if(sense || dev.Error)
-                {
-                    sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false,
-                                       true, MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
-
-                    if(sense || !dev.Error)
-                    {
-                        videoNowColorFrame = null;
-
-                        break;
-                    }
-                }
-
-                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
-            }
-
-            if(MMC.IsVideoNowColor(videoNowColorFrame))
-                dskType = MediaType.VideoNowColor;
-
-            uint blockSize = SECTOR_SIZE + subSize;
-
             UpdateStatus?.Invoke("Building track map...");
             dumpLog.WriteLine("Building track map...");
-
-            List<Track>            trackList      = new List<Track>();
-            long                   lastSector     = 0;
-            Dictionary<byte, byte> trackFlags     = new Dictionary<byte, byte>();
-            TrackType              firstTrackType = TrackType.Audio;
-            Dictionary<int, long>  leadOutStarts  = new Dictionary<int, long>();
 
             if(toc.HasValue)
             {
@@ -719,6 +525,206 @@ namespace DiscImageChef.Core.Devices.Dumping
                     lastSector = 360000;
                 }
             }
+
+            // ATIP exists on blank CDs
+            dumpLog.WriteLine("Reading ATIP");
+            UpdateStatus?.Invoke("Reading ATIP");
+            sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense)
+            {
+                ATIP.CDATIP? atip = ATIP.Decode(cmdBuf);
+
+                if(atip.HasValue)
+                {
+                    // Only CD-R and CD-RW have ATIP
+                    dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+
+                    tmpBuf = new byte[cmdBuf.Length - 4];
+                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                    mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
+                }
+            }
+
+            dumpLog.WriteLine("Reading Disc Information");
+            UpdateStatus?.Invoke("Reading Disc Information");
+
+            sense = dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
+                                            dev.Timeout, out _);
+
+            if(!sense)
+            {
+                DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
+
+                if(discInfo.HasValue &&
+                   dskType == MediaType.CD)
+                    switch(discInfo.Value.DiscType)
+                    {
+                        case 0x10:
+                            dskType = MediaType.CDI;
+
+                            break;
+                        case 0x20:
+                            dskType = MediaType.CDROMXA;
+
+                            break;
+                    }
+            }
+
+            dumpLog.WriteLine("Reading PMA");
+            UpdateStatus?.Invoke("Reading PMA");
+            sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense &&
+               PMA.Decode(cmdBuf).HasValue)
+            {
+                tmpBuf = new byte[cmdBuf.Length - 4];
+                Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
+            }
+        }
+
+        /// <summary>Dumps a compact disc</summary>
+        /// <param name="dskType">Disc type as detected in MMC layer</param>
+        internal void CompactDiscOld(ref MediaType dskType)
+        {
+            List<Track>                      trackList      = new List<Track>();
+            long                             lastSector     = 0;
+            Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
+            TrackType                        firstTrackType = TrackType.Audio;
+            Dictionary<int, long>            leadOutStarts  = new Dictionary<int, long>();
+            uint                             subSize        = 0;
+            const uint                       SECTOR_SIZE    = 2352;
+            uint                             blockSize      = SECTOR_SIZE + subSize;
+            DateTime                         start;
+            DateTime                         end;
+            bool                             readcd        = false;
+            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
+            bool                             sense         = false;
+            FullTOC.CDFullTOC?               toc           = null;
+            double                           totalDuration = 0;
+            double                           currentSpeed  = 0;
+            double                           maxSpeed      = double.MinValue;
+            double                           minSpeed      = double.MaxValue;
+            uint                             blocksToRead  = 64;
+            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
+            byte[]                           cmdBuf;
+            byte[]                           senseBuf;
+            byte[]                           tmpBuf;
+            MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
+            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
+
+            int sessions              = 1;
+            int firstTrackLastSession = 0;
+
+            dumpLog.WriteLine("Reading Session Information");
+            UpdateStatus?.Invoke("Reading Session Information");
+            sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense)
+            {
+                Session.CDSessionInfo? session = Session.Decode(cmdBuf);
+
+                if(session.HasValue)
+                {
+                    sessions              = session.Value.LastCompleteSession;
+                    firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
+                }
+            }
+
+            if(dskType == MediaType.CD ||
+               dskType == MediaType.CDROMXA)
+            {
+                bool hasDataTrack                  = false;
+                bool hasAudioTrack                 = false;
+                bool allFirstSessionTracksAreAudio = true;
+                bool hasVideoTrack                 = false;
+
+                foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
+                {
+                    if(track.TNO == 1 &&
+                       ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
+                        (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental))
+                        allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
+
+                    if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
+                       (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
+                    {
+                        hasDataTrack                  =  true;
+                        allFirstSessionTracksAreAudio &= track.POINT >= firstTrackLastSession;
+                    }
+                    else
+                    {
+                        hasAudioTrack = true;
+                    }
+
+                    hasVideoTrack |= track.ADR == 4;
+                }
+
+                if(hasDataTrack                  &&
+                   hasAudioTrack                 &&
+                   allFirstSessionTracksAreAudio &&
+                   sessions == 2)
+                    dskType = MediaType.CDPLUS;
+
+                if(!hasDataTrack &&
+                   hasAudioTrack &&
+                   sessions == 1)
+                    dskType = MediaType.CDDA;
+
+                if(hasDataTrack   &&
+                   !hasAudioTrack &&
+                   sessions == 1)
+                    dskType = MediaType.CDROM;
+
+                if(hasVideoTrack &&
+                   !hasDataTrack &&
+                   sessions == 1)
+                    dskType = MediaType.CDV;
+            }
+
+            dumpLog.WriteLine("Reading CD-Text from Lead-In");
+            UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
+            sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense)
+                if(CDTextOnLeadIn.Decode(cmdBuf).HasValue)
+                {
+                    tmpBuf = new byte[cmdBuf.Length - 4];
+                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                    mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
+                }
+
+            // TODO: Add other detectors here
+            dumpLog.WriteLine("Detecting disc type...");
+            UpdateStatus?.Invoke("Detecting disc type...");
+            byte[] videoNowColorFrame = new byte[9 * 2352];
+
+            for(int i = 0; i < 9; i++)
+            {
+                sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                   dev.Timeout, out _);
+
+                if(sense || dev.Error)
+                {
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false,
+                                       true, MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                       dev.Timeout, out _);
+
+                    if(sense || !dev.Error)
+                    {
+                        videoNowColorFrame = null;
+
+                        break;
+                    }
+                }
+
+                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
+            }
+
+            if(MMC.IsVideoNowColor(videoNowColorFrame))
+                dskType = MediaType.VideoNowColor;
 
             Track[] tracks = trackList.ToArray();
 
