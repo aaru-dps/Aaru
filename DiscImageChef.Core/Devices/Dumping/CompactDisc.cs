@@ -1127,6 +1127,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Device error {0} trying to guess ideal transfer length.", dev.LastError);
                 StoppingErrorMessage?.Invoke($"Device error {dev.LastError} trying to guess ideal transfer length.");
             }
+
+            dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+            dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
+            dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
+            dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
+            dumpLog.WriteLine("SCSI device type: {0}.", dev.ScsiType);
+            dumpLog.WriteLine("Media identified as {0}.", dskType);
+
+            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
+            UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
+            UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
+            UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
+            UpdateStatus?.Invoke($"SCSI device type: {dev.ScsiType}.");
+            UpdateStatus?.Invoke($"Media identified as {dskType}.");
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -1170,20 +1184,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    sectorSpeedStart = 0;
-
-            dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
-            dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
-            dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
-            dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
-            dumpLog.WriteLine("SCSI device type: {0}.", dev.ScsiType);
-            dumpLog.WriteLine("Media identified as {0}.", dskType);
-
-            UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
-            UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
-            UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
-            UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
-            UpdateStatus?.Invoke($"SCSI device type: {dev.ScsiType}.");
-            UpdateStatus?.Invoke($"Media identified as {dskType}.");
 
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
