@@ -73,22 +73,23 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDisc(ref MediaType dskType)
         {
-            DicContext         ctx;                 // Master database context
-            Device             dbDev;               // Device database entry
-            CdOffset           cdOffset;            // Read offset from database
-            bool               readcd;              // Device supports READ CD
-            bool               read6       = false; // Device supports READ(6)
-            bool               read10      = false; //Device supports READ(10)
-            bool               read12      = false; // Device supports READ(12)
-            bool               read16      = false; // Device supports READ(16)
-            const uint         SECTOR_SIZE = 2352;  // Full sector size
-            MmcSubchannel      supportedSubchannel; // Drive's maximum supported subchannel
-            uint               subSize;             // Subchannel size in bytes
-            bool               sense;               // Sense indicator
-            byte[]             cmdBuf;              // Data buffer
-            byte[]             senseBuf;            // Sense buffer
-            byte[]             tmpBuf;              // Temporary buffer
-            FullTOC.CDFullTOC? toc = null;          // Full CD TOC
+            DicContext          ctx;                 // Master database context
+            Device              dbDev;               // Device database entry
+            CdOffset            cdOffset;            // Read offset from database
+            bool                readcd;              // Device supports READ CD
+            bool                read6       = false; // Device supports READ(6)
+            bool                read10      = false; //Device supports READ(10)
+            bool                read12      = false; // Device supports READ(12)
+            bool                read16      = false; // Device supports READ(16)
+            const uint          SECTOR_SIZE = 2352;  // Full sector size
+            MmcSubchannel       supportedSubchannel; // Drive's maximum supported subchannel
+            uint                subSize;             // Subchannel size in bytes
+            bool                sense;               // Sense indicator
+            byte[]              cmdBuf;              // Data buffer
+            byte[]              senseBuf;            // Sense buffer
+            byte[]              tmpBuf;              // Temporary buffer
+            FullTOC.CDFullTOC?  toc = null;          // Full CD TOC
+            TrackSubchannelType subType;             // Track subchannel type
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -254,6 +255,50 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            // Check if output format supports subchannels
+            if(!outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+               supportedSubchannel != MmcSubchannel.None)
+            {
+                if(!force)
+                {
+                    dumpLog.WriteLine("Output format does not support subchannels, continuing...");
+                    UpdateStatus?.Invoke("Output format does not support subchannels, continuing...");
+                }
+                else
+                {
+                    dumpLog.WriteLine("Output format does not support subchannels, not continuing...");
+                    StoppingErrorMessage?.Invoke("Output format does not support subchannels, not continuing...");
+
+                    return;
+                }
+
+                supportedSubchannel = MmcSubchannel.None;
+                subSize             = 0;
+            }
+
+            switch(supportedSubchannel)
+            {
+                case MmcSubchannel.None:
+                    subType = TrackSubchannelType.None;
+
+                    break;
+                case MmcSubchannel.Raw:
+                    subType = TrackSubchannelType.Raw;
+
+                    break;
+                case MmcSubchannel.Q16:
+                    subType = TrackSubchannelType.Q16;
+
+                    break;
+                default:
+                    dumpLog.WriteLine("Handling subchannel type {0} not supported, exiting...", supportedSubchannel);
+
+                    StoppingErrorMessage?.
+                        Invoke($"Handling subchannel type {supportedSubchannel} not supported, exiting...");
+
+                    return;
+            }
+
             // We discarded all discs that falsify a TOC before requesting a real TOC
             // No TOC, no CD (or an empty one)
             dumpLog.WriteLine("Reading full TOC");
@@ -352,6 +397,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]                           senseBuf;
             byte[]                           tmpBuf;
             MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
+            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
 
             int sessions              = 1;
             int firstTrackLastSession = 0;
@@ -464,52 +510,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(MMC.IsVideoNowColor(videoNowColorFrame))
                 dskType = MediaType.VideoNowColor;
-
-            // Check if output format supports subchannels
-            if(!outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
-               supportedSubchannel != MmcSubchannel.None)
-            {
-                if(!force)
-                {
-                    dumpLog.WriteLine("Output format does not support subchannels, continuing...");
-                    UpdateStatus?.Invoke("Output format does not support subchannels, continuing...");
-                }
-                else
-                {
-                    dumpLog.WriteLine("Output format does not support subchannels, not continuing...");
-                    StoppingErrorMessage?.Invoke("Output format does not support subchannels, not continuing...");
-
-                    return;
-                }
-
-                supportedSubchannel = MmcSubchannel.None;
-                subSize             = 0;
-            }
-
-            TrackSubchannelType subType;
-
-            switch(supportedSubchannel)
-            {
-                case MmcSubchannel.None:
-                    subType = TrackSubchannelType.None;
-
-                    break;
-                case MmcSubchannel.Raw:
-                    subType = TrackSubchannelType.Raw;
-
-                    break;
-                case MmcSubchannel.Q16:
-                    subType = TrackSubchannelType.Q16;
-
-                    break;
-                default:
-                    dumpLog.WriteLine("Handling subchannel type {0} not supported, exiting...", supportedSubchannel);
-
-                    StoppingErrorMessage?.
-                        Invoke($"Handling subchannel type {supportedSubchannel} not supported, exiting...");
-
-                    return;
-            }
 
             uint blockSize = SECTOR_SIZE + subSize;
 
