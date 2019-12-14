@@ -1155,6 +1155,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
                                              outputPlugin.ErrorMessage);
             }
+
+            // Send tracklist to output plugin. This may fail if subchannel is set but unsupported.
+            ret = (outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
+
+            if(!ret &&
+               supportedSubchannel == MmcSubchannel.None)
+            {
+                dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
+                dumpLog.WriteLine(outputPlugin.ErrorMessage);
+
+                StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing." +
+                                             Environment.NewLine                                     +
+                                             outputPlugin.ErrorMessage);
+
+                return;
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -1199,22 +1215,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-
-            // Send tracklist to output plugin. This may fail if subchannel is set but unsupported.
-            ret = (outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
-
-            if(!ret &&
-               supportedSubchannel == MmcSubchannel.None)
-            {
-                dumpLog.WriteLine("Error sending tracks to output image, not continuing.");
-                dumpLog.WriteLine(outputPlugin.ErrorMessage);
-
-                StoppingErrorMessage?.Invoke("Error sending tracks to output image, not continuing." +
-                                             Environment.NewLine                                     +
-                                             outputPlugin.ErrorMessage);
-
-                return;
-            }
 
             // If a subchannel is supported, check if output plugin allows us to write it.
             if(supportedSubchannel != MmcSubchannel.None)
