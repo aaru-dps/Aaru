@@ -1316,182 +1316,175 @@ namespace DiscImageChef.Core.Devices.Dumping
             timeSpeedStart   = DateTime.UtcNow;
             InitProgress?.Invoke();
 
-            for(int t = 0; t < tracks.Length; t++)
+            for(long i = (long)resume.NextBlock; i <= lastSector; i += blocksToRead)
             {
-                dumpLog.WriteLine("Reading track {0}", tracks[t].TrackSequence);
-
-                if(resume.NextBlock < tracks[t].TrackStartSector)
-                    resume.NextBlock = tracks[t].TrackStartSector;
-
-                for(ulong i = resume.NextBlock; i <= tracks[t].TrackEndSector; i += blocksToRead)
+                if(aborted)
                 {
-                    if(aborted)
+                    currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+                    UpdateStatus?.Invoke("Aborted!");
+                    dumpLog.WriteLine("Aborted!");
+
+                    break;
+                }
+
+                ulong  ui          = (ulong)i;
+                double cmdDuration = 0;
+
+                if((lastSector + 1) - i < blocksToRead)
+                    blocksToRead = (uint)((lastSector + 1) - i);
+
+                #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+                if(currentSpeed > maxSpeed &&
+                   currentSpeed != 0)
+                    maxSpeed = currentSpeed;
+
+                if(currentSpeed < minSpeed &&
+                   currentSpeed != 0)
+                    minSpeed = currentSpeed;
+                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+
+                UpdateProgress?.
+                    Invoke(string.Format("Reading sector {0} of {1} ({2:F3} MiB/sec.)", i, blocks, currentSpeed), i,
+                           (long)blocks);
+
+                if(readcd)
+                {
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, blocksToRead,
+                                       MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
+                                       true, MmcErrorField.None, supportedSubchannel, dev.Timeout, out cmdDuration);
+
+                    totalDuration += cmdDuration;
+                }
+                else if(read16)
+                {
+                    sense = dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, ui, blockSize, 0, blocksToRead,
+                                       false, dev.Timeout, out cmdDuration);
+                }
+                else if(read12)
+                {
+                    sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
+                                       blocksToRead, false, dev.Timeout, out cmdDuration);
+                }
+                else if(read10)
+                {
+                    sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
+                                       (ushort)blocksToRead, dev.Timeout, out cmdDuration);
+                }
+                else if(read6)
+                {
+                    sense = dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, dev.Timeout,
+                                      out cmdDuration);
+                }
+
+                if(!sense &&
+                   !dev.Error)
+                {
+                    mhddLog.Write(ui, cmdDuration);
+                    ibgLog.Write(ui, currentSpeed * 1024);
+                    extents.Add(ui, blocksToRead, true);
+                    DateTime writeStart = DateTime.Now;
+
+                    if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        currentTry.Extents = ExtentsConverter.ToMetadata(extents);
-                        UpdateStatus?.Invoke("Aborted!");
-                        dumpLog.WriteLine("Aborted!");
+                        byte[] data = new byte[SECTOR_SIZE * blocksToRead];
+                        byte[] sub  = new byte[subSize     * blocksToRead];
 
-                        break;
-                    }
-
-                    double cmdDuration = 0;
-
-                    if((tracks[t].TrackEndSector + 1) - i < blocksToRead)
-                        blocksToRead = (uint)((tracks[t].TrackEndSector + 1) - i);
-
-                    #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                    if(currentSpeed > maxSpeed &&
-                       currentSpeed != 0)
-                        maxSpeed = currentSpeed;
-
-                    if(currentSpeed < minSpeed &&
-                       currentSpeed != 0)
-                        minSpeed = currentSpeed;
-                    #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
-
-                    UpdateProgress?.
-                        Invoke(string.Format("Reading sector {0} of {1} at track {3} ({2:F3} MiB/sec.)", i, blocks, currentSpeed, tracks[t].TrackSequence),
-                               (long)i, (long)blocks);
-
-                    if(readcd)
-                    {
-                        sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, blocksToRead,
-                                           MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                           true, MmcErrorField.None, supportedSubchannel, dev.Timeout, out cmdDuration);
-
-                        totalDuration += cmdDuration;
-                    }
-                    else if(read16)
-                    {
-                        sense = dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, i, blockSize, 0,
-                                           blocksToRead, false, dev.Timeout, out cmdDuration);
-                    }
-                    else if(read12)
-                    {
-                        sense = dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
-                                           0, blocksToRead, false, dev.Timeout, out cmdDuration);
-                    }
-                    else if(read10)
-                    {
-                        sense = dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize,
-                                           0, (ushort)blocksToRead, dev.Timeout, out cmdDuration);
-                    }
-                    else if(read6)
-                    {
-                        sense = dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, dev.Timeout,
-                                          out cmdDuration);
-                    }
-
-                    if(!sense &&
-                       !dev.Error)
-                    {
-                        mhddLog.Write(i, cmdDuration);
-                        ibgLog.Write(i, currentSpeed * 1024);
-                        extents.Add(i, blocksToRead, true);
-                        DateTime writeStart = DateTime.Now;
-
-                        if(supportedSubchannel != MmcSubchannel.None)
+                        for(int b = 0; b < blocksToRead; b++)
                         {
-                            byte[] data = new byte[SECTOR_SIZE * blocksToRead];
-                            byte[] sub  = new byte[subSize     * blocksToRead];
+                            Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, SECTOR_SIZE * b, SECTOR_SIZE);
 
-                            for(int b = 0; b < blocksToRead; b++)
-                            {
-                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, SECTOR_SIZE * b, SECTOR_SIZE);
-
-                                Array.Copy(cmdBuf, (int)(SECTOR_SIZE + (b * blockSize)), sub, subSize * b, subSize);
-                            }
-
-                            outputPlugin.WriteSectorsLong(data, i, blocksToRead);
-                            outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
-                        }
-                        else
-                        {
-                            if(supportsLongSectors)
-                            {
-                                outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
-                            }
-                            else
-                            {
-                                if(cmdBuf.Length % 2352 == 0)
-                                {
-                                    byte[] data = new byte[2048 * blocksToRead];
-
-                                    for(int b = 0; b < blocksToRead; b++)
-                                        Array.Copy(cmdBuf, (int)(16 + (b * blockSize)), data, 2048 * b, 2048);
-
-                                    outputPlugin.WriteSectors(data, i, blocksToRead);
-                                }
-                                else
-                                {
-                                    outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
-                                }
-                            }
+                            Array.Copy(cmdBuf, (int)(SECTOR_SIZE + (b * blockSize)), sub, subSize * b, subSize);
                         }
 
-                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+                        outputPlugin.WriteSectorsLong(data, ui, blocksToRead);
+                        outputPlugin.WriteSectorsTag(sub, ui, blocksToRead, SectorTagType.CdSectorSubchannel);
                     }
                     else
                     {
-                        // TODO: Reset device after X errors
-                        if(stopOnError)
-                            return; // TODO: Return more cleanly
-
-                        if(i + skip > blocks)
-                            skip = (uint)(blocks - i);
-
-                        // Write empty data
-                        DateTime writeStart = DateTime.Now;
-
-                        if(supportedSubchannel != MmcSubchannel.None)
+                        if(supportsLongSectors)
                         {
-                            outputPlugin.WriteSectorsLong(new byte[SECTOR_SIZE * skip], i, skip);
-
-                            outputPlugin.WriteSectorsTag(new byte[subSize * skip], i, skip,
-                                                         SectorTagType.CdSectorSubchannel);
+                            outputPlugin.WriteSectorsLong(cmdBuf, ui, blocksToRead);
                         }
                         else
                         {
-                            if(supportsLongSectors)
+                            if(cmdBuf.Length % 2352 == 0)
                             {
-                                outputPlugin.WriteSectorsLong(new byte[blockSize * skip], i, skip);
+                                byte[] data = new byte[2048 * blocksToRead];
+
+                                for(int b = 0; b < blocksToRead; b++)
+                                    Array.Copy(cmdBuf, (int)(16 + (b * blockSize)), data, 2048 * b, 2048);
+
+                                outputPlugin.WriteSectors(data, ui, blocksToRead);
                             }
                             else
                             {
-                                if(cmdBuf.Length % 2352 == 0)
-                                    outputPlugin.WriteSectors(new byte[2048 * skip], i, skip);
-                                else
-                                    outputPlugin.WriteSectorsLong(new byte[blockSize * skip], i, skip);
+                                outputPlugin.WriteSectorsLong(cmdBuf, ui, blocksToRead);
                             }
                         }
-
-                        imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
-
-                        for(ulong b = i; b < i + skip; b++)
-                            resume.BadBlocks.Add(b);
-
-                        DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
-                        mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
-
-                        ibgLog.Write(i, 0);
-                        dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
-                        i       += skip - blocksToRead;
-                        newTrim =  true;
                     }
 
-                    sectorSpeedStart += blocksToRead;
-
-                    resume.NextBlock = i + blocksToRead;
-
-                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
-
-                    if(elapsed < 1)
-                        continue;
-
-                    currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
-                    sectorSpeedStart = 0;
-                    timeSpeedStart   = DateTime.UtcNow;
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                 }
+                else
+                {
+                    // TODO: Reset device after X errors
+                    if(stopOnError)
+                        return; // TODO: Return more cleanly
+
+                    if(ui + skip > blocks)
+                        skip = (uint)(blocks - ui);
+
+                    // Write empty data
+                    DateTime writeStart = DateTime.Now;
+
+                    if(supportedSubchannel != MmcSubchannel.None)
+                    {
+                        outputPlugin.WriteSectorsLong(new byte[SECTOR_SIZE * skip], ui, skip);
+
+                        outputPlugin.WriteSectorsTag(new byte[subSize * skip], ui, skip,
+                                                     SectorTagType.CdSectorSubchannel);
+                    }
+                    else
+                    {
+                        if(supportsLongSectors)
+                        {
+                            outputPlugin.WriteSectorsLong(new byte[blockSize * skip], ui, skip);
+                        }
+                        else
+                        {
+                            if(cmdBuf.Length % 2352 == 0)
+                                outputPlugin.WriteSectors(new byte[2048 * skip], ui, skip);
+                            else
+                                outputPlugin.WriteSectorsLong(new byte[blockSize * skip], ui, skip);
+                        }
+                    }
+
+                    imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
+
+                    for(ulong b = ui; b < ui + skip; b++)
+                        resume.BadBlocks.Add(b);
+
+                    DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+                    mhddLog.Write(ui, cmdDuration < 500 ? 65535 : cmdDuration);
+
+                    ibgLog.Write(ui, 0);
+                    dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
+                    i       += skip - blocksToRead;
+                    newTrim =  true;
+                }
+
+                sectorSpeedStart += blocksToRead;
+
+                resume.NextBlock = ui + blocksToRead;
+
+                double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
+
+                if(elapsed < 1)
+                    continue;
+
+                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
+                sectorSpeedStart = 0;
+                timeSpeedStart   = DateTime.UtcNow;
             }
 
             EndProgress?.Invoke();
