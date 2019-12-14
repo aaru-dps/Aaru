@@ -102,6 +102,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             Track[]                tracks;
             var                    leadOutExtents      = new ExtentsULong();
             bool                   supportsLongSectors = true;
+            DumpHardwareType       currentTry          = null;
+            ExtentsULong           extents             = null;
+            DateTime               timeSpeedStart      = DateTime.UtcNow;
+            ulong                  sectorSpeedStart    = 0;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -543,6 +547,17 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(blocks == 0)
             {
                 StoppingErrorMessage?.Invoke("Cannot dump blank media.");
+
+                return;
+            }
+
+            ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
+                                  ref resume, ref currentTry, ref extents);
+
+            if(currentTry == null ||
+               extents    == null)
+            {
+                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
 
                 return;
             }
@@ -1021,17 +1036,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DumpHardwareType currentTry = null;
             ExtentsULong     extents    = null;
-
-            ResumeSupport.Process(true, true, blocks, dev.Manufacturer, dev.Model, dev.Serial, dev.PlatformId,
-                                  ref resume, ref currentTry, ref extents);
-
-            if(currentTry == null ||
-               extents    == null)
-            {
-                StoppingErrorMessage?.Invoke("Could not process resume file, not continuing...");
-
-                return;
-            }
 
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    sectorSpeedStart = 0;
