@@ -112,6 +112,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             double                 minSpeed            = double.MaxValue;
             uint                   blocksToRead        = 64;
             bool                   ret;
+            double                 imageWriteDuration = 0;
+            bool                   newTrim            = false;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -1275,6 +1277,29 @@ namespace DiscImageChef.Core.Devices.Dumping
                 UpdateStatus?.Invoke($"Setting ISRC for track {trk.TrackSequence} to {isrc}");
                 dumpLog.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
             }
+
+            if(resume.NextBlock > 0)
+            {
+                UpdateStatus?.Invoke($"Resuming from block {resume.NextBlock}.");
+                dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
+            }
+
+            if(skip < blocksToRead)
+                skip = blocksToRead;
+
+        #if DEBUG
+            foreach(Track trk in tracks)
+                UpdateStatus?.
+                    Invoke($"Track {trk.TrackSequence} starts at LBA {trk.TrackStartSector} and ends at LBA {trk.TrackEndSector}");
+        #endif
+
+            if(dskType == MediaType.CDIREADY)
+            {
+                dumpLog.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+
+                UpdateStatus?.
+                    Invoke("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -1316,36 +1341,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             ExtentsULong                     extents               = null;
             DateTime                         timeSpeedStart        = DateTime.UtcNow;
             ulong                            sectorSpeedStart      = 0;
+            double                           imageWriteDuration    = 0;
+            bool                             newTrim               = false;
 
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-
-            if(resume.NextBlock > 0)
-            {
-                UpdateStatus?.Invoke($"Resuming from block {resume.NextBlock}.");
-                dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
-            }
-
-            double imageWriteDuration = 0;
-
-            if(skip < blocksToRead)
-                skip = blocksToRead;
-
-            bool newTrim = false;
-
-        #if DEBUG
-            foreach(Track trk in tracks)
-                UpdateStatus?.
-                    Invoke($"Track {trk.TrackSequence} starts at LBA {trk.TrackStartSector} and ends at LBA {trk.TrackEndSector}");
-        #endif
-
-            if(dskType == MediaType.CDIREADY)
-            {
-                dumpLog.WriteLine("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
-
-                UpdateStatus?.
-                    Invoke("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
-            }
 
             // Start reading
             start            = DateTime.UtcNow;
