@@ -1245,6 +1245,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                     kvp.Value
                 }, track.TrackStartSector, SectorTagType.CdTrackFlags);
             }
+
+            // Set MCN
+            sense = dev.ReadMcn(out string mcn, out _, out _, dev.Timeout, out _);
+
+            if(!sense                 &&
+               mcn != null            &&
+               mcn != "0000000000000" &&
+               outputPlugin.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
+            {
+                UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
+                dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -1289,19 +1301,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-
-
-            // Set MCN
-            sense = dev.ReadMcn(out string mcn, out _, out _, dev.Timeout, out _);
-
-            if(!sense      &&
-               mcn != null &&
-               mcn != "0000000000000")
-                if(outputPlugin.WriteMediaTag(Encoding.ASCII.GetBytes(mcn), MediaTagType.CD_MCN))
-                {
-                    UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
-                    dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
-                }
 
             // Set ISRCs
             foreach(Track trk in tracks)
