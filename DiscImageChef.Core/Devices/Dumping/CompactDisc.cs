@@ -631,6 +631,26 @@ namespace DiscImageChef.Core.Devices.Dumping
                 mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
             }
 
+            // Check if output format supports all disc tags we have retrieved so far
+            foreach(MediaTagType tag in mediaTags.Keys)
+            {
+                if(outputPlugin.SupportedMediaTags.Contains(tag))
+                    continue;
+
+                if(!force)
+                {
+                    dumpLog.WriteLine("Output format does not support {0}, continuing...", tag);
+                    ErrorMessage?.Invoke($"Output format does not support {tag}, continuing...");
+                }
+                else
+                {
+                    dumpLog.WriteLine("Output format does not support {0}, not continuing...", tag);
+                    StoppingErrorMessage?.Invoke($"Output format does not support {tag}, not continuing...");
+
+                    return;
+                }
+            }
+
             if(leadOutStarts.Any())
             {
                 UpdateStatus?.Invoke("Solving lead-outs...");
@@ -844,26 +864,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(MMC.IsVideoNowColor(videoNowColorFrame))
                 dskType = MediaType.VideoNowColor;
-
-            // Check if output format supports all disc tags we have retrieved so far
-            foreach(MediaTagType tag in mediaTags.Keys)
-            {
-                if(outputPlugin.SupportedMediaTags.Contains(tag))
-                    continue;
-
-                if(!force)
-                {
-                    dumpLog.WriteLine("Output format does not support {0}, continuing...", tag);
-                    ErrorMessage?.Invoke($"Output format does not support {tag}, continuing...");
-                }
-                else
-                {
-                    dumpLog.WriteLine("Output format does not support {0}, not continuing...", tag);
-                    StoppingErrorMessage?.Invoke($"Output format does not support {tag}, not continuing...");
-
-                    return;
-                }
-            }
 
             // Check mode for tracks
             for(int t = 0; t < tracks.Length; t++)
