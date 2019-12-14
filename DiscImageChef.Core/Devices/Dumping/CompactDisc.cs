@@ -73,14 +73,9 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDisc(ref MediaType dskType)
         {
-            DicContext
-                ctx; // Master database context
-
-            Device
-                dbDev; // Device database entry
-
-            CdOffset
-                cdOffset; // Read offset from database
+            DicContext ctx;      // Master database context
+            Device     dbDev;    // Device database entry
+            CdOffset   cdOffset; // Read offset from database
 
             bool                             sense;                                              // Sense indicator
             byte[]                           cmdBuf;                                             // Data buffer
@@ -88,6 +83,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]                           tmpBuf;                                             // Temporary buffer
             FullTOC.CDFullTOC?               toc       = null;                                   // Full CD TOC
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
+
+            dskType = MediaType.CD;
 
             if(dumpRaw)
             {
@@ -148,6 +145,26 @@ namespace DiscImageChef.Core.Devices.Dumping
                     mediaTags.Add(MediaTagType.CD_FullTOC, tmpBuf);
                 }
             }
+
+            // ATIP exists on blank CDs
+            dumpLog.WriteLine("Reading ATIP");
+            UpdateStatus?.Invoke("Reading ATIP");
+            sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense)
+            {
+                ATIP.CDATIP? atip = ATIP.Decode(cmdBuf);
+
+                if(atip.HasValue)
+                {
+                    // Only CD-R and CD-RW have ATIP
+                    dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
+
+                    tmpBuf = new byte[cmdBuf.Length - 4];
+                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                    mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
+                }
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -172,28 +189,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]                           senseBuf;
             byte[]                           tmpBuf;
 
-            dskType = MediaType.CD;
             int sessions = 1;
-
-            // ATIP exists on blank CDs
-            dumpLog.WriteLine("Reading ATIP");
-            UpdateStatus?.Invoke("Reading ATIP");
-            sense = dev.ReadAtip(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense)
-            {
-                ATIP.CDATIP? atip = ATIP.Decode(cmdBuf);
-
-                if(atip.HasValue)
-                {
-                    // Only CD-R and CD-RW have ATIP
-                    dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
-
-                    tmpBuf = new byte[cmdBuf.Length - 4];
-                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
-                }
-            }
 
             dumpLog.WriteLine("Reading Disc Information");
             UpdateStatus?.Invoke("Reading Disc Information");
