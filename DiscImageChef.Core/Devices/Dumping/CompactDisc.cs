@@ -111,6 +111,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double                 maxSpeed            = double.MinValue;
             double                 minSpeed            = double.MaxValue;
             uint                   blocksToRead        = 64;
+            bool                   ret;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -1141,12 +1142,26 @@ namespace DiscImageChef.Core.Devices.Dumping
             UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
             UpdateStatus?.Invoke($"SCSI device type: {dev.ScsiType}.");
             UpdateStatus?.Invoke($"Media identified as {dskType}.");
+
+            ret = outputPlugin.Create(outputPath, dskType, formatOptions, blocks,
+                                      supportsLongSectors ? blockSize : 2048);
+
+            // Cannot create image
+            if(!ret)
+            {
+                dumpLog.WriteLine("Error creating output image, not continuing.");
+                dumpLog.WriteLine(outputPlugin.ErrorMessage);
+
+                StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
+                                             outputPlugin.ErrorMessage);
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDiscOld(ref MediaType dskType)
         {
+            bool                             ret;
             ulong                            blocks         = 0;
             Track[]                          tracks         = new Track[0];
             List<Track>                      trackList      = new List<Track>();
@@ -1172,36 +1187,18 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]                           cmdBuf        = null;
             byte[]                           senseBuf      = null;
             byte[]                           tmpBuf;
-            MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
-            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
-            bool                             supportsLongSectors = true;
-
-            int sessions              = 1;
-            int firstTrackLastSession = 0;
-
-            DumpHardwareType currentTry = null;
-            ExtentsULong     extents    = null;
-
-            DateTime timeSpeedStart   = DateTime.UtcNow;
-            ulong    sectorSpeedStart = 0;
+            MmcSubchannel                    supportedSubchannel   = MmcSubchannel.Raw;
+            TrackSubchannelType              subType               = TrackSubchannelType.None; // Track subchannel type
+            bool                             supportsLongSectors   = true;
+            int                              sessions              = 1;
+            int                              firstTrackLastSession = 0;
+            DumpHardwareType                 currentTry            = null;
+            ExtentsULong                     extents               = null;
+            DateTime                         timeSpeedStart        = DateTime.UtcNow;
+            ulong                            sectorSpeedStart      = 0;
 
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-
-            bool ret = outputPlugin.Create(outputPath, dskType, formatOptions, blocks,
-                                           supportsLongSectors ? blockSize : 2048);
-
-            // Cannot create image
-            if(!ret)
-            {
-                dumpLog.WriteLine("Error creating output image, not continuing.");
-                dumpLog.WriteLine(outputPlugin.ErrorMessage);
-
-                StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             outputPlugin.ErrorMessage);
-
-                return;
-            }
 
             // Send tracklist to output plugin. This may fail if subchannel is set but unsupported.
             ret = (outputPlugin as IWritableOpticalImage).SetTracks(tracks.ToList());
