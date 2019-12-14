@@ -78,7 +78,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             CdOffset               cdOffset;            // Read offset from database
             bool                   readcd;              // Device supports READ CD
             bool                   read6       = false; // Device supports READ(6)
-            bool                   read10      = false; //Device supports READ(10)
+            bool                   read10      = false; // Device supports READ(10)
             bool                   read12      = false; // Device supports READ(12)
             bool                   read16      = false; // Device supports READ(16)
             const uint             SECTOR_SIZE = 2352;  // Full sector size
@@ -98,6 +98,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             Dictionary<int, long>  leadOutStarts         = new Dictionary<int, long>();
             int                    sessions              = 1;
             int                    firstTrackLastSession = 0;
+            ulong                  blocks;
+            Track[]                tracks;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -528,6 +530,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
+            tracks = trackList.ToArray();
+
+            for(int t = 1; t < tracks.Length; t++)
+                tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
+
+            tracks[tracks.Length - 1].TrackEndSector = (ulong)lastSector;
+            blocks                                   = (ulong)(lastSector + 1);
+
+            if(blocks == 0)
+            {
+                StoppingErrorMessage?.Invoke("Cannot dump blank media.");
+
+                return;
+            }
+
             // ATIP exists on blank CDs
             dumpLog.WriteLine("Reading ATIP");
             UpdateStatus?.Invoke("Reading ATIP");
@@ -605,6 +622,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDiscOld(ref MediaType dskType)
         {
+            ulong                            blocks         = 0;
+            Track[]                          tracks         = new Track[0];
             List<Track>                      trackList      = new List<Track>();
             long                             lastSector     = 0;
             Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
@@ -727,21 +746,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(MMC.IsVideoNowColor(videoNowColorFrame))
                 dskType = MediaType.VideoNowColor;
-
-            Track[] tracks = trackList.ToArray();
-
-            for(int t = 1; t < tracks.Length; t++)
-                tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
-
-            tracks[tracks.Length              - 1].TrackEndSector = (ulong)lastSector;
-            ulong blocks = (ulong)(lastSector + 1);
-
-            if(blocks == 0)
-            {
-                StoppingErrorMessage?.Invoke("Cannot dump blank media.");
-
-                return;
-            }
 
             var leadOutExtents = new ExtentsULong();
 
