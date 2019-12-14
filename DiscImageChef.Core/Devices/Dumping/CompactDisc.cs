@@ -745,47 +745,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
             }
-        }
-
-        /// <summary>Dumps a compact disc</summary>
-        /// <param name="dskType">Disc type as detected in MMC layer</param>
-        internal void CompactDiscOld(ref MediaType dskType)
-        {
-            ulong                            blocks         = 0;
-            Track[]                          tracks         = new Track[0];
-            List<Track>                      trackList      = new List<Track>();
-            long                             lastSector     = 0;
-            Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
-            TrackType                        firstTrackType = TrackType.Audio;
-            Dictionary<int, long>            leadOutStarts  = new Dictionary<int, long>();
-            uint                             subSize        = 0;
-            const uint                       SECTOR_SIZE    = 2352;
-            uint                             blockSize      = SECTOR_SIZE + subSize;
-            DateTime                         start;
-            DateTime                         end;
-            bool                             readcd        = false;
-            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
-            bool                             sense         = false;
-            FullTOC.CDFullTOC?               toc           = null;
-            double                           totalDuration = 0;
-            double                           currentSpeed  = 0;
-            double                           maxSpeed      = double.MinValue;
-            double                           minSpeed      = double.MaxValue;
-            uint                             blocksToRead  = 64;
-            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
-            byte[]                           cmdBuf        = null;
-            byte[]                           senseBuf      = null;
-            byte[]                           tmpBuf;
-            MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
-            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
-            bool                             supportsLongSectors = true;
-
-            int sessions              = 1;
-            int firstTrackLastSession = 0;
 
             if(dskType == MediaType.CD ||
                dskType == MediaType.CDROMXA)
             {
+                // TODO: Add other detectors here
+                dumpLog.WriteLine("Detecting disc type...");
+                UpdateStatus?.Invoke("Detecting disc type...");
+
                 bool hasDataTrack                  = false;
                 bool hasAudioTrack                 = false;
                 bool allFirstSessionTracksAreAudio = true;
@@ -832,38 +799,72 @@ namespace DiscImageChef.Core.Devices.Dumping
                    !hasDataTrack &&
                    sessions == 1)
                     dskType = MediaType.CDV;
-            }
 
-            // TODO: Add other detectors here
-            dumpLog.WriteLine("Detecting disc type...");
-            UpdateStatus?.Invoke("Detecting disc type...");
-            byte[] videoNowColorFrame = new byte[9 * 2352];
+                byte[] videoNowColorFrame = new byte[9 * 2352];
 
-            for(int i = 0; i < 9; i++)
-            {
-                sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false,
-                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                   dev.Timeout, out _);
-
-                if(sense || dev.Error)
+                for(int i = 0; i < 9; i++)
                 {
-                    sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false,
-                                       true, MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
+                    sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false,
+                                       false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                       MmcSubchannel.None, dev.Timeout, out _);
 
-                    if(sense || !dev.Error)
+                    if(sense || dev.Error)
                     {
-                        videoNowColorFrame = null;
+                        sense = dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false,
+                                           false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
 
-                        break;
+                        if(sense || !dev.Error)
+                        {
+                            videoNowColorFrame = null;
+
+                            break;
+                        }
                     }
+
+                    Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
                 }
 
-                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
+                if(MMC.IsVideoNowColor(videoNowColorFrame))
+                    dskType = MediaType.VideoNowColor;
             }
+        }
 
-            if(MMC.IsVideoNowColor(videoNowColorFrame))
-                dskType = MediaType.VideoNowColor;
+        /// <summary>Dumps a compact disc</summary>
+        /// <param name="dskType">Disc type as detected in MMC layer</param>
+        internal void CompactDiscOld(ref MediaType dskType)
+        {
+            ulong                            blocks         = 0;
+            Track[]                          tracks         = new Track[0];
+            List<Track>                      trackList      = new List<Track>();
+            long                             lastSector     = 0;
+            Dictionary<byte, byte>           trackFlags     = new Dictionary<byte, byte>();
+            TrackType                        firstTrackType = TrackType.Audio;
+            Dictionary<int, long>            leadOutStarts  = new Dictionary<int, long>();
+            uint                             subSize        = 0;
+            const uint                       SECTOR_SIZE    = 2352;
+            uint                             blockSize      = SECTOR_SIZE + subSize;
+            DateTime                         start;
+            DateTime                         end;
+            bool                             readcd        = false;
+            bool                             read6         = false, read10 = false, read12 = false, read16 = false;
+            bool                             sense         = false;
+            FullTOC.CDFullTOC?               toc           = null;
+            double                           totalDuration = 0;
+            double                           currentSpeed  = 0;
+            double                           maxSpeed      = double.MinValue;
+            double                           minSpeed      = double.MaxValue;
+            uint                             blocksToRead  = 64;
+            Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
+            byte[]                           cmdBuf        = null;
+            byte[]                           senseBuf      = null;
+            byte[]                           tmpBuf;
+            MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
+            TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
+            bool                             supportsLongSectors = true;
+
+            int sessions              = 1;
+            int firstTrackLastSession = 0;
 
             // Check mode for tracks
             for(int t = 0; t < tracks.Length; t++)
