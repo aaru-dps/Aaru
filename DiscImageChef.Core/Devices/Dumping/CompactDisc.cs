@@ -1228,6 +1228,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
             }
+
+            // Set track flags
+            foreach(KeyValuePair<byte, byte> kvp in trackFlags)
+            {
+                Track track = tracks.FirstOrDefault(t => t.TrackSequence == kvp.Key);
+
+                if(track.TrackSequence == 0)
+                    continue;
+
+                dumpLog.WriteLine("Setting flags for track {0}...", track.TrackSequence);
+                UpdateStatus?.Invoke($"Setting flags for track {track.TrackSequence}...");
+
+                outputPlugin.WriteSectorTag(new[]
+                {
+                    kvp.Value
+                }, track.TrackStartSector, SectorTagType.CdTrackFlags);
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -1273,22 +1290,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
 
-            // Set track flags
-            foreach(KeyValuePair<byte, byte> kvp in trackFlags)
-            {
-                Track track = tracks.FirstOrDefault(t => t.TrackSequence == kvp.Key);
-
-                if(track.TrackSequence == 0)
-                    continue;
-
-                dumpLog.WriteLine("Setting flags for track {0}...", track.TrackSequence);
-                UpdateStatus?.Invoke($"Setting flags for track {track.TrackSequence}...");
-
-                outputPlugin.WriteSectorTag(new[]
-                {
-                    kvp.Value
-                }, track.TrackStartSector, SectorTagType.CdTrackFlags);
-            }
 
             // Set MCN
             sense = dev.ReadMcn(out string mcn, out _, out _, dev.Timeout, out _);
