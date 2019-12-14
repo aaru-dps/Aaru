@@ -1257,6 +1257,24 @@ namespace DiscImageChef.Core.Devices.Dumping
                 UpdateStatus?.Invoke($"Setting disc Media Catalogue Number to {mcn}");
                 dumpLog.WriteLine("Setting disc Media Catalogue Number to {0}", mcn);
             }
+
+            // Set ISRCs
+            foreach(Track trk in tracks)
+            {
+                sense = dev.ReadIsrc((byte)trk.TrackSequence, out string isrc, out _, out _, dev.Timeout, out _);
+
+                if(sense        ||
+                   isrc == null ||
+                   isrc == "000000000000")
+                    continue;
+
+                if(!outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc), trk.TrackStartSector,
+                                                SectorTagType.CdTrackIsrc))
+                    continue;
+
+                UpdateStatus?.Invoke($"Setting ISRC for track {trk.TrackSequence} to {isrc}");
+                dumpLog.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -1301,24 +1319,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
             var ibgLog  = new IbgLog(outputPrefix  + ".ibg", 0x0008);
-
-            // Set ISRCs
-            foreach(Track trk in tracks)
-            {
-                sense = dev.ReadIsrc((byte)trk.TrackSequence, out string isrc, out _, out _, dev.Timeout, out _);
-
-                if(sense        ||
-                   isrc == null ||
-                   isrc == "000000000000")
-                    continue;
-
-                if(!outputPlugin.WriteSectorTag(Encoding.ASCII.GetBytes(isrc), trk.TrackStartSector,
-                                                SectorTagType.CdTrackIsrc))
-                    continue;
-
-                UpdateStatus?.Invoke($"Setting ISRC for track {trk.TrackSequence} to {isrc}");
-                dumpLog.WriteLine("Setting ISRC for track {0} to {1}", trk.TrackSequence, isrc);
-            }
 
             if(resume.NextBlock > 0)
             {
