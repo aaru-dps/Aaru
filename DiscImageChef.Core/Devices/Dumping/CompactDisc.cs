@@ -45,15 +45,19 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Core.Media.Detection;
+using DiscImageChef.Database;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 using Schemas;
+using CdOffset = DiscImageChef.Database.Models.CdOffset;
+using Device = DiscImageChef.Database.Models.Device;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Session = DiscImageChef.Decoders.CD.Session;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
+// ReSharper disable JoinDeclarationAndInitializer
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -66,12 +70,53 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         internal void CompactDisc(ref MediaType dskType)
         {
+            // Master database context
+            DicContext ctx;
+            // Device database entry
+            Device dbDev;
+            // Read offset from database
+            CdOffset cdOffset;
+
             if(dumpRaw)
             {
                 dumpLog.WriteLine("Raw CD dumping not yet implemented");
                 StoppingErrorMessage?.Invoke("Raw CD dumping not yet implemented");
 
                 return;
+            }
+
+            // Open master database
+            ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+
+            // Search for device in master database
+            dbDev = ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
+                                                           d.Model        == dev.Model        &&
+                                                           d.Revision     == dev.Revision);
+
+            if(dbDev is null)
+            {
+                dumpLog.WriteLine("Device not in database, please create a device report and attach it to a Github issue.");
+                UpdateStatus?.Invoke("Device not in database, please create a device report and attach it to a Github issue.");
+            }
+            else
+            {
+                dumpLog.WriteLine($"Device in database since {dbDev.LastSynchronized}.");
+                UpdateStatus?.Invoke($"Device in database since {dbDev.LastSynchronized}.");
+            }
+
+            // Search for read offset in master database
+            cdOffset =
+                ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model);
+
+            if(cdOffset is null)
+            {
+                dumpLog.WriteLine("CD reading offset not found in database.");
+                UpdateStatus?.Invoke("CD reading offset not found in database.");
+            }
+            else
+            {
+                dumpLog.WriteLine($"CD reading offset is {cdOffset.Offset} samples.");
+                UpdateStatus?.Invoke($"CD reading offset is {cdOffset.Offset} samples.");
             }
         }
 
