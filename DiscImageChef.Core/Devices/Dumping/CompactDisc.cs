@@ -616,6 +616,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                     firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
                 }
             }
+
+            dumpLog.WriteLine("Reading CD-Text from Lead-In");
+            UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
+            sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense &&
+               CDTextOnLeadIn.Decode(cmdBuf).HasValue)
+            {
+                tmpBuf = new byte[cmdBuf.Length - 4];
+                Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -644,8 +656,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             double                           minSpeed      = double.MaxValue;
             uint                             blocksToRead  = 64;
             Dictionary<MediaTagType, byte[]> mediaTags     = new Dictionary<MediaTagType, byte[]>();
-            byte[]                           cmdBuf;
-            byte[]                           senseBuf;
+            byte[]                           cmdBuf        = null;
+            byte[]                           senseBuf      = null;
             byte[]                           tmpBuf;
             MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
             TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
@@ -703,18 +715,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                    sessions == 1)
                     dskType = MediaType.CDV;
             }
-
-            dumpLog.WriteLine("Reading CD-Text from Lead-In");
-            UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
-            sense = dev.ReadCdText(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense)
-                if(CDTextOnLeadIn.Decode(cmdBuf).HasValue)
-                {
-                    tmpBuf = new byte[cmdBuf.Length - 4];
-                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
-                }
 
             // TODO: Add other detectors here
             dumpLog.WriteLine("Detecting disc type...");
