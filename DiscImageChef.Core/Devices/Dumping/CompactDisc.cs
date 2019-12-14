@@ -142,6 +142,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 dumpLog.WriteLine($"Device in database since {dbDev.LastSynchronized}.");
                 UpdateStatus?.Invoke($"Device in database since {dbDev.LastSynchronized}.");
+
+                if(dbDev.OptimalMultipleSectorsRead > 0)
+                    blocksToRead = (uint)dbDev.OptimalMultipleSectorsRead;
             }
 
             // Search for read offset in master database
