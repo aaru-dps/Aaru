@@ -100,7 +100,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             int                    firstTrackLastSession = 0;
             ulong                  blocks;
             Track[]                tracks;
-            var                    leadOutExtents = new ExtentsULong();
+            var                    leadOutExtents      = new ExtentsULong();
+            bool                   supportsLongSectors = true;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -654,6 +655,76 @@ namespace DiscImageChef.Core.Devices.Dumping
                 for(int i = 0; i < dataExtentsArray.Length - 1; i++)
                     leadOutExtents.Add(dataExtentsArray[i].Item2 + 1, dataExtentsArray[i + 1].Item1 - 1);
             }
+
+            // Check for hidden data before start of track 1
+            if(tracks.First(t => t.TrackSequence == 1).TrackStartSector > 0 && readcd)
+            {
+                dumpLog.WriteLine("First track starts after sector 0, checking for a hidden track...");
+                UpdateStatus?.Invoke("First track starts after sector 0, checking for a hidden track...");
+
+                sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
+                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
+                                   dev.Timeout, out _);
+
+                if(dev.Error || sense)
+                {
+                    dumpLog.WriteLine("Could not read sector 0, continuing...");
+                    UpdateStatus?.Invoke("Could not read sector 0, continuing...");
+                }
+                else
+                {
+                    byte[] syncMark =
+                    {
+                        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
+                    };
+
+                    byte[] cdiMark =
+                    {
+                        0x01, 0x43, 0x44, 0x2D
+                    };
+
+                    byte[] testMark = new byte[12];
+                    Array.Copy(cmdBuf, 0, testMark, 0, 12);
+
+                    bool hiddenData = syncMark.SequenceEqual(testMark) &&
+                                      (cmdBuf[0xF] == 0 || cmdBuf[0xF] == 1 || cmdBuf[0xF] == 2);
+
+                    if(hiddenData && cmdBuf[0xF] == 2)
+                    {
+                        sense = dev.ReadCd(out cmdBuf, out senseBuf, 16, blockSize, 1, MmcSectorTypes.AllTypes, false,
+                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           supportedSubchannel, dev.Timeout, out _);
+
+                        if(!dev.Error &&
+                           !sense)
+                        {
+                            testMark = new byte[4];
+                            Array.Copy(cmdBuf, 24, testMark, 0, 4);
+
+                            if(cdiMark.SequenceEqual(testMark))
+                                dskType = MediaType.CDIREADY;
+                        }
+
+                        List<Track> trkList = new List<Track>
+                        {
+                            new Track
+                            {
+                                TrackSequence          = 0,
+                                TrackSession           = 1,
+                                TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
+                                TrackStartSector       = 0,
+                                TrackBytesPerSector    = (int)SECTOR_SIZE,
+                                TrackRawBytesPerSector = (int)SECTOR_SIZE,
+                                TrackSubchannelType    = subType,
+                                TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
+                            }
+                        };
+
+                        trkList.AddRange(tracks);
+                        tracks = trkList.ToArray();
+                    }
+                }
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -687,6 +758,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]                           tmpBuf;
             MmcSubchannel                    supportedSubchannel = MmcSubchannel.Raw;
             TrackSubchannelType              subType             = TrackSubchannelType.None; // Track subchannel type
+            bool                             supportsLongSectors = true;
 
             int sessions              = 1;
             int firstTrackLastSession = 0;
@@ -793,76 +865,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
             }
 
-            // Check for hidden data before start of track 1
-            if(tracks.First(t => t.TrackSequence == 1).TrackStartSector > 0 && readcd)
-            {
-                dumpLog.WriteLine("First track starts after sector 0, checking for a hidden track...");
-                UpdateStatus?.Invoke("First track starts after sector 0, checking for a hidden track...");
-
-                sense = dev.ReadCd(out cmdBuf, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
-                                   true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, supportedSubchannel,
-                                   dev.Timeout, out _);
-
-                if(dev.Error || sense)
-                {
-                    dumpLog.WriteLine("Could not read sector 0, continuing...");
-                    UpdateStatus?.Invoke("Could not read sector 0, continuing...");
-                }
-                else
-                {
-                    byte[] syncMark =
-                    {
-                        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
-                    };
-
-                    byte[] cdiMark =
-                    {
-                        0x01, 0x43, 0x44, 0x2D
-                    };
-
-                    byte[] testMark = new byte[12];
-                    Array.Copy(cmdBuf, 0, testMark, 0, 12);
-
-                    bool hiddenData = syncMark.SequenceEqual(testMark) &&
-                                      (cmdBuf[0xF] == 0 || cmdBuf[0xF] == 1 || cmdBuf[0xF] == 2);
-
-                    if(hiddenData && cmdBuf[0xF] == 2)
-                    {
-                        sense = dev.ReadCd(out cmdBuf, out senseBuf, 16, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                           false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                           supportedSubchannel, dev.Timeout, out _);
-
-                        if(!dev.Error &&
-                           !sense)
-                        {
-                            testMark = new byte[4];
-                            Array.Copy(cmdBuf, 24, testMark, 0, 4);
-
-                            if(cdiMark.SequenceEqual(testMark))
-                                dskType = MediaType.CDIREADY;
-                        }
-
-                        List<Track> trkList = new List<Track>
-                        {
-                            new Track
-                            {
-                                TrackSequence          = 0,
-                                TrackSession           = 1,
-                                TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
-                                TrackStartSector       = 0,
-                                TrackBytesPerSector    = (int)SECTOR_SIZE,
-                                TrackRawBytesPerSector = (int)SECTOR_SIZE,
-                                TrackSubchannelType    = subType,
-                                TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
-                            }
-                        };
-
-                        trkList.AddRange(tracks);
-                        tracks = trkList.ToArray();
-                    }
-                }
-            }
-
             // Check mode for tracks
             for(int t = 0; t < tracks.Length; t++)
             {
@@ -879,11 +881,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dumpLog.WriteLine("Checking mode for track {0}...", tracks[t].TrackSequence);
                 UpdateStatus?.Invoke($"Checking mode for track {tracks[t].TrackSequence}...");
 
-                readcd = !dev.ReadCd(out cmdBuf, out senseBuf, (uint)tracks[t].TrackStartSector, blockSize, 1,
-                                     MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                     MmcErrorField.None, supportedSubchannel, dev.Timeout, out _);
+                sense = !dev.ReadCd(out cmdBuf, out senseBuf, (uint)tracks[t].TrackStartSector, blockSize, 1,
+                                    MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                    MmcErrorField.None, supportedSubchannel, dev.Timeout, out _);
 
-                if(!readcd)
+                if(!sense)
                 {
                     dumpLog.WriteLine("Unable to guess mode for track {0}, continuing...", tracks[t].TrackSequence);
                     UpdateStatus?.Invoke($"Unable to guess mode for track {tracks[t].TrackSequence}, continuing...");
@@ -937,8 +939,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                 }
             }
-
-            bool supportsLongSectors = true;
 
             if(outputPlugin.Id == new Guid("12345678-AAAA-BBBB-CCCC-123456789000"))
             {
