@@ -91,11 +91,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             FullTOC.CDFullTOC?     toc = null;          // Full CD TOC
             TrackSubchannelType    subType;             // Track subchannel type
             uint                   blockSize;
-            List<Track>            trackList      = new List<Track>();
-            long                   lastSector     = 0;
-            Dictionary<byte, byte> trackFlags     = new Dictionary<byte, byte>();
-            TrackType              firstTrackType = TrackType.Audio;
-            Dictionary<int, long>  leadOutStarts  = new Dictionary<int, long>();
+            List<Track>            trackList             = new List<Track>();
+            long                   lastSector            = 0;
+            Dictionary<byte, byte> trackFlags            = new Dictionary<byte, byte>();
+            TrackType              firstTrackType        = TrackType.Audio;
+            Dictionary<int, long>  leadOutStarts         = new Dictionary<int, long>();
+            int                    sessions              = 1;
+            int                    firstTrackLastSession = 0;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -582,6 +584,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
                 mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
             }
+
+            dumpLog.WriteLine("Reading Session Information");
+            UpdateStatus?.Invoke("Reading Session Information");
+            sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense)
+            {
+                Session.CDSessionInfo? session = Session.Decode(cmdBuf);
+
+                if(session.HasValue)
+                {
+                    sessions              = session.Value.LastCompleteSession;
+                    firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
+                }
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -616,21 +633,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             int sessions              = 1;
             int firstTrackLastSession = 0;
-
-            dumpLog.WriteLine("Reading Session Information");
-            UpdateStatus?.Invoke("Reading Session Information");
-            sense = dev.ReadSessionInfo(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense)
-            {
-                Session.CDSessionInfo? session = Session.Decode(cmdBuf);
-
-                if(session.HasValue)
-                {
-                    sessions              = session.Value.LastCompleteSession;
-                    firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
-                }
-            }
 
             if(dskType == MediaType.CD ||
                dskType == MediaType.CDROMXA)
