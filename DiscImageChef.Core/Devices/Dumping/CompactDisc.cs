@@ -190,6 +190,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                             break;
                     }
             }
+
+            dumpLog.WriteLine("Reading PMA");
+            UpdateStatus?.Invoke("Reading PMA");
+            sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
+
+            if(!sense &&
+               PMA.Decode(cmdBuf).HasValue)
+            {
+                tmpBuf = new byte[cmdBuf.Length - 4];
+                Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
+                mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
+            }
         }
 
         /// <summary>Dumps a compact disc</summary>
@@ -282,18 +294,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                    sessions == 1)
                     dskType = MediaType.CDV;
             }
-
-            dumpLog.WriteLine("Reading PMA");
-            UpdateStatus?.Invoke("Reading PMA");
-            sense = dev.ReadPma(out cmdBuf, out senseBuf, dev.Timeout, out _);
-
-            if(!sense)
-                if(PMA.Decode(cmdBuf).HasValue)
-                {
-                    tmpBuf = new byte[cmdBuf.Length - 4];
-                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
-                }
 
             dumpLog.WriteLine("Reading CD-Text from Lead-In");
             UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
