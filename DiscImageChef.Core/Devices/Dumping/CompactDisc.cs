@@ -118,10 +118,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>();     // Track flags
             List<Track>            trackList     = new List<Track>();                // Tracks in disc
             Track[]                tracks;                                           // Tracks in disc as array
-            int                    offsetBytes;                                      // Read offset
+            int                    offsetBytes = 0;                                  // Read offset
 
-            bool
-                nextData; // Next cluster of sectors is all data;
+            bool nextData; // Next cluster of sectors is all data;
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -842,18 +841,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                    sessions == 1)
                     dskType = MediaType.CDV;
 
-                byte[] videoNowColorFrame = new byte[9 * 2352];
+                byte[] videoNowColorFrame = new byte[9 * sectorSize];
 
                 for(int i = 0; i < 9; i++)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false,
-                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, sectorSize, 1, MmcSectorTypes.AllTypes,
+                                        false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
                                         MmcSubchannel.None, _dev.Timeout, out _);
 
                     if(sense || _dev.Error)
                     {
-                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false,
-                                            false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, sectorSize, 1, MmcSectorTypes.Cdda,
+                                            false, false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
                                             MmcSubchannel.None, _dev.Timeout, out _);
 
                         if(sense || !_dev.Error)
@@ -864,7 +863,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
-                    Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
+                    Array.Copy(cmdBuf, 0, videoNowColorFrame, i * sectorSize, sectorSize);
                 }
 
                 if(MMC.IsVideoNowColor(videoNowColorFrame))
@@ -1437,6 +1436,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
+                if(_fixOffset && !inData)
+                {
+                    // TODO: FreeBSD bug
+                    if(offsetBytes > 0)
+                    {
+                        if(i == 0)
+                            firstSectorToRead = uint.MaxValue; // -1
+                        else
+                            firstSectorToRead--;
+                    }
+                }
+
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
 
                 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -1484,6 +1495,50 @@ namespace DiscImageChef.Core.Devices.Dumping
                                        _dev.Timeout, out cmdDuration);
                 }
 
+                // Because one block has been partially used to fix the offset
+                if(_fixOffset &&
+                   !inData    &&
+                   offsetBytes != 0)
+                {
+                    int offsetFix = offsetBytes > 0 ? offsetFix = (int)(sectorSize - offsetBytes)
+                                        : offsetFix = offsetBytes * -1;
+
+                    if(supportedSubchannel != MmcSubchannel.None)
+                    {
+                        // Deinterleave subchannel
+                        byte[] data = new byte[sectorSize * blocksToRead];
+                        byte[] sub  = new byte[subSize    * blocksToRead];
+
+                        for(int b = 0; b < blocksToRead; b++)
+                        {
+                            Array.Copy(cmdBuf, (int)(0          + (b * blockSize)), data, sectorSize * b, sectorSize);
+                            Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize     * b, subSize);
+                        }
+
+                        tmpBuf = new byte[sectorSize * (blocksToRead - 1)];
+                        Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                        data = tmpBuf;
+
+                        blocksToRead--;
+
+                        // Reinterleave subchannel
+                        cmdBuf = new byte[blockSize * blocksToRead];
+
+                        for(int b = 0; b < blocksToRead; b++)
+                        {
+                            Array.Copy(data, sectorSize * b, cmdBuf, (int)(0          + (b * blockSize)), sectorSize);
+                            Array.Copy(sub, subSize     * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
+                        }
+                    }
+                    else
+                    {
+                        tmpBuf = new byte[blockSize * (blocksToRead - 1)];
+                        Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                        cmdBuf = tmpBuf;
+                        blocksToRead--;
+                    }
+                }
+
                 if(!sense &&
                    !_dev.Error)
                 {
@@ -1515,7 +1570,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                         else
                         {
-                            if(cmdBuf.Length % 2352 == 0)
+                            if(cmdBuf.Length % sectorSize == 0)
                             {
                                 byte[] data = new byte[2048 * blocksToRead];
 
@@ -1560,7 +1615,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                         else
                         {
-                            if(cmdBuf.Length % 2352 == 0)
+                            if(cmdBuf.Length % sectorSize == 0)
                                 _outputPlugin.WriteSectors(new byte[2048 * _skip], i, _skip);
                             else
                                 _outputPlugin.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
@@ -1753,22 +1808,37 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     PulseProgress?.Invoke($"Trimming sector {badSector}");
 
+                    byte sectorsToTrim   = 1;
+                    uint badSectorToRead = (uint)badSector;
+
+                    if(_fixOffset                       &&
+                       audioExtents.Contains(badSector) &&
+                       offsetBytes != 0)
+                    {
+                        if(offsetBytes > 0)
+                        {
+                            badSectorToRead--;
+                        }
+
+                        sectorsToTrim = 2;
+                    }
+
                     if(readcd)
-                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)badSector, blockSize, 1,
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
                                             MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
                                             true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
                                             out cmdDuration);
                     else if(read16)
-                        sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, badSector, blockSize, 0,
-                                            1, false, _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, badSectorToRead, blockSize,
+                                            0, sectorsToTrim, false, _dev.Timeout, out cmdDuration);
                     else if(read12)
-                        sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)badSector,
-                                            blockSize, 0, 1, false, _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead,
+                                            blockSize, 0, sectorsToTrim, false, _dev.Timeout, out cmdDuration);
                     else if(read10)
-                        sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)badSector,
-                                            blockSize, 0, 1, _dev.Timeout, out cmdDuration);
+                        sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, badSectorToRead,
+                                            blockSize, 0, sectorsToTrim, _dev.Timeout, out cmdDuration);
                     else if(read6)
-                        sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)badSector, blockSize, 1,
+                        sense = _dev.Read6(out cmdBuf, out senseBuf, badSectorToRead, blockSize, sectorsToTrim,
                                            _dev.Timeout, out cmdDuration);
 
                     totalDuration += cmdDuration;
@@ -1781,6 +1851,51 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         _resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
+                    }
+
+                    // Because one block has been partially used to fix the offset
+                    if(_fixOffset                       &&
+                       audioExtents.Contains(badSector) &&
+                       offsetBytes != 0)
+                    {
+                        int offsetFix = offsetBytes > 0 ? offsetFix = (int)(sectorSize - offsetBytes)
+                                            : offsetFix = offsetBytes * -1;
+
+                        if(supportedSubchannel != MmcSubchannel.None)
+                        {
+                            // Deinterleave subchannel
+                            byte[] data = new byte[sectorSize * sectorsToTrim];
+                            byte[] sub  = new byte[subSize    * sectorsToTrim];
+
+                            for(int b = 0; b < sectorsToTrim; b++)
+                            {
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b,
+                                           sectorSize);
+
+                                Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
+                            }
+
+                            tmpBuf = new byte[sectorSize * (sectorsToTrim - 1)];
+                            Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                            data = tmpBuf;
+
+                            // Reinterleave subchannel
+                            cmdBuf = new byte[blockSize * sectorsToTrim];
+
+                            for(int b = 0; b < sectorsToTrim; b++)
+                            {
+                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)),
+                                           sectorSize);
+
+                                Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
+                            }
+                        }
+                        else
+                        {
+                            tmpBuf = new byte[blockSize * (sectorsToTrim - 1)];
+                            Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                            cmdBuf = tmpBuf;
+                        }
                     }
 
                     if(supportedSubchannel != MmcSubchannel.None)
@@ -1800,7 +1915,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                         else
                         {
-                            if(cmdBuf.Length % 2352 == 0)
+                            if(cmdBuf.Length % sectorSize == 0)
                             {
                                 byte[] data = new byte[2048];
                                 Array.Copy(cmdBuf, 16, data, 0, 2048);
@@ -1944,9 +2059,24 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                         forward ? "forward" : "reverse",
                                                         runningPersistent ? "recovering partial data, " : ""));
 
+                    byte sectorsToReRead   = 1;
+                    uint badSectorToReRead = (uint)badSector;
+
+                    if(_fixOffset                       &&
+                       audioExtents.Contains(badSector) &&
+                       offsetBytes != 0)
+                    {
+                        if(offsetBytes > 0)
+                        {
+                            badSectorToReRead--;
+                        }
+
+                        sectorsToReRead = 2;
+                    }
+
                     if(readcd)
                     {
-                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)badSector, blockSize, 1,
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, badSectorToReRead, blockSize, sectorsToReRead,
                                             MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
                                             true, true, MmcErrorField.None, supportedSubchannel, _dev.Timeout,
                                             out cmdDuration);
@@ -1966,6 +2096,51 @@ namespace DiscImageChef.Core.Devices.Dumping
                            decSense.Value.ASC == 0x11)
                             if(!sectorsNotEvenPartial.Contains(badSector))
                                 sectorsNotEvenPartial.Add(badSector);
+                    }
+
+                    // Because one block has been partially used to fix the offset
+                    if(_fixOffset                       &&
+                       audioExtents.Contains(badSector) &&
+                       offsetBytes != 0)
+                    {
+                        int offsetFix = offsetBytes > 0 ? offsetFix = (int)(sectorSize - offsetBytes)
+                                            : offsetFix = offsetBytes * -1;
+
+                        if(supportedSubchannel != MmcSubchannel.None)
+                        {
+                            // Deinterleave subchannel
+                            byte[] data = new byte[sectorSize * sectorsToReRead];
+                            byte[] sub  = new byte[subSize    * sectorsToReRead];
+
+                            for(int b = 0; b < sectorsToReRead; b++)
+                            {
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b,
+                                           sectorSize);
+
+                                Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
+                            }
+
+                            tmpBuf = new byte[sectorSize * (sectorsToReRead - 1)];
+                            Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                            data = tmpBuf;
+
+                            // Reinterleave subchannel
+                            cmdBuf = new byte[blockSize * sectorsToReRead];
+
+                            for(int b = 0; b < sectorsToReRead; b++)
+                            {
+                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)),
+                                           sectorSize);
+
+                                Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
+                            }
+                        }
+                        else
+                        {
+                            tmpBuf = new byte[blockSize * (sectorsToReRead - 1)];
+                            Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
+                            cmdBuf = tmpBuf;
+                        }
                     }
 
                     if(!sense &&
