@@ -117,6 +117,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>();     // Track flags
             List<Track>            trackList     = new List<Track>();                // Tracks in disc
             Track[]                tracks;                                           // Tracks in disc as array
+            int                    offsetBytes;                                      // Read offset
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -1326,6 +1327,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     _fixOffset = false;
                 }
+                else if(!readcd)
+                {
+                    _dumpLog.WriteLine("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
+
+                    UpdateStatus?.
+                        Invoke("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
+
+                    _fixOffset = false;
+                }
                 else
                 {
                     if(cdOffset is null)
@@ -1340,10 +1350,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
-                        // TODO: Calculate offset in bytes
-
                         _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
                         UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
+
+                        offsetBytes = cdOffset.Offset * 2 * -1;
+
+                        _dumpLog.WriteLine($"Offset is {offsetBytes} bytes.");
+                        UpdateStatus?.Invoke($"Offset is {offsetBytes} bytes.");
                     }
                 }
             }
@@ -1364,7 +1377,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             InitProgress?.Invoke();
 
             // TODO: Apply offset
-            for(long i = (long)_resume.NextBlock; i <= lastSector; i += blocksToRead)
+            for(ulong i = _resume.NextBlock; (long)i <= lastSector; i += blocksToRead)
             {
                 if(_aborted)
                 {
@@ -1375,10 +1388,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     break;
                 }
 
-                ulong ui = (ulong)i;
+                uint firstSectorToRead = (uint)i;
 
-                if((lastSector + 1) - i < blocksToRead)
-                    blocksToRead = (uint)((lastSector + 1) - i);
+                if((lastSector + 1) - (long)i < blocksToRead)
+                    blocksToRead = (uint)((lastSector + 1) - (long)i);
 
                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
 
@@ -1390,15 +1403,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(currentSpeed < minSpeed &&
                    currentSpeed != 0)
                     minSpeed = currentSpeed;
-                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                 // ReSharper restore CompareOfFloatsByEqualityOperator
 
-                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", i, (long)blocks);
+                #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
+
+                UpdateProgress?.Invoke($"Reading sector {i} of {blocks} ({currentSpeed:F3} MiB/sec.)", (long)i,
+                                       (long)blocks);
 
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, blockSize, blocksToRead,
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, blocksToRead,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                         true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
 
@@ -1406,31 +1421,31 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else if(read16)
                 {
-                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, ui, blockSize, 0, blocksToRead,
-                                        false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, firstSectorToRead, blockSize,
+                                        0, blocksToRead, false, _dev.Timeout, out cmdDuration);
                 }
                 else if(read12)
                 {
-                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        blocksToRead, false, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, firstSectorToRead,
+                                        blockSize, 0, blocksToRead, false, _dev.Timeout, out cmdDuration);
                 }
                 else if(read10)
                 {
-                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, (uint)i, blockSize, 0,
-                                        (ushort)blocksToRead, _dev.Timeout, out cmdDuration);
+                    sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, firstSectorToRead,
+                                        blockSize, 0, (ushort)blocksToRead, _dev.Timeout, out cmdDuration);
                 }
                 else if(read6)
                 {
-                    sense = _dev.Read6(out cmdBuf, out senseBuf, (uint)i, blockSize, (byte)blocksToRead, _dev.Timeout,
-                                       out cmdDuration);
+                    sense = _dev.Read6(out cmdBuf, out senseBuf, firstSectorToRead, blockSize, (byte)blocksToRead,
+                                       _dev.Timeout, out cmdDuration);
                 }
 
                 if(!sense &&
                    !_dev.Error)
                 {
-                    mhddLog.Write(ui, cmdDuration);
-                    ibgLog.Write(ui, currentSpeed * 1024);
-                    extents.Add(ui, blocksToRead, true);
+                    mhddLog.Write(i, cmdDuration);
+                    ibgLog.Write(i, currentSpeed * 1024);
+                    extents.Add(i, blocksToRead, true);
                     DateTime writeStart = DateTime.Now;
 
                     if(supportedSubchannel != MmcSubchannel.None)
@@ -1445,14 +1460,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                         }
 
-                        _outputPlugin.WriteSectorsLong(data, ui, blocksToRead);
-                        _outputPlugin.WriteSectorsTag(sub, ui, blocksToRead, SectorTagType.CdSectorSubchannel);
+                        _outputPlugin.WriteSectorsLong(data, i, blocksToRead);
+                        _outputPlugin.WriteSectorsTag(sub, i, blocksToRead, SectorTagType.CdSectorSubchannel);
                     }
                     else
                     {
                         if(supportsLongSectors)
                         {
-                            _outputPlugin.WriteSectorsLong(cmdBuf, ui, blocksToRead);
+                            _outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
                         }
                         else
                         {
@@ -1463,11 +1478,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 for(int b = 0; b < blocksToRead; b++)
                                     Array.Copy(cmdBuf, (int)(16 + (b * blockSize)), data, 2048 * b, 2048);
 
-                                _outputPlugin.WriteSectors(data, ui, blocksToRead);
+                                _outputPlugin.WriteSectors(data, i, blocksToRead);
                             }
                             else
                             {
-                                _outputPlugin.WriteSectorsLong(cmdBuf, ui, blocksToRead);
+                                _outputPlugin.WriteSectorsLong(cmdBuf, i, blocksToRead);
                             }
                         }
                     }
@@ -1480,43 +1495,43 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(_stopOnError)
                         return; // TODO: Return more cleanly
 
-                    if(ui + _skip > blocks)
-                        _skip = (uint)(blocks - ui);
+                    if(i + _skip > blocks)
+                        _skip = (uint)(blocks - i);
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        _outputPlugin.WriteSectorsLong(new byte[sectorSize * _skip], ui, _skip);
+                        _outputPlugin.WriteSectorsLong(new byte[sectorSize * _skip], i, _skip);
 
-                        _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], ui, _skip,
+                        _outputPlugin.WriteSectorsTag(new byte[subSize * _skip], i, _skip,
                                                       SectorTagType.CdSectorSubchannel);
                     }
                     else
                     {
                         if(supportsLongSectors)
                         {
-                            _outputPlugin.WriteSectorsLong(new byte[blockSize * _skip], ui, _skip);
+                            _outputPlugin.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
                         }
                         else
                         {
                             if(cmdBuf.Length % 2352 == 0)
-                                _outputPlugin.WriteSectors(new byte[2048 * _skip], ui, _skip);
+                                _outputPlugin.WriteSectors(new byte[2048 * _skip], i, _skip);
                             else
-                                _outputPlugin.WriteSectorsLong(new byte[blockSize * _skip], ui, _skip);
+                                _outputPlugin.WriteSectorsLong(new byte[blockSize * _skip], i, _skip);
                         }
                     }
 
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                    for(ulong b = ui; b < ui + _skip; b++)
+                    for(ulong b = i; b < i + _skip; b++)
                         _resume.BadBlocks.Add(b);
 
                     DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
-                    mhddLog.Write(ui, cmdDuration < 500 ? 65535 : cmdDuration);
+                    mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
-                    ibgLog.Write(ui, 0);
+                    ibgLog.Write(i, 0);
                     _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
                     i       += _skip - blocksToRead;
                     newTrim =  true;
@@ -1524,7 +1539,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 sectorSpeedStart += blocksToRead;
 
-                _resume.NextBlock = ui + blocksToRead;
+                _resume.NextBlock = i + blocksToRead;
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
