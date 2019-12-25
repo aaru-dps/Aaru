@@ -1311,6 +1311,48 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Invoke("There will be thousand of errors between track 0 and track 1, that is normal and you can ignore them.");
             }
 
+            // Check offset
+            if(_fixOffset)
+            {
+                // TODO: Plextor raw reading
+                // TODO: HL-DT-ST raw reading
+                // TODO: VideoNow
+
+                if(tracks.All(t => t.TrackType != TrackType.Audio))
+                {
+                    // No audio tracks so no need to fix offset
+                    _dumpLog.WriteLine("No audio tracks, disabling offset fix.");
+                    UpdateStatus?.Invoke("No audio tracks, disabling offset fix.");
+
+                    _fixOffset = false;
+                }
+                else
+                {
+                    if(cdOffset is null)
+                    {
+                        _dumpLog.
+                            WriteLine("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+
+                        UpdateStatus?.
+                            Invoke("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+
+                        _fixOffset = false;
+                    }
+                    else
+                    {
+                        // TODO: Calculate offset in bytes
+
+                        _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
+                        UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
+                    }
+                }
+            }
+            else if(tracks.Any(t => t.TrackType == TrackType.Audio))
+            {
+                _dumpLog.WriteLine("There are audio tracks and offset fixing is disabled, dump may not be correct.");
+                UpdateStatus?.Invoke("There are audio tracks and offset fixing is disabled, dump may not be correct.");
+            }
+
             mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead);
             ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
 
@@ -1321,6 +1363,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             timeSpeedStart   = DateTime.UtcNow;
             InitProgress?.Invoke();
 
+            // TODO: Apply offset
             for(long i = (long)_resume.NextBlock; i <= lastSector; i += blocksToRead)
             {
                 if(_aborted)

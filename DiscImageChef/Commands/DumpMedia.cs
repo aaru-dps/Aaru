@@ -60,6 +60,7 @@ namespace DiscImageChef.Commands
         bool   _doResume = true;
         string _encodingName;
         bool   _firstTrackPregap;
+        bool   _fixOffset;
         bool   _force;
         bool   _noMetadata;
         bool   _noTrim;
@@ -90,6 +91,9 @@ namespace DiscImageChef.Commands
             if(DetectOS.GetRealPlatformID() != PlatformID.FreeBSD)
                 Options.Add("first-pregap", "Try to read first track pregap. Only applicable to CD/DDCD/GD.",
                             b => _firstTrackPregap = b != null);
+
+            Options.Add("fix-offset", "Fix audio tracks offset. Only applicable to CD/GD.",
+                        b => _fixOffset = b != null);
 
             Options.Add("force|f", "Continue dump whatever happens.", b => _force = b != null);
 
@@ -339,7 +343,7 @@ namespace DiscImageChef.Commands
 
             var dumper = new Dump(_doResume, dev, _devicePath, outputFormat, _retryPasses, _force, false, _persistent,
                                   _stopOnError, resume, dumpLog, encoding, outputPrefix, _outputFile, parsedOptions,
-                                  sidecar, (uint)_skip, _noMetadata, _noTrim, _firstTrackPregap);
+                                  sidecar, (uint)_skip, _noMetadata, _noTrim, _firstTrackPregap, _fixOffset);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

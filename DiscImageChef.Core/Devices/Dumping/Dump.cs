@@ -33,6 +33,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly bool                       _stopOnError;
         bool                                _aborted;
         bool                                _dumpFirstTrackPregap;
+        bool                                _fixOffset;
         Resume                              _resume;
         Sidecar                             _sidecarClass;
         uint                                _skip;
@@ -61,7 +62,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
-                    CICMMetadataType preSidecar, uint skip, bool nometadata, bool notrim, bool dumpFirstTrackPregap)
+                    CICMMetadataType preSidecar, uint skip, bool nometadata, bool notrim, bool dumpFirstTrackPregap,
+                    bool fixOffset)
         {
             _doResume             = doResume;
             _dev                  = dev;
@@ -84,6 +86,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             _notrim               = notrim;
             _dumpFirstTrackPregap = dumpFirstTrackPregap;
             _aborted              = false;
+            _fixOffset            = fixOffset;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
