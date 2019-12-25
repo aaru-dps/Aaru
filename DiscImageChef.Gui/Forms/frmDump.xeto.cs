@@ -54,16 +54,18 @@ using Schemas;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 
+// ReSharper disable UnusedMember.Local
+
 namespace DiscImageChef.Gui.Forms
 {
     public class frmDump : Form
     {
-        readonly string  devicePath;
-        Device           dev;
-        Dump             dumper;
-        string           outputPrefix;
-        Resume           resume;
-        CICMMetadataType sidecar;
+        readonly string  _devicePath;
+        Device           _dev;
+        Dump             _dumper;
+        string           _outputPrefix;
+        Resume           _resume;
+        CICMMetadataType _sidecar;
 
         public frmDump(string devicePath, DeviceInfo deviceInfo, ScsiInfo scsiInfo = null)
         {
@@ -189,7 +191,7 @@ namespace DiscImageChef.Gui.Forms
                     break;
             }
 
-            this.devicePath = devicePath;
+            _devicePath = devicePath;
         }
 
         void OnCmbFormatSelectedIndexChanged(object sender, EventArgs e)
@@ -318,7 +320,7 @@ namespace DiscImageChef.Gui.Forms
             if(result != DialogResult.Ok)
             {
                 txtDestination.Text = "";
-                outputPrefix        = null;
+                _outputPrefix       = null;
 
                 return;
             }
@@ -328,8 +330,8 @@ namespace DiscImageChef.Gui.Forms
 
             txtDestination.Text = dlgDestination.FileName;
 
-            outputPrefix = Path.Combine(Path.GetDirectoryName(dlgDestination.FileName),
-                                        Path.GetFileNameWithoutExtension(dlgDestination.FileName));
+            _outputPrefix = Path.Combine(Path.GetDirectoryName(dlgDestination.FileName),
+                                         Path.GetFileNameWithoutExtension(dlgDestination.FileName));
 
             chkResume.Checked = true;
         }
@@ -344,7 +346,7 @@ namespace DiscImageChef.Gui.Forms
         {
             if(chkExistingMetadata.Checked == false)
             {
-                sidecar = null;
+                _sidecar = null;
 
                 return;
             }
@@ -370,7 +372,7 @@ namespace DiscImageChef.Gui.Forms
             try
             {
                 var sr = new StreamReader(dlgMetadata.FileName);
-                sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
+                _sidecar = (CICMMetadataType)sidecarXs.Deserialize(sr);
                 sr.Close();
             }
             catch
@@ -385,19 +387,19 @@ namespace DiscImageChef.Gui.Forms
             if(chkResume.Checked == false)
                 return;
 
-            if(outputPrefix != null)
+            if(_outputPrefix != null)
                 CheckResumeFile();
         }
 
         void CheckResumeFile()
         {
-            resume = null;
+            _resume = null;
             var xs = new XmlSerializer(typeof(Resume));
 
             try
             {
-                var sr = new StreamReader(outputPrefix + ".resume.xml");
-                resume = (Resume)xs.Deserialize(sr);
+                var sr = new StreamReader(_outputPrefix + ".resume.xml");
+                _resume = (Resume)xs.Deserialize(sr);
                 sr.Close();
             }
             catch
@@ -408,9 +410,9 @@ namespace DiscImageChef.Gui.Forms
                 return;
             }
 
-            if(resume           == null             ||
-               resume.NextBlock <= resume.LastBlock ||
-               (resume.BadBlocks.Count != 0 && !resume.Tape))
+            if(_resume           == null              ||
+               _resume.NextBlock <= _resume.LastBlock ||
+               (_resume.BadBlocks.Count != 0 && !_resume.Tape))
                 return;
 
             MessageBox.Show("Media already dumped correctly, please choose another destination...",
@@ -424,7 +426,7 @@ namespace DiscImageChef.Gui.Forms
         void OnBtnStopClick(object sender, EventArgs e)
         {
             btnStop.Enabled = false;
-            dumper.Abort();
+            _dumper.Abort();
         }
 
         void OnBtnDumpClick(object sender, EventArgs e)
@@ -442,15 +444,15 @@ namespace DiscImageChef.Gui.Forms
 
             try
             {
-                dev = new Device(devicePath);
+                _dev = new Device(_devicePath);
 
-                if(dev.IsRemote)
-                    Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
-                                         dev.RemoteOperatingSystemVersion, dev.RemoteArchitecture);
+                if(_dev.IsRemote)
+                    Statistics.AddRemote(_dev.RemoteApplication, _dev.RemoteVersion, _dev.RemoteOperatingSystem,
+                                         _dev.RemoteOperatingSystemVersion, _dev.RemoteArchitecture);
 
-                if(dev.Error)
+                if(_dev.Error)
                 {
-                    StoppingErrorMessage($"Error {dev.LastError} opening device.");
+                    StoppingErrorMessage($"Error {_dev.LastError} opening device.");
 
                     return;
                 }
@@ -462,7 +464,7 @@ namespace DiscImageChef.Gui.Forms
                 return;
             }
 
-            Statistics.AddDevice(dev);
+            Statistics.AddDevice(_dev);
             Statistics.AddCommand("dump-media");
 
             if(!(cmbFormat.SelectedValue is IWritableImage outputFormat))
@@ -515,36 +517,37 @@ namespace DiscImageChef.Gui.Forms
                     parsedOptions.Add(key, value);
                 }
 
-            var dumpLog = new DumpLog(outputPrefix + ".log", dev);
+            var dumpLog = new DumpLog(_outputPrefix + ".log", _dev);
 
             dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
 
-            dumper = new Dump(chkResume.Checked      == true, dev, devicePath, outputFormat, (ushort)stpRetries.Value,
-                              chkForce.Checked       == true, false, chkPersistent.Checked == true,
-                              chkStopOnError.Checked == true, resume, dumpLog, encoding, outputPrefix,
-                              txtDestination.Text, parsedOptions, sidecar, (uint)stpSkipped.Value,
-                              chkExistingMetadata.Checked == false, chkTrim.Checked == false,
-                              chkTrack1Pregap.Checked     == true);
+            _dumper = new Dump(chkResume.Checked == true, _dev, _devicePath, outputFormat,
+                               (ushort)stpRetries.Value,
+                               chkForce.Checked       == true, false, chkPersistent.Checked == true,
+                               chkStopOnError.Checked == true, _resume, dumpLog, encoding, _outputPrefix,
+                               txtDestination.Text, parsedOptions, _sidecar, (uint)stpSkipped.Value,
+                               chkExistingMetadata.Checked == false, chkTrim.Checked == false,
+                               chkTrack1Pregap.Checked     == true);
 
             new Thread(DoWork).Start();
         }
 
         void DoWork()
         {
-            dumper.UpdateStatus         += UpdateStatus;
-            dumper.ErrorMessage         += ErrorMessage;
-            dumper.StoppingErrorMessage += StoppingErrorMessage;
-            dumper.PulseProgress        += PulseProgress;
-            dumper.InitProgress         += InitProgress;
-            dumper.UpdateProgress       += UpdateProgress;
-            dumper.EndProgress          += EndProgress;
-            dumper.InitProgress2        += InitProgress2;
-            dumper.UpdateProgress2      += UpdateProgress2;
-            dumper.EndProgress2         += EndProgress2;
+            _dumper.UpdateStatus         += UpdateStatus;
+            _dumper.ErrorMessage         += ErrorMessage;
+            _dumper.StoppingErrorMessage += StoppingErrorMessage;
+            _dumper.PulseProgress        += PulseProgress;
+            _dumper.InitProgress         += InitProgress;
+            _dumper.UpdateProgress       += UpdateProgress;
+            _dumper.EndProgress          += EndProgress;
+            _dumper.InitProgress2        += InitProgress2;
+            _dumper.UpdateProgress2      += UpdateProgress2;
+            _dumper.EndProgress2         += EndProgress2;
 
-            dumper.Start();
+            _dumper.Start();
 
-            dev.Close();
+            _dev.Close();
 
             WorkFinished();
         }
@@ -643,6 +646,7 @@ namespace DiscImageChef.Gui.Forms
         }
 
         #region XAML IDs
+        // ReSharper disable InconsistentNaming
         ComboBox       cmbFormat;
         TextBox        txtDestination;
         Button         btnDestination;
@@ -673,6 +677,8 @@ namespace DiscImageChef.Gui.Forms
         Label          lblProgress2;
         ProgressBar    prgProgress2;
         StackLayout    stkOptions;
+
+        // ReSharper restore InconsistentNaming
         #endregion
     }
 }

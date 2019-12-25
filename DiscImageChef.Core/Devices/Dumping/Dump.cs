@@ -14,32 +14,30 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public partial class Dump
     {
-        readonly Device                     dev;
-        readonly string                     devicePath;
-        readonly bool                       doResume;
-        readonly DumpLog                    dumpLog;
-        readonly bool                       dumpRaw;
-        readonly Encoding                   encoding;
-        readonly bool                       force;
-        readonly Dictionary<string, string> formatOptions;
-        readonly bool                       nometadata;
-        readonly bool                       notrim;
-        readonly string                     outputPath;
-        readonly IWritableImage             outputPlugin;
-        readonly string                     outputPrefix;
-        readonly bool                       persistent;
-        readonly CICMMetadataType           preSidecar;
-        readonly ushort                     retryPasses;
-        readonly bool                       stopOnError;
-        bool                                aborted;
-        bool                                dumpFirstTrackPregap;
-        Resume                              resume;
-        Sidecar                             sidecarClass;
-        uint                                skip;
+        readonly Device                     _dev;
+        readonly string                     _devicePath;
+        readonly bool                       _doResume;
+        readonly DumpLog                    _dumpLog;
+        readonly bool                       _dumpRaw;
+        readonly Encoding                   _encoding;
+        readonly bool                       _force;
+        readonly Dictionary<string, string> _formatOptions;
+        readonly bool                       _nometadata;
+        readonly bool                       _notrim;
+        readonly string                     _outputPath;
+        readonly IWritableImage             _outputPlugin;
+        readonly string                     _outputPrefix;
+        readonly bool                       _persistent;
+        readonly CICMMetadataType           _preSidecar;
+        readonly ushort                     _retryPasses;
+        readonly bool                       _stopOnError;
+        bool                                _aborted;
+        bool                                _dumpFirstTrackPregap;
+        Resume                              _resume;
+        Sidecar                             _sidecarClass;
+        uint                                _skip;
 
-        /// <summary>
-        ///     Initializes dumpers
-        /// </summary>
+        /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>
         /// <param name="dev">Device</param>
         /// <param name="devicePath">Path to the device</param>
@@ -60,130 +58,113 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="preSidecar">Sidecar to store in dumped image</param>
         /// <param name="skip">How many sectors to skip reading on error</param>
         /// <param name="nometadata">Create metadata sidecar after dump?</param>
-        public Dump(bool                       doResume,     Device dev, string devicePath,
-                    IWritableImage             outputPlugin, ushort retryPasses,
-                    bool                       force,        bool   dumpRaw,      bool    persistent,
-                    bool                       stopOnError,  Resume resume,       DumpLog dumpLog,
-                    Encoding                   encoding,     string outputPrefix, string  outputPath,
-                    Dictionary<string, string> formatOptions,
-                    CICMMetadataType           preSidecar, uint skip, bool nometadata,
-                    bool                       notrim,     bool dumpFirstTrackPregap)
+        public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
+                    bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
+                    Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
+                    CICMMetadataType preSidecar, uint skip, bool nometadata, bool notrim, bool dumpFirstTrackPregap)
         {
-            this.doResume             = doResume;
-            this.dev                  = dev;
-            this.devicePath           = devicePath;
-            this.outputPlugin         = outputPlugin;
-            this.retryPasses          = retryPasses;
-            this.force                = force;
-            this.dumpRaw              = dumpRaw;
-            this.persistent           = persistent;
-            this.stopOnError          = stopOnError;
-            this.resume               = resume;
-            this.dumpLog              = dumpLog;
-            this.encoding             = encoding;
-            this.outputPrefix         = outputPrefix;
-            this.outputPath           = outputPath;
-            this.formatOptions        = formatOptions;
-            this.preSidecar           = preSidecar;
-            this.skip                 = skip;
-            this.nometadata           = nometadata;
-            this.notrim               = notrim;
-            this.dumpFirstTrackPregap = dumpFirstTrackPregap;
-            aborted                   = false;
+            _doResume             = doResume;
+            _dev                  = dev;
+            _devicePath           = devicePath;
+            _outputPlugin         = outputPlugin;
+            _retryPasses          = retryPasses;
+            _force                = force;
+            _dumpRaw              = dumpRaw;
+            _persistent           = persistent;
+            _stopOnError          = stopOnError;
+            _resume               = resume;
+            _dumpLog              = dumpLog;
+            _encoding             = encoding;
+            _outputPrefix         = outputPrefix;
+            _outputPath           = outputPath;
+            _formatOptions        = formatOptions;
+            _preSidecar           = preSidecar;
+            _skip                 = skip;
+            _nometadata           = nometadata;
+            _notrim               = notrim;
+            _dumpFirstTrackPregap = dumpFirstTrackPregap;
+            _aborted              = false;
         }
 
-        /// <summary>
-        ///     Starts dumping with the stablished fields and autodetecting the device type
-        /// </summary>
+        /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
         public void Start()
         {
-            if(dev.IsUsb && dev.UsbVendorId == 0x054C &&
-               (dev.UsbProductId == 0x01C8 || dev.UsbProductId == 0x01C9 || dev.UsbProductId == 0x02D2))
+            if(_dev.IsUsb                 &&
+               _dev.UsbVendorId == 0x054C &&
+               (_dev.UsbProductId == 0x01C8 || _dev.UsbProductId == 0x01C9 || _dev.UsbProductId == 0x02D2))
                 PlayStationPortable();
             else
-                switch(dev.Type)
+                switch(_dev.Type)
                 {
                     case DeviceType.ATA:
                         Ata();
+
                         break;
                     case DeviceType.MMC:
                     case DeviceType.SecureDigital:
                         SecureDigital();
+
                         break;
                     case DeviceType.NVMe:
                         NVMe();
+
                         break;
                     case DeviceType.ATAPI:
                     case DeviceType.SCSI:
                         Scsi();
+
                         break;
                     default:
-                        dumpLog.WriteLine("Unknown device type.");
-                        dumpLog.Close();
+                        _dumpLog.WriteLine("Unknown device type.");
+                        _dumpLog.Close();
                         StoppingErrorMessage?.Invoke("Unknown device type.");
+
                         return;
                 }
 
-            dumpLog.Close();
+            _dumpLog.Close();
 
-            if(resume == null || !doResume) return;
+            if(_resume == null ||
+               !_doResume)
+                return;
 
-            resume.LastWriteDate = DateTime.UtcNow;
-            resume.BadBlocks.Sort();
+            _resume.LastWriteDate = DateTime.UtcNow;
+            _resume.BadBlocks.Sort();
 
-            if(File.Exists(outputPrefix + ".resume.xml")) File.Delete(outputPrefix + ".resume.xml");
+            if(File.Exists(_outputPrefix + ".resume.xml"))
+                File.Delete(_outputPrefix + ".resume.xml");
 
-            FileStream    fs = new FileStream(outputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
-            XmlSerializer xs = new XmlSerializer(resume.GetType());
-            xs.Serialize(fs, resume);
+            var fs = new FileStream(_outputPrefix + ".resume.xml", FileMode.Create, FileAccess.ReadWrite);
+            var xs = new XmlSerializer(_resume.GetType());
+            xs.Serialize(fs, _resume);
             fs.Close();
         }
 
         public void Abort()
         {
-            aborted = true;
-            sidecarClass?.Abort();
+            _aborted = true;
+            _sidecarClass?.Abort();
         }
 
-        /// <summary>
-        ///     Event raised when the progress bar is not longer needed
-        /// </summary>
+        /// <summary>Event raised when the progress bar is not longer needed</summary>
         public event EndProgressHandler EndProgress;
-        /// <summary>
-        ///     Event raised when a progress bar is needed
-        /// </summary>
+        /// <summary>Event raised when a progress bar is needed</summary>
         public event InitProgressHandler InitProgress;
-        /// <summary>
-        ///     Event raised to report status updates
-        /// </summary>
+        /// <summary>Event raised to report status updates</summary>
         public event UpdateStatusHandler UpdateStatus;
-        /// <summary>
-        ///     Event raised to report a non-fatal error
-        /// </summary>
+        /// <summary>Event raised to report a non-fatal error</summary>
         public event ErrorMessageHandler ErrorMessage;
-        /// <summary>
-        ///     Event raised to report a fatal error that stops the dumping operation and should call user's attention
-        /// </summary>
+        /// <summary>Event raised to report a fatal error that stops the dumping operation and should call user's attention</summary>
         public event ErrorMessageHandler StoppingErrorMessage;
-        /// <summary>
-        ///     Event raised to update the values of a determinate progress bar
-        /// </summary>
+        /// <summary>Event raised to update the values of a determinate progress bar</summary>
         public event UpdateProgressHandler UpdateProgress;
-        /// <summary>
-        ///     Event raised to update the status of an undeterminate progress bar
-        /// </summary>
+        /// <summary>Event raised to update the status of an undeterminate progress bar</summary>
         public event PulseProgressHandler PulseProgress;
-        /// <summary>
-        ///     Event raised when the progress bar is not longer needed
-        /// </summary>
+        /// <summary>Event raised when the progress bar is not longer needed</summary>
         public event EndProgressHandler2 EndProgress2;
-        /// <summary>
-        ///     Event raised when a progress bar is needed
-        /// </summary>
+        /// <summary>Event raised when a progress bar is needed</summary>
         public event InitProgressHandler2 InitProgress2;
-        /// <summary>
-        ///     Event raised to update the values of a determinate progress bar
-        /// </summary>
+        /// <summary>Event raised to update the values of a determinate progress bar</summary>
         public event UpdateProgressHandler2 UpdateProgress2;
     }
 }

@@ -85,14 +85,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
                 }
 
-            dumpLog.WriteLine("Initializing reader.");
-            var   scsiReader = new Reader(dev, dev.Timeout, null, dumpRaw);
+            _dumpLog.WriteLine("Initializing reader.");
+            var   scsiReader = new Reader(_dev, _dev.Timeout, null, _dumpRaw);
             ulong blocks     = scsiReader.GetDeviceBlocks();
             uint  blockSize  = scsiReader.LogicalBlockSize;
 
             if(scsiReader.FindReadCommand())
             {
-                dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", scsiReader.ErrorMessage);
+                _dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", scsiReader.ErrorMessage);
                 StoppingErrorMessage?.Invoke("Unable to read medium.");
 
                 return;
@@ -110,7 +110,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Check how many blocks to read, if error show and return
             if(scsiReader.GetBlocksToRead())
             {
-                dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", scsiReader.ErrorMessage);
+                _dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", scsiReader.ErrorMessage);
                 StoppingErrorMessage?.Invoke(scsiReader.ErrorMessage);
 
                 return;
@@ -122,7 +122,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(blocks == 0)
             {
-                dumpLog.WriteLine("ERROR: Unable to read medium or empty medium present...");
+                _dumpLog.WriteLine("ERROR: Unable to read medium or empty medium present...");
                 StoppingErrorMessage?.Invoke("Unable to read medium or empty medium present...");
 
                 return;
@@ -132,60 +132,60 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 mediaTags = new Dictionary<MediaTagType, byte[]>();
 
-                if(dev.IsUsb &&
-                   dev.UsbDescriptors != null)
+                if(_dev.IsUsb &&
+                   _dev.UsbDescriptors != null)
                     mediaTags.Add(MediaTagType.USB_Descriptors, null);
 
-                if(dev.Type == DeviceType.ATAPI)
+                if(_dev.Type == DeviceType.ATAPI)
                     mediaTags.Add(MediaTagType.ATAPI_IDENTIFY, null);
 
-                if(dev.IsPcmcia &&
-                   dev.Cis != null)
+                if(_dev.IsPcmcia &&
+                   _dev.Cis != null)
                     mediaTags.Add(MediaTagType.PCMCIA_CIS, null);
 
-                sense = dev.ScsiInquiry(out byte[] cmdBuf, out _);
+                sense = _dev.ScsiInquiry(out byte[] cmdBuf, out _);
                 mediaTags.Add(MediaTagType.SCSI_INQUIRY, cmdBuf);
 
                 if(!sense)
                 {
-                    dumpLog.WriteLine("Requesting MODE SENSE (10).");
+                    _dumpLog.WriteLine("Requesting MODE SENSE (10).");
                     UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
 
-                    sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                            0xFF, 5, out _);
+                    sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                             0xFF, 5, out _);
 
                     if(!sense ||
-                       dev.Error)
-                        sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                                0x00, 5, out _);
+                       _dev.Error)
+                        sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                                 0x00, 5, out _);
 
                     if(!sense &&
-                       !dev.Error)
-                        if(Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
+                       !_dev.Error)
+                        if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                         {
                             mediaTags.Add(MediaTagType.SCSI_MODESENSE_10, cmdBuf);
-                            decMode = Modes.DecodeMode10(cmdBuf, dev.ScsiType);
+                            decMode = Modes.DecodeMode10(cmdBuf, _dev.ScsiType);
                         }
 
-                    dumpLog.WriteLine("Requesting MODE SENSE (6).");
+                    _dumpLog.WriteLine("Requesting MODE SENSE (6).");
                     UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
 
-                    sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
-                                           out _);
+                    sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00, 5,
+                                            out _);
 
-                    if(sense || dev.Error)
-                        sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
-                                               5, out _);
+                    if(sense || _dev.Error)
+                        sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F, 0x00,
+                                                5, out _);
 
-                    if(sense || dev.Error)
-                        sense = dev.ModeSense(out cmdBuf, out _, 5, out _);
+                    if(sense || _dev.Error)
+                        sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
 
                     if(!sense &&
-                       !dev.Error)
-                        if(Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
+                       !_dev.Error)
+                        if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                         {
                             mediaTags.Add(MediaTagType.SCSI_MODESENSE_6, cmdBuf);
-                            decMode = Modes.DecodeMode6(cmdBuf, dev.ScsiType);
+                            decMode = Modes.DecodeMode6(cmdBuf, _dev.ScsiType);
                         }
 
                     if(decMode.HasValue)
@@ -205,11 +205,11 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             if(dskType == MediaType.Unknown)
-                dskType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumType,
+                dskType = MediaTypeFromScsi.Get((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model, scsiMediumType,
                                                 scsiDensityCode, blocks, blockSize);
 
             if(dskType == MediaType.Unknown &&
-               dev.IsUsb                    &&
+               _dev.IsUsb                   &&
                containsFloppyPage)
                 dskType = MediaType.FlashDrive;
 
@@ -217,32 +217,32 @@ namespace DiscImageChef.Core.Devices.Dumping
             UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
             UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
             UpdateStatus?.Invoke($"Device reports {scsiReader.LongBlockSize} bytes per physical block.");
-            UpdateStatus?.Invoke($"SCSI device type: {dev.ScsiType}.");
+            UpdateStatus?.Invoke($"SCSI device type: {_dev.ScsiType}.");
             UpdateStatus?.Invoke($"SCSI medium type: {scsiMediumType}.");
             UpdateStatus?.Invoke($"SCSI density type: {scsiDensityCode}.");
             UpdateStatus?.Invoke($"SCSI floppy mode page present: {containsFloppyPage}.");
             UpdateStatus?.Invoke($"Media identified as {dskType}");
 
-            dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
-            dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
-            dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
-            dumpLog.WriteLine("Device reports {0} bytes per physical block.", scsiReader.LongBlockSize);
-            dumpLog.WriteLine("SCSI device type: {0}.", dev.ScsiType);
-            dumpLog.WriteLine("SCSI medium type: {0}.", scsiMediumType);
-            dumpLog.WriteLine("SCSI density type: {0}.", scsiDensityCode);
-            dumpLog.WriteLine("SCSI floppy mode page present: {0}.", containsFloppyPage);
-            dumpLog.WriteLine("Media identified as {0}.", dskType);
+            _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
+            _dumpLog.WriteLine("Device can read {0} blocks at a time.", blocksToRead);
+            _dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
+            _dumpLog.WriteLine("Device reports {0} bytes per physical block.", scsiReader.LongBlockSize);
+            _dumpLog.WriteLine("SCSI device type: {0}.", _dev.ScsiType);
+            _dumpLog.WriteLine("SCSI medium type: {0}.", scsiMediumType);
+            _dumpLog.WriteLine("SCSI density type: {0}.", scsiDensityCode);
+            _dumpLog.WriteLine("SCSI floppy mode page present: {0}.", containsFloppyPage);
+            _dumpLog.WriteLine("Media identified as {0}.", dskType);
 
             uint longBlockSize = scsiReader.LongBlockSize;
 
-            if(dumpRaw)
+            if(_dumpRaw)
                 if(blockSize == longBlockSize)
                 {
                     ErrorMessage?.Invoke(!scsiReader.CanReadRaw
                                              ? "Device doesn't seem capable of reading raw data from media."
                                              : "Device is capable of reading raw data but I've been unable to guess correct sector size.");
 
-                    if(!force)
+                    if(!_force)
                     {
                         StoppingErrorMessage?.
                             Invoke("Not continuing. If you want to continue reading cooked data when raw is not available use the force option.");
@@ -269,24 +269,24 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             foreach(MediaTagType tag in mediaTags.Keys)
             {
-                if(outputPlugin.SupportedMediaTags.Contains(tag))
+                if(_outputPlugin.SupportedMediaTags.Contains(tag))
                     continue;
 
                 ret = false;
-                dumpLog.WriteLine($"Output format does not support {tag}.");
+                _dumpLog.WriteLine($"Output format does not support {tag}.");
                 ErrorMessage?.Invoke($"Output format does not support {tag}.");
             }
 
             if(!ret)
             {
-                if(force)
+                if(_force)
                 {
-                    dumpLog.WriteLine("Several media tags not supported, continuing...");
+                    _dumpLog.WriteLine("Several media tags not supported, continuing...");
                     ErrorMessage?.Invoke("Several media tags not supported, continuing...");
                 }
                 else
                 {
-                    dumpLog.WriteLine("Several media tags not supported, not continuing...");
+                    _dumpLog.WriteLine("Several media tags not supported, not continuing...");
                     StoppingErrorMessage?.Invoke("Several media tags not supported, not continuing...");
 
                     return;
@@ -294,20 +294,20 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
-            dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
+            _dumpLog.WriteLine("Reading {0} sectors at a time.", blocksToRead);
 
-            var mhddLog = new MhddLog(outputPrefix + ".mhddlog.bin", dev, blocks, blockSize, blocksToRead);
-            var ibgLog  = new IbgLog(outputPrefix  + ".ibg", SBC_PROFILE);
-            ret = outputPlugin.Create(outputPath, dskType, formatOptions, blocks, blockSize);
+            var mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, blocksToRead);
+            var ibgLog  = new IbgLog(_outputPrefix  + ".ibg", SBC_PROFILE);
+            ret = _outputPlugin.Create(_outputPath, dskType, _formatOptions, blocks, blockSize);
 
             // Cannot create image
             if(!ret)
             {
-                dumpLog.WriteLine("Error creating output image, not continuing.");
-                dumpLog.WriteLine(outputPlugin.ErrorMessage);
+                _dumpLog.WriteLine("Error creating output image, not continuing.");
+                _dumpLog.WriteLine(_outputPlugin.ErrorMessage);
 
                 StoppingErrorMessage?.Invoke("Error creating output image, not continuing." + Environment.NewLine +
-                                             outputPlugin.ErrorMessage);
+                                             _outputPlugin.ErrorMessage);
 
                 return;
             }
@@ -317,7 +317,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(opticalDisc)
             {
-                if(outputPlugin is IWritableOpticalImage opticalPlugin)
+                if(_outputPlugin is IWritableOpticalImage opticalPlugin)
                 {
                     opticalPlugin.SetTracks(new List<Track>
                     {
@@ -332,7 +332,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
-                    dumpLog.WriteLine("The specified plugin does not support storing optical disc images..");
+                    _dumpLog.WriteLine("The specified plugin does not support storing optical disc images..");
                     StoppingErrorMessage?.Invoke("The specified plugin does not support storing optical disc images.");
 
                     return;
@@ -351,15 +351,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(!rigidPage.HasValue || setGeometry)
                             continue;
 
-                        dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
-                                          rigidPage.Value.Cylinders, rigidPage.Value.Heads,
-                                          (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
+                        _dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
+                                           rigidPage.Value.Cylinders, rigidPage.Value.Heads,
+                                           (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
 
                         UpdateStatus?.
                             Invoke($"Setting geometry to {rigidPage.Value.Cylinders} cylinders, {rigidPage.Value.Heads} heads, {(uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads))} sectors per track");
 
-                        outputPlugin.SetGeometry(rigidPage.Value.Cylinders, rigidPage.Value.Heads,
-                                                 (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
+                        _outputPlugin.SetGeometry(rigidPage.Value.Cylinders, rigidPage.Value.Heads,
+                                                  (uint)(blocks / (rigidPage.Value.Cylinders * rigidPage.Value.Heads)));
 
                         setGeometry = true;
                     }
@@ -371,15 +371,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(!flexiblePage.HasValue)
                             continue;
 
-                        dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
-                                          flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
-                                          flexiblePage.Value.SectorsPerTrack);
+                        _dumpLog.WriteLine("Setting geometry to {0} cylinders, {1} heads, {2} sectors per track",
+                                           flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
+                                           flexiblePage.Value.SectorsPerTrack);
 
                         UpdateStatus?.
                             Invoke($"Setting geometry to {flexiblePage.Value.Cylinders} cylinders, {flexiblePage.Value.Heads} heads, {flexiblePage.Value.SectorsPerTrack} sectors per track");
 
-                        outputPlugin.SetGeometry(flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
-                                                 flexiblePage.Value.SectorsPerTrack);
+                        _outputPlugin.SetGeometry(flexiblePage.Value.Cylinders, flexiblePage.Value.Heads,
+                                                  flexiblePage.Value.SectorsPerTrack);
 
                         setGeometry = true;
                     }
@@ -388,8 +388,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             DumpHardwareType currentTry = null;
             ExtentsULong     extents    = null;
 
-            ResumeSupport.Process(true, dev.IsRemovable, blocks, dev.Manufacturer, dev.Model, dev.Serial,
-                                  dev.PlatformId, ref resume, ref currentTry, ref extents);
+            ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
+                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents);
 
             if(currentTry == null ||
                extents    == null)
@@ -399,10 +399,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            if(resume.NextBlock > 0)
+            if(_resume.NextBlock > 0)
             {
-                UpdateStatus?.Invoke($"Resuming from block {resume.NextBlock}.");
-                dumpLog.WriteLine("Resuming from block {0}.", resume.NextBlock);
+                UpdateStatus?.Invoke($"Resuming from block {_resume.NextBlock}.");
+                _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
             }
 
             bool     newTrim          = false;
@@ -410,13 +410,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong    sectorSpeedStart = 0;
             InitProgress?.Invoke();
 
-            for(ulong i = resume.NextBlock; i < blocks; i += blocksToRead)
+            for(ulong i = _resume.NextBlock; i < blocks; i += blocksToRead)
             {
-                if(aborted)
+                if(_aborted)
                 {
                     currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                     UpdateStatus?.Invoke("Aborted!");
-                    dumpLog.WriteLine("Aborted!");
+                    _dumpLog.WriteLine("Aborted!");
 
                     break;
                 }
@@ -441,49 +441,49 @@ namespace DiscImageChef.Core.Devices.Dumping
                 totalDuration += cmdDuration;
 
                 if(!sense &&
-                   !dev.Error)
+                   !_dev.Error)
                 {
                     mhddLog.Write(i, cmdDuration);
                     ibgLog.Write(i, currentSpeed * 1024);
                     DateTime writeStart = DateTime.Now;
-                    outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
+                    _outputPlugin.WriteSectors(readBuffer, i, blocksToRead);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
                     extents.Add(i, blocksToRead, true);
                 }
                 else
                 {
                     // TODO: Reset device after X errors
-                    if(stopOnError)
+                    if(_stopOnError)
                         return; // TODO: Return more cleanly
 
-                    if(i + skip > blocks)
-                        skip = (uint)(blocks - i);
+                    if(i + _skip > blocks)
+                        _skip = (uint)(blocks - i);
 
                     // Write empty data
                     DateTime writeStart = DateTime.Now;
-                    outputPlugin.WriteSectors(new byte[blockSize * skip], i, skip);
+                    _outputPlugin.WriteSectors(new byte[blockSize * _skip], i, _skip);
                     imageWriteDuration += (DateTime.Now - writeStart).TotalSeconds;
 
-                    for(ulong b = i; b < i + skip; b++)
-                        resume.BadBlocks.Add(b);
+                    for(ulong b = i; b < i + _skip; b++)
+                        _resume.BadBlocks.Add(b);
 
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(i, 0);
-                    dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", skip, i);
-                    i       += skip - blocksToRead;
+                    _dumpLog.WriteLine("Skipping {0} blocks from errored block {1}.", _skip, i);
+                    i       += _skip - blocksToRead;
                     newTrim =  true;
                 }
 
-                sectorSpeedStart += blocksToRead;
-                resume.NextBlock =  i + blocksToRead;
+                sectorSpeedStart  += blocksToRead;
+                _resume.NextBlock =  i + blocksToRead;
 
                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
 
                 if(elapsed < 1)
                     continue;
 
-                currentSpeed     = sectorSpeedStart * blockSize / (1048576 * elapsed);
+                currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
                 sectorSpeedStart = 0;
                 timeSpeedStart   = DateTime.UtcNow;
             }
@@ -492,46 +492,46 @@ namespace DiscImageChef.Core.Devices.Dumping
             EndProgress?.Invoke();
             mhddLog.Close();
 
-            ibgLog.Close(dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                         blockSize * (double)(blocks + 1) / 1024                          / (totalDuration / 1000),
-                         devicePath);
+            ibgLog.Close(_dev, blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
+                         (blockSize * (double)(blocks + 1)) / 1024                         / (totalDuration / 1000),
+                         _devicePath);
 
             UpdateStatus?.Invoke($"Dump finished in {(end - start).TotalSeconds} seconds.");
 
             UpdateStatus?.
-                Invoke($"Average dump speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
+                Invoke($"Average dump speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000):F3} KiB/sec.");
 
             UpdateStatus?.
-                Invoke($"Average write speed {(double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration:F3} KiB/sec.");
+                Invoke($"Average write speed {((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration:F3} KiB/sec.");
 
-            dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
+            _dumpLog.WriteLine("Dump finished in {0} seconds.", (end - start).TotalSeconds);
 
-            dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
-                              (double)blockSize * (double)(blocks + 1) / 1024 / (totalDuration / 1000));
+            _dumpLog.WriteLine("Average dump speed {0:F3} KiB/sec.",
+                               ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalDuration / 1000));
 
-            dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
-                              (double)blockSize * (double)(blocks + 1) / 1024 / imageWriteDuration);
+            _dumpLog.WriteLine("Average write speed {0:F3} KiB/sec.",
+                               ((double)blockSize * (double)(blocks + 1)) / 1024 / imageWriteDuration);
 
             #region Trimming
-            if(resume.BadBlocks.Count > 0 &&
-               !aborted                   &&
-               !notrim                    &&
+            if(_resume.BadBlocks.Count > 0 &&
+               !_aborted                   &&
+               !_notrim                    &&
                newTrim)
             {
                 start = DateTime.UtcNow;
                 UpdateStatus?.Invoke("Trimming bad sectors");
-                dumpLog.WriteLine("Trimming bad sectors");
+                _dumpLog.WriteLine("Trimming bad sectors");
 
-                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                ulong[] tmpArray = _resume.BadBlocks.ToArray();
                 InitProgress?.Invoke();
 
                 foreach(ulong badSector in tmpArray)
                 {
-                    if(aborted)
+                    if(_aborted)
                     {
                         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                         UpdateStatus?.Invoke("Aborted!");
-                        dumpLog.WriteLine("Aborted!");
+                        _dumpLog.WriteLine("Aborted!");
 
                         break;
                     }
@@ -540,25 +540,25 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     sense = scsiReader.ReadBlock(out readBuffer, badSector, out double cmdDuration);
 
-                    if(sense || dev.Error)
+                    if(sense || _dev.Error)
                         continue;
 
-                    resume.BadBlocks.Remove(badSector);
+                    _resume.BadBlocks.Remove(badSector);
                     extents.Add(badSector);
-                    outputPlugin.WriteSector(readBuffer, badSector);
+                    _outputPlugin.WriteSector(readBuffer, badSector);
                 }
 
                 EndProgress?.Invoke();
                 end = DateTime.UtcNow;
                 UpdateStatus?.Invoke($"Trimmming finished in {(end - start).TotalSeconds} seconds.");
-                dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
+                _dumpLog.WriteLine("Trimmming finished in {0} seconds.", (end - start).TotalSeconds);
             }
             #endregion Trimming
 
             #region Error handling
-            if(resume.BadBlocks.Count > 0 &&
-               !aborted                   &&
-               retryPasses > 0)
+            if(_resume.BadBlocks.Count > 0 &&
+               !_aborted                   &&
+               _retryPasses > 0)
             {
                 int  pass              = 1;
                 bool forward           = true;
@@ -568,22 +568,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                 byte[]          md6;
                 byte[]          md10;
 
-                if(persistent)
+                if(_persistent)
                 {
                     Modes.ModePage_01_MMC pgMmc;
                     Modes.ModePage_01     pg;
 
-                    sense = dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
-                                           dev.Timeout, out _);
+                    sense = _dev.ModeSense6(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                            _dev.Timeout, out _);
 
                     if(sense)
                     {
-                        sense = dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
-                                                dev.Timeout, out _);
+                        sense = _dev.ModeSense10(out readBuffer, out _, false, ScsiModeSensePageControl.Current, 0x01,
+                                                 _dev.Timeout, out _);
 
                         if(!sense)
                         {
-                            Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(readBuffer, dev.ScsiType);
+                            Modes.DecodedMode? dcMode10 = Modes.DecodeMode10(readBuffer, _dev.ScsiType);
 
                             if(dcMode10.HasValue &&
                                dcMode10.Value.Pages != null)
@@ -595,7 +595,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
-                        Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, dev.ScsiType);
+                        Modes.DecodedMode? dcMode6 = Modes.DecodeMode6(readBuffer, _dev.ScsiType);
 
                         if(dcMode6.HasValue &&
                            dcMode6.Value.Pages != null)
@@ -607,7 +607,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(currentModePage == null)
                     {
-                        if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
+                        if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                         {
                             pgMmc = new Modes.ModePage_01_MMC
                             {
@@ -635,7 +635,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
-                    if(dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
+                    if(_dev.ScsiType == PeripheralDeviceTypes.MultiMediaDevice)
                     {
                         pgMmc = new Modes.ModePage_01_MMC
                         {
@@ -653,8 +653,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                             }
                         };
 
-                        md6  = Modes.EncodeMode6(md, dev.ScsiType);
-                        md10 = Modes.EncodeMode10(md, dev.ScsiType);
+                        md6  = Modes.EncodeMode6(md, _dev.ScsiType);
+                        md10 = Modes.EncodeMode10(md, _dev.ScsiType);
                     }
                     else
                     {
@@ -676,16 +676,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                             }
                         };
 
-                        md6  = Modes.EncodeMode6(md, dev.ScsiType);
-                        md10 = Modes.EncodeMode10(md, dev.ScsiType);
+                        md6  = Modes.EncodeMode6(md, _dev.ScsiType);
+                        md10 = Modes.EncodeMode10(md, _dev.ScsiType);
                     }
 
                     UpdateStatus?.Invoke("Sending MODE SELECT to drive (return damaged blocks).");
-                    dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
-                    sense = dev.ModeSelect(md6, out byte[] senseBuf, true, false, dev.Timeout, out _);
+                    _dumpLog.WriteLine("Sending MODE SELECT to drive (return damaged blocks).");
+                    sense = _dev.ModeSelect(md6, out byte[] senseBuf, true, false, _dev.Timeout, out _);
 
                     if(sense)
-                        sense = dev.ModeSelect10(md10, out senseBuf, true, false, dev.Timeout, out _);
+                        sense = _dev.ModeSelect10(md10, out senseBuf, true, false, _dev.Timeout, out _);
 
                     if(sense)
                     {
@@ -694,7 +694,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
 
-                        dumpLog.
+                        _dumpLog.
                             WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
                     }
                     else
@@ -705,15 +705,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 InitProgress?.Invoke();
                 repeatRetry:
-                ulong[] tmpArray = resume.BadBlocks.ToArray();
+                ulong[] tmpArray = _resume.BadBlocks.ToArray();
 
                 foreach(ulong badSector in tmpArray)
                 {
-                    if(aborted)
+                    if(_aborted)
                     {
                         currentTry.Extents = ExtentsConverter.ToMetadata(extents);
                         UpdateStatus?.Invoke("Aborted!");
-                        dumpLog.WriteLine("Aborted!");
+                        _dumpLog.WriteLine("Aborted!");
 
                         break;
                     }
@@ -726,28 +726,28 @@ namespace DiscImageChef.Core.Devices.Dumping
                     totalDuration += cmdDuration;
 
                     if(!sense &&
-                       !dev.Error)
+                       !_dev.Error)
                     {
-                        resume.BadBlocks.Remove(badSector);
+                        _resume.BadBlocks.Remove(badSector);
                         extents.Add(badSector);
-                        outputPlugin.WriteSector(readBuffer, badSector);
+                        _outputPlugin.WriteSector(readBuffer, badSector);
                         UpdateStatus?.Invoke($"Correctly retried block {badSector} in pass {pass}.");
-                        dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
+                        _dumpLog.WriteLine("Correctly retried block {0} in pass {1}.", badSector, pass);
                     }
                     else if(runningPersistent)
                     {
-                        outputPlugin.WriteSector(readBuffer, badSector);
+                        _outputPlugin.WriteSector(readBuffer, badSector);
                     }
                 }
 
-                if(pass < retryPasses &&
-                   !aborted           &&
-                   resume.BadBlocks.Count > 0)
+                if(pass < _retryPasses &&
+                   !_aborted           &&
+                   _resume.BadBlocks.Count > 0)
                 {
                     pass++;
                     forward = !forward;
-                    resume.BadBlocks.Sort();
-                    resume.BadBlocks.Reverse();
+                    _resume.BadBlocks.Sort();
+                    _resume.BadBlocks.Reverse();
 
                     goto repeatRetry;
                 }
@@ -762,22 +762,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     };
 
-                    md6  = Modes.EncodeMode6(md, dev.ScsiType);
-                    md10 = Modes.EncodeMode10(md, dev.ScsiType);
+                    md6  = Modes.EncodeMode6(md, _dev.ScsiType);
+                    md10 = Modes.EncodeMode10(md, _dev.ScsiType);
 
                     UpdateStatus?.Invoke("Sending MODE SELECT to drive (return device to previous status).");
-                    dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
-                    sense = dev.ModeSelect(md6, out _, true, false, dev.Timeout, out _);
+                    _dumpLog.WriteLine("Sending MODE SELECT to drive (return device to previous status).");
+                    sense = _dev.ModeSelect(md6, out _, true, false, _dev.Timeout, out _);
 
                     if(sense)
-                        dev.ModeSelect10(md10, out _, true, false, dev.Timeout, out _);
+                        _dev.ModeSelect10(md10, out _, true, false, _dev.Timeout, out _);
                 }
 
                 EndProgress?.Invoke();
             }
             #endregion Error handling
 
-            if(!aborted)
+            if(!_aborted)
                 if(opticalDisc)
                 {
                     foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
@@ -789,39 +789,39 @@ namespace DiscImageChef.Core.Devices.Dumping
                             continue;
                         }
 
-                        ret = outputPlugin.WriteMediaTag(tag.Value, tag.Key);
+                        ret = _outputPlugin.WriteMediaTag(tag.Value, tag.Key);
 
-                        if(ret || force)
+                        if(ret || _force)
                             continue;
 
                         // Cannot write tag to image
                         StoppingErrorMessage?.Invoke($"Cannot write tag {tag.Key}.");
 
-                        dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine +
-                                          outputPlugin.ErrorMessage);
+                        _dumpLog.WriteLine($"Cannot write tag {tag.Key}." + Environment.NewLine +
+                                           _outputPlugin.ErrorMessage);
 
                         return;
                     }
                 }
                 else
                 {
-                    if(!dev.IsRemovable ||
-                       dev.IsUsb)
+                    if(!_dev.IsRemovable ||
+                       _dev.IsUsb)
                     {
-                        if(dev.IsUsb &&
-                           dev.UsbDescriptors != null)
+                        if(_dev.IsUsb &&
+                           _dev.UsbDescriptors != null)
                         {
                             UpdateStatus?.Invoke("Reading USB descriptors.");
-                            dumpLog.WriteLine("Reading USB descriptors.");
-                            ret = outputPlugin.WriteMediaTag(dev.UsbDescriptors, MediaTagType.USB_Descriptors);
+                            _dumpLog.WriteLine("Reading USB descriptors.");
+                            ret = _outputPlugin.WriteMediaTag(_dev.UsbDescriptors, MediaTagType.USB_Descriptors);
 
                             if(!ret &&
-                               !force)
+                               !_force)
                             {
-                                dumpLog.WriteLine("Cannot write USB descriptors.");
+                                _dumpLog.WriteLine("Cannot write USB descriptors.");
 
                                 StoppingErrorMessage?.Invoke("Cannot write USB descriptors." + Environment.NewLine +
-                                                             outputPlugin.ErrorMessage);
+                                                             _outputPlugin.ErrorMessage);
 
                                 return;
                             }
@@ -829,110 +829,110 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         byte[] cmdBuf;
 
-                        if(dev.Type == DeviceType.ATAPI)
+                        if(_dev.Type == DeviceType.ATAPI)
                         {
                             UpdateStatus?.Invoke("Requesting ATAPI IDENTIFY PACKET DEVICE.");
-                            dumpLog.WriteLine("Requesting ATAPI IDENTIFY PACKET DEVICE.");
-                            sense = dev.AtapiIdentify(out cmdBuf, out _);
+                            _dumpLog.WriteLine("Requesting ATAPI IDENTIFY PACKET DEVICE.");
+                            sense = _dev.AtapiIdentify(out cmdBuf, out _);
 
                             if(!sense)
                             {
-                                ret = outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.ATAPI_IDENTIFY);
+                                ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.ATAPI_IDENTIFY);
 
                                 if(!ret &&
-                                   !force)
+                                   !_force)
                                 {
-                                    dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
+                                    _dumpLog.WriteLine("Cannot write ATAPI IDENTIFY PACKET DEVICE.");
 
                                     StoppingErrorMessage?.Invoke("Cannot write ATAPI IDENTIFY PACKET DEVICE." +
                                                                  Environment.NewLine                          +
-                                                                 outputPlugin.ErrorMessage);
+                                                                 _outputPlugin.ErrorMessage);
 
                                     return;
                                 }
                             }
                         }
 
-                        sense = dev.ScsiInquiry(out cmdBuf, out _);
+                        sense = _dev.ScsiInquiry(out cmdBuf, out _);
 
                         if(!sense)
                         {
                             UpdateStatus?.Invoke("Requesting SCSI INQUIRY.");
-                            dumpLog.WriteLine("Requesting SCSI INQUIRY.");
-                            ret = outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_INQUIRY);
+                            _dumpLog.WriteLine("Requesting SCSI INQUIRY.");
+                            ret = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_INQUIRY);
 
                             if(!ret &&
-                               !force)
+                               !_force)
                             {
                                 StoppingErrorMessage?.Invoke("Cannot write SCSI INQUIRY.");
 
-                                dumpLog.WriteLine("Cannot write SCSI INQUIRY." + Environment.NewLine +
-                                                  outputPlugin.ErrorMessage);
+                                _dumpLog.WriteLine("Cannot write SCSI INQUIRY." + Environment.NewLine +
+                                                   _outputPlugin.ErrorMessage);
 
                                 return;
                             }
 
                             UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
-                            dumpLog.WriteLine("Requesting MODE SENSE (10).");
+                            _dumpLog.WriteLine("Requesting MODE SENSE (10).");
 
-                            sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
-                                                    0x3F, 0xFF, 5, out _);
+                            sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
+                                                     0x3F, 0xFF, 5, out _);
 
                             if(!sense ||
-                               dev.Error)
-                                sense = dev.ModeSense10(out cmdBuf, out _, false, true,
-                                                        ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
+                               _dev.Error)
+                                sense = _dev.ModeSense10(out cmdBuf, out _, false, true,
+                                                         ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
 
                             decMode = null;
 
                             if(!sense &&
-                               !dev.Error)
-                                if(Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
+                               !_dev.Error)
+                                if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
                                 {
-                                    decMode = Modes.DecodeMode10(cmdBuf, dev.ScsiType);
-                                    ret     = outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
+                                    decMode = Modes.DecodeMode10(cmdBuf, _dev.ScsiType);
+                                    ret     = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_10);
 
                                     if(!ret &&
-                                       !force)
+                                       !_force)
                                     {
-                                        dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
+                                        _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (10).");
 
                                         StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (10)." +
                                                                      Environment.NewLine                  +
-                                                                     outputPlugin.ErrorMessage);
+                                                                     _outputPlugin.ErrorMessage);
 
                                         return;
                                     }
                                 }
 
                             UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
-                            dumpLog.WriteLine("Requesting MODE SENSE (6).");
+                            _dumpLog.WriteLine("Requesting MODE SENSE (6).");
 
-                            sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                                   0x00, 5, out _);
+                            sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                                    0x00, 5, out _);
 
-                            if(sense || dev.Error)
-                                sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                                       0x00, 5, out _);
+                            if(sense || _dev.Error)
+                                sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current,
+                                                        0x3F, 0x00, 5, out _);
 
-                            if(sense || dev.Error)
-                                sense = dev.ModeSense(out cmdBuf, out _, 5, out _);
+                            if(sense || _dev.Error)
+                                sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
 
                             if(!sense &&
-                               !dev.Error)
-                                if(Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
+                               !_dev.Error)
+                                if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
                                 {
-                                    decMode = Modes.DecodeMode6(cmdBuf, dev.ScsiType);
-                                    ret     = outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
+                                    decMode = Modes.DecodeMode6(cmdBuf, _dev.ScsiType);
+                                    ret     = _outputPlugin.WriteMediaTag(cmdBuf, MediaTagType.SCSI_MODESENSE_6);
 
                                     if(!ret &&
-                                       !force)
+                                       !_force)
                                     {
-                                        dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
+                                        _dumpLog.WriteLine("Cannot write SCSI MODE SENSE (6).");
 
                                         StoppingErrorMessage?.Invoke("Cannot write SCSI MODE SENSE (6)." +
                                                                      Environment.NewLine                 +
-                                                                     outputPlugin.ErrorMessage);
+                                                                     _outputPlugin.ErrorMessage);
 
                                         return;
                                     }
@@ -941,42 +941,42 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
-            resume.BadBlocks.Sort();
+            _resume.BadBlocks.Sort();
 
-            foreach(ulong bad in resume.BadBlocks)
-                dumpLog.WriteLine("Sector {0} could not be read.", bad);
+            foreach(ulong bad in _resume.BadBlocks)
+                _dumpLog.WriteLine("Sector {0} could not be read.", bad);
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
-            outputPlugin.SetDumpHardware(resume.Tries);
+            _outputPlugin.SetDumpHardware(_resume.Tries);
 
-            if(preSidecar != null)
-                outputPlugin.SetCicmMetadata(preSidecar);
+            if(_preSidecar != null)
+                _outputPlugin.SetCicmMetadata(_preSidecar);
 
-            dumpLog.WriteLine("Closing output file.");
+            _dumpLog.WriteLine("Closing output file.");
             UpdateStatus?.Invoke("Closing output file.");
             DateTime closeStart = DateTime.Now;
-            outputPlugin.Close();
+            _outputPlugin.Close();
             DateTime closeEnd = DateTime.Now;
             UpdateStatus?.Invoke($"Closed in {(closeEnd - closeStart).TotalSeconds} seconds.");
-            dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
+            _dumpLog.WriteLine("Closed in {0} seconds.", (closeEnd - closeStart).TotalSeconds);
 
-            if(aborted)
+            if(_aborted)
             {
                 UpdateStatus?.Invoke("Aborted!");
-                dumpLog.WriteLine("Aborted!");
+                _dumpLog.WriteLine("Aborted!");
 
                 return;
             }
 
             double totalChkDuration = 0;
 
-            if(!nometadata)
+            if(!_nometadata)
             {
                 UpdateStatus?.Invoke("Creating sidecar.");
-                dumpLog.WriteLine("Creating sidecar.");
+                _dumpLog.WriteLine("Creating sidecar.");
                 var         filters     = new FiltersList();
-                IFilter     filter      = filters.GetFilter(outputPath);
+                IFilter     filter      = filters.GetFilter(_outputPath);
                 IMediaImage inputPlugin = ImageFormat.Detect(filter);
 
                 if(!inputPlugin.Open(filter))
@@ -987,34 +987,34 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
                 DateTime chkStart = DateTime.UtcNow;
-                sidecarClass                      =  new Sidecar(inputPlugin, outputPath, filter.Id, encoding);
-                sidecarClass.InitProgressEvent    += InitProgress;
-                sidecarClass.UpdateProgressEvent  += UpdateProgress;
-                sidecarClass.EndProgressEvent     += EndProgress;
-                sidecarClass.InitProgressEvent2   += InitProgress2;
-                sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
-                sidecarClass.EndProgressEvent2    += EndProgress2;
-                sidecarClass.UpdateStatusEvent    += UpdateStatus;
-                CICMMetadataType sidecar = sidecarClass.Create();
+                _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
+                _sidecarClass.InitProgressEvent    += InitProgress;
+                _sidecarClass.UpdateProgressEvent  += UpdateProgress;
+                _sidecarClass.EndProgressEvent     += EndProgress;
+                _sidecarClass.InitProgressEvent2   += InitProgress2;
+                _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
+                _sidecarClass.EndProgressEvent2    += EndProgress2;
+                _sidecarClass.UpdateStatusEvent    += UpdateStatus;
+                CICMMetadataType sidecar = _sidecarClass.Create();
                 end = DateTime.UtcNow;
 
                 totalChkDuration = (end - chkStart).TotalMilliseconds;
                 UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
 
                 UpdateStatus?.
-                    Invoke($"Average checksum speed {(double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+                    Invoke($"Average checksum speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
 
-                dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+                _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
 
-                dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                  (double)blockSize * (double)(blocks + 1) / 1024 / (totalChkDuration / 1000));
+                _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                   ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000));
 
                 if(opticalDisc)
                 {
-                    if(preSidecar != null)
+                    if(_preSidecar != null)
                     {
-                        preSidecar.OpticalDisc = sidecar.OpticalDisc;
-                        sidecar                = preSidecar;
+                        _preSidecar.OpticalDisc = sidecar.OpticalDisc;
+                        sidecar                 = _preSidecar;
                     }
 
                     List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
@@ -1034,7 +1034,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }).Distinct())
                         {
                             UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
-                            dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                            _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
                         }
 
                     // TODO: Implement layers
@@ -1042,64 +1042,65 @@ namespace DiscImageChef.Core.Devices.Dumping
                     (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
                     sidecar.OpticalDisc[0].DiscType          = xmlType.type;
                     sidecar.OpticalDisc[0].DiscSubType       = xmlType.subType;
-                    sidecar.OpticalDisc[0].DumpHardwareArray = resume.Tries.ToArray();
+                    sidecar.OpticalDisc[0].DumpHardwareArray = _resume.Tries.ToArray();
 
                     foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
-                        if(outputPlugin.SupportedMediaTags.Contains(tag.Key))
-                            AddMediaTagToSidecar(outputPath, tag, ref sidecar);
+                        if(_outputPlugin.SupportedMediaTags.Contains(tag.Key))
+                            AddMediaTagToSidecar(_outputPath, tag, ref sidecar);
                 }
                 else
                 {
-                    if(preSidecar != null)
+                    if(_preSidecar != null)
                     {
-                        preSidecar.BlockMedia = sidecar.BlockMedia;
-                        sidecar               = preSidecar;
+                        _preSidecar.BlockMedia = sidecar.BlockMedia;
+                        sidecar                = _preSidecar;
                     }
 
                     // All USB flash drives report as removable, even if the media is not removable
-                    if(!dev.IsRemovable ||
-                       dev.IsUsb)
+                    if(!_dev.IsRemovable ||
+                       _dev.IsUsb)
                     {
-                        if(dev.IsUsb &&
-                           dev.UsbDescriptors != null)
-                            if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
+                        if(_dev.IsUsb &&
+                           _dev.UsbDescriptors != null)
+                            if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.USB_Descriptors))
                                 sidecar.BlockMedia[0].USB = new USBType
                                 {
-                                    ProductID = dev.UsbProductId, VendorID = dev.UsbVendorId, Descriptors = new DumpType
-                                    {
-                                        Image     = outputPath, Size = (ulong)dev.UsbDescriptors.Length,
-                                        Checksums = Checksum.GetChecksums(dev.UsbDescriptors).ToArray()
-                                    }
+                                    ProductID = _dev.UsbProductId, VendorID = _dev.UsbVendorId, Descriptors =
+                                        new DumpType
+                                        {
+                                            Image     = _outputPath, Size = (ulong)_dev.UsbDescriptors.Length,
+                                            Checksums = Checksum.GetChecksums(_dev.UsbDescriptors).ToArray()
+                                        }
                                 };
 
                         byte[] cmdBuf;
 
-                        if(dev.Type == DeviceType.ATAPI)
+                        if(_dev.Type == DeviceType.ATAPI)
                         {
-                            sense = dev.AtapiIdentify(out cmdBuf, out _);
+                            sense = _dev.AtapiIdentify(out cmdBuf, out _);
 
                             if(!sense)
-                                if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
+                                if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.ATAPI_IDENTIFY))
                                     sidecar.BlockMedia[0].ATA = new ATAType
                                     {
                                         Identify = new DumpType
                                         {
-                                            Image     = outputPath, Size = (ulong)cmdBuf.Length,
+                                            Image     = _outputPath, Size = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                         }
                                     };
                         }
 
-                        sense = dev.ScsiInquiry(out cmdBuf, out _);
+                        sense = _dev.ScsiInquiry(out cmdBuf, out _);
 
                         if(!sense)
                         {
-                            if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
+                            if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_INQUIRY))
                                 sidecar.BlockMedia[0].SCSI = new SCSIType
                                 {
                                     Inquiry = new DumpType
                                     {
-                                        Image     = outputPath, Size = (ulong)cmdBuf.Length,
+                                        Image     = _outputPath, Size = (ulong)cmdBuf.Length,
                                         Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                     }
                                 };
@@ -1139,48 +1140,48 @@ namespace DiscImageChef.Core.Devices.Dumping
                             */
 
                             UpdateStatus?.Invoke("Requesting MODE SENSE (10).");
-                            dumpLog.WriteLine("Requesting MODE SENSE (10).");
+                            _dumpLog.WriteLine("Requesting MODE SENSE (10).");
 
-                            sense = dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
-                                                    0x3F, 0xFF, 5, out _);
+                            sense = _dev.ModeSense10(out cmdBuf, out _, false, true, ScsiModeSensePageControl.Current,
+                                                     0x3F, 0xFF, 5, out _);
 
                             if(!sense ||
-                               dev.Error)
-                                sense = dev.ModeSense10(out cmdBuf, out _, false, true,
-                                                        ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
+                               _dev.Error)
+                                sense = _dev.ModeSense10(out cmdBuf, out _, false, true,
+                                                         ScsiModeSensePageControl.Current, 0x3F, 0x00, 5, out _);
 
                             decMode = null;
 
                             if(!sense &&
-                               !dev.Error)
-                                if(Modes.DecodeMode10(cmdBuf, dev.ScsiType).HasValue)
-                                    if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
+                               !_dev.Error)
+                                if(Modes.DecodeMode10(cmdBuf, _dev.ScsiType).HasValue)
+                                    if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_10))
                                         sidecar.BlockMedia[0].SCSI.ModeSense10 = new DumpType
                                         {
-                                            Image     = outputPath, Size = (ulong)cmdBuf.Length,
+                                            Image     = _outputPath, Size = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                         };
 
                             UpdateStatus?.Invoke("Requesting MODE SENSE (6).");
-                            dumpLog.WriteLine("Requesting MODE SENSE (6).");
+                            _dumpLog.WriteLine("Requesting MODE SENSE (6).");
 
-                            sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                                   0x00, 5, out _);
+                            sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                                    0x00, 5, out _);
 
-                            if(sense || dev.Error)
-                                sense = dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                                       0x00, 5, out _);
+                            if(sense || _dev.Error)
+                                sense = _dev.ModeSense6(out cmdBuf, out _, false, ScsiModeSensePageControl.Current,
+                                                        0x3F, 0x00, 5, out _);
 
-                            if(sense || dev.Error)
-                                sense = dev.ModeSense(out cmdBuf, out _, 5, out _);
+                            if(sense || _dev.Error)
+                                sense = _dev.ModeSense(out cmdBuf, out _, 5, out _);
 
                             if(!sense &&
-                               !dev.Error)
-                                if(Modes.DecodeMode6(cmdBuf, dev.ScsiType).HasValue)
-                                    if(outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
+                               !_dev.Error)
+                                if(Modes.DecodeMode6(cmdBuf, _dev.ScsiType).HasValue)
+                                    if(_outputPlugin.SupportedMediaTags.Contains(MediaTagType.SCSI_MODESENSE_6))
                                         sidecar.BlockMedia[0].SCSI.ModeSense = new DumpType
                                         {
-                                            Image     = outputPath, Size = (ulong)cmdBuf.Length,
+                                            Image     = _outputPath, Size = (ulong)cmdBuf.Length,
                                             Checksums = Checksum.GetChecksums(cmdBuf).ToArray()
                                         };
                         }
@@ -1201,7 +1202,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }).Distinct())
                         {
                             UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
-                            dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
+                            _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
                         }
 
                     sidecar.BlockMedia[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
@@ -1210,13 +1211,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.BlockMedia[0].DiskSubType = xmlType.subType;
 
                     // TODO: Implement device firmware revision
-                    if(!dev.IsRemovable ||
-                       dev.IsUsb)
-                        if(dev.Type == DeviceType.ATAPI)
+                    if(!_dev.IsRemovable ||
+                       _dev.IsUsb)
+                        if(_dev.Type == DeviceType.ATAPI)
                             sidecar.BlockMedia[0].Interface = "ATAPI";
-                        else if(dev.IsUsb)
+                        else if(_dev.IsUsb)
                             sidecar.BlockMedia[0].Interface = "USB";
-                        else if(dev.IsFireWire)
+                        else if(_dev.IsFireWire)
                             sidecar.BlockMedia[0].Interface = "FireWire";
                         else
                             sidecar.BlockMedia[0].Interface = "SCSI";
@@ -1224,18 +1225,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                     sidecar.BlockMedia[0].LogicalBlocks     = blocks;
                     sidecar.BlockMedia[0].PhysicalBlockSize = physicalBlockSize;
                     sidecar.BlockMedia[0].LogicalBlockSize  = logicalBlockSize;
-                    sidecar.BlockMedia[0].Manufacturer      = dev.Manufacturer;
-                    sidecar.BlockMedia[0].Model             = dev.Model;
-                    sidecar.BlockMedia[0].Serial            = dev.Serial;
+                    sidecar.BlockMedia[0].Manufacturer      = _dev.Manufacturer;
+                    sidecar.BlockMedia[0].Model             = _dev.Model;
+                    sidecar.BlockMedia[0].Serial            = _dev.Serial;
                     sidecar.BlockMedia[0].Size              = blocks * blockSize;
 
-                    if(dev.IsRemovable)
-                        sidecar.BlockMedia[0].DumpHardwareArray = resume.Tries.ToArray();
+                    if(_dev.IsRemovable)
+                        sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();
                 }
 
                 UpdateStatus?.Invoke("Writing metadata sidecar");
 
-                var xmlFs = new FileStream(outputPrefix + ".cicm.xml", FileMode.Create);
+                var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
 
                 var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
                 xmlSer.Serialize(xmlFs, sidecar);
@@ -1248,11 +1249,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Invoke($"Took a total of {(end - start).TotalSeconds:F3} seconds ({totalDuration / 1000:F3} processing commands, {totalChkDuration / 1000:F3} checksumming, {imageWriteDuration:F3} writing, {(closeEnd - closeStart).TotalSeconds:F3} closing).");
 
             UpdateStatus?.
-                Invoke($"Average speed: {(double)blockSize * (double)(blocks + 1) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
+                Invoke($"Average speed: {((double)blockSize * (double)(blocks + 1)) / 1048576 / (totalDuration / 1000):F3} MiB/sec.");
 
             UpdateStatus?.Invoke($"Fastest speed burst: {maxSpeed:F3} MiB/sec.");
             UpdateStatus?.Invoke($"Slowest speed burst: {minSpeed:F3} MiB/sec.");
-            UpdateStatus?.Invoke($"{resume.BadBlocks.Count} sectors could not be read.");
+            UpdateStatus?.Invoke($"{_resume.BadBlocks.Count} sectors could not be read.");
             UpdateStatus?.Invoke("");
 
             Statistics.AddMedia(dskType, true);
