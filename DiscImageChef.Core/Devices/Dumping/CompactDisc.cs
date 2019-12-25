@@ -73,55 +73,61 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         void CompactDisc(out MediaType dskType)
         {
-            DicContext             ctx;                 // Master database context
-            Device                 dbDev;               // Device database entry
-            CdOffset               cdOffset;            // Read offset from database
-            bool                   readcd;              // Device supports READ CD
-            bool                   read6      = false;  // Device supports READ(6)
-            bool                   read10     = false;  // Device supports READ(10)
-            bool                   read12     = false;  // Device supports READ(12)
-            bool                   read16     = false;  // Device supports READ(16)
-            const uint             sectorSize = 2352;   // Full sector size
-            MmcSubchannel          supportedSubchannel; // Drive's maximum supported subchannel
-            uint                   subSize;             // Subchannel size in bytes
-            bool                   sense;               // Sense indicator
-            byte[]                 cmdBuf;              // Data buffer
-            byte[]                 senseBuf;            // Sense buffer
-            byte[]                 tmpBuf;              // Temporary buffer
-            FullTOC.CDFullTOC?     toc = null;          // Full CD TOC
-            TrackSubchannelType    subType;             // Track subchannel type
-            uint                   blockSize;
-            List<Track>            trackList             = new List<Track>();
-            long                   lastSector            = 0;
-            Dictionary<byte, byte> trackFlags            = new Dictionary<byte, byte>();
-            TrackType              firstTrackType        = TrackType.Audio;
-            Dictionary<int, long>  leadOutStarts         = new Dictionary<int, long>();
-            int                    sessions              = 1;
-            int                    firstTrackLastSession = 0;
-            ulong                  blocks;
-            Track[]                tracks;
-            var                    leadOutExtents      = new ExtentsULong();
-            bool                   supportsLongSectors = true;
-            DumpHardwareType       currentTry          = null;
-            ExtentsULong           extents             = null;
-            DateTime               timeSpeedStart;
-            ulong                  sectorSpeedStart = 0;
-            double                 totalDuration    = 0;
-            double                 currentSpeed     = 0;
-            double                 maxSpeed         = double.MinValue;
-            double                 minSpeed         = double.MaxValue;
-            uint                   blocksToRead     = 64;
-            bool                   ret;
-            double                 imageWriteDuration = 0;
-            bool                   newTrim            = false;
-            MhddLog                mhddLog;
-            IbgLog                 ibgLog;
-            DateTime               start;
-            DateTime               dumpStart = DateTime.UtcNow;
-            DateTime               end;
-            double                 cmdDuration = 0;
+            ulong                  blocks;                                           // Total number of positive sectors
+            uint                   blockSize;                                        // Size of the read sector in bytes
+            uint                   blocksToRead = 64;                                // How many sectors to read at once
+            CdOffset               cdOffset;                                         // Read offset from database
+            byte[]                 cmdBuf;                                           // Data buffer
+            double                 cmdDuration = 0;                                  // Command execution time
+            DicContext             ctx;                                              // Master database context
+            DumpHardwareType       currentTry   = null;                              // Current dump hardware try
+            double                 currentSpeed = 0;                                 // Current read speed
+            Device                 dbDev;                                            // Device database entry
+            DateTime               dumpStart = DateTime.UtcNow;                      // Time of dump start
+            DateTime               end;                                              // Time of operation end
+            ExtentsULong           extents        = null;                            // Extents
+            TrackType              firstTrackType = TrackType.Audio;                 // Type of first track
+            IbgLog                 ibgLog;                                           // IMGBurn log
+            double                 imageWriteDuration = 0;                           // Duration of image write
+            long                   lastSector         = 0;                           // Last sector number
+            var                    leadOutExtents     = new ExtentsULong();          // Lead-out extents
+            Dictionary<int, long>  leadOutStarts      = new Dictionary<int, long>(); // Lead-out starts
+            double                 maxSpeed           = double.MinValue;             // Maximum speed
+            MhddLog                mhddLog;                                          // MHDD log
+            double                 minSpeed = double.MaxValue;                       // Minimum speed
+            bool                   newTrim  = false;                                 // Is trim a new one?
+            bool                   read6    = false;                                 // Device supports READ(6)
+            bool                   read10   = false;                                 // Device supports READ(10)
+            bool                   read12   = false;                                 // Device supports READ(12)
+            bool                   read16   = false;                                 // Device supports READ(16)
+            bool                   readcd;                                           // Device supports READ CD
+            bool                   ret;                                              // Image writing return status
+            const uint             sectorSize       = 2352;                          // Full sector size
+            ulong                  sectorSpeedStart = 0;                             // Used to calculate correct speed
+            bool                   sense;                                            // Sense indicator
+            byte[]                 senseBuf;                                         // Sense buffer
+            int                    sessions = 1;                                     // Number of sessions in disc
+            DateTime               start;                                            // Start of operation
+            uint                   subSize;                                          // Subchannel size in bytes
+            TrackSubchannelType    subType;                                          // Track subchannel type
+            bool                   supportsLongSectors = true;                       // Supports reading EDC and ECC
+            byte[]                 tmpBuf;                                           // Temporary buffer
+            FullTOC.CDFullTOC?     toc           = null;                             // Full CD TOC
+            double                 totalDuration = 0;                                // Total commands duration
+            Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>();     // Track flags
+            List<Track>            trackList     = new List<Track>();                // Tracks in disc
+            Track[]                tracks;                                           // Tracks in disc as array
 
-            Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
+            Dictionary<MediaTagType, byte[]>
+                mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
+
+            int firstTrackLastSession =
+                0; // Number of first track in last session
+
+            MmcSubchannel
+                supportedSubchannel; // Drive's maximum supported subchannel
+
+            DateTime timeSpeedStart; // Time of start for speed calculation
 
             dskType = MediaType.CD;
 
