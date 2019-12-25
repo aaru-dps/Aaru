@@ -5,7 +5,6 @@
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
-    <e p="$USER_HOME$/.Rider2019.3/system/rust_expanded_macros/vfwZLTAc/expansions" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
@@ -1260,19 +1259,6 @@
             </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-      </e>
-      <e p="DiscImageChef.EntityFramework" t="IncludeRecursive">
-        <e p="DiscImageChef.EntityFramework.csproj" t="IncludeRecursive" />
-        <e p="Program.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="discimagechef.db" t="Include" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp2.0" t="Include">
-              <e p="DiscImageChef.EntityFramework.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>

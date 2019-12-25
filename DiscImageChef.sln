@@ -35,8 +35,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Database", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Gui", "DiscImageChef.Gui\DiscImageChef.Gui.csproj", "{CF61AD81-3F98-4E7B-8F00-9957A6CDE5FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.EntityFramework", "DiscImageChef.EntityFramework\DiscImageChef.EntityFramework.csproj", "{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Dto", "DiscImageChef.Dto\DiscImageChef.Dto.csproj", "{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}"
 EndProject
 Global
@@ -175,14 +173,6 @@ Global
 		{CF61AD81-3F98-4E7B-8F00-9957A6CDE5FA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CF61AD81-3F98-4E7B-8F00-9957A6CDE5FA}.Release|x86.ActiveCfg = Release|Any CPU
 		{CF61AD81-3F98-4E7B-8F00-9957A6CDE5FA}.Release|x86.Build.0 = Release|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Debug|x86.Build.0 = Debug|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Release|x86.ActiveCfg = Release|Any CPU
-		{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}.Release|x86.Build.0 = Release|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}.Debug|x86.ActiveCfg = Debug|Any CPU
