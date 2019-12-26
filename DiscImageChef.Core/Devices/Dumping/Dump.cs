@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Core.Logging;
+using DiscImageChef.Database;
 using DiscImageChef.Devices;
 using Schemas;
 
@@ -14,6 +16,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     public partial class Dump
     {
+        readonly bool                       _debug;
         readonly Device                     _dev;
         readonly string                     _devicePath;
         readonly bool                       _doResume;
@@ -32,9 +35,11 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly ushort                     _retryPasses;
         readonly bool                       _stopOnError;
         bool                                _aborted;
-        readonly bool                       _debug;
+        DicContext                          _ctx;   // Master database context
+        Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
+        uint                                _maximumReadable; // Maximum number of sectors drive can read at once
         Resume                              _resume;
         Sidecar                             _sidecarClass;
         uint                                _skip;
@@ -89,11 +94,35 @@ namespace DiscImageChef.Core.Devices.Dumping
             _aborted              = false;
             _fixOffset            = fixOffset;
             _debug                = debug;
+            _maximumReadable      = 64;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>
         public void Start()
         {
+            // Open master database
+            _ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+
+            // Search for device in master database
+            _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&
+                                                      d.Revision     == _dev.Revision);
+
+            if(_dbDev is null)
+            {
+                _dumpLog.WriteLine("Device not in database, please create a device report and attach it to a Github issue.");
+
+                UpdateStatus?.
+                    Invoke("Device not in database, please create a device report and attach it to a Github issue.");
+            }
+            else
+            {
+                _dumpLog.WriteLine($"Device in database since {_dbDev.LastSynchronized}.");
+                UpdateStatus?.Invoke($"Device in database since {_dbDev.LastSynchronized}.");
+
+                if(_dbDev.OptimalMultipleSectorsRead > 0)
+                    _maximumReadable = (uint)_dbDev.OptimalMultipleSectorsRead;
+            }
+
             if(_dev.IsUsb                 &&
                _dev.UsbVendorId == 0x054C &&
                (_dev.UsbProductId == 0x01C8 || _dev.UsbProductId == 0x01C9 || _dev.UsbProductId == 0x02D2))

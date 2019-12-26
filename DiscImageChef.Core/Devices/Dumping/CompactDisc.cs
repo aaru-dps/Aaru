@@ -45,14 +45,12 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Core.Media.Detection;
-using DiscImageChef.Database;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 using Schemas;
 using CdOffset = DiscImageChef.Database.Models.CdOffset;
-using Device = DiscImageChef.Database.Models.Device;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Session = DiscImageChef.Decoders.CD.Session;
@@ -80,12 +78,10 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint                   blocksToRead = 0;                                 // How many sectors to read at once
             CdOffset               cdOffset;                                         // Read offset from database
             byte[]                 cmdBuf;                                           // Data buffer
-            double                 cmdDuration = 0;                                  // Command execution time
-            DicContext             ctx;                                              // Master database context
+            double                 cmdDuration  = 0;                                 // Command execution time
             DumpHardwareType       currentTry   = null;                              // Current dump hardware try
             double                 currentSpeed = 0;                                 // Current read speed
-            Device                 dbDev;                                            // Device database entry
-            DateTime               dumpStart = DateTime.UtcNow;                      // Time of dump start
+            DateTime               dumpStart    = DateTime.UtcNow;                   // Time of dump start
             DateTime               end;                                              // Time of operation end
             ExtentsULong           extents        = null;                            // Extents
             TrackType              firstTrackType = TrackType.Audio;                 // Type of first track
@@ -132,8 +128,6 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             DateTime timeSpeedStart; // Time of start for speed calculation
 
-            uint maximumReadable = 64; // Maximum number of sectors drive can read at once
-
             dskType = MediaType.CD;
 
             if(_dumpRaw)
@@ -144,31 +138,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            // Open master database
-            ctx = DicContext.Create(Settings.Settings.MasterDbPath);
-
-            // Search for device in master database
-            dbDev = ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&
-                                                    d.Revision     == _dev.Revision);
-
-            if(dbDev is null)
-            {
-                _dumpLog.WriteLine("Device not in database, please create a device report and attach it to a Github issue.");
-
-                UpdateStatus?.
-                    Invoke("Device not in database, please create a device report and attach it to a Github issue.");
-            }
-            else
-            {
-                _dumpLog.WriteLine($"Device in database since {dbDev.LastSynchronized}.");
-                UpdateStatus?.Invoke($"Device in database since {dbDev.LastSynchronized}.");
-
-                if(dbDev.OptimalMultipleSectorsRead > 0)
-                    maximumReadable = (uint)dbDev.OptimalMultipleSectorsRead;
-            }
-
             // Search for read offset in master database
-            cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model);
+            cdOffset = _ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model);
 
             if(cdOffset is null)
             {
@@ -1099,48 +1070,48 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 if(readcd)
                 {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, 0, blockSize, maximumReadable,
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, 0, blockSize, _maximumReadable,
                                         MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
                                         true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
-                        maximumReadable /= 2;
+                        _maximumReadable /= 2;
                 }
                 else if(read16)
                 {
                     sense = _dev.Read16(out cmdBuf, out senseBuf, 0, false, true, false, 0, blockSize, 0,
-                                        maximumReadable, false, _dev.Timeout, out _);
+                                        _maximumReadable, false, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
-                        maximumReadable /= 2;
+                        _maximumReadable /= 2;
                 }
                 else if(read12)
                 {
                     sense = _dev.Read12(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, blockSize, 0,
-                                        maximumReadable, false, _dev.Timeout, out _);
+                                        _maximumReadable, false, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
-                        maximumReadable /= 2;
+                        _maximumReadable /= 2;
                 }
                 else if(read10)
                 {
                     sense = _dev.Read10(out cmdBuf, out senseBuf, 0, false, true, false, false, 0, blockSize, 0,
-                                        (ushort)maximumReadable, _dev.Timeout, out _);
+                                        (ushort)_maximumReadable, _dev.Timeout, out _);
 
                     if(_dev.Error || sense)
-                        maximumReadable /= 2;
+                        _maximumReadable /= 2;
                 }
                 else if(read6)
                 {
-                    sense = _dev.Read6(out cmdBuf, out senseBuf, 0, blockSize, (byte)maximumReadable, _dev.Timeout,
+                    sense = _dev.Read6(out cmdBuf, out senseBuf, 0, blockSize, (byte)_maximumReadable, _dev.Timeout,
                                        out _);
 
                     if(_dev.Error || sense)
-                        maximumReadable /= 2;
+                        _maximumReadable /= 2;
                 }
 
                 if(!_dev.Error ||
-                   maximumReadable == 1)
+                   _maximumReadable == 1)
                     break;
             }
 
@@ -1150,16 +1121,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 StoppingErrorMessage?.Invoke($"Device error {_dev.LastError} trying to guess ideal transfer length.");
             }
 
-            _dumpLog.WriteLine("Reading {0} sectors at a time.", maximumReadable);
+            _dumpLog.WriteLine("Reading {0} sectors at a time.", _maximumReadable);
             _dumpLog.WriteLine("Device reports {0} blocks ({1} bytes).", blocks, blocks * blockSize);
-            _dumpLog.WriteLine("Device can read {0} blocks at a time.", maximumReadable);
+            _dumpLog.WriteLine("Device can read {0} blocks at a time.", _maximumReadable);
             _dumpLog.WriteLine("Device reports {0} bytes per logical block.", blockSize);
             _dumpLog.WriteLine("SCSI device type: {0}.", _dev.ScsiType);
             _dumpLog.WriteLine("Media identified as {0}.", dskType);
 
-            UpdateStatus?.Invoke($"Reading {maximumReadable} sectors at a time.");
+            UpdateStatus?.Invoke($"Reading {_maximumReadable} sectors at a time.");
             UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
-            UpdateStatus?.Invoke($"Device can read {maximumReadable} blocks at a time.");
+            UpdateStatus?.Invoke($"Device can read {_maximumReadable} blocks at a time.");
             UpdateStatus?.Invoke($"Device reports {blockSize} bytes per logical block.");
             UpdateStatus?.Invoke($"SCSI device type: {_dev.ScsiType}.");
             UpdateStatus?.Invoke($"Media identified as {dskType}.");
@@ -1303,8 +1274,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
             }
 
-            if(_skip < maximumReadable)
-                _skip = maximumReadable;
+            if(_skip < _maximumReadable)
+                _skip = _maximumReadable;
 
         #if DEBUG
             foreach(Track trk in tracks)
@@ -1380,8 +1351,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 tmpBuf = new byte[sectorSync.Length];
 
                                 // Plextor READ CDDA
-                                if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
-                                   dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
+                                if(_dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) ==
+                                   true                                                                               ||
+                                   _dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
                                    _dev.Manufacturer.ToLowerInvariant() ==
                                    "plextor")
                                 {
@@ -1407,10 +1379,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                     }
                                 }
 
-                                if(_debug                                                                        ||
-                                   dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
-                                   dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled  == true) == true ||
-                                   _dev.Manufacturer.ToLowerInvariant()                                  == "hl-dt-st")
+                                if(_debug                                                                         ||
+                                   _dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
+                                   _dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled  == true) == true ||
+                                   _dev.Manufacturer.ToLowerInvariant()                                   == "hl-dt-st")
                                 {
                                     sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(dataTrack.TrackEndSector - 2),
                                                         sectorSize, 3, MmcSectorTypes.Cdda, false, false, false,
@@ -1522,7 +1494,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 UpdateStatus?.Invoke("There are audio tracks and offset fixing is disabled, dump may not be correct.");
             }
 
-            mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, maximumReadable);
+            mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable);
             ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
 
             audioExtents = new ExtentsULong();
@@ -1553,13 +1525,13 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 uint firstSectorToRead = (uint)i;
 
-                if((lastSector + 1) - (long)i < maximumReadable)
-                    maximumReadable = (uint)((lastSector + 1) - (long)i);
+                if((lastSector + 1) - (long)i < _maximumReadable)
+                    _maximumReadable = (uint)((lastSector + 1) - (long)i);
 
                 blocksToRead = 0;
                 bool inData = nextData;
 
-                for(ulong j = i; j < i + maximumReadable; j++)
+                for(ulong j = i; j < i + _maximumReadable; j++)
                 {
                     if(nextData)
                     {
