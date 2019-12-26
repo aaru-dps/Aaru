@@ -119,7 +119,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>();     // Track flags
             List<Track>            trackList     = new List<Track>();                // Tracks in disc
             Track[]                tracks;                                           // Tracks in disc as array
-            int                    offsetBytes = 0;                                  // Read offset
+            int                    offsetBytes      = 0;                             // Read offset
+            int                    sectorsForOffset = 0;                             // Sectors needed to fix offset
 
             bool nextData; // Next cluster of sectors is all data;
 
@@ -1471,6 +1472,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                         UpdateStatus?.Invoke($"Offset is {offsetBytes} bytes.");
                     }
                 }
+
+                sectorsForOffset = offsetBytes / (int)sectorSize;
+
+                if(sectorsForOffset < 0)
+                    sectorsForOffset *= -1;
+
+                if(offsetBytes % sectorSize > 0)
+                    sectorsForOffset++;
             }
             else if(tracks.Any(t => t.TrackType == TrackType.Audio))
             {
@@ -1547,9 +1556,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(offsetBytes > 0)
                     {
                         if(i == 0)
-                            firstSectorToRead = uint.MaxValue; // -1
+                            firstSectorToRead = uint.MaxValue - (uint)(sectorsForOffset - 1); // -1
                         else
-                            firstSectorToRead--;
+                            firstSectorToRead -= (uint)sectorsForOffset;
                     }
                 }
 
@@ -1620,11 +1629,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize     * b, subSize);
                         }
 
-                        tmpBuf = new byte[sectorSize * (blocksToRead - 1)];
+                        tmpBuf = new byte[sectorSize * (blocksToRead - sectorsForOffset)];
                         Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
                         data = tmpBuf;
 
-                        blocksToRead--;
+                        blocksToRead -= (uint)sectorsForOffset;
 
                         // Reinterleave subchannel
                         cmdBuf = new byte[blockSize * blocksToRead];
@@ -1637,10 +1646,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
-                        tmpBuf = new byte[blockSize * (blocksToRead - 1)];
+                        tmpBuf = new byte[blockSize * (blocksToRead - sectorsForOffset)];
                         Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
-                        cmdBuf = tmpBuf;
-                        blocksToRead--;
+                        cmdBuf       =  tmpBuf;
+                        blocksToRead -= (uint)sectorsForOffset;
                     }
                 }
 
@@ -1922,10 +1931,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         if(offsetBytes > 0)
                         {
-                            badSectorToRead--;
+                            badSectorToRead -= (uint)sectorsForOffset;
                         }
 
-                        sectorsToTrim = 2;
+                        sectorsToTrim = (byte)(sectorsForOffset + 1);
                     }
 
                     if(readcd)
@@ -1979,7 +1988,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }
 
-                            tmpBuf = new byte[sectorSize * (sectorsToTrim - 1)];
+                            tmpBuf = new byte[sectorSize * (sectorsToTrim - sectorsForOffset)];
                             Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
                             data = tmpBuf;
 
@@ -1995,7 +2004,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                         else
                         {
-                            tmpBuf = new byte[blockSize * (sectorsToTrim - 1)];
+                            tmpBuf = new byte[blockSize * (sectorsToTrim - sectorsForOffset)];
                             Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
                             cmdBuf = tmpBuf;
                         }
@@ -2171,10 +2180,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         if(offsetBytes > 0)
                         {
-                            badSectorToReRead--;
+                            badSectorToReRead -= (uint)sectorsForOffset;
                         }
 
-                        sectorsToReRead = 2;
+                        sectorsToReRead = (byte)(sectorsForOffset + 1);
                     }
 
                     if(readcd)
@@ -2222,7 +2231,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }
 
-                            tmpBuf = new byte[sectorSize * (sectorsToReRead - 1)];
+                            tmpBuf = new byte[sectorSize * (sectorsToReRead - sectorsForOffset)];
                             Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
                             data = tmpBuf;
 
@@ -2238,7 +2247,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                         else
                         {
-                            tmpBuf = new byte[blockSize * (sectorsToReRead - 1)];
+                            tmpBuf = new byte[blockSize * (sectorsToReRead - sectorsForOffset)];
                             Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
                             cmdBuf = tmpBuf;
                         }
