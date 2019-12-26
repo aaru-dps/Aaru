@@ -108,7 +108,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             // Check how many blocks to read, if error show and return
-            if(scsiReader.GetBlocksToRead())
+            if(scsiReader.GetBlocksToRead(_maximumReadable))
             {
                 _dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", scsiReader.ErrorMessage);
                 StoppingErrorMessage?.Invoke(scsiReader.ErrorMessage);

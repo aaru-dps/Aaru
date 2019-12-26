@@ -120,7 +120,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     // Check how many blocks to read, if error show and return
-                    if(ataReader.GetBlocksToRead())
+                    if(ataReader.GetBlocksToRead(_maximumReadable))
                     {
                         _dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", ataReader.ErrorMessage);
                         ErrorMessage(ataReader.ErrorMessage);
@@ -612,8 +612,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         DateTime chkStart = DateTime.UtcNow;
 
-                        _sidecarClass =
-                            new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
+                        _sidecarClass = new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
 
                         _sidecarClass.InitProgressEvent    += InitProgress;
                         _sidecarClass.UpdateProgressEvent  += UpdateProgress;

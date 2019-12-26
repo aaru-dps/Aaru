@@ -37,13 +37,11 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices
 {
-    /// <summary>
-    ///     Reduces common code used for scanning and dumping
-    /// </summary>
-    partial class Reader
+    /// <summary>Reduces common code used for scanning and dumping</summary>
+    internal partial class Reader
     {
-        Device dev;
-        uint   timeout;
+        readonly Device dev;
+        readonly uint   timeout;
 
         internal Reader(Device dev, uint timeout, byte[] identification, bool raw = false)
         {
@@ -56,7 +54,10 @@ namespace DiscImageChef.Core.Devices
             {
                 case DeviceType.ATA:
                     Identify.IdentifyDevice? ataIdNullable = Identify.Decode(identification);
-                    if(ataIdNullable.HasValue) ataId       = ataIdNullable.Value;
+
+                    if(ataIdNullable.HasValue)
+                        ataId = ataIdNullable.Value;
+
                     break;
                 case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
             }
@@ -81,6 +82,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.SCSI: return ScsiGetBlocks();
                 default:
                     ErrorMessage = $"Unknown device type {dev.Type}.";
+
                     return 0;
             }
         }
@@ -94,6 +96,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.SCSI: return ScsiFindReadCommand();
                 default:
                     ErrorMessage = $"Unknown device type {dev.Type}.";
+
                     return true;
             }
         }
@@ -107,6 +110,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.SCSI: return ScsiGetBlockSize();
                 default:
                     ErrorMessage = $"Unknown device type {dev.Type}.";
+
                     return true;
             }
         }
@@ -120,6 +124,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.SCSI: return ScsiGetBlocksToRead(startWithBlocks);
                 default:
                     ErrorMessage = $"Unknown device type {dev.Type}.";
+
                     return true;
             }
         }
@@ -140,6 +145,7 @@ namespace DiscImageChef.Core.Devices
                 default:
                     buffer   = null;
                     duration = 0d;
+
                     return true;
             }
         }
@@ -152,6 +158,7 @@ namespace DiscImageChef.Core.Devices
                 default:
                     buffer   = null;
                     duration = 0d;
+
                     return true;
             }
         }
@@ -165,6 +172,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.SCSI: return ScsiSeek(block, out duration);
                 default:
                     duration = 0d;
+
                     return true;
             }
         }
@@ -176,6 +184,7 @@ namespace DiscImageChef.Core.Devices
                 case DeviceType.ATA: return AtaSeekChs(cylinder, head, sector, out duration);
                 default:
                     duration = 0;
+
                     return true;
             }
         }
