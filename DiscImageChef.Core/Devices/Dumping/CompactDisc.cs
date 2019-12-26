@@ -1321,7 +1321,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Check offset
             if(_fixOffset)
             {
-                // TODO: Plextor raw reading
                 // TODO: HL-DT-ST raw reading
                 // TODO: VideoNow
 
@@ -1344,22 +1343,101 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
+                    bool offsetFound = false;
+
+                    if(tracks.Any(t => t.TrackType != TrackType.Audio))
+                    {
+                        Track dataTrack = tracks.FirstOrDefault(t => t.TrackType != TrackType.Audio);
+
+                        if(dataTrack.TrackSequence != 0)
+                        {
+                            dataTrack.TrackEndSector += 149;
+
+                            // Calculate MSF
+                            ulong minute = dataTrack.TrackEndSector                     / 4500;
+                            ulong second = (dataTrack.TrackEndSector - (minute * 4500)) / 75;
+                            ulong frame  = dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
+
+                            dataTrack.TrackEndSector -= 149;
+
+                            // Convert to BCD
+                            ulong remainder = minute   % 10;
+                            minute    = ((minute / 10) * 16) + remainder;
+                            remainder = second % 10;
+                            second    = ((second / 10) * 16) + remainder;
+                            remainder = frame % 10;
+                            frame     = ((frame / 10) * 16) + remainder;
+
+                            // Build sync
+                            byte[] sectorSync =
+                            {
+                                0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, (byte)minute,
+                                (byte)second, (byte)frame
+                            };
+
+                            tmpBuf = new byte[sectorSync.Length];
+
+                            // Plextor READ CDDA
+                            if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
+                               dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
+                               _dev.Manufacturer.ToLowerInvariant()                                       == "plextor")
+                            {
+                                sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
+                                                             (uint)dataTrack.TrackEndSector - 2, sectorSize, 3,
+                                                             PlextorSubchannel.None, _dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !_dev.Error)
+                                {
+                                    for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+                                    {
+                                        Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
+
+                                        if(!tmpBuf.SequenceEqual(sectorSync))
+                                            continue;
+
+                                        offsetBytes = i - 2352;
+                                        offsetFound = true;
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if(cdOffset is null)
                     {
-                        _dumpLog.
-                            WriteLine("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+                        if(offsetFound)
+                        {
+                            _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes");
+                            UpdateStatus?.Invoke($"Combined disc and drive offsets are {offsetBytes} bytes");
+                        }
+                        else
+                        {
+                            _dumpLog.
+                                WriteLine("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
 
-                        UpdateStatus?.
-                            Invoke("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+                            UpdateStatus?.
+                                Invoke("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
 
-                        _fixOffset = false;
+                            _fixOffset = false;
+                        }
                     }
                     else
                     {
-                        _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
-                        UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
+                        if(offsetFound)
+                        {
+                            _dumpLog.WriteLine($"Disc offsets is {offsetBytes   - (cdOffset.Offset * 2 * -1)}");
+                            UpdateStatus?.Invoke($"Disc offsets is {offsetBytes - (cdOffset.Offset * 2 * -1)}");
+                        }
+                        else
+                        {
+                            _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
+                            UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
 
-                        offsetBytes = cdOffset.Offset * 2 * -1;
+                            offsetBytes = cdOffset.Offset * 2 * -1;
+                        }
 
                         _dumpLog.WriteLine($"Offset is {offsetBytes} bytes.");
                         UpdateStatus?.Invoke($"Offset is {offsetBytes} bytes.");
@@ -1390,7 +1468,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             timeSpeedStart   = DateTime.UtcNow;
             InitProgress?.Invoke();
 
-            // TODO: Apply offset
             for(ulong i = _resume.NextBlock; (long)i <= lastSector; i += blocksToRead)
             {
                 if(_aborted)
@@ -1869,8 +1946,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             for(int b = 0; b < sectorsToTrim; b++)
                             {
-                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b,
-                                           sectorSize);
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }
@@ -1884,8 +1960,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             for(int b = 0; b < sectorsToTrim; b++)
                             {
-                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)),
-                                           sectorSize);
+                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)), sectorSize);
 
                                 Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
                             }
@@ -2114,8 +2189,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             for(int b = 0; b < sectorsToReRead; b++)
                             {
-                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b,
-                                           sectorSize);
+                                Array.Copy(cmdBuf, (int)(0 + (b * blockSize)), data, sectorSize * b, sectorSize);
 
                                 Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize * b, subSize);
                             }
@@ -2129,8 +2203,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             for(int b = 0; b < sectorsToReRead; b++)
                             {
-                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)),
-                                           sectorSize);
+                                Array.Copy(data, sectorSize * b, cmdBuf, (int)(0 + (b * blockSize)), sectorSize);
 
                                 Array.Copy(sub, subSize * b, cmdBuf, (int)(sectorSize + (b * blockSize)), subSize);
                             }
