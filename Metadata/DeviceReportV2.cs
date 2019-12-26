@@ -653,6 +653,9 @@ namespace DiscImageChef.CommonTypes.Metadata
         public byte[] ModeSense6ChangeableData { get; set; }
         [DisplayName("Data from MODE SENSE(10) command (changeable)")]
         public byte[] ModeSense10ChangeableData { get; set; }
+
+        [JsonIgnore]
+        public int? SequentialDeviceId { get; set; }
     }
 
     public class ScsiMode
