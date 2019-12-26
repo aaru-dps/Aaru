@@ -343,7 +343,8 @@ namespace DiscImageChef.Commands
 
             var dumper = new Dump(_doResume, dev, _devicePath, outputFormat, _retryPasses, _force, false, _persistent,
                                   _stopOnError, resume, dumpLog, encoding, outputPrefix, _outputFile, parsedOptions,
-                                  sidecar, (uint)_skip, _noMetadata, _noTrim, _firstTrackPregap, _fixOffset);
+                                  sidecar, (uint)_skip, _noMetadata, _noTrim, _firstTrackPregap, _fixOffset,
+                                  MainClass.Debug);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

@@ -67,6 +67,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     /// <summary>Implement dumping Compact Discs</summary>
 
     // TODO: Barcode and pregaps
+    // TODO: Repetitive code
     partial class Dump
     {
         /// <summary>Dumps a compact disc</summary>
@@ -1321,7 +1322,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Check offset
             if(_fixOffset)
             {
-                // TODO: HL-DT-ST raw reading
                 // TODO: VideoNow
 
                 if(tracks.All(t => t.TrackType != TrackType.Audio))
@@ -1385,6 +1385,34 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
                                                              (uint)dataTrack.TrackEndSector - 2, sectorSize, 3,
                                                              PlextorSubchannel.None, _dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !_dev.Error)
+                                {
+                                    for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+                                    {
+                                        Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
+
+                                        if(!tmpBuf.SequenceEqual(sectorSync))
+                                            continue;
+
+                                        offsetBytes = i - 2352;
+                                        offsetFound = true;
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if(_debug                                                                        ||
+                               dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
+                               dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled  == true) == true ||
+                               _dev.Manufacturer.ToLowerInvariant()                                  == "hl-dt-st")
+                            {
+                                sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(dataTrack.TrackEndSector - 2),
+                                                    sectorSize, 3, MmcSectorTypes.Cdda, false, false, false,
+                                                    MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                    MmcSubchannel.None, _dev.Timeout, out _);
 
                                 if(!sense &&
                                    !_dev.Error)
