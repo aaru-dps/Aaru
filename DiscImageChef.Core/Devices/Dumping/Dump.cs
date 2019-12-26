@@ -14,6 +14,12 @@ using Schemas;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
+    public enum DumpSubchannel
+    {
+        Any, Rw, RwOrPq,
+        Pq, None
+    }
+
     public partial class Dump
     {
         readonly bool                       _debug;
@@ -43,6 +49,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         Resume                              _resume;
         Sidecar                             _sidecarClass;
         uint                                _skip;
+        readonly DumpSubchannel             _subchannel;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>
@@ -69,7 +76,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool nometadata, bool notrim, bool dumpFirstTrackPregap,
-                    bool fixOffset, bool debug)
+                    bool fixOffset, bool debug, DumpSubchannel subchannel)
         {
             _doResume             = doResume;
             _dev                  = dev;
@@ -95,6 +102,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             _fixOffset            = fixOffset;
             _debug                = debug;
             _maximumReadable      = 64;
+            _subchannel           = subchannel;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>

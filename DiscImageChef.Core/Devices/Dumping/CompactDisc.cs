@@ -152,44 +152,93 @@ namespace DiscImageChef.Core.Devices.Dumping
                 UpdateStatus?.Invoke($"CD reading offset is {cdOffset.Offset} samples.");
             }
 
-            supportedSubchannel = MmcSubchannel.Raw;
-            _dumpLog.WriteLine("Checking if drive supports full raw subchannel reading...");
-            UpdateStatus?.Invoke("Checking if drive supports full raw subchannel reading...");
-
-            readcd = !_dev.ReadCd(out cmdBuf, out senseBuf, 0, sectorSize + 96, 1, MmcSectorTypes.AllTypes, false,
-                                  false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                  supportedSubchannel, _dev.Timeout, out _);
-
-            if(readcd)
+            switch(_subchannel)
             {
-                _dumpLog.WriteLine("Full raw subchannel reading supported...");
-                UpdateStatus?.Invoke("Full raw subchannel reading supported...");
-                subSize = 96;
+                case DumpSubchannel.Any:
+                    if(SupportsRwSubchannel())
+                        supportedSubchannel = MmcSubchannel.Raw;
+                    else if(SupportsPqSubchannel())
+                        supportedSubchannel = MmcSubchannel.Q16;
+                    else
+                        supportedSubchannel = MmcSubchannel.None;
+
+                    break;
+                case DumpSubchannel.Rw:
+                    if(SupportsRwSubchannel())
+                        supportedSubchannel = MmcSubchannel.Raw;
+                    else
+                    {
+                        _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
+
+                        StoppingErrorMessage?.
+                            Invoke("Drive does not support the requested subchannel format, not continuing...");
+
+                        return;
+                    }
+
+                    break;
+                case DumpSubchannel.RwOrPq:
+                    if(SupportsRwSubchannel())
+                        supportedSubchannel = MmcSubchannel.Raw;
+                    else if(SupportsPqSubchannel())
+                        supportedSubchannel = MmcSubchannel.Q16;
+                    else
+                    {
+                        _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
+
+                        StoppingErrorMessage?.
+                            Invoke("Drive does not support the requested subchannel format, not continuing...");
+
+                        return;
+                    }
+
+                    break;
+                case DumpSubchannel.Pq:
+                    if(SupportsPqSubchannel())
+                        supportedSubchannel = MmcSubchannel.Q16;
+                    else
+                    {
+                        _dumpLog.WriteLine("Drive does not support the requested subchannel format, not continuing...");
+
+                        StoppingErrorMessage?.
+                            Invoke("Drive does not support the requested subchannel format, not continuing...");
+
+                        return;
+                    }
+
+                    break;
+                case DumpSubchannel.None:
+                    supportedSubchannel = MmcSubchannel.None;
+
+                    break;
+                default: throw new ArgumentOutOfRangeException();
             }
-            else
+
+            // Check if output format supports subchannels
+            if(!_outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
+               supportedSubchannel != MmcSubchannel.None)
             {
-                supportedSubchannel = MmcSubchannel.Q16;
-                _dumpLog.WriteLine("Checking if drive supports PQ subchannel reading...");
-                UpdateStatus?.Invoke("Checking if drive supports PQ subchannel reading...");
-
-                readcd = !_dev.ReadCd(out cmdBuf, out senseBuf, 0, sectorSize + 16, 1, MmcSectorTypes.AllTypes, false,
-                                      false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                      supportedSubchannel, _dev.Timeout, out _);
-
-                if(readcd)
+                if(!_force ||
+                   _subchannel != DumpSubchannel.Any)
                 {
-                    _dumpLog.WriteLine("PQ subchannel reading supported...");
-                    _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
-                    UpdateStatus?.Invoke("PQ subchannel reading supported...");
-
-                    UpdateStatus?.
-                        Invoke("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
-
-                    subSize = 16;
+                    _dumpLog.WriteLine("Output format does not support subchannels, continuing...");
+                    UpdateStatus?.Invoke("Output format does not support subchannels, continuing...");
                 }
                 else
                 {
-                    supportedSubchannel = MmcSubchannel.None;
+                    _dumpLog.WriteLine("Output format does not support subchannels, not continuing...");
+                    StoppingErrorMessage?.Invoke("Output format does not support subchannels, not continuing...");
+
+                    return;
+                }
+
+                supportedSubchannel = MmcSubchannel.None;
+                subSize             = 0;
+            }
+
+            switch(supportedSubchannel)
+            {
+                case MmcSubchannel.None:
                     _dumpLog.WriteLine("Checking if drive supports reading without subchannel...");
                     UpdateStatus?.Invoke("Checking if drive supports reading without subchannel...");
 
@@ -259,52 +308,36 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
-                    _dumpLog.WriteLine("Drive can only read without subchannel...");
+                    _dumpLog.WriteLine("Drive can read without subchannel...");
                     _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
-                    UpdateStatus?.Invoke("Drive can only read without subchannel...");
+                    UpdateStatus?.Invoke("Drive can read without subchannel...");
 
                     UpdateStatus?.
                         Invoke("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
 
                     subSize = 0;
-                }
-            }
-
-            // Check if output format supports subchannels
-            if(!_outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
-               supportedSubchannel != MmcSubchannel.None)
-            {
-                if(!_force)
-                {
-                    _dumpLog.WriteLine("Output format does not support subchannels, continuing...");
-                    UpdateStatus?.Invoke("Output format does not support subchannels, continuing...");
-                }
-                else
-                {
-                    _dumpLog.WriteLine("Output format does not support subchannels, not continuing...");
-                    StoppingErrorMessage?.Invoke("Output format does not support subchannels, not continuing...");
-
-                    return;
-                }
-
-                supportedSubchannel = MmcSubchannel.None;
-                subSize             = 0;
-            }
-
-            blockSize = sectorSize + subSize;
-
-            switch(supportedSubchannel)
-            {
-                case MmcSubchannel.None:
                     subType = TrackSubchannelType.None;
 
                     break;
                 case MmcSubchannel.Raw:
+                    _dumpLog.WriteLine("Full raw subchannel reading supported...");
+                    UpdateStatus?.Invoke("Full raw subchannel reading supported...");
                     subType = TrackSubchannelType.Raw;
+                    subSize = 96;
+                    readcd  = true;
 
                     break;
                 case MmcSubchannel.Q16:
+                    _dumpLog.WriteLine("PQ subchannel reading supported...");
+                    _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
+                    UpdateStatus?.Invoke("PQ subchannel reading supported...");
+
+                    UpdateStatus?.
+                        Invoke("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
+
                     subType = TrackSubchannelType.Q16;
+                    subSize = 16;
+                    readcd  = true;
 
                     break;
                 default:
@@ -315,6 +348,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     return;
             }
+
+            blockSize = sectorSize + subSize;
 
             // We discarded all discs that falsify a TOC before requesting a real TOC
             // No TOC, no CD (or an empty one)
@@ -2648,6 +2683,26 @@ namespace DiscImageChef.Core.Devices.Dumping
             UpdateStatus?.Invoke("");
 
             Statistics.AddMedia(dskType, true);
+        }
+
+        bool SupportsRwSubchannel()
+        {
+            _dumpLog.WriteLine("Checking if drive supports full raw subchannel reading...");
+            UpdateStatus?.Invoke("Checking if drive supports full raw subchannel reading...");
+
+            return!_dev.ReadCd(out _, out _, 0, 2352 + 96, 1, MmcSectorTypes.AllTypes, false, false, true,
+                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
+                               _dev.Timeout, out _);
+        }
+
+        bool SupportsPqSubchannel()
+        {
+            _dumpLog.WriteLine("Checking if drive supports PQ subchannel reading...");
+            UpdateStatus?.Invoke("Checking if drive supports PQ subchannel reading...");
+
+            return!_dev.ReadCd(out _, out _, 0, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
+                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
+                               _dev.Timeout, out _);
         }
     }
 }

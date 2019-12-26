@@ -527,7 +527,7 @@ namespace DiscImageChef.Gui.Forms
                                chkStopOnError.Checked == true, _resume, dumpLog, encoding, _outputPrefix,
                                txtDestination.Text, parsedOptions, _sidecar, (uint)stpSkipped.Value,
                                chkExistingMetadata.Checked == false, chkTrim.Checked == false,
-                               chkTrack1Pregap.Checked     == true, true, false);
+                               chkTrack1Pregap.Checked     == true, true, false, DumpSubchannel.Any);
 
             new Thread(DoWork).Start();
         }

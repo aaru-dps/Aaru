@@ -72,6 +72,7 @@ namespace DiscImageChef.Commands
         int    _skip = 512;
         bool   _stopOnError;
         string _wantedOutputFormat;
+        string _wantedSubchannel;
 
         public DumpMediaCommand() : base("dump-media", "Dumps the media inserted on a device to a media image.")
         {
@@ -117,6 +118,10 @@ namespace DiscImageChef.Commands
             Options.Add("stop-on-error|s", "Stop media dump on first error.", b => _stopOnError = b != null);
 
             Options.Add("help|h|?", "Show this message and exit.", v => _showHelp = v != null);
+
+            Options.Add("subchannel",
+                        "Subchannel to dump. Only applicable to CD/GD. Values: any, rw, rw-or-pq, pq, none",
+                        s => _wantedSubchannel = s);
 
             /* TODO: Disabled temporarily
             Options.Add("raw|r", "Dump sectors with tags included. For optical media, dump scrambled sectors.", (b) => raw = b != null);*/
@@ -177,6 +182,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--skip={0}", _skip);
             DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}", _stopOnError);
             DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", MainClass.Verbose);
+            DicConsole.DebugWriteLine("Dump-Media command", "--subchannel={0}", _wantedSubchannel);
 
             // TODO: Disabled temporarily
             //DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
@@ -203,6 +209,37 @@ namespace DiscImageChef.Commands
 
                     return(int)ErrorNumber.EncodingUnknown;
                 }
+
+            DumpSubchannel subchannel = DumpSubchannel.Any;
+
+            switch(_wantedSubchannel?.ToLowerInvariant())
+            {
+                case"any":
+                case null:
+                    subchannel = DumpSubchannel.Any;
+
+                    break;
+                case"rw":
+                    subchannel = DumpSubchannel.Rw;
+
+                    break;
+                case"rw-or-pq":
+                    subchannel = DumpSubchannel.RwOrPq;
+
+                    break;
+                case"pq":
+                    subchannel = DumpSubchannel.Pq;
+
+                    break;
+                case"none":
+                    subchannel = DumpSubchannel.None;
+
+                    break;
+                default:
+                    DicConsole.WriteLine("Incorrect subchannel type \"{0}\" requested.", _wantedSubchannel);
+
+                    break;
+            }
 
             if(_devicePath.Length == 2   &&
                _devicePath[1]     == ':' &&
@@ -344,7 +381,7 @@ namespace DiscImageChef.Commands
             var dumper = new Dump(_doResume, dev, _devicePath, outputFormat, _retryPasses, _force, false, _persistent,
                                   _stopOnError, resume, dumpLog, encoding, outputPrefix, _outputFile, parsedOptions,
                                   sidecar, (uint)_skip, _noMetadata, _noTrim, _firstTrackPregap, _fixOffset,
-                                  MainClass.Debug);
+                                  MainClass.Debug, subchannel);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;
