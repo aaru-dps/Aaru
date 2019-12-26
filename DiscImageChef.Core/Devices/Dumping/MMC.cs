@@ -56,6 +56,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[] tmpBuf;
             bool   compactDisc = true;
             bool   isXbox      = false;
+            _speedMultiplier = 1;
 
             // TODO: Log not only what is it reading, but if it was read correctly or not.
             sense = _dev.GetConfiguration(out byte[] cmdBuf, out _, 0, MmcGetConfigurationRt.Current, _dev.Timeout,
@@ -69,10 +70,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 switch(ftr.CurrentProfile)
                 {
                     case 0x0001:
-                        dskType = MediaType.GENERIC_HDD;
+                        dskType          = MediaType.GENERIC_HDD;
+                        _speedMultiplier = -1;
                         goto default;
                     case 0x0002:
-                        dskType = MediaType.PD650;
+                        dskType          = MediaType.PD650;
+                        _speedMultiplier = -1;
                         goto default;
                     case 0x0005:
                         dskType = MediaType.CDMO;
@@ -91,33 +94,42 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         break;
                     case 0x0010:
-                        dskType = MediaType.DVDROM;
+                        dskType          = MediaType.DVDROM;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0011:
-                        dskType = MediaType.DVDR;
+                        dskType          = MediaType.DVDR;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0012:
-                        dskType = MediaType.DVDRAM;
+                        dskType          = MediaType.DVDRAM;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0013:
                     case 0x0014:
-                        dskType = MediaType.DVDRW;
+                        dskType          = MediaType.DVDRW;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0015:
                     case 0x0016:
-                        dskType = MediaType.DVDRDL;
+                        dskType          = MediaType.DVDRDL;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0017:
-                        dskType = MediaType.DVDRWDL;
+                        dskType          = MediaType.DVDRWDL;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0018:
-                        dskType = MediaType.DVDDownload;
+                        dskType          = MediaType.DVDDownload;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x001A:
-                        dskType = MediaType.DVDPRW;
+                        dskType          = MediaType.DVDPRW;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x001B:
-                        dskType = MediaType.DVDPR;
+                        dskType          = MediaType.DVDPR;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0020:
                         dskType = MediaType.DDCD;
@@ -129,38 +141,49 @@ namespace DiscImageChef.Core.Devices.Dumping
                         dskType = MediaType.DDCDRW;
                         goto default;
                     case 0x002A:
-                        dskType = MediaType.DVDPRWDL;
+                        dskType          = MediaType.DVDPRWDL;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x002B:
-                        dskType = MediaType.DVDPRDL;
+                        dskType          = MediaType.DVDPRDL;
+                        _speedMultiplier = 9;
                         goto default;
                     case 0x0040:
-                        dskType = MediaType.BDROM;
+                        dskType          = MediaType.BDROM;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x0041:
                     case 0x0042:
-                        dskType = MediaType.BDR;
+                        dskType          = MediaType.BDR;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x0043:
-                        dskType = MediaType.BDRE;
+                        dskType          = MediaType.BDRE;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x0050:
-                        dskType = MediaType.HDDVDROM;
+                        dskType          = MediaType.HDDVDROM;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x0051:
-                        dskType = MediaType.HDDVDR;
+                        dskType          = MediaType.HDDVDR;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x0052:
-                        dskType = MediaType.HDDVDRAM;
+                        dskType          = MediaType.HDDVDRAM;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x0053:
-                        dskType = MediaType.HDDVDRW;
+                        dskType          = MediaType.HDDVDRW;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x0058:
-                        dskType = MediaType.HDDVDRDL;
+                        dskType          = MediaType.HDDVDRDL;
+                        _speedMultiplier = 30;
                         goto default;
                     case 0x005A:
-                        dskType = MediaType.HDDVDRWDL;
+                        dskType          = MediaType.HDDVDRWDL;
+                        _speedMultiplier = 30;
                         goto default;
                     default:
                         compactDisc = false;

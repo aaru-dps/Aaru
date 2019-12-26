@@ -383,6 +383,21 @@ namespace DiscImageChef.Core.Devices.Dumping
             _dumpLog.WriteLine("Using SCSI READ (12) command.");
             UpdateStatus?.Invoke("Using SCSI READ (12) command.");
 
+            // Set speed
+            if(_speedMultiplier >= 0)
+            {
+                _dumpLog.WriteLine($"Setting speed to {_speed}x.");
+                UpdateStatus?.Invoke($"Setting speed to {_speed}x.");
+
+                _speed *= _speedMultiplier;
+
+                if(_speed == 0 ||
+                   _speed > 0xFFFF)
+                    _speed = 0xFFFF;
+
+                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+            }
+
             while(true)
             {
                 if(read12)

@@ -70,6 +70,7 @@ namespace DiscImageChef.Commands
         ushort _retryPasses = 5;
         bool   _showHelp;
         int    _skip = 512;
+        int    _speed;
         bool   _stopOnError;
         string _wantedOutputFormat;
         string _wantedSubchannel;
@@ -122,6 +123,9 @@ namespace DiscImageChef.Commands
             Options.Add("subchannel",
                         "Subchannel to dump. Only applicable to CD/GD. Values: any, rw, rw-or-pq, pq, none",
                         s => _wantedSubchannel = s);
+
+            Options.Add("speed", "Speed to dump. Only applicable to optical drives, 0 for maximum",
+                        (int i) => _speed = i);
 
             /* TODO: Disabled temporarily
             Options.Add("raw|r", "Dump sectors with tags included. For optical media, dump scrambled sectors.", (b) => raw = b != null);*/
@@ -381,7 +385,7 @@ namespace DiscImageChef.Commands
             var dumper = new Dump(_doResume, dev, _devicePath, outputFormat, _retryPasses, _force, false, _persistent,
                                   _stopOnError, resume, dumpLog, encoding, outputPrefix, _outputFile, parsedOptions,
                                   sidecar, (uint)_skip, _noMetadata, _noTrim, _firstTrackPregap, _fixOffset,
-                                  MainClass.Debug, subchannel);
+                                  MainClass.Debug, subchannel, _speed);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;

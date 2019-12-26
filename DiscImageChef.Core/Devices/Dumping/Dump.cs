@@ -40,6 +40,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly CICMMetadataType           _preSidecar;
         readonly ushort                     _retryPasses;
         readonly bool                       _stopOnError;
+        readonly DumpSubchannel             _subchannel;
         bool                                _aborted;
         DicContext                          _ctx;   // Master database context
         Database.Models.Device              _dbDev; // Device database entry
@@ -49,7 +50,8 @@ namespace DiscImageChef.Core.Devices.Dumping
         Resume                              _resume;
         Sidecar                             _sidecarClass;
         uint                                _skip;
-        readonly DumpSubchannel             _subchannel;
+        int                                 _speed;
+        int                                 _speedMultiplier;
 
         /// <summary>Initializes dumpers</summary>
         /// <param name="doResume">Should resume?</param>
@@ -76,7 +78,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
                     CICMMetadataType preSidecar, uint skip, bool nometadata, bool notrim, bool dumpFirstTrackPregap,
-                    bool fixOffset, bool debug, DumpSubchannel subchannel)
+                    bool fixOffset, bool debug, DumpSubchannel subchannel, int speed)
         {
             _doResume             = doResume;
             _dev                  = dev;
@@ -103,6 +105,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             _debug                = debug;
             _maximumReadable      = 64;
             _subchannel           = subchannel;
+            _speedMultiplier      = -1;
+            _speed                = speed;
         }
 
         /// <summary>Starts dumping with the stablished fields and autodetecting the device type</summary>

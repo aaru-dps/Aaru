@@ -405,6 +405,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                 _dumpLog.WriteLine("Resuming from block {0}.", _resume.NextBlock);
             }
 
+            // Set speed
+            if(_speedMultiplier >= 0)
+            {
+                _dumpLog.WriteLine($"Setting speed to {_speed}x.");
+                UpdateStatus?.Invoke($"Setting speed to {_speed}x.");
+
+                _speed *= _speedMultiplier;
+
+                if(_speed == 0 ||
+                   _speed > 0xFFFF)
+                    _speed = 0xFFFF;
+
+                _dev.SetCdSpeed(out _, RotationalControl.ClvAndImpureCav, (ushort)_speed, 0, _dev.Timeout, out _);
+            }
+
             bool     newTrim          = false;
             DateTime timeSpeedStart   = DateTime.UtcNow;
             ulong    sectorSpeedStart = 0;
