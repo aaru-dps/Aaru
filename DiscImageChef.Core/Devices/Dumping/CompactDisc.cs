@@ -857,7 +857,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                             false, false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
                                             MmcSubchannel.None, _dev.Timeout, out _);
 
-                        if(sense || !_dev.Error)
+                        if(sense || _dev.Error)
                         {
                             videoNowColorFrame = null;
 
@@ -1323,153 +1323,188 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Check offset
             if(_fixOffset)
             {
-                // TODO: VideoNow
-
-                if(tracks.All(t => t.TrackType != TrackType.Audio))
+                if(dskType != MediaType.VideoNowColor)
                 {
-                    // No audio tracks so no need to fix offset
-                    _dumpLog.WriteLine("No audio tracks, disabling offset fix.");
-                    UpdateStatus?.Invoke("No audio tracks, disabling offset fix.");
-
-                    _fixOffset = false;
-                }
-                else if(!readcd)
-                {
-                    _dumpLog.WriteLine("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
-
-                    UpdateStatus?.
-                        Invoke("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
-
-                    _fixOffset = false;
-                }
-                else
-                {
-                    bool offsetFound = false;
-
-                    if(tracks.Any(t => t.TrackType != TrackType.Audio))
+                    if(tracks.All(t => t.TrackType != TrackType.Audio))
                     {
-                        Track dataTrack = tracks.FirstOrDefault(t => t.TrackType != TrackType.Audio);
+                        // No audio tracks so no need to fix offset
+                        _dumpLog.WriteLine("No audio tracks, disabling offset fix.");
+                        UpdateStatus?.Invoke("No audio tracks, disabling offset fix.");
 
-                        if(dataTrack.TrackSequence != 0)
-                        {
-                            dataTrack.TrackEndSector += 149;
-
-                            // Calculate MSF
-                            ulong minute = dataTrack.TrackEndSector                     / 4500;
-                            ulong second = (dataTrack.TrackEndSector - (minute * 4500)) / 75;
-                            ulong frame  = dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
-
-                            dataTrack.TrackEndSector -= 149;
-
-                            // Convert to BCD
-                            ulong remainder = minute   % 10;
-                            minute    = ((minute / 10) * 16) + remainder;
-                            remainder = second % 10;
-                            second    = ((second / 10) * 16) + remainder;
-                            remainder = frame % 10;
-                            frame     = ((frame / 10) * 16) + remainder;
-
-                            // Build sync
-                            byte[] sectorSync =
-                            {
-                                0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, (byte)minute,
-                                (byte)second, (byte)frame
-                            };
-
-                            tmpBuf = new byte[sectorSync.Length];
-
-                            // Plextor READ CDDA
-                            if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
-                               dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
-                               _dev.Manufacturer.ToLowerInvariant()                                       == "plextor")
-                            {
-                                sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
-                                                             (uint)dataTrack.TrackEndSector - 2, sectorSize, 3,
-                                                             PlextorSubchannel.None, _dev.Timeout, out _);
-
-                                if(!sense &&
-                                   !_dev.Error)
-                                {
-                                    for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
-                                    {
-                                        Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
-
-                                        if(!tmpBuf.SequenceEqual(sectorSync))
-                                            continue;
-
-                                        offsetBytes = i - 2352;
-                                        offsetFound = true;
-
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if(_debug                                                                        ||
-                               dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
-                               dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled  == true) == true ||
-                               _dev.Manufacturer.ToLowerInvariant()                                  == "hl-dt-st")
-                            {
-                                sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(dataTrack.TrackEndSector - 2),
-                                                    sectorSize, 3, MmcSectorTypes.Cdda, false, false, false,
-                                                    MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                    MmcSubchannel.None, _dev.Timeout, out _);
-
-                                if(!sense &&
-                                   !_dev.Error)
-                                {
-                                    for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
-                                    {
-                                        Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
-
-                                        if(!tmpBuf.SequenceEqual(sectorSync))
-                                            continue;
-
-                                        offsetBytes = i - 2352;
-                                        offsetFound = true;
-
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        _fixOffset = false;
                     }
-
-                    if(cdOffset is null)
+                    else if(!readcd)
                     {
-                        if(offsetFound)
-                        {
-                            _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes");
-                            UpdateStatus?.Invoke($"Combined disc and drive offsets are {offsetBytes} bytes");
-                        }
-                        else
-                        {
-                            _dumpLog.
-                                WriteLine("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+                        _dumpLog.
+                            WriteLine("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
 
-                            UpdateStatus?.
-                                Invoke("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+                        UpdateStatus?.
+                            Invoke("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
 
-                            _fixOffset = false;
-                        }
+                        _fixOffset = false;
                     }
                     else
                     {
-                        if(offsetFound)
+                        bool offsetFound = false;
+
+                        if(tracks.Any(t => t.TrackType != TrackType.Audio))
                         {
-                            _dumpLog.WriteLine($"Disc offsets is {offsetBytes   - (cdOffset.Offset * 2 * -1)}");
-                            UpdateStatus?.Invoke($"Disc offsets is {offsetBytes - (cdOffset.Offset * 2 * -1)}");
+                            Track dataTrack = tracks.FirstOrDefault(t => t.TrackType != TrackType.Audio);
+
+                            if(dataTrack.TrackSequence != 0)
+                            {
+                                dataTrack.TrackEndSector += 149;
+
+                                // Calculate MSF
+                                ulong minute = dataTrack.TrackEndSector                     / 4500;
+                                ulong second = (dataTrack.TrackEndSector - (minute * 4500)) / 75;
+                                ulong frame  = dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
+
+                                dataTrack.TrackEndSector -= 149;
+
+                                // Convert to BCD
+                                ulong remainder = minute   % 10;
+                                minute    = ((minute / 10) * 16) + remainder;
+                                remainder = second % 10;
+                                second    = ((second / 10) * 16) + remainder;
+                                remainder = frame % 10;
+                                frame     = ((frame / 10) * 16) + remainder;
+
+                                // Build sync
+                                byte[] sectorSync =
+                                {
+                                    0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00,
+                                    (byte)minute, (byte)second, (byte)frame
+                                };
+
+                                tmpBuf = new byte[sectorSync.Length];
+
+                                // Plextor READ CDDA
+                                if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
+                                   dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
+                                   _dev.Manufacturer.ToLowerInvariant() ==
+                                   "plextor")
+                                {
+                                    sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
+                                                                 (uint)dataTrack.TrackEndSector - 2, sectorSize, 3,
+                                                                 PlextorSubchannel.None, _dev.Timeout, out _);
+
+                                    if(!sense &&
+                                       !_dev.Error)
+                                    {
+                                        for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+                                        {
+                                            Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
+
+                                            if(!tmpBuf.SequenceEqual(sectorSync))
+                                                continue;
+
+                                            offsetBytes = i - 2352;
+                                            offsetFound = true;
+
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if(_debug                                                                        ||
+                                   dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
+                                   dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled  == true) == true ||
+                                   _dev.Manufacturer.ToLowerInvariant()                                  == "hl-dt-st")
+                                {
+                                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(dataTrack.TrackEndSector - 2),
+                                                        sectorSize, 3, MmcSectorTypes.Cdda, false, false, false,
+                                                        MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                        MmcSubchannel.None, _dev.Timeout, out _);
+
+                                    if(!sense &&
+                                       !_dev.Error)
+                                    {
+                                        for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+                                        {
+                                            Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
+
+                                            if(!tmpBuf.SequenceEqual(sectorSync))
+                                                continue;
+
+                                            offsetBytes = i - 2352;
+                                            offsetFound = true;
+
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if(cdOffset is null)
+                        {
+                            if(offsetFound)
+                            {
+                                _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes");
+                                UpdateStatus?.Invoke($"Combined disc and drive offsets are {offsetBytes} bytes");
+                            }
+                            else
+                            {
+                                _dumpLog.
+                                    WriteLine("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+
+                                UpdateStatus?.
+                                    Invoke("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
+
+                                _fixOffset = false;
+                            }
                         }
                         else
                         {
-                            _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
-                            UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
+                            if(offsetFound)
+                            {
+                                _dumpLog.WriteLine($"Disc offsets is {offsetBytes   - (cdOffset.Offset * 2 * -1)}");
+                                UpdateStatus?.Invoke($"Disc offsets is {offsetBytes - (cdOffset.Offset * 2 * -1)}");
+                            }
+                            else
+                            {
+                                _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
+                                UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
 
-                            offsetBytes = cdOffset.Offset * 2 * -1;
+                                offsetBytes = cdOffset.Offset * 2 * -1;
+                            }
+
+                            _dumpLog.WriteLine($"Offset is {offsetBytes} bytes.");
+                            UpdateStatus?.Invoke($"Offset is {offsetBytes} bytes.");
                         }
+                    }
+                }
+                else
+                {
+                    byte[] videoNowColorFrame = new byte[9 * sectorSize];
 
-                        _dumpLog.WriteLine($"Offset is {offsetBytes} bytes.");
-                        UpdateStatus?.Invoke($"Offset is {offsetBytes} bytes.");
+                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, 0, sectorSize, 9, MmcSectorTypes.AllTypes, false,
+                                        false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                        MmcSubchannel.None, _dev.Timeout, out _);
+
+                    if(sense || _dev.Error)
+                    {
+                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, 0, sectorSize, 9, MmcSectorTypes.Cdda, false,
+                                            false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                            MmcSubchannel.None, _dev.Timeout, out _);
+
+                        if(sense || _dev.Error)
+                        {
+                            videoNowColorFrame = null;
+                        }
+                    }
+
+                    if(videoNowColorFrame is null)
+                    {
+                        _dumpLog.WriteLine("Could not find VideoNow Color frame offset, dump may not be correct.");
+                        UpdateStatus?.Invoke("Could not find VideoNow Color frame offset, dump may not be correct.");
+                    }
+                    else
+                    {
+                        offsetBytes = MMC.GetVideoNowColorOffset(videoNowColorFrame);
+                        _dumpLog.WriteLine($"VideoNow Color frame is offset {offsetBytes} bytes.");
+                        UpdateStatus?.Invoke($"VideoNow Color frame is offset {offsetBytes} bytes.");
                     }
                 }
 
