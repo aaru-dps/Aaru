@@ -61,7 +61,7 @@ doubt, please contact us.
 Media
 =====
 This is the media for the drives listed above, or media for drives we do have, but lack and thus cannot test the actual hardware.
-- 3.5" magneto-optical media: 540MiB
+- 3.5" magneto-optical media: 540MiB, 2.3GiB GigaMO
 - 5.25" magneto-optical media: 128MiB, 640MiB, 9.6GiB
 - ADR tapes
 - AIT tapes
