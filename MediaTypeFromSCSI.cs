@@ -201,7 +201,7 @@ namespace DiscImageChef.CommonTypes
                                         case 640:    return MediaType.DOS_35_SS_DD_8;
                                         case 720:    return MediaType.DOS_35_DS_DD_9;
                                         case 800:    return MediaType.AppleSonySS;
-                                        case 249850: return MediaType.ECMA_154;
+                                        case 248826: return MediaType.ECMA_154;
                                         case 429975: return MediaType.ECMA_201_ROM;
                                         case 446325: return MediaType.ECMA_201;
                                         case 694929: return MediaType.ECMA_223_512;
@@ -313,7 +313,7 @@ namespace DiscImageChef.CommonTypes
                                         case 3444:   return MediaType.FDFORMAT_35_HD;
                                         case 3520:   return MediaType.CBM_AMIGA_35_HD;
                                         case 5760:   return MediaType.DOS_35_ED;
-                                        case 249850: return MediaType.ECMA_154;
+                                        case 248826: return MediaType.ECMA_154;
                                         case 429975: return MediaType.ECMA_201_ROM;
                                         case 446325: return MediaType.ECMA_201;
                                         case 694929: return MediaType.ECMA_223_512;
@@ -1529,7 +1529,7 @@ namespace DiscImageChef.CommonTypes
                         {
                             switch(blocks)
                             {
-                                case 249850: return MediaType.ECMA_154;
+                                case 248826: return MediaType.ECMA_154;
                                 case 429975: return MediaType.ECMA_201_ROM;
                                 case 446325: return MediaType.ECMA_201;
                                 case 694929: return MediaType.ECMA_223_512;
