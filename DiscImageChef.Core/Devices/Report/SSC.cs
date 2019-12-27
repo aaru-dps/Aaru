@@ -45,7 +45,7 @@ namespace DiscImageChef.Core.Devices.Report
         {
             Ssc report = new Ssc();
             DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
-            bool sense = dev.ReadBlockLimits(out byte[] buffer, out byte[] _, dev.Timeout, out _);
+            bool sense = _dev.ReadBlockLimits(out byte[] buffer, out byte[] _, _dev.Timeout, out _);
             if(!sense)
             {
                 BlockLimits.BlockLimitsData? decBl = BlockLimits.Decode(buffer);
@@ -60,7 +60,7 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
-            sense = dev.ReportDensitySupport(out buffer, out byte[] _, false, false, dev.Timeout, out _);
+            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, false, false, _dev.Timeout, out _);
             if(!sense)
             {
                 DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
@@ -89,7 +89,7 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types...");
-            sense = dev.ReportDensitySupport(out buffer, out byte[] _, true, false, dev.Timeout, out _);
+            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, true, false, _dev.Timeout, out _);
             if(sense) return report;
 
             DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
@@ -127,20 +127,20 @@ namespace DiscImageChef.Core.Devices.Report
             Modes.DecodedMode? decMode = null;
 
             DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
-            bool sense = dev.ModeSense10(out byte[] buffer, out byte[] _, false, true, ScsiModeSensePageControl.Current,
-                                         0x3F, 0x00, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            bool sense = _dev.ModeSense10(out byte[] buffer, out byte[] _, false, true, ScsiModeSensePageControl.Current,
+                                         0x3F, 0x00, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
-                decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
-                if(debug) seqTest.ModeSense10Data = buffer;
+                decMode = Modes.DecodeMode10(buffer, _dev.ScsiType);
+                 seqTest.ModeSense10Data = buffer;
             }
 
             DicConsole.WriteLine("Querying SCSI MODE SENSE...");
-            sense = dev.ModeSense(out buffer, out byte[] _, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            sense = _dev.ModeSense(out buffer, out byte[] _, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
-                if(!decMode.HasValue) decMode    = Modes.DecodeMode6(buffer, dev.ScsiType);
-                if(debug) seqTest.ModeSense6Data = buffer;
+                if(!decMode.HasValue) decMode    = Modes.DecodeMode6(buffer, _dev.ScsiType);
+                 seqTest.ModeSense6Data = buffer;
             }
 
             if(decMode.HasValue)
@@ -151,7 +151,7 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
-            sense = dev.ReportDensitySupport(out buffer, out byte[] _, false, true, dev.Timeout, out _);
+            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, false, true, _dev.Timeout, out _);
             if(!sense)
             {
                 DensitySupport.DensitySupportHeader? dsh = DensitySupport.DecodeDensity(buffer);
@@ -180,7 +180,7 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
-            sense = dev.ReportDensitySupport(out buffer, out byte[] _, true, true, dev.Timeout, out _);
+            sense = _dev.ReportDensitySupport(out buffer, out byte[] _, true, true, _dev.Timeout, out _);
             if(!sense)
             {
                 DensitySupport.MediaTypeSupportHeader? mtsh = DensitySupport.DecodeMediumType(buffer);
@@ -211,7 +211,7 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
-            seqTest.CanReadMediaSerial = !dev.ReadMediaSerialNumber(out buffer, out byte[] _, dev.Timeout, out _);
+            seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out byte[] _, _dev.Timeout, out _);
 
             return seqTest;
         }

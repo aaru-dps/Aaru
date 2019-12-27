@@ -45,8 +45,8 @@ namespace DiscImageChef.Core.Devices.Report
         /// </summary>
         public Pcmcia PcmciaReport()
         {
-            Pcmcia  pcmciaReport = new Pcmcia {CIS = dev.Cis};
-            Tuple[] tuples       = CIS.GetTuples(dev.Cis);
+            Pcmcia  pcmciaReport = new Pcmcia {CIS = _dev.Cis};
+            Tuple[] tuples       = CIS.GetTuples(_dev.Cis);
             if(tuples == null) return pcmciaReport;
 
             foreach(Tuple tuple in tuples)

@@ -50,13 +50,13 @@ namespace DiscImageChef.Core.Devices.Report
         {
             Usb usbReport = new Usb
             {
-                Manufacturer = dev.UsbManufacturerString,
-                Product      = dev.UsbProductString,
-                ProductID    = dev.UsbProductId,
-                VendorID     = dev.UsbVendorId
+                Manufacturer = _dev.UsbManufacturerString,
+                Product      = _dev.UsbProductString,
+                ProductID    = _dev.UsbProductId,
+                VendorID     = _dev.UsbVendorId
             };
 
-            if(debug) usbReport.Descriptors = dev.UsbDescriptors;
+             usbReport.Descriptors = _dev.UsbDescriptors;
 
             return usbReport;
         }

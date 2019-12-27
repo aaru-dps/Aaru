@@ -49,13 +49,13 @@ namespace DiscImageChef.Core.Devices.Report
             MmcSd report = new MmcSd();
 
             DicConsole.WriteLine("Trying to get CID...");
-            bool sense = dev.ReadCid(out byte[] cid, out _, dev.Timeout, out _);
+            bool sense = _dev.ReadCid(out byte[] cid, out _, _dev.Timeout, out _);
 
             if(!sense)
             {
                 DicConsole.WriteLine("CID obtained correctly...");
 
-                switch(dev.Type)
+                switch(_dev.Type)
                 {
                     case DeviceType.SecureDigital:
                         // Clear serial number and manufacturing date
@@ -81,7 +81,7 @@ namespace DiscImageChef.Core.Devices.Report
             else DicConsole.WriteLine("Could not read CID...");
 
             DicConsole.WriteLine("Trying to get CSD...");
-            sense = dev.ReadCsd(out byte[] csd, out _, dev.Timeout, out _);
+            sense = _dev.ReadCsd(out byte[] csd, out _, _dev.Timeout, out _);
 
             if(!sense)
             {
@@ -93,16 +93,16 @@ namespace DiscImageChef.Core.Devices.Report
             sense = true;
             byte[] ocr = null;
             DicConsole.WriteLine("Trying to get OCR...");
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.MMC:
                 {
-                    sense = dev.ReadOcr(out ocr, out _, dev.Timeout, out _);
+                    sense = _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _);
                     break;
                 }
                 case DeviceType.SecureDigital:
                 {
-                    sense = dev.ReadSdocr(out ocr, out _, dev.Timeout, out _);
+                    sense = _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _);
                     break;
                 }
             }
@@ -114,12 +114,12 @@ namespace DiscImageChef.Core.Devices.Report
             }
             else DicConsole.WriteLine("Could not read OCR...");
 
-            switch(dev.Type)
+            switch(_dev.Type)
             {
                 case DeviceType.MMC:
                 {
                     DicConsole.WriteLine("Trying to get Extended CSD...");
-                    sense = dev.ReadExtendedCsd(out byte[] ecsd, out _, dev.Timeout, out _);
+                    sense = _dev.ReadExtendedCsd(out byte[] ecsd, out _, _dev.Timeout, out _);
 
                     if(!sense)
                     {
@@ -133,7 +133,7 @@ namespace DiscImageChef.Core.Devices.Report
                 case DeviceType.SecureDigital:
                 {
                     DicConsole.WriteLine("Trying to get SCR...");
-                    sense = dev.ReadScr(out byte[] scr, out _, dev.Timeout, out _);
+                    sense = _dev.ReadScr(out byte[] scr, out _, _dev.Timeout, out _);
 
                     if(!sense)
                     {

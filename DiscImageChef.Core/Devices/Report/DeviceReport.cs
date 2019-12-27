@@ -36,13 +36,11 @@ namespace DiscImageChef.Core.Devices.Report
 {
     public partial class DeviceReport
     {
-        bool   debug;
-        Device dev;
+        Device _dev;
 
-        public DeviceReport(Device device, bool debug)
+        public DeviceReport(Device device)
         {
-            dev        = device;
-            this.debug = debug;
+            _dev        = device;
         }
     }
 }

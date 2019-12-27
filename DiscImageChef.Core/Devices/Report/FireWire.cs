@@ -45,10 +45,10 @@ namespace DiscImageChef.Core.Devices.Report
         public FireWire FireWireReport() =>
             new FireWire
             {
-                Manufacturer = dev.FireWireVendorName,
-                Product      = dev.FireWireModelName,
-                ProductID    = dev.FireWireModel,
-                VendorID     = dev.FireWireVendor
+                Manufacturer = _dev.FireWireVendorName,
+                Product      = _dev.FireWireModelName,
+                ProductID    = _dev.FireWireModel,
+                VendorID     = _dev.FireWireVendor
             };
     }
 }

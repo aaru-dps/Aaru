@@ -45,7 +45,7 @@ namespace DiscImageChef.Core.Devices.Report
         public Scsi ReportScsiInquiry()
         {
             DicConsole.WriteLine("Querying SCSI INQUIRY...");
-            bool sense = dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer);
+            bool sense = _dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer);
 
             Scsi report = new Scsi();
 
@@ -71,7 +71,7 @@ namespace DiscImageChef.Core.Devices.Report
         public List<ScsiPage> ReportEvpdPages(string vendor)
         {
             DicConsole.WriteLine("Querying list of SCSI EVPDs...");
-            bool sense = dev.ScsiInquiry(out byte[] buffer, out _, 0x00);
+            bool sense = _dev.ScsiInquiry(out byte[] buffer, out _, 0x00);
 
             if(sense) return null;
 
@@ -82,7 +82,7 @@ namespace DiscImageChef.Core.Devices.Report
             foreach(byte page in evpdPages.Where(page => page != 0x80))
             {
                 DicConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
-                sense = dev.ScsiInquiry(out buffer, out _, page);
+                sense = _dev.ScsiInquiry(out buffer, out _, page);
                 if(sense) continue;
 
                 byte[] empty;
@@ -149,33 +149,33 @@ namespace DiscImageChef.Core.Devices.Report
         public void ReportScsiModes(ref DeviceReportV2 report, out byte[] cdromMode)
         {
             Modes.DecodedMode?    decMode = null;
-            PeripheralDeviceTypes devType = dev.ScsiType;
+            PeripheralDeviceTypes devType = _dev.ScsiType;
             byte[]                mode10Currentbuffer;
             byte[]                mode10Changeablebuffer;
             byte[]                mode6Currentbuffer;
             byte[]                mode6Changeablebuffer;
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
-            bool sense = dev.ModeSense10(out byte[] mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default,
-                                         0x3F, 0xFF, dev.Timeout, out _);
-            if(sense || dev.Error)
+            bool sense = _dev.ModeSense10(out byte[] mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default,
+                                         0x3F, 0xFF, _dev.Timeout, out _);
+            if(sense || _dev.Error)
             {
                 DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (10)...");
-                sense = dev.ModeSense10(out mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default, 0x3F,
-                                        0x00, dev.Timeout, out _);
-                if(!sense && !dev.Error)
+                sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default, 0x3F,
+                                        0x00, _dev.Timeout, out _);
+                if(!sense && !_dev.Error)
                 {
                     report.SCSI.SupportsModeSense10  = true;
                     report.SCSI.SupportsModeSubpages = false;
                     decMode                          = Modes.DecodeMode10(mode10Buffer, devType);
-                    if(debug)
+
                     {
-                        sense = dev.ModeSense10(out mode10Currentbuffer, out _, false, true,
-                                                ScsiModeSensePageControl.Current, 0x3F, 0x00, dev.Timeout, out _);
-                        if(!sense && !dev.Error) report.SCSI.ModeSense10CurrentData = mode10Currentbuffer;
-                        sense = dev.ModeSense10(out mode10Changeablebuffer, out _, false, true,
-                                                ScsiModeSensePageControl.Changeable, 0x3F, 0x00, dev.Timeout, out _);
-                        if(!sense && !dev.Error) report.SCSI.ModeSense10ChangeableData = mode10Changeablebuffer;
+                        sense = _dev.ModeSense10(out mode10Currentbuffer, out _, false, true,
+                                                ScsiModeSensePageControl.Current, 0x3F, 0x00, _dev.Timeout, out _);
+                        if(!sense && !_dev.Error) report.SCSI.ModeSense10CurrentData = mode10Currentbuffer;
+                        sense = _dev.ModeSense10(out mode10Changeablebuffer, out _, false, true,
+                                                ScsiModeSensePageControl.Changeable, 0x3F, 0x00, _dev.Timeout, out _);
+                        if(!sense && !_dev.Error) report.SCSI.ModeSense10ChangeableData = mode10Changeablebuffer;
                     }
                 }
             }
@@ -184,62 +184,62 @@ namespace DiscImageChef.Core.Devices.Report
                 report.SCSI.SupportsModeSense10  = true;
                 report.SCSI.SupportsModeSubpages = true;
                 decMode                          = Modes.DecodeMode10(mode10Buffer, devType);
-                if(debug)
+
                 {
-                    sense = dev.ModeSense10(out mode10Currentbuffer, out _, false, true,
-                                            ScsiModeSensePageControl.Current, 0x3F, 0xFF, dev.Timeout, out _);
-                    if(!sense && !dev.Error) report.SCSI.ModeSense10CurrentData = mode10Currentbuffer;
-                    sense = dev.ModeSense10(out mode10Changeablebuffer, out _, false, true,
-                                            ScsiModeSensePageControl.Changeable, 0x3F, 0xFF, dev.Timeout, out _);
-                    if(!sense && !dev.Error) report.SCSI.ModeSense10ChangeableData = mode10Changeablebuffer;
+                    sense = _dev.ModeSense10(out mode10Currentbuffer, out _, false, true,
+                                            ScsiModeSensePageControl.Current, 0x3F, 0xFF, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error) report.SCSI.ModeSense10CurrentData = mode10Currentbuffer;
+                    sense = _dev.ModeSense10(out mode10Changeablebuffer, out _, false, true,
+                                            ScsiModeSensePageControl.Changeable, 0x3F, 0xFF, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error) report.SCSI.ModeSense10ChangeableData = mode10Changeablebuffer;
                 }
             }
 
             DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
-            sense = dev.ModeSense6(out byte[] mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0xFF,
-                                   dev.Timeout, out _);
-            if(sense || dev.Error)
+            sense = _dev.ModeSense6(out byte[] mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0xFF,
+                                   _dev.Timeout, out _);
+            if(sense || _dev.Error)
             {
                 DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (6)...");
-                sense = dev.ModeSense6(out mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0x00,
-                                       dev.Timeout, out _);
-                if(sense || dev.Error)
+                sense = _dev.ModeSense6(out mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0x00,
+                                       _dev.Timeout, out _);
+                if(sense || _dev.Error)
                 {
                     DicConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
-                    sense = dev.ModeSense(out mode6Buffer, out _, dev.Timeout, out _);
+                    sense = _dev.ModeSense(out mode6Buffer, out _, _dev.Timeout, out _);
                 }
-                else if(debug)
+                else
                 {
-                    sense = dev.ModeSense6(out mode6Currentbuffer, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                           0x00, dev.Timeout, out _);
-                    if(!sense && !dev.Error) report.SCSI.ModeSense6CurrentData = mode6Currentbuffer;
-                    sense = dev.ModeSense6(out mode6Changeablebuffer, out _, false, ScsiModeSensePageControl.Changeable,
-                                           0x3F, 0x00, dev.Timeout, out _);
-                    if(!sense && !dev.Error) report.SCSI.ModeSense6ChangeableData = mode6Changeablebuffer;
+                    sense = _dev.ModeSense6(out mode6Currentbuffer, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                           0x00, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error) report.SCSI.ModeSense6CurrentData = mode6Currentbuffer;
+                    sense = _dev.ModeSense6(out mode6Changeablebuffer, out _, false, ScsiModeSensePageControl.Changeable,
+                                           0x3F, 0x00, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error) report.SCSI.ModeSense6ChangeableData = mode6Changeablebuffer;
                 }
             }
             else
             {
                 report.SCSI.SupportsModeSubpages = true;
-                if(debug)
+
                 {
-                    sense = dev.ModeSense6(out mode6Currentbuffer, out _, false, ScsiModeSensePageControl.Current, 0x3F,
-                                           0xFF, dev.Timeout, out _);
-                    if(!sense && !dev.Error) report.SCSI.ModeSense6CurrentData = mode6Currentbuffer;
-                    sense = dev.ModeSense6(out mode6Changeablebuffer, out _, false, ScsiModeSensePageControl.Changeable,
-                                           0x3F, 0xFF, dev.Timeout, out _);
-                    if(!sense && !dev.Error) report.SCSI.ModeSense6ChangeableData = mode6Changeablebuffer;
+                    sense = _dev.ModeSense6(out mode6Currentbuffer, out _, false, ScsiModeSensePageControl.Current, 0x3F,
+                                           0xFF, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error) report.SCSI.ModeSense6CurrentData = mode6Currentbuffer;
+                    sense = _dev.ModeSense6(out mode6Changeablebuffer, out _, false, ScsiModeSensePageControl.Changeable,
+                                           0x3F, 0xFF, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error) report.SCSI.ModeSense6ChangeableData = mode6Changeablebuffer;
                 }
             }
 
-            if(!sense && !dev.Error && !decMode.HasValue) decMode = Modes.DecodeMode6(mode6Buffer, devType);
+            if(!sense && !_dev.Error && !decMode.HasValue) decMode = Modes.DecodeMode6(mode6Buffer, devType);
 
-            report.SCSI.SupportsModeSense6 |= !sense && !dev.Error;
+            report.SCSI.SupportsModeSense6 |= !sense && !_dev.Error;
 
             cdromMode = null;
 
-            if(debug && report.SCSI.SupportsModeSense6) report.SCSI.ModeSense6Data   = mode6Buffer;
-            if(debug && report.SCSI.SupportsModeSense10) report.SCSI.ModeSense10Data = mode10Buffer;
+            if(report.SCSI.SupportsModeSense6) report.SCSI.ModeSense6Data   = mode6Buffer;
+            if(report.SCSI.SupportsModeSense10) report.SCSI.ModeSense10Data = mode10Buffer;
 
             if(!decMode.HasValue) return;
 
@@ -273,8 +273,8 @@ namespace DiscImageChef.Core.Devices.Report
         {
             TestedMedia mediaTest = new TestedMedia();
             DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
-            bool sense = dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            bool sense = _dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
                 mediaTest.SupportsReadCapacity = true;
                 mediaTest.Blocks =
@@ -284,8 +284,8 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
-            sense = dev.ReadCapacity16(out buffer, out buffer, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
                 mediaTest.SupportsReadCapacity16 = true;
                 byte[] temp = new byte[8];
@@ -298,20 +298,20 @@ namespace DiscImageChef.Core.Devices.Report
             Modes.DecodedMode? decMode = null;
 
             DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
-            sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                    0x00, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                    0x00, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
-                decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
-                if(debug) mediaTest.ModeSense10Data = buffer;
+                decMode = Modes.DecodeMode10(buffer, _dev.ScsiType);
+                 mediaTest.ModeSense10Data = buffer;
             }
 
             DicConsole.WriteLine("Querying SCSI MODE SENSE...");
-            sense = dev.ModeSense(out buffer, out senseBuffer, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
-                if(!decMode.HasValue) decMode      = Modes.DecodeMode6(buffer, dev.ScsiType);
-                if(debug) mediaTest.ModeSense6Data = buffer;
+                if(!decMode.HasValue) decMode      = Modes.DecodeMode6(buffer, _dev.ScsiType);
+                 mediaTest.ModeSense6Data = buffer;
             }
 
             if(decMode.HasValue)
@@ -322,33 +322,33 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Trying SCSI READ (6)...");
-            mediaTest.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 0,
-                                                 mediaTest.BlockSize ?? 512, dev.Timeout, out _);
+            mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0,
+                                                 mediaTest.BlockSize ?? 512, _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
-            if(debug) mediaTest.Read6Data = buffer;
+             mediaTest.Read6Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (10)...");
-            mediaTest.SupportsRead10 = !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                   mediaTest.BlockSize ?? 512, 0, 1, dev.Timeout, out _);
+            mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+                                                   mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
-            if(debug) mediaTest.Read10Data = buffer;
+             mediaTest.Read10Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (12)...");
-            mediaTest.SupportsRead12 = !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                   mediaTest.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
+            mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+                                                   mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
-            if(debug) mediaTest.Read12Data = buffer;
+             mediaTest.Read12Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (16)...");
-            mediaTest.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
-                                                   mediaTest.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
+            mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
+                                                   mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
-            if(debug) mediaTest.Read16Data = buffer;
+             mediaTest.Read16Data = buffer;
 
             mediaTest.LongBlockSize = mediaTest.BlockSize;
             DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
-            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, dev.Timeout, out _);
-            if(sense && !dev.Error)
+            sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
+            if(sense && !_dev.Error)
             {
                 FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                 if(decSense.HasValue)
@@ -374,9 +374,9 @@ namespace DiscImageChef.Core.Devices.Report
                     })
                     {
                         ushort testSize = (ushort)i;
-                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, dev.Timeout,
+                        sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, testSize, _dev.Timeout,
                                                out _);
-                        if(sense || dev.Error) continue;
+                        if(sense || _dev.Error) continue;
 
                         mediaTest.SupportsReadLong = true;
                         mediaTest.LongBlockSize    = testSize;
@@ -392,9 +392,9 @@ namespace DiscImageChef.Core.Devices.Report
                     })
                     {
                         ushort testSize = (ushort)i;
-                        sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, dev.Timeout,
+                        sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, _dev.Timeout,
                                                out _);
-                        if(sense || dev.Error) continue;
+                        if(sense || _dev.Error) continue;
 
                         mediaTest.SupportsReadLong = true;
                         mediaTest.LongBlockSize    = testSize;
@@ -402,8 +402,8 @@ namespace DiscImageChef.Core.Devices.Report
                     }
                 else if(mediaTest.BlockSize == 2048)
                 {
-                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, dev.Timeout, out _);
-                    if(!sense && !dev.Error)
+                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error)
                     {
                         mediaTest.SupportsReadLong = true;
                         mediaTest.LongBlockSize    = 2380;
@@ -411,8 +411,8 @@ namespace DiscImageChef.Core.Devices.Report
                 }
                 else if(mediaTest.BlockSize == 4096)
                 {
-                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, dev.Timeout, out _);
-                    if(!sense && !dev.Error)
+                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error)
                     {
                         mediaTest.SupportsReadLong = true;
                         mediaTest.LongBlockSize    = 4760;
@@ -420,8 +420,8 @@ namespace DiscImageChef.Core.Devices.Report
                 }
                 else if(mediaTest.BlockSize == 8192)
                 {
-                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, dev.Timeout, out _);
-                    if(!sense && !dev.Error)
+                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout, out _);
+                    if(!sense && !_dev.Error)
                     {
                         mediaTest.SupportsReadLong = true;
                         mediaTest.LongBlockSize    = 9424;
@@ -429,7 +429,7 @@ namespace DiscImageChef.Core.Devices.Report
                 }
 
             DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
-            mediaTest.CanReadMediaSerial = !dev.ReadMediaSerialNumber(out buffer, out senseBuffer, dev.Timeout, out _);
+            mediaTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out senseBuffer, _dev.Timeout, out _);
 
             return mediaTest;
         }
@@ -439,8 +439,8 @@ namespace DiscImageChef.Core.Devices.Report
             TestedMedia capabilities = new TestedMedia {MediaIsRecognized = true};
 
             DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
-            bool sense = dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            bool sense = _dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
                 capabilities.SupportsReadCapacity = true;
                 capabilities.Blocks =
@@ -450,8 +450,8 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
-            sense = dev.ReadCapacity16(out buffer, out buffer, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
                 capabilities.SupportsReadCapacity16 = true;
                 byte[] temp = new byte[8];
@@ -464,20 +464,20 @@ namespace DiscImageChef.Core.Devices.Report
             Modes.DecodedMode? decMode = null;
 
             DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
-            sense = dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                    0x00, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
+                                    0x00, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
-                decMode = Modes.DecodeMode10(buffer, dev.ScsiType);
-                if(debug) capabilities.ModeSense10Data = buffer;
+                decMode = Modes.DecodeMode10(buffer, _dev.ScsiType);
+                 capabilities.ModeSense10Data = buffer;
             }
 
             DicConsole.WriteLine("Querying SCSI MODE SENSE...");
-            sense = dev.ModeSense(out buffer, out senseBuffer, dev.Timeout, out _);
-            if(!sense && !dev.Error)
+            sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
+            if(!sense && !_dev.Error)
             {
-                if(!decMode.HasValue) decMode         = Modes.DecodeMode6(buffer, dev.ScsiType);
-                if(debug) capabilities.ModeSense6Data = buffer;
+                if(!decMode.HasValue) decMode         = Modes.DecodeMode6(buffer, _dev.ScsiType);
+                 capabilities.ModeSense6Data = buffer;
             }
 
             if(decMode.HasValue)
@@ -488,33 +488,33 @@ namespace DiscImageChef.Core.Devices.Report
             }
 
             DicConsole.WriteLine("Trying SCSI READ (6)...");
-            capabilities.SupportsRead6 = !dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
-                                                    dev.Timeout, out _);
+            capabilities.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
+                                                    _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead6);
-            if(debug) capabilities.Read6Data = buffer;
+             capabilities.Read6Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (10)...");
-            capabilities.SupportsRead10 = !dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                      capabilities.BlockSize ?? 512, 0, 1, dev.Timeout, out _);
+            capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+                                                      capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
-            if(debug) capabilities.Read10Data = buffer;
+             capabilities.Read10Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (12)...");
-            capabilities.SupportsRead12 = !dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
-                                                      capabilities.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
+            capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
+                                                      capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
-            if(debug) capabilities.Read12Data = buffer;
+             capabilities.Read12Data = buffer;
 
             DicConsole.WriteLine("Trying SCSI READ (16)...");
-            capabilities.SupportsRead16 = !dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
-                                                      capabilities.BlockSize ?? 512, 0, 1, false, dev.Timeout, out _);
+            capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
+                                                      capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
             DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
-            if(debug) capabilities.Read16Data = buffer;
+             capabilities.Read16Data = buffer;
 
             capabilities.LongBlockSize = capabilities.BlockSize;
             DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
-            sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, dev.Timeout, out _);
-            if(sense && !dev.Error)
+            sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
+            if(sense && !_dev.Error)
             {
                 FixedSense? decSense = Sense.DecodeFixed(senseBuffer);
                 if(decSense.HasValue)
@@ -542,8 +542,8 @@ namespace DiscImageChef.Core.Devices.Report
                 })
                 {
                     ushort testSize = (ushort)i;
-                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, dev.Timeout, out _);
-                    if(sense || dev.Error) continue;
+                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, _dev.Timeout, out _);
+                    if(sense || _dev.Error) continue;
 
                     capabilities.SupportsReadLong = true;
                     capabilities.LongBlockSize    = testSize;
@@ -559,8 +559,8 @@ namespace DiscImageChef.Core.Devices.Report
                 })
                 {
                     ushort testSize = (ushort)i;
-                    sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, dev.Timeout, out _);
-                    if(sense || dev.Error) continue;
+                    sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, (ushort)i, _dev.Timeout, out _);
+                    if(sense || _dev.Error) continue;
 
                     capabilities.SupportsReadLong = true;
                     capabilities.LongBlockSize    = testSize;
@@ -568,24 +568,24 @@ namespace DiscImageChef.Core.Devices.Report
                 }
             else if(capabilities.BlockSize == 2048)
             {
-                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, dev.Timeout, out _);
-                if(sense || dev.Error) return capabilities;
+                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 2380, _dev.Timeout, out _);
+                if(sense || _dev.Error) return capabilities;
 
                 capabilities.SupportsReadLong = true;
                 capabilities.LongBlockSize    = 2380;
             }
             else if(capabilities.BlockSize == 4096)
             {
-                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, dev.Timeout, out _);
-                if(sense || dev.Error) return capabilities;
+                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 4760, _dev.Timeout, out _);
+                if(sense || _dev.Error) return capabilities;
 
                 capabilities.SupportsReadLong = true;
                 capabilities.LongBlockSize    = 4760;
             }
             else if(capabilities.BlockSize == 8192)
             {
-                sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, dev.Timeout, out _);
-                if(sense || dev.Error) return capabilities;
+                sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 9424, _dev.Timeout, out _);
+                if(sense || _dev.Error) return capabilities;
 
                 capabilities.SupportsReadLong = true;
                 capabilities.LongBlockSize    = 9424;

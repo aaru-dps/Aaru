@@ -54,9 +54,8 @@ namespace DiscImageChef.Commands
 {
     internal class DeviceReportCommand : Command
     {
-        string devicePath;
-
-        bool showHelp;
+        string _devicePath;
+        bool _showHelp;
 
         public DeviceReportCommand() : base("device-report",
                                             "Tests the device capabilities and creates an JSON report of them.") =>
@@ -66,7 +65,7 @@ namespace DiscImageChef.Commands
                 $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} devicepath", "",
                 Help,
                 {
-                    "help|h|?", "Show this message and exit.", v => showHelp = v != null
+                    "help|h|?", "Show this message and exit.", v => _showHelp = v != null
                 }
             };
 
@@ -74,7 +73,7 @@ namespace DiscImageChef.Commands
         {
             List<string> extra = Options.Parse(arguments);
 
-            if(showHelp)
+            if(_showHelp)
             {
                 Options.WriteOptionDescriptions(CommandSet.Out);
 
@@ -105,23 +104,23 @@ namespace DiscImageChef.Commands
                 return(int)ErrorNumber.MissingArgument;
             }
 
-            devicePath = extra[0];
+            _devicePath = extra[0];
 
             DicConsole.DebugWriteLine("Device-Report command", "--debug={0}", MainClass.Debug);
-            DicConsole.DebugWriteLine("Device-Report command", "--device={0}", devicePath);
+            DicConsole.DebugWriteLine("Device-Report command", "--device={0}", _devicePath);
             DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", MainClass.Verbose);
 
-            if(devicePath.Length == 2   &&
-               devicePath[1]     == ':' &&
-               devicePath[0]     != '/' &&
-               char.IsLetter(devicePath[0]))
-                devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
+            if(_devicePath.Length == 2   &&
+               _devicePath[1]     == ':' &&
+               _devicePath[0]     != '/' &&
+               char.IsLetter(_devicePath[0]))
+                _devicePath = "\\\\.\\" + char.ToUpper(_devicePath[0]) + ':';
 
             Device dev;
 
             try
             {
-                dev = new Device(devicePath);
+                dev = new Device(_devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -145,10 +144,7 @@ namespace DiscImageChef.Commands
 
             bool isAdmin;
 
-            if(dev.IsRemote)
-                isAdmin = dev.IsRemoteAdmin;
-            else
-                isAdmin = DetectOS.IsAdmin;
+            isAdmin = dev.IsRemote ? dev.IsRemoteAdmin : DetectOS.IsAdmin;
 
             if(!isAdmin)
             {
@@ -180,7 +176,7 @@ namespace DiscImageChef.Commands
 
             jsonFile = jsonFile.Replace('\\', '_').Replace('/', '_').Replace('?', '_');
 
-            var reporter = new DeviceReport(dev, MainClass.Debug);
+            var reporter = new DeviceReport(dev);
 
             ConsoleKeyInfo pressedKey;
 
@@ -658,8 +654,7 @@ namespace DiscImageChef.Commands
                             tryPioneer |= dev.Manufacturer.ToLowerInvariant() == "pioneer";
                             tryNec     |= dev.Manufacturer.ToLowerInvariant() == "nec";
 
-                            if(MainClass.Debug &&
-                               !iomegaRev)
+                            if(!iomegaRev)
                             {
                                 if(!tryPlextor)
                                 {
@@ -880,9 +875,7 @@ namespace DiscImageChef.Commands
 
                                                 if(!sense)
                                                 {
-                                                    if(MainClass.Debug)
                                                         mediaTest.ReadLong10Data = buffer;
-
                                                     mediaTest.LongBlockSize = i;
 
                                                     break;
@@ -896,8 +889,7 @@ namespace DiscImageChef.Commands
                                         }
                                     }
 
-                                    if(MainClass.Debug                    &&
-                                       mediaTest.SupportsReadLong == true &&
+                                    if(mediaTest.SupportsReadLong == true &&
                                        mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                     {
                                         sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
@@ -1200,8 +1192,7 @@ namespace DiscImageChef.Commands
                                             }
                                         }
 
-                                        if(MainClass.Debug                    &&
-                                           mediaTest.SupportsReadLong == true &&
+                                        if(mediaTest.SupportsReadLong == true &&
                                            mediaTest.LongBlockSize    != mediaTest.BlockSize)
                                         {
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
@@ -1256,9 +1247,7 @@ namespace DiscImageChef.Commands
 
                                             if(!sense)
                                             {
-                                                if(MainClass.Debug)
                                                     report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
-
                                                 report.SCSI.ReadCapabilities.LongBlockSize = i;
 
                                                 break;
@@ -1272,7 +1261,7 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                if(MainClass.Debug                                       &&
+                                if(
                                    report.SCSI.ReadCapabilities.SupportsReadLong == true &&
                                    report.SCSI.ReadCapabilities.LongBlockSize !=
                                    report.SCSI.ReadCapabilities.BlockSize)
