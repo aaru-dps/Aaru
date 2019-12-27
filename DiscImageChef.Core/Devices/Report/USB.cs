@@ -34,29 +34,17 @@ using DiscImageChef.CommonTypes.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    /// <summary>
-    ///     Implements creating a report for a USB device
-    /// </summary>
+    /// <summary>Implements creating a report for a USB device</summary>
     public partial class DeviceReport
     {
-        /// <summary>
-        ///     Fills a device report with parameters specific to a USB device
-        /// </summary>
-        /// <param name="dev">Device</param>
-        /// <param name="report">Device report</param>
-        /// <param name="removable">If device is removable</param>
-        /// <param name="debug">If debug is enabled</param>
+        /// <summary>Fills a device report with parameters specific to a USB device</summary>
         public Usb UsbReport()
         {
-            Usb usbReport = new Usb
+            var usbReport = new Usb
             {
-                Manufacturer = _dev.UsbManufacturerString,
-                Product      = _dev.UsbProductString,
-                ProductID    = _dev.UsbProductId,
-                VendorID     = _dev.UsbVendorId
+                Manufacturer = _dev.UsbManufacturerString, Product = _dev.UsbProductString,
+                ProductID    = _dev.UsbProductId, VendorID         = _dev.UsbVendorId, Descriptors = _dev.UsbDescriptors
             };
-
-             usbReport.Descriptors = _dev.UsbDescriptors;
 
             return usbReport;
         }

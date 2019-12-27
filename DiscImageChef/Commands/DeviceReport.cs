@@ -55,7 +55,7 @@ namespace DiscImageChef.Commands
     internal class DeviceReportCommand : Command
     {
         string _devicePath;
-        bool _showHelp;
+        bool   _showHelp;
 
         public DeviceReportCommand() : base("device-report",
                                             "Tests the device capabilities and creates an JSON report of them.") =>
@@ -875,8 +875,8 @@ namespace DiscImageChef.Commands
 
                                                 if(!sense)
                                                 {
-                                                        mediaTest.ReadLong10Data = buffer;
-                                                    mediaTest.LongBlockSize = i;
+                                                    mediaTest.ReadLong10Data = buffer;
+                                                    mediaTest.LongBlockSize  = i;
 
                                                     break;
                                                 }
@@ -1247,8 +1247,8 @@ namespace DiscImageChef.Commands
 
                                             if(!sense)
                                             {
-                                                    report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
-                                                report.SCSI.ReadCapabilities.LongBlockSize = i;
+                                                report.SCSI.ReadCapabilities.ReadLong10Data = buffer;
+                                                report.SCSI.ReadCapabilities.LongBlockSize  = i;
 
                                                 break;
                                             }
@@ -1261,8 +1261,7 @@ namespace DiscImageChef.Commands
                                     }
                                 }
 
-                                if(
-                                   report.SCSI.ReadCapabilities.SupportsReadLong == true &&
+                                if(report.SCSI.ReadCapabilities.SupportsReadLong == true &&
                                    report.SCSI.ReadCapabilities.LongBlockSize !=
                                    report.SCSI.ReadCapabilities.BlockSize)
                                 {

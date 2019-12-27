@@ -34,21 +34,14 @@ using DiscImageChef.CommonTypes.Metadata;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    /// <summary>
-    ///     Implements creating a report for a FireWire device
-    /// </summary>
+    /// <summary>Implements creating a report for a FireWire device</summary>
     public partial class DeviceReport
     {
-        /// <summary>
-        ///     Fills a device report with parameters specific to a FireWire device
-        /// </summary>
-        public FireWire FireWireReport() =>
-            new FireWire
-            {
-                Manufacturer = _dev.FireWireVendorName,
-                Product      = _dev.FireWireModelName,
-                ProductID    = _dev.FireWireModel,
-                VendorID     = _dev.FireWireVendor
-            };
+        /// <summary>Fills a device report with parameters specific to a FireWire device</summary>
+        public FireWire FireWireReport() => new FireWire
+        {
+            Manufacturer = _dev.FireWireVendorName, Product = _dev.FireWireModelName, ProductID = _dev.FireWireModel,
+            VendorID     = _dev.FireWireVendor
+        };
     }
 }

@@ -35,19 +35,21 @@ using DiscImageChef.Decoders.PCMCIA;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    /// <summary>
-    ///     Implements creating a report for a PCMCIA device
-    /// </summary>
+    /// <summary>Implements creating a report for a PCMCIA device</summary>
     public partial class DeviceReport
     {
-        /// <summary>
-        ///     Fills a device report with parameters specific to a PCMCIA device
-        /// </summary>
+        /// <summary>Fills a device report with parameters specific to a PCMCIA device</summary>
         public Pcmcia PcmciaReport()
         {
-            Pcmcia  pcmciaReport = new Pcmcia {CIS = _dev.Cis};
-            Tuple[] tuples       = CIS.GetTuples(_dev.Cis);
-            if(tuples == null) return pcmciaReport;
+            var pcmciaReport = new Pcmcia
+            {
+                CIS = _dev.Cis
+            };
+
+            Tuple[] tuples = CIS.GetTuples(_dev.Cis);
+
+            if(tuples == null)
+                return pcmciaReport;
 
             foreach(Tuple tuple in tuples)
                 switch(tuple.Code)

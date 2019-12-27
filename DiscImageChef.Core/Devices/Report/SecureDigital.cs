@@ -36,17 +36,13 @@ using DiscImageChef.Console;
 
 namespace DiscImageChef.Core.Devices.Report
 {
-    /// <summary>
-    ///     Implements creating a device report for a SecureDigital or MultiMediaCard flash card
-    /// </summary>
+    /// <summary>Implements creating a device report for a SecureDigital or MultiMediaCard flash card</summary>
     public partial class DeviceReport
     {
-        /// <summary>
-        ///     Creates a device report for a SecureDigital or MultiMediaCard flash card
-        /// </summary>
+        /// <summary>Creates a device report for a SecureDigital or MultiMediaCard flash card</summary>
         public MmcSd MmcSdReport()
         {
-            MmcSd report = new MmcSd();
+            var report = new MmcSd();
 
             DicConsole.WriteLine("Trying to get CID...");
             bool sense = _dev.ReadCid(out byte[] cid, out _, _dev.Timeout, out _);
@@ -65,6 +61,7 @@ namespace DiscImageChef.Core.Devices.Report
                         cid[12] = 0;
                         cid[13] = 0;
                         cid[14] = 0;
+
                         break;
                     case DeviceType.MMC:
                         // Clear serial number and manufacturing date
@@ -73,12 +70,14 @@ namespace DiscImageChef.Core.Devices.Report
                         cid[12] = 0;
                         cid[13] = 0;
                         cid[14] = 0;
+
                         break;
                 }
 
                 report.CID = cid;
             }
-            else DicConsole.WriteLine("Could not read CID...");
+            else
+                DicConsole.WriteLine("Could not read CID...");
 
             DicConsole.WriteLine("Trying to get CSD...");
             sense = _dev.ReadCsd(out byte[] csd, out _, _dev.Timeout, out _);
@@ -88,21 +87,25 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("CSD obtained correctly...");
                 report.CSD = csd;
             }
-            else DicConsole.WriteLine("Could not read CSD...");
+            else
+                DicConsole.WriteLine("Could not read CSD...");
 
             sense = true;
             byte[] ocr = null;
             DicConsole.WriteLine("Trying to get OCR...");
+
             switch(_dev.Type)
             {
                 case DeviceType.MMC:
                 {
                     sense = _dev.ReadOcr(out ocr, out _, _dev.Timeout, out _);
+
                     break;
                 }
                 case DeviceType.SecureDigital:
                 {
                     sense = _dev.ReadSdocr(out ocr, out _, _dev.Timeout, out _);
+
                     break;
                 }
             }
@@ -112,7 +115,8 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("OCR obtained correctly...");
                 report.OCR = ocr;
             }
-            else DicConsole.WriteLine("Could not read OCR...");
+            else
+                DicConsole.WriteLine("Could not read OCR...");
 
             switch(_dev.Type)
             {
@@ -126,7 +130,8 @@ namespace DiscImageChef.Core.Devices.Report
                         DicConsole.WriteLine("Extended CSD obtained correctly...");
                         report.ExtendedCSD = ecsd;
                     }
-                    else DicConsole.WriteLine("Could not read Extended CSD...");
+                    else
+                        DicConsole.WriteLine("Could not read Extended CSD...");
 
                     break;
                 }
@@ -140,7 +145,8 @@ namespace DiscImageChef.Core.Devices.Report
                         DicConsole.WriteLine("SCR obtained correctly...");
                         report.SCR = scr;
                     }
-                    else DicConsole.WriteLine("Could not read SCR...");
+                    else
+                        DicConsole.WriteLine("Could not read SCR...");
 
                     break;
                 }

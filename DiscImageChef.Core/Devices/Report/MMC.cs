@@ -584,11 +584,9 @@ namespace DiscImageChef.Core.Devices.Report
             {
                 mediaTest.SupportsReadCapacity = true;
 
-                mediaTest.Blocks =
-                    (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) + 1;
+                mediaTest.Blocks = (ulong)((buffer[0] << 24) + (buffer[1] << 16) + (buffer[2] << 8) + buffer[3]) + 1;
 
-                mediaTest.BlockSize =
-                    (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
+                mediaTest.BlockSize = (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
             }
 
             DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
@@ -610,15 +608,14 @@ namespace DiscImageChef.Core.Devices.Report
             DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
 
             sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
-                                    0x00, _dev.Timeout, out _);
+                                     0x00, _dev.Timeout, out _);
 
             if(!sense &&
                !_dev.Error)
             {
                 decMode = Modes.DecodeMode10(buffer, _dev.ScsiType);
 
-
-                    mediaTest.ModeSense10Data = buffer;
+                mediaTest.ModeSense10Data = buffer;
             }
 
             DicConsole.WriteLine("Querying SCSI MODE SENSE...");
@@ -630,8 +627,7 @@ namespace DiscImageChef.Core.Devices.Report
                 if(!decMode.HasValue)
                     decMode = Modes.DecodeMode6(buffer, _dev.ScsiType);
 
-
-                    mediaTest.ModeSense6Data = buffer;
+                mediaTest.ModeSense6Data = buffer;
             }
 
             if(decMode.HasValue)
@@ -654,15 +650,13 @@ namespace DiscImageChef.Core.Devices.Report
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadTOC);
 
-
-                    mediaTest.TocData = buffer;
+                mediaTest.TocData = buffer;
 
                 DicConsole.WriteLine("Querying CD Full TOC...");
                 mediaTest.CanReadFullTOC = !_dev.ReadRawToc(out buffer, out senseBuffer, 1, _dev.Timeout, out _);
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadFullTOC);
 
-
-                    mediaTest.FullTocData = buffer;
+                mediaTest.FullTocData = buffer;
             }
 
             if(mediaType.StartsWith("CD-R", StringComparison.Ordinal) ||
@@ -672,15 +666,13 @@ namespace DiscImageChef.Core.Devices.Report
                 mediaTest.CanReadATIP = !_dev.ReadAtip(out buffer, out senseBuffer, _dev.Timeout, out _);
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadATIP);
 
-
-                    mediaTest.AtipData = buffer;
+                mediaTest.AtipData = buffer;
 
                 DicConsole.WriteLine("Querying CD PMA...");
                 mediaTest.CanReadPMA = !_dev.ReadPma(out buffer, out senseBuffer, _dev.Timeout, out _);
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPMA);
 
-
-                    mediaTest.PmaData = buffer;
+                mediaTest.PmaData = buffer;
             }
 
             if(mediaType.StartsWith("DVD-", StringComparison.Ordinal)    ||
@@ -690,26 +682,24 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying DVD PFI...");
 
                 mediaTest.CanReadPFI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                              MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                              MmcDiscStructureFormat.PhysicalInformation, 0,
-                                                              _dev.Timeout, out _);
+                                                               MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                               MmcDiscStructureFormat.PhysicalInformation, 0,
+                                                               _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPFI);
 
-
-                    mediaTest.PfiData = buffer;
+                mediaTest.PfiData = buffer;
 
                 DicConsole.WriteLine("Querying DVD DMI...");
 
                 mediaTest.CanReadDMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                              MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                              MmcDiscStructureFormat.DiscManufacturingInformation, 0,
-                                                              _dev.Timeout, out _);
+                                                               MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                               MmcDiscStructureFormat.DiscManufacturingInformation, 0,
+                                                               _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDMI);
 
-
-                    mediaTest.DmiData = buffer;
+                mediaTest.DmiData = buffer;
             }
 
             if(mediaType == "DVD-ROM")
@@ -717,14 +707,13 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying DVD CMI...");
 
                 mediaTest.CanReadCMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                              MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                              MmcDiscStructureFormat.CopyrightInformation, 0,
-                                                              _dev.Timeout, out _);
+                                                               MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                               MmcDiscStructureFormat.CopyrightInformation, 0,
+                                                               _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCMI);
 
-
-                    mediaTest.CmiData = buffer;
+                mediaTest.CmiData = buffer;
             }
 
             switch(mediaType)
@@ -734,26 +723,24 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.WriteLine("Querying DVD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                  MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                  MmcDiscStructureFormat.BurstCuttingArea, 0,
-                                                                  _dev.Timeout, out _);
+                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                   MmcDiscStructureFormat.BurstCuttingArea, 0,
+                                                                   _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
 
-
-                        mediaTest.DvdBcaData = buffer;
+                    mediaTest.DvdBcaData = buffer;
 
                     DicConsole.WriteLine("Querying DVD AACS...");
 
                     mediaTest.CanReadAACS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                   MmcDiscStructureFormat.DvdAacs, 0, _dev.Timeout,
-                                                                   out _);
+                                                                    MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                    MmcDiscStructureFormat.DvdAacs, 0, _dev.Timeout,
+                                                                    out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadAACS);
 
-
-                        mediaTest.DvdAacsData = buffer;
+                    mediaTest.DvdAacsData = buffer;
 
                     break;
                 case"Nintendo GameCube game":
@@ -761,14 +748,13 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.WriteLine("Querying DVD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                  MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                  MmcDiscStructureFormat.BurstCuttingArea, 0,
-                                                                  _dev.Timeout, out _);
+                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                   MmcDiscStructureFormat.BurstCuttingArea, 0,
+                                                                   _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
 
-
-                        mediaTest.DvdBcaData = buffer;
+                    mediaTest.DvdBcaData = buffer;
 
                     break;
                 case"BD-ROM":
@@ -780,14 +766,13 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.WriteLine("Querying BD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                  MmcDiscStructureMediaType.Bd, 0, 0,
-                                                                  MmcDiscStructureFormat.BdBurstCuttingArea, 0,
-                                                                  _dev.Timeout, out _);
+                                                                   MmcDiscStructureMediaType.Bd, 0, 0,
+                                                                   MmcDiscStructureFormat.BdBurstCuttingArea, 0,
+                                                                   _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
 
-
-                        mediaTest.BluBcaData = buffer;
+                    mediaTest.BluBcaData = buffer;
 
                     break;
                 case"DVD-RAM (1st gen, marked 2.6Gb or 5.2Gb)":
@@ -795,24 +780,22 @@ namespace DiscImageChef.Core.Devices.Report
                 case"HD DVD-RAM":
                 case"PD-650":
                     mediaTest.CanReadDDS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                  MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                  MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout,
-                                                                  out _);
+                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                   MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout,
+                                                                   out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
 
-
-                        mediaTest.DvdDdsData = buffer;
+                    mediaTest.DvdDdsData = buffer;
 
                     mediaTest.CanReadSpareAreaInformation =
                         !_dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Dvd, 0, 0,
-                                               MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, _dev.Timeout,
-                                               out _);
+                                                MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, _dev.Timeout,
+                                                out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadSpareAreaInformation);
 
-
-                        mediaTest.DvdSaiData = buffer;
+                    mediaTest.DvdSaiData = buffer;
 
                     break;
             }
@@ -822,25 +805,23 @@ namespace DiscImageChef.Core.Devices.Report
             {
                 DicConsole.WriteLine("Querying BD DDS...");
 
-                mediaTest.CanReadDDS = !_dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Bd,
-                                                              0, 0, MmcDiscStructureFormat.BdDds, 0, _dev.Timeout,
-                                                              out _);
+                mediaTest.CanReadDDS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
+                                                               MmcDiscStructureMediaType.Bd, 0, 0,
+                                                               MmcDiscStructureFormat.BdDds, 0, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
 
-
-                    mediaTest.BluDdsData = buffer;
+                mediaTest.BluDdsData = buffer;
 
                 DicConsole.WriteLine("Querying BD SAI...");
 
                 mediaTest.CanReadSpareAreaInformation =
                     !_dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Bd, 0, 0,
-                                           MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout, out _);
+                                            MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadSpareAreaInformation);
 
-
-                    mediaTest.BluSaiData = buffer;
+                mediaTest.BluSaiData = buffer;
             }
 
             if(mediaType == "DVD-R" ||
@@ -849,14 +830,13 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying DVD PRI...");
 
                 mediaTest.CanReadPRI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                              MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                              MmcDiscStructureFormat.PreRecordedInfo, 0, _dev.Timeout,
-                                                              out _);
+                                                               MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                               MmcDiscStructureFormat.PreRecordedInfo, 0, _dev.Timeout,
+                                                               out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPRI);
 
-
-                    mediaTest.PriData = buffer;
+                mediaTest.PriData = buffer;
             }
 
             if(mediaType == "DVD-R"  ||
@@ -866,22 +846,21 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying DVD Media ID...");
 
                 mediaTest.CanReadMediaID = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                  MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                  MmcDiscStructureFormat.DvdrMediaIdentifier, 0,
-                                                                  _dev.Timeout, out _);
+                                                                   MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                   MmcDiscStructureFormat.DvdrMediaIdentifier, 0,
+                                                                   _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadMediaID);
                 DicConsole.WriteLine("Querying DVD Embossed PFI...");
 
                 mediaTest.CanReadRecordablePFI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                        MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                        MmcDiscStructureFormat.DvdrPhysicalInformation,
-                                                                        0, _dev.Timeout, out _);
+                                                                         MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                         MmcDiscStructureFormat.DvdrPhysicalInformation,
+                                                                         0, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRecordablePFI);
 
-
-                    mediaTest.EmbossedPfiData = buffer;
+                mediaTest.EmbossedPfiData = buffer;
             }
 
             if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal) ||
@@ -890,24 +869,22 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying DVD ADIP...");
 
                 mediaTest.CanReadADIP = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                               MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                               MmcDiscStructureFormat.Adip, 0, _dev.Timeout, out _);
+                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                MmcDiscStructureFormat.Adip, 0, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadADIP);
 
-
-                    mediaTest.AdipData = buffer;
+                mediaTest.AdipData = buffer;
 
                 DicConsole.WriteLine("Querying DVD DCB...");
 
                 mediaTest.CanReadDCB = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                              MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                              MmcDiscStructureFormat.Dcb, 0, _dev.Timeout, out _);
+                                                               MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                               MmcDiscStructureFormat.Dcb, 0, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDCB);
 
-
-                    mediaTest.DcbData = buffer;
+                mediaTest.DcbData = buffer;
             }
 
             if(mediaType == "HD DVD-ROM")
@@ -915,14 +892,13 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying HD DVD CMI...");
 
                 mediaTest.CanReadHDCMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                MmcDiscStructureFormat.HddvdCopyrightInformation, 0,
-                                                                _dev.Timeout, out _);
+                                                                 MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                 MmcDiscStructureFormat.HddvdCopyrightInformation, 0,
+                                                                 _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadHDCMI);
 
-
-                    mediaTest.HdCmiData = buffer;
+                mediaTest.HdCmiData = buffer;
             }
 
             if(mediaType.EndsWith(" DL", StringComparison.Ordinal))
@@ -930,14 +906,13 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying DVD Layer Capacity...");
 
                 mediaTest.CanReadLayerCapacity = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                        MmcDiscStructureMediaType.Dvd, 0, 0,
-                                                                        MmcDiscStructureFormat.DvdrLayerCapacity, 0,
-                                                                        _dev.Timeout, out _);
+                                                                         MmcDiscStructureMediaType.Dvd, 0, 0,
+                                                                         MmcDiscStructureFormat.DvdrLayerCapacity, 0,
+                                                                         _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLayerCapacity);
 
-
-                    mediaTest.DvdLayerData = buffer;
+                mediaTest.DvdLayerData = buffer;
             }
 
             if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) ||
@@ -950,24 +925,23 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Querying BD Disc Information...");
 
                 mediaTest.CanReadDiscInformation = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
-                                                                          MmcDiscStructureMediaType.Bd, 0, 0,
-                                                                          MmcDiscStructureFormat.DiscInformation, 0,
-                                                                          _dev.Timeout, out _);
+                                                                           MmcDiscStructureMediaType.Bd, 0, 0,
+                                                                           MmcDiscStructureFormat.DiscInformation, 0,
+                                                                           _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDiscInformation);
 
-
-                    mediaTest.BluDiData = buffer;
+                mediaTest.BluDiData = buffer;
 
                 DicConsole.WriteLine("Querying BD PAC...");
 
-                mediaTest.CanReadPAC = !_dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Bd,
-                                                              0, 0, MmcDiscStructureFormat.Pac, 0, _dev.Timeout, out _);
+                mediaTest.CanReadPAC = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
+                                                               MmcDiscStructureMediaType.Bd, 0, 0,
+                                                               MmcDiscStructureFormat.Pac, 0, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPAC);
 
-
-                    mediaTest.BluPacData = buffer;
+                mediaTest.BluPacData = buffer;
             }
 
             if(mediaType.StartsWith("CD-", StringComparison.Ordinal))
@@ -975,12 +949,11 @@ namespace DiscImageChef.Core.Devices.Report
                 DicConsole.WriteLine("Trying SCSI READ CD scrambled...");
 
                 mediaTest.CanReadCdScrambled = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2352, 1,
-                                                           MmcSectorTypes.Cdda, false, false, false,
-                                                           MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                           MmcSubchannel.None, _dev.Timeout, out _);
+                                                            MmcSectorTypes.Cdda, false, false, false,
+                                                            MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                            MmcSubchannel.None, _dev.Timeout, out _);
 
-
-                    mediaTest.ReadCdScrambledData = buffer;
+                mediaTest.ReadCdScrambledData = buffer;
             }
 
             if(mediaType.StartsWith("PD-", StringComparison.Ordinal))
@@ -989,38 +962,34 @@ namespace DiscImageChef.Core.Devices.Report
                 mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 16, 512, _dev.Timeout, out _);
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
 
-
-                    mediaTest.Read6Data = buffer;
+                mediaTest.Read6Data = buffer;
 
                 DicConsole.WriteLine("Trying SCSI READ (10)...");
 
                 mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
-                                                       512, 0, 1, _dev.Timeout, out _);
+                                                        512, 0, 1, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
 
-
-                    mediaTest.Read10Data = buffer;
+                mediaTest.Read10Data = buffer;
 
                 DicConsole.WriteLine("Trying SCSI READ (12)...");
 
                 mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
-                                                       512, 0, 1, false, _dev.Timeout, out _);
+                                                        512, 0, 1, false, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
 
-
-                    mediaTest.Read12Data = buffer;
+                mediaTest.Read12Data = buffer;
 
                 DicConsole.WriteLine("Trying SCSI READ (16)...");
 
                 mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 512, 0,
-                                                       1, false, _dev.Timeout, out _);
+                                                        1, false, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
 
-
-                    mediaTest.Read16Data = buffer;
+                mediaTest.Read16Data = buffer;
             }
             else
             {
@@ -1028,38 +997,34 @@ namespace DiscImageChef.Core.Devices.Report
                 mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 16, 2048, _dev.Timeout, out _);
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
 
-
-                    mediaTest.Read6Data = buffer;
+                mediaTest.Read6Data = buffer;
 
                 DicConsole.WriteLine("Trying SCSI READ (10)...");
 
                 mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
-                                                       2048, 0, 1, _dev.Timeout, out _);
+                                                        2048, 0, 1, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
 
-
-                    mediaTest.Read10Data = buffer;
+                mediaTest.Read10Data = buffer;
 
                 DicConsole.WriteLine("Trying SCSI READ (12)...");
 
                 mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
-                                                       2048, 0, 1, false, _dev.Timeout, out _);
+                                                        2048, 0, 1, false, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
 
-
-                    mediaTest.Read12Data = buffer;
+                mediaTest.Read12Data = buffer;
 
                 DicConsole.WriteLine("Trying SCSI READ (16)...");
 
                 mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 2048, 0,
-                                                       1, false, _dev.Timeout, out _);
+                                                        1, false, _dev.Timeout, out _);
 
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
 
-
-                    mediaTest.Read16Data = buffer;
+                mediaTest.Read16Data = buffer;
             }
 
             if(mediaType.StartsWith("CD-", StringComparison.Ordinal)   ||
@@ -1071,99 +1036,93 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.WriteLine("Trying SCSI READ CD...");
 
                     mediaTest.SupportsReadCd = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2352, 1,
-                                                           MmcSectorTypes.Cdda, false, false, false,
-                                                           MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                           MmcSubchannel.None, _dev.Timeout, out _);
+                                                            MmcSectorTypes.Cdda, false, false, false,
+                                                            MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                            MmcSubchannel.None, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCd);
 
-
-                        mediaTest.ReadCdFullData = buffer;
+                    mediaTest.ReadCdFullData = buffer;
 
                     DicConsole.WriteLine("Trying SCSI READ CD MSF...");
 
                     mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211,
-                                                                 2352, MmcSectorTypes.Cdda, false, false,
-                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                                 MmcSubchannel.None, _dev.Timeout, out _);
+                                                                  2352, MmcSectorTypes.Cdda, false, false,
+                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                  MmcSubchannel.None, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
 
-
-                        mediaTest.ReadCdMsfFullData = buffer;
+                    mediaTest.ReadCdMsfFullData = buffer;
                 }
                 else
                 {
                     DicConsole.WriteLine("Trying SCSI READ CD...");
 
                     mediaTest.SupportsReadCd = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2048, 1,
-                                                           MmcSectorTypes.AllTypes, false, false, false,
-                                                           MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                           MmcSubchannel.None, _dev.Timeout, out _);
+                                                            MmcSectorTypes.AllTypes, false, false, false,
+                                                            MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                            MmcSubchannel.None, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCd);
 
-
-                        mediaTest.ReadCdData = buffer;
+                    mediaTest.ReadCdData = buffer;
 
                     DicConsole.WriteLine("Trying SCSI READ CD MSF...");
 
                     mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211,
-                                                                 2048, MmcSectorTypes.AllTypes, false, false,
-                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                                 MmcSubchannel.None, _dev.Timeout, out _);
+                                                                  2048, MmcSectorTypes.AllTypes, false, false,
+                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                  MmcSubchannel.None, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
 
-
-                        mediaTest.ReadCdMsfData = buffer;
+                    mediaTest.ReadCdMsfData = buffer;
 
                     DicConsole.WriteLine("Trying SCSI READ CD full sector...");
 
                     mediaTest.SupportsReadCdRaw = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2352, 1,
-                                                              MmcSectorTypes.AllTypes, false, false, true,
-                                                              MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                                              MmcSubchannel.None, _dev.Timeout, out _);
+                                                               MmcSectorTypes.AllTypes, false, false, true,
+                                                               MmcHeaderCodes.AllHeaders, true, true,
+                                                               MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
+                                                               out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdRaw);
 
-
-                        mediaTest.ReadCdFullData = buffer;
+                    mediaTest.ReadCdFullData = buffer;
 
                     DicConsole.WriteLine("Trying SCSI READ CD MSF full sector...");
 
-                    mediaTest.SupportsReadCdMsfRaw = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211,
-                                                                    2352, MmcSectorTypes.AllTypes, false, false,
-                                                                    MmcHeaderCodes.AllHeaders, true, true,
-                                                                    MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
-                                                                    out _);
+                    mediaTest.SupportsReadCdMsfRaw = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210,
+                                                                     0x00000211, 2352, MmcSectorTypes.AllTypes, false,
+                                                                     false, MmcHeaderCodes.AllHeaders, true, true,
+                                                                     MmcErrorField.None, MmcSubchannel.None,
+                                                                     _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsfRaw);
 
-
-                        mediaTest.ReadCdMsfFullData = buffer;
+                    mediaTest.ReadCdMsfFullData = buffer;
                 }
 
                 if(mediaTest.SupportsReadCdRaw == true ||
                    mediaType                   == "Audio CD")
                 {
-                    DicConsole.WriteLine("Trying to read CD Track 1 pregap...");
+                    DicConsole.WriteLine("Trying to read CD Track 1 pre-gap...");
 
                     for(int i = -150; i < 0; i++)
                     {
                         if(mediaType == "Audio CD")
                             sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.Cdda,
-                                               false, false, false, MmcHeaderCodes.None, true, false,
-                                               MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
+                                                false, false, false, MmcHeaderCodes.None, true, false,
+                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
                         else
                             sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.AllTypes,
-                                               false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                               MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
+                                                false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
 
-
-                            mediaTest.Track1PregapData = buffer;
+                        mediaTest.Track1PregapData = buffer;
 
                         if(sense)
                             continue;
@@ -1182,17 +1141,16 @@ namespace DiscImageChef.Core.Devices.Report
                     {
                         if(mediaType == "Audio CD")
                             sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.Cdda,
-                                               false, false, false, MmcHeaderCodes.None, true, false,
-                                               MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
+                                                false, false, false, MmcHeaderCodes.None, true, false,
+                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
                         else
                             sense = _dev.ReadCd(out buffer, out senseBuffer, (uint)i, 2352, 1, MmcSectorTypes.AllTypes,
-                                               false, false, true, MmcHeaderCodes.AllHeaders, true, true,
-                                               MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
+                                                false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
 
-
-                            mediaTest.LeadInData = buffer;
+                        mediaTest.LeadInData = buffer;
 
                         if(sense)
                             continue;
@@ -1206,22 +1164,21 @@ namespace DiscImageChef.Core.Devices.Report
 
                     if(mediaType == "Audio CD")
                         mediaTest.CanReadLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                               (uint)(mediaTest.Blocks + 1), 2352, 1,
-                                                               MmcSectorTypes.Cdda, false, false, false,
-                                                               MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                               MmcSubchannel.None, _dev.Timeout, out _);
+                                                                (uint)(mediaTest.Blocks + 1), 2352, 1,
+                                                                MmcSectorTypes.Cdda, false, false, false,
+                                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                MmcSubchannel.None, _dev.Timeout, out _);
                     else
                         mediaTest.CanReadLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                               (uint)(mediaTest.Blocks + 1), 2352, 1,
-                                                               MmcSectorTypes.AllTypes, false, false, true,
-                                                               MmcHeaderCodes.AllHeaders, true, true,
-                                                               MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
-                                                               out _);
+                                                                (uint)(mediaTest.Blocks + 1), 2352, 1,
+                                                                MmcSectorTypes.AllTypes, false, false, true,
+                                                                MmcHeaderCodes.AllHeaders, true, true,
+                                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
+                                                                out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLeadOut);
 
-
-                        mediaTest.LeadOutData = buffer;
+                    mediaTest.LeadOutData = buffer;
                 }
 
                 if(mediaType == "Audio CD")
@@ -1229,341 +1186,323 @@ namespace DiscImageChef.Core.Devices.Report
                     DicConsole.WriteLine("Trying to read C2 Pointers...");
 
                     mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2646, 1,
-                                                              MmcSectorTypes.Cdda, false, false, false,
-                                                              MmcHeaderCodes.None, true, false,
-                                                              MmcErrorField.C2Pointers, MmcSubchannel.None, _dev.Timeout,
-                                                              out _);
+                                                               MmcSectorTypes.Cdda, false, false, false,
+                                                               MmcHeaderCodes.None, true, false,
+                                                               MmcErrorField.C2Pointers, MmcSubchannel.None,
+                                                               _dev.Timeout, out _);
 
                     if(!mediaTest.CanReadC2Pointers == true)
                         mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2648, 1,
-                                                                  MmcSectorTypes.Cdda, false, false, false,
-                                                                  MmcHeaderCodes.None, true, false,
-                                                                  MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
-                                                                  _dev.Timeout, out _);
+                                                                   MmcSectorTypes.Cdda, false, false, false,
+                                                                   MmcHeaderCodes.None, true, false,
+                                                                   MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
+                                                                   _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
 
-
-                        mediaTest.C2PointersData = buffer;
+                    mediaTest.C2PointersData = buffer;
 
                     DicConsole.WriteLine("Trying to read subchannels...");
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2368, 1,
-                                                                MmcSectorTypes.Cdda, false, false, false,
-                                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                 MmcSectorTypes.Cdda, false, false, false,
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Q16, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
-
-                        mediaTest.PQSubchannelData = buffer;
+                    mediaTest.PQSubchannelData = buffer;
 
                     mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2448, 1,
-                                                                MmcSectorTypes.Cdda, false, false, false,
-                                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                 MmcSectorTypes.Cdda, false, false, false,
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Raw, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
-
-                        mediaTest.RWSubchannelData = buffer;
+                    mediaTest.RWSubchannelData = buffer;
 
                     mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2448, 1,
-                                                                       MmcSectorTypes.Cdda, false, false, false,
-                                                                       MmcHeaderCodes.None, true, false,
-                                                                       MmcErrorField.None, MmcSubchannel.Rw,
-                                                                       _dev.Timeout, out _);
+                                                                        MmcSectorTypes.Cdda, false, false, false,
+                                                                        MmcHeaderCodes.None, true, false,
+                                                                        MmcErrorField.None, MmcSubchannel.Rw,
+                                                                        _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
 
-
-                        mediaTest.CorrectedSubchannelData = buffer;
+                    mediaTest.CorrectedSubchannelData = buffer;
 
                     DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
                     mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2662, 1,
-                                                                      MmcSectorTypes.Cdda, false, false, false,
-                                                                      MmcHeaderCodes.None, true, false,
-                                                                      MmcErrorField.C2Pointers, MmcSubchannel.Q16,
-                                                                      _dev.Timeout, out _);
+                                                                       MmcSectorTypes.Cdda, false, false, false,
+                                                                       MmcHeaderCodes.None, true, false,
+                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                       _dev.Timeout, out _);
 
                     if(mediaTest.CanReadPQSubchannelWithC2 == false)
                         mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2664, 1,
-                                                                          MmcSectorTypes.Cdda, false, false, false,
-                                                                          MmcHeaderCodes.None, true, false,
-                                                                          MmcErrorField.C2PointersAndBlock,
-                                                                          MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.Cdda, false, false, false,
+                                                                           MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.C2PointersAndBlock,
+                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
-
-                        mediaTest.PQSubchannelWithC2Data = buffer;
+                    mediaTest.PQSubchannelWithC2Data = buffer;
 
                     mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1,
-                                                                      MmcSectorTypes.Cdda, false, false, false,
-                                                                      MmcHeaderCodes.None, true, false,
-                                                                      MmcErrorField.C2Pointers, MmcSubchannel.Raw,
-                                                                      _dev.Timeout, out _);
+                                                                       MmcSectorTypes.Cdda, false, false, false,
+                                                                       MmcHeaderCodes.None, true, false,
+                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                       _dev.Timeout, out _);
 
                     if(mediaTest.CanReadRWSubchannelWithC2 == false)
                         mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2714, 1,
-                                                                          MmcSectorTypes.Cdda, false, false, false,
-                                                                          MmcHeaderCodes.None, true, false,
-                                                                          MmcErrorField.C2PointersAndBlock,
-                                                                          MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.Cdda, false, false, false,
+                                                                           MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.C2PointersAndBlock,
+                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
-
-                        mediaTest.RWSubchannelWithC2Data = buffer;
+                    mediaTest.RWSubchannelWithC2Data = buffer;
 
                     mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2712, 1,
-                                                                             MmcSectorTypes.Cdda, false, false, false,
-                                                                             MmcHeaderCodes.None, true, false,
-                                                                             MmcErrorField.C2Pointers, MmcSubchannel.Rw,
-                                                                             _dev.Timeout, out _);
+                                                                              MmcSectorTypes.Cdda, false, false, false,
+                                                                              MmcHeaderCodes.None, true, false,
+                                                                              MmcErrorField.C2Pointers,
+                                                                              MmcSubchannel.Rw, _dev.Timeout, out _);
 
                     if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
                         mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2714,
-                                                                                 1, MmcSectorTypes.Cdda, false, false,
-                                                                                 false, MmcHeaderCodes.None, true,
-                                                                                 false,
-                                                                                 MmcErrorField.C2PointersAndBlock,
-                                                                                 MmcSubchannel.Rw, _dev.Timeout, out _);
+                                                                                  1, MmcSectorTypes.Cdda, false, false,
+                                                                                  false, MmcHeaderCodes.None, true,
+                                                                                  false,
+                                                                                  MmcErrorField.C2PointersAndBlock,
+                                                                                  MmcSubchannel.Rw, _dev.Timeout,
+                                                                                  out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
-
-                        mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                    mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
                 else if(mediaTest.SupportsReadCdRaw == true)
                 {
                     DicConsole.WriteLine("Trying to read C2 Pointers...");
 
                     mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2646, 1,
-                                                              MmcSectorTypes.AllTypes, false, false, true,
-                                                              MmcHeaderCodes.AllHeaders, true, true,
-                                                              MmcErrorField.C2Pointers, MmcSubchannel.None, _dev.Timeout,
-                                                              out _);
+                                                               MmcSectorTypes.AllTypes, false, false, true,
+                                                               MmcHeaderCodes.AllHeaders, true, true,
+                                                               MmcErrorField.C2Pointers, MmcSubchannel.None,
+                                                               _dev.Timeout, out _);
 
                     if(mediaTest.CanReadC2Pointers == false)
                         mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2648, 1,
-                                                                  MmcSectorTypes.AllTypes, false, false, true,
-                                                                  MmcHeaderCodes.AllHeaders, true, true,
-                                                                  MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
-                                                                  _dev.Timeout, out _);
+                                                                   MmcSectorTypes.AllTypes, false, false, true,
+                                                                   MmcHeaderCodes.AllHeaders, true, true,
+                                                                   MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
+                                                                   _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
 
-
-                        mediaTest.C2PointersData = buffer;
+                    mediaTest.C2PointersData = buffer;
 
                     DicConsole.WriteLine("Trying to read subchannels...");
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2368, 1,
-                                                                MmcSectorTypes.AllTypes, false, false, true,
-                                                                MmcHeaderCodes.AllHeaders, true, true,
-                                                                MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout,
-                                                                out _);
+                                                                 MmcSectorTypes.AllTypes, false, false, true,
+                                                                 MmcHeaderCodes.AllHeaders, true, true,
+                                                                 MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout,
+                                                                 out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
-
-                        mediaTest.PQSubchannelData = buffer;
+                    mediaTest.PQSubchannelData = buffer;
 
                     mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2448, 1,
-                                                                MmcSectorTypes.AllTypes, false, false, true,
-                                                                MmcHeaderCodes.AllHeaders, true, true,
-                                                                MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout,
-                                                                out _);
+                                                                 MmcSectorTypes.AllTypes, false, false, true,
+                                                                 MmcHeaderCodes.AllHeaders, true, true,
+                                                                 MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout,
+                                                                 out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
-
-                        mediaTest.RWSubchannelData = buffer;
+                    mediaTest.RWSubchannelData = buffer;
 
                     mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2448, 1,
-                                                                       MmcSectorTypes.AllTypes, false, false, true,
-                                                                       MmcHeaderCodes.AllHeaders, true, true,
-                                                                       MmcErrorField.None, MmcSubchannel.Rw,
-                                                                       _dev.Timeout, out _);
+                                                                        MmcSectorTypes.AllTypes, false, false, true,
+                                                                        MmcHeaderCodes.AllHeaders, true, true,
+                                                                        MmcErrorField.None, MmcSubchannel.Rw,
+                                                                        _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
 
-
-                        mediaTest.CorrectedSubchannelData = buffer;
+                    mediaTest.CorrectedSubchannelData = buffer;
 
                     DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
                     mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2662, 1,
-                                                                      MmcSectorTypes.AllTypes, false, false, true,
-                                                                      MmcHeaderCodes.AllHeaders, true, true,
-                                                                      MmcErrorField.C2Pointers, MmcSubchannel.Q16,
-                                                                      _dev.Timeout, out _);
+                                                                       MmcSectorTypes.AllTypes, false, false, true,
+                                                                       MmcHeaderCodes.AllHeaders, true, true,
+                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                       _dev.Timeout, out _);
 
                     if(mediaTest.CanReadPQSubchannelWithC2 == false)
                         mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2664, 1,
-                                                                          MmcSectorTypes.AllTypes, false, false, true,
-                                                                          MmcHeaderCodes.AllHeaders, true, true,
-                                                                          MmcErrorField.C2PointersAndBlock,
-                                                                          MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, true,
+                                                                           MmcHeaderCodes.AllHeaders, true, true,
+                                                                           MmcErrorField.C2PointersAndBlock,
+                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
-
-                        mediaTest.PQSubchannelWithC2Data = buffer;
+                    mediaTest.PQSubchannelWithC2Data = buffer;
 
                     mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712, 1,
-                                                                      MmcSectorTypes.AllTypes, false, false, true,
-                                                                      MmcHeaderCodes.AllHeaders, true, true,
-                                                                      MmcErrorField.C2Pointers, MmcSubchannel.Raw,
-                                                                      _dev.Timeout, out _);
+                                                                       MmcSectorTypes.AllTypes, false, false, true,
+                                                                       MmcHeaderCodes.AllHeaders, true, true,
+                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                       _dev.Timeout, out _);
 
                     if(mediaTest.CanReadRWSubchannelWithC2 == false)
                         mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2714, 1,
-                                                                          MmcSectorTypes.AllTypes, false, false, true,
-                                                                          MmcHeaderCodes.AllHeaders, true, true,
-                                                                          MmcErrorField.C2PointersAndBlock,
-                                                                          MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, true,
+                                                                           MmcHeaderCodes.AllHeaders, true, true,
+                                                                           MmcErrorField.C2PointersAndBlock,
+                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
-
-                        mediaTest.RWSubchannelWithC2Data = buffer;
+                    mediaTest.RWSubchannelWithC2Data = buffer;
 
                     mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2712, 1,
-                                                                             MmcSectorTypes.AllTypes, false, false,
-                                                                             true, MmcHeaderCodes.AllHeaders, true,
-                                                                             true, MmcErrorField.C2Pointers,
-                                                                             MmcSubchannel.Rw, _dev.Timeout, out _);
+                                                                              MmcSectorTypes.AllTypes, false, false,
+                                                                              true, MmcHeaderCodes.AllHeaders, true,
+                                                                              true, MmcErrorField.C2Pointers,
+                                                                              MmcSubchannel.Rw, _dev.Timeout, out _);
 
                     if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
                         mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2714,
-                                                                                 1, MmcSectorTypes.AllTypes, false,
-                                                                                 false, true, MmcHeaderCodes.AllHeaders,
-                                                                                 true, true,
-                                                                                 MmcErrorField.C2PointersAndBlock,
-                                                                                 MmcSubchannel.Rw, _dev.Timeout, out _);
+                                                                                  1, MmcSectorTypes.AllTypes, false,
+                                                                                  false, true,
+                                                                                  MmcHeaderCodes.AllHeaders, true, true,
+                                                                                  MmcErrorField.C2PointersAndBlock,
+                                                                                  MmcSubchannel.Rw, _dev.Timeout,
+                                                                                  out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
-
-                        mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                    mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
                 else
                 {
                     DicConsole.WriteLine("Trying to read C2 Pointers...");
 
                     mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2342, 1,
-                                                              MmcSectorTypes.AllTypes, false, false, false,
-                                                              MmcHeaderCodes.None, true, false,
-                                                              MmcErrorField.C2Pointers, MmcSubchannel.None, _dev.Timeout,
-                                                              out _);
+                                                               MmcSectorTypes.AllTypes, false, false, false,
+                                                               MmcHeaderCodes.None, true, false,
+                                                               MmcErrorField.C2Pointers, MmcSubchannel.None,
+                                                               _dev.Timeout, out _);
 
                     if(mediaTest.CanReadC2Pointers == false)
                         mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2344, 1,
-                                                                  MmcSectorTypes.AllTypes, false, false, false,
-                                                                  MmcHeaderCodes.None, true, false,
-                                                                  MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
-                                                                  _dev.Timeout, out _);
+                                                                   MmcSectorTypes.AllTypes, false, false, false,
+                                                                   MmcHeaderCodes.None, true, false,
+                                                                   MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
+                                                                   _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
 
-
-                        mediaTest.C2PointersData = buffer;
+                    mediaTest.C2PointersData = buffer;
 
                     DicConsole.WriteLine("Trying to read subchannels...");
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2064, 1,
-                                                                MmcSectorTypes.AllTypes, false, false, false,
-                                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                                MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                 MmcSectorTypes.AllTypes, false, false, false,
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Q16, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
-
-                        mediaTest.PQSubchannelData = buffer;
+                    mediaTest.PQSubchannelData = buffer;
 
                     mediaTest.CanReadRWSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2144, 1,
-                                                                MmcSectorTypes.AllTypes, false, false, false,
-                                                                MmcHeaderCodes.None, true, false, MmcErrorField.None,
-                                                                MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                 MmcSectorTypes.AllTypes, false, false, false,
+                                                                 MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                                 MmcSubchannel.Raw, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
-
-                        mediaTest.RWSubchannelData = buffer;
+                    mediaTest.RWSubchannelData = buffer;
 
                     mediaTest.CanReadCorrectedSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2144, 1,
-                                                                       MmcSectorTypes.AllTypes, false, false, false,
-                                                                       MmcHeaderCodes.None, true, false,
-                                                                       MmcErrorField.None, MmcSubchannel.Rw,
-                                                                       _dev.Timeout, out _);
+                                                                        MmcSectorTypes.AllTypes, false, false, false,
+                                                                        MmcHeaderCodes.None, true, false,
+                                                                        MmcErrorField.None, MmcSubchannel.Rw,
+                                                                        _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
 
-
-                        mediaTest.CorrectedSubchannelData = buffer;
+                    mediaTest.CorrectedSubchannelData = buffer;
 
                     DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
                     mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2358, 1,
-                                                                      MmcSectorTypes.AllTypes, false, false, false,
-                                                                      MmcHeaderCodes.None, true, false,
-                                                                      MmcErrorField.C2Pointers, MmcSubchannel.Q16,
-                                                                      _dev.Timeout, out _);
+                                                                       MmcSectorTypes.AllTypes, false, false, false,
+                                                                       MmcHeaderCodes.None, true, false,
+                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Q16,
+                                                                       _dev.Timeout, out _);
 
                     if(mediaTest.CanReadPQSubchannelWithC2 == false)
                         mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2360, 1,
-                                                                          MmcSectorTypes.AllTypes, false, false, false,
-                                                                          MmcHeaderCodes.None, true, false,
-                                                                          MmcErrorField.C2PointersAndBlock,
-                                                                          MmcSubchannel.Q16, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, false,
+                                                                           MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.C2PointersAndBlock,
+                                                                           MmcSubchannel.Q16, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
-
-                        mediaTest.PQSubchannelWithC2Data = buffer;
+                    mediaTest.PQSubchannelWithC2Data = buffer;
 
                     mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438, 1,
-                                                                      MmcSectorTypes.AllTypes, false, false, false,
-                                                                      MmcHeaderCodes.None, true, false,
-                                                                      MmcErrorField.C2Pointers, MmcSubchannel.Raw,
-                                                                      _dev.Timeout, out _);
+                                                                       MmcSectorTypes.AllTypes, false, false, false,
+                                                                       MmcHeaderCodes.None, true, false,
+                                                                       MmcErrorField.C2Pointers, MmcSubchannel.Raw,
+                                                                       _dev.Timeout, out _);
 
                     if(mediaTest.CanReadRWSubchannelWithC2 == false)
                         mediaTest.CanReadRWSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2440, 1,
-                                                                          MmcSectorTypes.AllTypes, false, false, false,
-                                                                          MmcHeaderCodes.None, true, false,
-                                                                          MmcErrorField.C2PointersAndBlock,
-                                                                          MmcSubchannel.Raw, _dev.Timeout, out _);
+                                                                           MmcSectorTypes.AllTypes, false, false, false,
+                                                                           MmcHeaderCodes.None, true, false,
+                                                                           MmcErrorField.C2PointersAndBlock,
+                                                                           MmcSubchannel.Raw, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
-
-                        mediaTest.RWSubchannelWithC2Data = buffer;
+                    mediaTest.RWSubchannelWithC2Data = buffer;
 
                     mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2438, 1,
-                                                                             MmcSectorTypes.AllTypes, false, false,
-                                                                             false, MmcHeaderCodes.None, true, false,
-                                                                             MmcErrorField.C2Pointers, MmcSubchannel.Rw,
-                                                                             _dev.Timeout, out _);
+                                                                              MmcSectorTypes.AllTypes, false, false,
+                                                                              false, MmcHeaderCodes.None, true, false,
+                                                                              MmcErrorField.C2Pointers,
+                                                                              MmcSubchannel.Rw, _dev.Timeout, out _);
 
                     if(mediaTest.CanReadCorrectedSubchannelWithC2 == false)
                         mediaTest.CanReadCorrectedSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2440,
-                                                                                 1, MmcSectorTypes.AllTypes, false,
-                                                                                 false, false, MmcHeaderCodes.None,
-                                                                                 true, false,
-                                                                                 MmcErrorField.C2PointersAndBlock,
-                                                                                 MmcSubchannel.Rw, _dev.Timeout, out _);
+                                                                                  1, MmcSectorTypes.AllTypes, false,
+                                                                                  false, false, MmcHeaderCodes.None,
+                                                                                  true, false,
+                                                                                  MmcErrorField.C2PointersAndBlock,
+                                                                                  MmcSubchannel.Rw, _dev.Timeout,
+                                                                                  out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
-
-                        mediaTest.CorrectedSubchannelWithC2Data = buffer;
+                    mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
 
                 if(tryPlextor)
@@ -1572,12 +1511,11 @@ namespace DiscImageChef.Core.Devices.Report
 
                     mediaTest.SupportsPlextorReadCDDA =
                         !_dev.PlextorReadCdDa(out buffer, out senseBuffer, 16, 2352, 1, PlextorSubchannel.None,
-                                             _dev.Timeout, out _);
+                                              _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPlextorReadCDDA);
 
-
-                        mediaTest.PlextorReadCddaData = buffer;
+                    mediaTest.PlextorReadCddaData = buffer;
                 }
 
                 if(tryPioneer)
@@ -1586,23 +1524,21 @@ namespace DiscImageChef.Core.Devices.Report
 
                     mediaTest.SupportsPioneerReadCDDA =
                         !_dev.PioneerReadCdDa(out buffer, out senseBuffer, 16, 2352, 1, PioneerSubchannel.None,
-                                             _dev.Timeout, out _);
+                                              _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPioneerReadCDDA);
 
-
-                        mediaTest.PioneerReadCddaData = buffer;
+                    mediaTest.PioneerReadCddaData = buffer;
 
                     DicConsole.WriteLine("Trying Pioneer READ CD-DA MSF...");
 
                     mediaTest.SupportsPioneerReadCDDAMSF =
                         !_dev.PioneerReadCdDaMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211, 2352,
-                                                PioneerSubchannel.None, _dev.Timeout, out _);
+                                                 PioneerSubchannel.None, _dev.Timeout, out _);
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPioneerReadCDDAMSF);
 
-
-                        mediaTest.PioneerReadCddaMsfData = buffer;
+                    mediaTest.PioneerReadCddaMsfData = buffer;
                 }
 
                 if(tryNec)
@@ -1614,8 +1550,7 @@ namespace DiscImageChef.Core.Devices.Report
 
                     DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsNECReadCDDA);
 
-
-                        mediaTest.NecReadCddaData = buffer;
+                    mediaTest.NecReadCddaData = buffer;
                 }
             }
 
@@ -1694,8 +1629,7 @@ namespace DiscImageChef.Core.Devices.Report
                 mediaTest.CanReadFullTOC = !_dev.ReadRawToc(out buffer, out senseBuffer, 1, _dev.Timeout, out _);
                 DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadFullTOC);
 
-
-                    mediaTest.FullTocData = buffer;
+                mediaTest.FullTocData = buffer;
 
                 if(mediaTest.CanReadFullTOC == true)
                 {
@@ -1752,25 +1686,61 @@ namespace DiscImageChef.Core.Devices.Report
                         DicConsole.WriteLine("Trying SCSI READ CD in first session Lead-Out...");
 
                         mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                              firstSessionLeadOutLba, 2448, 1,
+                                                                               firstSessionLeadOutLba, 2448, 1,
+                                                                               MmcSectorTypes.AllTypes, false, false,
+                                                                               false, MmcHeaderCodes.AllHeaders, true,
+                                                                               false, MmcErrorField.None,
+                                                                               MmcSubchannel.Raw, _dev.Timeout, out _);
+
+                        if(mediaTest.CanReadingIntersessionLeadOut == false)
+                        {
+                            mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                                   firstSessionLeadOutLba, 2368, 1,
+                                                                                   MmcSectorTypes.AllTypes, false,
+                                                                                   false, false,
+                                                                                   MmcHeaderCodes.AllHeaders, true,
+                                                                                   false, MmcErrorField.None,
+                                                                                   MmcSubchannel.Q16, _dev.Timeout,
+                                                                                   out _);
+
+                            if(mediaTest.CanReadingIntersessionLeadOut == false)
+                                mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                                       firstSessionLeadOutLba, 2352, 1,
+                                                                                       MmcSectorTypes.AllTypes, false,
+                                                                                       false, false,
+                                                                                       MmcHeaderCodes.AllHeaders, true,
+                                                                                       false, MmcErrorField.None,
+                                                                                       MmcSubchannel.None, _dev.Timeout,
+                                                                                       out _);
+                        }
+
+                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                                                  !mediaTest.CanReadingIntersessionLeadOut);
+
+                        mediaTest.IntersessionLeadOutData = buffer;
+
+                        DicConsole.WriteLine("Trying SCSI READ CD in second session Lead-In...");
+
+                        mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                              secondSessionLeadInLba, 2448, 1,
                                                                               MmcSectorTypes.AllTypes, false, false,
                                                                               false, MmcHeaderCodes.AllHeaders, true,
                                                                               false, MmcErrorField.None,
                                                                               MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                        if(mediaTest.CanReadingIntersessionLeadOut == false)
+                        if(mediaTest.CanReadingIntersessionLeadIn == false)
                         {
-                            mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                  firstSessionLeadOutLba, 2368, 1,
+                            mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                                  secondSessionLeadInLba, 2368, 1,
                                                                                   MmcSectorTypes.AllTypes, false, false,
                                                                                   false, MmcHeaderCodes.AllHeaders,
                                                                                   true, false, MmcErrorField.None,
                                                                                   MmcSubchannel.Q16, _dev.Timeout,
                                                                                   out _);
 
-                            if(mediaTest.CanReadingIntersessionLeadOut == false)
-                                mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                      firstSessionLeadOutLba, 2352, 1,
+                            if(mediaTest.CanReadingIntersessionLeadIn == false)
+                                mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
+                                                                                      secondSessionLeadInLba, 2352, 1,
                                                                                       MmcSectorTypes.AllTypes, false,
                                                                                       false, false,
                                                                                       MmcHeaderCodes.AllHeaders, true,
@@ -1780,45 +1750,9 @@ namespace DiscImageChef.Core.Devices.Report
                         }
 
                         DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
-                                                  !mediaTest.CanReadingIntersessionLeadOut);
-
-
-                            mediaTest.IntersessionLeadOutData = buffer;
-
-                        DicConsole.WriteLine("Trying SCSI READ CD in second session Lead-In...");
-
-                        mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                             secondSessionLeadInLba, 2448, 1,
-                                                                             MmcSectorTypes.AllTypes, false, false,
-                                                                             false, MmcHeaderCodes.AllHeaders, true,
-                                                                             false, MmcErrorField.None,
-                                                                             MmcSubchannel.Raw, _dev.Timeout, out _);
-
-                        if(mediaTest.CanReadingIntersessionLeadIn == false)
-                        {
-                            mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                 secondSessionLeadInLba, 2368, 1,
-                                                                                 MmcSectorTypes.AllTypes, false, false,
-                                                                                 false, MmcHeaderCodes.AllHeaders, true,
-                                                                                 false, MmcErrorField.None,
-                                                                                 MmcSubchannel.Q16, _dev.Timeout, out _);
-
-                            if(mediaTest.CanReadingIntersessionLeadIn == false)
-                                mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
-                                                                                     secondSessionLeadInLba, 2352, 1,
-                                                                                     MmcSectorTypes.AllTypes, false,
-                                                                                     false, false,
-                                                                                     MmcHeaderCodes.AllHeaders, true,
-                                                                                     false, MmcErrorField.None,
-                                                                                     MmcSubchannel.None, _dev.Timeout,
-                                                                                     out _);
-                        }
-
-                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                   !mediaTest.CanReadingIntersessionLeadIn);
 
-
-                            mediaTest.IntersessionLeadInData = buffer;
+                        mediaTest.IntersessionLeadInData = buffer;
                     }
                 }
             }

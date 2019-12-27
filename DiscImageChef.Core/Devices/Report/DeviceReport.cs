@@ -36,11 +36,8 @@ namespace DiscImageChef.Core.Devices.Report
 {
     public partial class DeviceReport
     {
-        Device _dev;
+        readonly Device _dev;
 
-        public DeviceReport(Device device)
-        {
-            _dev        = device;
-        }
+        public DeviceReport(Device device) => _dev = device;
     }
 }
