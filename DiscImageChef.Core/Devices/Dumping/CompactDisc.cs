@@ -1,4 +1,4 @@
-// /***************************************************************************
+﻿// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -1359,14 +1359,14 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             if(dataTrack.TrackSequence != 0)
                             {
-                                dataTrack.TrackEndSector += 149;
+                                dataTrack.TrackStartSector += 151;
 
                                 // Calculate MSF
-                                ulong minute = dataTrack.TrackEndSector                     / 4500;
-                                ulong second = (dataTrack.TrackEndSector - (minute * 4500)) / 75;
-                                ulong frame  = dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
+                                ulong minute = dataTrack.TrackStartSector                     / 4500;
+                                ulong second = (dataTrack.TrackStartSector - (minute * 4500)) / 75;
+                                ulong frame  = dataTrack.TrackStartSector - (minute * 4500) - (second * 75);
 
-                                dataTrack.TrackEndSector -= 149;
+                                dataTrack.TrackStartSector -= 151;
 
                                 // Convert to BCD
                                 ulong remainder = minute   % 10;
@@ -1397,7 +1397,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                    "plextor")
                                 {
                                     sense = _dev.PlextorReadCdDa(out cmdBuf, out senseBuf,
-                                                                 (uint)dataTrack.TrackEndSector - 2, sectorSize, 3,
+                                                                 (uint)dataTrack.TrackStartSector, sectorSize, 3,
                                                                  PlextorSubchannel.None, _dev.Timeout, out _);
 
                                     if(!sense &&
@@ -1423,7 +1423,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                    _dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled  == true) == true ||
                                    _dev.Manufacturer.ToLowerInvariant()                                   == "hl-dt-st")
                                 {
-                                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)(dataTrack.TrackEndSector - 2),
+                                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)dataTrack.TrackStartSector,
                                                         sectorSize, 3, MmcSectorTypes.Cdda, false, false, false,
                                                         MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                         MmcSubchannel.None, _dev.Timeout, out _);
