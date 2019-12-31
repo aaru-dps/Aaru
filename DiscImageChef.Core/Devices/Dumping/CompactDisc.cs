@@ -1466,15 +1466,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             if(offsetFound)
                             {
-                                _dumpLog.WriteLine($"Disc offsets is {offsetBytes   - (cdOffset.Offset * 2 * -1)}");
-                                UpdateStatus?.Invoke($"Disc offsets is {offsetBytes - (cdOffset.Offset * 2 * -1)}");
+                                _dumpLog.WriteLine($"Disc offsets is {offsetBytes   - (cdOffset.Offset * 4 * -1)}");
+                                UpdateStatus?.Invoke($"Disc offsets is {offsetBytes - (cdOffset.Offset * 4 * -1)}");
                             }
                             else
                             {
                                 _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
                                 UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
 
-                                offsetBytes = cdOffset.Offset * 2 * -1;
+                                offsetBytes = cdOffset.Offset * 4 * -1;
                             }
 
                             _dumpLog.WriteLine($"Offset is {offsetBytes} bytes.");
