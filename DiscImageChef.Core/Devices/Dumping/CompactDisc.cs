@@ -1520,7 +1520,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(sectorsForOffset < 0)
                     sectorsForOffset *= -1;
 
-                if(offsetBytes % sectorSize > 0)
+                if(offsetBytes % sectorSize != 0)
                     sectorsForOffset++;
             }
             else if(tracks.Any(t => t.TrackType == TrackType.Audio))
@@ -1606,6 +1606,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                         blocksToRead++;
                     }
                 }
+
+                if(blocksToRead == 1)
+                    blocksToRead = 2;
 
                 if(_fixOffset && !inData)
                 {
