@@ -83,13 +83,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             double                 currentSpeed = 0;                                 // Current read speed
             DateTime               dumpStart    = DateTime.UtcNow;                   // Time of dump start
             DateTime               end;                                              // Time of operation end
-            ExtentsULong           extents        = null;                            // Extents
-            TrackType              firstTrackType = TrackType.Audio;                 // Type of first track
+            ExtentsULong           extents = null;                                   // Extents
             IbgLog                 ibgLog;                                           // IMGBurn log
             double                 imageWriteDuration = 0;                           // Duration of image write
             long                   lastSector         = 0;                           // Last sector number
             var                    leadOutExtents     = new ExtentsULong();          // Lead-out extents
             Dictionary<int, long>  leadOutStarts      = new Dictionary<int, long>(); // Lead-out starts
+            TrackType              leadoutTrackType   = TrackType.Audio;             // Type of lead-out
             double                 maxSpeed           = double.MinValue;             // Maximum speed
             MhddLog                mhddLog;                                          // MHDD log
             double                 minSpeed = double.MaxValue;                       // Minimum speed
@@ -455,7 +455,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 break;
                         }
 
-                        firstTrackType =
+                        leadoutTrackType =
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
                                 : TrackType.Audio;
@@ -500,7 +500,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else if(trk.TrackNumber == 0xAA)
                     {
-                        firstTrackType =
+                        leadoutTrackType =
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
                             (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
                                 : TrackType.Audio;
@@ -516,13 +516,13 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 trackList.Add(new Track
                 {
-                    TrackSequence       = 1, TrackSession = 1, TrackType = firstTrackType,
+                    TrackSequence       = 1, TrackSession = 1, TrackType = leadoutTrackType,
                     TrackStartSector    = 0,
                     TrackBytesPerSector = (int)sectorSize, TrackRawBytesPerSector = (int)sectorSize,
                     TrackSubchannelType = subType
                 });
 
-                trackFlags.Add(1, (byte)(firstTrackType == TrackType.Audio ? 0 : 4));
+                trackFlags.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
             }
 
             if(lastSector == 0)
@@ -1533,7 +1533,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ibgLog  = new IbgLog(_outputPrefix  + ".ibg", 0x0008);
 
             audioExtents = new ExtentsULong();
-            nextData     = firstTrackType != TrackType.Audio;
+            nextData     = tracks[0].TrackType != TrackType.Audio;
 
             foreach(Track audioTrack in tracks.Where(t => t.TrackType == TrackType.Audio))
             {
