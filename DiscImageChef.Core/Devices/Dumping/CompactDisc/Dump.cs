@@ -35,23 +35,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Core.Media.Detection;
+using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 using Schemas;
-using CdOffset = DiscImageChef.Database.Models.CdOffset;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Session = DiscImageChef.Decoders.CD.Session;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
@@ -2111,79 +2108,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double totalChkDuration = 0;
 
             if(!_nometadata)
-            {
-                _dumpLog.WriteLine("Creating sidecar.");
-                var         filters     = new FiltersList();
-                IFilter     filter      = filters.GetFilter(_outputPath);
-                IMediaImage inputPlugin = ImageFormat.Detect(filter);
-
-                if(!inputPlugin.Open(filter))
-                {
-                    StoppingErrorMessage?.Invoke("Could not open created image.");
-
-                    return;
-                }
-
-                DateTime chkStart = DateTime.UtcNow;
-
-                // ReSharper disable once UseObjectOrCollectionInitializer
-                _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
-                _sidecarClass.InitProgressEvent    += InitProgress;
-                _sidecarClass.UpdateProgressEvent  += UpdateProgress;
-                _sidecarClass.EndProgressEvent     += EndProgress;
-                _sidecarClass.InitProgressEvent2   += InitProgress2;
-                _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
-                _sidecarClass.EndProgressEvent2    += EndProgress2;
-                _sidecarClass.UpdateStatusEvent    += UpdateStatus;
-                CICMMetadataType sidecar = _sidecarClass.Create();
-                end = DateTime.UtcNow;
-
-                totalChkDuration = (end - chkStart).TotalMilliseconds;
-                _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
-
-                _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                   ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000));
-
-                if(_preSidecar != null)
-                {
-                    _preSidecar.OpticalDisc = sidecar.OpticalDisc;
-                    sidecar                 = _preSidecar;
-                }
-
-                List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
-
-                if(sidecar.OpticalDisc[0].Track != null)
-                    filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
-                                         where xmlTrack.FileSystemInformation != null
-                                         from partition in xmlTrack.FileSystemInformation
-                                         where partition.FileSystems != null from fileSystem in partition.FileSystems
-                                         select (partition.StartSector, fileSystem.Type));
-
-                if(filesystems.Count > 0)
-                    foreach(var filesystem in filesystems.Select(o => new
-                    {
-                        o.start, o.type
-                    }).Distinct())
-                        _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
-
-                sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-                (string type, string subType) discType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
-                sidecar.OpticalDisc[0].DiscType          = discType.type;
-                sidecar.OpticalDisc[0].DiscSubType       = discType.subType;
-                sidecar.OpticalDisc[0].DumpHardwareArray = _resume.Tries.ToArray();
-
-                foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
-                    if(_outputPlugin.SupportedMediaTags.Contains(tag.Key))
-                        AddMediaTagToSidecar(_outputPath, tag, ref sidecar);
-
-                UpdateStatus?.Invoke("Writing metadata sidecar");
-
-                var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
-
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
-            }
+                WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, sessions, out totalChkDuration);
 
             end = DateTime.UtcNow;
             UpdateStatus?.Invoke("");

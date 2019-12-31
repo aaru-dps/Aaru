@@ -52,6 +52,7 @@
     <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Tracks.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
+    <Compile Include="Devices\Dumping\Metadata.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable.cs" />
     <Compile Include="Devices\Info\DeviceInfo.cs" />
     <Compile Include="Devices\Info\Plextor.cs" />

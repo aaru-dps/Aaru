@@ -241,6 +241,7 @@
             </e>
             <e p="Dump.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
+            <e p="Metadata.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
             <e p="PlayStationPortable.cs" t="Include" />
             <e p="ResumeSupport.cs" t="Include" />

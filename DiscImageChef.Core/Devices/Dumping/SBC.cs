@@ -988,83 +988,47 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(!_nometadata)
             {
-                UpdateStatus?.Invoke("Creating sidecar.");
-                _dumpLog.WriteLine("Creating sidecar.");
-                var         filters     = new FiltersList();
-                IFilter     filter      = filters.GetFilter(_outputPath);
-                IMediaImage inputPlugin = ImageFormat.Detect(filter);
-
-                if(!inputPlugin.Open(filter))
-                {
-                    StoppingErrorMessage?.Invoke("Could not open created image.");
-
-                    return;
-                }
-
-                DateTime chkStart = DateTime.UtcNow;
-                _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
-                _sidecarClass.InitProgressEvent    += InitProgress;
-                _sidecarClass.UpdateProgressEvent  += UpdateProgress;
-                _sidecarClass.EndProgressEvent     += EndProgress;
-                _sidecarClass.InitProgressEvent2   += InitProgress2;
-                _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
-                _sidecarClass.EndProgressEvent2    += EndProgress2;
-                _sidecarClass.UpdateStatusEvent    += UpdateStatus;
-                CICMMetadataType sidecar = _sidecarClass.Create();
-                end = DateTime.UtcNow;
-
-                totalChkDuration = (end - chkStart).TotalMilliseconds;
-                UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
-
-                UpdateStatus?.
-                    Invoke($"Average checksum speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
-
-                _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
-
-                _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
-                                   ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000));
-
+                // TODO: Layers
                 if(opticalDisc)
-                {
-                    if(_preSidecar != null)
-                    {
-                        _preSidecar.OpticalDisc = sidecar.OpticalDisc;
-                        sidecar                 = _preSidecar;
-                    }
-
-                    List<(ulong start, string type)> filesystems = new List<(ulong start, string type)>();
-
-                    if(sidecar.OpticalDisc[0].Track != null)
-                        filesystems.AddRange(from xmlTrack in sidecar.OpticalDisc[0].Track
-                                             where xmlTrack.FileSystemInformation != null
-                                             from partition in xmlTrack.FileSystemInformation
-                                             where partition.FileSystems != null
-                                             from fileSystem in partition.FileSystems
-                                             select (partition.StartSector, fileSystem.Type));
-
-                    if(filesystems.Count > 0)
-                        foreach(var filesystem in filesystems.Select(o => new
-                        {
-                            o.start, o.type
-                        }).Distinct())
-                        {
-                            UpdateStatus?.Invoke($"Found filesystem {filesystem.type} at sector {filesystem.start}");
-                            _dumpLog.WriteLine("Found filesystem {0} at sector {1}", filesystem.type, filesystem.start);
-                        }
-
-                    // TODO: Implement layers
-                    sidecar.OpticalDisc[0].Dimensions = Dimensions.DimensionsFromMediaType(dskType);
-                    (string type, string subType) xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(dskType);
-                    sidecar.OpticalDisc[0].DiscType          = xmlType.type;
-                    sidecar.OpticalDisc[0].DiscSubType       = xmlType.subType;
-                    sidecar.OpticalDisc[0].DumpHardwareArray = _resume.Tries.ToArray();
-
-                    foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags)
-                        if(_outputPlugin.SupportedMediaTags.Contains(tag.Key))
-                            AddMediaTagToSidecar(_outputPath, tag, ref sidecar);
-                }
+                    WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, 1, out totalChkDuration);
                 else
                 {
+                    UpdateStatus?.Invoke("Creating sidecar.");
+                    _dumpLog.WriteLine("Creating sidecar.");
+                    var         filters     = new FiltersList();
+                    IFilter     filter      = filters.GetFilter(_outputPath);
+                    IMediaImage inputPlugin = ImageFormat.Detect(filter);
+
+                    if(!inputPlugin.Open(filter))
+                    {
+                        StoppingErrorMessage?.Invoke("Could not open created image.");
+
+                        return;
+                    }
+
+                    DateTime chkStart = DateTime.UtcNow;
+                    _sidecarClass                      =  new Sidecar(inputPlugin, _outputPath, filter.Id, _encoding);
+                    _sidecarClass.InitProgressEvent    += InitProgress;
+                    _sidecarClass.UpdateProgressEvent  += UpdateProgress;
+                    _sidecarClass.EndProgressEvent     += EndProgress;
+                    _sidecarClass.InitProgressEvent2   += InitProgress2;
+                    _sidecarClass.UpdateProgressEvent2 += UpdateProgress2;
+                    _sidecarClass.EndProgressEvent2    += EndProgress2;
+                    _sidecarClass.UpdateStatusEvent    += UpdateStatus;
+                    CICMMetadataType sidecar = _sidecarClass.Create();
+                    end = DateTime.UtcNow;
+
+                    totalChkDuration = (end - chkStart).TotalMilliseconds;
+                    UpdateStatus?.Invoke($"Sidecar created in {(end - chkStart).TotalSeconds} seconds.");
+
+                    UpdateStatus?.
+                        Invoke($"Average checksum speed {((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000):F3} KiB/sec.");
+
+                    _dumpLog.WriteLine("Sidecar created in {0} seconds.", (end - chkStart).TotalSeconds);
+
+                    _dumpLog.WriteLine("Average checksum speed {0:F3} KiB/sec.",
+                                       ((double)blockSize * (double)(blocks + 1)) / 1024 / (totalChkDuration / 1000));
+
                     if(_preSidecar != null)
                     {
                         _preSidecar.BlockMedia = sidecar.BlockMedia;
@@ -1247,15 +1211,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(_dev.IsRemovable)
                         sidecar.BlockMedia[0].DumpHardwareArray = _resume.Tries.ToArray();
+
+                    UpdateStatus?.Invoke("Writing metadata sidecar");
+
+                    var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
+
+                    var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
+                    xmlSer.Serialize(xmlFs, sidecar);
+                    xmlFs.Close();
                 }
-
-                UpdateStatus?.Invoke("Writing metadata sidecar");
-
-                var xmlFs = new FileStream(_outputPrefix + ".cicm.xml", FileMode.Create);
-
-                var xmlSer = new XmlSerializer(typeof(CICMMetadataType));
-                xmlSer.Serialize(xmlFs, sidecar);
-                xmlFs.Close();
             }
 
             UpdateStatus?.Invoke("");
