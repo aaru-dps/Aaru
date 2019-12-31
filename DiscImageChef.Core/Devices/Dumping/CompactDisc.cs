@@ -1470,15 +1470,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                         {
                             if(offsetFound)
                             {
-                                _dumpLog.WriteLine($"Disc offsets is {offsetBytes   - (cdOffset.Offset * 4 * -1)}");
-                                UpdateStatus?.Invoke($"Disc offsets is {offsetBytes - (cdOffset.Offset * 4 * -1)}");
+                                _dumpLog.
+                                    WriteLine($"Disc offsets is {offsetBytes - (cdOffset.Offset * 4)} bytes ({(offsetBytes / 4) - cdOffset.Offset} samples)");
+
+                                UpdateStatus?.
+                                    Invoke($"Disc offsets is {offsetBytes - (cdOffset.Offset * 4)} bytes ({(offsetBytes / 4) - cdOffset.Offset} samples)");
                             }
                             else
                             {
                                 _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
                                 UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
 
-                                offsetBytes = cdOffset.Offset * 4 * -1;
+                                offsetBytes = cdOffset.Offset * 4;
                             }
 
                             _dumpLog.WriteLine($"Offset is {offsetBytes} bytes.");
@@ -1625,7 +1628,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(_fixOffset && !inData)
                 {
                     // TODO: FreeBSD bug
-                    if(offsetBytes > 0)
+                    if(offsetBytes < 0)
                     {
                         if(i == 0)
                             firstSectorToRead = uint.MaxValue - (uint)(sectorsForOffset - 1); // -1
@@ -1686,8 +1689,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                    !inData    &&
                    offsetBytes != 0)
                 {
-                    int offsetFix = offsetBytes > 0 ? offsetFix = (int)(sectorSize - offsetBytes)
-                                        : offsetFix = offsetBytes * -1;
+                    int offsetFix = offsetBytes < 0 ? offsetFix = (int)(sectorSize - (offsetBytes * -1))
+                                        : offsetFix = offsetBytes;
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
@@ -2044,8 +2047,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                        audioExtents.Contains(badSector) &&
                        offsetBytes != 0)
                     {
-                        int offsetFix = offsetBytes > 0 ? offsetFix = (int)(sectorSize - offsetBytes)
-                                            : offsetFix = offsetBytes * -1;
+                        int offsetFix = offsetBytes < 0 ? offsetFix = (int)(sectorSize - (offsetBytes * -1))
+                                            : offsetFix = offsetBytes;
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
@@ -2287,8 +2290,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                        audioExtents.Contains(badSector) &&
                        offsetBytes != 0)
                     {
-                        int offsetFix = offsetBytes > 0 ? offsetFix = (int)(sectorSize - offsetBytes)
-                                            : offsetFix = offsetBytes * -1;
+                        int offsetFix = offsetBytes > 0 ? offsetFix = (int)(sectorSize - (offsetBytes * -1))
+                                            : offsetFix = offsetBytes;
 
                         if(supportedSubchannel != MmcSubchannel.None)
                         {
