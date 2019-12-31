@@ -1573,6 +1573,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     break;
                 }
 
+                while(leadOutExtents.Contains(i))
+                {
+                    i++;
+                }
+
+                if((long)i > lastSector)
+                    break;
+
                 uint firstSectorToRead = (uint)i;
 
                 if((lastSector + 1) - (long)i < _maximumReadable)
