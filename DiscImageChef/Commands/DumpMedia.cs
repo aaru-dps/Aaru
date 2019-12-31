@@ -60,7 +60,7 @@ namespace DiscImageChef.Commands
         bool   _doResume = true;
         string _encodingName;
         bool   _firstTrackPregap;
-        bool   _fixOffset;
+        bool   _fixOffset = true;
         bool   _force;
         bool   _noMetadata;
         bool   _noTrim;
