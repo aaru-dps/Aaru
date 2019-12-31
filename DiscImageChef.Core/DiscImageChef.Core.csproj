@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\LeadOuts.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable.cs" />
