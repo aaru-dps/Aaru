@@ -61,6 +61,7 @@
     <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />
     <Compile Include="Media\Detection\MMC.cs" />
+    <Compile Include="Media\Info\CompactDisc.cs" />
     <Compile Include="Media\Info\ScsiInfo.cs" />
     <Compile Include="Media\Info\XgdInfo.cs" />
     <Compile Include="Options.cs" />
