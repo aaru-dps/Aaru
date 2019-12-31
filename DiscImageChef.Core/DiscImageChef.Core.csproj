@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable.cs" />
     <Compile Include="Devices\Info\DeviceInfo.cs" />
@@ -97,7 +99,6 @@
     <Compile Include="Devices\ReaderSCSI.cs" />
     <Compile Include="Devices\Dumping\SSC.cs" />
     <Compile Include="Devices\Dumping\MMC.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc.cs" />
     <Compile Include="Devices\Dumping\SBC.cs" />
     <Compile Include="Devices\Dumping\XGD.cs" />
     <Compile Include="Devices\Dumping\ResumeSupport.cs" />

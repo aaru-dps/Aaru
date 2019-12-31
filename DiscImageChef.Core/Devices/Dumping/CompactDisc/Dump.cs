@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -2519,26 +2519,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             UpdateStatus?.Invoke("");
 
             Statistics.AddMedia(dskType, true);
-        }
-
-        bool SupportsRwSubchannel()
-        {
-            _dumpLog.WriteLine("Checking if drive supports full raw subchannel reading...");
-            UpdateStatus?.Invoke("Checking if drive supports full raw subchannel reading...");
-
-            return!_dev.ReadCd(out _, out _, 0, 2352 + 96, 1, MmcSectorTypes.AllTypes, false, false, true,
-                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
-                               _dev.Timeout, out _);
-        }
-
-        bool SupportsPqSubchannel()
-        {
-            _dumpLog.WriteLine("Checking if drive supports PQ subchannel reading...");
-            UpdateStatus?.Invoke("Checking if drive supports PQ subchannel reading...");
-
-            return!_dev.ReadCd(out _, out _, 0, 2352 + 16, 1, MmcSectorTypes.AllTypes, false, false, true,
-                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
-                               _dev.Timeout, out _);
         }
     }
 }

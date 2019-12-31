@@ -233,7 +233,10 @@
         <e p="Devices" t="Include">
           <e p="Dumping" t="Include">
             <e p="ATA.cs" t="Include" />
-            <e p="CompactDisc.cs" t="Include" />
+            <e p="CompactDisc" t="Include">
+              <e p="Dump.cs" t="Include" />
+              <e p="Subchannel.cs" t="Include" />
+            </e>
             <e p="Dump.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
