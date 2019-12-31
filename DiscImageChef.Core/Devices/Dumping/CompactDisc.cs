@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -1376,6 +1376,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 remainder = frame % 10;
                                 frame     = ((frame / 10) * 16) + remainder;
 
+                                // Scramble M and S
+                                minute ^= 0x01;
+                                second ^= 0x80;
+
                                 // Build sync
                                 byte[] sectorSync =
                                 {
@@ -1543,7 +1547,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Set speed
             if(_speedMultiplier >= 0)
             {
-                _dumpLog.WriteLine($"Setting speed to {(_speed == 0 ? "MAX" : $"{_speed}x")}.");
+                _dumpLog.WriteLine($"Setting speed to {(_speed   == 0 ? "MAX" : $"{_speed}x")}.");
                 UpdateStatus?.Invoke($"Setting speed to {(_speed == 0 ? "MAX" : $"{_speed}x")}.");
 
                 _speed *= _speedMultiplier;
