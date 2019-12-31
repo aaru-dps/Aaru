@@ -72,51 +72,49 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="dskType">Disc type as detected in MMC layer</param>
         void CompactDisc(out MediaType dskType)
         {
-            ExtentsULong           audioExtents;                                     // Extents with audio sectors
-            ulong                  blocks;                                           // Total number of positive sectors
-            uint                   blockSize;                                        // Size of the read sector in bytes
-            uint                   blocksToRead = 0;                                 // How many sectors to read at once
-            CdOffset               cdOffset;                                         // Read offset from database
-            byte[]                 cmdBuf;                                           // Data buffer
-            double                 cmdDuration  = 0;                                 // Command execution time
-            DumpHardwareType       currentTry   = null;                              // Current dump hardware try
-            double                 currentSpeed = 0;                                 // Current read speed
-            DateTime               dumpStart    = DateTime.UtcNow;                   // Time of dump start
-            DateTime               end;                                              // Time of operation end
-            ExtentsULong           extents = null;                                   // Extents
-            IbgLog                 ibgLog;                                           // IMGBurn log
-            double                 imageWriteDuration = 0;                           // Duration of image write
-            long                   lastSector         = 0;                           // Last sector number
-            var                    leadOutExtents     = new ExtentsULong();          // Lead-out extents
-            Dictionary<int, long>  leadOutStarts      = new Dictionary<int, long>(); // Lead-out starts
-            TrackType              leadoutTrackType   = TrackType.Audio;             // Type of lead-out
-            double                 maxSpeed           = double.MinValue;             // Maximum speed
-            MhddLog                mhddLog;                                          // MHDD log
-            double                 minSpeed = double.MaxValue;                       // Minimum speed
-            bool                   newTrim  = false;                                 // Is trim a new one?
-            bool                   read6    = false;                                 // Device supports READ(6)
-            bool                   read10   = false;                                 // Device supports READ(10)
-            bool                   read12   = false;                                 // Device supports READ(12)
-            bool                   read16   = false;                                 // Device supports READ(16)
-            bool                   readcd;                                           // Device supports READ CD
-            bool                   ret;                                              // Image writing return status
-            const uint             sectorSize       = 2352;                          // Full sector size
-            ulong                  sectorSpeedStart = 0;                             // Used to calculate correct speed
-            bool                   sense;                                            // Sense indicator
-            byte[]                 senseBuf;                                         // Sense buffer
-            int                    sessions = 1;                                     // Number of sessions in disc
-            DateTime               start;                                            // Start of operation
-            uint                   subSize;                                          // Subchannel size in bytes
-            TrackSubchannelType    subType;                                          // Track subchannel type
-            bool                   supportsLongSectors = true;                       // Supports reading EDC and ECC
-            byte[]                 tmpBuf;                                           // Temporary buffer
-            FullTOC.CDFullTOC?     toc           = null;                             // Full CD TOC
-            double                 totalDuration = 0;                                // Total commands duration
-            Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>();     // Track flags
-            List<Track>            trackList     = new List<Track>();                // Tracks in disc
-            Track[]                tracks;                                           // Tracks in disc as array
-            int                    offsetBytes      = 0;                             // Read offset
-            int                    sectorsForOffset = 0;                             // Sectors needed to fix offset
+            ExtentsULong           audioExtents;                                 // Extents with audio sectors
+            ulong                  blocks;                                       // Total number of positive sectors
+            uint                   blockSize;                                    // Size of the read sector in bytes
+            uint                   blocksToRead = 0;                             // How many sectors to read at once
+            CdOffset               cdOffset;                                     // Read offset from database
+            byte[]                 cmdBuf;                                       // Data buffer
+            double                 cmdDuration  = 0;                             // Command execution time
+            DumpHardwareType       currentTry   = null;                          // Current dump hardware try
+            double                 currentSpeed = 0;                             // Current read speed
+            DateTime               dumpStart    = DateTime.UtcNow;               // Time of dump start
+            DateTime               end;                                          // Time of operation end
+            ExtentsULong           extents = null;                               // Extents
+            IbgLog                 ibgLog;                                       // IMGBurn log
+            double                 imageWriteDuration = 0;                       // Duration of image write
+            long                   lastSector;                                   // Last sector number
+            var                    leadOutExtents = new ExtentsULong();          // Lead-out extents
+            Dictionary<int, long>  leadOutStarts  = new Dictionary<int, long>(); // Lead-out starts
+            double                 maxSpeed       = double.MinValue;             // Maximum speed
+            MhddLog                mhddLog;                                      // MHDD log
+            double                 minSpeed = double.MaxValue;                   // Minimum speed
+            bool                   newTrim  = false;                             // Is trim a new one?
+            bool                   read6    = false;                             // Device supports READ(6)
+            bool                   read10   = false;                             // Device supports READ(10)
+            bool                   read12   = false;                             // Device supports READ(12)
+            bool                   read16   = false;                             // Device supports READ(16)
+            bool                   readcd;                                       // Device supports READ CD
+            bool                   ret;                                          // Image writing return status
+            const uint             sectorSize       = 2352;                      // Full sector size
+            ulong                  sectorSpeedStart = 0;                         // Used to calculate correct speed
+            bool                   sense;                                        // Sense indicator
+            byte[]                 senseBuf;                                     // Sense buffer
+            int                    sessions = 1;                                 // Number of sessions in disc
+            DateTime               start;                                        // Start of operation
+            uint                   subSize;                                      // Subchannel size in bytes
+            TrackSubchannelType    subType;                                      // Track subchannel type
+            bool                   supportsLongSectors = true;                   // Supports reading EDC and ECC
+            byte[]                 tmpBuf;                                       // Temporary buffer
+            FullTOC.CDFullTOC?     toc           = null;                         // Full CD TOC
+            double                 totalDuration = 0;                            // Total commands duration
+            Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>(); // Track flags
+            Track[]                tracks;                                       // Tracks in disc
+            int                    offsetBytes      = 0;                         // Read offset
+            int                    sectorsForOffset = 0;                         // Sectors needed to fix offset
 
             bool nextData; // Next cluster of sectors is all data;
 
@@ -351,226 +349,11 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             blockSize = sectorSize + subSize;
 
-            // We discarded all discs that falsify a TOC before requesting a real TOC
-            // No TOC, no CD (or an empty one)
-            _dumpLog.WriteLine("Reading full TOC");
-            UpdateStatus?.Invoke("Reading full TOC");
-            sense = _dev.ReadRawToc(out cmdBuf, out senseBuf, 0, _dev.Timeout, out _);
+            tracks = GetCdTracks(ref blockSize, dskType, out lastSector, leadOutStarts, mediaTags, out toc, trackFlags,
+                                 subType);
 
-            if(!sense)
-            {
-                toc = FullTOC.Decode(cmdBuf);
-
-                if(toc.HasValue)
-                {
-                    tmpBuf = new byte[cmdBuf.Length - 2];
-                    Array.Copy(cmdBuf, 2, tmpBuf, 0, cmdBuf.Length - 2);
-                    mediaTags.Add(MediaTagType.CD_FullTOC, tmpBuf);
-                }
-            }
-
-            UpdateStatus?.Invoke("Building track map...");
-            _dumpLog.WriteLine("Building track map...");
-
-            if(toc.HasValue)
-            {
-                FullTOC.TrackDataDescriptor[] sortedTracks =
-                    toc.Value.TrackDescriptors.OrderBy(track => track.POINT).ToArray();
-
-                foreach(FullTOC.TrackDataDescriptor trk in sortedTracks.Where(trk => trk.ADR == 1 || trk.ADR == 4))
-                    if(trk.POINT >= 0x01 &&
-                       trk.POINT <= 0x63)
-                    {
-                        trackList.Add(new Track
-                        {
-                            TrackSequence = trk.POINT, TrackSession = trk.SessionNumber,
-                            TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                            ? TrackType.Data : TrackType.Audio,
-                            TrackStartSector =
-                                (ulong)(((trk.PHOUR * 3600 * 75) + (trk.PMIN * 60 * 75) + (trk.PSEC * 75) +
-                                         trk.PFRAME) - 150),
-                            TrackBytesPerSector    = (int)sectorSize,
-                            TrackRawBytesPerSector = (int)sectorSize,
-                            TrackSubchannelType    = subType
-                        });
-
-                        trackFlags.Add(trk.POINT, trk.CONTROL);
-                    }
-                    else if(trk.POINT == 0xA2)
-                    {
-                        int phour, pmin, psec, pframe;
-
-                        if(trk.PFRAME == 0)
-                        {
-                            pframe = 74;
-
-                            if(trk.PSEC == 0)
-                            {
-                                psec = 59;
-
-                                if(trk.PMIN == 0)
-                                {
-                                    pmin  = 59;
-                                    phour = trk.PHOUR - 1;
-                                }
-                                else
-                                {
-                                    pmin  = trk.PMIN - 1;
-                                    phour = trk.PHOUR;
-                                }
-                            }
-                            else
-                            {
-                                psec  = trk.PSEC - 1;
-                                pmin  = trk.PMIN;
-                                phour = trk.PHOUR;
-                            }
-                        }
-                        else
-                        {
-                            pframe = trk.PFRAME - 1;
-                            psec   = trk.PSEC;
-                            pmin   = trk.PMIN;
-                            phour  = trk.PHOUR;
-                        }
-
-                        lastSector = ((phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe) - 150;
-                        leadOutStarts.Add(trk.SessionNumber, lastSector                    + 1);
-                    }
-                    else if(trk.POINT == 0xA0 &&
-                            trk.ADR   == 1)
-                    {
-                        switch(trk.PSEC)
-                        {
-                            case 0x10:
-                                dskType = MediaType.CDI;
-
-                                break;
-                            case 0x20:
-                                if(dskType == MediaType.CD ||
-                                   dskType == MediaType.CDROM)
-                                    dskType = MediaType.CDROMXA;
-
-                                break;
-                        }
-
-                        leadoutTrackType =
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                                : TrackType.Audio;
-                    }
-            }
-            else
-            {
-                UpdateStatus?.Invoke("Cannot read RAW TOC, requesting processed one...");
-                _dumpLog.WriteLine("Cannot read RAW TOC, requesting processed one...");
-                sense = _dev.ReadToc(out cmdBuf, out senseBuf, false, 0, _dev.Timeout, out _);
-
-                TOC.CDTOC? oldToc = TOC.Decode(cmdBuf);
-
-                if((sense || !oldToc.HasValue) &&
-                   !_force)
-                {
-                    _dumpLog.WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
-
-                    StoppingErrorMessage?.
-                        Invoke("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
-
-                    return;
-                }
-
-                foreach(TOC.CDTOCTrackDataDescriptor trk in oldToc.
-                                                            Value.TrackDescriptors.OrderBy(t => t.TrackNumber).
-                                                            Where(trk => trk.ADR == 1 || trk.ADR == 4))
-                    if(trk.TrackNumber >= 0x01 &&
-                       trk.TrackNumber <= 0x63)
-                    {
-                        trackList.Add(new Track
-                        {
-                            TrackSequence = trk.TrackNumber, TrackSession = 1,
-                            TrackType = (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                                        (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental
-                                            ? TrackType.Data : TrackType.Audio,
-                            TrackStartSector       = trk.TrackStartAddress, TrackBytesPerSector = (int)sectorSize,
-                            TrackRawBytesPerSector = (int)sectorSize, TrackSubchannelType       = subType
-                        });
-
-                        trackFlags.Add(trk.TrackNumber, trk.CONTROL);
-                    }
-                    else if(trk.TrackNumber == 0xAA)
-                    {
-                        leadoutTrackType =
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrack ||
-                            (TocControl)(trk.CONTROL & 0x0D) == TocControl.DataTrackIncremental ? TrackType.Data
-                                : TrackType.Audio;
-
-                        lastSector = trk.TrackStartAddress - 1;
-                    }
-            }
-
-            if(trackList.Count == 0)
-            {
-                UpdateStatus?.Invoke("No tracks found, adding a single track from 0 to Lead-Out");
-                _dumpLog.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
-
-                trackList.Add(new Track
-                {
-                    TrackSequence       = 1, TrackSession = 1, TrackType = leadoutTrackType,
-                    TrackStartSector    = 0,
-                    TrackBytesPerSector = (int)sectorSize, TrackRawBytesPerSector = (int)sectorSize,
-                    TrackSubchannelType = subType
-                });
-
-                trackFlags.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
-            }
-
-            if(lastSector == 0)
-            {
-                sense = _dev.ReadCapacity16(out cmdBuf, out senseBuf, _dev.Timeout, out _);
-
-                if(!sense)
-                {
-                    byte[] temp = new byte[8];
-
-                    Array.Copy(cmdBuf, 0, temp, 0, 8);
-                    Array.Reverse(temp);
-                    lastSector = (long)BitConverter.ToUInt64(temp, 0);
-                    blockSize  = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
-                }
-                else
-                {
-                    sense = _dev.ReadCapacity(out cmdBuf, out senseBuf, _dev.Timeout, out _);
-
-                    if(!sense)
-                    {
-                        lastSector = (cmdBuf[0] << 24) + (cmdBuf[1] << 16) + (cmdBuf[2] << 8) + cmdBuf[3];
-                        blockSize  = (uint)((cmdBuf[5] << 24) + (cmdBuf[5] << 16) + (cmdBuf[6] << 8) + cmdBuf[7]);
-                    }
-                }
-
-                if(lastSector <= 0)
-                {
-                    if(!_force)
-                    {
-                        StoppingErrorMessage?.
-                            Invoke("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-
-                        _dumpLog.
-                            WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
-
-                        return;
-                    }
-
-                    UpdateStatus?.
-                        Invoke("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-
-                    _dumpLog.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
-                    lastSector = 360000;
-                }
-            }
-
-            tracks = trackList.ToArray();
+            if(tracks is null)
+                return;
 
             for(int t = 1; t < tracks.Length; t++)
                 tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
