@@ -1543,8 +1543,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Set speed
             if(_speedMultiplier >= 0)
             {
-                _dumpLog.WriteLine($"Setting speed to {_speed}x.");
-                UpdateStatus?.Invoke($"Setting speed to {_speed}x.");
+                _dumpLog.WriteLine($"Setting speed to {(_speed == 0 ? "MAX" : $"{_speed}x")}.");
+                UpdateStatus?.Invoke($"Setting speed to {(_speed == 0 ? "MAX" : $"{_speed}x")}.");
 
                 _speed *= _speedMultiplier;
 
