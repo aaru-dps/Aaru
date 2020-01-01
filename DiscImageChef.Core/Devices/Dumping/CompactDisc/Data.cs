@@ -121,14 +121,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                 Track track =
                     tracks.OrderBy(t => t.TrackStartSector).LastOrDefault(t => i >= t.TrackStartSector);
 
-                if((lastSector + 1) - (long)i < _maximumReadable)
-                    _maximumReadable = (uint)((lastSector + 1) - (long)i);
-
                 blocksToRead = 0;
                 bool inData = nextData;
 
                 for(ulong j = i; j < i + _maximumReadable; j++)
                 {
+                    if(j > (ulong)lastSector)
+                    {
+                        blocksToRead += (uint)sectorsForOffset;
+                        break;
+                    }
+
                     if(nextData)
                     {
                         if(audioExtents.Contains(j))
