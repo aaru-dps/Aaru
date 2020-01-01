@@ -32,7 +32,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes;
@@ -70,7 +69,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint                   blockSize;                                    // Size of the read sector in bytes
             CdOffset               cdOffset;                                     // Read offset from database
             byte[]                 cmdBuf;                                       // Data buffer
-            double                 cmdDuration;                                  // Command execution time
             DumpHardwareType       currentTry   = null;                          // Current dump hardware try
             double                 currentSpeed = 0;                             // Current read speed
             DateTime               dumpStart    = DateTime.UtcNow;               // Time of dump start
@@ -95,7 +93,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             bool                   ret;                                          // Image writing return status
             const uint             sectorSize       = 2352;                      // Full sector size
             int                    sectorsForOffset = 0;                         // Sectors needed to fix offset
-            ulong                  sectorSpeedStart = 0;                         // Used to calculate correct speed
             bool                   sense            = true;                      // Sense indicator
             int                    sessions;                                     // Number of sessions in disc
             DateTime               start;                                        // Start of operation
@@ -113,7 +110,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             int           firstTrackLastSession; // Number of first track in last session
             bool          hiddenTrack;           // Disc has a hidden track before track 1
             MmcSubchannel supportedSubchannel;   // Drive's maximum supported subchannel
-            DateTime      timeSpeedStart;        // Time of start for speed calculation
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
@@ -603,70 +599,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // Try to read the first track pregap
             if(_dumpFirstTrackPregap && readcd)
-            {
-                bool gotFirstTrackPregap         = false;
-                int  firstTrackPregapSectorsGood = 0;
-                var  firstTrackPregapMs          = new MemoryStream();
-
-                _dumpLog.WriteLine("Reading first track pregap");
-                UpdateStatus?.Invoke("Reading first track pregap");
-                InitProgress?.Invoke();
-                timeSpeedStart = DateTime.UtcNow;
-
-                for(int firstTrackPregapBlock = -150; firstTrackPregapBlock < 0 && _resume.NextBlock == 0;
-                    firstTrackPregapBlock++)
-                {
-                    if(_aborted)
-                    {
-                        _dumpLog.WriteLine("Aborted!");
-                        UpdateStatus?.Invoke("Aborted!");
-
-                        break;
-                    }
-
-                    PulseProgress?.
-                        Invoke($"Trying to read first track pregap sector {firstTrackPregapBlock} ({currentSpeed:F3} MiB/sec.)");
-
-                    sense = _dev.ReadCd(out cmdBuf, out _, (uint)firstTrackPregapBlock, blockSize, 1,
-                                        MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true,
-                                        true, MmcErrorField.None, supportedSubchannel, _dev.Timeout, out cmdDuration);
-
-                    if(!sense &&
-                       !_dev.Error)
-                    {
-                        firstTrackPregapMs.Write(cmdBuf, 0, (int)blockSize);
-                        gotFirstTrackPregap = true;
-                        firstTrackPregapSectorsGood++;
-                        totalDuration += cmdDuration;
-                    }
-                    else
-                    {
-                        // Write empty data
-                        if(gotFirstTrackPregap)
-                            firstTrackPregapMs.Write(new byte[blockSize], 0, (int)blockSize);
-                    }
-
-                    sectorSpeedStart++;
-
-                    double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
-
-                    if(elapsed < 1)
-                        continue;
-
-                    currentSpeed     = (sectorSpeedStart * blockSize) / (1048576 * elapsed);
-                    sectorSpeedStart = 0;
-                    timeSpeedStart   = DateTime.UtcNow;
-                }
-
-                if(firstTrackPregapSectorsGood > 0)
-                    mediaTags.Add(MediaTagType.CD_FirstTrackPregap, firstTrackPregapMs.ToArray());
-
-                EndProgress?.Invoke();
-                UpdateStatus?.Invoke($"Got {firstTrackPregapSectorsGood} first track pregap sectors.");
-                _dumpLog.WriteLine("Got {0} first track pregap sectors.", firstTrackPregapSectorsGood);
-
-                firstTrackPregapMs.Close();
-            }
+                ReadCdFirstTrackPregap(blockSize, ref currentSpeed, mediaTags, supportedSubchannel, ref totalDuration);
 
             // Try how many blocks are readable at once
             while(true)
