@@ -88,15 +88,17 @@ namespace DiscImageChef.Core.Devices.Dumping
             Dictionary<int, long>  leadOutStarts  = new Dictionary<int, long>(); // Lead-out starts
             double                 maxSpeed       = double.MinValue;             // Maximum speed
             MhddLog                mhddLog;                                      // MHDD log
-            double                 minSpeed = double.MaxValue;                   // Minimum speed
-            bool                   newTrim  = false;                             // Is trim a new one?
-            bool                   read6    = false;                             // Device supports READ(6)
-            bool                   read10   = false;                             // Device supports READ(10)
-            bool                   read12   = false;                             // Device supports READ(12)
-            bool                   read16   = false;                             // Device supports READ(16)
+            double                 minSpeed    = double.MaxValue;                // Minimum speed
+            bool                   newTrim     = false;                          // Is trim a new one?
+            int                    offsetBytes = 0;                              // Read offset
+            bool                   read6       = false;                          // Device supports READ(6)
+            bool                   read10      = false;                          // Device supports READ(10)
+            bool                   read12      = false;                          // Device supports READ(12)
+            bool                   read16      = false;                          // Device supports READ(16)
             bool                   readcd;                                       // Device supports READ CD
             bool                   ret;                                          // Image writing return status
             const uint             sectorSize       = 2352;                      // Full sector size
+            int                    sectorsForOffset = 0;                         // Sectors needed to fix offset
             ulong                  sectorSpeedStart = 0;                         // Used to calculate correct speed
             bool                   sense;                                        // Sense indicator
             byte[]                 senseBuf;                                     // Sense buffer
@@ -105,13 +107,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint                   subSize;                                      // Subchannel size in bytes
             TrackSubchannelType    subType;                                      // Track subchannel type
             bool                   supportsLongSectors = true;                   // Supports reading EDC and ECC
+            bool                   supportsPqSubchannel;                         // Supports reading PQ subchannel
+            bool                   supportsRwSubchannel;                         // Supports reading RW subchannel
             byte[]                 tmpBuf;                                       // Temporary buffer
             FullTOC.CDFullTOC?     toc           = null;                         // Full CD TOC
             double                 totalDuration = 0;                            // Total commands duration
             Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>(); // Track flags
             Track[]                tracks;                                       // Tracks in disc
-            int                    offsetBytes      = 0;                         // Read offset
-            int                    sectorsForOffset = 0;                         // Sectors needed to fix offset
 
             bool nextData; // Next cluster of sectors is all data;
 
@@ -147,19 +149,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 UpdateStatus?.Invoke($"CD reading offset is {cdOffset.Offset} samples.");
             }
 
+            // Check subchannels support
+            supportsPqSubchannel = SupportsPqSubchannel();
+            supportsRwSubchannel = SupportsRwSubchannel();
+
             switch(_subchannel)
             {
                 case DumpSubchannel.Any:
-                    if(SupportsRwSubchannel())
+                    if(supportsRwSubchannel)
                         supportedSubchannel = MmcSubchannel.Raw;
-                    else if(SupportsPqSubchannel())
+                    else if(supportsPqSubchannel)
                         supportedSubchannel = MmcSubchannel.Q16;
                     else
                         supportedSubchannel = MmcSubchannel.None;
 
                     break;
                 case DumpSubchannel.Rw:
-                    if(SupportsRwSubchannel())
+                    if(supportsRwSubchannel)
                         supportedSubchannel = MmcSubchannel.Raw;
                     else
                     {
@@ -173,9 +179,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     break;
                 case DumpSubchannel.RwOrPq:
-                    if(SupportsRwSubchannel())
+                    if(supportsRwSubchannel)
                         supportedSubchannel = MmcSubchannel.Raw;
-                    else if(SupportsPqSubchannel())
+                    else if(supportsPqSubchannel)
                         supportedSubchannel = MmcSubchannel.Q16;
                     else
                     {
@@ -189,7 +195,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     break;
                 case DumpSubchannel.Pq:
-                    if(SupportsPqSubchannel())
+                    if(supportsPqSubchannel)
                         supportedSubchannel = MmcSubchannel.Q16;
                     else
                     {
