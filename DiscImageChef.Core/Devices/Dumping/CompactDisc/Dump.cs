@@ -380,7 +380,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 if(_outputPlugin.SupportedMediaTags.Contains(tag))
                     continue;
 
-                if(!_force)
+                if(_force)
                 {
                     _dumpLog.WriteLine("Output format does not support {0}, continuing...", tag);
                     ErrorMessage?.Invoke($"Output format does not support {tag}, continuing...");
