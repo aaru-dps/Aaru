@@ -207,8 +207,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(!_outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
                supportedSubchannel != MmcSubchannel.None)
             {
-                if(!_force ||
-                   _subchannel != DumpSubchannel.Any)
+                if(_force ||
+                   _subchannel == DumpSubchannel.None)
                 {
                     _dumpLog.WriteLine("Output format does not support subchannels, continuing...");
                     UpdateStatus?.Invoke("Output format does not support subchannels, continuing...");
