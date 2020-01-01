@@ -31,8 +31,10 @@
 // ****************************************************************************/
 
 using System;
+using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.SCSI;
@@ -79,7 +81,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         long lastSector, ExtentsULong leadOutExtents, ref double maxSpeed, MhddLog mhddLog,
                         ref double minSpeed, out bool newTrim, bool nextData, int offsetBytes, bool read6, bool read10,
                         bool read12, bool read16, bool readcd, int sectorsForOffset, uint subSize,
-                        MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration)
+                        MmcSubchannel supportedSubchannel, bool supportsLongSectors, ref double totalDuration,
+                        Track[] tracks)
         {
             ulong      sectorSpeedStart = 0;               // Used to calculate correct speed
             DateTime   timeSpeedStart   = DateTime.UtcNow; // Time of start for speed calculation
@@ -115,6 +118,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 uint firstSectorToRead = (uint)i;
 
+                Track track =
+                    tracks.OrderBy(t => t.TrackStartSector).LastOrDefault(t => i >= t.TrackStartSector);
+
                 if((lastSector + 1) - (long)i < _maximumReadable)
                     _maximumReadable = (uint)((lastSector + 1) - (long)i);
 
@@ -147,8 +153,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                 }
 
+                if(track.TrackSequence                          != 0 &&
+                   (i + blocksToRead) - (ulong)sectorsForOffset > track.TrackEndSector + 1)
+                    blocksToRead = (uint)(((track.TrackEndSector + 1) - i) + (ulong)sectorsForOffset);
+
                 if(blocksToRead == 1)
-                    blocksToRead = 2;
+                    blocksToRead += (uint)sectorsForOffset;
 
                 if(_fixOffset && !inData)
                 {

@@ -872,7 +872,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ReadCdData(audioExtents, blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog,
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
                        out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
-                       readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration);
+                       readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration, tracks);
 
             // TODO: Enable when underlying images support lead-outs
             /*
