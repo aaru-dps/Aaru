@@ -79,6 +79,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             DateTime               dumpStart    = DateTime.UtcNow;               // Time of dump start
             DateTime               end;                                          // Time of operation end
             ExtentsULong           extents = null;                               // Extents
+            bool                   hiddenData;                                   // Hidden track is data
             IbgLog                 ibgLog;                                       // IMGBurn log
             double                 imageWriteDuration = 0;                       // Duration of image write
             long                   lastSector;                                   // Last sector number
@@ -98,8 +99,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             const uint             sectorSize       = 2352;                      // Full sector size
             int                    sectorsForOffset = 0;                         // Sectors needed to fix offset
             ulong                  sectorSpeedStart = 0;                         // Used to calculate correct speed
-            bool                   sense=true;                                        // Sense indicator
-            byte[]                 senseBuf = null;                              // Sense buffer
+            bool                   sense            = true;                      // Sense indicator
+            byte[]                 senseBuf         = null;                      // Sense buffer
             int                    sessions;                                     // Number of sessions in disc
             DateTime               start;                                        // Start of operation
             uint                   subSize;                                      // Subchannel size in bytes
@@ -113,15 +114,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             Dictionary<byte, byte> trackFlags    = new Dictionary<byte, byte>(); // Track flags
             Track[]                tracks;                                       // Tracks in disc
 
-            bool nextData; // Next cluster of sectors is all data;
+            int           firstTrackLastSession; // Number of first track in last session
+            bool          hiddenTrack;           // Disc has a hidden track before track 1
+            bool          nextData;              // Next cluster of sectors is all data;
+            MmcSubchannel supportedSubchannel;   // Drive's maximum supported subchannel
+            DateTime      timeSpeedStart;        // Time of start for speed calculation
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
-
-            int firstTrackLastSession; // Number of first track in last session
-
-            MmcSubchannel supportedSubchannel; // Drive's maximum supported subchannel
-
-            DateTime timeSpeedStart; // Time of start for speed calculation
 
             dskType = MediaType.CD;
 
@@ -428,157 +427,31 @@ namespace DiscImageChef.Core.Devices.Dumping
                     leadOutExtents.Add(dataExtentsArray[i].Item2 + 1, dataExtentsArray[i + 1].Item1 - 1);
             }
 
-            // Check for hidden data before start of track 1
-            if(tracks.First(t => t.TrackSequence == 1).TrackStartSector > 0 && readcd)
+            _dumpLog.WriteLine("Detecting disc type...");
+            UpdateStatus?.Invoke("Detecting disc type...");
+
+            MMC.DetectDiscType(ref dskType, sessions, toc, _dev, out hiddenTrack, out hiddenData,
+                               firstTrackLastSession);
+
+            if(hiddenTrack)
             {
-                _dumpLog.WriteLine("First track starts after sector 0, checking for a hidden track...");
-                UpdateStatus?.Invoke("First track starts after sector 0, checking for a hidden track...");
+                _dumpLog.WriteLine("Disc contains a hidden track...");
+                UpdateStatus?.Invoke("Disc contains a hidden track...");
 
-                sense = _dev.ReadCd(out cmdBuf, out senseBuf, 0, blockSize, 1, MmcSectorTypes.AllTypes, false, false,
-                                    true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                    supportedSubchannel, _dev.Timeout, out _);
-
-                if(_dev.Error || sense)
+                List<Track> trkList = new List<Track>
                 {
-                    _dumpLog.WriteLine("Could not read sector 0, continuing...");
-                    UpdateStatus?.Invoke("Could not read sector 0, continuing...");
-                }
-                else
-                {
-                    byte[] syncMark =
+                    new Track
                     {
-                        0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
-                    };
-
-                    byte[] cdiMark =
-                    {
-                        0x01, 0x43, 0x44, 0x2D
-                    };
-
-                    byte[] testMark = new byte[12];
-                    Array.Copy(cmdBuf, 0, testMark, 0, 12);
-
-                    bool hiddenData = syncMark.SequenceEqual(testMark) &&
-                                      (cmdBuf[0xF] == 0 || cmdBuf[0xF] == 1 || cmdBuf[0xF] == 2);
-
-                    if(hiddenData && cmdBuf[0xF] == 2)
-                    {
-                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, 16, blockSize, 1, MmcSectorTypes.AllTypes, false,
-                                            false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                            supportedSubchannel, _dev.Timeout, out _);
-
-                        if(!_dev.Error &&
-                           !sense)
-                        {
-                            testMark = new byte[4];
-                            Array.Copy(cmdBuf, 24, testMark, 0, 4);
-
-                            if(cdiMark.SequenceEqual(testMark))
-                                dskType = MediaType.CDIREADY;
-                        }
-
-                        List<Track> trkList = new List<Track>
-                        {
-                            new Track
-                            {
-                                TrackSequence          = 0,
-                                TrackSession           = 1,
-                                TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
-                                TrackStartSector       = 0,
-                                TrackBytesPerSector    = (int)sectorSize,
-                                TrackRawBytesPerSector = (int)sectorSize,
-                                TrackSubchannelType    = subType,
-                                TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
-                            }
-                        };
-
-                        trkList.AddRange(tracks);
-                        tracks = trkList.ToArray();
+                        TrackSequence          = 0, TrackSession = 1,
+                        TrackType              = hiddenData ? TrackType.Data : TrackType.Audio,
+                        TrackStartSector       = 0, TrackBytesPerSector               = (int)sectorSize,
+                        TrackRawBytesPerSector = (int)sectorSize, TrackSubchannelType = subType,
+                        TrackEndSector         = tracks.First(t => t.TrackSequence == 1).TrackStartSector - 1
                     }
-                }
-            }
+                };
 
-            if(dskType == MediaType.CD ||
-               dskType == MediaType.CDROMXA)
-            {
-                // TODO: Add other detectors here
-                _dumpLog.WriteLine("Detecting disc type...");
-                UpdateStatus?.Invoke("Detecting disc type...");
-
-                bool hasDataTrack                  = false;
-                bool hasAudioTrack                 = false;
-                bool allFirstSessionTracksAreAudio = true;
-                bool hasVideoTrack                 = false;
-
-                foreach(FullTOC.TrackDataDescriptor track in toc.Value.TrackDescriptors)
-                {
-                    if(track.TNO == 1 &&
-                       ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
-                        (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental))
-                        allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
-
-                    if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
-                       (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
-                    {
-                        hasDataTrack                  =  true;
-                        allFirstSessionTracksAreAudio &= track.POINT >= firstTrackLastSession;
-                    }
-                    else
-                    {
-                        hasAudioTrack = true;
-                    }
-
-                    hasVideoTrack |= track.ADR == 4;
-                }
-
-                if(hasDataTrack                  &&
-                   hasAudioTrack                 &&
-                   allFirstSessionTracksAreAudio &&
-                   sessions == 2)
-                    dskType = MediaType.CDPLUS;
-
-                if(!hasDataTrack &&
-                   hasAudioTrack &&
-                   sessions == 1)
-                    dskType = MediaType.CDDA;
-
-                if(hasDataTrack   &&
-                   !hasAudioTrack &&
-                   sessions == 1)
-                    dskType = MediaType.CDROM;
-
-                if(hasVideoTrack &&
-                   !hasDataTrack &&
-                   sessions == 1)
-                    dskType = MediaType.CDV;
-
-                byte[] videoNowColorFrame = new byte[9 * sectorSize];
-
-                for(int i = 0; i < 9; i++)
-                {
-                    sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, sectorSize, 1, MmcSectorTypes.AllTypes,
-                                        false, false, true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                        MmcSubchannel.None, _dev.Timeout, out _);
-
-                    if(sense || _dev.Error)
-                    {
-                        sense = _dev.ReadCd(out cmdBuf, out senseBuf, (uint)i, sectorSize, 1, MmcSectorTypes.Cdda,
-                                            false, false, true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
-                                            MmcSubchannel.None, _dev.Timeout, out _);
-
-                        if(sense || _dev.Error)
-                        {
-                            videoNowColorFrame = null;
-
-                            break;
-                        }
-                    }
-
-                    Array.Copy(cmdBuf, 0, videoNowColorFrame, i * sectorSize, sectorSize);
-                }
-
-                if(MMC.IsVideoNowColor(videoNowColorFrame))
-                    dskType = MediaType.VideoNowColor;
+                trkList.AddRange(tracks);
+                tracks = trkList.ToArray();
             }
 
             // Check mode for tracks

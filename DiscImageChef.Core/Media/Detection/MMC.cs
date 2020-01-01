@@ -31,14 +31,79 @@
 // ****************************************************************************/
 
 using System;
+using System.IO;
 using System.Linq;
+using DiscImageChef.Checksums;
+using DiscImageChef.CommonTypes;
+using DiscImageChef.Console;
+using DiscImageChef.Decoders.CD;
+using DiscImageChef.Decoders.Sega;
+using DiscImageChef.Devices;
+// ReSharper disable JoinDeclarationAndInitializer
 
 namespace DiscImageChef.Core.Media.Detection
 {
     public static class MMC
     {
+        /// <summary>SHA256 of PlayStation 2 boot sectors, seen in PAL discs</summary>
+        const string PS2_PAL_HASH = "5d04ff236613e1d8adcf9c201874acd6f6deed1e04306558b86f91cfb626f39d";
+
+        /// <summary>SHA256 of PlayStation 2 boot sectors, seen in Japanese, American, Malaysian and Korean discs</summary>
+        const string PS2_NTSC_HASH = "0bada1426e2c0351b872ef2a9ad2e5a0ac3918f4c53aa53329cb2911a8e16c23";
+
+        /// <summary>SHA256 of PlayStation 2 boot sectors, seen in Japanese discs</summary>
+        const string PS2_JAPANESE_HASH = "b82bffb809070d61fe050b7e1545df53d8f3cc648257cdff7502bc0ba6b38870";
+
+        static readonly byte[] _ps3Id =
+        {
+            0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x33, 0x00, 0x00, 0x00, 0x00
+        };
+
+        static readonly byte[] _ps4Id =
+        {
+            0x50, 0x6C, 0x61, 0x79, 0x53, 0x74, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x34, 0x00, 0x00, 0x00, 0x00
+        };
+
+        static readonly byte[] _operaId =
+        {
+            0x01, 0x5A, 0x5A, 0x5A, 0x5A, 0x5A, 0x01
+        };
+
+        // Only present on bootable CDs, but those make more than 99% of all available
+        static readonly byte[] _fmTownsBootId =
+        {
+            0x49, 0x50, 0x4C, 0x34, 0xEB, 0x55, 0x06
+        };
+
+        /// <summary>Present on first two seconds of second track, says "COPYRIGHT BANDAI"</summary>
+        static readonly byte[] _playdiaCopyright =
+        {
+            0x43, 0x4F, 0x50, 0x59, 0x52, 0x49, 0x47, 0x48, 0x54, 0x20, 0x42, 0x41, 0x4E, 0x44, 0x41, 0x49
+        };
+
+        static readonly byte[] _pcEngineSignature =
+        {
+            0x50, 0x43, 0x20, 0x45, 0x6E, 0x67, 0x69, 0x6E, 0x65, 0x20, 0x43, 0x44, 0x2D, 0x52, 0x4F, 0x4D, 0x20, 0x53,
+            0x59, 0x53, 0x54, 0x45, 0x4D
+        };
+
+        static readonly byte[] _pcFxSignature =
+        {
+            0x50, 0x43, 0x2D, 0x46, 0x58, 0x3A, 0x48, 0x75, 0x5F, 0x43, 0x44, 0x2D, 0x52, 0x4F, 0x4D
+        };
+
+        static readonly byte[] _atariSignature =
+        {
+            0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41,
+            0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52,
+            0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41,
+            0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x49, 0x52, 0x54, 0x41, 0x52, 0x41, 0x20, 0x49, 0x50, 0x41,
+            0x52, 0x50, 0x56, 0x4F, 0x44, 0x45, 0x44, 0x20, 0x54, 0x41, 0x20, 0x41, 0x45, 0x48, 0x44, 0x41, 0x52, 0x45,
+            0x41, 0x20, 0x52, 0x54
+        };
+
         /// <summary>This is some kind of header. Every 10 bytes there's an audio byte.</summary>
-        static readonly byte[] VideoNowColorFrameMarker =
+        static readonly byte[] _videoNowColorFrameMarker =
         {
             0x81, 0xE3, 0xE3, 0xC7, 0xC7, 0x81, 0x81, 0xE3, 0xC7, 0x00, 0x81, 0xE3, 0xE3, 0xC7, 0xC7, 0x81, 0x81, 0xE3,
             0xC7, 0x00, 0x81, 0xE3, 0xE3, 0xC7, 0xC7, 0x81, 0x81, 0xE3, 0xC7, 0x00, 0x81, 0xE3, 0xE3, 0xC7, 0xC7, 0x81,
@@ -65,14 +130,9 @@ namespace DiscImageChef.Core.Media.Detection
             0xFF, 0xFF, 0xFF, 0x00
         };
 
-        /// <summary>Checks if the media corresponds to CD-i.</summary>
-        /// <param name="sector0">Contents of LBA 0, with all headers.</param>
-        /// <param name="sector16">Contents of LBA 0, with all headers.</param>
-        /// <returns><c>true</c> if it corresponds to a CD-i, <c>false</c>otherwise.</returns>
-        public static bool IsCdi(byte[] sector0, byte[] sector16)
+        static bool IsData(byte[] sector)
         {
-            if(sector0?.Length  != 2352 ||
-               sector16?.Length != 2352)
+            if(sector?.Length != 2352)
                 return false;
 
             byte[] syncMark =
@@ -80,34 +140,45 @@ namespace DiscImageChef.Core.Media.Detection
                 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
             };
 
+            byte[] testMark = new byte[12];
+            Array.Copy(sector, 0, testMark, 0, 12);
+
+            return syncMark.SequenceEqual(testMark) && (sector[0xF] == 0 || sector[0xF] == 1 || sector[0xF] == 2);
+        }
+
+        /// <summary>Checks if the media corresponds to CD-i.</summary>
+        /// <param name="sector0">Contents of LBA 0, with all headers.</param>
+        /// <param name="sector16">Contents of LBA 0, with all headers.</param>
+        /// <returns><c>true</c> if it corresponds to a CD-i, <c>false</c>otherwise.</returns>
+        static bool IsCdi(byte[] sector0, byte[] sector16)
+        {
+            if(sector16?.Length != 2352)
+                return false;
+
             byte[] cdiMark =
             {
                 0x01, 0x43, 0x44, 0x2D
             };
 
-            byte[] testMark = new byte[12];
-            Array.Copy(sector0, 0, testMark, 0, 12);
+            bool isData = IsData(sector0);
 
-            bool hiddenData = syncMark.SequenceEqual(testMark) &&
-                              (sector0[0xF] == 0 || sector0[0xF] == 1 || sector0[0xF] == 2);
-
-            if(!hiddenData ||
+            if(!isData ||
                sector0[0xF] != 2)
                 return false;
 
-            testMark = new byte[4];
+            byte[] testMark = new byte[4];
             Array.Copy(sector16, 24, testMark, 0, 4);
 
             return cdiMark.SequenceEqual(testMark);
         }
 
-        public static bool IsVideoNowColor(byte[] videoFrame)
+        static bool IsVideoNowColor(byte[] videoFrame)
         {
             if(videoFrame is null ||
-               videoFrame.Length < VideoNowColorFrameMarker.Length)
+               videoFrame.Length < _videoNowColorFrameMarker.Length)
                 return false;
 
-            byte[] buffer = new byte[VideoNowColorFrameMarker.Length];
+            byte[] buffer = new byte[_videoNowColorFrameMarker.Length];
 
             for(int framePosition = 0; framePosition + buffer.Length < videoFrame.Length; framePosition++)
             {
@@ -116,7 +187,7 @@ namespace DiscImageChef.Core.Media.Detection
                 for(int ab = 9; ab < buffer.Length; ab += 10)
                     buffer[ab] = 0;
 
-                if(!VideoNowColorFrameMarker.SequenceEqual(buffer))
+                if(!_videoNowColorFrameMarker.SequenceEqual(buffer))
                     continue;
 
                 return true;
@@ -127,7 +198,7 @@ namespace DiscImageChef.Core.Media.Detection
 
         public static int GetVideoNowColorOffset(byte[] data)
         {
-            byte[] buffer = new byte[VideoNowColorFrameMarker.Length];
+            byte[] buffer = new byte[_videoNowColorFrameMarker.Length];
 
             for(int framePosition = 0; framePosition + buffer.Length < data.Length; framePosition++)
             {
@@ -136,13 +207,773 @@ namespace DiscImageChef.Core.Media.Detection
                 for(int ab = 9; ab < buffer.Length; ab += 10)
                     buffer[ab] = 0;
 
-                if(!VideoNowColorFrameMarker.SequenceEqual(buffer))
+                if(!_videoNowColorFrameMarker.SequenceEqual(buffer))
                     continue;
 
                 return 18032 - framePosition;
             }
 
             return 0;
+        }
+
+        public static void DetectDiscType(ref MediaType mediaType, int sessions, FullTOC.CDFullTOC? decodedToc,
+                                          Device dev, out bool hiddenTrack, out bool hiddenData,
+                                          int firstTrackLastSession)
+        {
+            uint   startOfFirstDataTrack = uint.MaxValue;
+            byte[] cmdBuf;
+            bool   sense;
+            byte   secondSessionFirstTrack = 0;
+            byte[] sector0;
+            byte[] sector1                      = null;
+            byte[] ps2BootSectors               = null;
+            byte[] playdia1                     = null;
+            byte[] playdia2                     = null;
+            byte[] firstDataSectorNotZero       = null;
+            byte[] secondDataSectorNotZero      = null;
+            byte[] firstTrackSecondSession      = null;
+            byte[] firstTrackSecondSessionAudio = null;
+            byte[] videoNowColorFrame;
+            hiddenTrack = false;
+            hiddenData  = false;
+
+            if(decodedToc.HasValue)
+                if(decodedToc.Value.TrackDescriptors.Any(t => t.SessionNumber == 2))
+                    secondSessionFirstTrack =
+                        decodedToc.Value.TrackDescriptors.Where(t => t.SessionNumber == 2).Min(t => t.POINT);
+
+            if(mediaType == MediaType.CD ||
+               mediaType == MediaType.CDROMXA)
+            {
+                bool hasDataTrack                  = false;
+                bool hasAudioTrack                 = false;
+                bool allFirstSessionTracksAreAudio = true;
+                bool hasVideoTrack                 = false;
+
+                if(decodedToc.HasValue)
+                    foreach(FullTOC.TrackDataDescriptor track in decodedToc.Value.TrackDescriptors)
+                    {
+                        if(track.TNO == 1 &&
+                           ((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
+                            (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental))
+                            allFirstSessionTracksAreAudio &= firstTrackLastSession != 1;
+
+                        if((TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrack ||
+                           (TocControl)(track.CONTROL & 0x0D) == TocControl.DataTrackIncremental)
+                        {
+                            uint startAddress =
+                                (uint)(((track.PHOUR * 3600 * 75) + (track.PMIN * 60 * 75) + (track.PSEC * 75) +
+                                        track.PFRAME) - 150);
+
+                            if(startAddress < startOfFirstDataTrack)
+                                startOfFirstDataTrack = startAddress;
+
+                            hasDataTrack                  =  true;
+                            allFirstSessionTracksAreAudio &= track.POINT >= firstTrackLastSession;
+                        }
+                        else
+                        {
+                            hasAudioTrack = true;
+                        }
+
+                        hasVideoTrack |= track.ADR == 4;
+                    }
+
+                if(hasDataTrack                  &&
+                   hasAudioTrack                 &&
+                   allFirstSessionTracksAreAudio &&
+                   sessions == 2)
+                    mediaType = MediaType.CDPLUS;
+
+                if(!hasDataTrack &&
+                   hasAudioTrack &&
+                   sessions == 1)
+                    mediaType = MediaType.CDDA;
+
+                if(hasDataTrack   &&
+                   !hasAudioTrack &&
+                   sessions == 1)
+                    mediaType = MediaType.CDROM;
+
+                if(hasVideoTrack &&
+                   !hasDataTrack &&
+                   sessions == 1)
+                    mediaType = MediaType.CDV;
+            }
+
+            if(secondSessionFirstTrack != 0 &&
+               decodedToc.HasValue          &&
+               decodedToc.Value.TrackDescriptors.Any(t => t.POINT == secondSessionFirstTrack))
+            {
+                FullTOC.TrackDataDescriptor secondSessionFirstTrackTrack =
+                    decodedToc.Value.TrackDescriptors.First(t => t.POINT == secondSessionFirstTrack);
+
+                uint firstSectorSecondSessionFirstTrack =
+                    (uint)(((secondSessionFirstTrackTrack.PHOUR * 3600 * 75) +
+                            (secondSessionFirstTrackTrack.PMIN * 60    * 75) +
+                            (secondSessionFirstTrackTrack.PSEC         * 75) +
+                            secondSessionFirstTrackTrack.PFRAME) - 150);
+
+                sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
+                                   MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                if(!sense &&
+                   !dev.Error)
+                {
+                    firstTrackSecondSession = cmdBuf;
+                }
+                else
+                {
+                    sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack, 2352, 1,
+                                       MmcSectorTypes.Cdda, false, false, true, MmcHeaderCodes.None, true, true,
+                                       MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                    if(!sense &&
+                       !dev.Error)
+                        firstTrackSecondSession = cmdBuf;
+                }
+
+                sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack - 1, 2352, 3,
+                                   MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                if(!sense &&
+                   !dev.Error)
+                {
+                    firstTrackSecondSessionAudio = cmdBuf;
+                }
+                else
+                {
+                    sense = dev.ReadCd(out cmdBuf, out _, firstSectorSecondSessionFirstTrack - 1, 2352, 3,
+                                       MmcSectorTypes.Cdda, false, false, true, MmcHeaderCodes.None, true, true,
+                                       MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                    if(!sense &&
+                       !dev.Error)
+                        firstTrackSecondSessionAudio = cmdBuf;
+                }
+            }
+
+            videoNowColorFrame = new byte[9 * 2352];
+
+            for(int i = 0; i < 9; i++)
+            {
+                sense = dev.ReadCd(out cmdBuf, out _, (uint)i, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                   dev.Timeout, out _);
+
+                if(sense || dev.Error)
+                {
+                    sense = dev.ReadCd(out cmdBuf, out _, (uint)i, 2352, 1, MmcSectorTypes.Cdda, false, false, true,
+                                       MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                       dev.Timeout, out _);
+
+                    if(sense || !dev.Error)
+                    {
+                        videoNowColorFrame = null;
+
+                        break;
+                    }
+                }
+
+                Array.Copy(cmdBuf, 0, videoNowColorFrame, i * 2352, 2352);
+            }
+
+            if(decodedToc.HasValue)
+            {
+                FullTOC.TrackDataDescriptor firstTrack = decodedToc.Value.TrackDescriptors.First(t => t.POINT == 1);
+
+                uint firstTrackSector = (uint)(((firstTrack.PHOUR * 3600 * 75) + (firstTrack.PMIN * 60 * 75) +
+                                                (firstTrack.PSEC         * 75) + firstTrack.PFRAME) - 150);
+
+                // Check for hidden data before start of track 1
+                if(firstTrackSector > 0)
+                {
+                    sense = dev.ReadCd(out sector0, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                       dev.Timeout, out _);
+
+                    if(!dev.Error &&
+                       !sense)
+                    {
+                        hiddenTrack = true;
+
+                        hiddenData = IsData(sector0);
+
+                        if(hiddenData)
+                        {
+                            sense = dev.ReadCd(out byte[] sector16, out _, 16, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                               true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(IsCdi(sector0, sector16))
+                            {
+                                mediaType = MediaType.CDIREADY;
+                            }
+                        }
+                    }
+                }
+            }
+
+            sector0 = null;
+
+            switch(mediaType)
+            {
+                case MediaType.CD:
+                case MediaType.CDDA:
+                case MediaType.CDPLUS:
+                case MediaType.CDROM:
+                case MediaType.CDROMXA:
+                {
+                    sense = dev.ReadCd(out cmdBuf, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                       dev.Timeout, out _);
+
+                    if(!sense &&
+                       !dev.Error)
+                    {
+                        sector0 = new byte[2048];
+                        Array.Copy(cmdBuf, 16, sector0, 0, 2048);
+
+                        sense = dev.ReadCd(out cmdBuf, out _, 1, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                        {
+                            sector1 = new byte[2048];
+                            Array.Copy(cmdBuf, 16, sector1, 0, 2048);
+                        }
+
+                        sense = dev.ReadCd(out cmdBuf, out _, 4200, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                           true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                        {
+                            playdia1 = new byte[2048];
+                            Array.Copy(cmdBuf, 24, playdia1, 0, 2048);
+                        }
+
+                        sense = dev.ReadCd(out cmdBuf, out _, 4201, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                           true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                        {
+                            playdia2 = new byte[2048];
+                            Array.Copy(cmdBuf, 24, playdia2, 0, 2048);
+                        }
+
+                        if(startOfFirstDataTrack != uint.MaxValue)
+                        {
+                            sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2352, 1,
+                                               MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                               true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                            {
+                                firstDataSectorNotZero = new byte[2048];
+                                Array.Copy(cmdBuf, 16, firstDataSectorNotZero, 0, 2048);
+                            }
+
+                            sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2352, 1,
+                                               MmcSectorTypes.AllTypes, false, false, true, MmcHeaderCodes.AllHeaders,
+                                               true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                            {
+                                secondDataSectorNotZero = new byte[2048];
+                                Array.Copy(cmdBuf, 16, secondDataSectorNotZero, 0, 2048);
+                            }
+                        }
+
+                        var ps2Ms = new MemoryStream();
+
+                        for(uint p = 0; p < 12; p++)
+                        {
+                            sense = dev.ReadCd(out cmdBuf, out _, p, 2352, 1, MmcSectorTypes.AllTypes, false, false,
+                                               true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(sense || dev.Error)
+                                break;
+
+                            ps2Ms.Write(cmdBuf, cmdBuf[0x0F] == 0x02 ? 24 : 16, 2048);
+                        }
+
+                        if(ps2Ms.Length == 0x6000)
+                            ps2BootSectors = ps2Ms.ToArray();
+                    }
+                    else
+                    {
+                        sense = dev.ReadCd(out cmdBuf, out _, 0, 2324, 1, MmcSectorTypes.Mode2, false, false, true,
+                                           MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                           dev.Timeout, out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                        {
+                            sector0 = new byte[2048];
+                            Array.Copy(cmdBuf, 0, sector0, 0, 2048);
+
+                            sense = dev.ReadCd(out cmdBuf, out _, 1, 2324, 1, MmcSectorTypes.Mode2, false, false, true,
+                                               MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                               dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                            {
+                                sector1 = new byte[2048];
+                                Array.Copy(cmdBuf, 1, sector0, 0, 2048);
+                            }
+
+                            sense = dev.ReadCd(out cmdBuf, out _, 4200, 2324, 1, MmcSectorTypes.Mode2, false, false,
+                                               true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                            {
+                                playdia1 = new byte[2048];
+                                Array.Copy(cmdBuf, 0, playdia1, 0, 2048);
+                            }
+
+                            sense = dev.ReadCd(out cmdBuf, out _, 4201, 2324, 1, MmcSectorTypes.Mode2, false, false,
+                                               true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                            {
+                                playdia2 = new byte[2048];
+                                Array.Copy(cmdBuf, 0, playdia2, 0, 2048);
+                            }
+
+                            if(startOfFirstDataTrack != uint.MaxValue)
+                            {
+                                sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2324, 1,
+                                                   MmcSectorTypes.Mode2, false, false, true, MmcHeaderCodes.None, true,
+                                                   true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !dev.Error)
+                                {
+                                    firstDataSectorNotZero = new byte[2048];
+                                    Array.Copy(cmdBuf, 0, firstDataSectorNotZero, 0, 2048);
+                                }
+
+                                sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2324, 1,
+                                                   MmcSectorTypes.Mode2, false, false, true, MmcHeaderCodes.None, true,
+                                                   true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !dev.Error)
+                                {
+                                    secondDataSectorNotZero = new byte[2048];
+                                    Array.Copy(cmdBuf, 0, secondDataSectorNotZero, 0, 2048);
+                                }
+                            }
+
+                            var ps2Ms = new MemoryStream();
+
+                            for(uint p = 0; p < 12; p++)
+                            {
+                                sense = dev.ReadCd(out cmdBuf, out _, p, 2324, 1, MmcSectorTypes.Mode2, false, false,
+                                                   true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(sense || dev.Error)
+                                    break;
+
+                                ps2Ms.Write(cmdBuf, 0, 2048);
+                            }
+
+                            if(ps2Ms.Length == 0x6000)
+                                ps2BootSectors = ps2Ms.ToArray();
+                        }
+                        else
+                        {
+                            sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 1, MmcSectorTypes.Mode1, false, false, true,
+                                               MmcHeaderCodes.None, true, true, MmcErrorField.None, MmcSubchannel.None,
+                                               dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                            {
+                                sector0 = cmdBuf;
+
+                                sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 1, MmcSectorTypes.Mode1, false, false,
+                                                   true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !dev.Error)
+                                    sector1 = cmdBuf;
+
+                                sense = dev.ReadCd(out cmdBuf, out _, 0, 2048, 12, MmcSectorTypes.Mode1, false, false,
+                                                   true, MmcHeaderCodes.None, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !dev.Error)
+                                    ps2BootSectors = cmdBuf;
+
+                                if(startOfFirstDataTrack != uint.MaxValue)
+                                {
+                                    sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack, 2048, 1,
+                                                       MmcSectorTypes.Mode1, false, false, true, MmcHeaderCodes.None,
+                                                       true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                                                       out _);
+
+                                    if(!sense &&
+                                       !dev.Error)
+                                        firstDataSectorNotZero = cmdBuf;
+
+                                    sense = dev.ReadCd(out cmdBuf, out _, startOfFirstDataTrack + 1, 2048, 1,
+                                                       MmcSectorTypes.Mode1, false, false, true, MmcHeaderCodes.None,
+                                                       true, true, MmcErrorField.None, MmcSubchannel.None, dev.Timeout,
+                                                       out _);
+
+                                    if(!sense &&
+                                       !dev.Error)
+                                        secondDataSectorNotZero = cmdBuf;
+                                }
+                            }
+                            else
+                            {
+                                goto case MediaType.DVDROM;
+                            }
+                        }
+                    }
+
+                    break;
+                }
+
+                // TODO: Check for CD-i Ready
+                case MediaType.CDI: break;
+                case MediaType.DVDROM:
+                case MediaType.HDDVDROM:
+                case MediaType.BDROM:
+                case MediaType.Unknown:
+                    sense = dev.Read16(out cmdBuf, out _, 0, false, true, false, 0, 2048, 0, 1, false, dev.Timeout,
+                                       out _);
+
+                    if(!sense &&
+                       !dev.Error)
+                    {
+                        sector0 = cmdBuf;
+
+                        sense = dev.Read16(out cmdBuf, out _, 0, false, true, false, 1, 2048, 0, 1, false, dev.Timeout,
+                                           out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                            sector1 = cmdBuf;
+
+                        sense = dev.Read16(out cmdBuf, out _, 0, false, true, false, 0, 2048, 0, 12, false, dev.Timeout,
+                                           out _);
+
+                        if(!sense     &&
+                           !dev.Error &&
+                           cmdBuf.Length == 0x6000)
+                            ps2BootSectors = cmdBuf;
+                    }
+                    else
+                    {
+                        sense = dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 1, false,
+                                           dev.Timeout, out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                        {
+                            sector0 = cmdBuf;
+
+                            sense = dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 1, 2048, 0, 1, false,
+                                               dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                                sector1 = cmdBuf;
+
+                            sense = dev.Read12(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 12, false,
+                                               dev.Timeout, out _);
+
+                            if(!sense     &&
+                               !dev.Error &&
+                               cmdBuf.Length == 0x6000)
+                                ps2BootSectors = cmdBuf;
+                        }
+                        else
+                        {
+                            sense = dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 1,
+                                               dev.Timeout, out _);
+
+                            if(!sense &&
+                               !dev.Error)
+                            {
+                                sector0 = cmdBuf;
+
+                                sense = dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 1, 2048, 0, 1,
+                                                   dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !dev.Error)
+                                    sector1 = cmdBuf;
+
+                                sense = dev.Read10(out cmdBuf, out _, 0, false, true, false, false, 0, 2048, 0, 12,
+                                                   dev.Timeout, out _);
+
+                                if(!sense     &&
+                                   !dev.Error &&
+                                   cmdBuf.Length == 0x6000)
+                                    ps2BootSectors = cmdBuf;
+                            }
+                            else
+                            {
+                                sense = dev.Read6(out cmdBuf, out _, 0, 2048, 1, dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !dev.Error)
+                                {
+                                    sector0 = cmdBuf;
+
+                                    sense = dev.Read6(out cmdBuf, out _, 1, 2048, 1, dev.Timeout, out _);
+
+                                    if(!sense &&
+                                       !dev.Error)
+                                        sector1 = cmdBuf;
+
+                                    sense = dev.Read6(out cmdBuf, out _, 0, 2048, 12, dev.Timeout, out _);
+
+                                    if(!sense     &&
+                                       !dev.Error &&
+                                       cmdBuf.Length == 0x6000)
+                                        ps2BootSectors = cmdBuf;
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+
+                // Recordables will not be checked
+                case MediaType.CDR:
+                case MediaType.CDRW:
+                case MediaType.CDMRW:
+                case MediaType.DDCDR:
+                case MediaType.DDCDRW:
+                case MediaType.DVDR:
+                case MediaType.DVDRW:
+                case MediaType.DVDPR:
+                case MediaType.DVDPRW:
+                case MediaType.DVDPRWDL:
+                case MediaType.DVDRDL:
+                case MediaType.DVDPRDL:
+                case MediaType.DVDRAM:
+                case MediaType.DVDRWDL:
+                case MediaType.DVDDownload:
+                case MediaType.HDDVDRAM:
+                case MediaType.HDDVDR:
+                case MediaType.HDDVDRW:
+                case MediaType.HDDVDRDL:
+                case MediaType.HDDVDRWDL:
+                case MediaType.BDR:
+                case MediaType.BDRE:
+                case MediaType.BDRXL:
+                case MediaType.BDREXL: return;
+            }
+
+            if(sector0 == null)
+                return;
+
+            switch(mediaType)
+            {
+                case MediaType.CD:
+                case MediaType.CDDA:
+                case MediaType.CDPLUS:
+                case MediaType.CDROM:
+                case MediaType.CDROMXA:
+                    // TODO: CDTV requires reading the filesystem, searching for a file called "/CDTV.TM"
+                    // TODO: CD32 requires reading the filesystem, searching for a file called "/CD32.TM"
+                    // TODO: Neo-Geo CD requires reading the filesystem and checking that the file "/IPL.TXT" is correct
+                    // TODO: Pippin requires interpreting Apple Partition Map, reading HFS and checking for Pippin signatures
+                {
+                    if(CD.DecodeIPBin(sector0).HasValue)
+                    {
+                        mediaType = MediaType.MEGACD;
+
+                        return;
+                    }
+
+                    if(Saturn.DecodeIPBin(sector0).HasValue)
+                        mediaType = MediaType.SATURNCD;
+
+                    // Are GDR detectable ???
+                    if(Dreamcast.DecodeIPBin(sector0).HasValue)
+                        mediaType = MediaType.GDROM;
+
+                    if(ps2BootSectors        != null &&
+                       ps2BootSectors.Length == 0x6000)
+                    {
+                        // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
+                        byte decryptByte = ps2BootSectors[0];
+
+                        for(int i = 0; i < 0x6000; i++)
+                            ps2BootSectors[i] ^= decryptByte;
+
+                        string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
+
+                        DicConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
+                                                  ps2BootSectorsHash);
+
+                        if(ps2BootSectorsHash == PS2_PAL_HASH  ||
+                           ps2BootSectorsHash == PS2_NTSC_HASH ||
+                           ps2BootSectorsHash == PS2_JAPANESE_HASH)
+                            mediaType = MediaType.PS2CD;
+                    }
+
+                    if(sector0 != null)
+                    {
+                        byte[] syncBytes = new byte[7];
+                        Array.Copy(sector0, 0, syncBytes, 0, 7);
+
+                        if(_operaId.SequenceEqual(syncBytes))
+                            mediaType = MediaType.ThreeDO;
+
+                        if(_fmTownsBootId.SequenceEqual(syncBytes))
+                            mediaType = MediaType.FMTOWNS;
+                    }
+
+                    if(playdia1 != null &&
+                       playdia2 != null)
+                    {
+                        byte[] pd1 = new byte[_playdiaCopyright.Length];
+                        byte[] pd2 = new byte[_playdiaCopyright.Length];
+
+                        Array.Copy(playdia1, 38, pd1, 0, pd1.Length);
+                        Array.Copy(playdia2, 0, pd2, 0, pd1.Length);
+
+                        if(_playdiaCopyright.SequenceEqual(pd1) &&
+                           _playdiaCopyright.SequenceEqual(pd2))
+                            mediaType = MediaType.Playdia;
+                    }
+
+                    if(secondDataSectorNotZero != null)
+                    {
+                        byte[] pce = new byte[_pcEngineSignature.Length];
+                        Array.Copy(secondDataSectorNotZero, 32, pce, 0, pce.Length);
+
+                        if(_pcEngineSignature.SequenceEqual(pce))
+                            mediaType = MediaType.SuperCDROM2;
+                    }
+
+                    if(firstDataSectorNotZero != null)
+                    {
+                        byte[] pcfx = new byte[_pcFxSignature.Length];
+                        Array.Copy(firstDataSectorNotZero, 0, pcfx, 0, pcfx.Length);
+
+                        if(_pcFxSignature.SequenceEqual(pcfx))
+                            mediaType = MediaType.PCFX;
+                    }
+
+                    if(firstTrackSecondSessionAudio != null)
+                    {
+                        byte[] jaguar = new byte[_atariSignature.Length];
+
+                        for(int i = 0; i + jaguar.Length <= firstTrackSecondSessionAudio.Length; i += 2)
+                        {
+                            Array.Copy(firstTrackSecondSessionAudio, i, jaguar, 0, jaguar.Length);
+
+                            if(!_atariSignature.SequenceEqual(jaguar))
+                                continue;
+
+                            mediaType = MediaType.JaguarCD;
+
+                            break;
+                        }
+                    }
+
+                    if(firstTrackSecondSession != null)
+                        if(firstTrackSecondSession.Length >= 2336)
+                        {
+                            byte[] milcd = new byte[2048];
+                            Array.Copy(firstTrackSecondSession, 24, milcd, 0, 2048);
+
+                            if(Dreamcast.DecodeIPBin(milcd).HasValue)
+                                mediaType = MediaType.MilCD;
+                        }
+
+                    // TODO: Detect black and white VideoNow
+                    // TODO: Detect VideoNow XP
+                    if(IsVideoNowColor(videoNowColorFrame))
+                        mediaType = MediaType.VideoNowColor;
+
+                    break;
+                }
+
+                // TODO: Check for CD-i Ready
+                case MediaType.CDI: break;
+                case MediaType.DVDROM:
+                case MediaType.HDDVDROM:
+                case MediaType.BDROM:
+                case MediaType.Unknown:
+                    // TODO: Nuon requires reading the filesystem, searching for a file called "/NUON/NUON.RUN"
+                    if(ps2BootSectors        != null &&
+                       ps2BootSectors.Length == 0x6000)
+                    {
+                        // The decryption key is applied as XOR. As first byte is originally always NULL, it gives us the key :)
+                        byte decryptByte = ps2BootSectors[0];
+
+                        for(int i = 0; i < 0x6000; i++)
+                            ps2BootSectors[i] ^= decryptByte;
+
+                        string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
+
+                        DicConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
+                                                  ps2BootSectorsHash);
+
+                        if(ps2BootSectorsHash == PS2_PAL_HASH  ||
+                           ps2BootSectorsHash == PS2_NTSC_HASH ||
+                           ps2BootSectorsHash == PS2_JAPANESE_HASH)
+                            mediaType = MediaType.PS2DVD;
+                    }
+
+                    if(sector1 != null)
+                    {
+                        byte[] tmp = new byte[_ps3Id.Length];
+                        Array.Copy(sector1, 0, tmp, 0, tmp.Length);
+
+                        if(tmp.SequenceEqual(_ps3Id))
+                            switch(mediaType)
+                            {
+                                case MediaType.BDROM:
+                                    mediaType = MediaType.PS3BD;
+
+                                    break;
+                                case MediaType.DVDROM:
+                                    mediaType = MediaType.PS3DVD;
+
+                                    break;
+                            }
+
+                        tmp = new byte[_ps4Id.Length];
+                        Array.Copy(sector1, 512, tmp, 0, tmp.Length);
+
+                        if(tmp.SequenceEqual(_ps4Id) &&
+                           mediaType == MediaType.BDROM)
+                            mediaType = MediaType.PS4BD;
+                    }
+
+                    // TODO: Identify discs that require reading tracks (PC-FX, PlayStation, Sega, etc)
+                    break;
+            }
         }
     }
 }
