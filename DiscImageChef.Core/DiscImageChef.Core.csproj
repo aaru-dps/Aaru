@@ -50,6 +50,7 @@
     <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\LeadOuts.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Tags.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Tracks.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
     <Compile Include="Devices\Dumping\Metadata.cs" />

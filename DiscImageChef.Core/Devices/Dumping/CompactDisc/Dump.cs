@@ -46,11 +46,9 @@ using DiscImageChef.Core.Media.Detection;
 using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Devices;
 using Schemas;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using Session = DiscImageChef.Decoders.CD.Session;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -74,7 +72,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             uint                   blockSize;                                    // Size of the read sector in bytes
             uint                   blocksToRead = 0;                             // How many sectors to read at once
             CdOffset               cdOffset;                                     // Read offset from database
-            byte[]                 cmdBuf;                                       // Data buffer
+            byte[]                 cmdBuf       = null;                          // Data buffer
             double                 cmdDuration  = 0;                             // Command execution time
             DumpHardwareType       currentTry   = null;                          // Current dump hardware try
             double                 currentSpeed = 0;                             // Current read speed
@@ -100,9 +98,9 @@ namespace DiscImageChef.Core.Devices.Dumping
             const uint             sectorSize       = 2352;                      // Full sector size
             int                    sectorsForOffset = 0;                         // Sectors needed to fix offset
             ulong                  sectorSpeedStart = 0;                         // Used to calculate correct speed
-            bool                   sense;                                        // Sense indicator
-            byte[]                 senseBuf;                                     // Sense buffer
-            int                    sessions = 1;                                 // Number of sessions in disc
+            bool                   sense=true;                                        // Sense indicator
+            byte[]                 senseBuf = null;                              // Sense buffer
+            int                    sessions;                                     // Number of sessions in disc
             DateTime               start;                                        // Start of operation
             uint                   subSize;                                      // Subchannel size in bytes
             TrackSubchannelType    subType;                                      // Track subchannel type
@@ -119,7 +117,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
-            int firstTrackLastSession = 0; // Number of first track in last session
+            int firstTrackLastSession; // Number of first track in last session
 
             MmcSubchannel supportedSubchannel; // Drive's maximum supported subchannel
 
@@ -382,89 +380,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            // ATIP exists on blank CDs
-            _dumpLog.WriteLine("Reading ATIP");
-            UpdateStatus?.Invoke("Reading ATIP");
-            sense = _dev.ReadAtip(out cmdBuf, out senseBuf, _dev.Timeout, out _);
-
-            if(!sense)
-            {
-                ATIP.CDATIP? atip = ATIP.Decode(cmdBuf);
-
-                if(atip.HasValue)
-                {
-                    // Only CD-R and CD-RW have ATIP
-                    dskType = atip.Value.DiscType ? MediaType.CDRW : MediaType.CDR;
-
-                    tmpBuf = new byte[cmdBuf.Length - 4];
-                    Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                    mediaTags.Add(MediaTagType.CD_ATIP, tmpBuf);
-                }
-            }
-
-            _dumpLog.WriteLine("Reading Disc Information");
-            UpdateStatus?.Invoke("Reading Disc Information");
-
-            sense = _dev.ReadDiscInformation(out cmdBuf, out senseBuf, MmcDiscInformationDataTypes.DiscInformation,
-                                             _dev.Timeout, out _);
-
-            if(!sense)
-            {
-                DiscInformation.StandardDiscInformation? discInfo = DiscInformation.Decode000b(cmdBuf);
-
-                if(discInfo.HasValue &&
-                   dskType == MediaType.CD)
-                    switch(discInfo.Value.DiscType)
-                    {
-                        case 0x10:
-                            dskType = MediaType.CDI;
-
-                            break;
-                        case 0x20:
-                            dskType = MediaType.CDROMXA;
-
-                            break;
-                    }
-            }
-
-            _dumpLog.WriteLine("Reading PMA");
-            UpdateStatus?.Invoke("Reading PMA");
-            sense = _dev.ReadPma(out cmdBuf, out senseBuf, _dev.Timeout, out _);
-
-            if(!sense &&
-               PMA.Decode(cmdBuf).HasValue)
-            {
-                tmpBuf = new byte[cmdBuf.Length - 4];
-                Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                mediaTags.Add(MediaTagType.CD_PMA, tmpBuf);
-            }
-
-            _dumpLog.WriteLine("Reading Session Information");
-            UpdateStatus?.Invoke("Reading Session Information");
-            sense = _dev.ReadSessionInfo(out cmdBuf, out senseBuf, _dev.Timeout, out _);
-
-            if(!sense)
-            {
-                Session.CDSessionInfo? session = Session.Decode(cmdBuf);
-
-                if(session.HasValue)
-                {
-                    sessions              = session.Value.LastCompleteSession;
-                    firstTrackLastSession = session.Value.TrackDescriptors[0].TrackNumber;
-                }
-            }
-
-            _dumpLog.WriteLine("Reading CD-Text from Lead-In");
-            UpdateStatus?.Invoke("Reading CD-Text from Lead-In");
-            sense = _dev.ReadCdText(out cmdBuf, out senseBuf, _dev.Timeout, out _);
-
-            if(!sense &&
-               CDTextOnLeadIn.Decode(cmdBuf).HasValue)
-            {
-                tmpBuf = new byte[cmdBuf.Length - 4];
-                Array.Copy(cmdBuf, 4, tmpBuf, 0, cmdBuf.Length - 4);
-                mediaTags.Add(MediaTagType.CD_TEXT, tmpBuf);
-            }
+            // Read media tags
+            ReadCdTags(ref dskType, mediaTags, out sessions, out firstTrackLastSession);
 
             // Check if output format supports all disc tags we have retrieved so far
             foreach(MediaTagType tag in mediaTags.Keys)
