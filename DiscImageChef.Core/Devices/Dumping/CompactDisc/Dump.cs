@@ -57,7 +57,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 {
     /// <summary>Implement dumping Compact Discs</summary>
 
-    // TODO: Barcode and pregaps
+    // TODO: Barcode
     partial class Dump
     {
         /// <summary>Dumps a compact disc</summary>
@@ -344,6 +344,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(tracks is null)
                 return;
+
+            SolveTrackPregaps(tracks, supportsPqSubchannel, supportsRwSubchannel);
 
             for(int t = 1; t < tracks.Length; t++)
                 tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
