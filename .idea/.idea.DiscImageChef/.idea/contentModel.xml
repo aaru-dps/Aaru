@@ -236,6 +236,7 @@
             <e p="CompactDisc" t="Include">
               <e p="Data.cs" t="Include" />
               <e p="Dump.cs" t="Include" />
+              <e p="Error.cs" t="Include" />
               <e p="LeadOuts.cs" t="Include" />
               <e p="Subchannel.cs" t="Include" />
               <e p="Tags.cs" t="Include" />
