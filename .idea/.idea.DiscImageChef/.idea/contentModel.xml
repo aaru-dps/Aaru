@@ -240,6 +240,7 @@
               <e p="Subchannel.cs" t="Include" />
               <e p="Tags.cs" t="Include" />
               <e p="Tracks.cs" t="Include" />
+              <e p="Trim.cs" t="Include" />
             </e>
             <e p="Dump.cs" t="Include" />
             <e p="MMC.cs" t="Include" />

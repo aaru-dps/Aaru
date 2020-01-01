@@ -214,12 +214,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                    !inData    &&
                    offsetBytes != 0)
                 {
-                    int offsetFix = offsetBytes < 0 ? offsetFix = (int)(sectorSize - (offsetBytes * -1))
-                                        : offsetFix = offsetBytes;
+                    int offsetFix = offsetBytes < 0 ? (int)(sectorSize - (offsetBytes * -1)) : offsetBytes;
 
                     if(supportedSubchannel != MmcSubchannel.None)
                     {
-                        // Deinterleave subchannel
+                        // De-interleave subchannel
                         byte[] data = new byte[sectorSize * blocksToRead];
                         byte[] sub  = new byte[subSize    * blocksToRead];
 
@@ -235,7 +234,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         blocksToRead -= (uint)sectorsForOffset;
 
-                        // Reinterleave subchannel
+                        // Re-interleave subchannel
                         cmdBuf = new byte[blockSize * blocksToRead];
 
                         for(int b = 0; b < blocksToRead; b++)

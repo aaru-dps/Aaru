@@ -53,6 +53,7 @@
     <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Tags.cs" />
     <Compile Include="Devices\Dumping\CompactDisc\Tracks.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Trim.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
     <Compile Include="Devices\Dumping\Metadata.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable.cs" />
