@@ -153,9 +153,9 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        static int Invoke(bool debug, bool verbose, bool adler32, bool crc16, bool crc32, bool crc64, bool fletcher16,
-                          bool fletcher32, bool md5, bool sha1, bool sha256, bool sha384, bool sha512, bool spamSum,
-                          string imagePath, bool separatedTracks, bool wholeDisc)
+        public static int Invoke(bool debug, bool verbose, bool adler32, bool crc16, bool crc32, bool crc64, bool fletcher16,
+                                 bool fletcher32, bool md5, bool sha1, bool sha256, bool sha384, bool sha512, bool spamSum,
+                                 string imagePath, bool separatedTracks, bool wholeDisc)
         {
             MainClass.PrintCopyright();
 

@@ -49,7 +49,7 @@ namespace DiscImageChef.Commands
                                        "Lists all supported disc images, partition schemes and file systems.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
-        static int Invoke(bool verbose, bool debug)
+        public static int Invoke(bool verbose, bool debug)
         {
             MainClass.PrintCopyright();
 

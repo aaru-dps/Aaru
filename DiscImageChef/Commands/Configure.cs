@@ -53,7 +53,7 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        int Invoke(bool debug, bool verbose)
+        public int Invoke(bool debug, bool verbose)
         {
             if(!_autoCall)
             {

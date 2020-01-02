@@ -178,10 +178,10 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume, string encoding,
-                          bool firstTrackPregap, bool fixOffset, bool force, bool noMetadata, bool noTrim,
-                          string outputPath, string options, bool persistent, ushort retryPasses, int skip,
-                          int speed, bool stopOnError, string format, string subchannel)
+        public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume, string encoding,
+                                 bool firstTrackPregap, bool fixOffset, bool force, bool noMetadata, bool noTrim,
+                                 string outputPath, string options, bool persistent, ushort retryPasses, int skip,
+                                 int speed, bool stopOnError, string format, string subchannel)
         {
             MainClass.PrintCopyright();
 

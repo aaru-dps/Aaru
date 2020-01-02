@@ -62,7 +62,7 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        static int Invoke(bool debug, bool verbose, string imagePath1, string imagePath2)
+        public static int Invoke(bool debug, bool verbose, string imagePath1, string imagePath2)
         {
             MainClass.PrintCopyright();
 

@@ -87,8 +87,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        static int Invoke(bool verbose, bool debug, bool diskTags, string imagePath, string length, bool sectorTags,
-                          ulong startSector)
+        public static int Invoke(bool verbose, bool debug, bool diskTags, string imagePath, string length, bool sectorTags,
+                                 ulong startSector)
         {
             MainClass.PrintCopyright();
 

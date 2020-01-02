@@ -46,7 +46,7 @@ namespace DiscImageChef.Commands
         public ListEncodingsCommand() : base("list-encodings", "Lists all supported text encodings and code pages.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
-        static int Invoke(bool debug, bool verbose)
+        public static int Invoke(bool debug, bool verbose)
         {
             MainClass.PrintCopyright();
 

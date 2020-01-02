@@ -45,7 +45,7 @@ namespace DiscImageChef.Commands
         public StatisticsCommand() : base("stats", "Shows statistics.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
-        static int Invoke(bool debug, bool verbose)
+        public static int Invoke(bool debug, bool verbose)
         {
             MainClass.PrintCopyright();
 

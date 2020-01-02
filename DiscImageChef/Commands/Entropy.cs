@@ -76,8 +76,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        static int Invoke(bool debug, bool verbose, bool duplicatedSectors, string imagePath, bool separatedTracks,
-                          bool wholeDisc)
+        public static int Invoke(bool debug, bool verbose, bool duplicatedSectors, string imagePath, bool separatedTracks,
+                                 bool wholeDisc)
         {
             MainClass.PrintCopyright();
 

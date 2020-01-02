@@ -190,12 +190,12 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        static int Invoke(bool verbose, bool debug, string cicmXml, string comments, int count, string creator,
-                          string driveFirmwareRevision, string driveManufacturer, string driveModel,
-                          string driveSerialNumber, bool force, string inputPath, int lastMediaSequence,
-                          string mediaBarcode, string mediaManufacturer, string mediaModel, string mediaPartNumber,
-                          int mediaSequence, string mediaSerialNumber, string mediaTitle, string outputPath,
-                          string outputOptions, string resumeFile, string format)
+        public static int Invoke(bool verbose, bool debug, string cicmXml, string comments, int count, string creator,
+                                 string driveFirmwareRevision, string driveManufacturer, string driveModel,
+                                 string driveSerialNumber, bool force, string inputPath, int lastMediaSequence,
+                                 string mediaBarcode, string mediaManufacturer, string mediaModel, string mediaPartNumber,
+                                 int mediaSequence, string mediaSerialNumber, string mediaTitle, string outputPath,
+                                 string outputOptions, string resumeFile, string format)
         {
             MainClass.PrintCopyright();
 

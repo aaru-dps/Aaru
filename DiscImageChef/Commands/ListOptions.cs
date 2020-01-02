@@ -49,7 +49,7 @@ namespace DiscImageChef.Commands
                                            "Lists all options supported by read-only filesystems and writable media images.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
-        static int Invoke(bool debug, bool verbose)
+        public static int Invoke(bool debug, bool verbose)
         {
             MainClass.PrintCopyright();
 

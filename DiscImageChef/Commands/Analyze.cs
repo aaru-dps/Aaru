@@ -77,10 +77,10 @@ namespace DiscImageChef.Commands
                 Arity = ArgumentArity.ExactlyOne, Description = "Disc image path", Name = "image-path"
             });
 
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+            Handler = CommandHandler.Create(typeof(AnalyzeCommand).GetMethod(nameof(Invoke)));
         }
 
-        int Invoke(bool verbose, bool debug, string encoding, bool filesystems, bool partitions, string imagePath)
+        public static int Invoke(bool verbose, bool debug, string encoding, bool filesystems, bool partitions, string imagePath)
         {
             MainClass.PrintCopyright();
 
