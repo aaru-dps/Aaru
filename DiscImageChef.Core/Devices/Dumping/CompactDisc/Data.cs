@@ -97,6 +97,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             InitProgress?.Invoke();
 
+            bool crossingLeadOut       = false;
+            bool failedCrossingLeadOut = false;
+
             for(ulong i = _resume.NextBlock; (long)i <= lastSector; i += blocksToRead)
             {
                 if(_aborted)
@@ -118,8 +121,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 uint firstSectorToRead = (uint)i;
 
-                Track track =
-                    tracks.OrderBy(t => t.TrackStartSector).LastOrDefault(t => i >= t.TrackStartSector);
+                Track track = tracks.OrderBy(t => t.TrackStartSector).LastOrDefault(t => i >= t.TrackStartSector);
 
                 blocksToRead = 0;
                 bool inData = nextData;
@@ -128,7 +130,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     if(j > (ulong)lastSector)
                     {
-                        blocksToRead += (uint)sectorsForOffset;
+                        if(!failedCrossingLeadOut)
+                            blocksToRead += (uint)sectorsForOffset;
+
+                        if(sectorsForOffset > 0)
+                            crossingLeadOut = true;
+
                         break;
                     }
 
@@ -241,6 +248,18 @@ namespace DiscImageChef.Core.Devices.Dumping
                             Array.Copy(cmdBuf, (int)(sectorSize + (b * blockSize)), sub, subSize     * b, subSize);
                         }
 
+                        if(failedCrossingLeadOut)
+                        {
+                            blocksToRead += (uint)sectorsForOffset;
+
+                            tmpBuf = new byte[sectorSize * blocksToRead];
+                            Array.Copy(data, 0, tmpBuf, 0, data.Length);
+                            data   = tmpBuf;
+                            tmpBuf = new byte[subSize * blocksToRead];
+                            Array.Copy(sub, 0, tmpBuf, 0, sub.Length);
+                            sub = tmpBuf;
+                        }
+
                         tmpBuf = new byte[sectorSize * (blocksToRead - sectorsForOffset)];
                         Array.Copy(data, offsetFix, tmpBuf, 0, tmpBuf.Length);
                         data = tmpBuf;
@@ -258,6 +277,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
                     else
                     {
+                        if(failedCrossingLeadOut)
+                        {
+                            blocksToRead += (uint)sectorsForOffset;
+
+                            tmpBuf = new byte[blockSize * blocksToRead];
+                            Array.Copy(cmdBuf, 0, tmpBuf, 0, cmdBuf.Length);
+                            cmdBuf = tmpBuf;
+                        }
+
                         tmpBuf = new byte[blockSize * (blocksToRead - sectorsForOffset)];
                         Array.Copy(cmdBuf, offsetFix, tmpBuf, 0, tmpBuf.Length);
                         cmdBuf       =  tmpBuf;
@@ -316,6 +344,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
+                    if(crossingLeadOut && Sense.DecodeFixed(senseBuf)?.Information == lastSector + 1)
+                    {
+                        failedCrossingLeadOut = true;
+                        blocksToRead          = 0;
+
+                        continue;
+                    }
+
                     // TODO: Reset device after X errors
                     if(_stopOnError)
                         return; // TODO: Return more cleanly
@@ -377,6 +413,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             EndProgress?.Invoke();
+
+            if(!failedCrossingLeadOut)
+                return;
+
+            _dumpLog.WriteLine("Failed crossing into Lead-Out, dump may not be correct.");
+            UpdateStatus?.Invoke("Failed crossing into Lead-Out, dump may not be correct.");
         }
     }
 }
