@@ -43,6 +43,7 @@ using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Device = DiscImageChef.Devices.Device;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
@@ -1066,6 +1067,10 @@ namespace DiscImageChef.Core
                 catch(WebException)
                 {
                     // Can't connect to the server, do nothing
+                }
+                catch(DbUpdateConcurrencyException)
+                {
+                    // Ignore db concurrency errors
                 }
 
                 // ReSharper disable once RedundantCatchClause
