@@ -33,71 +33,42 @@
 // TODO: Fix errors returned
 
 using System;
-using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using Mono.Options;
 using Remote = DiscImageChef.Devices.Remote.Remote;
 
 namespace DiscImageChef.Commands
 {
     internal class RemoteCommand : Command
     {
-        string host;
-        bool   showHelp;
-
-        public RemoteCommand() : base("remote", "Tests connection to a DiscImageChef Remote Server.") =>
-            Options = new OptionSet
-            {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} [OPTIONS] host", "",
-                Help,
-                {
-                    "help|h|?", "Show this message and exit.", v => showHelp = v != null
-                }
-            };
-
-        public override int Invoke(IEnumerable<string> arguments)
+        public RemoteCommand() : base("remote", "Tests connection to a DiscImageChef Remote Server.")
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
+            AddArgument(new Argument<string>
             {
-                Options.WriteOptionDescriptions(CommandSet.Out);
+                Arity = ArgumentArity.ExactlyOne, Description = "dicremote host", Name = "host"
+            });
 
-                return(int)ErrorNumber.HelpRequested;
-            }
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        }
 
+        static int Invoke(bool debug, bool verbose, string host)
+        {
             MainClass.PrintCopyright();
 
-            if(MainClass.Debug)
+            if(debug)
                 DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            if(MainClass.Verbose)
+            if(verbose)
                 DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            //            Statistics.AddCommand("remote");
+            Statistics.AddCommand("remote");
 
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-
-                return(int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing input image.");
-
-                return(int)ErrorNumber.MissingArgument;
-            }
-
-            host = extra[0];
-
-            DicConsole.DebugWriteLine("Remote command", "--debug={0}", MainClass.Debug);
+            DicConsole.DebugWriteLine("Remote command", "--debug={0}", debug);
             DicConsole.DebugWriteLine("Remote command", "--host={0}", host);
-            DicConsole.DebugWriteLine("Remote command", "--verbose={0}", MainClass.Verbose);
+            DicConsole.DebugWriteLine("Remote command", "--verbose={0}", verbose);
 
             try
             {

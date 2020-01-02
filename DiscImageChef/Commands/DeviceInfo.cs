@@ -31,6 +31,8 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -40,72 +42,46 @@ using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
-using Mono.Options;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 
 namespace DiscImageChef.Commands
 {
     internal class DeviceInfoCommand : Command
     {
-        string devicePath;
-        string outputPrefix;
-
-        bool showHelp;
-
-        public DeviceInfoCommand() : base("device-info", "Gets information about a device.") => Options = new OptionSet
+        public DeviceInfoCommand() : base("device-info", "Gets information about a device.")
         {
-            $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-            $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} [OPTIONS] devicepath", "",
-            Help,
-            {
-                "output-prefix|w=", "Name of character encoding to use.", s => outputPrefix = s
-            },
-            {
-                "help|h|?", "Show this message and exit.", v => showHelp = v != null
-            }
-        };
+            Add(new Option(new[]
+                {
+                    "--output-prefix", "-w"
+                }, "Prefix for saving binary information from device.")
+                {
+                    Argument = new Argument<string>(() => null), Required = false
+                });
 
-        public override int Invoke(IEnumerable<string> arguments)
+            AddArgument(new Argument<string>
+            {
+                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+            });
+
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        }
+
+        static int Invoke(bool debug, bool verbose, string devicePath, string outputPrefix)
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-
-                return(int)ErrorNumber.HelpRequested;
-            }
-
             MainClass.PrintCopyright();
 
-            if(MainClass.Debug)
+            if(debug)
                 DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            if(MainClass.Verbose)
+            if(verbose)
                 DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("device-info");
 
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-
-                return(int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing device path.");
-
-                return(int)ErrorNumber.MissingArgument;
-            }
-
-            devicePath = extra[0];
-
-            DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", MainClass.Debug);
+            DicConsole.DebugWriteLine("Device-Info command", "--debug={0}", debug);
             DicConsole.DebugWriteLine("Device-Info command", "--device={0}", devicePath);
             DicConsole.DebugWriteLine("Device-Info command", "--output-prefix={0}", outputPrefix);
-            DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", MainClass.Verbose);
+            DicConsole.DebugWriteLine("Device-Info command", "--verbose={0}", verbose);
 
             if(devicePath.Length == 2   &&
                devicePath[1]     == ':' &&
@@ -932,7 +908,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("\tCan do challenge/response with Xbox discs");
 
                     if(devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs))
-                        DicConsole.WriteLine("\tCan read and descrypt SS from Xbox discs");
+                        DicConsole.WriteLine("\tCan read and decrypt SS from Xbox discs");
 
                     if(devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock))
                         DicConsole.WriteLine("\tCan set xtreme unlock state with Xbox discs");
@@ -944,7 +920,7 @@ namespace DiscImageChef.Commands
                         DicConsole.WriteLine("\tCan do challenge/response with Xbox 360 discs");
 
                     if(devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs360))
-                        DicConsole.WriteLine("\tCan read and descrypt SS from Xbox 360 discs");
+                        DicConsole.WriteLine("\tCan read and decrypt SS from Xbox 360 discs");
 
                     if(devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock360))
                         DicConsole.WriteLine("\tCan set xtreme unlock state with Xbox 360 discs");

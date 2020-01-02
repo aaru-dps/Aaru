@@ -30,62 +30,44 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    class UpdateCommand : Command
+    internal class UpdateCommand : Command
     {
-        readonly bool masterDbUpdate;
-        bool          showHelp;
+        readonly bool _masterDbUpdate;
 
         public UpdateCommand(bool masterDbUpdate) : base("update", "Updates the database.")
         {
-            this.masterDbUpdate = masterDbUpdate;
-            Options = new OptionSet
-            {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}",
-                "",
-                $"usage: DiscImageChef {Name}",
-                "",
-                Help,
-                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
-            };
+            _masterDbUpdate = masterDbUpdate;
+
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public override int Invoke(IEnumerable<string> arguments)
+        int Invoke(bool debug, bool verbose)
         {
-            if(masterDbUpdate) return (int)ErrorNumber.NoError;
-
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int)ErrorNumber.HelpRequested;
-            }
+            if(_masterDbUpdate)
+                return(int)ErrorNumber.NoError;
 
             MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            if(extra.Count > 0)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int)ErrorNumber.UnexpectedArgumentCount;
-            }
+            if(debug)
+                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            DicConsole.DebugWriteLine("Update command", "--debug={0}",   MainClass.Debug);
-            DicConsole.DebugWriteLine("Update command", "--verbose={0}", MainClass.Verbose);
+            if(verbose)
+                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            DicConsole.DebugWriteLine("Update command", "--debug={0}", debug);
+            DicConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
 
             DoUpdate(false);
 
-            return (int)ErrorNumber.NoError;
+            return(int)ErrorNumber.NoError;
         }
 
         internal static void DoUpdate(bool create)

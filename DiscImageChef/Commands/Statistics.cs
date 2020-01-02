@@ -30,62 +30,44 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
+using System.CommandLine.Invocation;
 using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
-using Mono.Options;
-using Command = Mono.Options.Command;
+using Command = System.CommandLine.Command;
 
 namespace DiscImageChef.Commands
 {
-    class StatisticsCommand : Command
+    internal class StatisticsCommand : Command
     {
-        bool showHelp;
+        public StatisticsCommand() : base("stats", "Shows statistics.") =>
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
-        public StatisticsCommand() : base("stats", "Shows statistics.")
+        static int Invoke(bool debug, bool verbose)
         {
-            Options = new OptionSet
-            {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}",
-                "",
-                $"usage: DiscImageChef {Name}",
-                "",
-                Help,
-                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
-            };
-        }
-
-        public override int Invoke(IEnumerable<string> arguments)
-        {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int)ErrorNumber.HelpRequested;
-            }
-
             MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            if(extra.Count > 0)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int)ErrorNumber.UnexpectedArgumentCount;
-            }
+            if(debug)
+                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            if(verbose)
+                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            if(!ctx.Commands.Any() && !ctx.Filesystems.Any() && !ctx.Filters.Any() && !ctx.MediaFormats.Any() &&
-               !ctx.Medias.Any()   && !ctx.Partitions.Any()  && !ctx.SeenDevices.Any())
+            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+
+            if(!ctx.Commands.Any()     &&
+               !ctx.Filesystems.Any()  &&
+               !ctx.Filters.Any()      &&
+               !ctx.MediaFormats.Any() &&
+               !ctx.Medias.Any()       &&
+               !ctx.Partitions.Any()   &&
+               !ctx.SeenDevices.Any())
             {
                 DicConsole.WriteLine("There are no statistics.");
-                return (int)ErrorNumber.NothingFound;
+
+                return(int)ErrorNumber.NothingFound;
             }
 
             bool thereAreStats = false;
@@ -97,11 +79,13 @@ namespace DiscImageChef.Commands
 
                 foreach(string command in ctx.Commands.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == command && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == command && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == command && !c.Synchronized);
 
-                    if(count == 0) continue;
+                    if(count == 0)
+                        continue;
 
                     DicConsole.WriteLine("You have called the {0} command {1} times.", command, count);
                     thereAreStats = true;
@@ -117,11 +101,13 @@ namespace DiscImageChef.Commands
 
                 foreach(string filter in ctx.Filters.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
-                    ulong count = ctx.Filters.Where(c => c.Name == filter && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Filters.Where(c => c.Name == filter && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Filters.LongCount(c => c.Name == filter && !c.Synchronized);
 
-                    if(count == 0) continue;
+                    if(count == 0)
+                        continue;
 
                     DicConsole.WriteLine("Filter {0} has been found {1} times.", filter, count);
                     thereAreStats = true;
@@ -137,11 +123,13 @@ namespace DiscImageChef.Commands
 
                 foreach(string format in ctx.MediaFormats.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
-                    ulong count = ctx.MediaFormats.Where(c => c.Name == format && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.MediaFormats.Where(c => c.Name == format && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.MediaFormats.LongCount(c => c.Name == format && !c.Synchronized);
 
-                    if(count == 0) continue;
+                    if(count == 0)
+                        continue;
 
                     DicConsole.WriteLine("Format {0} has been found {1} times.", format, count);
                     thereAreStats = true;
@@ -157,11 +145,13 @@ namespace DiscImageChef.Commands
 
                 foreach(string partition in ctx.Partitions.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
-                    ulong count = ctx.Partitions.Where(c => c.Name == partition && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Partitions.Where(c => c.Name == partition && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Partitions.LongCount(c => c.Name == partition && !c.Synchronized);
 
-                    if(count == 0) continue;
+                    if(count == 0)
+                        continue;
 
                     DicConsole.WriteLine("Partitioning scheme {0} has been found {1} times.", partition, count);
                     thereAreStats = true;
@@ -177,11 +167,13 @@ namespace DiscImageChef.Commands
 
                 foreach(string filesystem in ctx.Filesystems.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
-                    ulong count = ctx.Filesystems.Where(c => c.Name == filesystem && c.Synchronized)
-                                     .Select(c => c.Count).FirstOrDefault();
+                    ulong count = ctx.Filesystems.Where(c => c.Name == filesystem && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Filesystems.LongCount(c => c.Name == filesystem && !c.Synchronized);
 
-                    if(count == 0) continue;
+                    if(count == 0)
+                        continue;
 
                     DicConsole.WriteLine("Filesystem {0} has been found {1} times.", filesystem, count);
                     thereAreStats = true;
@@ -195,10 +187,10 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Device statistics");
                 DicConsole.WriteLine("=================");
 
-                foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer).ThenBy(ds => ds.Model)
-                                            .ThenBy(ds => ds.Revision).ThenBy(ds => ds.Bus))
-                    DicConsole
-                       .WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.",
+                foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer).ThenBy(ds => ds.Model).
+                                             ThenBy(ds => ds.Revision).ThenBy(ds => ds.Bus))
+                    DicConsole.
+                        WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.",
                                   ds.Model, ds.Manufacturer, ds.Revision, ds.Bus);
 
                 DicConsole.WriteLine();
@@ -212,8 +204,9 @@ namespace DiscImageChef.Commands
 
                 foreach(string media in ctx.Medias.OrderBy(ms => ms.Type).Select(ms => ms.Type).Distinct())
                 {
-                    ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real)
-                                     .Select(c => c.Count).FirstOrDefault();
+                    ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
 
                     if(count > 0)
@@ -222,11 +215,13 @@ namespace DiscImageChef.Commands
                         thereAreStats = true;
                     }
 
-                    count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count)
-                               .FirstOrDefault();
+                    count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count).
+                                FirstOrDefault();
+
                     count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && !c.Real);
 
-                    if(count == 0) continue;
+                    if(count == 0)
+                        continue;
 
                     DicConsole.WriteLine("Media type {0} has been found {1} times in a media image.", media, count);
                     thereAreStats = true;
@@ -235,8 +230,10 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine();
             }
 
-            if(!thereAreStats) DicConsole.WriteLine("There are no statistics.");
-            return (int)ErrorNumber.NoError;
+            if(!thereAreStats)
+                DicConsole.WriteLine("There are no statistics.");
+
+            return(int)ErrorNumber.NoError;
         }
     }
 }

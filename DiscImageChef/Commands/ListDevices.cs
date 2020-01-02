@@ -30,70 +30,47 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Devices;
-using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
     internal class ListDevicesCommand : Command
     {
-        bool showHelp;
-
-        public ListDevicesCommand() : base("list-devices", "Lists all connected devices.") => Options = new OptionSet
+        public ListDevicesCommand() : base("list-devices", "Lists all connected devices.")
         {
-            $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-            $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} [dic-remote-host]", "",
-            Help,
+            AddArgument(new Argument<string>
             {
-                "help|h|?", "Show this message and exit.", v => showHelp = v != null
-            }
-        };
+                Arity = ArgumentArity.ZeroOrOne, Description = "dicremote host", Name = "dic-remote-host"
+            });
 
-        public override int Invoke(IEnumerable<string> arguments)
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        }
+
+        static int Invoke(bool debug, bool verbose, string dicRemoteHost)
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-
-                return(int)ErrorNumber.HelpRequested;
-            }
-
             MainClass.PrintCopyright();
 
-            if(MainClass.Debug)
+            if(debug)
                 DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            if(MainClass.Verbose)
+            if(verbose)
                 DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("list-devices");
 
-            string dicRemote = null;
-
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-
-                return(int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 1)
-                dicRemote = extra[0];
-
-            DicConsole.DebugWriteLine("List-Devices command", "--debug={0}", MainClass.Debug);
-            DicConsole.DebugWriteLine("List-Devices command", "--verbose={0}", MainClass.Verbose);
+            DicConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
+            DicConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
 
             DeviceInfo[] devices = Device.ListDevices(out bool isRemote, out string serverApplication,
                                                       out string serverVersion, out string serverOperatingSystem,
                                                       out string serverOperatingSystemVersion,
-                                                      out string serverArchitecture, dicRemote);
+                                                      out string serverArchitecture, dicRemoteHost);
 
             if(isRemote)
             {
@@ -110,7 +87,7 @@ namespace DiscImageChef.Commands
             {
                 devices = devices.OrderBy(d => d.Path).ToArray();
 
-                if(dicRemote is null)
+                if(dicRemoteHost is null)
                 {
                     DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
                                          "Serial", "Bus", "Supported?");

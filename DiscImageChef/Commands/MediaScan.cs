@@ -30,82 +30,61 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Devices;
-using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
     internal class MediaScanCommand : Command
     {
-        string devicePath;
-        string ibgLogPath;
-        string mhddLogPath;
-        bool   showHelp;
-
-        public MediaScanCommand() : base("media-scan", "Scans the media inserted on a device.") =>
-            Options = new OptionSet
-            {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} [OPTIONS] devicepath", "",
-                Help,
-                {
-                    "mhdd-log|mw=", "Write a log of the scan in the format used by MHDD.", s => mhddLogPath = s
-                },
-                {
-                    "ibg-log|b=", "Write a log of the scan in the format used by ImgBurn.", s => ibgLogPath = s
-                },
-                {
-                    "help|h|?", "Show this message and exit.", v => showHelp = v != null
-                }
-            };
-
-        public override int Invoke(IEnumerable<string> arguments)
+        public MediaScanCommand() : base("media-scan", "Scans the media inserted on a device.")
         {
-            List<string> extra = Options.Parse(arguments);
+            Add(new Option(new[]
+                {
+                    "--mhdd-log", "-m"
+                }, "Write a log of the scan in the format used by MHDD.")
+                {
+                    Argument = new Argument<string>(() => null), Required = false
+                });
 
-            if(showHelp)
+            Add(new Option(new[]
+                {
+                    "--ibg-log", "-b"
+                }, "Write a log of the scan in the format used by ImgBurn.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            AddArgument(new Argument<string>
             {
-                Options.WriteOptionDescriptions(CommandSet.Out);
+                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+            });
 
-                return(int)ErrorNumber.HelpRequested;
-            }
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        }
 
+        static int Invoke(bool debug, bool verbose, string devicePath, string ibgLog, string mhddLog)
+        {
             MainClass.PrintCopyright();
 
-            if(MainClass.Debug)
+            if(debug)
                 DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            if(MainClass.Verbose)
+            if(verbose)
                 DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("media-scan");
 
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-
-                return(int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing device path.");
-
-                return(int)ErrorNumber.MissingArgument;
-            }
-
-            devicePath = extra[0];
-
-            DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}", MainClass.Debug);
+            DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}", debug);
             DicConsole.DebugWriteLine("Media-Scan command", "--device={0}", devicePath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", ibgLogPath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLogPath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", MainClass.Verbose);
+            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", ibgLog);
+            DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLog);
+            DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", verbose);
 
             if(devicePath.Length == 2   &&
                devicePath[1]     == ':' &&
@@ -139,7 +118,7 @@ namespace DiscImageChef.Commands
 
             Statistics.AddDevice(dev);
 
-            var scanner = new MediaScan(mhddLogPath, ibgLogPath, devicePath, dev);
+            var scanner = new MediaScan(mhddLog, ibgLog, devicePath, dev);
             scanner.UpdateStatus         += Progress.UpdateStatus;
             scanner.StoppingErrorMessage += Progress.ErrorMessage;
             scanner.UpdateProgress       += Progress.UpdateProgress;
@@ -177,9 +156,13 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine();
 
             #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
+
+            // ReSharper disable CompareOfFloatsByEqualityOperator
             if(results.SeekTotal != 0               ||
                results.SeekMin   != double.MaxValue ||
                results.SeekMax   != double.MinValue)
+
+                // ReSharper restore CompareOfFloatsByEqualityOperator
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
                 DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);

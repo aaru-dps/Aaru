@@ -32,6 +32,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading;
 using DiscImageChef.CommonTypes.Enums;
@@ -44,9 +46,8 @@ using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
-using Mono.Options;
 using Newtonsoft.Json;
-using Command = Mono.Options.Command;
+using Command = System.CommandLine.Command;
 using Device = DiscImageChef.Devices.Device;
 using DeviceReport = DiscImageChef.Core.Devices.Report.DeviceReport;
 
@@ -54,73 +55,44 @@ namespace DiscImageChef.Commands
 {
     internal class DeviceReportCommand : Command
     {
-        string _devicePath;
-        bool   _showHelp;
-
         public DeviceReportCommand() : base("device-report",
-                                            "Tests the device capabilities and creates an JSON report of them.") =>
-            Options = new OptionSet
-            {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} devicepath", "",
-                Help,
-                {
-                    "help|h|?", "Show this message and exit.", v => _showHelp = v != null
-                }
-            };
-
-        public override int Invoke(IEnumerable<string> arguments)
+                                            "Tests the device capabilities and creates an JSON report of them.")
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(_showHelp)
+            AddArgument(new Argument<string>
             {
-                Options.WriteOptionDescriptions(CommandSet.Out);
+                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+            });
 
-                return(int)ErrorNumber.HelpRequested;
-            }
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        }
 
+        static int Invoke(bool debug, bool verbose, string devicePath)
+        {
             MainClass.PrintCopyright();
 
-            if(MainClass.Debug)
+            if(debug)
                 DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            if(MainClass.Verbose)
+            if(verbose)
                 DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("device-report");
 
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
+            DicConsole.DebugWriteLine("Device-Report command", "--debug={0}", debug);
+            DicConsole.DebugWriteLine("Device-Report command", "--device={0}", devicePath);
+            DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", verbose);
 
-                return(int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing device path.");
-
-                return(int)ErrorNumber.MissingArgument;
-            }
-
-            _devicePath = extra[0];
-
-            DicConsole.DebugWriteLine("Device-Report command", "--debug={0}", MainClass.Debug);
-            DicConsole.DebugWriteLine("Device-Report command", "--device={0}", _devicePath);
-            DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", MainClass.Verbose);
-
-            if(_devicePath.Length == 2   &&
-               _devicePath[1]     == ':' &&
-               _devicePath[0]     != '/' &&
-               char.IsLetter(_devicePath[0]))
-                _devicePath = "\\\\.\\" + char.ToUpper(_devicePath[0]) + ':';
+            if(devicePath.Length == 2   &&
+               devicePath[1]     == ':' &&
+               devicePath[0]     != '/' &&
+               char.IsLetter(devicePath[0]))
+                devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
             Device dev;
 
             try
             {
-                dev = new Device(_devicePath);
+                dev = new Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

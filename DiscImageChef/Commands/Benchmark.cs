@@ -31,58 +31,56 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    class BenchmarkCommand : Command
+    internal class BenchmarkCommand : Command
     {
-        int  blockSize  = 512;
-        int  bufferSize = 128;
-        bool showHelp;
-
         public BenchmarkCommand() : base("benchmark", "Benchmarks hashing and entropy calculation.")
         {
-            Options = new OptionSet
+            Add(new Option(new[]
+                {
+                    "--block-size", "-b"
+                }, "Block size.")
+                {
+                    Argument = new Argument<int>(() => 512), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--buffer-size", "-s"
+                }, "Buffer size in mebibytes.")
+                {
+                    Argument = new Argument<int>(() => 128), Required = false
+                });
+
+            AddArgument(new Argument<string>
             {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}",
-                "",
-                $"usage: DiscImageChef {Name} [OPTIONS]",
-                "",
-                Help,
-                {"block-size|b=", "Block size.", (int                i) => blockSize  = i},
-                {"buffer-size|s=", "Buffer size in mebibytes.", (int i) => bufferSize = i},
-                {"help|h|?", "Show this message and exit.", v => showHelp             = v != null}
-            };
+                Arity = ArgumentArity.ExactlyOne, Description = "Disc image path", Name = "image-path"
+            });
+
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public override int Invoke(IEnumerable<string> arguments)
+        static int Invoke(bool debug, bool verbose, int blockSize, int bufferSize)
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int)ErrorNumber.HelpRequested;
-            }
-
             MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(debug)
+                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+
+            if(verbose)
+                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
             Statistics.AddCommand("benchmark");
 
-            if(extra.Count != 0)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            DicConsole.DebugWriteLine("Benchmark command", "--debug={0}",   MainClass.Debug);
-            DicConsole.DebugWriteLine("Benchmark command", "--verbose={0}", MainClass.Verbose);
+            DicConsole.DebugWriteLine("Benchmark command", "--debug={0}", debug);
+            DicConsole.DebugWriteLine("Benchmark command", "--verbose={0}", verbose);
 
             Benchmark.InitProgressEvent   += Progress.InitProgress;
             Benchmark.UpdateProgressEvent += Progress.UpdateProgress;
@@ -92,8 +90,10 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Took {0} seconds to fill buffer, {1:F3} MiB/sec.", results.FillTime,
                                  results.FillSpeed);
+
             DicConsole.WriteLine("Took {0} seconds to read buffer, {1:F3} MiB/sec.", results.ReadTime,
                                  results.ReadSpeed);
+
             DicConsole.WriteLine("Took {0} seconds to entropy buffer, {1:F3} MiB/sec.", results.EntropyTime,
                                  results.EntropySpeed);
 
@@ -103,6 +103,7 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Took {0} seconds to do all algorithms at the same time, {1:F3} MiB/sec.",
                                  results.TotalTime, results.TotalSpeed);
+
             DicConsole.WriteLine("Took {0} seconds to do all algorithms sequentially, {1:F3} MiB/sec.",
                                  results.SeparateTime, results.SeparateSpeed);
 
@@ -110,7 +111,7 @@ namespace DiscImageChef.Commands
             DicConsole.WriteLine("Max memory used is {0} bytes", results.MaxMemory);
             DicConsole.WriteLine("Min memory used is {0} bytes", results.MinMemory);
 
-            return (int)ErrorNumber.NoError;
+            return(int)ErrorNumber.NoError;
         }
     }
 }

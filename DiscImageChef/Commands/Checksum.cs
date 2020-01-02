@@ -32,121 +32,167 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using Mono.Options;
 using Schemas;
 
 namespace DiscImageChef.Commands
 {
-    class ChecksumCommand : Command
+    internal class ChecksumCommand : Command
     {
         // How many sectors to read at once
         const uint SECTORS_TO_READ = 256;
 
-        bool   doAdler32 = true;
-        bool   doCrc16   = true;
-        bool   doCrc32   = true;
-        bool   doCrc64;
-        bool   doFletcher16;
-        bool   doFletcher32;
-        bool   doMd5 = true;
-        bool   doSha1 = true;
-        bool   doSha256;
-        bool   doSha384;
-        bool   doSha512;
-        bool   doSpamSum = true;
-        string inputFile;
-        bool   separatedTracks = true;
-        bool   showHelp;
-        bool   wholeDisc = true;
-
         public ChecksumCommand() : base("checksum", "Checksums an image.")
         {
-            Options = new OptionSet
+            Add(new Option(new[]
+                {
+                    "--adler32", "-a"
+                }, "Calculates Adler32.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option("--crc16", "Calculates CRC16.")
             {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}",
-                "",
-                $"usage: DiscImageChef {Name} [OPTIONS] imagefile",
-                "",
-                Help,
-                {"adler32|a", "Calculates Adler-32.", b => doAdler32                            = b != null},
-                {"crc16", "Calculates CRC16.", b => doCrc16                                     = b != null},
-                {"crc32|c", "Calculates CRC32.", b => doCrc32                                   = b != null},
-                {"crc64", "Calculates CRC64 (ECMA).", b => doCrc64                              = b != null},
-                {"fletcher16", "Calculates Fletcher-16.", b => doFletcher16                     = b != null},
-                {"fletcher32", "Calculates Fletcher-32.", b => doFletcher32                     = b != null},
-                {"md5|m", "Calculates MD5.", b => doMd5                                         = b != null},
-                {"separated-tracks|t", "Checksums each track separately.", b => separatedTracks = b != null},
-                {"sha1|s", "Calculates SHA1.", b => doSha1                                      = b != null},
-                {"sha256", "Calculates SHA256.", b => doSha256                                  = b != null},
-                {"sha384", "Calculates SHA384.", b => doSha384                                  = b != null},
-                {"sha512", "Calculates SHA512.", b => doSha512                                  = b != null},
-                {"spamsum|f", "Calculates SpamSum fuzzy hash.", b => doSpamSum                  = b != null},
-                {"whole-disc|w", "Checksums the whole disc.", b => wholeDisc                    = b != null},
-                {"help|h|?", "Show this message and exit.", v => showHelp                       = v != null}
-            };
+                Argument = new Argument<bool>(() => true), Required = false
+            });
+
+            Add(new Option(new[]
+                {
+                    "--crc32", "-c"
+                }, "Calculates CRC32.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option("--crc64", "Calculates CRC64.")
+            {
+                Argument = new Argument<bool>(() => true), Required = false
+            });
+
+            Add(new Option("--fletcher16", "Calculates Fletcher-16.")
+            {
+                Argument = new Argument<bool>(() => true), Required = false
+            });
+
+            Add(new Option("--fletcher32", "Calculates Fletcher-32.")
+            {
+                Argument = new Argument<bool>(() => true), Required = false
+            });
+
+            Add(new Option(new[]
+                {
+                    "--md5", "-m"
+                }, "Calculates MD5.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--separated-tracks", "-t"
+                }, "Checksums each track separately.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--sha1", "-s"
+                }, "Calculates SHA1.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--sha256", "-a"
+                }, "Calculates SHA256.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option("--sha384", "Calculates SHA384.")
+            {
+                Argument = new Argument<bool>(() => true), Required = false
+            });
+
+            Add(new Option("--sha512", "Calculates SHA512.")
+            {
+                Argument = new Argument<bool>(() => true), Required = false
+            });
+
+            Add(new Option(new[]
+                {
+                    "--spamsum", "-f"
+                }, "Calculates SpamSum fuzzy hash.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--whole-disc", "-w"
+                }, "Checksums the whole disc.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            AddArgument(new Argument<string>
+            {
+                Arity = ArgumentArity.ExactlyOne, Description = "Media image path", Name = "image-path"
+            });
+
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public override int Invoke(IEnumerable<string> arguments)
+        static int Invoke(bool debug, bool verbose, bool adler32, bool crc16, bool crc32, bool crc64, bool fletcher16,
+                          bool fletcher32, bool md5, bool sha1, bool sha256, bool sha384, bool sha512, bool spamSum,
+                          string imagePath, bool separatedTracks, bool wholeDisc)
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int)ErrorNumber.HelpRequested;
-            }
-
             MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(debug)
+                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+
+            if(verbose)
+                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
             Statistics.AddCommand("checksum");
 
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing input image.");
-                return (int)ErrorNumber.MissingArgument;
-            }
-
-            inputFile = extra[0];
-
-            DicConsole.DebugWriteLine("Checksum command", "--adler32={0}",          doAdler32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}",            doCrc16);
-            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}",            doCrc32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}",            doCrc64);
-            DicConsole.DebugWriteLine("Checksum command", "--debug={0}",            MainClass.Debug);
-            DicConsole.DebugWriteLine("Checksum command", "--fletcher16={0}",       doFletcher16);
-            DicConsole.DebugWriteLine("Checksum command", "--fletcher32={0}",       doFletcher32);
-            DicConsole.DebugWriteLine("Checksum command", "--input={0}",            inputFile);
-            DicConsole.DebugWriteLine("Checksum command", "--md5={0}",              doMd5);
+            DicConsole.DebugWriteLine("Checksum command", "--adler32={0}", adler32);
+            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}", crc16);
+            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}", crc32);
+            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}", crc64);
+            DicConsole.DebugWriteLine("Checksum command", "--debug={0}", debug);
+            DicConsole.DebugWriteLine("Checksum command", "--fletcher16={0}", fletcher16);
+            DicConsole.DebugWriteLine("Checksum command", "--fletcher32={0}", fletcher32);
+            DicConsole.DebugWriteLine("Checksum command", "--input={0}", imagePath);
+            DicConsole.DebugWriteLine("Checksum command", "--md5={0}", md5);
             DicConsole.DebugWriteLine("Checksum command", "--separated-tracks={0}", separatedTracks);
-            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}",             doSha1);
-            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}",           doSha256);
-            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}",           doSha384);
-            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}",           doSha512);
-            DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}",          doSpamSum);
-            DicConsole.DebugWriteLine("Checksum command", "--verbose={0}",          MainClass.Verbose);
-            DicConsole.DebugWriteLine("Checksum command", "--whole-disc={0}",       wholeDisc);
+            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}", sha1);
+            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}", sha256);
+            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}", sha384);
+            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", sha512);
+            DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", spamSum);
+            DicConsole.DebugWriteLine("Checksum command", "--verbose={0}", verbose);
+            DicConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", wholeDisc);
 
-            FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(inputFile);
+            var     filtersList = new FiltersList();
+            IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return (int)ErrorNumber.CannotOpenFile;
+
+                return(int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -154,27 +200,51 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
-                return (int)ErrorNumber.UnrecognizedFormat;
+
+                return(int)ErrorNumber.UnrecognizedFormat;
             }
 
             inputFormat.Open(inputFilter);
             Statistics.AddMediaFormat(inputFormat.Format);
             Statistics.AddMedia(inputFormat.Info.MediaType, false);
             Statistics.AddFilter(inputFilter.Name);
-            EnableChecksum enabledChecksums = new EnableChecksum();
+            var enabledChecksums = new EnableChecksum();
 
-            if(doAdler32) enabledChecksums    |= EnableChecksum.Adler32;
-            if(doCrc16) enabledChecksums      |= EnableChecksum.Crc16;
-            if(doCrc32) enabledChecksums      |= EnableChecksum.Crc32;
-            if(doCrc64) enabledChecksums      |= EnableChecksum.Crc64;
-            if(doMd5) enabledChecksums        |= EnableChecksum.Md5;
-            if(doSha1) enabledChecksums       |= EnableChecksum.Sha1;
-            if(doSha256) enabledChecksums     |= EnableChecksum.Sha256;
-            if(doSha384) enabledChecksums     |= EnableChecksum.Sha384;
-            if(doSha512) enabledChecksums     |= EnableChecksum.Sha512;
-            if(doSpamSum) enabledChecksums    |= EnableChecksum.SpamSum;
-            if(doFletcher16) enabledChecksums |= EnableChecksum.Fletcher16;
-            if(doFletcher32) enabledChecksums |= EnableChecksum.Fletcher32;
+            if(adler32)
+                enabledChecksums |= EnableChecksum.Adler32;
+
+            if(crc16)
+                enabledChecksums |= EnableChecksum.Crc16;
+
+            if(crc32)
+                enabledChecksums |= EnableChecksum.Crc32;
+
+            if(crc64)
+                enabledChecksums |= EnableChecksum.Crc64;
+
+            if(md5)
+                enabledChecksums |= EnableChecksum.Md5;
+
+            if(sha1)
+                enabledChecksums |= EnableChecksum.Sha1;
+
+            if(sha256)
+                enabledChecksums |= EnableChecksum.Sha256;
+
+            if(sha384)
+                enabledChecksums |= EnableChecksum.Sha384;
+
+            if(sha512)
+                enabledChecksums |= EnableChecksum.Sha512;
+
+            if(spamSum)
+                enabledChecksums |= EnableChecksum.SpamSum;
+
+            if(fletcher16)
+                enabledChecksums |= EnableChecksum.Fletcher16;
+
+            if(fletcher32)
+                enabledChecksums |= EnableChecksum.Fletcher32;
 
             Checksum mediaChecksum = null;
 
@@ -185,11 +255,13 @@ namespace DiscImageChef.Commands
                     {
                         Checksum trackChecksum = null;
 
-                        if(wholeDisc) mediaChecksum = new Checksum(enabledChecksums);
+                        if(wholeDisc)
+                            mediaChecksum = new Checksum(enabledChecksums);
 
                         ulong previousTrackEnd = 0;
 
                         List<Track> inputTracks = opticalInput.Tracks;
+
                         foreach(Track currentTrack in inputTracks)
                         {
                             if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
@@ -207,9 +279,10 @@ namespace DiscImageChef.Commands
                                                       currentTrack.TrackSequence, currentTrack.TrackStartSector,
                                                       currentTrack.TrackEndSector);
 
-                            if(separatedTracks) trackChecksum = new Checksum(enabledChecksums);
+                            if(separatedTracks)
+                                trackChecksum = new Checksum(enabledChecksums);
 
-                            ulong sectors     = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
+                            ulong sectors     = (currentTrack.TrackEndSector - currentTrack.TrackStartSector) + 1;
                             ulong doneSectors = 0;
                             DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
@@ -221,22 +294,28 @@ namespace DiscImageChef.Commands
                                 {
                                     sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
                                                                       currentTrack.TrackSequence);
-                                    DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
+
+                                    DicConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
                                                      currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
+
                                     doneSectors += SECTORS_TO_READ;
                                 }
                                 else
                                 {
                                     sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
                                                                       currentTrack.TrackSequence);
-                                    DicConsole.Write("\rHashings sectors {0} to {2} of track {1}", doneSectors,
+
+                                    DicConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
                                                      currentTrack.TrackSequence, doneSectors + (sectors - doneSectors));
+
                                     doneSectors += sectors - doneSectors;
                                 }
 
-                                if(wholeDisc) mediaChecksum?.Update(sector);
+                                if(wholeDisc)
+                                    mediaChecksum?.Update(sector);
 
-                                if(separatedTracks) trackChecksum?.Update(sector);
+                                if(separatedTracks)
+                                    trackChecksum?.Update(sector);
                             }
 
                             DicConsole.WriteLine();
@@ -266,8 +345,10 @@ namespace DiscImageChef.Commands
                     }
                     catch(Exception ex)
                     {
-                        if(MainClass.Debug) DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
-                        else DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
+                        if(debug)
+                            DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                        else
+                            DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
                     }
 
                     break;
@@ -276,7 +357,8 @@ namespace DiscImageChef.Commands
                 {
                     Checksum trackChecksum = null;
 
-                    if(wholeDisc) mediaChecksum = new Checksum(enabledChecksums);
+                    if(wholeDisc)
+                        mediaChecksum = new Checksum(enabledChecksums);
 
                     ulong previousTrackEnd = 0;
 
@@ -296,9 +378,10 @@ namespace DiscImageChef.Commands
                                                   "Track {0} starts at sector {1} and ends at block {2}",
                                                   currentFile.File, currentFile.FirstBlock, currentFile.LastBlock);
 
-                        if(separatedTracks) trackChecksum = new Checksum(enabledChecksums);
+                        if(separatedTracks)
+                            trackChecksum = new Checksum(enabledChecksums);
 
-                        ulong sectors     = currentFile.LastBlock - currentFile.FirstBlock + 1;
+                        ulong sectors     = (currentFile.LastBlock - currentFile.FirstBlock) + 1;
                         ulong doneSectors = 0;
                         DicConsole.WriteLine("File {0} has {1} sectors", currentFile.File, sectors);
 
@@ -309,22 +392,28 @@ namespace DiscImageChef.Commands
                             if(sectors - doneSectors >= SECTORS_TO_READ)
                             {
                                 sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock, SECTORS_TO_READ);
-                                DicConsole.Write("\rHashings blocks {0} to {2} of file {1}", doneSectors,
+
+                                DicConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
                                                  currentFile.File, doneSectors + SECTORS_TO_READ);
+
                                 doneSectors += SECTORS_TO_READ;
                             }
                             else
                             {
                                 sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
                                                                (uint)(sectors - doneSectors));
-                                DicConsole.Write("\rHashings blocks {0} to {2} of file {1}", doneSectors,
+
+                                DicConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
                                                  currentFile.File, doneSectors + (sectors - doneSectors));
+
                                 doneSectors += sectors - doneSectors;
                             }
 
-                            if(wholeDisc) mediaChecksum?.Update(sector);
+                            if(wholeDisc)
+                                mediaChecksum?.Update(sector);
 
-                            if(separatedTracks) trackChecksum?.Update(sector);
+                            if(separatedTracks)
+                                trackChecksum?.Update(sector);
                         }
 
                         DicConsole.WriteLine();
@@ -350,6 +439,7 @@ namespace DiscImageChef.Commands
                         if(mediaChecksum != null)
                             foreach(ChecksumType chk in mediaChecksum.End())
                                 DicConsole.WriteLine("Tape's {0}: {1}", chk.type, chk.Value);
+
                     break;
                 }
 
@@ -368,15 +458,19 @@ namespace DiscImageChef.Commands
                         if(sectors - doneSectors >= SECTORS_TO_READ)
                         {
                             sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
-                            DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors,
+
+                            DicConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
                                              doneSectors + SECTORS_TO_READ);
+
                             doneSectors += SECTORS_TO_READ;
                         }
                         else
                         {
                             sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
-                            DicConsole.Write("\rHashings sectors {0} to {1}", doneSectors,
+
+                            DicConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
                                              doneSectors + (sectors - doneSectors));
+
                             doneSectors += sectors - doneSectors;
                         }
 
@@ -387,11 +481,12 @@ namespace DiscImageChef.Commands
 
                     foreach(ChecksumType chk in mediaChecksum.End())
                         DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+
                     break;
                 }
             }
 
-            return (int)ErrorNumber.NoError;
+            return(int)ErrorNumber.NoError;
         }
     }
 }

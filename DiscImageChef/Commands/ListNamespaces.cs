@@ -31,73 +31,54 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    class ListNamespacesCommand : Command
+    internal class ListNamespacesCommand : Command
     {
-        bool showHelp;
-
         public ListNamespacesCommand() : base("list-namespaces",
-                                              "Lists all namespaces supported by read-only filesystems.")
+                                              "Lists all namespaces supported by read-only filesystems.") =>
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+
+        static int Invoke(bool debug, bool verbose)
         {
-            Options = new OptionSet
-            {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}",
-                "",
-                $"usage: DiscImageChef {Name}",
-                "",
-                Help,
-                {"help|h|?", "Show this message and exit.", v => showHelp = v != null}
-            };
-        }
-
-        public override int Invoke(IEnumerable<string> arguments)
-        {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int)ErrorNumber.HelpRequested;
-            }
-
             MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            if(extra.Count > 0)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int)ErrorNumber.UnexpectedArgumentCount;
-            }
+            if(debug)
+                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            DicConsole.DebugWriteLine("List-Namespaces command", "--debug={0}",   MainClass.Debug);
-            DicConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", MainClass.Verbose);
+            if(verbose)
+                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            DicConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
+            DicConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
             Statistics.AddCommand("list-namespaces");
 
             PluginBase plugins = GetPluginBase.Instance;
 
             foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
             {
-                if(kvp.Value.Namespaces is null) continue;
+                if(kvp.Value.Namespaces is null)
+                    continue;
 
-                DicConsole.WriteLine("\tNamespaces for {0}:",  kvp.Value.Name);
+                DicConsole.WriteLine("\tNamespaces for {0}:", kvp.Value.Name);
                 DicConsole.WriteLine("\t\t{0,-16} {1,-16}", "Namespace", "Description");
+
                 foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
                     DicConsole.WriteLine("\t\t{0,-16} {1,-16}", @namespace.Key, @namespace.Value);
+
                 DicConsole.WriteLine();
             }
 
-            return (int)ErrorNumber.NoError;
+            return(int)ErrorNumber.NoError;
         }
     }
 }

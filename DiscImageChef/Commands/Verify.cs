@@ -32,81 +32,71 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
-using Mono.Options;
 
 namespace DiscImageChef.Commands
 {
-    class VerifyCommand : Command
+    internal class VerifyCommand : Command
     {
-        string inputFile;
-        bool   showHelp;
-        bool   verifyDisc    = true;
-        bool   verifySectors = true;
-
         public VerifyCommand() : base("verify", "Verifies a disc image integrity, and if supported, sector integrity.")
         {
-            Options = new OptionSet
+            Add(new Option(new[]
+                {
+                    "--verify-disc", "-w"
+                }, "Verify disc image if supported.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            Add(new Option(new[]
+                {
+                    "--verify-sectors", "-s"
+                }, "Verify all sectors if supported.")
+                {
+                    Argument = new Argument<bool>(() => true), Required = false
+                });
+
+            AddArgument(new Argument<string>
             {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}",
-                "",
-                $"usage: DiscImageChef {Name} [OPTIONS] imagefile",
-                "",
-                Help,
-                {"verify-disc|w", "Verify disc image if supported.", b => verifyDisc        = b != null},
-                {"verify-sectors|s", "Verify all sectors if supported.", b => verifySectors = b != null},
-                {"help|h|?", "Show this message and exit.", v => showHelp                   = v != null}
-            };
+                Arity = ArgumentArity.ExactlyOne, Description = "Disc image path", Name = "image-path"
+            });
+
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public override int Invoke(IEnumerable<string> arguments)
+        static int Invoke(bool debug, bool verbose, string imagePath, bool verifyDisc = true, bool verifySectors = true)
         {
-            List<string> extra = Options.Parse(arguments);
-
-            if(showHelp)
-            {
-                Options.WriteOptionDescriptions(CommandSet.Out);
-                return (int)ErrorNumber.HelpRequested;
-            }
-
             MainClass.PrintCopyright();
-            if(MainClass.Debug) DicConsole.DebugWriteLineEvent     += System.Console.Error.WriteLine;
-            if(MainClass.Verbose) DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
+            if(debug)
+                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+
+            if(verbose)
+                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+
             Statistics.AddCommand("verify");
 
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-                return (int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing input image.");
-                return (int)ErrorNumber.MissingArgument;
-            }
-
-            inputFile = extra[0];
-
-            DicConsole.DebugWriteLine("Verify command", "--debug={0}",          MainClass.Debug);
-            DicConsole.DebugWriteLine("Verify command", "--input={0}",          inputFile);
-            DicConsole.DebugWriteLine("Verify command", "--verbose={0}",        MainClass.Verbose);
-            DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}",    verifyDisc);
+            DicConsole.DebugWriteLine("Verify command", "--debug={0}", debug);
+            DicConsole.DebugWriteLine("Verify command", "--input={0}", imagePath);
+            DicConsole.DebugWriteLine("Verify command", "--verbose={0}", verbose);
+            DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}", verifyDisc);
             DicConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", verifySectors);
 
-            FiltersList filtersList = new FiltersList();
-            IFilter     inputFilter = filtersList.GetFilter(inputFile);
+            var     filtersList = new FiltersList();
+            IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
                 DicConsole.ErrorWriteLine("Cannot open specified file.");
-                return (int)ErrorNumber.CannotOpenFile;
+
+                return(int)ErrorNumber.CannotOpenFile;
             }
 
             IMediaImage inputFormat = ImageFormat.Detect(inputFilter);
@@ -114,7 +104,8 @@ namespace DiscImageChef.Commands
             if(inputFormat == null)
             {
                 DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
-                return (int)ErrorNumber.FormatNotFound;
+
+                return(int)ErrorNumber.FormatNotFound;
             }
 
             inputFormat.Open(inputFilter);
@@ -123,18 +114,19 @@ namespace DiscImageChef.Commands
             Statistics.AddFilter(inputFilter.Name);
 
             bool? correctImage   = null;
-            long  totalSectors   = 0;
             long  errorSectors   = 0;
             bool? correctSectors = null;
             long  unknownSectors = 0;
 
-            IVerifiableImage        verifiableImage        = inputFormat as IVerifiableImage;
-            IVerifiableSectorsImage verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
+            var verifiableImage        = inputFormat as IVerifiableImage;
+            var verifiableSectorsImage = inputFormat as IVerifiableSectorsImage;
 
-            if(verifiableImage is null && verifiableSectorsImage is null)
+            if(verifiableImage is null &&
+               verifiableSectorsImage is null)
             {
                 DicConsole.ErrorWriteLine("The specified image does not support any kind of verification");
-                return (int)ErrorNumber.NotVerificable;
+
+                return(int)ErrorNumber.NotVerificable;
             }
 
             if(verifyDisc && verifiableImage != null)
@@ -149,12 +141,15 @@ namespace DiscImageChef.Commands
                 {
                     case true:
                         DicConsole.WriteLine("Disc image checksums are correct");
+
                         break;
                     case false:
                         DicConsole.WriteLine("Disc image checksums are incorrect");
+
                         break;
                     case null:
                         DicConsole.WriteLine("Disc image does not contain checksums");
+
                         break;
                 }
 
@@ -175,6 +170,7 @@ namespace DiscImageChef.Commands
                     ulong       currentSectorAll = 0;
 
                     startCheck = DateTime.UtcNow;
+
                     foreach(Track currentTrack in inputTracks)
                     {
                         ulong remainingSectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector;
@@ -185,20 +181,20 @@ namespace DiscImageChef.Commands
                             DicConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll,
                                              inputFormat.Info.Sectors, currentTrack.TrackSequence);
 
-                            List<ulong> tempfailingLbas;
-                            List<ulong> tempunknownLbas;
+                            List<ulong> tempFailingLbas;
+                            List<ulong> tempUnknownLbas;
 
                             if(remainingSectors < 512)
                                 opticalMediaImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                currentTrack.TrackSequence, out tempfailingLbas,
-                                                                out tempunknownLbas);
+                                                                currentTrack.TrackSequence, out tempFailingLbas,
+                                                                out tempUnknownLbas);
                             else
                                 opticalMediaImage.VerifySectors(currentSector, 512, currentTrack.TrackSequence,
-                                                                out tempfailingLbas, out tempunknownLbas);
+                                                                out tempFailingLbas, out tempUnknownLbas);
 
-                            failingLbas.AddRange(tempfailingLbas);
+                            failingLbas.AddRange(tempFailingLbas);
 
-                            unknownLbas.AddRange(tempunknownLbas);
+                            unknownLbas.AddRange(tempUnknownLbas);
 
                             if(remainingSectors < 512)
                             {
@@ -223,23 +219,24 @@ namespace DiscImageChef.Commands
                     ulong currentSector    = 0;
 
                     startCheck = DateTime.UtcNow;
+
                     while(remainingSectors > 0)
                     {
                         DicConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.Info.Sectors);
 
-                        List<ulong> tempfailingLbas;
-                        List<ulong> tempunknownLbas;
+                        List<ulong> tempFailingLbas;
+                        List<ulong> tempUnknownLbas;
 
                         if(remainingSectors < 512)
                             verifiableSectorsImage.VerifySectors(currentSector, (uint)remainingSectors,
-                                                                 out tempfailingLbas, out tempunknownLbas);
+                                                                 out tempFailingLbas, out tempUnknownLbas);
                         else
-                            verifiableSectorsImage.VerifySectors(currentSector, 512, out tempfailingLbas,
-                                                                 out tempunknownLbas);
+                            verifiableSectorsImage.VerifySectors(currentSector, 512, out tempFailingLbas,
+                                                                 out tempUnknownLbas);
 
-                        failingLbas.AddRange(tempfailingLbas);
+                        failingLbas.AddRange(tempFailingLbas);
 
-                        unknownLbas.AddRange(tempunknownLbas);
+                        unknownLbas.AddRange(tempUnknownLbas);
 
                         if(remainingSectors < 512)
                         {
@@ -262,15 +259,20 @@ namespace DiscImageChef.Commands
 
                 if(unknownSectors > 0)
                     DicConsole.WriteLine("There is at least one sector that does not contain a checksum");
+
                 if(errorSectors > 0)
                     DicConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
-                if(unknownSectors == 0 && errorSectors == 0) DicConsole.WriteLine("All sector checksums are correct");
+
+                if(unknownSectors == 0 &&
+                   errorSectors   == 0)
+                    DicConsole.WriteLine("All sector checksums are correct");
 
                 DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
 
-                if(MainClass.Verbose)
+                if(verbose)
                 {
                     DicConsole.VerboseWriteLine("LBAs with error:");
+
                     if(failingLbas.Count == (int)inputFormat.Info.Sectors)
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else
@@ -278,6 +280,7 @@ namespace DiscImageChef.Commands
                             DicConsole.VerboseWriteLine("\t{0}", t);
 
                     DicConsole.WriteLine("LBAs without checksum:");
+
                     if(unknownLbas.Count == (int)inputFormat.Info.Sectors)
                         DicConsole.VerboseWriteLine("\tall sectors.");
                     else
@@ -290,27 +293,26 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine("Total unknowns.......... {0}", unknownLbas.Count);
                 DicConsole.WriteLine("Total errors+unknowns... {0}", failingLbas.Count + unknownLbas.Count);
 
-                totalSectors   = (long)inputFormat.Info.Sectors;
-                errorSectors   = failingLbas.Count;
-                unknownSectors = unknownLbas.Count;
-                if(failingLbas.Count             > 0) correctSectors                        = false;
-                else if((ulong)unknownLbas.Count < inputFormat.Info.Sectors) correctSectors = true;
+                if(failingLbas.Count > 0)
+                    correctSectors = false;
+                else if((ulong)unknownLbas.Count < inputFormat.Info.Sectors)
+                    correctSectors = true;
             }
 
             switch(correctImage)
             {
-                case null when correctSectors is null:   return (int)ErrorNumber.NotVerificable;
-                case null when correctSectors == false:  return (int)ErrorNumber.BadSectorsImageNotVerified;
-                case null when correctSectors == true:   return (int)ErrorNumber.CorrectSectorsImageNotVerified;
-                case false when correctSectors is null:  return (int)ErrorNumber.BadImageSectorsNotVerified;
-                case false when correctSectors == false: return (int)ErrorNumber.BadImageBadSectors;
-                case false when correctSectors == true:  return (int)ErrorNumber.CorrectSectorsBadImage;
-                case true when correctSectors is null:   return (int)ErrorNumber.CorrectImageSectorsNotVerified;
-                case true when correctSectors == false:  return (int)ErrorNumber.CorrectImageBadSectors;
-                case true when correctSectors == true:   return (int)ErrorNumber.NoError;
+                case null when correctSectors is null:   return(int)ErrorNumber.NotVerificable;
+                case null when correctSectors == false:  return(int)ErrorNumber.BadSectorsImageNotVerified;
+                case null when correctSectors == true:   return(int)ErrorNumber.CorrectSectorsImageNotVerified;
+                case false when correctSectors is null:  return(int)ErrorNumber.BadImageSectorsNotVerified;
+                case false when correctSectors == false: return(int)ErrorNumber.BadImageBadSectors;
+                case false when correctSectors == true:  return(int)ErrorNumber.CorrectSectorsBadImage;
+                case true when correctSectors is null:   return(int)ErrorNumber.CorrectImageSectorsNotVerified;
+                case true when correctSectors == false:  return(int)ErrorNumber.CorrectImageBadSectors;
+                case true when correctSectors == true:   return(int)ErrorNumber.NoError;
             }
 
-            return (int)ErrorNumber.NoError;
+            return(int)ErrorNumber.NoError;
         }
     }
 }

@@ -31,44 +31,43 @@
 // ****************************************************************************/
 
 using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using DiscImageChef.Commands;
-using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Database;
 using DiscImageChef.Settings;
 using Microsoft.EntityFrameworkCore;
-using Mono.Options;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 
 namespace DiscImageChef
 {
     internal class MainClass
     {
-        internal static bool Verbose;
-        internal static bool Debug;
-        internal static string AssemblyCopyright;
-        internal static string AssemblyTitle;
-        internal static AssemblyInformationalVersionAttribute AssemblyVersion;
+        static string                                _assemblyCopyright;
+        static string                                _assemblyTitle;
+        static AssemblyInformationalVersionAttribute _assemblyVersion;
 
         [STAThread]
         public static int Main(string[] args)
         {
-            var attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-            AssemblyTitle = ((AssemblyTitleAttribute) attributes[0]).Title;
-            attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-            AssemblyVersion =
+            object[] attributes = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+            _assemblyTitle = ((AssemblyTitleAttribute)attributes[0]).Title;
+            attributes     = typeof(MainClass).Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+
+            _assemblyVersion =
                 Attribute.GetCustomAttribute(typeof(MainClass).Assembly, typeof(AssemblyInformationalVersionAttribute))
                     as AssemblyInformationalVersionAttribute;
-            AssemblyCopyright = ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
 
-            DicConsole.WriteLineEvent += System.Console.WriteLine;
-            DicConsole.WriteEvent += System.Console.Write;
+            _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+
+            DicConsole.WriteLineEvent      += System.Console.WriteLine;
+            DicConsole.WriteEvent          += System.Console.Write;
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             Settings.Settings.LoadSettings();
@@ -77,16 +76,17 @@ namespace DiscImageChef
             ctx.Database.Migrate();
             ctx.SaveChanges();
 
-            var masterDbUpdate = false;
-            if (!File.Exists(Settings.Settings.MasterDbPath))
+            bool masterDbUpdate = false;
+
+            if(!File.Exists(Settings.Settings.MasterDbPath))
             {
                 masterDbUpdate = true;
                 UpdateCommand.DoUpdate(true);
             }
 
-            var mctx = DicContext.Create(Settings.Settings.MasterDbPath);
+            var masterContext = DicContext.Create(Settings.Settings.MasterDbPath);
 
-            if(mctx.Database.GetPendingMigrations().Any())
+            if(masterContext.Database.GetPendingMigrations().Any())
             {
                 DicConsole.WriteLine("New database version, updating...");
 
@@ -103,84 +103,76 @@ namespace DiscImageChef
                 UpdateCommand.DoUpdate(true);
             }
 
-            if ((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
-                Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+            if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
+               Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
                 new ConfigureCommand(true, true).Invoke(args);
-            Statistics.LoadStats();
-            if (Settings.Settings.Current.Stats != null && Settings.Settings.Current.Stats.ShareStats)
-                Task.Run(() => { Statistics.SubmitStats(); });
 
-            var currentPlatform = DetectOS.GetRealPlatformID();
+            Statistics.LoadStats();
+
+            if(Settings.Settings.Current.Stats != null &&
+               Settings.Settings.Current.Stats.ShareStats)
+                Task.Run(Statistics.SubmitStats);
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-            var commands = new CommandSet("DiscImageChef")
-            {
-                $"{AssemblyTitle} {AssemblyVersion?.InformationalVersion}",
-                $"{AssemblyCopyright}",
-                "",
-                "usage: DiscImageChef COMMAND [OPTIONS]",
-                "",
-                "Global options:",
-                {"verbose|v", "Shows verbose output.", b => Verbose = b != null},
-                {"debug|d", "Shows debug output from plugins.", b => Debug = b != null},
-                "",
-                "Available commands:",
-                new AnalyzeCommand(),
-                new BenchmarkCommand(),
-                new ChecksumCommand(),
-                new CompareCommand(),
-                new ConfigureCommand(false, false),
-                new ConvertImageCommand(),
-                new CreateSidecarCommand(),
-                new DecodeCommand()
-            };
-
-            if (currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
-                currentPlatform == PlatformID.Win32NT)
-            {
-                commands.Add(new DeviceInfoCommand());
-                commands.Add(new DeviceReportCommand());
-                commands.Add(new DumpMediaCommand());
-            }
-
-            commands.Add(new EntropyCommand());
-            commands.Add(new ExtractFilesCommand());
-            commands.Add(new FormatsCommand());
-            commands.Add(new ImageInfoCommand());
-
-            if (currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
-                currentPlatform == PlatformID.Win32NT) commands.Add(new ListDevicesCommand());
-
-            commands.Add(new ListEncodingsCommand());
-            commands.Add(new ListNamespacesCommand());
-            commands.Add(new ListOptionsCommand());
-            commands.Add(new LsCommand());
-
-            if (currentPlatform == PlatformID.FreeBSD || currentPlatform == PlatformID.Linux ||
-                currentPlatform == PlatformID.Win32NT)
-            {
-                commands.Add(new MediaInfoCommand());
-                commands.Add(new MediaScanCommand());
-            }
-
-            commands.Add(new PrintHexCommand());
-            commands.Add(new StatisticsCommand());
-            commands.Add(new UpdateCommand(masterDbUpdate));
-            commands.Add(new VerifyCommand());
-            commands.Add(new RemoteCommand());
-
-            var ret = commands.Run(args);
-
             Statistics.SaveStats();
 
-            return ret;
+            var rootCommand = new RootCommand
+            {
+                new Option(new[]
+                {
+                    "--verbose", "-v"
+                }, "Shows verbose output.")
+                {
+                    Argument = new Argument<bool>(() => false)
+                },
+                new Option(new[]
+                {
+                    "--debug", "-d"
+                }, "Shows debug output from plugins.")
+                {
+                    Argument = new Argument<bool>(() => false)
+                }
+            };
+
+            rootCommand.Description =
+                $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
+
+            rootCommand.AddCommand(new AnalyzeCommand());
+            rootCommand.AddCommand(new BenchmarkCommand());
+            rootCommand.AddCommand(new ChecksumCommand());
+            rootCommand.AddCommand(new CompareCommand());
+            rootCommand.AddCommand(new ConfigureCommand(false, false));
+            rootCommand.AddCommand(new ConvertImageCommand());
+            rootCommand.AddCommand(new CreateSidecarCommand());
+            rootCommand.AddCommand(new DecodeCommand());
+            rootCommand.AddCommand(new DeviceInfoCommand());
+            rootCommand.AddCommand(new DeviceReportCommand());
+            rootCommand.AddCommand(new DumpMediaCommand());
+            rootCommand.AddCommand(new EntropyCommand());
+            rootCommand.AddCommand(new ExtractFilesCommand());
+            rootCommand.AddCommand(new FormatsCommand());
+            rootCommand.AddCommand(new ImageInfoCommand());
+            rootCommand.AddCommand(new ListDevicesCommand());
+            rootCommand.AddCommand(new ListEncodingsCommand());
+            rootCommand.AddCommand(new ListNamespacesCommand());
+            rootCommand.AddCommand(new ListOptionsCommand());
+            rootCommand.AddCommand(new LsCommand());
+            rootCommand.AddCommand(new MediaInfoCommand());
+            rootCommand.AddCommand(new MediaScanCommand());
+            rootCommand.AddCommand(new PrintHexCommand());
+            rootCommand.AddCommand(new StatisticsCommand());
+            rootCommand.AddCommand(new UpdateCommand(masterDbUpdate));
+            rootCommand.AddCommand(new VerifyCommand());
+            rootCommand.AddCommand(new RemoteCommand());
+
+            return rootCommand.Invoke(args);
         }
 
         internal static void PrintCopyright()
         {
-            DicConsole.WriteLine("{0} {1}", AssemblyTitle, AssemblyVersion?.InformationalVersion);
-            DicConsole.WriteLine("{0}", AssemblyCopyright);
+            DicConsole.WriteLine("{0} {1}", _assemblyTitle, _assemblyVersion?.InformationalVersion);
+            DicConsole.WriteLine("{0}", _assemblyCopyright);
             DicConsole.WriteLine();
         }
     }

@@ -32,6 +32,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
@@ -44,7 +46,6 @@ using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
-using Mono.Options;
 using BCA = DiscImageChef.Decoders.Bluray.BCA;
 using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
@@ -55,65 +56,40 @@ namespace DiscImageChef.Commands
 {
     internal class MediaInfoCommand : Command
     {
-        string devicePath;
-        string outputPrefix;
-        bool   showHelp;
-
-        public MediaInfoCommand() : base("media-info", "Gets information about the media inserted on a device.") =>
-            Options = new OptionSet
-            {
-                $"{MainClass.AssemblyTitle} {MainClass.AssemblyVersion?.InformationalVersion}",
-                $"{MainClass.AssemblyCopyright}", "", $"usage: DiscImageChef {Name} [OPTIONS] devicepath", "",
-                Help,
-                {
-                    "output-prefix|w=", "Write binary responses from device with that prefix.", s => outputPrefix = s
-                },
-                {
-                    "help|h|?", "Show this message and exit.", v => showHelp = v != null
-                }
-            };
-
-        public override int Invoke(IEnumerable<string> arguments)
+        public MediaInfoCommand() : base("media-info", "Gets information about the media inserted on a device.")
         {
-            List<string> extra = Options.Parse(arguments);
+            Add(new Option(new[]
+                {
+                    "--output-prefix", "-w"
+                }, "Write binary responses from device with that prefix.")
+                {
+                    Argument = new Argument<string>(() => null), Required = false
+                });
 
-            if(showHelp)
+            AddArgument(new Argument<string>
             {
-                Options.WriteOptionDescriptions(CommandSet.Out);
+                Arity = ArgumentArity.ExactlyOne, Description = "Device path", Name = "device-path"
+            });
 
-                return(int)ErrorNumber.HelpRequested;
-            }
+            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+        }
 
+        static int Invoke(bool debug, bool verbose, string devicePath, string outputPrefix)
+        {
             MainClass.PrintCopyright();
 
-            if(MainClass.Debug)
+            if(debug)
                 DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
-            if(MainClass.Verbose)
+            if(verbose)
                 DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("media-info");
 
-            if(extra.Count > 1)
-            {
-                DicConsole.ErrorWriteLine("Too many arguments.");
-
-                return(int)ErrorNumber.UnexpectedArgumentCount;
-            }
-
-            if(extra.Count == 0)
-            {
-                DicConsole.ErrorWriteLine("Missing device path.");
-
-                return(int)ErrorNumber.MissingArgument;
-            }
-
-            devicePath = extra[0];
-
-            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}", MainClass.Debug);
+            DicConsole.DebugWriteLine("Media-Info command", "--debug={0}", debug);
             DicConsole.DebugWriteLine("Media-Info command", "--device={0}", devicePath);
             DicConsole.DebugWriteLine("Media-Info command", "--output-prefix={0}", outputPrefix);
-            DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}", MainClass.Verbose);
+            DicConsole.DebugWriteLine("Media-Info command", "--verbose={0}", verbose);
 
             if(devicePath.Length == 2   &&
                devicePath[1]     == ':' &&
