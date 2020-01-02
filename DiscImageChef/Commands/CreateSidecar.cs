@@ -69,14 +69,6 @@ namespace DiscImageChef.Commands
                 });
 
             Add(new Option(new[]
-                {
-                    "--encoding", "-e"
-                }, "Name of character encoding to use.")
-                {
-                    Argument = new Argument<string>(() => null), Required = false
-                });
-
-            Add(new Option(new[]
                            {
                                "--tape", "-t"
                            },
