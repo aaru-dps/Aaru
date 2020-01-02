@@ -149,6 +149,81 @@ namespace DiscImageChef.Core.Media.Info
                     }
                 }
 
+                // Try to get another the offset some other way, we need an audio track just after a data track, same session
+                if(!offsetFound)
+                {
+                    Track dataTrack  = default;
+                    Track audioTrack = default;
+
+                    for(int i = 1; i < tracks.Length; i++)
+                    {
+                        if(tracks[i - 1].TrackType == TrackType.Audio ||
+                           tracks[i].TrackType     != TrackType.Audio)
+                            continue;
+
+                        dataTrack  = tracks[i - 1];
+                        audioTrack = tracks[i];
+
+                        break;
+                    }
+
+                    // Found them
+                    if(dataTrack.TrackSequence  != 0 &&
+                       audioTrack.TrackSequence != 0)
+                    {
+                        sense = dev.ReadCd(out cmdBuf, out _, (uint)audioTrack.TrackStartSector, sectorSize, 3,
+                                           MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true, false,
+                                           MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                        if(!sense &&
+                           !dev.Error)
+                        {
+                            dataTrack.TrackEndSector += 150;
+
+                            // Calculate MSF
+                            ulong minute = dataTrack.TrackEndSector                     / 4500;
+                            ulong second = (dataTrack.TrackEndSector - (minute * 4500)) / 75;
+                            ulong frame  = dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
+
+                            dataTrack.TrackEndSector -= 150;
+
+                            // Convert to BCD
+                            ulong remainder = minute   % 10;
+                            minute    = ((minute / 10) * 16) + remainder;
+                            remainder = second % 10;
+                            second    = ((second / 10) * 16) + remainder;
+                            remainder = frame % 10;
+                            frame     = ((frame / 10) * 16) + remainder;
+
+                            // Scramble M and S
+                            minute ^= 0x01;
+                            second ^= 0x80;
+
+                            // Build sync
+                            byte[] sectorSync =
+                            {
+                                0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, (byte)minute,
+                                (byte)second, (byte)frame
+                            };
+
+                            byte[] tmpBuf = new byte[sectorSync.Length];
+
+                            for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
+                            {
+                                Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
+
+                                if(!tmpBuf.SequenceEqual(sectorSync))
+                                    continue;
+
+                                offsetBytes = i + 2352;
+                                offsetFound = true;
+
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 if(cdOffset is null)
                 {
                     if(offsetFound)
