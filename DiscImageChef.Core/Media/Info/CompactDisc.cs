@@ -50,7 +50,7 @@ namespace DiscImageChef.Core.Media.Info
 
                 if(!readcd)
                 {
-                    dumpLog.WriteLine("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
+                    dumpLog?.WriteLine("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
 
                     updateStatus?.
                         Invoke("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
@@ -158,7 +158,7 @@ namespace DiscImageChef.Core.Media.Info
                     }
                     else
                     {
-                        dumpLog.
+                        dumpLog?.
                             WriteLine("Drive read offset is unknown, disabling offset fix. Dump may not be correct.");
 
                         updateStatus?.
@@ -171,7 +171,7 @@ namespace DiscImageChef.Core.Media.Info
                 {
                     if(offsetFound)
                     {
-                        dumpLog.
+                        dumpLog?.
                             WriteLine($"Disc offsets is {offsetBytes - (cdOffset.Offset * 4)} bytes ({(offsetBytes / 4) - cdOffset.Offset} samples)");
 
                         updateStatus?.

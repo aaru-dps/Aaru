@@ -34,12 +34,15 @@ using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Dumping;
 using DiscImageChef.Core.Media.Info;
+using DiscImageChef.Database;
+using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.Bluray;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
@@ -50,7 +53,9 @@ using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
 using BCA = DiscImageChef.Decoders.Bluray.BCA;
 using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
+using Command = System.CommandLine.Command;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
+using Device = DiscImageChef.Devices.Device;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using Session = DiscImageChef.Decoders.CD.Session;
 using Spare = DiscImageChef.Decoders.DVD.Spare;
@@ -143,7 +148,7 @@ namespace DiscImageChef.Commands
                     break;
                 case DeviceType.ATAPI:
                 case DeviceType.SCSI:
-                    DoScsiMediaInfo(outputPrefix, dev);
+                    DoScsiMediaInfo(debug, verbose, outputPrefix, dev);
 
                     break;
                 default: throw new NotSupportedException("Unknown device type.");
@@ -159,7 +164,7 @@ namespace DiscImageChef.Commands
 
         static void DoSdMediaInfo() => DicConsole.ErrorWriteLine("Please use device-info command for MMC/SD devices.");
 
-        static void DoScsiMediaInfo(string outputPrefix, Device dev)
+        static void DoScsiMediaInfo(bool debug, bool verbose, string outputPrefix, Device dev)
         {
             var scsiInfo = new ScsiInfo(dev);
 
@@ -562,6 +567,47 @@ namespace DiscImageChef.Commands
                             WriteLine("Track {0} starts at LBA {1}, ends at LBA {2}, has a pregap of {3} sectors and is of type {4}",
                                       track.TrackSequence, track.TrackStartSector, track.TrackEndSector,
                                       track.TrackPregap, track.TrackType);
+
+                    // Open master database
+                    var ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+
+                    // Search for device in master database
+                    Database.Models.Device dbDev =
+                        ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
+                                                        d.Revision     == dev.Revision);
+
+                    CdOffset cdOffset = null;
+
+                    if(dbDev != null)
+                    {
+                        // Search for read offset in master database
+                        cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
+                                                                     d.Model        == dev.Model);
+                    }
+
+                    bool gotOffset = CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null,
+                                                           out int offsetBytes, true, out _, tracks, null);
+
+                    DicConsole.WriteLine();
+                    DicConsole.WriteLine("Offsets:");
+
+                    DicConsole.WriteLine(cdOffset != null
+                                             ? $"Drive offset is {cdOffset.Offset * 4} bytes ({cdOffset.Offset} samples)"
+                                             : "Drive offset is unknown");
+
+                    if(gotOffset)
+                    {
+                        DicConsole.WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples)");
+
+                        DicConsole.WriteLine(cdOffset != null
+                                                 ? $"Disc offset is {offsetBytes - (cdOffset.Offset * 4)} bytes ({(offsetBytes / 4) - cdOffset.Offset} samples)"
+                                                 : "Disc offset is unknown");
+                    }
+                    else
+                    {
+                        DicConsole.WriteLine("Combined offset is unknown");
+                        DicConsole.WriteLine("Disc offset is unknown");
+                    }
                 }
             }
 
