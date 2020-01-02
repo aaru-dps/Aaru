@@ -47,7 +47,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Devices\Dumping\CompactDisc\Data.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Dump.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Error.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\LeadOuts.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Pregap.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Subchannel.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Tags.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Tracks.cs" />
+    <Compile Include="Devices\Dumping\CompactDisc\Trim.cs" />
     <Compile Include="Devices\Dumping\Dump.cs" />
+    <Compile Include="Devices\Dumping\Metadata.cs" />
     <Compile Include="Devices\Dumping\PlayStationPortable.cs" />
     <Compile Include="Devices\Info\DeviceInfo.cs" />
     <Compile Include="Devices\Info\Plextor.cs" />
@@ -61,6 +71,7 @@
     <Compile Include="GetPluginBase.cs" />
     <Compile Include="ImageInfo.cs" />
     <Compile Include="Media\Detection\MMC.cs" />
+    <Compile Include="Media\Info\CompactDisc.cs" />
     <Compile Include="Media\Info\ScsiInfo.cs" />
     <Compile Include="Media\Info\XgdInfo.cs" />
     <Compile Include="Options.cs" />
@@ -96,7 +107,6 @@
     <Compile Include="Devices\ReaderSCSI.cs" />
     <Compile Include="Devices\Dumping\SSC.cs" />
     <Compile Include="Devices\Dumping\MMC.cs" />
-    <Compile Include="Devices\Dumping\CompactDisc.cs" />
     <Compile Include="Devices\Dumping\SBC.cs" />
     <Compile Include="Devices\Dumping\XGD.cs" />
     <Compile Include="Devices\Dumping\ResumeSupport.cs" />

@@ -233,9 +233,20 @@
         <e p="Devices" t="Include">
           <e p="Dumping" t="Include">
             <e p="ATA.cs" t="Include" />
-            <e p="CompactDisc.cs" t="Include" />
+            <e p="CompactDisc" t="Include">
+              <e p="Data.cs" t="Include" />
+              <e p="Dump.cs" t="Include" />
+              <e p="Error.cs" t="Include" />
+              <e p="LeadOuts.cs" t="Include" />
+              <e p="Pregap.cs" t="Include" />
+              <e p="Subchannel.cs" t="Include" />
+              <e p="Tags.cs" t="Include" />
+              <e p="Tracks.cs" t="Include" />
+              <e p="Trim.cs" t="Include" />
+            </e>
             <e p="Dump.cs" t="Include" />
             <e p="MMC.cs" t="Include" />
+            <e p="Metadata.cs" t="Include" />
             <e p="NVMe.cs" t="Include" />
             <e p="PlayStationPortable.cs" t="Include" />
             <e p="ResumeSupport.cs" t="Include" />
@@ -291,6 +302,7 @@
             <e p="MMC.cs" t="Include" />
           </e>
           <e p="Info" t="Include">
+            <e p="CompactDisc.cs" t="Include" />
             <e p="ScsiInfo.cs" t="Include" />
             <e p="XgdInfo.cs" t="Include" />
           </e>
@@ -1261,19 +1273,6 @@
             </e>
             <e p="netstandard2.0" t="Include">
               <e p="DiscImageChef.Dto.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-      </e>
-      <e p="DiscImageChef.EntityFramework" t="IncludeRecursive">
-        <e p="DiscImageChef.EntityFramework.csproj" t="IncludeRecursive" />
-        <e p="Program.cs" t="Include" />
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="discimagechef.db" t="Include" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp2.0" t="Include">
-              <e p="DiscImageChef.EntityFramework.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>

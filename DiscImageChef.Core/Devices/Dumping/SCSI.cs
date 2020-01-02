@@ -37,59 +37,66 @@ using DiscImageChef.Decoders.SCSI;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    /// <summary>
-    ///     Implements dumping SCSI and ATAPI devices
-    /// </summary>
+    /// <summary>Implements dumping SCSI and ATAPI devices</summary>
     public partial class Dump
     {
         // TODO: Get cartridge serial number from Certance vendor EVPD
-        /// <summary>
-        ///     Dumps a SCSI Block Commands device or a Reduced Block Commands devices
-        /// </summary>
+        /// <summary>Dumps a SCSI Block Commands device or a Reduced Block Commands devices</summary>
         public void Scsi()
         {
             MediaType dskType = MediaType.Unknown;
             int       resets  = 0;
 
-            if(dev.IsRemovable)
+            if(_dev.IsRemovable)
             {
                 InitProgress?.Invoke();
                 deviceGotReset:
-                bool sense = dev.ScsiTestUnitReady(out byte[] senseBuf, dev.Timeout, out _);
+                bool sense = _dev.ScsiTestUnitReady(out byte[] senseBuf, _dev.Timeout, out _);
+
                 if(sense)
                 {
                     FixedSense? decSense = Sense.DecodeFixed(senseBuf);
+
                     if(decSense.HasValue)
                     {
-                        ErrorMessage
-                          ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
-                        dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                          decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                        ErrorMessage?.
+                            Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+
+                        _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
+                                           decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
 
                         // Just retry, for 5 times
                         if(decSense.Value.ASC == 0x29)
                         {
                             resets++;
-                            if(resets < 5) goto deviceGotReset;
+
+                            if(resets < 5)
+                                goto deviceGotReset;
                         }
 
                         if(decSense.Value.ASC == 0x3A)
                         {
                             int leftRetries = 5;
+
                             while(leftRetries > 0)
                             {
                                 PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
-                                if(!sense) break;
+                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
+
+                                if(!sense)
+                                    break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
+
                                 if(decSense.HasValue)
                                 {
-                                    ErrorMessage
-                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
-                                    dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
-                                                      decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    ErrorMessage?.
+                                        Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+
+                                    _dumpLog.WriteLine("Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
+                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.ASCQ);
                                 }
 
                                 leftRetries--;
@@ -98,26 +105,34 @@ namespace DiscImageChef.Core.Devices.Dumping
                             if(sense)
                             {
                                 StoppingErrorMessage?.Invoke("Please insert media in drive");
+
                                 return;
                             }
                         }
-                        else if(decSense.Value.ASC == 0x04 && decSense.Value.ASCQ == 0x01)
+                        else if(decSense.Value.ASC  == 0x04 &&
+                                decSense.Value.ASCQ == 0x01)
                         {
                             int leftRetries = 50;
+
                             while(leftRetries > 0)
                             {
                                 PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
-                                if(!sense) break;
+                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
+
+                                if(!sense)
+                                    break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
+
                                 if(decSense.HasValue)
                                 {
-                                    ErrorMessage
-                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
-                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                      decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    ErrorMessage?.
+                                        Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+
+                                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.ASCQ);
                                 }
 
                                 leftRetries--;
@@ -125,8 +140,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             if(sense)
                             {
-                                StoppingErrorMessage
-                                  ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.
+                                    Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+
                                 return;
                             }
                         }
@@ -147,20 +163,26 @@ namespace DiscImageChef.Core.Devices.Dumping
                         else if(decSense.Value.ASC == 0x28)
                         {
                             int leftRetries = 10;
+
                             while(leftRetries > 0)
                             {
                                 PulseProgress?.Invoke("Waiting for drive to become ready");
                                 Thread.Sleep(2000);
-                                sense = dev.ScsiTestUnitReady(out senseBuf, dev.Timeout, out _);
-                                if(!sense) break;
+                                sense = _dev.ScsiTestUnitReady(out senseBuf, _dev.Timeout, out _);
+
+                                if(!sense)
+                                    break;
 
                                 decSense = Sense.DecodeFixed(senseBuf);
+
                                 if(decSense.HasValue)
                                 {
-                                    ErrorMessage
-                                      ?.Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
-                                    dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
-                                                      decSense.Value.SenseKey, decSense.Value.ASC, decSense.Value.ASCQ);
+                                    ErrorMessage?.
+                                        Invoke($"Device not ready. Sense {decSense.Value.SenseKey} ASC {decSense.Value.ASC:X2}h ASCQ {decSense.Value.ASCQ:X2}h");
+
+                                    _dumpLog.WriteLine("Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
+                                                       decSense.Value.SenseKey, decSense.Value.ASC,
+                                                       decSense.Value.ASCQ);
                                 }
 
                                 leftRetries--;
@@ -168,21 +190,24 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                             if(sense)
                             {
-                                StoppingErrorMessage
-                                  ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                                StoppingErrorMessage?.
+                                    Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+
                                 return;
                             }
                         }
                         else
                         {
-                            StoppingErrorMessage
-                              ?.Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+                            StoppingErrorMessage?.
+                                Invoke($"Error testing unit was ready:\n{Sense.PrettifySense(senseBuf)}");
+
                             return;
                         }
                     }
                     else
                     {
                         StoppingErrorMessage?.Invoke("Unknown testing unit was ready.");
+
                         return;
                     }
                 }
@@ -190,28 +215,34 @@ namespace DiscImageChef.Core.Devices.Dumping
                 EndProgress?.Invoke();
             }
 
-            switch(dev.ScsiType)
+            switch(_dev.ScsiType)
             {
                 case PeripheralDeviceTypes.SequentialAccess:
-                    if(dumpRaw)
+                    if(_dumpRaw)
                     {
                         StoppingErrorMessage?.Invoke("Tapes cannot be dumped raw.");
+
                         return;
                     }
 
-                    if(outputPlugin is IWritableTapeImage) Ssc();
+                    if(_outputPlugin is IWritableTapeImage)
+                        Ssc();
                     else
-                        StoppingErrorMessage
-                          ?.Invoke("The specified plugin does not support storing streaming tape images.");
+                        StoppingErrorMessage?.
+                            Invoke("The specified plugin does not support storing streaming tape images.");
+
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
-                    if(outputPlugin is IWritableOpticalImage) Mmc(ref dskType);
+                    if(_outputPlugin is IWritableOpticalImage)
+                        Mmc(ref dskType);
                     else
-                        StoppingErrorMessage
-                          ?.Invoke("The specified plugin does not support storing optical disc images.");
+                        StoppingErrorMessage?.
+                            Invoke("The specified plugin does not support storing optical disc images.");
+
                     return;
                 default:
                     Sbc(null, ref dskType, false);
+
                     break;
             }
         }
