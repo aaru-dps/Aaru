@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.IO;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 
 // ReSharper disable JoinDeclarationAndInitializer
@@ -118,7 +119,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             firstTrackPregapMs.Close();
         }
 
-        void SolveTrackPregaps(Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel)
+        public static void SolveTrackPregaps(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus,
+                                             Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel)
         {
             bool   sense;  // Sense indicator
             byte[] cmdBuf; // Data buffer
@@ -136,14 +138,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                 while(lba > tracks[i - 1].TrackStartSector)
                 {
                     if(supportsPqSubchannel)
-                        sense = _dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                            MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
-                                            _dev.Timeout, out _);
+                        sense = dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.AllTypes, false, false, false,
+                                           MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
+                                           dev.Timeout, out _);
                     else
                     {
                         sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                            MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
-                                            _dev.Timeout, out _);
+                                           MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
+                                           dev.Timeout, out _);
 
                         if(!sense)
                         {
@@ -229,8 +231,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
 
             #if DEBUG
-                _dumpLog.WriteLine($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
-                UpdateStatus?.Invoke($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
+                dumpLog?.WriteLine($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
+                updateStatus?.Invoke($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
             #endif
 
                 tracks[i].TrackPregap      =  (ulong)trackPregap;

@@ -35,8 +35,10 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.Core.Devices.Dumping;
 using DiscImageChef.Core.Media.Info;
 using DiscImageChef.Decoders.Bluray;
 using DiscImageChef.Decoders.CD;
@@ -50,6 +52,7 @@ using BCA = DiscImageChef.Decoders.Bluray.BCA;
 using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using Session = DiscImageChef.Decoders.CD.Session;
 using Spare = DiscImageChef.Decoders.DVD.Spare;
 
 namespace DiscImageChef.Commands
@@ -529,6 +532,38 @@ namespace DiscImageChef.Commands
 
             DicConsole.WriteLine("Media identified as {0}", scsiInfo.MediaType);
             Statistics.AddMedia(scsiInfo.MediaType, true);
+
+            if(scsiInfo.Toc    != null ||
+               scsiInfo.RawToc != null)
+            {
+                uint blockSize = 2352;
+
+                Track[] tracks = Dump.GetCdTracks(ref blockSize, dev, scsiInfo.MediaType, null, false,
+                                                  out long lastSector, null, null, null, TrackSubchannelType.None,
+                                                  out _, null, null);
+
+                if(tracks != null)
+                {
+                    bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null);
+                    bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null);
+
+                    Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel);
+
+                    for(int t = 1; t < tracks.Length; t++)
+                        tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
+
+                    tracks[tracks.Length - 1].TrackEndSector = (ulong)lastSector;
+
+                    DicConsole.WriteLine();
+                    DicConsole.WriteLine("Track calculations:");
+
+                    foreach(Track track in tracks)
+                        DicConsole.
+                            WriteLine("Track {0} starts at LBA {1}, ends at LBA {2}, has a pregap of {3} sectors and is of type {4}",
+                                      track.TrackSequence, track.TrackStartSector, track.TrackEndSector,
+                                      track.TrackPregap, track.TrackType);
+                }
+            }
 
             dev.Close();
         }

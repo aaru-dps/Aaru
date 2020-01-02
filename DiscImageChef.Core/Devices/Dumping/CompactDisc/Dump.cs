@@ -138,8 +138,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             // Check subchannels support
-            supportsPqSubchannel = SupportsPqSubchannel();
-            supportsRwSubchannel = SupportsRwSubchannel();
+            supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus);
+            supportsRwSubchannel = SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus);
 
             switch(_subchannel)
             {
@@ -207,8 +207,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(!_outputPlugin.SupportedSectorTags.Contains(SectorTagType.CdSectorSubchannel) &&
                supportedSubchannel != MmcSubchannel.None)
             {
-                if(_force ||
-                   _subchannel == DumpSubchannel.None)
+                if(_force || _subchannel == DumpSubchannel.None)
                 {
                     _dumpLog.WriteLine("Output format does not support subchannels, continuing...");
                     UpdateStatus?.Invoke("Output format does not support subchannels, continuing...");
@@ -339,13 +338,13 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             blockSize = sectorSize + subSize;
 
-            tracks = GetCdTracks(ref blockSize, dskType, out lastSector, leadOutStarts, mediaTags, out toc, trackFlags,
-                                 subType);
+            tracks = GetCdTracks(ref blockSize, _dev, dskType, _dumpLog, _force, out lastSector, leadOutStarts,
+                                 mediaTags, StoppingErrorMessage, subType, out toc, trackFlags, UpdateStatus);
 
             if(tracks is null)
                 return;
 
-            SolveTrackPregaps(tracks, supportsPqSubchannel, supportsRwSubchannel);
+            SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel);
 
             for(int t = 1; t < tracks.Length; t++)
                 tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
@@ -872,7 +871,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             ReadCdData(audioExtents, blocks, blockSize, ref currentSpeed, currentTry, extents, ibgLog,
                        ref imageWriteDuration, lastSector, leadOutExtents, ref maxSpeed, mhddLog, ref minSpeed,
                        out newTrim, tracks[0].TrackType != TrackType.Audio, offsetBytes, read6, read10, read12, read16,
-                       readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration, tracks);
+                       readcd, sectorsForOffset, subSize, supportedSubchannel, supportsLongSectors, ref totalDuration,
+                       tracks);
 
             // TODO: Enable when underlying images support lead-outs
             /*

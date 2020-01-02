@@ -33,15 +33,20 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.Database;
+using DiscImageChef.Database.Models;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
+using Command = System.CommandLine.Command;
+using Device = DiscImageChef.Devices.Device;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 
 namespace DiscImageChef.Commands
@@ -1065,6 +1070,33 @@ namespace DiscImageChef.Commands
             }
 
             dev.Close();
+
+            DicConsole.WriteLine();
+
+            // Open master database
+            var ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+
+            // Search for device in master database
+            Database.Models.Device dbDev =
+                ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
+                                                d.Revision     == dev.Revision);
+
+            if(dbDev is null)
+                DicConsole.WriteLine("Device not in database, please create a device report and attach it to a Github issue.");
+            else
+            {
+                DicConsole.WriteLine($"Device in database since {dbDev.LastSynchronized}.");
+
+                if(dbDev.OptimalMultipleSectorsRead > 0)
+                    DicConsole.WriteLine($"Optimal multiple read is {dbDev.LastSynchronized} sectors.");
+            }
+
+            // Search for read offset in master database
+            CdOffset cdOffset =
+                ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model);
+
+            DicConsole.WriteLine(cdOffset is null ? "CD reading offset not found in database."
+                                     : $"CD reading offset is {cdOffset.Offset} samples ({cdOffset.Offset * 4} bytes).");
 
             return(int)ErrorNumber.NoError;
         }

@@ -36,7 +36,9 @@ using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.CD;
+using DiscImageChef.Devices;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
@@ -48,17 +50,25 @@ namespace DiscImageChef.Core.Devices.Dumping
     {
         /// <summary>Reads the TOC, processes it, returns the track list and last sector</summary>
         /// <param name="blockSize">Size of the read sector in bytes</param>
+        /// <param name="dev">Device</param>
         /// <param name="dskType">Disc type</param>
+        /// <param name="dumpLog">Dump log</param>
+        /// <param name="force">Force dump enabled</param>
         /// <param name="lastSector">Last sector number</param>
         /// <param name="leadOutStarts">Lead-out starts</param>
         /// <param name="mediaTags">Media tags</param>
+        /// <param name="stoppingErrorMessage">Stopping error message handler</param>
+        /// <param name="subType">Track subchannel type</param>
         /// <param name="toc">Full CD TOC</param>
         /// <param name="trackFlags">Track flags</param>
-        /// <param name="subType">Track subchannel type</param>
+        /// <param name="updateStatus">Update status handler</param>
         /// <returns>List of tracks</returns>
-        Track[] GetCdTracks(ref uint blockSize, MediaType dskType, out long lastSector,
-                            Dictionary<int, long> leadOutStarts, Dictionary<MediaTagType, byte[]> mediaTags,
-                            out FullTOC.CDFullTOC? toc, Dictionary<byte, byte> trackFlags, TrackSubchannelType subType)
+        public static Track[] GetCdTracks(ref uint blockSize, Device dev, MediaType dskType, DumpLog dumpLog,
+                                          bool force, out long lastSector, Dictionary<int, long> leadOutStarts,
+                                          Dictionary<MediaTagType, byte[]> mediaTags,
+                                          ErrorMessageHandler stoppingErrorMessage, TrackSubchannelType subType,
+                                          out FullTOC.CDFullTOC? toc, Dictionary<byte, byte> trackFlags,
+                                          UpdateStatusHandler updateStatus)
         {
             byte[]      cmdBuf     = null;              // Data buffer
             const uint  sectorSize = 2352;              // Full sector size
@@ -71,9 +81,9 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // We discarded all discs that falsify a TOC before requesting a real TOC
             // No TOC, no CD (or an empty one)
-            _dumpLog.WriteLine("Reading full TOC");
-            UpdateStatus?.Invoke("Reading full TOC");
-            sense = _dev.ReadRawToc(out cmdBuf, out _, 0, _dev.Timeout, out _);
+            dumpLog?.WriteLine("Reading full TOC");
+            updateStatus?.Invoke("Reading full TOC");
+            sense = dev.ReadRawToc(out cmdBuf, out _, 0, dev.Timeout, out _);
 
             if(!sense)
             {
@@ -83,12 +93,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     tmpBuf = new byte[cmdBuf.Length - 2];
                     Array.Copy(cmdBuf, 2, tmpBuf, 0, cmdBuf.Length - 2);
-                    mediaTags.Add(MediaTagType.CD_FullTOC, tmpBuf);
+                    mediaTags?.Add(MediaTagType.CD_FullTOC, tmpBuf);
                 }
             }
 
-            UpdateStatus?.Invoke("Building track map...");
-            _dumpLog.WriteLine("Building track map...");
+            updateStatus?.Invoke("Building track map...");
+            dumpLog?.WriteLine("Building track map...");
 
             if(toc.HasValue)
             {
@@ -113,7 +123,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             TrackSubchannelType    = subType
                         });
 
-                        trackFlags.Add(trk.POINT, trk.CONTROL);
+                        trackFlags?.Add(trk.POINT, trk.CONTROL);
                     }
                     else if(trk.POINT == 0xA2)
                     {
@@ -154,7 +164,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
 
                         lastSector = ((phour * 3600 * 75) + (pmin * 60 * 75) + (psec * 75) + pframe) - 150;
-                        leadOutStarts.Add(trk.SessionNumber, lastSector                    + 1);
+                        leadOutStarts?.Add(trk.SessionNumber, lastSector                   + 1);
                     }
                     else if(trk.POINT == 0xA0 &&
                             trk.ADR   == 1)
@@ -181,18 +191,18 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
             else
             {
-                UpdateStatus?.Invoke("Cannot read RAW TOC, requesting processed one...");
-                _dumpLog.WriteLine("Cannot read RAW TOC, requesting processed one...");
-                sense = _dev.ReadToc(out cmdBuf, out _, false, 0, _dev.Timeout, out _);
+                updateStatus?.Invoke("Cannot read RAW TOC, requesting processed one...");
+                dumpLog?.WriteLine("Cannot read RAW TOC, requesting processed one...");
+                sense = dev.ReadToc(out cmdBuf, out _, false, 0, dev.Timeout, out _);
 
                 TOC.CDTOC? oldToc = TOC.Decode(cmdBuf);
 
                 if((sense || !oldToc.HasValue) &&
-                   !_force)
+                   !force)
                 {
-                    _dumpLog.WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
+                    dumpLog?.WriteLine("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
 
-                    StoppingErrorMessage?.
+                    stoppingErrorMessage?.
                         Invoke("Could not read TOC, if you want to continue, use force, and will try from LBA 0 to 360000...");
 
                     return null;
@@ -214,7 +224,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                             TrackRawBytesPerSector = (int)sectorSize, TrackSubchannelType       = subType
                         });
 
-                        trackFlags.Add(trk.TrackNumber, trk.CONTROL);
+                        trackFlags?.Add(trk.TrackNumber, trk.CONTROL);
                     }
                     else if(trk.TrackNumber == 0xAA)
                     {
@@ -229,8 +239,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(trackList.Count == 0)
             {
-                UpdateStatus?.Invoke("No tracks found, adding a single track from 0 to Lead-Out");
-                _dumpLog.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
+                updateStatus?.Invoke("No tracks found, adding a single track from 0 to Lead-Out");
+                dumpLog?.WriteLine("No tracks found, adding a single track from 0 to Lead-Out");
 
                 trackList.Add(new Track
                 {
@@ -240,12 +250,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                     TrackSubchannelType = subType
                 });
 
-                trackFlags.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
+                trackFlags?.Add(1, (byte)(leadoutTrackType == TrackType.Audio ? 0 : 4));
             }
 
             if(lastSector == 0)
             {
-                sense = _dev.ReadCapacity16(out cmdBuf, out _, _dev.Timeout, out _);
+                sense = dev.ReadCapacity16(out cmdBuf, out _, dev.Timeout, out _);
 
                 if(!sense)
                 {
@@ -258,7 +268,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
-                    sense = _dev.ReadCapacity(out cmdBuf, out _, _dev.Timeout, out _);
+                    sense = dev.ReadCapacity(out cmdBuf, out _, dev.Timeout, out _);
 
                     if(!sense)
                     {
@@ -269,21 +279,21 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 if(lastSector <= 0)
                 {
-                    if(!_force)
+                    if(!force)
                     {
-                        StoppingErrorMessage?.
+                        stoppingErrorMessage?.
                             Invoke("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
 
-                        _dumpLog.
+                        dumpLog?.
                             WriteLine("Could not find Lead-Out, if you want to continue use force option and will continue until 360000 sectors...");
 
                         return null;
                     }
 
-                    UpdateStatus?.
+                    updateStatus?.
                         Invoke("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
 
-                    _dumpLog.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
+                    dumpLog?.WriteLine("WARNING: Could not find Lead-Out start, will try to read up to 360000 sectors, probably will fail before...");
                     lastSector = 360000;
                 }
             }
