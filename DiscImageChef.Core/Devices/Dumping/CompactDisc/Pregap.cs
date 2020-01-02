@@ -168,7 +168,20 @@ namespace DiscImageChef.Core.Devices.Dumping
                             {
                                 cmdBuf[iq] = (byte)q[iq];
                             }
+                        }
+                    }
 
+                    if(!sense)
+                    {
+                        // Q position
+                        if((cmdBuf[0] & 0xF) != 1)
+                            continue;
+
+                        // Check if BCD or binary values, change to binary
+                        int posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
+
+                        if(posQ > lba)
+                        {
                             cmdBuf[1] = (byte)(((cmdBuf[1] / 16) * 10) + (cmdBuf[1] & 0x0F));
                             cmdBuf[2] = (byte)(((cmdBuf[2] / 16) * 10) + (cmdBuf[2] & 0x0F));
                             cmdBuf[3] = (byte)(((cmdBuf[3] / 16) * 10) + (cmdBuf[3] & 0x0F));
@@ -178,14 +191,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                             cmdBuf[7] = (byte)(((cmdBuf[7] / 16) * 10) + (cmdBuf[7] & 0x0F));
                             cmdBuf[8] = (byte)(((cmdBuf[8] / 16) * 10) + (cmdBuf[8] & 0x0F));
                             cmdBuf[9] = (byte)(((cmdBuf[9] / 16) * 10) + (cmdBuf[9] & 0x0F));
-                        }
-                    }
 
-                    if(!sense)
-                    {
-                        // Q position
-                        if((cmdBuf[0] & 0xF) != 1)
-                            continue;
+                            posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
+                        }
 
                         if(cmdBuf[1] != tracks[i].TrackSequence ||
                            cmdBuf[2] != 0)
@@ -199,12 +207,17 @@ namespace DiscImageChef.Core.Devices.Dumping
                             continue;
                         }
 
-                        int pregapQ = (cmdBuf[3] * 60 * 75) + (cmdBuf[4] * 75) + cmdBuf[5];
+                        int pregapQ = posQ > lba ? trackPregap : (cmdBuf[3] * 60 * 75) + (cmdBuf[4] * 75) + cmdBuf[5];
 
                         if(pregapQ > trackPregap)
                             trackPregap = pregapQ;
                         else
+                        {
+                            if(posQ == lba + 1)
+                                trackPregap++;
+
                             break;
+                        }
 
                         lba--;
                     }
