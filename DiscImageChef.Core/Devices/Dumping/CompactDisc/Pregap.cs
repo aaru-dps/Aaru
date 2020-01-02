@@ -141,11 +141,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                             _dev.Timeout, out _);
                     else
                     {
-                        sense = _dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                            MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
-                                            _dev.Timeout, out _);
-
-                        sense = _dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.AllTypes, false, false, false,
+                        sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.AllTypes, false, false, false,
                                             MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
                                             _dev.Timeout, out _);
 
