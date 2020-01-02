@@ -46,7 +46,7 @@ namespace DiscImageChef.Commands
         {
             _masterDbUpdate = masterDbUpdate;
 
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+            Handler = CommandHandler.Create<bool, bool>(Invoke);
         }
 
         public int Invoke(bool debug, bool verbose)

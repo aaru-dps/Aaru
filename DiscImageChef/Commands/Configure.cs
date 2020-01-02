@@ -50,7 +50,7 @@ namespace DiscImageChef.Commands
             _gdprChange = gdprChange;
             _autoCall   = autoCall;
 
-            Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
+            Handler = CommandHandler.Create<bool, bool>(Invoke);
         }
 
         public int Invoke(bool debug, bool verbose)
