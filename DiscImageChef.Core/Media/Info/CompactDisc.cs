@@ -6,6 +6,7 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Core.Media.Detection;
 using DiscImageChef.Database.Models;
+using DiscImageChef.Decoders.CD;
 using DiscImageChef.Devices;
 using Device = DiscImageChef.Database.Models.Device;
 
@@ -219,6 +220,39 @@ namespace DiscImageChef.Core.Media.Info
                                 offsetFound = true;
 
                                 break;
+                            }
+
+                            if(!offsetFound &&
+                               audioTrack.TrackPregap > 0)
+                            {
+                                sense = dev.ReadCd(out byte[] dataBuf, out _, (uint)dataTrack.TrackEndSector,
+                                                   sectorSize, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                                   MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(!sense &&
+                                   !dev.Error)
+                                {
+                                    for(int i = 0; i < dataBuf.Length; i++)
+                                        dataBuf[i] ^= Sector.ScrambleTable[i];
+
+                                    for(int i = 0; i < 2352; i++)
+                                    {
+                                        byte[] dataSide  = new byte[2352 - i];
+                                        byte[] audioSide = new byte[2352 - i];
+
+                                        Array.Copy(dataBuf, i, dataSide, 0, dataSide.Length);
+                                        Array.Copy(cmdBuf, 0, audioSide, 0, audioSide.Length);
+
+                                        if(!dataSide.SequenceEqual(audioSide))
+                                            continue;
+
+                                        offsetBytes = audioSide.Length;
+                                        offsetFound = true;
+
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
