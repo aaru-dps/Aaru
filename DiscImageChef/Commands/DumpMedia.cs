@@ -180,8 +180,8 @@ namespace DiscImageChef.Commands
 
         public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume, string encoding,
                                  bool firstTrackPregap, bool fixOffset, bool force, bool noMetadata, bool noTrim,
-                                 string outputPath, string options, bool persistent, ushort retryPasses, int skip,
-                                 int speed, bool stopOnError, string format, string subchannel)
+                                 string outputPath, string options, bool persistent, ushort retryPasses, uint skip,
+                                 byte speed, bool stopOnError, string format, string subchannel)
         {
             MainClass.PrintCopyright();
 
