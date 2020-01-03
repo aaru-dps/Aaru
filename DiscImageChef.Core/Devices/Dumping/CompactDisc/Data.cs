@@ -344,7 +344,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 }
                 else
                 {
-                    if(crossingLeadOut && Sense.DecodeFixed(senseBuf)?.Information == lastSector + 1)
+                    if(crossingLeadOut && Sense.DecodeFixed(senseBuf)?.ASC == 0x21)
                     {
                         failedCrossingLeadOut = true;
                         blocksToRead          = 0;
