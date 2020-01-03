@@ -147,29 +147,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                        dev.Timeout, out _);
 
                     if(!sense)
-                    {
-                        int[] q = new int[cmdBuf.Length / 8];
-
-                        // De-interlace Q subchannel
-                        for(int iq = 0; iq < cmdBuf.Length; iq += 8)
-                        {
-                            q[iq / 8] =  (cmdBuf[iq] & 0x40) << 1;
-                            q[iq / 8] += cmdBuf[iq + 1] & 0x40;
-                            q[iq / 8] += (cmdBuf[iq + 2] & 0x40) >> 1;
-                            q[iq / 8] += (cmdBuf[iq + 3] & 0x40) >> 2;
-                            q[iq / 8] += (cmdBuf[iq + 4] & 0x40) >> 3;
-                            q[iq / 8] += (cmdBuf[iq + 5] & 0x40) >> 4;
-                            q[iq / 8] += (cmdBuf[iq + 6] & 0x40) >> 5;
-                            q[iq / 8] += (cmdBuf[iq + 7] & 0x40) >> 6;
-                        }
-
-                        cmdBuf = new byte[q.Length];
-
-                        for(int iq = 0; iq < cmdBuf.Length; iq++)
-                        {
-                            cmdBuf[iq] = (byte)q[iq];
-                        }
-                    }
+                        cmdBuf = DeinterleaveQ(cmdBuf);
                 }
 
                 if(!sense)
@@ -182,15 +160,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         if(posQ > lba)
                         {
-                            cmdBuf[1] = (byte)(((cmdBuf[1] / 16) * 10) + (cmdBuf[1] & 0x0F));
-                            cmdBuf[2] = (byte)(((cmdBuf[2] / 16) * 10) + (cmdBuf[2] & 0x0F));
-                            cmdBuf[3] = (byte)(((cmdBuf[3] / 16) * 10) + (cmdBuf[3] & 0x0F));
-                            cmdBuf[4] = (byte)(((cmdBuf[4] / 16) * 10) + (cmdBuf[4] & 0x0F));
-                            cmdBuf[5] = (byte)(((cmdBuf[5] / 16) * 10) + (cmdBuf[5] & 0x0F));
-                            cmdBuf[6] = (byte)(((cmdBuf[6] / 16) * 10) + (cmdBuf[6] & 0x0F));
-                            cmdBuf[7] = (byte)(((cmdBuf[7] / 16) * 10) + (cmdBuf[7] & 0x0F));
-                            cmdBuf[8] = (byte)(((cmdBuf[8] / 16) * 10) + (cmdBuf[8] & 0x0F));
-                            cmdBuf[9] = (byte)(((cmdBuf[9] / 16) * 10) + (cmdBuf[9] & 0x0F));
+                            BcdToBinaryQ(cmdBuf);
 
                             posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
                         }
@@ -230,29 +200,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                            dev.Timeout, out _);
 
                         if(!sense)
-                        {
-                            int[] q = new int[cmdBuf.Length / 8];
-
-                            // De-interlace Q subchannel
-                            for(int iq = 0; iq < cmdBuf.Length; iq += 8)
-                            {
-                                q[iq / 8] =  (cmdBuf[iq] & 0x40) << 1;
-                                q[iq / 8] += cmdBuf[iq + 1] & 0x40;
-                                q[iq / 8] += (cmdBuf[iq + 2] & 0x40) >> 1;
-                                q[iq / 8] += (cmdBuf[iq + 3] & 0x40) >> 2;
-                                q[iq / 8] += (cmdBuf[iq + 4] & 0x40) >> 3;
-                                q[iq / 8] += (cmdBuf[iq + 5] & 0x40) >> 4;
-                                q[iq / 8] += (cmdBuf[iq + 6] & 0x40) >> 5;
-                                q[iq / 8] += (cmdBuf[iq + 7] & 0x40) >> 6;
-                            }
-
-                            cmdBuf = new byte[q.Length];
-
-                            for(int iq = 0; iq < cmdBuf.Length; iq++)
-                            {
-                                cmdBuf[iq] = (byte)q[iq];
-                            }
-                        }
+                            cmdBuf = DeinterleaveQ(cmdBuf);
                     }
 
                     if(!sense)
@@ -270,15 +218,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         if(posQ > lba)
                         {
-                            cmdBuf[1] = (byte)(((cmdBuf[1] / 16) * 10) + (cmdBuf[1] & 0x0F));
-                            cmdBuf[2] = (byte)(((cmdBuf[2] / 16) * 10) + (cmdBuf[2] & 0x0F));
-                            cmdBuf[3] = (byte)(((cmdBuf[3] / 16) * 10) + (cmdBuf[3] & 0x0F));
-                            cmdBuf[4] = (byte)(((cmdBuf[4] / 16) * 10) + (cmdBuf[4] & 0x0F));
-                            cmdBuf[5] = (byte)(((cmdBuf[5] / 16) * 10) + (cmdBuf[5] & 0x0F));
-                            cmdBuf[6] = (byte)(((cmdBuf[6] / 16) * 10) + (cmdBuf[6] & 0x0F));
-                            cmdBuf[7] = (byte)(((cmdBuf[7] / 16) * 10) + (cmdBuf[7] & 0x0F));
-                            cmdBuf[8] = (byte)(((cmdBuf[8] / 16) * 10) + (cmdBuf[8] & 0x0F));
-                            cmdBuf[9] = (byte)(((cmdBuf[9] / 16) * 10) + (cmdBuf[9] & 0x0F));
+                            BcdToBinaryQ(cmdBuf);
 
                             posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
                         }
@@ -324,6 +264,46 @@ namespace DiscImageChef.Core.Devices.Dumping
                 tracks[i].TrackPregap      =  (ulong)trackPregap;
                 tracks[i].TrackStartSector -= tracks[i].TrackPregap;
             }
+        }
+
+        static byte[] DeinterleaveQ(byte[] subchannel)
+        {
+            int[] q = new int[subchannel.Length / 8];
+
+            // De-interlace Q subchannel
+            for(int iq = 0; iq < subchannel.Length; iq += 8)
+            {
+                q[iq / 8] =  (subchannel[iq] & 0x40) << 1;
+                q[iq / 8] += subchannel[iq + 1] & 0x40;
+                q[iq / 8] += (subchannel[iq + 2] & 0x40) >> 1;
+                q[iq / 8] += (subchannel[iq + 3] & 0x40) >> 2;
+                q[iq / 8] += (subchannel[iq + 4] & 0x40) >> 3;
+                q[iq / 8] += (subchannel[iq + 5] & 0x40) >> 4;
+                q[iq / 8] += (subchannel[iq + 6] & 0x40) >> 5;
+                q[iq / 8] += (subchannel[iq + 7] & 0x40) >> 6;
+            }
+
+            byte[] deQ = new byte[q.Length];
+
+            for(int iq = 0; iq < subchannel.Length; iq++)
+            {
+                deQ[iq] = (byte)q[iq];
+            }
+
+            return deQ;
+        }
+
+        static void BcdToBinaryQ(byte[] q)
+        {
+            q[1] = (byte)(((q[1] / 16) * 10) + (q[1] & 0x0F));
+            q[2] = (byte)(((q[2] / 16) * 10) + (q[2] & 0x0F));
+            q[3] = (byte)(((q[3] / 16) * 10) + (q[3] & 0x0F));
+            q[4] = (byte)(((q[4] / 16) * 10) + (q[4] & 0x0F));
+            q[5] = (byte)(((q[5] / 16) * 10) + (q[5] & 0x0F));
+            q[6] = (byte)(((q[6] / 16) * 10) + (q[6] & 0x0F));
+            q[7] = (byte)(((q[7] / 16) * 10) + (q[7] & 0x0F));
+            q[8] = (byte)(((q[8] / 16) * 10) + (q[8] & 0x0F));
+            q[9] = (byte)(((q[9] / 16) * 10) + (q[9] & 0x0F));
         }
     }
 }
