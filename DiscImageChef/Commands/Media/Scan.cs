@@ -57,7 +57,7 @@ namespace DiscImageChef.Commands.Media
                     "--ibg-log", "-b"
                 }, "Write a log of the scan in the format used by ImgBurn.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<string>(() => null), Required = false
                 });
 
             AddArgument(new Argument<string>
