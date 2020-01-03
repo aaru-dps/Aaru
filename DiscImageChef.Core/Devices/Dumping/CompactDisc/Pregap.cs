@@ -177,7 +177,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         // Q position
                         if((cmdBuf[0] & 0xF) != 1)
+                        {
+                            lba--;
                             continue;
+                        }
 
                         // Check if BCD or binary values, change to binary
                         int posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
