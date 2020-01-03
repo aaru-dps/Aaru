@@ -38,11 +38,11 @@ using DiscImageChef.Core;
 using DiscImageChef.Core.Devices.Scanning;
 using DiscImageChef.Devices;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Media
 {
     internal class MediaScanCommand : Command
     {
-        public MediaScanCommand() : base("media-scan", "Scans the media inserted on a device.")
+        public MediaScanCommand() : base("scan", "Scans the media inserted on a device.")
         {
             Add(new Option(new[]
                 {

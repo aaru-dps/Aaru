@@ -52,7 +52,7 @@ namespace DiscImageChef.Commands.Device
 {
     internal class DeviceInfoCommand : Command
     {
-        public DeviceInfoCommand() : base("device-info", "Gets information about a device.")
+        public DeviceInfoCommand() : base("info", "Gets information about a device.")
         {
             Add(new Option(new[]
                 {

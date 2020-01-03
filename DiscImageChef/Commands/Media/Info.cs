@@ -59,11 +59,11 @@ using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using Session = DiscImageChef.Decoders.CD.Session;
 using Spare = DiscImageChef.Decoders.DVD.Spare;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Media
 {
     internal class MediaInfoCommand : Command
     {
-        public MediaInfoCommand() : base("media-info", "Gets information about the media inserted on a device.")
+        public MediaInfoCommand() : base("info", "Gets information about the media inserted on a device.")
         {
             Add(new Option(new[]
                 {

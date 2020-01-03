@@ -49,12 +49,12 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 using Schemas;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Media
 {
     // TODO: Add raw dumping
     internal class DumpMediaCommand : Command
     {
-        public DumpMediaCommand() : base("dump-media", "Dumps the media inserted on a device to a media image.")
+        public DumpMediaCommand() : base("dump", "Dumps the media inserted on a device to a media image.")
         {
             Add(new Option(new[]
                 {

@@ -49,6 +49,8 @@ namespace DiscImageChef.Commands.Image
     {
         public CompareCommand() : base("compare", "Compares two disc images.")
         {
+            AddAlias("cmp");
+
             AddArgument(new Argument<string>
             {
                 Arity = ArgumentArity.ExactlyOne, Description = "First media image path", Name = "image-path1"

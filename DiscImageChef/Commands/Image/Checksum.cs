@@ -51,6 +51,8 @@ namespace DiscImageChef.Commands.Image
 
         public ChecksumCommand() : base("checksum", "Checksums an image.")
         {
+            AddAlias("chk");
+
             Add(new Option(new[]
                 {
                     "--adler32", "-a"

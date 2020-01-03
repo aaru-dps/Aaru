@@ -44,11 +44,11 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Filesystem
 {
     internal class ExtractFilesCommand : Command
     {
-        public ExtractFilesCommand() : base("extract-files", "Extracts all files in disc image.")
+        public ExtractFilesCommand() : base("extract", "Extracts all files in disc image.")
         {
             Add(new Option(new[]
                 {

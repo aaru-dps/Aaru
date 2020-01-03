@@ -38,11 +38,11 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Devices;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Device
 {
     internal class ListDevicesCommand : Command
     {
-        public ListDevicesCommand() : base("list-devices", "Lists all connected devices.")
+        public ListDevicesCommand() : base("list", "Lists all connected devices.")
         {
             AddArgument(new Argument<string>
             {

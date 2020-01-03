@@ -38,7 +38,6 @@ namespace DiscImageChef.Commands.Device
     {
         public DeviceFamily() : base("device", "Commands that talks to devices")
         {
-            AddAlias("d");
             AddAlias("dev");
 
             AddCommand(new DeviceInfoCommand());

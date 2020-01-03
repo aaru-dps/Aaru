@@ -43,12 +43,14 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Filesystem
 {
     internal class LsCommand : Command
     {
-        public LsCommand() : base("ls", "Lists files in disc image.")
+        public LsCommand() : base("list", "Lists files in disc image.")
         {
+            AddAlias("ls");
+
             Add(new Option(new[]
                 {
                     "--encoding", "-e"

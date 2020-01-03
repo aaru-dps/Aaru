@@ -42,7 +42,7 @@ namespace DiscImageChef.Commands.Image
 {
     internal class PrintHexCommand : Command
     {
-        public PrintHexCommand() : base("printhex", "Prints a sector, in hexadecimal values, to the console.")
+        public PrintHexCommand() : base("print", "Prints a sector, in hexadecimal values, to the console.")
         {
             Add(new Option(new[]
                 {

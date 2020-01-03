@@ -54,7 +54,7 @@ namespace DiscImageChef.Commands.Device
 {
     internal class DeviceReportCommand : Command
     {
-        public DeviceReportCommand() : base("device-report",
+        public DeviceReportCommand() : base("report",
                                             "Tests the device capabilities and creates an JSON report of them.")
         {
             AddArgument(new Argument<string>

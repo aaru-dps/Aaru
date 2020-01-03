@@ -52,7 +52,7 @@ namespace DiscImageChef.Commands.Image
 {
     internal class ConvertImageCommand : Command
     {
-        public ConvertImageCommand() : base("convert-image", "Converts one image to another format.")
+        public ConvertImageCommand() : base("convert", "Converts one image to another format.")
         {
             Add(new Option(new[]
                 {

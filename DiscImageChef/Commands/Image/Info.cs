@@ -43,7 +43,7 @@ namespace DiscImageChef.Commands.Image
 {
     internal class ImageInfoCommand : Command
     {
-        public ImageInfoCommand() : base("image-info",
+        public ImageInfoCommand() : base("info",
                                          "Opens a media image and shows information about the media it represents and metadata.")
         {
             AddArgument(new Argument<string>

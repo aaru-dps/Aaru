@@ -41,11 +41,11 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Filesystem
 {
     internal class ListOptionsCommand : Command
     {
-        public ListOptionsCommand() : base("list-options",
+        public ListOptionsCommand() : base("options",
                                            "Lists all options supported by read-only filesystems and writable media images.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
