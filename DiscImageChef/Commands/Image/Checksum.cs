@@ -58,7 +58,7 @@ namespace DiscImageChef.Commands.Image
                     "--adler32", "-a"
                 }, "Calculates Adler32.")
                 {
-                    Argument = new Argument<bool>(() => true), Required = false
+                    Argument = new Argument<bool>(() => false), Required = false
                 });
 
             Add(new Option("--crc16", "Calculates CRC16.")
@@ -81,12 +81,12 @@ namespace DiscImageChef.Commands.Image
 
             Add(new Option("--fletcher16", "Calculates Fletcher-16.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => false), Required = false
             });
 
             Add(new Option("--fletcher32", "Calculates Fletcher-32.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => false), Required = false
             });
 
             Add(new Option(new[]
@@ -115,12 +115,12 @@ namespace DiscImageChef.Commands.Image
 
             Add(new Option("--sha256", "Calculates SHA256.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => false), Required = false
             });
 
             Add(new Option("--sha384", "Calculates SHA384.")
             {
-                Argument = new Argument<bool>(() => true), Required = false
+                Argument = new Argument<bool>(() => false), Required = false
             });
 
             Add(new Option("--sha512", "Calculates SHA512.")
