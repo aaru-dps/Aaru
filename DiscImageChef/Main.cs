@@ -148,7 +148,6 @@ namespace DiscImageChef
             rootCommand.AddCommand(new ImageFamily());
             rootCommand.AddCommand(new MediaFamily());
 
-            rootCommand.AddCommand(new BenchmarkCommand());
             rootCommand.AddCommand(new ConfigureCommand(false, false));
             rootCommand.AddCommand(new FormatsCommand());
             rootCommand.AddCommand(new ListEncodingsCommand());

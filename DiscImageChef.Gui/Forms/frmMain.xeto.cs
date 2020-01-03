@@ -58,10 +58,8 @@ namespace DiscImageChef.Gui.Forms
 {
     public class frmMain : Form
     {
-        bool            closing;
         readonly Bitmap devicesIcon;
         readonly Bitmap ejectIcon;
-        GridView        grdFiles;
         readonly Bitmap hardDiskIcon;
         readonly Bitmap imagesIcon;
         readonly Label  lblError;
@@ -72,10 +70,12 @@ namespace DiscImageChef.Gui.Forms
         readonly Bitmap                 removableIcon;
         readonly Bitmap                 sdIcon;
         readonly Bitmap                 tapeIcon;
-        TreeGridView                    treeImages;
         readonly TreeGridItemCollection treeImagesItems;
         readonly ContextMenu            treeImagesMenu;
         readonly Bitmap                 usbIcon;
+        bool                            closing;
+        GridView                        grdFiles;
+        TreeGridView                    treeImages;
 
         public frmMain(bool debug, bool verbose)
         {
@@ -692,8 +692,6 @@ namespace DiscImageChef.Gui.Forms
         protected void OnMenuPlugins(object sender, EventArgs e) => new dlgPlugins().ShowModal(this);
 
         protected void OnMenuEncodings(object sender, EventArgs e) => new dlgEncodings().ShowModal(this);
-
-        protected void OnMenuBenchmark(object sender, EventArgs e) => new dlgBenchmark().ShowModal(this);
 
         protected void OnMenuStatistics(object sender, EventArgs e)
         {

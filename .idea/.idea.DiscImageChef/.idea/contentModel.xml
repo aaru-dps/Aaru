@@ -26,7 +26,6 @@
       <e p="Changelog.md" t="Include" />
       <e p="DiscImageChef" t="IncludeRecursive">
         <e p="Commands" t="Include">
-          <e p="Benchmark.cs" t="Include" />
           <e p="Configure.cs" t="Include" />
           <e p="Database" t="Include">
             <e p="DatabaseFamily.cs" t="Include" />
@@ -241,7 +240,6 @@
         </e>
       </e>
       <e p="DiscImageChef.Core" t="IncludeRecursive">
-        <e p="Benchmark.cs" t="Include" />
         <e p="Checksum.cs" t="Include" />
         <e p="DataFile.cs" t="Include" />
         <e p="Delegates.cs" t="Include" />
@@ -509,6 +507,7 @@
           <e p="CIS.cs" t="Include" />
           <e p="Enums.cs" t="Include" />
           <e p="Types.cs" t="Include" />
+          <e p="Types.cs~" t="Include" />
           <e p="VendorCode.cs" t="Include" />
         </e>
         <e p="SCSI" t="Include">
@@ -1811,8 +1810,6 @@
           <e p="SvgImageView.cs" t="Include" />
         </e>
         <e p="Dialogs" t="Include">
-          <e p="dlgBenchmark.xeto" t="Include" />
-          <e p="dlgBenchmark.xeto.cs" t="Include" />
           <e p="dlgEncodings.xeto" t="Include" />
           <e p="dlgEncodings.xeto.cs" t="Include" />
           <e p="dlgPlugins.xeto" t="Include" />

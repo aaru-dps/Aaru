@@ -53,7 +53,6 @@
                 <ButtonMenuItem Text="&amp;Console" Click="OnMenuConsole"/>
             </ButtonMenuItem>
             <ButtonMenuItem Text="&amp;Help">
-                <ButtonMenuItem Text="&amp;Benchmark" Click="OnMenuBenchmark"/>
                 <ButtonMenuItem Text="&amp;Encodings" Click="OnMenuEncodings"/>
                 <ButtonMenuItem Text="&amp;Plugins" Click="OnMenuPlugins"/>
                 <ButtonMenuItem Text="&amp;Statistics" Click="OnMenuStatistics"/>

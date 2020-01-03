@@ -47,10 +47,12 @@ namespace DiscImageChef.Gui.Dialogs
                 "In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n"    +
                 "we must give you the following information about DiscImageChef and ask if you want to opt-in\n" +
                 "in some information sharing.";
+
             lblGdpr2.Text =
                 "Disclaimer: Because DiscImageChef is an open source software this information, and therefore,\n" +
                 "compliance with GDPR only holds true if you obtained a certificated copy from its original\n"    +
                 "authors. In case of doubt, close DiscImageChef now and ask in our IRC support channel.";
+
             lblGdpr3.Text =
                 "For any information sharing your IP address may be stored in our server, in a way that is not\n" +
                 "possible for any person, manual, or automated process, to link with your identity, unless\n"     +
@@ -70,14 +72,16 @@ namespace DiscImageChef.Gui.Dialogs
 
             chkSaveReportsGlobally.Text =
                 "Do you want to save device reports in shared folder of your computer? (Y/N): ";
+
             chkSaveReportsGlobally.Checked = Settings.Settings.Current.SaveReportsGlobally;
 
             lblShareReports.Text =
                 "Sharing a report with us will send it to our server, that's in the european union territory, where it\n"      +
                 "will be manually analized by an european union citizen to remove any trace of personal identification\n"      +
-                "from it. Once that is done, it will be shared in our stats website, https://www.discimagechef.app\n"       +
+                "from it. Once that is done, it will be shared in our stats website, https://www.discimagechef.app\n"          +
                 "These report will be used to improve DiscImageChef support, and in some cases, to provide emulation of the\n" +
                 "devices to other open-source projects. In any case, no information linking the report to you will be stored.";
+
             chkShareReports.Text    = "Do you want to share your device reports with us? (Y/N): ";
             chkShareReports.Checked = Settings.Settings.Current.ShareReports;
             #endregion Device reports
@@ -88,6 +92,7 @@ namespace DiscImageChef.Gui.Dialogs
                 "command is executed, a filesystem, partition, or device is used, the operating system version, and other.\n"   +
                 "In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the\n" +
                 "pool with no way of using them to identify you.";
+
             chkSaveStats.Text = "Do you want to save stats about your DiscImageChef usage? (Y/N): ";
 
             if(Settings.Settings.Current.Stats != null)
@@ -97,9 +102,6 @@ namespace DiscImageChef.Gui.Dialogs
 
                 chkShareStats.Text    = "Do you want to share your stats anonymously? (Y/N): ";
                 chkShareStats.Checked = Settings.Settings.Current.Stats.ShareStats;
-
-                chkBenchmarkStats.Text    = "Do you want to gather statistics about benchmarks? (Y/N): ";
-                chkBenchmarkStats.Checked = Settings.Settings.Current.Stats.BenchmarkStats;
 
                 chkCommandStats.Text    = "Do you want to gather statistics about command usage? (Y/N): ";
                 chkCommandStats.Checked = Settings.Settings.Current.Stats.CommandStats;
@@ -115,6 +117,7 @@ namespace DiscImageChef.Gui.Dialogs
 
                 chkMediaImageStats.Text =
                     "Do you want to gather statistics about found media image formats? (Y/N): ";
+
                 chkMediaImageStats.Checked = Settings.Settings.Current.Stats.MediaImageStats;
 
                 chkMediaScanStats.Text    = "Do you want to gather statistics about scanned media? (Y/N): ";
@@ -122,6 +125,7 @@ namespace DiscImageChef.Gui.Dialogs
 
                 chkPartitionStats.Text =
                     "Do you want to gather statistics about found partitioning schemes? (Y/N): ";
+
                 chkPartitionStats.Checked = Settings.Settings.Current.Stats.PartitionStats;
 
                 chkMediaStats.Text    = "Do you want to gather statistics about media types? (Y/N): ";
@@ -138,10 +142,7 @@ namespace DiscImageChef.Gui.Dialogs
             #endregion Statistics
         }
 
-        protected void OnBtnCancel(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnCancel(object sender, EventArgs e) => Close();
 
         protected void OnBtnSave(object sender, EventArgs e)
         {
@@ -152,18 +153,17 @@ namespace DiscImageChef.Gui.Dialogs
                 Settings.Settings.Current.Stats = new StatsSettings
                 {
                     ShareStats      = chkShareStats.Checked      == true,
-                    BenchmarkStats  = chkBenchmarkStats.Checked  == true,
                     CommandStats    = chkCommandStats.Checked    == true,
                     DeviceStats     = chkDeviceStats.Checked     == true,
                     FilesystemStats = chkFilesystemStats.Checked == true,
                     FilterStats     = chkFilterStats.Checked     == true,
                     MediaImageStats = chkMediaImageStats.Checked == true,
                     MediaScanStats  = chkMediaScanStats.Checked  == true,
-                    PartitionStats  = chkPartitionStats.Checked  == true,
-                    MediaStats      = chkMediaStats.Checked      == true,
+                    PartitionStats  = chkPartitionStats.Checked  == true, MediaStats = chkMediaStats.Checked == true,
                     VerifyStats     = chkVerifyStats.Checked     == true
                 };
-            else Settings.Settings.Current.Stats = null;
+            else
+                Settings.Settings.Current.Stats = null;
 
             Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
             Settings.Settings.SaveSettings();
@@ -178,7 +178,6 @@ namespace DiscImageChef.Gui.Dialogs
         CheckBox    chkShareReports;
         CheckBox    chkSaveStats;
         CheckBox    chkShareStats;
-        CheckBox    chkBenchmarkStats;
         CheckBox    chkCommandStats;
         CheckBox    chkDeviceStats;
         CheckBox    chkFilesystemStats;

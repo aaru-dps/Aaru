@@ -64,7 +64,6 @@
                     <Label/>
                     <StackLayout Orientation="Vertical" ID="stkStatistics">
                         <CheckBox ID="chkShareStats"/>
-                        <CheckBox ID="chkBenchmarkStats"/>
                         <CheckBox ID="chkCommandStats"/>
                         <CheckBox ID="chkDeviceStats"/>
                         <CheckBox ID="chkFilesystemStats"/>

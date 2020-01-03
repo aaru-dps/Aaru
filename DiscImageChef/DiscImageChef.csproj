@@ -83,9 +83,6 @@
     <Compile Include="Commands\Media\MediaScan.cs" />
     <Compile Include="Commands\Remote.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Commands\Benchmark.cs">
-      <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
-    </Compile>
     <Compile Include="Commands\Configure.cs" />
     <Compile Include="Progress.cs" />
     <Compile Include="Commands\ListEncodings.cs" />

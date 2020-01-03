@@ -86,18 +86,6 @@ namespace DiscImageChef.Core
                             ctx.Commands.Update(command);
                         }
 
-                        if(allStats.Commands.Benchmark > 0)
-                        {
-                            Command command =
-                                ctx.Commands.FirstOrDefault(c => c.Name == "benchmark" && c.Synchronized) ?? new Command
-                                {
-                                    Name = "benchmark", Synchronized = true
-                                };
-
-                            command.Count += (ulong)allStats.Commands.Benchmark;
-                            ctx.Commands.Update(command);
-                        }
-
                         if(allStats.Commands.Checksum > 0)
                         {
                             Command command =

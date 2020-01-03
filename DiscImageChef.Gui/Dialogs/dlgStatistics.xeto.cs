@@ -45,34 +45,26 @@ namespace DiscImageChef.Gui.Dialogs
         {
             XamlReader.Load(this);
 
-            DicContext ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
 
             if(ctx.Commands.Any())
             {
                 if(ctx.Commands.Any(c => c.Name == "analyze"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "analyze" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "analyze" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "analyze" && !c.Synchronized);
 
                     lblAnalyze.Visible = true;
                     lblAnalyze.Text    = $"You have called the Analyze command {count} times";
                 }
 
-                if(ctx.Commands.Any(c => c.Name == "benchmark"))
-                {
-                    ulong count = ctx.Commands.Where(c => c.Name == "benchmark" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
-                    count += (ulong)ctx.Commands.LongCount(c => c.Name == "benchmark" && !c.Synchronized);
-
-                    lblBenchmark.Visible = true;
-                    lblBenchmark.Text    = $"You have called the Benchmark command {count} times";
-                }
-
                 if(ctx.Commands.Any(c => c.Name == "checksum"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "checksum" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "checksum" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "checksum" && !c.Synchronized);
 
                     lblChecksum.Visible = true;
@@ -81,8 +73,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "compare"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "compare" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "compare" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "compare" && !c.Synchronized);
 
                     lblCompare.Visible = true;
@@ -91,8 +84,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "convert-image"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "convert-image" && c.Synchronized)
-                                     .Select(c => c.Count).FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "convert-image" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "convert-image" && !c.Synchronized);
 
                     lblConvertImage.Visible = true;
@@ -101,8 +95,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "create-sidecar"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "create-sidecar" && c.Synchronized)
-                                     .Select(c => c.Count).FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "create-sidecar" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "create-sidecar" && !c.Synchronized);
 
                     lblCreateSidecar.Visible = true;
@@ -111,8 +106,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "decode"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "decode" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "decode" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "decode" && !c.Synchronized);
 
                     lblDecode.Visible = true;
@@ -121,8 +117,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "device-info"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "device-info" && c.Synchronized)
-                                     .Select(c => c.Count).FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "device-info" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-info" && !c.Synchronized);
 
                     lblDeviceInfo.Visible = true;
@@ -131,8 +128,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "device-report"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "device-report" && c.Synchronized)
-                                     .Select(c => c.Count).FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "device-report" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "device-report" && !c.Synchronized);
 
                     lblDeviceReport.Visible = true;
@@ -141,8 +139,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "dump-media"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "dump-media" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "dump-media" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "dump-media" && !c.Synchronized);
 
                     lblDumpMedia.Visible = true;
@@ -151,8 +150,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "entropy"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "entropy" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "entropy" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "entropy" && !c.Synchronized);
 
                     lblEntropy.Visible = true;
@@ -161,8 +161,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "formats"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "formats" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "formats" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "formats" && !c.Synchronized);
 
                     lblFormats.Visible = true;
@@ -171,8 +172,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "image-info"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "image-info" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "image-info" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "image-info" && !c.Synchronized);
 
                     lblImageInfo.Visible = true;
@@ -181,8 +183,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "media-info"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "media-info" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "media-info" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-info" && !c.Synchronized);
 
                     lblMediaInfo.Visible = true;
@@ -191,8 +194,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "media-scan"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "media-scan" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "media-scan" && c.Synchronized).
+                                      Select(c => c.Count).FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "media-scan" && !c.Synchronized);
 
                     lblMediaScan.Visible = true;
@@ -201,8 +205,9 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "printhex"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "printhex" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "printhex" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "printhex" && !c.Synchronized);
 
                     lblPrintHex.Visible = true;
@@ -211,30 +216,38 @@ namespace DiscImageChef.Gui.Dialogs
 
                 if(ctx.Commands.Any(c => c.Name == "verify"))
                 {
-                    ulong count = ctx.Commands.Where(c => c.Name == "verify" && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Commands.Where(c => c.Name == "verify" && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Commands.LongCount(c => c.Name == "verify" && !c.Synchronized);
 
                     lblVerify.Visible = true;
                     lblVerify.Text    = $"You have called the Verify command {count} times";
                 }
 
-                tabCommands.Visible = lblAnalyze.Visible   || lblBenchmark.Visible    || lblChecksum.Visible      ||
-                                      lblCompare.Visible   || lblConvertImage.Visible || lblCreateSidecar.Visible ||
-                                      lblDecode.Visible    || lblDeviceInfo.Visible   || lblDeviceReport.Visible  ||
-                                      lblDumpMedia.Visible || lblEntropy.Visible      || lblFormats.Visible       ||
-                                      lblImageInfo.Visible || lblMediaInfo.Visible    || lblMediaScan.Visible     ||
-                                      lblPrintHex.Visible  || lblVerify.Visible;
+                tabCommands.Visible = lblAnalyze.Visible      || lblChecksum.Visible      || lblCompare.Visible   ||
+                                      lblConvertImage.Visible || lblCreateSidecar.Visible || lblDecode.Visible    ||
+                                      lblDeviceInfo.Visible   || lblDeviceReport.Visible  || lblDumpMedia.Visible ||
+                                      lblEntropy.Visible      || lblFormats.Visible       || lblImageInfo.Visible ||
+                                      lblMediaInfo.Visible    || lblMediaScan.Visible     || lblPrintHex.Visible  ||
+                                      lblVerify.Visible;
             }
 
             if(ctx.Filters.Any())
             {
                 tabFilters.Visible = true;
 
-                TreeGridItemCollection filterList = new TreeGridItemCollection();
+                var filterList = new TreeGridItemCollection();
 
-                treeFilters.Columns.Add(new GridColumn {HeaderText = "Filter", DataCell      = new TextBoxCell(0)});
-                treeFilters.Columns.Add(new GridColumn {HeaderText = "Times found", DataCell = new TextBoxCell(1)});
+                treeFilters.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Filter", DataCell = new TextBoxCell(0)
+                });
+
+                treeFilters.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Times found", DataCell = new TextBoxCell(1)
+                });
 
                 treeFilters.AllowMultipleSelection = false;
                 treeFilters.ShowHeader             = true;
@@ -242,11 +255,18 @@ namespace DiscImageChef.Gui.Dialogs
 
                 foreach(string nvs in ctx.Filters.Select(n => n.Name).Distinct())
                 {
-                    ulong count = ctx.Filters.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Filters.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Filters.LongCount(c => c.Name == nvs && !c.Synchronized);
 
-                    filterList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                    filterList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            nvs, count
+                        }
+                    });
                 }
             }
 
@@ -254,10 +274,17 @@ namespace DiscImageChef.Gui.Dialogs
             {
                 tabFormats.Visible = true;
 
-                TreeGridItemCollection formatList = new TreeGridItemCollection();
+                var formatList = new TreeGridItemCollection();
 
-                treeFormats.Columns.Add(new GridColumn {HeaderText = "Format", DataCell      = new TextBoxCell(0)});
-                treeFormats.Columns.Add(new GridColumn {HeaderText = "Times found", DataCell = new TextBoxCell(1)});
+                treeFormats.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Format", DataCell = new TextBoxCell(0)
+                });
+
+                treeFormats.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Times found", DataCell = new TextBoxCell(1)
+                });
 
                 treeFormats.AllowMultipleSelection = false;
                 treeFormats.ShowHeader             = true;
@@ -265,11 +292,18 @@ namespace DiscImageChef.Gui.Dialogs
 
                 foreach(string nvs in ctx.MediaFormats.Select(n => n.Name).Distinct())
                 {
-                    ulong count = ctx.MediaFormats.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.MediaFormats.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.MediaFormats.LongCount(c => c.Name == nvs && !c.Synchronized);
 
-                    formatList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                    formatList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            nvs, count
+                        }
+                    });
                 }
             }
 
@@ -277,10 +311,17 @@ namespace DiscImageChef.Gui.Dialogs
             {
                 tabPartitions.Visible = true;
 
-                TreeGridItemCollection partitionList = new TreeGridItemCollection();
+                var partitionList = new TreeGridItemCollection();
 
-                treePartitions.Columns.Add(new GridColumn {HeaderText = "Filter", DataCell      = new TextBoxCell(0)});
-                treePartitions.Columns.Add(new GridColumn {HeaderText = "Times found", DataCell = new TextBoxCell(1)});
+                treePartitions.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Filter", DataCell = new TextBoxCell(0)
+                });
+
+                treePartitions.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Times found", DataCell = new TextBoxCell(1)
+                });
 
                 treePartitions.AllowMultipleSelection = false;
                 treePartitions.ShowHeader             = true;
@@ -288,11 +329,18 @@ namespace DiscImageChef.Gui.Dialogs
 
                 foreach(string nvs in ctx.Partitions.Select(n => n.Name).Distinct())
                 {
-                    ulong count = ctx.Partitions.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Partitions.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Partitions.LongCount(c => c.Name == nvs && !c.Synchronized);
 
-                    partitionList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                    partitionList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            nvs, count
+                        }
+                    });
                 }
             }
 
@@ -300,10 +348,17 @@ namespace DiscImageChef.Gui.Dialogs
             {
                 tabFilesystems.Visible = true;
 
-                TreeGridItemCollection filesystemList = new TreeGridItemCollection();
+                var filesystemList = new TreeGridItemCollection();
 
-                treeFilesystems.Columns.Add(new GridColumn {HeaderText = "Filesystem", DataCell  = new TextBoxCell(0)});
-                treeFilesystems.Columns.Add(new GridColumn {HeaderText = "Times found", DataCell = new TextBoxCell(1)});
+                treeFilesystems.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Filesystem", DataCell = new TextBoxCell(0)
+                });
+
+                treeFilesystems.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Times found", DataCell = new TextBoxCell(1)
+                });
 
                 treeFilesystems.AllowMultipleSelection = false;
                 treeFilesystems.ShowHeader             = true;
@@ -311,11 +366,18 @@ namespace DiscImageChef.Gui.Dialogs
 
                 foreach(string nvs in ctx.Filesystems.Select(n => n.Name).Distinct())
                 {
-                    ulong count = ctx.Filesystems.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count)
-                                     .FirstOrDefault();
+                    ulong count = ctx.Filesystems.Where(c => c.Name == nvs && c.Synchronized).Select(c => c.Count).
+                                      FirstOrDefault();
+
                     count += (ulong)ctx.Filesystems.LongCount(c => c.Name == nvs && !c.Synchronized);
 
-                    filesystemList.Add(new TreeGridItem {Values = new object[] {nvs, count}});
+                    filesystemList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            nvs, count
+                        }
+                    });
                 }
             }
 
@@ -323,35 +385,64 @@ namespace DiscImageChef.Gui.Dialogs
             {
                 tabDevices.Visible = true;
 
-                TreeGridItemCollection deviceList = new TreeGridItemCollection();
+                var deviceList = new TreeGridItemCollection();
 
-                treeDevices.Columns.Add(new GridColumn {HeaderText = "Device", DataCell       = new TextBoxCell(0)});
-                treeDevices.Columns.Add(new GridColumn {HeaderText = "Manufacturer", DataCell = new TextBoxCell(1)});
-                treeDevices.Columns.Add(new GridColumn {HeaderText = "Revision", DataCell     = new TextBoxCell(2)});
-                treeDevices.Columns.Add(new GridColumn {HeaderText = "Bus", DataCell          = new TextBoxCell(3)});
+                treeDevices.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Device", DataCell = new TextBoxCell(0)
+                });
+
+                treeDevices.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Manufacturer", DataCell = new TextBoxCell(1)
+                });
+
+                treeDevices.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Revision", DataCell = new TextBoxCell(2)
+                });
+
+                treeDevices.Columns.Add(new GridColumn
+                {
+                    HeaderText = "Bus", DataCell = new TextBoxCell(3)
+                });
 
                 treeDevices.AllowMultipleSelection = false;
                 treeDevices.ShowHeader             = true;
                 treeDevices.DataStore              = deviceList;
 
-                foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(n => n.Manufacturer).ThenBy(n => n.Manufacturer)
-                                            .ThenBy(n => n.Revision)
-                                            .ThenBy(n => n.Bus))
+                foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(n => n.Manufacturer).ThenBy(n => n.Manufacturer).
+                                             ThenBy(n => n.Revision).ThenBy(n => n.Bus))
                     deviceList.Add(new TreeGridItem
                     {
-                        Values = new object[] {ds.Model, ds.Manufacturer, ds.Revision, ds.Bus}
+                        Values = new object[]
+                        {
+                            ds.Model, ds.Manufacturer, ds.Revision, ds.Bus
+                        }
                     });
             }
 
-            if(!ctx.Medias.Any()) return;
+            if(!ctx.Medias.Any())
+                return;
 
             tabMedias.Visible = true;
 
-            TreeGridItemCollection mediaList = new TreeGridItemCollection();
+            var mediaList = new TreeGridItemCollection();
 
-            treeMedias.Columns.Add(new GridColumn {HeaderText = "Media", DataCell       = new TextBoxCell(0)});
-            treeMedias.Columns.Add(new GridColumn {HeaderText = "Times found", DataCell = new TextBoxCell(1)});
-            treeMedias.Columns.Add(new GridColumn {HeaderText = "Type", DataCell        = new TextBoxCell(2)});
+            treeMedias.Columns.Add(new GridColumn
+            {
+                HeaderText = "Media", DataCell = new TextBoxCell(0)
+            });
+
+            treeMedias.Columns.Add(new GridColumn
+            {
+                HeaderText = "Times found", DataCell = new TextBoxCell(1)
+            });
+
+            treeMedias.Columns.Add(new GridColumn
+            {
+                HeaderText = "Type", DataCell = new TextBoxCell(2)
+            });
 
             treeMedias.AllowMultipleSelection = false;
             treeMedias.ShowHeader             = true;
@@ -359,31 +450,43 @@ namespace DiscImageChef.Gui.Dialogs
 
             foreach(string media in ctx.Medias.OrderBy(ms => ms.Type).Select(ms => ms.Type).Distinct())
             {
-                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).Select(c => c.Count)
-                                 .FirstOrDefault();
+                ulong count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && c.Real).Select(c => c.Count).
+                                  FirstOrDefault();
+
                 count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && c.Real);
 
-                if(count > 0) mediaList.Add(new TreeGridItem {Values = new object[] {media, count, "real"}});
+                if(count > 0)
+                    mediaList.Add(new TreeGridItem
+                    {
+                        Values = new object[]
+                        {
+                            media, count, "real"
+                        }
+                    });
 
-                count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count)
-                           .FirstOrDefault();
+                count = ctx.Medias.Where(c => c.Type == media && c.Synchronized && !c.Real).Select(c => c.Count).
+                            FirstOrDefault();
+
                 count += (ulong)ctx.Medias.LongCount(c => c.Type == media && !c.Synchronized && !c.Real);
 
-                if(count == 0) continue;
+                if(count == 0)
+                    continue;
 
-                mediaList.Add(new TreeGridItem {Values = new object[] {media, count, "image"}});
+                mediaList.Add(new TreeGridItem
+                {
+                    Values = new object[]
+                    {
+                        media, count, "image"
+                    }
+                });
             }
         }
 
-        protected void OnBtnClose(object sender, EventArgs e)
-        {
-            Close();
-        }
+        protected void OnBtnClose(object sender, EventArgs e) => Close();
 
         #region XAML controls
         TabPage      tabCommands;
         Label        lblAnalyze;
-        Label        lblBenchmark;
         Label        lblChecksum;
         Label        lblCompare;
         Label        lblConvertImage;

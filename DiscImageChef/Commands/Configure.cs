@@ -168,18 +168,6 @@ namespace DiscImageChef.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about benchmarks? (Y/N): ");
-                    pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
-                }
-
-                Settings.Settings.Current.Stats.BenchmarkStats = pressedKey.Key == ConsoleKey.Y;
-
-                pressedKey = new ConsoleKeyInfo();
-
-                while(pressedKey.Key != ConsoleKey.Y &&
-                      pressedKey.Key != ConsoleKey.N)
-                {
                     DicConsole.Write("Do you want to gather statistics about command usage? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
                     DicConsole.WriteLine();

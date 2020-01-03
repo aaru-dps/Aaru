@@ -38,7 +38,6 @@
             <TabPage ID="tabCommands" Text="Commands" Visible="False">
                 <StackLayout Orientation="Vertical">
                     <Label ID="lblAnalyze" Visible="False"/>
-                    <Label ID="lblBenchmark" Visible="False"/>
                     <Label ID="lblChecksum" Visible="False"/>
                     <Label ID="lblCompare" Visible="False"/>
                     <Label ID="lblConvertImage" Visible="False"/>
