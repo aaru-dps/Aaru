@@ -41,7 +41,7 @@ using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.SCSI;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class DecodeCommand : Command
     {
@@ -87,8 +87,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool verbose, bool debug, bool diskTags, string imagePath, string length, bool sectorTags,
-                                 ulong startSector)
+        public static int Invoke(bool verbose, bool debug, bool diskTags, string imagePath, string length,
+                                 bool sectorTags, ulong startSector)
         {
             MainClass.PrintCopyright();
 

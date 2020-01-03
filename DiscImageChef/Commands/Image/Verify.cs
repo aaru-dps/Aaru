@@ -41,7 +41,7 @@ using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class VerifyCommand : Command
     {
@@ -71,7 +71,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, string imagePath, bool verifyDisc = true, bool verifySectors = true)
+        public static int Invoke(bool debug, bool verbose, string imagePath, bool verifyDisc = true,
+                                 bool verifySectors = true)
         {
             MainClass.PrintCopyright();
 

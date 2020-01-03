@@ -41,7 +41,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class AnalyzeCommand : Command
     {
@@ -80,7 +80,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(typeof(AnalyzeCommand).GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool verbose, bool debug, string encoding, bool filesystems, bool partitions, string imagePath)
+        public static int Invoke(bool verbose, bool debug, string encoding, bool filesystems, bool partitions,
+                                 string imagePath)
         {
             MainClass.PrintCopyright();
 

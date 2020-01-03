@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class PrintHexCommand : Command
     {
@@ -84,8 +84,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, string imagePath, ulong length, bool longSectors, ulong startSector,
-                                 ushort widthBytes)
+        public static int Invoke(bool debug, bool verbose, string imagePath, ulong length, bool longSectors,
+                                 ulong startSector, ushort widthBytes)
         {
             MainClass.PrintCopyright();
 

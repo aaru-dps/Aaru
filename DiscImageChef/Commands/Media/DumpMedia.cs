@@ -275,11 +275,11 @@ namespace DiscImageChef.Commands
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Device dev;
+            Devices.Device dev;
 
             try
             {
-                dev = new Device(devicePath);
+                dev = new Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

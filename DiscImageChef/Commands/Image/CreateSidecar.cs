@@ -45,7 +45,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using Schemas;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class CreateSidecarCommand : Command
     {
@@ -85,7 +85,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, uint blockSize, string encodingName, string imagePath, bool tape)
+        public static int Invoke(bool debug, bool verbose, uint blockSize, string encodingName, string imagePath,
+                                 bool tape)
         {
             MainClass.PrintCopyright();
 

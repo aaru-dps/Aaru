@@ -97,8 +97,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, string encoding, bool xattrs, string imagePath, string @namespace,
-                                 string outputDir, string options)
+        public static int Invoke(bool debug, bool verbose, string encoding, bool xattrs, string imagePath,
+                                 string @namespace, string outputDir, string options)
         {
             MainClass.PrintCopyright();
 

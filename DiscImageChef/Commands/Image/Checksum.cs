@@ -42,7 +42,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using Schemas;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class ChecksumCommand : Command
     {

@@ -48,10 +48,9 @@ using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
 using Newtonsoft.Json;
 using Command = System.CommandLine.Command;
-using Device = DiscImageChef.Devices.Device;
 using DeviceReport = DiscImageChef.Core.Devices.Report.DeviceReport;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Device
 {
     internal class DeviceReportCommand : Command
     {
@@ -88,11 +87,11 @@ namespace DiscImageChef.Commands
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Device dev;
+            Devices.Device dev;
 
             try
             {
-                dev = new Device(devicePath);
+                dev = new Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

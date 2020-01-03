@@ -43,7 +43,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class CompareCommand : Command
     {

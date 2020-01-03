@@ -38,7 +38,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class EntropyCommand : Command
     {
@@ -76,8 +76,8 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, bool duplicatedSectors, string imagePath, bool separatedTracks,
-                                 bool wholeDisc)
+        public static int Invoke(bool debug, bool verbose, bool duplicatedSectors, string imagePath,
+                                 bool separatedTracks, bool wholeDisc)
         {
             MainClass.PrintCopyright();
 

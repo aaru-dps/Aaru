@@ -48,7 +48,7 @@ using Schemas;
 using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class ConvertImageCommand : Command
     {
@@ -193,9 +193,9 @@ namespace DiscImageChef.Commands
         public static int Invoke(bool verbose, bool debug, string cicmXml, string comments, int count, string creator,
                                  string driveFirmwareRevision, string driveManufacturer, string driveModel,
                                  string driveSerialNumber, bool force, string inputPath, int lastMediaSequence,
-                                 string mediaBarcode, string mediaManufacturer, string mediaModel, string mediaPartNumber,
-                                 int mediaSequence, string mediaSerialNumber, string mediaTitle, string outputPath,
-                                 string outputOptions, string resumeFile, string format)
+                                 string mediaBarcode, string mediaManufacturer, string mediaModel,
+                                 string mediaPartNumber, int mediaSequence, string mediaSerialNumber, string mediaTitle,
+                                 string outputPath, string outputOptions, string resumeFile, string format)
         {
             MainClass.PrintCopyright();
 

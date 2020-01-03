@@ -3,8 +3,10 @@
   <component name="ContentModelStore">
     <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
@@ -24,33 +26,48 @@
       <e p="Changelog.md" t="Include" />
       <e p="DiscImageChef" t="IncludeRecursive">
         <e p="Commands" t="Include">
-          <e p="Analyze.cs" t="Include" />
           <e p="Benchmark.cs" t="Include" />
-          <e p="Checksum.cs" t="Include" />
-          <e p="Compare.cs" t="Include" />
           <e p="Configure.cs" t="Include" />
-          <e p="ConvertImage.cs" t="Include" />
-          <e p="CreateSidecar.cs" t="Include" />
-          <e p="Decode.cs" t="Include" />
-          <e p="DeviceInfo.cs" t="Include" />
-          <e p="DeviceReport.cs" t="Include" />
-          <e p="DumpMedia.cs" t="Include" />
-          <e p="Entropy.cs" t="Include" />
-          <e p="ExtractFiles.cs" t="Include" />
+          <e p="Database" t="Include">
+            <e p="DatabaseFamily.cs" t="Include" />
+            <e p="Statistics.cs" t="Include" />
+            <e p="Update.cs" t="Include" />
+          </e>
+          <e p="Device" t="Include">
+            <e p="DeviceFamily.cs" t="Include" />
+            <e p="DeviceInfo.cs" t="Include" />
+            <e p="DeviceReport.cs" t="Include" />
+            <e p="ListDevices.cs" t="Include" />
+          </e>
+          <e p="Filesystem" t="Include">
+            <e p="ExtractFiles.cs" t="Include" />
+            <e p="FilesystemFamily.cs" t="Include" />
+            <e p="ListOptions.cs" t="Include" />
+            <e p="Ls.cs" t="Include" />
+          </e>
           <e p="Formats.cs" t="Include" />
-          <e p="ImageInfo.cs" t="Include" />
-          <e p="ListDevices.cs" t="Include" />
+          <e p="Image" t="Include">
+            <e p="Analyze.cs" t="Include" />
+            <e p="Checksum.cs" t="Include" />
+            <e p="Compare.cs" t="Include" />
+            <e p="ConvertImage.cs" t="Include" />
+            <e p="CreateSidecar.cs" t="Include" />
+            <e p="Decode.cs" t="Include" />
+            <e p="Entropy.cs" t="Include" />
+            <e p="ImageFamily.cs" t="Include" />
+            <e p="ImageInfo.cs" t="Include" />
+            <e p="PrintHex.cs" t="Include" />
+            <e p="Verify.cs" t="Include" />
+          </e>
           <e p="ListEncodings.cs" t="Include" />
           <e p="ListNamespaces.cs" t="Include" />
-          <e p="ListOptions.cs" t="Include" />
-          <e p="Ls.cs" t="Include" />
-          <e p="MediaInfo.cs" t="Include" />
-          <e p="MediaScan.cs" t="Include" />
-          <e p="PrintHex.cs" t="Include" />
+          <e p="Media" t="Include">
+            <e p="DumpMedia.cs" t="Include" />
+            <e p="MediaFamily.cs" t="Include" />
+            <e p="MediaInfo.cs" t="Include" />
+            <e p="MediaScan.cs" t="Include" />
+          </e>
           <e p="Remote.cs" t="Include" />
-          <e p="Statistics.cs" t="Include" />
-          <e p="Update.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
         </e>
         <e p="DiscImageChef.csproj" t="IncludeRecursive" />
         <e p="Info.plist" t="Include" />

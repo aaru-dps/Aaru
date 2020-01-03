@@ -39,6 +39,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using DiscImageChef.Commands;
+using DiscImageChef.Commands.Device;
+using DiscImageChef.Commands.Filesystem;
+using DiscImageChef.Commands.Image;
+using DiscImageChef.Commands.Media;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Database;
@@ -138,32 +142,17 @@ namespace DiscImageChef
             rootCommand.Description =
                 $"{_assemblyTitle} {_assemblyVersion?.InformationalVersion}\n{_assemblyCopyright}";
 
-            rootCommand.AddCommand(new AnalyzeCommand());
+            rootCommand.AddCommand(new DatabaseFamily(masterDbUpdate));
+            rootCommand.AddCommand(new DeviceFamily());
+            rootCommand.AddCommand(new FilesystemFamily());
+            rootCommand.AddCommand(new ImageFamily());
+            rootCommand.AddCommand(new MediaFamily());
+
             rootCommand.AddCommand(new BenchmarkCommand());
-            rootCommand.AddCommand(new ChecksumCommand());
-            rootCommand.AddCommand(new CompareCommand());
             rootCommand.AddCommand(new ConfigureCommand(false, false));
-            rootCommand.AddCommand(new ConvertImageCommand());
-            rootCommand.AddCommand(new CreateSidecarCommand());
-            rootCommand.AddCommand(new DecodeCommand());
-            rootCommand.AddCommand(new DeviceInfoCommand());
-            rootCommand.AddCommand(new DeviceReportCommand());
-            rootCommand.AddCommand(new DumpMediaCommand());
-            rootCommand.AddCommand(new EntropyCommand());
-            rootCommand.AddCommand(new ExtractFilesCommand());
             rootCommand.AddCommand(new FormatsCommand());
-            rootCommand.AddCommand(new ImageInfoCommand());
-            rootCommand.AddCommand(new ListDevicesCommand());
             rootCommand.AddCommand(new ListEncodingsCommand());
             rootCommand.AddCommand(new ListNamespacesCommand());
-            rootCommand.AddCommand(new ListOptionsCommand());
-            rootCommand.AddCommand(new LsCommand());
-            rootCommand.AddCommand(new MediaInfoCommand());
-            rootCommand.AddCommand(new MediaScanCommand());
-            rootCommand.AddCommand(new PrintHexCommand());
-            rootCommand.AddCommand(new StatisticsCommand());
-            rootCommand.AddCommand(new UpdateCommand(masterDbUpdate));
-            rootCommand.AddCommand(new VerifyCommand());
             rootCommand.AddCommand(new RemoteCommand());
 
             return rootCommand.Invoke(args);

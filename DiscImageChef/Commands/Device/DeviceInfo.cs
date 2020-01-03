@@ -46,10 +46,9 @@ using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
 using Command = System.CommandLine.Command;
-using Device = DiscImageChef.Devices.Device;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Device
 {
     internal class DeviceInfoCommand : Command
     {
@@ -94,11 +93,11 @@ namespace DiscImageChef.Commands
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Device dev;
+            Devices.Device dev;
 
             try
             {
-                dev = new Device(devicePath);
+                dev = new Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

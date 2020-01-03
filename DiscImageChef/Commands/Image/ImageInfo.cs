@@ -39,7 +39,7 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands
+namespace DiscImageChef.Commands.Image
 {
     internal class ImageInfoCommand : Command
     {

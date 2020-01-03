@@ -55,7 +55,6 @@ using BCA = DiscImageChef.Decoders.Bluray.BCA;
 using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
 using Command = System.CommandLine.Command;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
-using Device = DiscImageChef.Devices.Device;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
 using Session = DiscImageChef.Decoders.CD.Session;
 using Spare = DiscImageChef.Decoders.DVD.Spare;
@@ -105,11 +104,11 @@ namespace DiscImageChef.Commands
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Device dev;
+            Devices.Device dev;
 
             try
             {
-                dev = new Device(devicePath);
+                dev = new Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -159,12 +158,12 @@ namespace DiscImageChef.Commands
 
         static void DoAtaMediaInfo() => DicConsole.ErrorWriteLine("Please use device-info command for ATA devices.");
 
-        static void DoNvmeMediaInfo(string outputPrefix, Device dev) =>
+        static void DoNvmeMediaInfo(string outputPrefix, Devices.Device dev) =>
             throw new NotImplementedException("NVMe devices not yet supported.");
 
         static void DoSdMediaInfo() => DicConsole.ErrorWriteLine("Please use device-info command for MMC/SD devices.");
 
-        static void DoScsiMediaInfo(bool debug, bool verbose, string outputPrefix, Device dev)
+        static void DoScsiMediaInfo(bool debug, bool verbose, string outputPrefix, Devices.Device dev)
         {
             var scsiInfo = new ScsiInfo(dev);
 
