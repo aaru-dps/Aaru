@@ -131,9 +131,91 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             for(int i = 1; i < tracks.Length; i++)
             {
-                uint lba           = (uint)tracks[i].TrackStartSector - 150;
+                uint lba           = (uint)tracks[i].TrackStartSector - 1;
                 int  trackPregap   = 0;
                 bool previousSense = false;
+
+                // Check if pregap is 0
+                if(supportsPqSubchannel)
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.AllTypes, false, false, false,
+                                       MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
+                                       dev.Timeout, out _);
+                else
+                {
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.AllTypes, false, false, false,
+                                       MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
+                                       dev.Timeout, out _);
+
+                    if(!sense)
+                    {
+                        int[] q = new int[cmdBuf.Length / 8];
+
+                        // De-interlace Q subchannel
+                        for(int iq = 0; iq < cmdBuf.Length; iq += 8)
+                        {
+                            q[iq / 8] =  (cmdBuf[iq] & 0x40) << 1;
+                            q[iq / 8] += cmdBuf[iq + 1] & 0x40;
+                            q[iq / 8] += (cmdBuf[iq + 2] & 0x40) >> 1;
+                            q[iq / 8] += (cmdBuf[iq + 3] & 0x40) >> 2;
+                            q[iq / 8] += (cmdBuf[iq + 4] & 0x40) >> 3;
+                            q[iq / 8] += (cmdBuf[iq + 5] & 0x40) >> 4;
+                            q[iq / 8] += (cmdBuf[iq + 6] & 0x40) >> 5;
+                            q[iq / 8] += (cmdBuf[iq + 7] & 0x40) >> 6;
+                        }
+
+                        cmdBuf = new byte[q.Length];
+
+                        for(int iq = 0; iq < cmdBuf.Length; iq++)
+                        {
+                            cmdBuf[iq] = (byte)q[iq];
+                        }
+                    }
+                }
+
+                if(!sense)
+                {
+                    // Q position
+                    if((cmdBuf[0] & 0xF) == 1)
+                    {
+                        // Check if BCD or binary values, change to binary
+                        int posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
+
+                        if(posQ > lba)
+                        {
+                            cmdBuf[1] = (byte)(((cmdBuf[1] / 16) * 10) + (cmdBuf[1] & 0x0F));
+                            cmdBuf[2] = (byte)(((cmdBuf[2] / 16) * 10) + (cmdBuf[2] & 0x0F));
+                            cmdBuf[3] = (byte)(((cmdBuf[3] / 16) * 10) + (cmdBuf[3] & 0x0F));
+                            cmdBuf[4] = (byte)(((cmdBuf[4] / 16) * 10) + (cmdBuf[4] & 0x0F));
+                            cmdBuf[5] = (byte)(((cmdBuf[5] / 16) * 10) + (cmdBuf[5] & 0x0F));
+                            cmdBuf[6] = (byte)(((cmdBuf[6] / 16) * 10) + (cmdBuf[6] & 0x0F));
+                            cmdBuf[7] = (byte)(((cmdBuf[7] / 16) * 10) + (cmdBuf[7] & 0x0F));
+                            cmdBuf[8] = (byte)(((cmdBuf[8] / 16) * 10) + (cmdBuf[8] & 0x0F));
+                            cmdBuf[9] = (byte)(((cmdBuf[9] / 16) * 10) + (cmdBuf[9] & 0x0F));
+
+                            posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
+                        }
+
+                        if(cmdBuf[1] == tracks[i - 1].TrackSequence &&
+                           cmdBuf[2] > 0                            &&
+                           posQ      == lba)
+                        {
+                            trackPregap = 0;
+
+                        #if DEBUG
+                            dumpLog?.WriteLine($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
+                            updateStatus?.Invoke($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
+                        #endif
+
+                            tracks[i].TrackPregap      =  (ulong)trackPregap;
+                            tracks[i].TrackStartSector -= tracks[i].TrackPregap;
+
+                            continue;
+                        }
+                    }
+                }
+
+                // Calculate pregap
+                lba = (uint)tracks[i].TrackStartSector - 150;
 
                 while(lba > tracks[i - 1].TrackStartSector)
                 {
@@ -179,6 +261,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if((cmdBuf[0] & 0xF) != 1)
                         {
                             lba--;
+
                             continue;
                         }
 
