@@ -34,7 +34,7 @@
 //     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2019 Natalia Portillo
+// Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
 using DiscImageChef.CommonTypes.Structs;
