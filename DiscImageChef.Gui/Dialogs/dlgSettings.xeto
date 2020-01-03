@@ -28,7 +28,7 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 // ============================================================================
-// Copyright © 2011-2019 Natalia Portillo
+// Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 -->
 <Dialog xmlns="http://schema.picoe.ca/eto.forms" Title="Settings" ClientSize="460, 160" Padding="10">

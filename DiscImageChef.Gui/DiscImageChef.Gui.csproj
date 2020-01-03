@@ -6,7 +6,7 @@
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <Version>4.5.99.1693</Version>
         <Company>Claunia.com</Company>
-        <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
+        <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
         <Product>The Disc Image Chef</Product>
         <Title>The Disc Image Chef</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>

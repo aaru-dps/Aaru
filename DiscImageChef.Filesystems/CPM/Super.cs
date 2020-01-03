@@ -29,7 +29,7 @@
 //     License along with this library; if not, see <http://www.gnu.org/licenses/>.
 //
 // ----------------------------------------------------------------------------
-// Copyright © 2011-2019 Natalia Portillo
+// Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
 using System;

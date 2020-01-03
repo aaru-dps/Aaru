@@ -27,7 +27,7 @@
 //
 // ----------------------------------------------------------------------------
 // Copyright © 2018-2019 Michael Drüing
-// Copyright © 2011-2019 Natalia Portillo
+// Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
 using DiscImageChef.CommonTypes.Enums;
