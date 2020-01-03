@@ -178,10 +178,10 @@ namespace DiscImageChef.Commands
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume, string encoding,
-                                 bool firstTrackPregap, bool fixOffset, bool force, bool noMetadata, bool noTrim,
-                                 string outputPath, string options, bool persistent, ushort retryPasses, uint skip,
-                                 byte speed, bool stopOnError, string format, string subchannel)
+        public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume,
+                                 string encoding, bool firstPregap, bool fixOffset, bool force, bool noMetadata,
+                                 bool noTrim, string outputPath, string options, bool persistent, ushort retryPasses,
+                                 uint skip, byte speed, bool stopOnError, string format, string subchannel)
         {
             MainClass.PrintCopyright();
 
@@ -197,7 +197,7 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}", debug);
             DicConsole.DebugWriteLine("Dump-Media command", "--device={0}", devicePath);
             DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}", encoding);
-            DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}", firstTrackPregap);
+            DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}", firstPregap);
             DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
             DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
             DicConsole.DebugWriteLine("Dump-Media command", "--format={0}", format);
@@ -407,8 +407,8 @@ namespace DiscImageChef.Commands
 
             var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
-                                  parsedOptions, sidecar, (uint)skip, noMetadata, noTrim, firstTrackPregap, fixOffset,
-                                  debug, wantedSubchannel, speed);
+                                  parsedOptions, sidecar, skip, noMetadata, noTrim, firstPregap, fixOffset, debug,
+                                  wantedSubchannel, speed);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;
             dumper.ErrorMessage         += Progress.ErrorMessage;
