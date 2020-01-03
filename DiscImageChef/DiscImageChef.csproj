@@ -74,6 +74,7 @@
     <Compile Include="Commands\Image\Entropy.cs" />
     <Compile Include="Commands\Image\ImageFamily.cs" />
     <Compile Include="Commands\Image\Info.cs" />
+    <Compile Include="Commands\Image\Options.cs" />
     <Compile Include="Commands\Image\Print.cs" />
     <Compile Include="Commands\Image\Verify.cs" />
     <Compile Include="Commands\ListNamespaces.cs" />

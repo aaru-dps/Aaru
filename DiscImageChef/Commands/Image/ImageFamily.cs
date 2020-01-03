@@ -48,6 +48,7 @@ namespace DiscImageChef.Commands.Image
             AddCommand(new DecodeCommand());
             AddCommand(new EntropyCommand());
             AddCommand(new ImageInfoCommand());
+            AddCommand(new ListOptionsCommand());
             AddCommand(new PrintHexCommand());
             AddCommand(new VerifyCommand());
         }

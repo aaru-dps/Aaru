@@ -55,6 +55,7 @@
             <e p="Entropy.cs" t="Include" />
             <e p="ImageFamily.cs" t="Include" />
             <e p="Info.cs" t="Include" />
+            <e p="Options.cs" t="Include" />
             <e p="Print.cs" t="Include" />
             <e p="Verify.cs" t="Include" />
           </e>

@@ -41,12 +41,12 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 
-namespace DiscImageChef.Commands.Filesystem
+namespace DiscImageChef.Commands.Image
 {
     internal class ListOptionsCommand : Command
     {
         public ListOptionsCommand() : base("options",
-                                           "Lists all options supported by read-only filesystems.") =>
+                                           "Lists all options supported by writable media images.") =>
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
 
         public static int Invoke(bool debug, bool verbose)
@@ -65,21 +65,23 @@ namespace DiscImageChef.Commands.Filesystem
 
             PluginBase plugins = GetPluginBase.Instance;
 
-            DicConsole.WriteLine("Read-only filesystems options:");
+            DicConsole.WriteLine("Read/Write media images options:");
 
-            foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
+            foreach(KeyValuePair<string, IWritableImage> kvp in plugins.WritableImages)
             {
-                List<(string name, Type type, string description)> options = kvp.Value.SupportedOptions.ToList();
+                List<(string name, Type type, string description, object @default)> options =
+                    kvp.Value.SupportedOptions.ToList();
 
                 if(options.Count == 0)
                     continue;
 
                 DicConsole.WriteLine("\tOptions for {0}:", kvp.Value.Name);
-                DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", "Name", "Type", "Description");
+                DicConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", "Name", "Type", "Default", "Description");
 
-                foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
-                    DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, TypeToString(option.type),
-                                         option.description);
+                foreach((string name, Type type, string description, object @default) option in
+                    options.OrderBy(t => t.name))
+                    DicConsole.WriteLine("\t\t{0,-20} {1,-10} {2,-12} {3,-8}", option.name, TypeToString(option.type),
+                                         option.@default, option.description);
 
                 DicConsole.WriteLine();
             }
