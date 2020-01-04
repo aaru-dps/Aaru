@@ -31,208 +31,196 @@
 // ****************************************************************************/
 
 using System.IO;
+using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes.Interfaces;
 
 namespace DiscImageChef.Checksums
 {
-    /// <summary>
-    ///     Implements a CRC16 algorithm
-    /// </summary>
+    /// <summary>Implements a CRC16 algorithm</summary>
     public class Crc16Context : IChecksum
     {
-        public const ushort CRC16_IBM_POLY   = 0xA001;
-        public const ushort CRC16_IBM_SEED   = 0x0000;
-        public const ushort CRC16_CCITT_POLY = 0x8408;
-        public const ushort CRC16_CCITT_SEED = 0x0000;
+        protected ushort _finalSeed;
+        protected ushort _hashInt;
+        protected bool   _inverse;
 
-        readonly ushort   finalSeed;
-        readonly ushort[] table;
-        ushort            hashInt;
+        protected ushort[] _table;
 
-        /// <summary>
-        ///     Initializes the CRC16 table and seed as CRC16-IBM
-        /// </summary>
-        public Crc16Context()
+        /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
+        public Crc16Context(ushort polynomial, ushort seed, ushort[] table, bool inverse)
         {
-            hashInt   = CRC16_IBM_SEED;
-            finalSeed = CRC16_IBM_SEED;
+            _hashInt   = seed;
+            _finalSeed = seed;
+            _inverse   = inverse;
 
-            table = new ushort[256];
-            for(int i = 0; i < 256; i++)
-            {
-                ushort entry = (ushort)i;
-                for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ CRC16_IBM_POLY);
-                    else entry                 = (ushort)(entry >> 1);
-
-                table[i] = entry;
-            }
+            _table = table ?? GenerateTable(polynomial, inverse);
         }
 
-        /// <summary>
-        ///     Initializes the CRC16 table with a custom polynomial and seed
-        /// </summary>
-        public Crc16Context(ushort polynomial, ushort seed)
-        {
-            hashInt   = seed;
-            finalSeed = seed;
-
-            table = new ushort[256];
-            for(int i = 0; i < 256; i++)
-            {
-                ushort entry = (ushort)i;
-                for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ polynomial);
-                    else entry                 = (ushort)(entry >> 1);
-
-                table[i] = entry;
-            }
-        }
-
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            for(int i = 0; i < len; i++) hashInt = (ushort)((hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xFF)]);
+            for(int i = 0; i < len; i++)
+            {
+                if(_inverse)
+                    _hashInt = (ushort)(_table[(_hashInt >> 8) ^ data[i]] ^ (_hashInt << 8));
+                else
+                    _hashInt = (ushort)((_hashInt >> 8) ^ _table[data[i] ^ (_hashInt & 0xFF)]);
+            }
         }
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
-        public void Update(byte[] data)
-        {
-            Update(data, (uint)data.Length);
-        }
+        public void Update(byte[] data) => Update(data, (uint)data.Length);
 
-        /// <summary>
-        ///     Returns a byte array of the hash value.
-        /// </summary>
-        public byte[] Final() => BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed));
+        /// <summary>Returns a byte array of the hash value.</summary>
+        public byte[] Final() => BigEndianBitConverter.GetBytes((ushort)(_hashInt ^ _finalSeed));
 
-        /// <summary>
-        ///     Returns a hexadecimal representation of the hash value.
-        /// </summary>
+        /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            StringBuilder crc16Output = new StringBuilder();
+            var crc16Output = new StringBuilder();
 
-            for(int i = 0; i < BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed)).Length; i++)
-                crc16Output.Append(BigEndianBitConverter.GetBytes((ushort)(hashInt ^ finalSeed))[i].ToString("x2"));
+            ushort final = (ushort)(_hashInt ^ _finalSeed);
+
+            if(_inverse)
+                final = (ushort)~final;
+
+            byte[] finalBytes = BigEndianBitConverter.GetBytes(final);
+
+            for(int i = 0; i < finalBytes.Length; i++)
+                crc16Output.Append(finalBytes[i].ToString("x2"));
 
             return crc16Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of a file
-        /// </summary>
-        /// <param name="filename">File path.</param>
-        public static byte[] File(string filename)
+        static ushort[] GenerateTable(ushort polynomial, bool inverseTable)
         {
-            File(filename, out byte[] hash);
-            return hash;
-        }
+            ushort[] table = new ushort[256];
 
-        /// <summary>
-        ///     Gets the hash of a file in hexadecimal and as a byte array.
-        /// </summary>
-        /// <param name="filename">File path.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        public static string File(string filename, out byte[] hash) =>
-            File(filename, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
+            if(!inverseTable)
+                for(uint i = 0; i < 256; i++)
+                {
+                    uint entry = i;
 
-        /// <summary>
-        ///     Gets the hash of a file in hexadecimal and as a byte array.
-        /// </summary>
-        /// <param name="filename">File path.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed)
-        {
-            FileStream fileStream = new FileStream(filename, FileMode.Open);
+                    for(int j = 0; j < 8; j++)
+                        if((entry & 1) == 1)
+                            entry = (entry >> 1) ^ polynomial;
+                        else
+                            entry = entry >> 1;
 
-            ushort localhashInt = seed;
-
-            ushort[] localTable = new ushort[256];
-            for(int i = 0; i < 256; i++)
+                    table[i] = (ushort)entry;
+                }
+            else
             {
-                ushort entry = (ushort)i;
-                for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ polynomial);
-                    else entry                 = (ushort)(entry >> 1);
+                for(uint i = 0; i < 256; i++)
+                {
+                    uint entry = i << 8;
 
-                localTable[i] = entry;
+                    for(uint j = 0; j < 8; j++)
+                    {
+                        if((entry & 0x8000) > 0)
+                            entry = (entry << 1) ^ polynomial;
+                        else
+                            entry <<= 1;
+
+                        table[i] = (ushort)entry;
+                    }
+                }
             }
 
+            return table;
+        }
+
+        /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
+        /// <param name="filename">File path.</param>
+        /// <param name="hash">Byte array of the hash value.</param>
+        public static string File(string filename, out byte[] hash, ushort polynomial, ushort seed, ushort[] table,
+                                  bool inverse)
+        {
+            var fileStream = new FileStream(filename, FileMode.Open);
+
+            ushort localHashInt = seed;
+
+            ushort[] localTable = table ?? GenerateTable(polynomial, inverse);
+
             for(int i = 0; i < fileStream.Length; i++)
-                localhashInt =
-                    (ushort)((localhashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localhashInt & 0xff)]);
+                if(inverse)
+                    localHashInt =
+                        (ushort)(localTable[(localHashInt >> 8) ^ fileStream.ReadByte()] ^ (localHashInt << 8));
+                else
+                    localHashInt =
+                        (ushort)((localHashInt >> 8) ^ localTable[fileStream.ReadByte() ^ (localHashInt & 0xff)]);
 
-            localhashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
+            localHashInt ^= seed;
 
-            StringBuilder crc16Output = new StringBuilder();
+            if(inverse)
+                localHashInt = (ushort)~localHashInt;
 
-            foreach(byte h in hash) crc16Output.Append(h.ToString("x2"));
+            hash = BigEndianBitConverter.GetBytes(localHashInt);
+
+            var crc16Output = new StringBuilder();
+
+            foreach(byte h in hash)
+                crc16Output.Append(h.ToString("x2"));
 
             fileStream.Close();
 
             return crc16Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
-        /// <param name="data">Data buffer.</param>
-        /// <param name="len">Length of the data buffer to hash.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        public static string Data(byte[] data, uint len, out byte[] hash) =>
-            Data(data, len, out hash, CRC16_IBM_POLY, CRC16_IBM_SEED);
-
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         /// <param name="polynomial">CRC polynomial</param>
         /// <param name="seed">CRC seed</param>
-        public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed)
+        public static string Data(byte[] data, uint len, out byte[] hash, ushort polynomial, ushort seed,
+                                  ushort[] table, bool inverse)
         {
-            ushort localhashInt = seed;
+            ushort localHashInt = seed;
 
-            ushort[] localTable = new ushort[256];
-            for(int i = 0; i < 256; i++)
-            {
-                ushort entry = (ushort)i;
-                for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (ushort)((entry >> 1) ^ polynomial);
-                    else entry                 = (ushort)(entry >> 1);
-
-                localTable[i] = entry;
-            }
+            ushort[] localTable = table ?? GenerateTable(polynomial, inverse);
 
             for(int i = 0; i < len; i++)
-                localhashInt = (ushort)((localhashInt >> 8) ^ localTable[data[i] ^ (localhashInt & 0xff)]);
+                if(inverse)
+                    localHashInt = (ushort)(localTable[(localHashInt >> 8) ^ data[i]] ^ (localHashInt << 8));
+                else
+                    localHashInt = (ushort)((localHashInt >> 8) ^ localTable[data[i] ^ (localHashInt & 0xff)]);
 
-            localhashInt ^= seed;
-            hash         =  BigEndianBitConverter.GetBytes(localhashInt);
+            localHashInt ^= seed;
 
-            StringBuilder crc16Output = new StringBuilder();
+            if(inverse)
+                localHashInt = (ushort)~localHashInt;
 
-            foreach(byte h in hash) crc16Output.Append(h.ToString("x2"));
+            hash = BigEndianBitConverter.GetBytes(localHashInt);
+
+            var crc16Output = new StringBuilder();
+
+            foreach(byte h in hash)
+                crc16Output.Append(h.ToString("x2"));
 
             return crc16Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
-        /// <param name="data">Data buffer.</param>
-        /// <param name="hash">Byte array of the hash value.</param>
-        public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);
+        public static ushort Calculate(byte[] buffer, ushort polynomial, ushort seed, ushort[] table, bool inverse)
+        {
+            ushort[] localTable = table ?? GenerateTable(polynomial, inverse);
+
+            ushort crc16 =
+                buffer.Aggregate<byte, ushort>(0,
+                                               (current, b) =>
+                                                   inverse ? (ushort)(localTable[(current >> 8) ^ b] ^ (current << 8))
+                                                       : (ushort)((current >> 8) ^
+                                                                  localTable[b ^ (current & 0xff)]));
+
+            crc16 ^= seed;
+
+            if(inverse)
+                crc16 = (ushort)~crc16;
+
+            return crc16;
+        }
     }
 }
