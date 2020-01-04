@@ -99,14 +99,14 @@ namespace DiscImageChef.Commands.Media
                 Argument = new Argument<string>(() => null), Required = false
             });
 
-            Add(new Option("--no-metadata", "Disables creating CICM XML sidecar.")
+            Add(new Option("--metadata", "Enables creating CICM XML sidecar.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => true), Required = false
             });
 
-            Add(new Option("--no-trim", "Disables trimming errored from skipped sectors.")
+            Add(new Option("--trim", "Enables trimming errored from skipped sectors.")
             {
-                Argument = new Argument<bool>(() => false), Required = false
+                Argument = new Argument<bool>(() => true), Required = false
             });
 
             Add(new Option(new[]
@@ -179,8 +179,8 @@ namespace DiscImageChef.Commands.Media
         }
 
         public static int Invoke(bool debug, bool verbose, string cicmXml, string devicePath, bool resume,
-                                 string encoding, bool firstPregap, bool fixOffset, bool force, bool noMetadata,
-                                 bool noTrim, string outputPath, string options, bool persistent, ushort retryPasses,
+                                 string encoding, bool firstPregap, bool fixOffset, bool force, bool metadata,
+                                 bool trim, string outputPath, string options, bool persistent, ushort retryPasses,
                                  uint skip, byte speed, bool stopOnError, string format, string subchannel)
         {
             MainClass.PrintCopyright();
@@ -198,10 +198,10 @@ namespace DiscImageChef.Commands.Media
             DicConsole.DebugWriteLine("Dump-Media command", "--device={0}", devicePath);
             DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}", encoding);
             DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}", firstPregap);
-            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
+            DicConsole.DebugWriteLine("Dump-Media command", "--fix-offset={0}", fixOffset);
             DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
             DicConsole.DebugWriteLine("Dump-Media command", "--format={0}", format);
-            DicConsole.DebugWriteLine("Dump-Media command", "--no-metadata={0}", noMetadata);
+            DicConsole.DebugWriteLine("Dump-Media command", "--metadata={0}", metadata);
             DicConsole.DebugWriteLine("Dump-Media command", "--options={0}", options);
             DicConsole.DebugWriteLine("Dump-Media command", "--output={0}", outputPath);
             DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", persistent);
@@ -209,6 +209,7 @@ namespace DiscImageChef.Commands.Media
             DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}", retryPasses);
             DicConsole.DebugWriteLine("Dump-Media command", "--skip={0}", skip);
             DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}", stopOnError);
+            DicConsole.DebugWriteLine("Dump-Media command", "--trim={0}", trim);
             DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", verbose);
             DicConsole.DebugWriteLine("Dump-Media command", "--subchannel={0}", subchannel);
 
@@ -407,7 +408,7 @@ namespace DiscImageChef.Commands.Media
 
             var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,
                                   stopOnError, resumeClass, dumpLog, encodingClass, outputPrefix, outputPath,
-                                  parsedOptions, sidecar, skip, noMetadata, noTrim, firstPregap, fixOffset, debug,
+                                  parsedOptions, sidecar, skip, metadata, trim, firstPregap, fixOffset, debug,
                                   wantedSubchannel, speed);
 
             dumper.UpdateStatus         += Progress.UpdateStatus;

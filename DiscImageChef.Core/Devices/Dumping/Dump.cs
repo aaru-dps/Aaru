@@ -31,8 +31,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly Encoding                   _encoding;
         readonly bool                       _force;
         readonly Dictionary<string, string> _formatOptions;
-        readonly bool                       _nometadata;
-        readonly bool                       _notrim;
+        readonly bool                       _metadata;
         readonly string                     _outputPath;
         readonly IWritableImage             _outputPlugin;
         readonly string                     _outputPrefix;
@@ -41,6 +40,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly ushort                     _retryPasses;
         readonly bool                       _stopOnError;
         readonly DumpSubchannel             _subchannel;
+        readonly bool                       _trim;
         bool                                _aborted;
         DicContext                          _ctx;   // Master database context
         Database.Models.Device              _dbDev; // Device database entry
@@ -69,15 +69,15 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="encoding">Encoding to use when analyzing dump</param>
         /// <param name="outputPath">Path to output file</param>
         /// <param name="formatOptions">Formats to pass to output file plugin</param>
-        /// <param name="notrim">Do not trim errors from skipped sectors</param>
+        /// <param name="trim">Trim errors from skipped sectors</param>
         /// <param name="dumpFirstTrackPregap">Try to read and dump as much first track pregap as possible</param>
         /// <param name="preSidecar">Sidecar to store in dumped image</param>
         /// <param name="skip">How many sectors to skip reading on error</param>
-        /// <param name="nometadata">Create metadata sidecar after dump?</param>
+        /// <param name="metadata">Create metadata sidecar after dump?</param>
         public Dump(bool doResume, Device dev, string devicePath, IWritableImage outputPlugin, ushort retryPasses,
                     bool force, bool dumpRaw, bool persistent, bool stopOnError, Resume resume, DumpLog dumpLog,
                     Encoding encoding, string outputPrefix, string outputPath, Dictionary<string, string> formatOptions,
-                    CICMMetadataType preSidecar, uint skip, bool nometadata, bool notrim, bool dumpFirstTrackPregap,
+                    CICMMetadataType preSidecar, uint skip, bool metadata, bool trim, bool dumpFirstTrackPregap,
                     bool fixOffset, bool debug, DumpSubchannel subchannel, int speed)
         {
             _doResume             = doResume;
@@ -97,8 +97,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             _formatOptions        = formatOptions;
             _preSidecar           = preSidecar;
             _skip                 = skip;
-            _nometadata           = nometadata;
-            _notrim               = notrim;
+            _metadata             = metadata;
+            _trim                 = trim;
             _dumpFirstTrackPregap = dumpFirstTrackPregap;
             _aborted              = false;
             _fixOffset            = fixOffset;

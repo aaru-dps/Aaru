@@ -1250,7 +1250,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             double totalChkDuration = 0;
 
-            if(!_nometadata)
+            if(_metadata)
             {
                 UpdateStatus?.Invoke("Creating sidecar.");
                 _dumpLog.WriteLine("Creating sidecar.");

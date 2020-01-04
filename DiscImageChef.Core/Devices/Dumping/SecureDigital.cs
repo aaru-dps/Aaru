@@ -415,7 +415,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             #region Trimming
             if(_resume.BadBlocks.Count > 0 &&
                !_aborted                   &&
-               !_notrim                    &&
+               _trim                       &&
                newTrim)
             {
                 start = DateTime.UtcNow;
@@ -544,7 +544,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             double totalChkDuration = 0;
 
-            if(!_nometadata)
+            if(_metadata)
             {
                 UpdateStatus?.Invoke("Creating sidecar.");
                 _dumpLog.WriteLine("Creating sidecar.");

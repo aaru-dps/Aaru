@@ -59,7 +59,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(_resume.BadBlocks.Count <= 0 ||
                _aborted                     ||
-               _notrim                      ||
+               !_trim                       ||
                !newTrim)
                 return;
 

@@ -962,7 +962,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             double totalChkDuration = 0;
 
-            if(!_nometadata)
+            if(_metadata)
                 WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, sessions, out totalChkDuration);
 
             end = DateTime.UtcNow;
