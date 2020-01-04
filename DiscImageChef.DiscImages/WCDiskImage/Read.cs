@@ -55,6 +55,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(header, 0, 32);
 
             WCDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WCDiskImageFileHeader>(header);
+
             DicConsole.DebugWriteLine("d2f plugin",
                                       "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
                                       fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
@@ -71,6 +72,7 @@ namespace DiscImageChef.DiscImages
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
             imageInfo.MediaTitle           = Path.GetFileNameWithoutExtension(imageFilter.GetFilename());
+
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,
                                                          (ushort)imageInfo.SectorsPerTrack, 512, MediaEncoding.MFM,
                                                          false));
@@ -78,7 +80,8 @@ namespace DiscImageChef.DiscImages
             /* buffer the entire disk in memory */
             for(int cyl = 0; cyl < imageInfo.Cylinders; cyl++)
             {
-                for(int head = 0; head < imageInfo.Heads; head++) ReadTrack(stream, cyl, head);
+                for(int head = 0; head < imageInfo.Heads; head++)
+                    ReadTrack(stream, cyl, head);
             }
 
             /* if there are extra tracks, read them as well */
@@ -107,8 +110,13 @@ namespace DiscImageChef.DiscImages
             }
 
             /* adjust number of cylinders */
-            if(fheader.extraTracks[0] == 1 || fheader.extraTracks[1] == 1) imageInfo.Cylinders++;
-            if(fheader.extraTracks[2] == 1 || fheader.extraTracks[3] == 1) imageInfo.Cylinders++;
+            if(fheader.extraTracks[0] == 1 ||
+               fheader.extraTracks[1] == 1)
+                imageInfo.Cylinders++;
+
+            if(fheader.extraTracks[2] == 1 ||
+               fheader.extraTracks[3] == 1)
+                imageInfo.Cylinders++;
 
             /* read the comment and directory data if present */
             if(fheader.extraFlags.HasFlag(ExtraFlag.Comment))
@@ -116,6 +124,7 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("d2f plugin", "Comment present, reading");
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
+
                 WCDiskImageSectorHeader sheader =
                     Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
 
@@ -133,6 +142,7 @@ namespace DiscImageChef.DiscImages
                 DicConsole.DebugWriteLine("d2f plugin", "Directory listing present, reading");
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
+
                 WCDiskImageSectorHeader sheader =
                     Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
 
@@ -145,11 +155,13 @@ namespace DiscImageChef.DiscImages
                 comments += Encoding.ASCII.GetString(dir);
             }
 
-            if(comments.Length > 0) imageInfo.Comments = comments;
+            if(comments.Length > 0)
+                imageInfo.Comments = comments;
 
             // save some variables for later use
             fileHeader    = fheader;
             wcImageFilter = imageFilter;
+
             return true;
         }
 
@@ -189,9 +201,7 @@ namespace DiscImageChef.DiscImages
             return result;
         }
 
-        /// <summary>
-        ///     Read a whole track and cache it
-        /// </summary>
+        /// <summary>Read a whole track and cache it</summary>
         /// <param name="stream">The stream to read from</param>
         /// <param name="cyl">The cylinder number of the track being read.</param>
         /// <param name="head">The head number of the track being read.</param>
@@ -206,30 +216,36 @@ namespace DiscImageChef.DiscImages
                 /* read the sector header */
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
+
                 WCDiskImageSectorHeader sheader =
                     Marshal.ByteArrayToStructureLittleEndian<WCDiskImageSectorHeader>(sheaderBuffer);
 
                 /* validate the sector header */
-                if(sheader.cylinder != cyl || sheader.head != head || sheader.sector != sect)
+                if(sheader.cylinder != cyl  ||
+                   sheader.head     != head ||
+                   sheader.sector   != sect)
                     throw new
-                        InvalidDataException(string.Format("Unexpected sector encountered. Found CHS {0},{1},{2} but expected {3},{4},{5}",
-                                                           sheader.cylinder, sheader.head, sheader.sector, cyl, head,
-                                                           sect));
+                        InvalidDataException(string.
+                                                 Format("Unexpected sector encountered. Found CHS {0},{1},{2} but expected {3},{4},{5}",
+                                                        sheader.cylinder, sheader.head, sheader.sector, cyl, head,
+                                                        sect));
 
                 sectorData = new byte[512];
+
                 /* read the sector data */
                 switch(sheader.flag)
                 {
                     case SectorFlag.Normal: /* read a normal sector and store it in cache */
                         stream.Read(sectorData, 0, 512);
                         sectorCache[(cyl, head, sect)] = sectorData;
-                        Crc16Context.Data(sectorData, 512, out crc);
+                        CRC16IBMContext.Data(sectorData, 512, out crc);
                         calculatedCRC = (short)((256 * crc[0]) | crc[1]);
                         /*
                         DicConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
                             cyl, head, sect, sheader.crc, 256 * crc[0] + crc[1]);
                          */
                         badSectors[(cyl, head, sect)] = sheader.crc != calculatedCRC;
+
                         if(calculatedCRC != sheader.crc)
                             DicConsole.DebugWriteLine("d2f plugin",
                                                       "CHS {0},{1},{2}: CRC mismatch: stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
@@ -249,7 +265,8 @@ namespace DiscImageChef.DiscImages
                         DicConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: RepeatByte sector, fill byte 0x{0:x2}",
                             cyl, head, sect, sheader.crc & 0xff);
                          */
-                        for(int i = 0; i < 512; i++) sectorData[i] = (byte)(sheader.crc & 0xff);
+                        for(int i = 0; i < 512; i++)
+                            sectorData[i] = (byte)(sheader.crc & 0xff);
 
                         sectorCache[(cyl, head, sect)] = sectorData;
                         badSectors[(cyl, head, sect)]  = false;

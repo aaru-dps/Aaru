@@ -3,8 +3,10 @@
   <component name="ContentModelStore">
     <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_PLUGINS_DIR$/puppet/lib/stubs" t="IncludeRecursive" />
+    <e p="$APPLICATION_CONFIG_DIR$/scratches" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/extResources" t="IncludeRecursive" />
     <e p="$USER_HOME$/.Rider2019.3/system/resharper-host/local/Transient/ReSharperHost/v193/SolutionCaches/_DiscImageChef.-1491758497.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.config/git/ignore" t="IncludeRecursive" />
     <e p="$USER_HOME$/.nuget/packages/sqlitepclraw.lib.e_sqlite3.linux/1.1.12/runtimes/linux-x64/native/libe_sqlite3.so" t="Include" />
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p=".git/info/exclude" t="IncludeRecursive" />
@@ -88,7 +90,9 @@
       <e p="DiscImageChef.Checksums" t="IncludeRecursive">
         <e p="Adler32Context.cs" t="Include" />
         <e p="CDChecksums.cs" t="Include" />
+        <e p="CRC16CCITTContext.cs" t="Include" />
         <e p="CRC16Context.cs" t="Include" />
+        <e p="CRC16IBMContext.cs" t="Include" />
         <e p="CRC32Context.cs" t="Include" />
         <e p="CRC64Context.cs" t="Include" />
         <e p="DiscImageChef.Checksums.csproj" t="IncludeRecursive" />
