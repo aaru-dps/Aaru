@@ -344,7 +344,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(tracks is null)
                 return;
 
-            SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel);
+            SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel, _dbDev);
 
             for(int t = 1; t < tracks.Length; t++)
                 tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;

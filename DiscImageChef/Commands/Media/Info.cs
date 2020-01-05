@@ -551,7 +551,15 @@ namespace DiscImageChef.Commands.Media
                     bool supportsPqSubchannel = Dump.SupportsPqSubchannel(dev, null, null);
                     bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null);
 
-                    Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel);
+                    // Open master database
+                    var ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+
+                    // Search for device in master database
+                    Database.Models.Device dbDev =
+                        ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
+                                                        d.Revision     == dev.Revision);
+
+                    Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev);
 
                     for(int t = 1; t < tracks.Length; t++)
                         tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
@@ -566,14 +574,6 @@ namespace DiscImageChef.Commands.Media
                             WriteLine("Track {0} starts at LBA {1}, ends at LBA {2}, has a pregap of {3} sectors and is of type {4}",
                                       track.TrackSequence, track.TrackStartSector, track.TrackEndSector,
                                       track.TrackPregap, track.TrackType);
-
-                    // Open master database
-                    var ctx = DicContext.Create(Settings.Settings.MasterDbPath);
-
-                    // Search for device in master database
-                    Database.Models.Device dbDev =
-                        ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
-                                                        d.Revision     == dev.Revision);
 
                     CdOffset cdOffset = null;
 

@@ -33,6 +33,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Core.Logging;
@@ -120,150 +122,258 @@ namespace DiscImageChef.Core.Devices.Dumping
         }
 
         public static void SolveTrackPregaps(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus,
-                                             Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel)
+                                             Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel,
+                                             Database.Models.Device dbDev)
         {
-            bool   sense;  // Sense indicator
-            byte[] cmdBuf; // Data buffer
+            bool                  sense;  // Sense indicator
+            byte[]                cmdBuf; // Data buffer
+            byte[]                subBuf;
+            int                   posQ;
+            uint                  retries;
+            bool?                 bcd = null;
+            byte[]                crc;
+            Dictionary<uint, int> pregaps = new Dictionary<uint, int>();
 
             if(!supportsPqSubchannel &&
                !supportsRwSubchannel)
                 return;
 
-            for(int i = 1; i < tracks.Length; i++)
+            // Check if subchannel is BCD
+            for(retries = 0; retries < 10; retries++)
             {
-                uint lba           = (uint)tracks[i].TrackStartSector - 1;
-                int  trackPregap   = 0;
-                bool previousSense = false;
+                sense = GetSectorForPregap(dev, 11, dbDev, out subBuf);
+
+                if(sense)
+                    continue;
+
+                bcd = (subBuf[9] & 0x10) > 0;
+
+                break;
+            }
+
+            if(bcd is null)
+            {
+                dumpLog?.WriteLine("Could not detect if drive subchannel is BCD or not, pregaps could not be calculated, dump may be incorrect...");
+
+                updateStatus?.
+                    Invoke("Could not detect if drive subchannel is BCD or not, pregaps could not be calculated, dump may be incorrect...");
+
+                return;
+            }
+
+            // Initialize the dictionary
+            for(int i = 0; i < tracks.Length; i++)
+                pregaps[tracks[i].TrackSequence] = 0;
+
+            foreach(Track track in tracks)
+            {
+                if(track.TrackSequence <= 1)
+                    continue;
+
+                int   lba           = (int)track.TrackStartSector - 1;
+                bool  pregapFound   = false;
+                Track previousTrack = tracks.FirstOrDefault(t => t.TrackSequence == track.TrackSequence - 1);
+
+                bool goneBack = false;
+                bool goFront  = false;
 
                 // Check if pregap is 0
-                if(supportsPqSubchannel)
-                    sense = dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                       MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
-                                       dev.Timeout, out _);
-                else
+                for(retries = 0; retries < 10; retries++)
                 {
-                    sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                       MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
-                                       dev.Timeout, out _);
+                    sense = GetSectorForPregap(dev, (uint)lba, dbDev, out subBuf);
 
-                    if(!sense)
-                        cmdBuf = DeinterleaveQ(cmdBuf);
-                }
+                    if(sense)
+                        continue;
 
-                if(!sense)
-                {
+                    if(bcd == false)
+                        BinaryToBcdQ(subBuf);
+
+                    CRC16CCITTContext.Data(subBuf, 10, out crc);
+
+                    if(crc[0] != subBuf[10] ||
+                       crc[1] != subBuf[11])
+                        continue;
+
+                    BcdToBinaryQ(subBuf);
+
                     // Q position
-                    if((cmdBuf[0] & 0xF) == 1)
-                    {
-                        // Check if BCD or binary values, change to binary
-                        int posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
+                    if((subBuf[0] & 0xF) != 1)
+                        continue;
 
-                        if(posQ > lba)
-                        {
-                            BcdToBinaryQ(cmdBuf);
+                    posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75) + subBuf[9]) - 150;
 
-                            posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
-                        }
+                    if(subBuf[1] != track.TrackSequence - 1 ||
+                       subBuf[2] == 0                       ||
+                       posQ      != lba)
+                        break;
 
-                        if(cmdBuf[1] == tracks[i - 1].TrackSequence &&
-                           cmdBuf[2] > 0                            &&
-                           posQ      == lba)
-                        {
-                            trackPregap = 0;
+                    pregaps[track.TrackSequence] = 0;
 
-                        #if DEBUG
-                            dumpLog?.WriteLine($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
-                            updateStatus?.Invoke($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
-                        #endif
-
-                            tracks[i].TrackPregap      =  (ulong)trackPregap;
-                            tracks[i].TrackStartSector -= tracks[i].TrackPregap;
-
-                            continue;
-                        }
-                    }
+                    pregapFound = true;
                 }
+
+                if(pregapFound)
+                    continue;
 
                 // Calculate pregap
-                lba = (uint)tracks[i].TrackStartSector - 150;
+                lba = (int)track.TrackStartSector - 151;
 
-                while(lba > tracks[i - 1].TrackStartSector)
+                pregapFound = false;
+
+                while(lba > (int)previousTrack.TrackStartSector)
                 {
-                    if(supportsPqSubchannel)
-                        sense = dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                           MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
-                                           dev.Timeout, out _);
-                    else
+                    for(retries = 0; retries < 10; retries++)
                     {
-                        sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.AllTypes, false, false, false,
-                                           MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
-                                           dev.Timeout, out _);
+                        sense = GetSectorForPregap(dev, (uint)lba, dbDev, out subBuf);
 
-                        if(!sense)
-                            cmdBuf = DeinterleaveQ(cmdBuf);
-                    }
-
-                    if(!sense)
-                    {
-                        // Q position
-                        if((cmdBuf[0] & 0xF) != 1)
-                        {
-                            lba--;
-
+                        if(sense)
                             continue;
-                        }
 
-                        // Check if BCD or binary values, change to binary
-                        int posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
+                        if(bcd == false)
+                            BinaryToBcdQ(subBuf);
 
-                        if(posQ > lba)
+                        CRC16CCITTContext.Data(subBuf, 10, out crc);
+
+                        if(crc[0] != subBuf[10] ||
+                           crc[1] != subBuf[11])
+                            continue;
+
+                        BcdToBinaryQ(subBuf);
+
+                        // If it's not Q position
+                        if((subBuf[0] & 0xF) != 1)
                         {
-                            BcdToBinaryQ(cmdBuf);
+                            // This means we already searched back, so search forward
+                            if(goFront)
+                            {
+                                lba++;
 
-                            posQ = ((cmdBuf[7] * 60 * 75) + (cmdBuf[8] * 75) + cmdBuf[9]) - 150;
-                        }
+                                if(lba == (int)previousTrack.TrackStartSector)
+                                    pregapFound = true;
 
-                        if(cmdBuf[1] != tracks[i].TrackSequence ||
-                           cmdBuf[2] != 0)
-                        {
-                            lba++;
-                            trackPregap = (int)(tracks[i].TrackStartSector - lba);
-
-                            if(previousSense)
                                 break;
+                            }
 
-                            continue;
-                        }
-
-                        int pregapQ = posQ > lba ? trackPregap : (cmdBuf[3] * 60 * 75) + (cmdBuf[4] * 75) + cmdBuf[5];
-
-                        if(pregapQ > trackPregap)
-                            trackPregap = pregapQ;
-                        else
-                        {
-                            if(posQ == lba + 1)
-                                trackPregap++;
+                            // Search back
+                            goneBack = true;
+                            lba--;
 
                             break;
                         }
 
+                        // Previous track
+                        if(subBuf[1] < track.TrackSequence)
+                        {
+                            lba++;
+
+                            // Already gone back, so go forward
+                            if(goneBack)
+                                goFront = true;
+
+                            break;
+                        }
+
+                        // Same track, but not pregap
+                        if(subBuf[1] == track.TrackSequence &&
+                           subBuf[2] > 0)
+                        {
+                            lba--;
+
+                            break;
+                        }
+
+                        // Pregap according to Q position
+                        int pregapQ = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] + 1;
+
+                        // Bigger than known change, otherwise we found it
+                        if(pregapQ > pregaps[track.TrackSequence])
+                            pregaps[track.TrackSequence] = pregapQ;
+                        else if(pregapQ == pregaps[track.TrackSequence])
+                            pregapFound = true;
+
                         lba--;
+
+                        break;
                     }
-                    else
-                    {
-                        previousSense = true;
-                        lba--;
-                    }
+
+                    if(pregapFound)
+                        break;
+
+                    if(retries != 10)
+                        continue;
+
+                    dumpLog?.WriteLine($"Could not calculate pregap for track {track.TrackSequence}");
+                    updateStatus?.Invoke($"Could not calculate pregap for track {track.TrackSequence}");
                 }
+            }
+
+            for(int i = 0; i < tracks.Length; i++)
+            {
+                tracks[i].TrackPregap      =  (ulong)pregaps[tracks[i].TrackSequence];
+                tracks[i].TrackStartSector -= tracks[i].TrackPregap;
 
             #if DEBUG
-                dumpLog?.WriteLine($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
-                updateStatus?.Invoke($"Track {tracks[i].TrackSequence} pregap is {trackPregap} sectors");
+                dumpLog?.WriteLine($"Track {tracks[i].TrackSequence} pregap is {tracks[i].TrackPregap} sectors");
+                updateStatus?.Invoke($"Track {tracks[i].TrackSequence} pregap is {tracks[i].TrackPregap} sectors");
             #endif
-
-                tracks[i].TrackPregap      =  (ulong)trackPregap;
-                tracks[i].TrackStartSector -= tracks[i].TrackPregap;
             }
+        }
+
+        static bool GetSectorForPregap(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
+        {
+            byte[] cmdBuf;
+            bool   sense;
+            subBuf = null;
+
+            sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.AllTypes, false, false, true,
+                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Raw,
+                               dev.Timeout, out _);
+
+            if(sense)
+                sense = dev.ReadCd(out cmdBuf, out _, lba, 2448, 1, MmcSectorTypes.Cdda, false, false, false,
+                                   MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Raw, dev.Timeout,
+                                   out _);
+
+            if(!sense)
+            {
+                byte[] tmpBuf = new byte[96];
+                Array.Copy(cmdBuf, 2352, tmpBuf, 0, 96);
+                subBuf = DeinterleaveQ(tmpBuf);
+            }
+            else
+            {
+                sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.AllTypes, false, false, false,
+                                   MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
+                                   dev.Timeout, out _);
+
+                if(sense)
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 96, 1, MmcSectorTypes.Cdda, false, false, false,
+                                       MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Raw,
+                                       dev.Timeout, out _);
+
+                if(!sense)
+                {
+                    subBuf = DeinterleaveQ(cmdBuf);
+                }
+                else
+                {
+                    if(sense && (dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
+                                 dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
+                                 dev.Manufacturer.ToLowerInvariant() ==
+                                 "plextor"))
+                        sense = dev.PlextorReadCdDa(out cmdBuf, out _, lba, 2448, 1, PlextorSubchannel.All, dev.Timeout,
+                                                    out _);
+
+                    if(!sense)
+                    {
+                        byte[] tmpBuf = new byte[96];
+                        Array.Copy(cmdBuf, 0, tmpBuf, 0, 96);
+                        subBuf = DeinterleaveQ(tmpBuf);
+                    }
+                }
+            }
+
+            return sense;
         }
 
         static byte[] DeinterleaveQ(byte[] subchannel)
@@ -285,12 +395,25 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             byte[] deQ = new byte[q.Length];
 
-            for(int iq = 0; iq < subchannel.Length; iq++)
+            for(int iq = 0; iq < q.Length; iq++)
             {
                 deQ[iq] = (byte)q[iq];
             }
 
             return deQ;
+        }
+
+        static void BinaryToBcdQ(byte[] q)
+        {
+            q[1] = (byte)(((q[1] / 10) << 4) + (q[1] % 10));
+            q[2] = (byte)(((q[2] / 10) << 4) + (q[2] % 10));
+            q[3] = (byte)(((q[3] / 10) << 4) + (q[3] % 10));
+            q[4] = (byte)(((q[4] / 10) << 4) + (q[4] % 10));
+            q[5] = (byte)(((q[5] / 10) << 4) + (q[5] % 10));
+            q[6] = (byte)(((q[6] / 10) << 4) + (q[6] % 10));
+            q[7] = (byte)(((q[7] / 10) << 4) + (q[7] % 10));
+            q[8] = (byte)(((q[8] / 10) << 4) + (q[8] % 10));
+            q[9] = (byte)(((q[9] / 10) << 4) + (q[9] % 10));
         }
 
         static void BcdToBinaryQ(byte[] q)
