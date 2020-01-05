@@ -218,8 +218,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // Calculate pregap
                 lba = (int)track.TrackStartSector - 150;
 
-                pregapFound = false;
-
                 while(lba > (int)previousTrack.TrackStartSector)
                 {
                     // Some drives crash if you try to read just before the previous read, so seek away first
@@ -237,78 +235,71 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         CRC16CCITTContext.Data(subBuf, 10, out crc);
 
-                        if(crc[0] != subBuf[10] ||
-                           crc[1] != subBuf[11])
-                            continue;
-
-                        BcdToBinaryQ(subBuf);
-
-                        // If it's not Q position
-                        if((subBuf[0] & 0xF) != 1)
-                        {
-                            // This means we already searched back, so search forward
-                            if(goFront)
-                            {
-                                lba++;
-
-                                if(lba == (int)previousTrack.TrackStartSector)
-                                    pregapFound = true;
-
-                                break;
-                            }
-
-                            // Search back
-                            goneBack = true;
-                            lba--;
-
+                        if(crc[0] == subBuf[10] &&
+                           crc[1] == subBuf[11])
                             break;
-                        }
+                    }
 
-                        // Previous track
-                        if(subBuf[1] < track.TrackSequence)
+                    if(retries == 10)
+                    {
+                        dumpLog?.WriteLine($"Could not get correct subchannel for sector {lba}");
+                        updateStatus?.Invoke($"Could not get correct subchannel for sector {lba}");
+                    }
+
+                    BcdToBinaryQ(subBuf);
+
+                    // If it's not Q position
+                    if((subBuf[0] & 0xF) != 1)
+                    {
+                        // This means we already searched back, so search forward
+                        if(goFront)
                         {
                             lba++;
 
-                            // Already gone back, so go forward
-                            if(goneBack)
-                                goFront = true;
+                            if(lba == (int)previousTrack.TrackStartSector)
+                                break;
 
-                            break;
+                            continue;
                         }
 
-                        // Same track, but not pregap
-                        if(subBuf[1] == track.TrackSequence &&
-                           subBuf[2] > 0)
-                        {
-                            lba--;
-
-                            break;
-                        }
-
-                        // Pregap according to Q position
-                        int pregapQ = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] + 1;
-
-                        // Bigger than known change, otherwise we found it
-                        if(pregapQ > pregaps[track.TrackSequence])
-                            pregaps[track.TrackSequence] = pregapQ;
-                        else if(pregapQ == pregaps[track.TrackSequence])
-                            pregapFound = true;
-
+                        // Search back
+                        goneBack = true;
                         lba--;
 
-                        break;
+                        continue;
                     }
 
-                    if(pregapFound)
+                    // Previous track
+                    if(subBuf[1] < track.TrackSequence)
+                    {
+                        lba++;
+
+                        // Already gone back, so go forward
+                        if(goneBack)
+                            goFront = true;
+
+                        continue;
+                    }
+
+                    // Same track, but not pregap
+                    if(subBuf[1] == track.TrackSequence &&
+                       subBuf[2] > 0)
+                    {
+                        lba--;
+
+                        continue;
+                    }
+
+                    // Pregap according to Q position
+                    int pregapQ = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] + 1;
+
+                    // Bigger than known change, otherwise we found it
+                    if(pregapQ > pregaps[track.TrackSequence])
+                        pregaps[track.TrackSequence] = pregapQ;
+                    else if(pregapQ == pregaps[track.TrackSequence])
                         break;
 
-                    if(retries != 10)
-                        continue;
-
-                    dumpLog?.WriteLine($"Could not calculate pregap for track {track.TrackSequence}");
-                    updateStatus?.Invoke($"Could not calculate pregap for track {track.TrackSequence}");
-
-                    break;
+                    lba--;
                 }
             }
 
