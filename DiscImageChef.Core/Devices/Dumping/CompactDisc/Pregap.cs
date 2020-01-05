@@ -304,6 +304,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     dumpLog?.WriteLine($"Could not calculate pregap for track {track.TrackSequence}");
                     updateStatus?.Invoke($"Could not calculate pregap for track {track.TrackSequence}");
+
+                    break;
                 }
             }
 
