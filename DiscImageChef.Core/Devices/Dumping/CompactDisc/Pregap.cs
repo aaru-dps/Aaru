@@ -216,12 +216,15 @@ namespace DiscImageChef.Core.Devices.Dumping
                     continue;
 
                 // Calculate pregap
-                lba = (int)track.TrackStartSector - 151;
+                lba = (int)track.TrackStartSector - 150;
 
                 pregapFound = false;
 
                 while(lba > (int)previousTrack.TrackStartSector)
                 {
+                    // Some drives crash if you try to read just before the previous read, so seek away first
+                    GetSectorForPregap(dev, (uint)lba - 10, dbDev, out subBuf);
+
                     for(retries = 0; retries < 10; retries++)
                     {
                         sense = GetSectorForPregap(dev, (uint)lba, dbDev, out subBuf);
@@ -357,15 +360,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 {
                     subBuf = DeinterleaveQ(cmdBuf);
                 }
-                else
-                {
-                    if(sense && (dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
-                                 dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
-                                 dev.Manufacturer.ToLowerInvariant() ==
-                                 "plextor"))
-                        sense = dev.PlextorReadCdDa(out cmdBuf, out _, lba, 2448, 1, PlextorSubchannel.All, dev.Timeout,
-                                                    out _);
+                else if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
+                        dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
+                        dev.Manufacturer.ToLowerInvariant()                                        == "plextor")
+                    sense = dev.PlextorReadCdDa(out cmdBuf, out _, lba, 2448, 1, PlextorSubchannel.All, dev.Timeout,
+                                                out _);
 
+                {
                     if(!sense)
                     {
                         byte[] tmpBuf = new byte[96];
