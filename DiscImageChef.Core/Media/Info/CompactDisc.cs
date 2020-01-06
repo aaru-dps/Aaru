@@ -34,12 +34,13 @@ namespace DiscImageChef.Core.Media.Info
         {
             byte[]     cmdBuf;
             bool       sense;
-            ulong      minute;
-            ulong      second;
-            ulong      frame;
-            ulong      remainder;
+            int        minute;
+            int        second;
+            int        frame;
             byte[]     sectorSync;
             byte[]     tmpBuf;
+            int        lba;
+            int        diff;
             Track      dataTrack   = default;
             Track      audioTrack  = default;
             bool       offsetFound = false;
@@ -55,32 +56,10 @@ namespace DiscImageChef.Core.Media.Info
 
                     if(dataTrack.TrackSequence != 0)
                     {
-                        dataTrack.TrackStartSector += 151;
-
-                        // Calculate MSF
-                        minute = dataTrack.TrackStartSector                     / 4500;
-                        second = (dataTrack.TrackStartSector - (minute * 4500)) / 75;
-                        frame  = dataTrack.TrackStartSector - (minute * 4500) - (second * 75);
-
-                        dataTrack.TrackStartSector -= 151;
-
-                        // Convert to BCD
-                        remainder = minute % 10;
-                        minute    = ((minute / 10) * 16) + remainder;
-                        remainder = second % 10;
-                        second    = ((second / 10) * 16) + remainder;
-                        remainder = frame % 10;
-                        frame     = ((frame / 10) * 16) + remainder;
-
-                        // Scramble M and S
-                        minute ^= 0x01;
-                        second ^= 0x80;
-
                         // Build sync
                         sectorSync = new byte[]
                         {
-                            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, (byte)minute,
-                            (byte)second, (byte)frame
+                            0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00
                         };
 
                         tmpBuf = new byte[sectorSync.Length];
@@ -103,7 +82,23 @@ namespace DiscImageChef.Core.Media.Info
                                     if(!tmpBuf.SequenceEqual(sectorSync))
                                         continue;
 
-                                    combinedOffset = i - 2352;
+                                    // De-scramble M and S
+                                    minute = cmdBuf[i + 12] ^ 0x01;
+                                    second = cmdBuf[i + 13] ^ 0x80;
+                                    frame  = cmdBuf[i + 14];
+
+                                    // Convert to binary
+                                    minute = ((minute / 16) * 10) + (minute & 0x0F);
+                                    second = ((second / 16) * 10) + (second & 0x0F);
+                                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+
+                                    // Calculate the first found LBA
+                                    lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+
+                                    // Calculate the difference between the found LBA and the requested one
+                                    diff = (int)dataTrack.TrackStartSector - lba;
+
+                                    combinedOffset = i + (2352 * diff);
                                     offsetFound    = true;
 
                                     break;
@@ -111,10 +106,11 @@ namespace DiscImageChef.Core.Media.Info
                             }
                         }
 
-                        if(debug                                                                         ||
-                           dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
-                           dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled  == true) == true ||
-                           dev.Manufacturer.ToLowerInvariant()                                   == "hl-dt-st")
+                        if(!offsetFound &&
+                           (debug || dbDev?.ATAPI?.RemovableMedias?.Any(d => d.CanReadCdScrambled == true) == true ||
+                            dbDev?.SCSI?.RemovableMedias?.Any(d => d.CanReadCdScrambled           == true) == true ||
+                            dev.Manufacturer.ToLowerInvariant() ==
+                            "hl-dt-st"))
                         {
                             sense = dev.ReadCd(out cmdBuf, out _, (uint)dataTrack.TrackStartSector, sectorSize, 3,
                                                MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
@@ -130,7 +126,23 @@ namespace DiscImageChef.Core.Media.Info
                                     if(!tmpBuf.SequenceEqual(sectorSync))
                                         continue;
 
-                                    combinedOffset = i - 2352;
+                                    // De-scramble M and S
+                                    minute = cmdBuf[i + 12] ^ 0x01;
+                                    second = cmdBuf[i + 13] ^ 0x80;
+                                    frame  = cmdBuf[i + 14];
+
+                                    // Convert to binary
+                                    minute = ((minute / 16) * 10) + (minute & 0x0F);
+                                    second = ((second / 16) * 10) + (second & 0x0F);
+                                    frame  = ((frame  / 16) * 10) + (frame  & 0x0F);
+
+                                    // Calculate the first found LBA
+                                    lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
+
+                                    // Calculate the difference between the found LBA and the requested one
+                                    diff = (int)dataTrack.TrackStartSector - lba;
+
+                                    combinedOffset = i + (2352 * diff);
                                     offsetFound    = true;
 
                                     break;
@@ -172,19 +184,19 @@ namespace DiscImageChef.Core.Media.Info
                 dataTrack.TrackEndSector += 150;
 
                 // Calculate MSF
-                minute = dataTrack.TrackEndSector                     / 4500;
-                second = (dataTrack.TrackEndSector - (minute * 4500)) / 75;
-                frame  = dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
+                minute = (int)dataTrack.TrackEndSector                     / 4500;
+                second = ((int)dataTrack.TrackEndSector - (minute * 4500)) / 75;
+                frame  = (int)dataTrack.TrackEndSector - (minute * 4500) - (second * 75);
 
                 dataTrack.TrackEndSector -= 150;
 
                 // Convert to BCD
-                remainder = minute % 10;
-                minute    = ((minute / 10) * 16) + remainder;
-                remainder = second % 10;
-                second    = ((second / 10) * 16) + remainder;
-                remainder = frame % 10;
-                frame     = ((frame / 10) * 16) + remainder;
+                minute = ((minute / 10) << 4) + (minute % 10);
+                ;
+                second = ((second / 10) << 4) + (second % 10);
+                ;
+                frame = ((frame / 10) << 4) + (frame % 10);
+                ;
 
                 // Scramble M and S
                 minute ^= 0x01;
