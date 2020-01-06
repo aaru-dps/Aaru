@@ -123,20 +123,6 @@ namespace DiscImageChef.Core.Devices.Dumping
                 return;
             }
 
-            // Search for read offset in master database
-            cdOffset = _ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model);
-
-            if(cdOffset is null)
-            {
-                _dumpLog.WriteLine("CD reading offset not found in database.");
-                UpdateStatus?.Invoke("CD reading offset not found in database.");
-            }
-            else
-            {
-                _dumpLog.WriteLine($"CD reading offset is {cdOffset.Offset} samples.");
-                UpdateStatus?.Invoke($"CD reading offset is {cdOffset.Offset} samples.");
-            }
-
             // Check subchannels support
             supportsPqSubchannel = SupportsPqSubchannel(_dev, _dumpLog, UpdateStatus);
             supportsRwSubchannel = SupportsRwSubchannel(_dev, _dumpLog, UpdateStatus);
@@ -839,14 +825,113 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Check offset
             if(_fixOffset)
             {
-                _fixOffset = Media.Info.CompactDisc.GetOffset(cdOffset, _dbDev, _debug, _dev, dskType, _dumpLog,
-                                                              out offsetBytes, readcd, out sectorsForOffset, tracks,
-                                                              UpdateStatus);
+                if(tracks.All(t => t.TrackType != TrackType.Audio))
+                {
+                    // No audio tracks so no need to fix offset
+                    _dumpLog.WriteLine("No audio tracks, disabling offset fix.");
+                    UpdateStatus.Invoke("No audio tracks, disabling offset fix.");
+
+                    _fixOffset = false;
+                }
+
+                if(!readcd)
+                {
+                    _dumpLog.WriteLine("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
+
+                    UpdateStatus?.
+                        Invoke("READ CD command is not supported, disabling offset fix. Dump may not be correct.");
+
+                    _fixOffset = false;
+                }
             }
             else if(tracks.Any(t => t.TrackType == TrackType.Audio))
             {
                 _dumpLog.WriteLine("There are audio tracks and offset fixing is disabled, dump may not be correct.");
                 UpdateStatus?.Invoke("There are audio tracks and offset fixing is disabled, dump may not be correct.");
+            }
+
+            // Search for read offset in master database
+            cdOffset = _ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model);
+
+            Media.Info.CompactDisc.GetOffset(cdOffset, _dbDev, _debug, _dev, dskType, _dumpLog, tracks, UpdateStatus,
+                                             out int? driveOffset, out int? combinedOffset);
+
+            if(combinedOffset is null)
+            {
+                if(driveOffset is null)
+                {
+                    _dumpLog.WriteLine("Drive reading offset not found in database.");
+                    UpdateStatus?.Invoke("Drive reading offset not found in database.");
+                    _dumpLog.WriteLine("Disc offset cannot be calculated.");
+                    UpdateStatus?.Invoke("Disc offset cannot be calculated.");
+
+                    if(tracks.Any(t => t.TrackType == TrackType.Audio))
+                    {
+                        _dumpLog.WriteLine("Dump may not be correct.");
+
+                        UpdateStatus?.Invoke("Dump may not be correct.");
+                    }
+
+                    if(_fixOffset)
+                        _fixOffset = false;
+                }
+                else
+                {
+                    _dumpLog.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset   / 4} samples).");
+                    UpdateStatus?.Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+
+                    _dumpLog.WriteLine("Disc write offset is unknown, dump may not be correct.");
+                    UpdateStatus?.Invoke("Disc write offset is unknown, dump may not be correct.");
+
+                    offsetBytes = driveOffset.Value;
+
+                    sectorsForOffset = offsetBytes / (int)sectorSize;
+
+                    if(sectorsForOffset < 0)
+                        sectorsForOffset *= -1;
+
+                    if(offsetBytes % sectorSize != 0)
+                        sectorsForOffset++;
+                }
+            }
+            else
+            {
+                offsetBytes      = combinedOffset.Value;
+                sectorsForOffset = offsetBytes / (int)sectorSize;
+
+                if(sectorsForOffset < 0)
+                    sectorsForOffset *= -1;
+
+                if(offsetBytes % sectorSize != 0)
+                    sectorsForOffset++;
+
+                if(driveOffset is null)
+                {
+                    _dumpLog.WriteLine("Drive reading offset not found in database.");
+                    UpdateStatus?.Invoke("Drive reading offset not found in database.");
+                    _dumpLog.WriteLine($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+
+                    UpdateStatus?.
+                        Invoke($"Combined disc and drive offsets are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+                }
+                else
+                {
+                    _dumpLog.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset   / 4} samples).");
+                    UpdateStatus?.Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+
+                    int? discOffset = offsetBytes - driveOffset;
+
+                    _dumpLog.WriteLine($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+
+                    UpdateStatus?.Invoke($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
+                }
+            }
+
+            if(!_fixOffset ||
+               tracks.All(t => t.TrackType != TrackType.Audio))
+            {
+                offsetBytes      = 0;
+                sectorsForOffset = 0;
             }
 
             mhddLog = new MhddLog(_outputPrefix + ".mhddlog.bin", _dev, blocks, blockSize, _maximumReadable);

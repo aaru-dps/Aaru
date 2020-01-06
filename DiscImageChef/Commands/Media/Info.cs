@@ -580,37 +580,55 @@ namespace DiscImageChef.Commands.Media
                                       track.TrackSequence, track.TrackStartSector, track.TrackEndSector,
                                       track.TrackPregap, track.TrackType);
 
-                    CdOffset cdOffset = null;
-
-                    if(dbDev != null)
-                    {
-                        // Search for read offset in master database
-                        cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
-                                                                     d.Model        == dev.Model);
-                    }
-
-                    bool gotOffset = CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null,
-                                                           out int offsetBytes, true, out _, tracks, null);
-
                     DicConsole.WriteLine();
                     DicConsole.WriteLine("Offsets:");
 
-                    DicConsole.WriteLine(cdOffset != null
-                                             ? $"Drive offset is {cdOffset.Offset * 4} bytes ({cdOffset.Offset} samples)"
-                                             : "Drive offset is unknown");
+                    CdOffset cdOffset = null;
 
-                    if(gotOffset)
+                    // Search for read offset in master database
+                    cdOffset = ctx.CdOffsets.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer &&
+                                                                 d.Model        == dev.Model);
+
+                    CompactDisc.GetOffset(cdOffset, dbDev, debug, dev, scsiInfo.MediaType, null, tracks, null,
+                                          out int? driveOffset, out int? combinedOffset);
+
+                    if(combinedOffset is null)
                     {
-                        DicConsole.WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples)");
+                        if(driveOffset is null)
+                        {
+                            DicConsole.WriteLine("Drive reading offset not found in database.");
+                            DicConsole.WriteLine("Disc offset cannot be calculated.");
+                        }
+                        else
+                        {
+                            DicConsole.
+                                WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
 
-                        DicConsole.WriteLine(cdOffset != null
-                                                 ? $"Disc offset is {offsetBytes - (cdOffset.Offset * 4)} bytes ({(offsetBytes / 4) - cdOffset.Offset} samples)"
-                                                 : "Disc offset is unknown");
+                            DicConsole.WriteLine("Disc write offset is unknown.");
+                        }
                     }
                     else
                     {
-                        DicConsole.WriteLine("Combined offset is unknown");
-                        DicConsole.WriteLine("Disc offset is unknown");
+                        int offsetBytes = combinedOffset.Value;
+
+                        if(driveOffset is null)
+                        {
+                            DicConsole.WriteLine("Drive reading offset not found in database.");
+
+                            DicConsole.
+                                WriteLine($"Combined disc and drive offset are {offsetBytes} bytes ({offsetBytes / 4} samples).");
+                        }
+                        else
+                        {
+                            DicConsole.
+                                WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
+
+                            DicConsole.WriteLine($"Combined offset is {offsetBytes} bytes ({offsetBytes / 4} samples)");
+
+                            int? discOffset = offsetBytes - driveOffset;
+
+                            DicConsole.WriteLine($"Disc offset is {discOffset} bytes ({discOffset / 4} samples)");
+                        }
                     }
                 }
             }
