@@ -300,10 +300,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     int diff = posQ                                                    - lba;
 
                     if(diff != 0)
-                    {
-                        inexactPositioning =  true;
-                        pregapQ            += diff;
-                    }
+                        inexactPositioning = true;
 
                     // Bigger than known change, otherwise we found it
                     if(pregapQ > pregaps[track.TrackSequence])
