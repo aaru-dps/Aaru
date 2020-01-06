@@ -990,7 +990,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 // TODO: Layers
                 if(opticalDisc)
-                    WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, 1, out totalChkDuration);
+                    WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, 1, out totalChkDuration, null);
                 else
                 {
                     UpdateStatus?.Invoke("Creating sidecar.");

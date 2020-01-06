@@ -54,8 +54,10 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="mediaTags">Media tags</param>
         /// <param name="sessions">Disc sessions</param>
         /// <param name="totalChkDuration">Total time spent doing checksums</param>
+        /// <param name="discOffset">Disc write offset</param>
         void WriteOpticalSidecar(uint blockSize, ulong blocks, MediaType mediaType, LayersType layers,
-                                 Dictionary<MediaTagType, byte[]> mediaTags, int sessions, out double totalChkDuration)
+                                 Dictionary<MediaTagType, byte[]> mediaTags, int sessions, out double totalChkDuration,
+                                 int? discOffset)
         {
             _dumpLog.WriteLine("Creating sidecar.");
             var         filters     = new FiltersList();
@@ -119,6 +121,12 @@ namespace DiscImageChef.Core.Devices.Dumping
             sidecar.OpticalDisc[0].DumpHardwareArray = _resume.Tries.ToArray();
             sidecar.OpticalDisc[0].Sessions          = (uint)sessions;
             sidecar.OpticalDisc[0].Layers            = layers;
+
+            if(discOffset.HasValue)
+            {
+                sidecar.OpticalDisc[0].Offset          = (int)(discOffset / 4);
+                sidecar.OpticalDisc[0].OffsetSpecified = true;
+            }
 
             if(mediaTags != null)
                 foreach(KeyValuePair<MediaTagType, byte[]> tag in mediaTags.Where(tag => _outputPlugin.

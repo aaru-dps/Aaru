@@ -1179,7 +1179,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     Value = layerBreak
                 };
 
-                WriteOpticalSidecar(BLOCK_SIZE, blocks, dskType, layers, mediaTags, 1, out totalChkDuration);
+                WriteOpticalSidecar(BLOCK_SIZE, blocks, dskType, layers, mediaTags, 1, out totalChkDuration, null);
             }
 
             UpdateStatus?.Invoke("");

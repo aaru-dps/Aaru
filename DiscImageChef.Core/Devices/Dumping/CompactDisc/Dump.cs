@@ -71,6 +71,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             byte[]                 cmdBuf;                                       // Data buffer
             DumpHardwareType       currentTry   = null;                          // Current dump hardware try
             double                 currentSpeed = 0;                             // Current read speed
+            int?                   discOffset   = null;                          // Disc write offset
             DateTime               dumpStart    = DateTime.UtcNow;               // Time of dump start
             DateTime               end;                                          // Time of operation end
             ExtentsULong           extents = null;                               // Extents
@@ -919,7 +920,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     _dumpLog.WriteLine($"Drive reading offset is {driveOffset} bytes ({driveOffset   / 4} samples).");
                     UpdateStatus?.Invoke($"Drive reading offset is {driveOffset} bytes ({driveOffset / 4} samples).");
 
-                    int? discOffset = offsetBytes - driveOffset;
+                    discOffset = offsetBytes - driveOffset;
 
                     _dumpLog.WriteLine($"Disc offsets is {discOffset} bytes ({discOffset / 4} samples)");
 
@@ -1057,7 +1058,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             double totalChkDuration = 0;
 
             if(_metadata)
-                WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, sessions, out totalChkDuration);
+                WriteOpticalSidecar(blockSize, blocks, dskType, null, mediaTags, sessions, out totalChkDuration,
+                                    discOffset);
 
             end = DateTime.UtcNow;
             UpdateStatus?.Invoke("");

@@ -652,9 +652,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             double totalChkDuration = 0;
 
             if(_metadata)
-            {
-                WriteOpticalSidecar(BLOCK_SIZE, blocks, DSK_TYPE, null, null, 1, out totalChkDuration);
-            }
+                WriteOpticalSidecar(BLOCK_SIZE, blocks, DSK_TYPE, null, null, 1, out totalChkDuration, null);
 
             UpdateStatus?.Invoke("");
 
