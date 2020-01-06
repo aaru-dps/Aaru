@@ -344,7 +344,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             if(tracks is null)
                 return;
 
-            SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel, _dbDev);
+            SolveTrackPregaps(_dev, _dumpLog, UpdateStatus, tracks, supportsPqSubchannel, supportsRwSubchannel, _dbDev,
+                              out bool inexactPositioning);
+
+            if(inexactPositioning)
+            {
+                _dumpLog.WriteLine("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
+
+                UpdateStatus?.
+                    Invoke("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
+            }
 
             for(int t = 1; t < tracks.Length; t++)
                 tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;

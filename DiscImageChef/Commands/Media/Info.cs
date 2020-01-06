@@ -559,7 +559,8 @@ namespace DiscImageChef.Commands.Media
                         ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
                                                         d.Revision     == dev.Revision);
 
-                    Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev);
+                    Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev,
+                                           out bool inexactPositioning);
 
                     for(int t = 1; t < tracks.Length; t++)
                         tracks[t - 1].TrackEndSector = tracks[t].TrackStartSector - 1;
@@ -568,6 +569,10 @@ namespace DiscImageChef.Commands.Media
 
                     DicConsole.WriteLine();
                     DicConsole.WriteLine("Track calculations:");
+
+                    if(inexactPositioning)
+                        DicConsole.
+                            WriteLine("WARNING: The drive has returned incorrect Q positioning when calculating pregaps. A best effort has been tried but they may be incorrect.");
 
                     foreach(Track track in tracks)
                         DicConsole.

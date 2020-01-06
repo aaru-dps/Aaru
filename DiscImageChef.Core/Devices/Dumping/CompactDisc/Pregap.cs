@@ -123,16 +123,16 @@ namespace DiscImageChef.Core.Devices.Dumping
 
         public static void SolveTrackPregaps(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus,
                                              Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel,
-                                             Database.Models.Device dbDev)
+                                             Database.Models.Device dbDev, out bool inexactPositioning)
         {
-            bool                  sense;  // Sense indicator
-            byte[]                cmdBuf; // Data buffer
+            bool                  sense; // Sense indicator
             byte[]                subBuf;
             int                   posQ;
             uint                  retries;
             bool?                 bcd = null;
             byte[]                crc;
             Dictionary<uint, int> pregaps = new Dictionary<uint, int>();
+            inexactPositioning = false;
 
             if(!supportsPqSubchannel &&
                !supportsRwSubchannel)
@@ -296,6 +296,14 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     // Pregap according to Q position
                     int pregapQ = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] + 1;
+                    posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75)                   + subBuf[9]) - 150;
+                    int diff = posQ                                                    - lba;
+
+                    if(diff != 0)
+                    {
+                        inexactPositioning =  true;
+                        pregapQ            += diff;
+                    }
 
                     // Bigger than known change, otherwise we found it
                     if(pregapQ > pregaps[track.TrackSequence])
