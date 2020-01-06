@@ -141,7 +141,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             // Check if subchannel is BCD
             for(retries = 0; retries < 10; retries++)
             {
-                sense = GetSectorForPregap(dev, 11, dbDev, out subBuf);
+                sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, 11, dbDev, out subBuf)
+                            : GetSectorForPregapQ16(dev, 11, dbDev, out subBuf);
 
                 if(sense)
                     continue;
@@ -180,7 +181,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // Check if pregap is 0
                 for(retries = 0; retries < 10; retries++)
                 {
-                    sense = GetSectorForPregap(dev, (uint)lba, dbDev, out subBuf);
+                    sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf)
+                                : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf);
 
                     if(sense)
                         continue;
@@ -221,11 +223,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 while(lba > (int)previousTrack.TrackStartSector)
                 {
                     // Some drives crash if you try to read just before the previous read, so seek away first
-                    GetSectorForPregap(dev, (uint)lba - 10, dbDev, out subBuf);
+                    sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf)
+                                : GetSectorForPregapQ16(dev, (uint)lba                  - 10, dbDev, out subBuf);
 
                     for(retries = 0; retries < 10; retries++)
                     {
-                        sense = GetSectorForPregap(dev, (uint)lba, dbDev, out subBuf);
+                        sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf)
+                                    : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf);
 
                         if(sense)
                             continue;
@@ -315,7 +319,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
         }
 
-        static bool GetSectorForPregap(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
+        static bool GetSectorForPregapRaw(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
         {
             byte[] cmdBuf;
             bool   sense;
@@ -365,6 +369,44 @@ namespace DiscImageChef.Core.Devices.Dumping
                         subBuf = DeinterleaveQ(tmpBuf);
                     }
                 }
+            }
+
+            return sense;
+        }
+
+        static bool GetSectorForPregapQ16(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
+        {
+            byte[] cmdBuf;
+            bool   sense;
+            subBuf = null;
+
+            sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.AllTypes, false, false, true,
+                               MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.Q16,
+                               dev.Timeout, out _);
+
+            if(sense)
+                sense = dev.ReadCd(out cmdBuf, out _, lba, 2368, 1, MmcSectorTypes.Cdda, false, false, false,
+                                   MmcHeaderCodes.None, true, false, MmcErrorField.None, MmcSubchannel.Q16, dev.Timeout,
+                                   out _);
+
+            if(!sense)
+            {
+                subBuf = new byte[16];
+                Array.Copy(cmdBuf, 2352, subBuf, 0, 16);
+            }
+            else
+            {
+                sense = dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.AllTypes, false, false, false,
+                                   MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
+                                   dev.Timeout, out _);
+
+                if(sense)
+                    sense = dev.ReadCd(out cmdBuf, out _, lba, 16, 1, MmcSectorTypes.Cdda, false, false, false,
+                                       MmcHeaderCodes.None, false, false, MmcErrorField.None, MmcSubchannel.Q16,
+                                       dev.Timeout, out _);
+
+                if(!sense)
+                    subBuf = cmdBuf;
             }
 
             return sense;
