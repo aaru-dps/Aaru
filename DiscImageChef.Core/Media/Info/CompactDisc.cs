@@ -64,13 +64,16 @@ namespace DiscImageChef.Core.Media.Info
 
                         tmpBuf = new byte[sectorSync.Length];
 
+                        // Ensure to be out of the pregap, or multi-session discs give funny values
+                        uint wantedLba = (uint)(dataTrack.TrackStartSector + 151);
+
                         // Plextor READ CDDA
                         if(dbDev?.ATAPI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA == true) == true ||
                            dbDev?.SCSI?.RemovableMedias?.Any(d => d.SupportsPlextorReadCDDA  == true) == true ||
                            dev.Manufacturer.ToLowerInvariant()                                        == "plextor")
                         {
-                            sense = dev.PlextorReadCdDa(out cmdBuf, out _, (uint)dataTrack.TrackStartSector, sectorSize,
-                                                        3, PlextorSubchannel.None, dev.Timeout, out _);
+                            sense = dev.PlextorReadCdDa(out cmdBuf, out _, wantedLba, sectorSize, 3,
+                                                        PlextorSubchannel.None, dev.Timeout, out _);
 
                             if(!sense &&
                                !dev.Error)
@@ -96,7 +99,7 @@ namespace DiscImageChef.Core.Media.Info
                                     lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
 
                                     // Calculate the difference between the found LBA and the requested one
-                                    diff = (int)dataTrack.TrackStartSector - lba;
+                                    diff = (int)wantedLba - lba;
 
                                     combinedOffset = i + (2352 * diff);
                                     offsetFound    = true;
@@ -112,9 +115,9 @@ namespace DiscImageChef.Core.Media.Info
                             dev.Manufacturer.ToLowerInvariant() ==
                             "hl-dt-st"))
                         {
-                            sense = dev.ReadCd(out cmdBuf, out _, (uint)dataTrack.TrackStartSector, sectorSize, 3,
-                                               MmcSectorTypes.Cdda, false, false, false, MmcHeaderCodes.None, true,
-                                               false, MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+                            sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false,
+                                               false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                               MmcSubchannel.None, dev.Timeout, out _);
 
                             if(!sense &&
                                !dev.Error)
@@ -140,7 +143,7 @@ namespace DiscImageChef.Core.Media.Info
                                     lba = ((minute * 60 * 75) + (second * 75) + frame) - 150;
 
                                     // Calculate the difference between the found LBA and the requested one
-                                    diff = (int)dataTrack.TrackStartSector - lba;
+                                    diff = (int)wantedLba - lba;
 
                                     combinedOffset = i + (2352 * diff);
                                     offsetFound    = true;
