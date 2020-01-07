@@ -45,7 +45,7 @@ namespace DiscImageChef.DiscImages
     public partial class CdrWin
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
             if(options != null)
             {
@@ -54,25 +54,32 @@ namespace DiscImageChef.DiscImages
                     if(!bool.TryParse(tmpValue, out separateTracksWriting))
                     {
                         ErrorMessage = "Invalid value for split option";
+
                         return false;
                     }
 
                     if(separateTracksWriting)
                     {
                         ErrorMessage = "Separate tracksnot yet implemented";
+
                         return false;
                     }
                 }
             }
-            else separateTracksWriting = false;
+            else
+                separateTracksWriting = false;
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
             // TODO: Separate tracks
             try
@@ -83,6 +90,7 @@ namespace DiscImageChef.DiscImages
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
@@ -96,6 +104,7 @@ namespace DiscImageChef.DiscImages
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
@@ -104,6 +113,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
@@ -111,16 +121,20 @@ namespace DiscImageChef.DiscImages
             {
                 case MediaTagType.CD_MCN:
                     discimage.Mcn = Encoding.ASCII.GetString(data);
+
                     return true;
                 case MediaTagType.CD_TEXT:
-                    FileStream cdTextStream = new FileStream(writingBaseName + "_cdtext.bin", FileMode.Create,
-                                                             FileAccess.ReadWrite, FileShare.None);
+                    var cdTextStream = new FileStream(writingBaseName + "_cdtext.bin", FileMode.Create,
+                                                      FileAccess.ReadWrite, FileShare.None);
+
                     cdTextStream.Write(data, 0, data.Length);
                     discimage.Cdtextfile = Path.GetFileName(cdTextStream.Name);
                     cdTextStream.Close();
+
                     return true;
                 default:
                     ErrorMessage = $"Unsupported media tag {tag}";
+
                     return false;
             }
         }
@@ -130,6 +144,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
@@ -140,6 +155,7 @@ namespace DiscImageChef.DiscImages
             if(track.TrackSequence == 0)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
+
                 return false;
             }
 
@@ -148,23 +164,28 @@ namespace DiscImageChef.DiscImages
             if(trackStream == null)
             {
                 ErrorMessage = $"Can't found file containing {sectorAddress}";
+
                 return false;
             }
 
             if(track.TrackBytesPerSector != track.TrackRawBytesPerSector)
             {
                 ErrorMessage = "Invalid write mode for this sector";
+
                 return false;
             }
 
             if(data.Length != track.TrackRawBytesPerSector)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
-            trackStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
-                             SeekOrigin.Begin);
+            trackStream.
+                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                     SeekOrigin.Begin);
+
             trackStream.Write(data, 0, data.Length);
 
             return true;
@@ -175,6 +196,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
@@ -185,6 +207,7 @@ namespace DiscImageChef.DiscImages
             if(track.TrackSequence == 0)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
+
                 return false;
             }
 
@@ -193,29 +216,35 @@ namespace DiscImageChef.DiscImages
             if(trackStream == null)
             {
                 ErrorMessage = $"Can't found file containing {sectorAddress}";
+
                 return false;
             }
 
             if(track.TrackBytesPerSector != track.TrackRawBytesPerSector)
             {
                 ErrorMessage = "Invalid write mode for this sector";
+
                 return false;
             }
 
             if(sectorAddress + length > track.TrackEndSector + 1)
             {
                 ErrorMessage = "Can't cross tracks";
+
                 return false;
             }
 
             if(data.Length % track.TrackRawBytesPerSector != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
-            trackStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
-                             SeekOrigin.Begin);
+            trackStream.
+                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                     SeekOrigin.Begin);
+
             trackStream.Write(data, 0, data.Length);
 
             return true;
@@ -226,6 +255,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
@@ -236,6 +266,7 @@ namespace DiscImageChef.DiscImages
             if(track.TrackSequence == 0)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
+
                 return false;
             }
 
@@ -244,17 +275,21 @@ namespace DiscImageChef.DiscImages
             if(trackStream == null)
             {
                 ErrorMessage = $"Can't found file containing {sectorAddress}";
+
                 return false;
             }
 
             if(data.Length != track.TrackRawBytesPerSector)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
-            trackStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
-                             SeekOrigin.Begin);
+            trackStream.
+                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                     SeekOrigin.Begin);
+
             trackStream.Write(data, 0, data.Length);
 
             return true;
@@ -265,6 +300,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
@@ -275,6 +311,7 @@ namespace DiscImageChef.DiscImages
             if(track.TrackSequence == 0)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
+
                 return false;
             }
 
@@ -283,23 +320,28 @@ namespace DiscImageChef.DiscImages
             if(trackStream == null)
             {
                 ErrorMessage = $"Can't found file containing {sectorAddress}";
+
                 return false;
             }
 
             if(sectorAddress + length > track.TrackEndSector + 1)
             {
                 ErrorMessage = "Can't cross tracks";
+
                 return false;
             }
 
             if(data.Length % track.TrackRawBytesPerSector != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
-            trackStream.Seek((long)(track.TrackFileOffset + (sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector),
-                             SeekOrigin.Begin);
+            trackStream.
+                Seek((long)(track.TrackFileOffset + ((sectorAddress - track.TrackStartSector) * (ulong)track.TrackRawBytesPerSector)),
+                     SeekOrigin.Begin);
+
             trackStream.Write(data, 0, data.Length);
 
             return true;
@@ -310,34 +352,42 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
-            if(tracks == null || tracks.Count == 0)
+            if(tracks       == null ||
+               tracks.Count == 0)
             {
                 ErrorMessage = "Invalid tracks sent";
+
                 return false;
             }
 
-            if(writingTracks != null && writingStreams != null)
+            if(writingTracks  != null &&
+               writingStreams != null)
                 foreach(FileStream oldTrack in writingStreams.Select(t => t.Value).Distinct())
                     oldTrack.Close();
 
             ulong currentOffset = 0;
             writingTracks = new List<Track>();
+
             foreach(Track track in tracks.OrderBy(t => t.TrackSequence))
             {
                 Track newTrack = track;
-                newTrack.TrackFile = separateTracksWriting
-                                         ? writingBaseName + $"_track{track.TrackSequence:D2}.bin"
-                                         : writingBaseName + ".bin";
+
+                newTrack.TrackFile = separateTracksWriting ? writingBaseName + $"_track{track.TrackSequence:D2}.bin"
+                                         : writingBaseName                   + ".bin";
+
                 newTrack.TrackFileOffset = separateTracksWriting ? 0 : currentOffset;
                 writingTracks.Add(newTrack);
+
                 currentOffset += (ulong)newTrack.TrackRawBytesPerSector *
-                                 (newTrack.TrackEndSector - newTrack.TrackStartSector + 1);
+                                 ((newTrack.TrackEndSector - newTrack.TrackStartSector) + 1);
             }
 
             writingStreams = new Dictionary<uint, FileStream>();
+
             if(separateTracksWriting)
                 foreach(Track track in writingTracks)
                     writingStreams.Add(track.TrackSequence,
@@ -345,9 +395,11 @@ namespace DiscImageChef.DiscImages
                                                       FileShare.None));
             else
             {
-                FileStream jointstream = new FileStream(writingBaseName + ".bin", FileMode.OpenOrCreate,
-                                                        FileAccess.ReadWrite, FileShare.None);
-                foreach(Track track in writingTracks) writingStreams.Add(track.TrackSequence, jointstream);
+                var jointstream = new FileStream(writingBaseName + ".bin", FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                                 FileShare.None);
+
+                foreach(Track track in writingTracks)
+                    writingStreams.Add(track.TrackSequence, jointstream);
             }
 
             return true;
@@ -358,6 +410,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -377,27 +430,36 @@ namespace DiscImageChef.DiscImages
 
             if(!string.IsNullOrWhiteSpace(discimage.Comment))
             {
-                string[] commentLines = discimage.Comment.Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
-                foreach(string line in commentLines) descriptorStream.WriteLine("REM {0}", line);
+                string[] commentLines = discimage.Comment.Split(new[]
+                {
+                    '\n'
+                }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach(string line in commentLines)
+                    descriptorStream.WriteLine("REM {0}", line);
             }
 
-            descriptorStream.WriteLine("REM ORIGINAL MEDIA-TYPE {0}", MediaTypeToCdrwinType(imageInfo.MediaType));
+            descriptorStream.WriteLine("REM ORIGINAL MEDIA-TYPE: {0}", MediaTypeToCdrwinType(imageInfo.MediaType));
 
             if(!string.IsNullOrEmpty(discimage.Cdtextfile))
                 descriptorStream.WriteLine("CDTEXTFILE \"{0}\"", Path.GetFileName(discimage.Cdtextfile));
 
-            if(!string.IsNullOrEmpty(discimage.Title)) descriptorStream.WriteLine("TITLE {0}", discimage.Title);
+            if(!string.IsNullOrEmpty(discimage.Title))
+                descriptorStream.WriteLine("TITLE {0}", discimage.Title);
 
-            if(!string.IsNullOrEmpty(discimage.Mcn)) descriptorStream.WriteLine("CATALOG {0}", discimage.Mcn);
+            if(!string.IsNullOrEmpty(discimage.Mcn))
+                descriptorStream.WriteLine("CATALOG {0}", discimage.Mcn);
 
-            if(!string.IsNullOrEmpty(discimage.Barcode)) descriptorStream.WriteLine("UPC_EAN {0}", discimage.Barcode);
+            if(!string.IsNullOrEmpty(discimage.Barcode))
+                descriptorStream.WriteLine("UPC_EAN {0}", discimage.Barcode);
 
             if(!separateTracksWriting)
                 descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(writingStreams.First().Value.Name));
 
             foreach(Track track in writingTracks)
             {
-                if(track.TrackSession > currentSession) descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
+                if(track.TrackSession > currentSession)
+                    descriptorStream.WriteLine("REM SESSION {0}", ++currentSession);
 
                 if(separateTracksWriting)
                     descriptorStream.WriteLine("FILE \"{0}\" BINARY", Path.GetFileName(track.TrackFile));
@@ -406,9 +468,11 @@ namespace DiscImageChef.DiscImages
                 descriptorStream.WriteLine("  TRACK {0:D2} {1}", track.TrackSequence, GetTrackMode(track));
 
                 if(trackFlags.TryGetValue((byte)track.TrackSequence, out byte flagsByte))
-                    if(flagsByte != 0 && flagsByte != (byte)CdFlags.DataTrack)
+                    if(flagsByte != 0 &&
+                       flagsByte != (byte)CdFlags.DataTrack)
                     {
-                        CdFlags flags = (CdFlags)flagsByte;
+                        var flags = (CdFlags)flagsByte;
+
                         descriptorStream.WriteLine("    FLAGS{0}{1}{2}",
                                                    flags.HasFlag(CdFlags.CopyPermitted) ? " DCP" : "",
                                                    flags.HasFlag(CdFlags.FourChannel) ? " 4CH" : "",
@@ -418,8 +482,19 @@ namespace DiscImageChef.DiscImages
                 if(trackIsrcs.TryGetValue((byte)track.TrackSequence, out string isrc))
                     descriptorStream.WriteLine("    ISRC {0}", isrc);
 
-                descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
-                                           msf.frame);
+                if(track.TrackPregap > 0)
+                {
+                    descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 0, msf.minute, msf.second,
+                                               msf.frame);
+
+                    msf = LbaToMsf(track.TrackStartSector + track.TrackPregap);
+
+                    descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
+                                               msf.frame);
+                }
+                else
+                    descriptorStream.WriteLine("    INDEX {0:D2} {1:D2}:{2:D2}:{3:D2}", 1, msf.minute, msf.second,
+                                               msf.frame);
             }
 
             descriptorStream.Flush();
@@ -427,12 +502,14 @@ namespace DiscImageChef.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
         public bool SetGeometry(uint cylinders, uint heads, uint sectorsPerTrack)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
@@ -441,6 +518,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
@@ -451,6 +529,7 @@ namespace DiscImageChef.DiscImages
             if(track.TrackSequence == 0)
             {
                 ErrorMessage = $"Can't found track containing {sectorAddress}";
+
                 return false;
             }
 
@@ -461,19 +540,24 @@ namespace DiscImageChef.DiscImages
                     if(data.Length != 1)
                     {
                         ErrorMessage = "Incorrect data size for track flags";
+
                         return false;
                     }
 
                     trackFlags.Add((byte)track.TrackSequence, data[0]);
+
                     return true;
                 }
                 case SectorTagType.CdTrackIsrc:
                 {
-                    if(data != null) trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
+                    if(data != null)
+                        trackIsrcs.Add((byte)track.TrackSequence, Encoding.UTF8.GetString(data));
+
                     return true;
                 }
                 default:
                     ErrorMessage = $"Unsupported tag type {tag}";
+
                     return false;
             }
         }
@@ -490,6 +574,7 @@ namespace DiscImageChef.DiscImages
             discimage.Barcode = metadata.MediaBarcode;
             discimage.Comment = metadata.Comments;
             discimage.Title   = metadata.MediaTitle;
+
             return true;
         }
     }
