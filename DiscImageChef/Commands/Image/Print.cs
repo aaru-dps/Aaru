@@ -85,7 +85,7 @@ namespace DiscImageChef.Commands.Image
         }
 
         public static int Invoke(bool debug, bool verbose, string imagePath, ulong length, bool longSectors,
-                                 ulong startSector, ushort widthBytes)
+                                 ulong start, ushort width)
         {
             MainClass.PrintCopyright();
 
@@ -101,9 +101,9 @@ namespace DiscImageChef.Commands.Image
             DicConsole.DebugWriteLine("PrintHex command", "--input={0}", imagePath);
             DicConsole.DebugWriteLine("PrintHex command", "--length={0}", length);
             DicConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", longSectors);
-            DicConsole.DebugWriteLine("PrintHex command", "--start={0}", startSector);
+            DicConsole.DebugWriteLine("PrintHex command", "--start={0}", start);
             DicConsole.DebugWriteLine("PrintHex command", "--verbose={0}", verbose);
-            DicConsole.DebugWriteLine("PrintHex command", "--WidthBytes={0}", widthBytes);
+            DicConsole.DebugWriteLine("PrintHex command", "--width={0}", width);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
@@ -128,7 +128,7 @@ namespace DiscImageChef.Commands.Image
 
             for(ulong i = 0; i < length; i++)
             {
-                DicConsole.WriteLine("Sector {0}", startSector + i);
+                DicConsole.WriteLine("Sector {0}", start + i);
 
                 if(inputFormat.Info.ReadableSectorTags == null)
                 {
@@ -148,10 +148,10 @@ namespace DiscImageChef.Commands.Image
                     }
                 }
 
-                byte[] sector = longSectors ? inputFormat.ReadSectorLong(startSector + i)
-                                    : inputFormat.ReadSector(startSector             + i);
+                byte[] sector = longSectors ? inputFormat.ReadSectorLong(start + i)
+                                    : inputFormat.ReadSector(start             + i);
 
-                PrintHex.PrintHexArray(sector, widthBytes);
+                PrintHex.PrintHexArray(sector, width);
             }
 
             return(int)ErrorNumber.NoError;
