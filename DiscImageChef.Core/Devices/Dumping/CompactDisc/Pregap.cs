@@ -250,6 +250,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                         updateStatus?.Invoke($"Could not get correct subchannel for sector {lba}");
                     }
 
+                    if(subBuf.All(b => b == 0))
+                    {
+                        inexactPositioning = true;
+
+                        break;
+                    }
+
                     BcdToBinaryQ(subBuf);
 
                     // If it's not Q position
