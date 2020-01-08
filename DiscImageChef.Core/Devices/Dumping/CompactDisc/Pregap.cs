@@ -37,6 +37,7 @@ using System.Linq;
 using DiscImageChef.Checksums;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Devices;
 
@@ -152,6 +153,12 @@ namespace DiscImageChef.Core.Devices.Dumping
                 break;
             }
 
+            DicConsole.DebugWriteLine("Pregap calculator", bcd == true
+                                                               ? "Subchannel is BCD"
+                                                               : bcd == false
+                                                                   ? "Subchannel is not BCD"
+                                                                   : "Could not detect drive subchannel BCD");
+
             if(bcd is null)
             {
                 dumpLog?.WriteLine("Could not detect if drive subchannel is BCD or not, pregaps could not be calculated, dump may be incorrect...");
@@ -169,7 +176,13 @@ namespace DiscImageChef.Core.Devices.Dumping
             foreach(Track track in tracks)
             {
                 if(track.TrackSequence <= 1)
+                {
+                    DicConsole.DebugWriteLine("Pregap calculator", "Skipping track 1");
+
                     continue;
+                }
+
+                DicConsole.DebugWriteLine("Pregap calculator", "Track {0}", track.TrackSequence);
 
                 int   lba           = (int)track.TrackStartSector - 1;
                 bool  pregapFound   = false;
@@ -185,12 +198,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                                 : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf);
 
                     if(sense)
+                    {
+                        DicConsole.DebugWriteLine("Pregap calculator", "LBA: {0}, Try {1}, Sense {2}", lba, retries + 1,
+                                                  sense);
+
                         continue;
+                    }
 
                     if(bcd == false)
                         BinaryToBcdQ(subBuf);
 
                     CRC16CCITTContext.Data(subBuf, 10, out crc);
+
+                    DicConsole.DebugWriteLine("Pregap calculator",
+                                              "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                              lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
+                                              subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
+                                              subBuf[10], subBuf[11], crc[0], crc[1]);
 
                     if(crc[0] != subBuf[10] ||
                        crc[1] != subBuf[11])
@@ -239,6 +263,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         CRC16CCITTContext.Data(subBuf, 10, out crc);
 
+                        DicConsole.DebugWriteLine("Pregap calculator",
+                                                  "LBA: {0}, Try {1}, Sense {2}, Q: {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                                  lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2], subBuf[3],
+                                                  subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
+                                                  subBuf[10], subBuf[11], crc[0], crc[1]);
+
                         if(crc[0] == subBuf[10] &&
                            crc[1] == subBuf[11])
                             break;
@@ -253,6 +283,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(subBuf.All(b => b == 0))
                     {
                         inexactPositioning = true;
+
+                        DicConsole.DebugWriteLine("Pregap calculator", "All Q empty for LBA {0}", lba);
 
                         break;
                     }
@@ -307,11 +339,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                     int diff = posQ                                                    - lba;
 
                     if(diff != 0)
+                    {
+                        DicConsole.DebugWriteLine("Pregap calculator", "Invalid Q position for LBA {0}, got {1}", lba,
+                                                  posQ);
+
                         inexactPositioning = true;
+                    }
 
                     // Bigger than known change, otherwise we found it
                     if(pregapQ > pregaps[track.TrackSequence])
+                    {
+                        DicConsole.DebugWriteLine("Pregap calculator", "Pregap for track {0}: {1}", track.TrackSequence,
+                                                  pregapQ);
+
                         pregaps[track.TrackSequence] = pregapQ;
+                    }
                     else if(pregapQ == pregaps[track.TrackSequence])
                         break;
 
