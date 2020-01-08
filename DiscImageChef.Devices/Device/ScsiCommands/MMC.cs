@@ -439,7 +439,10 @@ namespace DiscImageChef.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "READ CD took {0} ms.", duration);
+            DicConsole.DebugWriteLine("SCSI Device",
+                                      "READ CD (LBA: {1}, Block Size: {2}, Transfer Length: {3}, Expected Sector Type: {4}, DAP: {5}, Relative Address: {6}, Sync: {7}, Headers: {8}, User Data: {9}, ECC/EDC: {10}, C2: {11}, Subchannel: {12}, Sense: {13}, Last Error: {14}) took {0} ms.",
+                                      duration, lba, blockSize, transferLength, expectedSectorType, dap, relAddr, sync,
+                                      headerCodes, userData, edcEcc, c2Error, subchannel, sense, LastError);
 
             return sense;
         }

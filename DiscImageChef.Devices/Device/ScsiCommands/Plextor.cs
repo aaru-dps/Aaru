@@ -36,9 +36,7 @@ namespace DiscImageChef.Devices
 {
     public partial class Device
     {
-        /// <summary>
-        ///     Sends the Plextor READ CD-DA command
-        /// </summary>
+        /// <summary>Sends the Plextor READ CD-DA command</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Plextor READ CD-DA response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -48,8 +46,8 @@ namespace DiscImageChef.Devices
         /// <param name="transferLength">How many blocks to read.</param>
         /// <param name="blockSize">Block size.</param>
         /// <param name="subchannel">Subchannel selection.</param>
-        public bool PlextorReadCdDa(out byte[] buffer,         out byte[]        senseBuffer, uint lba, uint blockSize,
-                                    uint       transferLength, PlextorSubchannel subchannel,  uint timeout,
+        public bool PlextorReadCdDa(out byte[] buffer, out byte[] senseBuffer, uint lba, uint blockSize,
+                                    uint transferLength, PlextorSubchannel subchannel, uint timeout,
                                     out double duration)
         {
             senseBuffer = new byte[32];
@@ -70,16 +68,17 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
+            DicConsole.DebugWriteLine("SCSI Device",
+                                      "Plextor READ CD-DA (LBA: {1}, Block Size: {2}, Transfer Length: {3}, Subchannel: {4}, Sense: {5}, Last Error: {6}) took {0} ms.",
+                                      duration, lba, blockSize, transferLength, subchannel, sense, LastError);
 
             return sense;
         }
 
-        /// <summary>
-        ///     Reads a "raw" sector from DVD on Plextor drives. Does it reading drive's cache.
-        /// </summary>
+        /// <summary>Reads a "raw" sector from DVD on Plextor drives. Does it reading drive's cache.</summary>
         /// <returns><c>true</c> if the command failed and <paramref name="senseBuffer" /> contains the sense buffer.</returns>
         /// <param name="buffer">Buffer where the Plextor READ DVD (RAW) response will be stored</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -87,8 +86,8 @@ namespace DiscImageChef.Devices
         /// <param name="duration">Duration in milliseconds it took for the device to execute the command.</param>
         /// <param name="lba">Start block address.</param>
         /// <param name="transferLength">How many blocks to read.</param>
-        public bool PlextorReadRawDvd(out byte[] buffer,  out byte[] senseBuffer, uint lba, uint transferLength,
-                                      uint       timeout, out double duration)
+        public bool PlextorReadRawDvd(out byte[] buffer, out byte[] senseBuffer, uint lba, uint transferLength,
+                                      uint timeout, out double duration)
         {
             senseBuffer = new byte[32];
             byte[] cdb = new byte[10];
@@ -105,6 +104,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "Plextor READ DVD (RAW) took {0} ms.", duration);
@@ -112,9 +112,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reads the statistics EEPROM from Plextor CD recorders
-        /// </summary>
+        /// <summary>Reads the statistics EEPROM from Plextor CD recorders</summary>
         /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -131,6 +129,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
@@ -138,9 +137,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reads the statistics EEPROM from Plextor PX-708 and PX-712 recorders
-        /// </summary>
+        /// <summary>Reads the statistics EEPROM from Plextor PX-708 and PX-712 recorders</summary>
         /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -157,6 +154,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
@@ -164,9 +162,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Reads a block from the statistics EEPROM from Plextor DVD recorders
-        /// </summary>
+        /// <summary>Reads a block from the statistics EEPROM from Plextor DVD recorders</summary>
         /// <returns><c>true</c>, if EEPROM is correctly read, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -174,8 +170,8 @@ namespace DiscImageChef.Devices
         /// <param name="blockSize">How many bytes are in the EEPROM block</param>
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
-        public bool PlextorReadEepromBlock(out byte[] buffer,  out byte[] senseBuffer, byte block, ushort blockSize,
-                                           uint       timeout, out double duration)
+        public bool PlextorReadEepromBlock(out byte[] buffer, out byte[] senseBuffer, byte block, ushort blockSize,
+                                           uint timeout, out double duration)
         {
             buffer      = new byte[blockSize];
             senseBuffer = new byte[32];
@@ -189,6 +185,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
@@ -196,9 +193,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets speeds set by Plextor PoweRec
-        /// </summary>
+        /// <summary>Gets speeds set by Plextor PoweRec</summary>
         /// <returns><c>true</c>, if speeds were got correctly, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="selected">Selected write speed.</param>
@@ -207,7 +202,7 @@ namespace DiscImageChef.Devices
         /// <param name="timeout">Timeout.</param>
         /// <param name="duration">Duration.</param>
         public bool PlextorGetSpeeds(out byte[] senseBuffer, out ushort selected, out ushort max, out ushort last,
-                                     uint       timeout,     out double duration)
+                                     uint timeout, out double duration)
         {
             byte[] buf = new byte[10];
             senseBuffer = new byte[32];
@@ -222,11 +217,13 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
-            if(sense || Error) return sense;
+            if(sense || Error)
+                return sense;
 
             selected = BigEndianBitConverter.ToUInt16(buf, 4);
             max      = BigEndianBitConverter.ToUInt16(buf, 6);
@@ -235,9 +232,7 @@ namespace DiscImageChef.Devices
             return false;
         }
 
-        /// <summary>
-        ///     Gets the Plextor PoweRec status
-        /// </summary>
+        /// <summary>Gets the Plextor PoweRec status</summary>
         /// <returns><c>true</c>, if PoweRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="senseBuffer">Sense buffer.</param>
         /// <param name="enabled">PoweRec is enabled.</param>
@@ -260,11 +255,13 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buf, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
-            if(sense || Error) return sense;
+            if(sense || Error)
+                return sense;
 
             enabled = buf[2] != 0;
             speed   = BigEndianBitConverter.ToUInt16(buf, 4);
@@ -272,9 +269,7 @@ namespace DiscImageChef.Devices
             return false;
         }
 
-        /// <summary>
-        ///     Gets the Plextor SilentMode status
-        /// </summary>
+        /// <summary>Gets the Plextor SilentMode status</summary>
         /// <returns><c>true</c>, if SilentMode is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -294,6 +289,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SILENT MODE took {0} ms.", duration);
@@ -301,9 +297,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the Plextor GigaRec status
-        /// </summary>
+        /// <summary>Gets the Plextor GigaRec status</summary>
         /// <returns><c>true</c>, if GigaRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -322,6 +316,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET GIGAREC took {0} ms.", duration);
@@ -329,9 +324,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the Plextor VariRec status
-        /// </summary>
+        /// <summary>Gets the Plextor VariRec status</summary>
         /// <returns><c>true</c>, if VariRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -350,11 +343,14 @@ namespace DiscImageChef.Devices
             cdb[2]  = (byte)PlextorSubCommands.VariRec;
             cdb[10] = (byte)buffer.Length;
 
-            if(dvd) cdb[3] = 0x12;
-            else cdb[3]    = 0x02;
+            if(dvd)
+                cdb[3] = 0x12;
+            else
+                cdb[3] = 0x02;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET VARIREC took {0} ms.", duration);
@@ -362,9 +358,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the Plextor SecuRec status
-        /// </summary>
+        /// <summary>Gets the Plextor SecuRec status</summary>
         /// <returns><c>true</c>, if SecuRec is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -382,6 +376,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SECUREC took {0} ms.", duration);
@@ -389,9 +384,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the Plextor SpeedRead status
-        /// </summary>
+        /// <summary>Gets the Plextor SpeedRead status</summary>
         /// <returns><c>true</c>, if SpeedRead is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -410,6 +403,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SPEEDREAD took {0} ms.", duration);
@@ -417,9 +411,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the Plextor CD-R and multi-session hiding status
-        /// </summary>
+        /// <summary>Gets the Plextor CD-R and multi-session hiding status</summary>
         /// <returns><c>true</c>, if CD-R and multi-session hiding is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -438,6 +430,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SINGLE-SESSION / HIDE CD-R took {0} ms.", duration);
@@ -445,9 +438,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the Plextor DVD+ book bitsetting status
-        /// </summary>
+        /// <summary>Gets the Plextor DVD+ book bitsetting status</summary>
         /// <returns><c>true</c>, if DVD+ book bitsetting is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -466,11 +457,14 @@ namespace DiscImageChef.Devices
             cdb[2] = (byte)PlextorSubCommands.BitSet;
             cdb[9] = (byte)buffer.Length;
 
-            if(dualLayer) cdb[3] = (byte)PlextorSubCommands.BitSetRdl;
-            else cdb[3]          = (byte)PlextorSubCommands.BitSetR;
+            if(dualLayer)
+                cdb[3] = (byte)PlextorSubCommands.BitSetRdl;
+            else
+                cdb[3] = (byte)PlextorSubCommands.BitSetR;
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET BOOK BITSETTING took {0} ms.", duration);
@@ -478,9 +472,7 @@ namespace DiscImageChef.Devices
             return sense;
         }
 
-        /// <summary>
-        ///     Gets the Plextor DVD+ test writing status
-        /// </summary>
+        /// <summary>Gets the Plextor DVD+ test writing status</summary>
         /// <returns><c>true</c>, if DVD+ test writing is supported, <c>false</c> otherwise.</returns>
         /// <param name="buffer">Buffer.</param>
         /// <param name="senseBuffer">Sense buffer.</param>
@@ -500,6 +492,7 @@ namespace DiscImageChef.Devices
 
             LastError = SendScsiCommand(cdb, ref buffer, out senseBuffer, timeout, ScsiDirection.In, out duration,
                                         out bool sense);
+
             Error = LastError != 0;
 
             DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET TEST WRITE DVD+ took {0} ms.", duration);
