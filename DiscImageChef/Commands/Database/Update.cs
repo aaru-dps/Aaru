@@ -30,11 +30,16 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
+using System.IO;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
+using DiscImageChef.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiscImageChef.Commands
 {
@@ -46,10 +51,20 @@ namespace DiscImageChef.Commands
         {
             _masterDbUpdate = masterDbUpdate;
 
-            Handler = CommandHandler.Create<bool, bool>(Invoke);
+            Add(new Option("--clear", "Clear existing master database.")
+            {
+                Argument = new Argument<bool>(() => false), Required = false
+            });
+
+            Add(new Option("--clear-all", "Clear existing master and local database.")
+            {
+                Argument = new Argument<bool>(() => false), Required = false
+            });
+
+            Handler = CommandHandler.Create<bool, bool, bool, bool>(Invoke);
         }
 
-        public int Invoke(bool debug, bool verbose)
+        public int Invoke(bool debug, bool verbose, bool clear, bool clearAll)
         {
             if(_masterDbUpdate)
                 return(int)ErrorNumber.NoError;
@@ -65,7 +80,45 @@ namespace DiscImageChef.Commands
             DicConsole.DebugWriteLine("Update command", "--debug={0}", debug);
             DicConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
 
-            DoUpdate(false);
+            if(clearAll)
+            {
+                try
+                {
+                    File.Delete(Settings.Settings.LocalDbPath);
+
+                    var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+                    ctx.Database.Migrate();
+                    ctx.SaveChanges();
+                }
+                catch(Exception e)
+                {
+                    if(Debugger.IsAttached)
+                        throw;
+
+                    DicConsole.ErrorWriteLine("Could not remove local database.");
+
+                    return(int)ErrorNumber.CannotRemoveDatabase;
+                }
+            }
+
+            if(clear || clearAll)
+            {
+                try
+                {
+                    File.Delete(Settings.Settings.MasterDbPath);
+                }
+                catch(Exception e)
+                {
+                    if(Debugger.IsAttached)
+                        throw;
+
+                    DicConsole.ErrorWriteLine("Could not remove master database.");
+
+                    return(int)ErrorNumber.CannotRemoveDatabase;
+                }
+            }
+
+            DoUpdate(clear || clearAll);
 
             return(int)ErrorNumber.NoError;
         }
