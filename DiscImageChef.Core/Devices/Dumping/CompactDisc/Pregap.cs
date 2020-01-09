@@ -127,7 +127,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                              Database.Models.Device dbDev, out bool inexactPositioning)
         {
             bool                  sense; // Sense indicator
-            byte[]                subBuf;
+            byte[]                subBuf = null;
             int                   posQ;
             uint                  retries;
             bool?                 bcd = null;
@@ -195,6 +195,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 bool goneBack = false;
                 bool goFront  = false;
+                bool forward  = false;
 
                 // Check if pregap is 0
                 for(retries = 0; retries < 10; retries++)
@@ -249,11 +250,13 @@ namespace DiscImageChef.Core.Devices.Dumping
                 // Calculate pregap
                 lba = (int)track.TrackStartSector - 150;
 
-                while(lba > (int)previousTrack.TrackStartSector)
+                while(lba > (int)previousTrack.TrackStartSector &&
+                      lba <= (int)track.TrackStartSector)
                 {
                     // Some drives crash if you try to read just before the previous read, so seek away first
-                    sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf)
-                                : GetSectorForPregapQ16(dev, (uint)lba                  - 10, dbDev, out subBuf);
+                    if(!forward)
+                        sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf)
+                                    : GetSectorForPregapQ16(dev, (uint)lba                  - 10, dbDev, out subBuf);
 
                     for(retries = 0; retries < 10; retries++)
                     {
@@ -303,6 +306,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         if(goFront)
                         {
                             lba++;
+                            forward = true;
 
                             if(lba == (int)previousTrack.TrackStartSector)
                                 break;
@@ -313,6 +317,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         // Search back
                         goneBack = true;
                         lba--;
+                        forward = false;
 
                         continue;
                     }
@@ -321,6 +326,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(subBuf[1] < track.TrackSequence)
                     {
                         lba++;
+                        forward = true;
 
                         // Already gone back, so go forward
                         if(goneBack)
@@ -334,6 +340,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                        subBuf[2] > 0)
                     {
                         lba--;
+                        forward = false;
 
                         continue;
                     }
@@ -363,6 +370,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                         break;
 
                     lba--;
+                    forward = false;
                 }
             }
 
