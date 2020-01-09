@@ -389,7 +389,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             ExtentsULong     extents    = null;
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
-                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents);
+                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
 
             if(currentTry == null ||
                extents    == null)

@@ -356,7 +356,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
 
             ResumeSupport.Process(true, true, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial, _dev.PlatformId,
-                                  ref _resume, ref currentTry, ref extents);
+                                  ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
 
             if(currentTry == null ||
                extents    == null)

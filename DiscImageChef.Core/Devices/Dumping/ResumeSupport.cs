@@ -40,14 +40,10 @@ using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
-    /// <summary>
-    ///     Implements resume support
-    /// </summary>
-    static class ResumeSupport
+    /// <summary>Implements resume support</summary>
+    internal static class ResumeSupport
     {
-        /// <summary>
-        ///     Process resume
-        /// </summary>
+        /// <summary>Process resume</summary>
         /// <param name="isLba">If drive is LBA</param>
         /// <param name="removable">If media is removable from device</param>
         /// <param name="blocks">Media blocks</param>
@@ -58,20 +54,22 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="resume">Previous resume, or null</param>
         /// <param name="currentTry">Current dumping hardware</param>
         /// <param name="extents">Dumped extents</param>
+        /// <param name="firmware">Firmware revision</param>
+        /// <param name="isTape">Set to <c>true</c> if device is a streaming tape, <c>false</c> otherwise</param>
         /// <exception cref="System.NotImplementedException">If device uses CHS addressing</exception>
         /// <exception cref="System.InvalidOperationException">
         ///     If the provided resume does not correspond with the current in
         ///     progress dump
         /// </exception>
-        internal static void Process(bool                 isLba,        bool             removable, ulong blocks,
-                                     string               manufacturer, string           model,
-                                     string               serial,       PlatformID       platform, ref Resume resume,
-                                     ref DumpHardwareType currentTry,   ref ExtentsULong extents,
-                                     bool                 isTape = false)
+        internal static void Process(bool isLba, bool removable, ulong blocks, string manufacturer, string model,
+                                     string serial, PlatformID platform, ref Resume resume,
+                                     ref DumpHardwareType currentTry, ref ExtentsULong extents, string firmware,
+                                     bool isTape = false)
         {
             if(resume != null)
             {
-                if(!isLba) throw new NotImplementedException("Resuming CHS devices is currently not supported.");
+                if(!isLba)
+                    throw new NotImplementedException("Resuming CHS devices is currently not supported.");
 
                 if(resume.Tape != isTape)
                     throw new
@@ -81,51 +79,60 @@ namespace DiscImageChef.Core.Devices.Dumping
                     throw new
                         InvalidOperationException($"Resume file specifies a {(resume.Removable ? "removable" : "non removable")} device but you're requesting to dump a {(removable ? "removable" : "non removable")} device, not continuing...");
 
-                if(!isTape && resume.LastBlock != blocks - 1)
+                if(!isTape &&
+                   resume.LastBlock != blocks - 1)
                     throw new
                         InvalidOperationException($"Resume file specifies a device with {resume.LastBlock + 1} blocks but you're requesting to dump one with {blocks} blocks, not continuing...");
 
-                foreach(DumpHardwareType oldtry in resume.Tries)
+                foreach(DumpHardwareType oldTry in resume.Tries)
                 {
                     if(!removable)
                     {
-                        if(oldtry.Manufacturer != manufacturer)
+                        if(oldTry.Manufacturer != manufacturer)
                             throw new
-                                InvalidOperationException($"Resume file specifies a device manufactured by {oldtry.Manufacturer} but you're requesting to dump one by {manufacturer}, not continuing...");
+                                InvalidOperationException($"Resume file specifies a device manufactured by {oldTry.Manufacturer} but you're requesting to dump one by {manufacturer}, not continuing...");
 
-                        if(oldtry.Model != model)
+                        if(oldTry.Model != model)
                             throw new
-                                InvalidOperationException($"Resume file specifies a device model {oldtry.Model} but you're requesting to dump model {model}, not continuing...");
+                                InvalidOperationException($"Resume file specifies a device model {oldTry.Model} but you're requesting to dump model {model}, not continuing...");
 
-                        if(oldtry.Serial != serial)
+                        if(oldTry.Serial != serial)
                             throw new
-                                InvalidOperationException($"Resume file specifies a device with serial {oldtry.Serial} but you're requesting to dump one with serial {serial}, not continuing...");
+                                InvalidOperationException($"Resume file specifies a device with serial {oldTry.Serial} but you're requesting to dump one with serial {serial}, not continuing...");
+
+                        if(oldTry.Firmware != firmware)
+                            throw new
+                                InvalidOperationException($"Resume file specifies a device with firmware version {oldTry.Firmware} but you're requesting to dump one with firmware version {firmware}, not continuing...");
                     }
 
-                    if(oldtry.Software == null)
+                    if(oldTry.Software == null)
                         throw new InvalidOperationException("Found corrupt resume file, cannot continue...");
 
-                    if(oldtry.Software.Name            != "DiscImageChef"     ||
-                       oldtry.Software.OperatingSystem != platform.ToString() ||
-                       oldtry.Software.Version         != Version.GetVersion()) continue;
+                    if(oldTry.Software.Name            != "DiscImageChef"     ||
+                       oldTry.Software.OperatingSystem != platform.ToString() ||
+                       oldTry.Software.Version         != Version.GetVersion())
+                        continue;
 
-                    if(removable && (oldtry.Manufacturer != manufacturer || oldtry.Model != model ||
-                                     oldtry.Serial       != serial)) continue;
+                    if(removable && (oldTry.Manufacturer != manufacturer || oldTry.Model    != model ||
+                                     oldTry.Serial       != serial       || oldTry.Firmware != firmware))
+                        continue;
 
-                    currentTry = oldtry;
+                    currentTry = oldTry;
                     extents    = ExtentsConverter.FromMetadata(currentTry.Extents);
+
                     break;
                 }
 
-                if(currentTry != null) return;
+                if(currentTry != null)
+                    return;
 
                 currentTry = new DumpHardwareType
                 {
-                    Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
-                    Manufacturer = manufacturer,
-                    Model        = model,
-                    Serial       = serial
+                    Software = CommonTypes.Metadata.Version.GetSoftwareType(), Manufacturer = manufacturer,
+                    Model    = model, Serial                                                = serial,
+                    Firmware = firmware
                 };
+
                 resume.Tries.Add(currentTry);
                 extents = new ExtentsULong();
             }
@@ -133,19 +140,18 @@ namespace DiscImageChef.Core.Devices.Dumping
             {
                 resume = new Resume
                 {
-                    Tries        = new List<DumpHardwareType>(),
-                    CreationDate = DateTime.UtcNow,
-                    BadBlocks    = new List<ulong>(),
-                    LastBlock    = isTape ? 0 : blocks - 1,
-                    Tape         = isTape
+                    Tries     = new List<DumpHardwareType>(), CreationDate = DateTime.UtcNow,
+                    BadBlocks = new List<ulong>(),
+                    LastBlock = isTape ? 0 : blocks - 1, Tape = isTape
                 };
+
                 currentTry = new DumpHardwareType
                 {
-                    Software     = CommonTypes.Metadata.Version.GetSoftwareType(),
-                    Manufacturer = manufacturer,
-                    Model        = model,
-                    Serial       = serial
+                    Software = CommonTypes.Metadata.Version.GetSoftwareType(), Manufacturer = manufacturer,
+                    Model    = model, Serial                                                = serial,
+                    Firmware = firmware
                 };
+
                 resume.Tries.Add(currentTry);
                 extents          = new ExtentsULong();
                 resume.Removable = removable;
