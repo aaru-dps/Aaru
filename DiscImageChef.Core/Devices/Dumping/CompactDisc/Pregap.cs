@@ -175,9 +175,14 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             foreach(Track track in tracks)
             {
-                if(track.TrackSequence <= 1)
+                // First track of each session has at least 150 sectors of pregap and is not readable always
+                if(tracks.Where(t => t.TrackSession == track.TrackSession).OrderBy(t => t.TrackSequence).
+                          FirstOrDefault().TrackSequence == track.TrackSequence)
                 {
-                    DicConsole.DebugWriteLine("Pregap calculator", "Skipping track 1");
+                    DicConsole.DebugWriteLine("Pregap calculator", "Skipping track {0}", track.TrackSequence);
+
+                    if(track.TrackSequence > 1)
+                        pregaps[track.TrackSequence] = 150;
 
                     continue;
                 }
