@@ -383,7 +383,7 @@ namespace DiscImageChef.Devices
 
             DicConsole.DebugWriteLine("SCSI Device",
                                       "READ DISC INFORMATION (Data Type: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
-                                      duration, sense, LastError);
+                                      duration, dataType, sense, LastError);
 
             return sense;
         }
