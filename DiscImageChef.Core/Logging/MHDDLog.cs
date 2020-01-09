@@ -39,17 +39,13 @@ using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Logging
 {
-    /// <summary>
-    ///     Implements a log in the format used by MHDD
-    /// </summary>
-    class MhddLog
+    /// <summary>Implements a log in the format used by MHDD</summary>
+    internal class MhddLog
     {
-        string       logFile;
-        MemoryStream mhddFs;
+        readonly string       logFile;
+        readonly MemoryStream mhddFs;
 
-        /// <summary>
-        ///     Initializes the MHDD log
-        /// </summary>
+        /// <summary>Initializes the MHDD log</summary>
         /// <param name="outputFile">Log file</param>
         /// <param name="dev">Device</param>
         /// <param name="blocks">Blocks in media</param>
@@ -57,7 +53,9 @@ namespace DiscImageChef.Core.Logging
         /// <param name="blocksToRead">How many blocks read at once</param>
         internal MhddLog(string outputFile, Device dev, ulong blocks, ulong blockSize, ulong blocksToRead)
         {
-            if(dev == null || string.IsNullOrEmpty(outputFile)) return;
+            if(dev == null ||
+               string.IsNullOrEmpty(outputFile))
+                return;
 
             mhddFs  = new MemoryStream();
             logFile = outputFile;
@@ -69,31 +67,39 @@ namespace DiscImageChef.Core.Logging
                 case DeviceType.ATA:
                 case DeviceType.ATAPI:
                     mode = "MODE: IDE";
+
                     break;
                 case DeviceType.SCSI:
                     mode = "MODE: SCSI";
+
                     break;
                 case DeviceType.MMC:
                     mode = "MODE: MMC";
+
                     break;
                 case DeviceType.NVMe:
                     mode = "MODE: NVMe";
+
                     break;
                 case DeviceType.SecureDigital:
                     mode = "MODE: SD";
+
                     break;
                 default:
                     mode = "MODE: IDE";
+
                     break;
             }
 
             string device     = $"DEVICE: {dev.Manufacturer} {dev.Model}";
-            string fw         = $"F/W: {dev.Revision}";
+            string fw         = $"F/W: {dev.FirmwareRevision}";
             string sn         = $"S/N: {dev.Serial}";
-            string sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}",           blocks);
+            string sectors    = string.Format(new CultureInfo("en-US"), "SECTORS: {0:n0}", blocks);
             string sectorsize = string.Format(new CultureInfo("en-US"), "SECTOR SIZE: {0:n0} bytes", blockSize);
+
             string scanblocksize =
                 string.Format(new CultureInfo("en-US"), "SCAN BLOCK SIZE: {0:n0} sectors", blocksToRead);
+
             const string MHDD_VER = "VER:2 ";
 
             byte[] deviceBytes        = Encoding.ASCII.GetBytes(device);
@@ -108,7 +114,7 @@ namespace DiscImageChef.Core.Logging
             uint pointer = (uint)(deviceBytes.Length  + modeBytes.Length + fwBytes.Length +
                                   snBytes.Length      +
                                   sectorsBytes.Length + sectorsizeBytes.Length + scanblocksizeBytes.Length +
-                                  verBytes.Length     + 2 * 9                  + // New lines
+                                  verBytes.Length     + (2 * 9)                + // New lines
                                   4);                                            // Pointer
 
             byte[] newLine = new byte[2];
@@ -116,49 +122,47 @@ namespace DiscImageChef.Core.Logging
             newLine[1] = 0x0A;
 
             mhddFs.Write(BitConverter.GetBytes(pointer), 0, 4);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(verBytes,                       0, verBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(modeBytes,                      0, modeBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(deviceBytes,                    0, deviceBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(fwBytes,                        0, fwBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(snBytes,                        0, snBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(sectorsBytes,                   0, sectorsBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(sectorsizeBytes,                0, sectorsizeBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
-            mhddFs.Write(scanblocksizeBytes,             0, scanblocksizeBytes.Length);
-            mhddFs.Write(newLine,                        0, 2);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(verBytes, 0, verBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(modeBytes, 0, modeBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(deviceBytes, 0, deviceBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(fwBytes, 0, fwBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(snBytes, 0, snBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(sectorsBytes, 0, sectorsBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(sectorsizeBytes, 0, sectorsizeBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
+            mhddFs.Write(scanblocksizeBytes, 0, scanblocksizeBytes.Length);
+            mhddFs.Write(newLine, 0, 2);
         }
 
-        /// <summary>
-        ///     Logs a new read
-        /// </summary>
+        /// <summary>Logs a new read</summary>
         /// <param name="sector">Starting sector</param>
         /// <param name="duration">Duration in milliseconds</param>
         internal void Write(ulong sector, double duration)
         {
-            if(logFile == null) return;
+            if(logFile == null)
+                return;
 
             byte[] sectorBytes   = BitConverter.GetBytes(sector);
             byte[] durationBytes = BitConverter.GetBytes((ulong)(duration * 1000));
 
-            mhddFs.Write(sectorBytes,   0, 8);
+            mhddFs.Write(sectorBytes, 0, 8);
             mhddFs.Write(durationBytes, 0, 8);
         }
 
-        /// <summary>
-        ///     Closes and writes to file the MHDD log
-        /// </summary>
+        /// <summary>Closes and writes to file the MHDD log</summary>
         internal void Close()
         {
-            if(logFile == null) return;
+            if(logFile == null)
+                return;
 
-            FileStream fs = new FileStream(logFile, FileMode.Create);
+            var fs = new FileStream(logFile, FileMode.Create);
             mhddFs.WriteTo(fs);
             mhddFs.Close();
             fs.Close();

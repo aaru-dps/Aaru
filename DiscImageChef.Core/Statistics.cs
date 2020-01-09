@@ -1272,7 +1272,8 @@ namespace DiscImageChef.Core
 
             ctx.SeenDevices.Add(new DeviceStat
             {
-                Bus          = deviceBus, Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.Revision,
+                Bus          = deviceBus, Manufacturer = dev.Manufacturer, Model = dev.Model,
+                Revision     = dev.FirmwareRevision,
                 Synchronized = false
             });
 

@@ -100,10 +100,10 @@ namespace DiscImageChef.Devices
         public string Model { get; }
 
         /// <summary>
-        ///     Gets the device's revision.
+        ///     Gets the device's firmware version.
         /// </summary>
-        /// <value>The revision.</value>
-        public string Revision { get; }
+        /// <value>The firmware version.</value>
+        public string FirmwareRevision { get; }
 
         /// <summary>
         ///     Gets the device's serial number.

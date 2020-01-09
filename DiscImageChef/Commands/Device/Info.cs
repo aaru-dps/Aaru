@@ -1078,7 +1078,7 @@ namespace DiscImageChef.Commands.Device
             // Search for device in master database
             Database.Models.Device dbDev =
                 ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
-                                                d.Revision     == dev.Revision);
+                                                d.Revision     == dev.FirmwareRevision);
 
             if(dbDev is null)
                 DicConsole.WriteLine("Device not in database, please create a device report and attach it to a Github issue.");

@@ -129,19 +129,19 @@ namespace DiscImageChef.Commands.Device
 
             var report = new DeviceReportV2
             {
-                Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.Revision, Type = dev.Type
+                Manufacturer = dev.Manufacturer, Model = dev.Model, Revision = dev.FirmwareRevision, Type = dev.Type
             };
 
             bool   removable = false;
             string jsonFile;
 
             if(!string.IsNullOrWhiteSpace(dev.Manufacturer) &&
-               !string.IsNullOrWhiteSpace(dev.Revision))
-                jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.Revision + ".json";
+               !string.IsNullOrWhiteSpace(dev.FirmwareRevision))
+                jsonFile = dev.Manufacturer + "_" + dev.Model + "_" + dev.FirmwareRevision + ".json";
             else if(!string.IsNullOrWhiteSpace(dev.Manufacturer))
                 jsonFile = dev.Manufacturer + "_" + dev.Model + ".json";
-            else if(!string.IsNullOrWhiteSpace(dev.Revision))
-                jsonFile = dev.Model + "_" + dev.Revision + ".json";
+            else if(!string.IsNullOrWhiteSpace(dev.FirmwareRevision))
+                jsonFile = dev.Model + "_" + dev.FirmwareRevision + ".json";
             else
                 jsonFile = dev.Model + ".json";
 

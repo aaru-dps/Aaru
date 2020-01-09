@@ -557,7 +557,7 @@ namespace DiscImageChef.Commands.Media
                     // Search for device in master database
                     Database.Models.Device dbDev =
                         ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
-                                                        d.Revision     == dev.Revision);
+                                                        d.Revision     == dev.FirmwareRevision);
 
                     Dump.SolveTrackPregaps(dev, null, null, tracks, supportsPqSubchannel, supportsRwSubchannel, dbDev,
                                            out bool inexactPositioning);

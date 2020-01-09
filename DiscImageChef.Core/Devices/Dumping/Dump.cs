@@ -117,7 +117,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             // Search for device in master database
             _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&
-                                                      d.Revision     == _dev.Revision);
+                                                      d.Revision     == _dev.FirmwareRevision);
 
             if(_dbDev is null)
             {

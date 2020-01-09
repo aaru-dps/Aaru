@@ -36,61 +36,67 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.Devices;
+using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Logging
 {
-    /// <summary>
-    ///     Creates a dump log
-    /// </summary>
+    /// <summary>Creates a dump log</summary>
     public class DumpLog
     {
-        private readonly StreamWriter logSw;
+        readonly StreamWriter logSw;
 
-        /// <summary>
-        ///     Initializes the dump log
-        /// </summary>
+        /// <summary>Initializes the dump log</summary>
         /// <param name="outputFile">Output log file</param>
         /// <param name="dev">Device</param>
         public DumpLog(string outputFile, Device dev)
         {
-            if (string.IsNullOrEmpty(outputFile)) return;
+            if(string.IsNullOrEmpty(outputFile))
+                return;
 
             logSw = new StreamWriter(outputFile, true);
 
             logSw.WriteLine("Start logging at {0}", DateTime.Now);
 
-            var platId = DetectOS.GetRealPlatformID();
-            var platVer = DetectOS.GetVersion();
+            PlatformID platId  = DetectOS.GetRealPlatformID();
+            string     platVer = DetectOS.GetVersion();
+
             var assemblyVersion =
                 Attribute.GetCustomAttribute(typeof(DumpLog).Assembly, typeof(AssemblyInformationalVersionAttribute)) as
                     AssemblyInformationalVersionAttribute;
 
             logSw.WriteLine("################# System information #################");
+
             logSw.WriteLine("{0} {1} ({2}-bit)", DetectOS.GetPlatformName(platId, platVer), platVer,
-                Environment.Is64BitOperatingSystem ? 64 : 32);
-            if (DetectOS.IsMono) logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
-            else if (DetectOS.IsNetCore) logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
-            else logSw.WriteLine(RuntimeInformation.FrameworkDescription);
+                            Environment.Is64BitOperatingSystem ? 64 : 32);
+
+            if(DetectOS.IsMono)
+                logSw.WriteLine("Mono {0}", Version.GetMonoVersion());
+            else if(DetectOS.IsNetCore)
+                logSw.WriteLine(".NET Core {0}", Version.GetNetCoreVersion());
+            else
+                logSw.WriteLine(RuntimeInformation.FrameworkDescription);
 
             logSw.WriteLine();
 
             logSw.WriteLine("################# Program information ################");
             logSw.WriteLine("DiscImageChef {0}", assemblyVersion?.InformationalVersion);
             logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
-#if DEBUG
+        #if DEBUG
             logSw.WriteLine("DEBUG version");
-#endif
+        #endif
             logSw.WriteLine("Command line: {0}", Environment.CommandLine);
             logSw.WriteLine();
 
-            if (dev.IsRemote)
+            if(dev.IsRemote)
             {
                 logSw.WriteLine("################# Remote information #################");
                 logSw.WriteLine("Server: {0}", dev.RemoteApplication);
                 logSw.WriteLine("Version: {0}", dev.RemoteVersion);
+
                 logSw.WriteLine("Operating system: {0} {1}", dev.RemoteOperatingSystem,
-                    dev.RemoteOperatingSystemVersion);
+                                dev.RemoteOperatingSystemVersion);
+
                 logSw.WriteLine("Architecture: {0}", dev.RemoteArchitecture);
                 logSw.WriteLine("Protocol version: {0}", dev.RemoteProtocolVersion);
                 logSw.WriteLine("######################################################");
@@ -99,14 +105,15 @@ namespace DiscImageChef.Core.Logging
             logSw.WriteLine("################# Device information #################");
             logSw.WriteLine("Manufacturer: {0}", dev.Manufacturer);
             logSw.WriteLine("Model: {0}", dev.Model);
-            logSw.WriteLine("Firmware revision: {0}", dev.Revision);
+            logSw.WriteLine("Firmware revision: {0}", dev.FirmwareRevision);
             logSw.WriteLine("Serial number: {0}", dev.Serial);
             logSw.WriteLine("Removable device: {0}", dev.IsRemovable);
             logSw.WriteLine("Device type: {0}", dev.Type);
             logSw.WriteLine("CompactFlash device: {0}", dev.IsCompactFlash);
             logSw.WriteLine("PCMCIA device: {0}", dev.IsPcmcia);
             logSw.WriteLine("USB device: {0}", dev.IsUsb);
-            if (dev.IsUsb)
+
+            if(dev.IsUsb)
             {
                 logSw.WriteLine("USB manufacturer: {0}", dev.UsbManufacturerString);
                 logSw.WriteLine("USB product: {0}", dev.UsbProductString);
@@ -116,7 +123,8 @@ namespace DiscImageChef.Core.Logging
             }
 
             logSw.WriteLine("FireWire device: {0}", dev.IsFireWire);
-            if (dev.IsFireWire)
+
+            if(dev.IsFireWire)
             {
                 logSw.WriteLine("FireWire vendor: {0}", dev.FireWireVendorName);
                 logSw.WriteLine("FireWire model: {0}", dev.FireWireModelName);
@@ -132,23 +140,20 @@ namespace DiscImageChef.Core.Logging
             logSw.Flush();
         }
 
-        /// <summary>
-        ///     Adds a new line to the dump log
-        /// </summary>
+        /// <summary>Adds a new line to the dump log</summary>
         /// <param name="format">Format string</param>
         /// <param name="args">Arguments</param>
         public void WriteLine(string format, params object[] args)
         {
-            if (logSw == null) return;
+            if(logSw == null)
+                return;
 
-            var text = string.Format(format, args);
+            string text = string.Format(format, args);
             logSw.WriteLine("{0:s} {1}", DateTime.Now, text);
             logSw.Flush();
         }
 
-        /// <summary>
-        ///     Finishes and closes the dump log
-        /// </summary>
+        /// <summary>Finishes and closes the dump log</summary>
         public void Close()
         {
             logSw?.WriteLine("######################################################");

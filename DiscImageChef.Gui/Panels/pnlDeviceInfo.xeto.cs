@@ -43,7 +43,7 @@ namespace DiscImageChef.Gui.Panels
 {
     public class pnlDeviceInfo : Panel
     {
-        DeviceInfo devInfo;
+        readonly DeviceInfo devInfo;
 
         public pnlDeviceInfo(DeviceInfo devInfo)
         {
@@ -54,7 +54,7 @@ namespace DiscImageChef.Gui.Panels
             txtType.Text         = devInfo.Type.ToString();
             txtManufacturer.Text = devInfo.Manufacturer;
             txtModel.Text        = devInfo.Model;
-            txtRevision.Text     = devInfo.Revision;
+            txtRevision.Text     = devInfo.FirmwareRevision;
             txtSerial.Text       = devInfo.Serial;
             txtScsiType.Text     = devInfo.ScsiType.ToString();
             chkRemovable.Checked = devInfo.IsRemovable;
@@ -83,14 +83,15 @@ namespace DiscImageChef.Gui.Panels
 
             if(devInfo.IsPcmcia)
             {
-                tabPcmciaInfo tabPcmciaInfo = new tabPcmciaInfo();
+                var tabPcmciaInfo = new tabPcmciaInfo();
                 tabPcmciaInfo.LoadData(devInfo.Cis);
                 tabInfos.Pages.Add(tabPcmciaInfo);
             }
 
-            if(devInfo.AtaIdentify != null || devInfo.AtapiIdentify != null)
+            if(devInfo.AtaIdentify   != null ||
+               devInfo.AtapiIdentify != null)
             {
-                tabAtaInfo tabAtaInfo = new tabAtaInfo();
+                var tabAtaInfo = new tabAtaInfo();
                 tabAtaInfo.LoadData(devInfo.AtaIdentify, devInfo.AtapiIdentify, devInfo.AtaMcptError);
 
                 tabInfos.Pages.Add(tabAtaInfo);
@@ -98,7 +99,8 @@ namespace DiscImageChef.Gui.Panels
 
             if(devInfo.ScsiInquiryData != null)
             {
-                tabScsiInfo tabScsiInfo = new tabScsiInfo();
+                var tabScsiInfo = new tabScsiInfo();
+
                 tabScsiInfo.LoadData(devInfo.ScsiInquiryData, devInfo.ScsiInquiry, devInfo.ScsiEvpdPages,
                                      devInfo.ScsiMode, devInfo.ScsiType, devInfo.ScsiModeSense6,
                                      devInfo.ScsiModeSense10, devInfo.MmcConfiguration);
@@ -108,18 +110,23 @@ namespace DiscImageChef.Gui.Panels
                 if(devInfo.PlextorFeatures != null)
                 {
                     tabPlextor.Visible = true;
+
                     if(devInfo.PlextorFeatures.Eeprom != null)
                     {
                         stkPlextorEeprom.Visible  = true;
                         txtPlextorDiscs.Text      = $"{devInfo.PlextorFeatures.Discs}";
                         txtPlextorCdReadTime.Text = TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdReadTime).ToString();
+
                         txtPlextorCdWriteTime.Text =
                             TimeSpan.FromSeconds(devInfo.PlextorFeatures.CdWriteTime).ToString();
+
                         if(devInfo.PlextorFeatures.IsDvd)
                         {
                             stkPlextorDvdTimes.Visible = true;
+
                             txtPlextorDvdReadTime.Text =
                                 TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdReadTime).ToString();
+
                             txtPlextorDvdWriteTime.Text =
                                 TimeSpan.FromSeconds(devInfo.PlextorFeatures.DvdWriteTime).ToString();
                         }
@@ -139,6 +146,7 @@ namespace DiscImageChef.Gui.Panels
                             if(devInfo.PlextorFeatures.PoweRecRecommendedSpeed > 0)
                             {
                                 stkPlextorPoweRecRecommended.Visible = true;
+
                                 txtPlextorPoweRecRecommended.Text =
                                     $"{devInfo.PlextorFeatures.PoweRecRecommendedSpeed} Kb/sec.";
                             }
@@ -146,6 +154,7 @@ namespace DiscImageChef.Gui.Panels
                             if(devInfo.PlextorFeatures.PoweRecSelected > 0)
                             {
                                 stkPlextorPoweRecSelected.Visible = true;
+
                                 txtPlextorPoweRecSelected.Text =
                                     $"{devInfo.PlextorFeatures.PoweRecSelected} Kb/sec.";
                             }
@@ -179,21 +188,19 @@ namespace DiscImageChef.Gui.Panels
 
                             txtPlextorSilentModeCdReadSpeedLimit.Text =
                                 devInfo.PlextorFeatures.CdReadSpeedLimit > 0
-                                    ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
-                                    : "unlimited";
+                                    ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x" : "unlimited";
 
                             txtPlextorSilentModeCdWriteSpeedLimit.Text =
                                 devInfo.PlextorFeatures.CdWriteSpeedLimit > 0
-                                    ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x"
-                                    : "unlimited";
+                                    ? $"{devInfo.PlextorFeatures.CdReadSpeedLimit}x" : "unlimited";
 
                             if(devInfo.PlextorFeatures.IsDvd)
                             {
                                 stkPlextorSilentModeDvdReadSpeedLimit.Visible = true;
+
                                 txtPlextorSilentModeDvdReadSpeedLimit.Text =
                                     devInfo.PlextorFeatures.DvdReadSpeedLimit > 0
-                                        ? $"{devInfo.PlextorFeatures.DvdReadSpeedLimit}x"
-                                        : "unlimited";
+                                        ? $"{devInfo.PlextorFeatures.DvdReadSpeedLimit}x" : "unlimited";
                             }
                         }
                     }
@@ -209,6 +216,7 @@ namespace DiscImageChef.Gui.Panels
                     }
 
                     chkPlextorHiding.Checked = devInfo.PlextorFeatures.Hiding;
+
                     if(devInfo.PlextorFeatures.Hiding)
                     {
                         stkPlextorHiding.Visible           = true;
@@ -235,8 +243,10 @@ namespace DiscImageChef.Gui.Panels
                     chkKreonDecryptSs.Checked         = devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs);
                     chkKreonXtremeUnlock.Checked      = devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock);
                     chkKreonWxripperUnlock.Checked    = devInfo.KreonFeatures.HasFlag(KreonFeatures.WxripperUnlock);
+
                     chkKreonChallengeResponse360.Checked =
                         devInfo.KreonFeatures.HasFlag(KreonFeatures.ChallengeResponse360);
+
                     chkKreonDecryptSs360.Checked      = devInfo.KreonFeatures.HasFlag(KreonFeatures.DecryptSs360);
                     chkKreonXtremeUnlock360.Checked   = devInfo.KreonFeatures.HasFlag(KreonFeatures.XtremeUnlock360);
                     chkKreonWxripperUnlock360.Checked = devInfo.KreonFeatures.HasFlag(KreonFeatures.WxripperUnlock360);
@@ -251,9 +261,11 @@ namespace DiscImageChef.Gui.Panels
                     if(blockLimits.HasValue)
                     {
                         tabSsc.Visible = true;
+
                         if(blockLimits.Value.minBlockLen == blockLimits.Value.maxBlockLen)
                         {
                             lblMinBlockSize.Visible = true;
+
                             lblMinBlockSize.Text =
                                 $"Device's block size is fixed at {blockLimits.Value.minBlockLen} bytes";
                         }
@@ -265,12 +277,14 @@ namespace DiscImageChef.Gui.Panels
                             lblMaxBlockSize.Text = blockLimits.Value.maxBlockLen > 0
                                                        ? $"Device's maximum block size is {blockLimits.Value.maxBlockLen} bytes"
                                                        : "Device does not specify a maximum block size";
+
                             lblMinBlockSize.Text =
                                 $"Device's minimum block size is {blockLimits.Value.minBlockLen} bytes";
 
                             if(blockLimits.Value.granularity > 0)
                             {
                                 lblBlockSizeGranularity.Visible = true;
+
                                 lblBlockSizeGranularity.Text =
                                     $"Device's needs a block size granularity of 2^{blockLimits.Value.granularity} ({Math.Pow(2, blockLimits.Value.granularity)}) bytes";
                             }
@@ -298,7 +312,8 @@ namespace DiscImageChef.Gui.Panels
                 }
             }
 
-            tabSdMmcInfo tabSdMmcInfo = new tabSdMmcInfo();
+            var tabSdMmcInfo = new tabSdMmcInfo();
+
             tabSdMmcInfo.LoadData(devInfo.Type, devInfo.CID, devInfo.CSD, devInfo.OCR, devInfo.ExtendedCSD,
                                   devInfo.SCR);
 
@@ -307,13 +322,23 @@ namespace DiscImageChef.Gui.Panels
 
         protected void OnBtnSaveUsbDescriptors(object sender, EventArgs e)
         {
-            SaveFileDialog dlgSaveBinary = new SaveFileDialog();
-            dlgSaveBinary.Filters.Add(new FileFilter {Extensions = new[] {"*.bin"}, Name = "Binary"});
+            var dlgSaveBinary = new SaveFileDialog();
+
+            dlgSaveBinary.Filters.Add(new FileFilter
+            {
+                Extensions = new[]
+                {
+                    "*.bin"
+                },
+                Name = "Binary"
+            });
+
             DialogResult result = dlgSaveBinary.ShowDialog(this);
 
-            if(result != DialogResult.Ok) return;
+            if(result != DialogResult.Ok)
+                return;
 
-            FileStream saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
+            var saveFs = new FileStream(dlgSaveBinary.FileName, FileMode.Create);
             saveFs.Write(devInfo.UsbDescriptors, 0, devInfo.UsbDescriptors.Length);
 
             saveFs.Close();

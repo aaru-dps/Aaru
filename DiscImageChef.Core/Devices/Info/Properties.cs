@@ -66,7 +66,7 @@ namespace DiscImageChef.Core.Devices.Info
         public DeviceType                             Type                   { get; }
         public string                                 Manufacturer           { get; }
         public string                                 Model                  { get; }
-        public string                                 Revision               { get; }
+        public string                                 FirmwareRevision       { get; }
         public string                                 Serial                 { get; }
         public PeripheralDeviceTypes                  ScsiType               { get; }
         public bool                                   IsRemovable            { get; }
