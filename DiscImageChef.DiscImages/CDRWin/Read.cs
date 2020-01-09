@@ -1039,100 +1039,26 @@ namespace DiscImageChef.DiscImages
                 ulong byteOffset        = 0;
                 ulong sectorOffset      = 0;
                 ulong partitionSequence = 0;
-                ulong indexZeroOffset   = 0;
-                ulong indexOneOffset    = 0;
-                bool  indexZero         = false;
 
                 _offsetMap = new Dictionary<uint, ulong>();
 
                 for(int i = 0; i < _discImage.Tracks.Count; i++)
                 {
-                    ulong index0Len = 0;
-
                     if(_discImage.Tracks[i].Sequence == 1 &&
                        i                             != 0)
                         throw new ImageNotSupportedException("Unordered tracks");
 
                     var partition = new Partition();
 
-                    /*if(discimage.tracks[i].pregap > 0)
-                    {
-                        partition.PartitionDescription = string.Format("Track {0} pregap.", discimage.tracks[i].sequence);
-                        partition.PartitionName = discimage.tracks[i].title;
-                        partition.PartitionStartSector = sector_offset;
-                        partition.PartitionLength = discimage.tracks[i].pregap * discimage.tracks[i].bps;
-                        partition.PartitionSectors = discimage.tracks[i].pregap;
-                        partition.PartitionSequence = partitionSequence;
-                        partition.PartitionStart = byte_offset;
-                        partition.PartitionType = discimage.tracks[i].tracktype;
-
-                        sector_offset += partition.PartitionSectors;
-                        byte_offset += partition.PartitionLength;
-                        partitionSequence++;
-
-                        if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
-                            offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
-                        else
-                        {
-                            ulong old_start;
-                            offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
-
-                            if(partition.PartitionStartSector < old_start)
-                            {
-                                offsetmap.Remove(discimage.tracks[i].sequence);
-                                offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
-                            }
-                        }
-
-                        partitions.Add(partition);
-                        partition = new Partition();
-                    }*/
-
-                    indexZero |= _discImage.Tracks[i].Indexes.TryGetValue(0, out indexZeroOffset);
-
-                    if(!_discImage.Tracks[i].Indexes.TryGetValue(1, out indexOneOffset))
+                    if(!_discImage.Tracks[i].Indexes.TryGetValue(1, out ulong _))
                         throw new ImageNotSupportedException($"Track {_discImage.Tracks[i].Sequence} lacks index 01");
-
-                    /*if(index_zero && index_one_offset > index_zero_offset)
-                    {
-                        partition.PartitionDescription = string.Format("Track {0} index 00.", discimage.tracks[i].sequence);
-                        partition.PartitionName = discimage.tracks[i].title;
-                        partition.PartitionStartSector = sector_offset;
-                        partition.PartitionLength = (index_one_offset - index_zero_offset) * discimage.tracks[i].bps;
-                        partition.PartitionSectors = index_one_offset - index_zero_offset;
-                        partition.PartitionSequence = partitionSequence;
-                        partition.PartitionStart = byte_offset;
-                        partition.PartitionType = discimage.tracks[i].tracktype;
-
-                        sector_offset += partition.PartitionSectors;
-                        byte_offset += partition.PartitionLength;
-                        index0_len = partition.PartitionSectors;
-                        partitionSequence++;
-
-                        if(!offsetmap.ContainsKey(discimage.tracks[i].sequence))
-                            offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
-                        else
-                        {
-                            ulong old_start;
-                            offsetmap.TryGetValue(discimage.tracks[i].sequence, out old_start);
-
-                            if(partition.PartitionStartSector < old_start)
-                            {
-                                offsetmap.Remove(discimage.tracks[i].sequence);
-                                offsetmap.Add(discimage.tracks[i].sequence, partition.PartitionStartSector);
-                            }
-                        }
-
-                        partitions.Add(partition);
-                        partition = new Partition();
-                    }*/
 
                     // Index 01
                     partition.Description = $"Track {_discImage.Tracks[i].Sequence}.";
                     partition.Name        = _discImage.Tracks[i].Title;
                     partition.Start       = sectorOffset;
-                    partition.Size        = (_discImage.Tracks[i].Sectors - index0Len) * _discImage.Tracks[i].Bps;
-                    partition.Length      = _discImage.Tracks[i].Sectors - index0Len;
+                    partition.Size        = _discImage.Tracks[i].Sectors * _discImage.Tracks[i].Bps;
+                    partition.Length      = _discImage.Tracks[i].Sectors;
                     partition.Sequence    = partitionSequence;
                     partition.Offset      = byteOffset;
                     partition.Type        = _discImage.Tracks[i].TrackType;
