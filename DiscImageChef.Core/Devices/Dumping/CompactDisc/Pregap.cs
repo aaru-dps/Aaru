@@ -281,6 +281,49 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                         crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
 
+                        // Try to do a simple correction
+                        if(!crcOk)
+                        {
+                            // Data track cannot have 11xxb in CONTROL
+                            if((subBuf[0] & 0x40) > 0)
+                                subBuf[0] &= 0x7F;
+
+                            // ADR only uses two bits
+                            subBuf[0] &= 0xF3;
+
+                            // Don't care about other Q modes
+                            if((subBuf[0] & 0xF) == 1)
+                            {
+                                // ZERO only used in DDCD
+                                subBuf[6] = 0;
+
+                                // Fix BCD numbering
+                                for(int i = 1; i < 10; i++)
+                                {
+                                    if((subBuf[i] & 0xF0) > 0xA0)
+                                        subBuf[i] &= 0x7F;
+
+                                    if((subBuf[i] & 0x0F) > 0x0A)
+                                        subBuf[i] &= 0xF7;
+                                }
+                            }
+
+                            CRC16CCITTContext.Data(subBuf, 10, out crc);
+
+                            crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
+
+                            if(crcOk)
+                            {
+                                DicConsole.DebugWriteLine("Pregap calculator",
+                                                          "LBA: {0}, Try {1}, Sense {2}, Q (FIXED): {3:X2} {4:X2} {5:X2} {6:X2} {7:X2} {8:X2} {9:X2} {10:X2} {11:X2} {12:X2} CRC 0x{13:X2}{14:X2}, Calculated CRC: 0x{15:X2}{16:X2}",
+                                                          lba, retries + 1, sense, subBuf[0], subBuf[1], subBuf[2],
+                                                          subBuf[3], subBuf[4], subBuf[5], subBuf[6], subBuf[7],
+                                                          subBuf[8], subBuf[9], subBuf[10], subBuf[11], crc[0], crc[1]);
+
+                                break;
+                            }
+                        }
+
                         if(crcOk)
                             break;
                     }
@@ -373,13 +416,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(pregapQ > pregaps[track.TrackSequence])
                     {
                         // If CRC is not OK, only accept pregaps less than 10 sectors longer than previously now
-                        if((crcOk || pregapQ - pregaps[track.TrackSequence] < 10))
+                        if(crcOk || pregapQ - pregaps[track.TrackSequence] < 10)
                         {
                             DicConsole.DebugWriteLine("Pregap calculator", "Pregap for track {0}: {1}",
                                                       track.TrackSequence, pregapQ);
 
                             pregaps[track.TrackSequence] = pregapQ;
                         }
+
                         // We are going forward, so we have already been in the previous track, so add 1 to pregap and get out of here
                         else if(forward)
                         {
