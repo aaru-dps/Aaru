@@ -126,7 +126,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                                              Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel,
                                              Database.Models.Device dbDev, out bool inexactPositioning)
         {
-            bool                  sense; // Sense indicator
+            bool                  sense  = true; // Sense indicator
             byte[]                subBuf = null;
             int                   posQ;
             uint                  retries;
@@ -286,6 +286,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         dumpLog?.WriteLine($"Could not get correct subchannel for sector {lba}");
                         updateStatus?.Invoke($"Could not get correct subchannel for sector {lba}");
+
+                        if(sense)
+                        {
+                            lba++;
+                            forward = true;
+
+                            continue;
+                        }
                     }
 
                     if(subBuf.All(b => b == 0))
