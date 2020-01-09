@@ -44,6 +44,7 @@ using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.MMC;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -522,6 +523,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             _outputPlugin.SetDumpHardware(_resume.Tries);
+
+            // TODO: Drive info
+            var metadata = new CommonTypes.Structs.ImageInfo
+            {
+                Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+            };
+
+            if(!_outputPlugin.SetMetadata(metadata))
+                ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+                                     _outputPlugin.ErrorMessage);
 
             if(_preSidecar != null)
                 _outputPlugin.SetCicmMetadata(_preSidecar);

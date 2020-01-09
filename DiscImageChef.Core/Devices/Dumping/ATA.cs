@@ -44,6 +44,7 @@ using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using Schemas;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -157,7 +158,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     ExtentsULong     extents    = null;
 
                     ResumeSupport.Process(ataReader.IsLba, removable, blocks, _dev.Manufacturer, _dev.Model,
-                                          _dev.Serial, _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision);
+                                          _dev.Serial, _dev.PlatformId, ref _resume, ref currentTry, ref extents,
+                                          _dev.FirmwareRevision);
 
                     if(currentTry == null ||
                        extents    == null)
@@ -573,6 +575,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                         _dumpLog.WriteLine("Sector {0} could not be read.", bad);
 
                     _outputPlugin.SetDumpHardware(_resume.Tries);
+
+                    // TODO: Non-removable
+                    var metadata = new CommonTypes.Structs.ImageInfo
+                    {
+                        Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+                    };
+
+                    if(!_outputPlugin.SetMetadata(metadata))
+                        ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+                                             _outputPlugin.ErrorMessage);
 
                     if(_preSidecar != null)
                         _outputPlugin.SetCicmMetadata(_preSidecar);

@@ -48,6 +48,7 @@ using DiscImageChef.Devices;
 using Schemas;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
@@ -1035,6 +1036,16 @@ namespace DiscImageChef.Core.Devices.Dumping
                 _dumpLog.WriteLine("Sector {0} could not be read.", bad);
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
+
+            // TODO: Disc ID
+            var metadata = new CommonTypes.Structs.ImageInfo
+            {
+                Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+            };
+
+            if(!_outputPlugin.SetMetadata(metadata))
+                ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+                                     _outputPlugin.ErrorMessage);
 
             _outputPlugin.SetDumpHardware(_resume.Tries);
 

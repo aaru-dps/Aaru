@@ -48,6 +48,7 @@ using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
 using Schemas;
 using MediaType = DiscImageChef.CommonTypes.MediaType;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -469,7 +470,8 @@ namespace DiscImageChef.Core.Devices.Dumping
             ExtentsULong     extents    = null;
 
             ResumeSupport.Process(true, _dev.IsRemovable, blocks, _dev.Manufacturer, _dev.Model, _dev.Serial,
-                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision, true);
+                                  _dev.PlatformId, ref _resume, ref currentTry, ref extents, _dev.FirmwareRevision,
+                                  true);
 
             if(currentTry == null ||
                extents    == null)
@@ -1220,6 +1222,16 @@ namespace DiscImageChef.Core.Devices.Dumping
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             _outputPlugin.SetDumpHardware(_resume.Tries);
+
+            // TODO: Media Serial Number
+            var metadata = new CommonTypes.Structs.ImageInfo
+            {
+                Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+            };
+
+            if(!_outputPlugin.SetMetadata(metadata))
+                ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+                                     _outputPlugin.ErrorMessage);
 
             if(_preSidecar != null)
                 _outputPlugin.SetCicmMetadata(_preSidecar);

@@ -1092,6 +1092,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
+            var metadata = new CommonTypes.Structs.ImageInfo
+            {
+                Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+            };
+
+            if(!_outputPlugin.SetMetadata(metadata))
+                ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+                                     _outputPlugin.ErrorMessage);
+
             _outputPlugin.SetDumpHardware(_resume.Tries);
 
             if(_preSidecar != null)

@@ -48,6 +48,7 @@ using DiscImageChef.Devices;
 using Schemas;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
+using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Core.Devices.Dumping
 {
@@ -1145,6 +1146,15 @@ namespace DiscImageChef.Core.Devices.Dumping
             currentTry.Extents = ExtentsConverter.ToMetadata(extents);
 
             _outputPlugin.SetDumpHardware(_resume.Tries);
+
+            var metadata = new CommonTypes.Structs.ImageInfo
+            {
+                Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+            };
+
+            if(!_outputPlugin.SetMetadata(metadata))
+                ErrorMessage?.Invoke("Error {0} setting metadata, continuing..." + Environment.NewLine +
+                                     _outputPlugin.ErrorMessage);
 
             if(_preSidecar != null)
                 _outputPlugin.SetCicmMetadata(_preSidecar);
