@@ -258,6 +258,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                         sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba - 10, dbDev, out subBuf)
                                     : GetSectorForPregapQ16(dev, (uint)lba                  - 10, dbDev, out subBuf);
 
+                    bool crcOk = false;
+
                     for(retries = 0; retries < 10; retries++)
                     {
                         sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf)
@@ -277,8 +279,9 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                   subBuf[4], subBuf[5], subBuf[6], subBuf[7], subBuf[8], subBuf[9],
                                                   subBuf[10], subBuf[11], crc[0], crc[1]);
 
-                        if(crc[0] == subBuf[10] &&
-                           crc[1] == subBuf[11])
+                        crcOk = crc[0] == subBuf[10] && crc[1] == subBuf[11];
+
+                        if(crcOk)
                             break;
                     }
 
@@ -369,10 +372,21 @@ namespace DiscImageChef.Core.Devices.Dumping
                     // Bigger than known change, otherwise we found it
                     if(pregapQ > pregaps[track.TrackSequence])
                     {
-                        DicConsole.DebugWriteLine("Pregap calculator", "Pregap for track {0}: {1}", track.TrackSequence,
-                                                  pregapQ);
+                        // If CRC is not OK, only accept pregaps less than 10 sectors longer than previously now
+                        if((crcOk || pregapQ - pregaps[track.TrackSequence] < 10))
+                        {
+                            DicConsole.DebugWriteLine("Pregap calculator", "Pregap for track {0}: {1}",
+                                                      track.TrackSequence, pregapQ);
 
-                        pregaps[track.TrackSequence] = pregapQ;
+                            pregaps[track.TrackSequence] = pregapQ;
+                        }
+                        // We are going forward, so we have already been in the previous track, so add 1 to pregap and get out of here
+                        else if(forward)
+                        {
+                            pregaps[track.TrackSequence]++;
+
+                            break;
+                        }
                     }
                     else if(pregapQ == pregaps[track.TrackSequence])
                         break;
