@@ -44,11 +44,11 @@ namespace DiscImageChef.DiscImages
             /// <summary>Track #</summary>
             public uint Sequence;
             /// <summary>Filter of file containing track</summary>
-            public IFilter Datafilter;
+            public IFilter DataFilter;
             /// <summary>Offset of track start in file</summary>
             public ulong Offset;
             /// <summary>Type of file</summary>
-            public string Filetype;
+            public string FileType;
         }
 
         struct CdrWinTrack
@@ -70,18 +70,18 @@ namespace DiscImageChef.DiscImages
             /// <summary>Track ISRC</summary>
             public string Isrc;
             /// <summary>File struct for this track</summary>
-            public CdrWinTrackFile Trackfile;
+            public CdrWinTrackFile TrackFile;
             /// <summary>Indexes on this track</summary>
             public Dictionary<int, ulong> Indexes;
             /// <summary>Track pre-gap in sectors</summary>
             public ulong Pregap;
             /// <summary>Track post-gap in sectors</summary>
             public ulong Postgap;
-            /// <summary>Digical Copy Permitted</summary>
+            /// <summary>Digital Copy Permitted</summary>
             public bool FlagDcp;
             /// <summary>Track is quadraphonic</summary>
             public bool Flag4ch;
-            /// <summary>Track has preemphasis</summary>
+            /// <summary>Track has pre-emphasis</summary>
             public bool FlagPre;
             /// <summary>Track has SCMS</summary>
             public bool FlagScms;
@@ -90,7 +90,7 @@ namespace DiscImageChef.DiscImages
             /// <summary>Sectors in track</summary>
             public ulong Sectors;
             /// <summary>Track type</summary>
-            public string Tracktype;
+            public string TrackType;
             /// <summary>Track session</summary>
             public ushort Session;
         }
@@ -112,11 +112,11 @@ namespace DiscImageChef.DiscImages
             /// <summary>Media catalog number</summary>
             public string Mcn;
             /// <summary>Disk type</summary>
-            public MediaType Disktype;
+            public MediaType MediaType;
             /// <summary>Disk type string</summary>
-            public string Disktypestr;
+            public string OriginalMediaType;
             /// <summary>Disk CDDB ID</summary>
-            public string DiskId;
+            public string DiscId;
             /// <summary>Disk UPC/EAN</summary>
             public string Barcode;
             /// <summary>Sessions</summary>
@@ -126,11 +126,13 @@ namespace DiscImageChef.DiscImages
             /// <summary>Disk comment</summary>
             public string Comment;
             /// <summary>File containing CD-Text</summary>
-            public string Cdtextfile;
+            public string CdTextFile;
             /// <summary>Has trurip extensions</summary>
             public bool IsTrurip;
             /// <summary>Disc image hashes</summary>
             public Dictionary<string, string> DiscHashes;
+            /// <summary>DIC media type</summary>
+            public string DicMediaType;
         }
     }
 }

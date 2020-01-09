@@ -44,27 +44,28 @@ namespace DiscImageChef.DiscImages
     {
         public bool? VerifyMediaImage()
         {
-            if(discimage.DiscHashes.Count == 0) return null;
+            if(_discImage.DiscHashes.Count == 0)
+                return null;
 
-            // Read up to 1MiB at a time for verification
-            const int VERIFY_SIZE = 1024 * 1024;
+            // Read up to 1 MiB at a time for verification
+            const int verifySize = 1024 * 1024;
             long      readBytes;
             byte[]    verifyBytes;
 
-            IFilter[] filters = discimage.Tracks.OrderBy(t => t.Sequence).Select(t => t.Trackfile.Datafilter).Distinct()
-                                         .ToArray();
+            IFilter[] filters = _discImage.Tracks.OrderBy(t => t.Sequence).Select(t => t.TrackFile.DataFilter).
+                                           Distinct().ToArray();
 
-            if(discimage.DiscHashes.TryGetValue("sha1", out string sha1))
+            if(_discImage.DiscHashes.TryGetValue("sha1", out string sha1))
             {
-                Sha1Context ctx = new Sha1Context();
+                var ctx = new Sha1Context();
 
                 foreach(IFilter filter in filters)
                 {
                     Stream stream = filter.GetDataForkStream();
                     readBytes   = 0;
-                    verifyBytes = new byte[VERIFY_SIZE];
+                    verifyBytes = new byte[verifySize];
 
-                    while(readBytes + VERIFY_SIZE < stream.Length)
+                    while(readBytes + verifySize < stream.Length)
                     {
                         stream.Read(verifyBytes, 0, verifyBytes.Length);
                         ctx.Update(verifyBytes);
@@ -78,22 +79,22 @@ namespace DiscImageChef.DiscImages
 
                 string verifySha1 = ctx.End();
                 DicConsole.DebugWriteLine("CDRWin plugin", "Calculated SHA1: {0}", verifySha1);
-                DicConsole.DebugWriteLine("CDRWin plugin", "Expected SHA1: {0}",   sha1);
+                DicConsole.DebugWriteLine("CDRWin plugin", "Expected SHA1: {0}", sha1);
 
                 return verifySha1 == sha1;
             }
 
-            if(discimage.DiscHashes.TryGetValue("md5", out string md5))
+            if(_discImage.DiscHashes.TryGetValue("md5", out string md5))
             {
-                Md5Context ctx = new Md5Context();
+                var ctx = new Md5Context();
 
                 foreach(IFilter filter in filters)
                 {
                     Stream stream = filter.GetDataForkStream();
                     readBytes   = 0;
-                    verifyBytes = new byte[VERIFY_SIZE];
+                    verifyBytes = new byte[verifySize];
 
-                    while(readBytes + VERIFY_SIZE < stream.Length)
+                    while(readBytes + verifySize < stream.Length)
                     {
                         stream.Read(verifyBytes, 0, verifyBytes.Length);
                         ctx.Update(verifyBytes);
@@ -107,22 +108,22 @@ namespace DiscImageChef.DiscImages
 
                 string verifyMd5 = ctx.End();
                 DicConsole.DebugWriteLine("CDRWin plugin", "Calculated MD5: {0}", verifyMd5);
-                DicConsole.DebugWriteLine("CDRWin plugin", "Expected MD5: {0}",   md5);
+                DicConsole.DebugWriteLine("CDRWin plugin", "Expected MD5: {0}", md5);
 
                 return verifyMd5 == md5;
             }
 
-            if(discimage.DiscHashes.TryGetValue("crc32", out string crc32))
+            if(_discImage.DiscHashes.TryGetValue("crc32", out string crc32))
             {
-                Crc32Context ctx = new Crc32Context();
+                var ctx = new Crc32Context();
 
                 foreach(IFilter filter in filters)
                 {
                     Stream stream = filter.GetDataForkStream();
                     readBytes   = 0;
-                    verifyBytes = new byte[VERIFY_SIZE];
+                    verifyBytes = new byte[verifySize];
 
-                    while(readBytes + VERIFY_SIZE < stream.Length)
+                    while(readBytes + verifySize < stream.Length)
                     {
                         stream.Read(verifyBytes, 0, verifyBytes.Length);
                         ctx.Update(verifyBytes);
@@ -136,12 +137,12 @@ namespace DiscImageChef.DiscImages
 
                 string verifyCrc = ctx.End();
                 DicConsole.DebugWriteLine("CDRWin plugin", "Calculated CRC32: {0}", verifyCrc);
-                DicConsole.DebugWriteLine("CDRWin plugin", "Expected CRC32: {0}",   crc32);
+                DicConsole.DebugWriteLine("CDRWin plugin", "Expected CRC32: {0}", crc32);
 
                 return verifyCrc == crc32;
             }
 
-            foreach(string hash in discimage.DiscHashes.Keys)
+            foreach(string hash in _discImage.DiscHashes.Keys)
                 DicConsole.DebugWriteLine("CDRWin plugin", "Found unsupported hash {0}", hash);
 
             return null;
@@ -150,10 +151,11 @@ namespace DiscImageChef.DiscImages
         public bool? VerifySector(ulong sectorAddress)
         {
             byte[] buffer = ReadSectorLong(sectorAddress);
+
             return CdChecksums.CheckCdSector(buffer);
         }
 
-        public bool? VerifySectors(ulong           sectorAddress, uint length, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length);
@@ -171,19 +173,22 @@ namespace DiscImageChef.DiscImages
                 {
                     case null:
                         unknownLbas.Add((ulong)i + sectorAddress);
+
                         break;
                     case false:
                         failingLbas.Add((ulong)i + sectorAddress);
+
                         break;
                 }
             }
 
-            if(unknownLbas.Count > 0) return null;
+            if(unknownLbas.Count > 0)
+                return null;
 
             return failingLbas.Count <= 0;
         }
 
-        public bool? VerifySectors(ulong           sectorAddress, uint length, uint track, out List<ulong> failingLbas,
+        public bool? VerifySectors(ulong sectorAddress, uint length, uint track, out List<ulong> failingLbas,
                                    out List<ulong> unknownLbas)
         {
             byte[] buffer = ReadSectorsLong(sectorAddress, length, track);
@@ -201,14 +206,17 @@ namespace DiscImageChef.DiscImages
                 {
                     case null:
                         unknownLbas.Add((ulong)i + sectorAddress);
+
                         break;
                     case false:
                         failingLbas.Add((ulong)i + sectorAddress);
+
                         break;
                 }
             }
 
-            if(unknownLbas.Count > 0) return null;
+            if(unknownLbas.Count > 0)
+                return null;
 
             return failingLbas.Count <= 0;
         }
@@ -216,6 +224,7 @@ namespace DiscImageChef.DiscImages
         public bool? VerifySector(ulong sectorAddress, uint track)
         {
             byte[] buffer = ReadSectorLong(sectorAddress, track);
+
             return CdChecksums.CheckCdSector(buffer);
         }
     }

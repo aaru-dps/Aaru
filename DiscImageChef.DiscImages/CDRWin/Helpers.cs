@@ -38,14 +38,14 @@ namespace DiscImageChef.DiscImages
 {
     public partial class CdrWin
     {
-        static ulong CdrWinMsftoLba(string msf)
+        static ulong CdrWinMsfToLba(string msf)
         {
             string[] msfElements = msf.Split(':');
             ulong    minute      = ulong.Parse(msfElements[0]);
             ulong    second      = ulong.Parse(msfElements[1]);
             ulong    frame       = ulong.Parse(msfElements[2]);
 
-            ulong sectors = minute * 60 * 75 + second * 75 + frame;
+            ulong sectors = (minute * 60 * 75) + (second * 75) + frame;
 
             return sectors;
         }
@@ -144,8 +144,8 @@ namespace DiscImageChef.DiscImages
             }
         }
 
-        static (byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
-            ((byte)(sector / 75 / 60), (byte)(sector / 75 % 60), (byte)(sector % 75));
+        static(byte minute, byte second, byte frame) LbaToMsf(ulong sector) =>
+            ((byte)(sector / 75 / 60), (byte)((sector / 75) % 60), (byte)(sector % 75));
 
         static string GetTrackMode(Track track)
         {
@@ -235,7 +235,7 @@ namespace DiscImageChef.DiscImages
                 case MediaType.HDDVDROM:  return CDRWIN_DISK_TYPE_HDDVD;
                 case MediaType.HDDVDRW:   return CDRWIN_DISK_TYPE_HDDVDRW;
                 case MediaType.HDDVDRWDL: return CDRWIN_DISK_TYPE_HDDVDRWDL;
-                default:                  return "";
+                default:                  return"";
             }
         }
     }

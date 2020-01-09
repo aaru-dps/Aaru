@@ -137,6 +137,7 @@ namespace DiscImageChef.DiscImages
         const string REGEX_SESSION    = @"\bREM\s+SESSION\s+(?<number>\d+).*$";
         const string REGEX_MEDIA_TYPE = @"\bREM\s+ORIGINAL MEDIA-TYPE:\s+(?<mediatype>.+)$";
         const string REGEX_LEAD_OUT   = @"\bREM\s+LEAD-OUT\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
+
         // Not checked
         const string REGEX_LBA        = @"\bREM MSF:\s+(?<msf>[\d]+:[\d]+:[\d]+)\s+=\s+LBA:\s+(?<lba>[\d]+)$";
         const string REGEX_DISC_ID    = @"\bDISC_ID\s+(?<diskid>[\da-f]{8})$";
@@ -157,6 +158,7 @@ namespace DiscImageChef.DiscImages
         const string REGEX_PREGAP     = @"\bPREGAP\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
         const string REGEX_POSTGAP    = @"\bPOSTGAP\s+(?<msf>[\d]+:[\d]+:[\d]+)$";
         const string REGEX_FLAGS      = @"\bFLAGS\s+(((?<dcp>DCP)|(?<quad>4CH)|(?<pre>PRE)|(?<scms>SCMS))\s*)+$";
+
         // Trurip extensions
         const string REGEX_APPLICATION        = @"\bREM\s+Ripping Tool:\s+(?<application>.+)$";
         const string REGEX_TRURIP_DISC_HASHES = @"\bREM\s+DISC\s+HASHES$";
@@ -169,5 +171,9 @@ namespace DiscImageChef.DiscImages
         const string REGEX_TRURIP_TRACK_MD5     = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{32}$";
         const string REGEX_TRURIP_TRACK_SHA1    = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{40}$";
         const string REGEX_TRURIP_TRACK_UNKNOWN = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{8,}$";
+        const string REGEX_DIC_MEDIA_TYPE       = @"\bREM\s+METADATA DIC MEDIA-TYPE:\s+(?<mediatype>.+)$";
+        const string REGEX_APPLICATION_VERSION  = @"\bREM\s+Ripping Tool Version:\s+(?<application>.+)$";
+        const string REGEX_DUMP_EXTENT =
+            @"\bREM\s+METADATA DUMP EXTENT:\s+(?<application>.+)\s+\|\s+(?<version>.+)\s+\|\s+(?<os>.+)\s+\|\s+(?<manufacturer>.+)\s+\|\s+(?<model>.+)\s+\|\s+(?<firmware>.+)\s+\|\s+(?<serial>.+)\s+\|\s+(?<start>\d+):(?<end>\d+)$";
     }
 }

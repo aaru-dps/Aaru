@@ -41,43 +41,31 @@ namespace DiscImageChef.DiscImages
     // TODO: Implement track flags
     public partial class CdrWin : IWritableOpticalImage, IVerifiableImage
     {
-        IFilter      cdrwinFilter;
-        StreamReader cueStream;
-        StreamWriter descriptorStream;
-        CdrWinDisc   discimage;
-        ImageInfo    imageInfo;
-        Stream       imageStream;
+        IFilter      _cdrwinFilter;
+        StreamReader _cueStream;
+        StreamWriter _descriptorStream;
+        CdrWinDisc   _discImage;
+        ImageInfo    _imageInfo;
+        Stream       _imageStream;
         /// <summary>Dictionary, index is track #, value is TrackFile</summary>
-        Dictionary<uint, ulong> offsetmap;
-        bool                         separateTracksWriting;
-        Dictionary<byte, byte>       trackFlags;
-        Dictionary<byte, string>     trackIsrcs;
-        string                       writingBaseName;
-        Dictionary<uint, FileStream> writingStreams;
-        List<Track>                  writingTracks;
+        Dictionary<uint, ulong> _offsetMap;
+        bool                         _separateTracksWriting;
+        Dictionary<byte, byte>       _trackFlags;
+        Dictionary<byte, string>     _trackIsrcs;
+        string                       _writingBaseName;
+        Dictionary<uint, FileStream> _writingStreams;
+        List<Track>                  _writingTracks;
 
-        public CdrWin()
+        public CdrWin() => _imageInfo = new ImageInfo
         {
-            imageInfo = new ImageInfo
-            {
-                ReadableSectorTags    = new List<SectorTagType>(),
-                ReadableMediaTags     = new List<MediaTagType>(),
-                HasPartitions         = true,
-                HasSessions           = true,
-                Version               = null,
-                ApplicationVersion    = null,
-                MediaTitle            = null,
-                Creator               = null,
-                MediaManufacturer     = null,
-                MediaModel            = null,
-                MediaPartNumber       = null,
-                MediaSequence         = 0,
-                LastMediaSequence     = 0,
-                DriveManufacturer     = null,
-                DriveModel            = null,
-                DriveSerialNumber     = null,
-                DriveFirmwareRevision = null
-            };
-        }
+            ReadableSectorTags = new List<SectorTagType>(), ReadableMediaTags = new List<MediaTagType>(),
+            HasPartitions      = true, HasSessions                            = true, Version = null,
+            ApplicationVersion = null,
+            MediaTitle         = null, Creator = null, MediaManufacturer = null,
+            MediaModel         = null,
+            MediaPartNumber    = null, MediaSequence = 0, LastMediaSequence = 0,
+            DriveManufacturer  = null,
+            DriveModel         = null, DriveSerialNumber = null, DriveFirmwareRevision = null
+        };
     }
 }

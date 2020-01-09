@@ -43,7 +43,7 @@ namespace DiscImageChef.DiscImages
         // Due to .cue format, this method must parse whole file, ignoring errors (those will be thrown by OpenImage()).
         public bool Identify(IFilter imageFilter)
         {
-            cdrwinFilter = imageFilter;
+            _cdrwinFilter = imageFilter;
 
             try
             {
@@ -51,37 +51,45 @@ namespace DiscImageChef.DiscImages
                 byte[] testArray = new byte[512];
                 imageFilter.GetDataForkStream().Read(testArray, 0, 512);
                 imageFilter.GetDataForkStream().Seek(0, SeekOrigin.Begin);
+
                 // Check for unexpected control characters that shouldn't be present in a text file and can crash this plugin
                 bool twoConsecutiveNulls = false;
+
                 for(int i = 0; i < 512; i++)
                 {
-                    if(i >= imageFilter.GetDataForkStream().Length) break;
+                    if(i >= imageFilter.GetDataForkStream().Length)
+                        break;
 
                     if(testArray[i] == 0)
                     {
-                        if(twoConsecutiveNulls) return false;
+                        if(twoConsecutiveNulls)
+                            return false;
 
                         twoConsecutiveNulls = true;
                     }
-                    else twoConsecutiveNulls = false;
+                    else
+                        twoConsecutiveNulls = false;
 
-                    if(testArray[i] < 0x20 && testArray[i] != 0x0A && testArray[i] != 0x0D && testArray[i] != 0x00)
+                    if(testArray[i] < 0x20  &&
+                       testArray[i] != 0x0A &&
+                       testArray[i] != 0x0D &&
+                       testArray[i] != 0x00)
                         return false;
                 }
 
-                cueStream = new StreamReader(cdrwinFilter.GetDataForkStream());
+                _cueStream = new StreamReader(_cdrwinFilter.GetDataForkStream());
 
-                while(cueStream.Peek() >= 0)
+                while(_cueStream.Peek() >= 0)
                 {
-                    string line = cueStream.ReadLine();
+                    string line = _cueStream.ReadLine();
 
-                    Regex sr = new Regex(REGEX_SESSION);
-                    Regex rr = new Regex(REGEX_COMMENT);
-                    Regex cr = new Regex(REGEX_MCN);
-                    Regex fr = new Regex(REGEX_FILE);
-                    Regex tr = new Regex(REGEX_CDTEXT);
+                    var sr = new Regex(REGEX_SESSION);
+                    var rr = new Regex(REGEX_COMMENT);
+                    var cr = new Regex(REGEX_MCN);
+                    var fr = new Regex(REGEX_FILE);
+                    var tr = new Regex(REGEX_CDTEXT);
 
-                    // First line must be SESSION, REM, CATALOG,  FILE or CDTEXTFILE.
+                    // First line must be SESSION, REM, CATALOG, FILE or CDTEXTFILE.
                     Match sm = sr.Match(line ?? throw new InvalidOperationException());
                     Match rm = rr.Match(line);
                     Match cm = cr.Match(line);
@@ -95,9 +103,10 @@ namespace DiscImageChef.DiscImages
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", cdrwinFilter);
-                DicConsole.ErrorWriteLine("Exception: {0}",                              ex.Message);
-                DicConsole.ErrorWriteLine("Stack trace: {0}",                            ex.StackTrace);
+                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrwinFilter);
+                DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
+                DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+
                 return false;
             }
         }
