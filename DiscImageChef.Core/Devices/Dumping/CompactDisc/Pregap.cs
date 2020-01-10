@@ -193,10 +193,11 @@ namespace DiscImageChef.Core.Devices.Dumping
                 bool  pregapFound   = false;
                 Track previousTrack = tracks.FirstOrDefault(t => t.TrackSequence == track.TrackSequence - 1);
 
-                bool goneBack = false;
-                bool goFront  = false;
-                bool forward  = false;
-                bool crcOk    = false;
+                bool goneBack                      = false;
+                bool goFront                       = false;
+                bool forward                       = false;
+                bool crcOk                         = false;
+                bool previousPregapIsPreviousTrack = false;
 
                 // Check if pregap is 0
                 for(retries = 0; retries < 10 && !pregapFound; retries++)
@@ -420,7 +421,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                     if(subBuf[1] < track.TrackSequence)
                     {
                         lba++;
-                        forward = true;
+                        forward                       = true;
+                        previousPregapIsPreviousTrack = true;
 
                         // Already gone back, so go forward
                         if(goneBack)
@@ -436,13 +438,22 @@ namespace DiscImageChef.Core.Devices.Dumping
                         lba--;
                         forward = false;
 
+                        if(previousPregapIsPreviousTrack)
+                            break;
+
                         continue;
                     }
 
+                    previousPregapIsPreviousTrack = false;
+
                     // Pregap according to Q position
-                    int pregapQ = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] + 1;
                     posQ = ((subBuf[7] * 60 * 75) + (subBuf[8] * 75)                   + subBuf[9]) - 150;
-                    int diff = posQ                                                    - lba;
+                    int diff    = posQ                                                 - lba;
+                    int pregapQ = (subBuf[3] * 60 * 75) + (subBuf[4] * 75) + subBuf[5] + 1;
+
+                    // If we obtained a Q from a previous sector, or we just came back from the previous track Q, sum the difference
+                    if(diff < 0 || forward)
+                        pregapQ += diff;
 
                     if(diff != 0)
                     {
