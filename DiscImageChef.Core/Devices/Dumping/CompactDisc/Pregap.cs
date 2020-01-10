@@ -199,7 +199,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                 bool crcOk    = false;
 
                 // Check if pregap is 0
-                for(retries = 0; retries < 10; retries++)
+                for(retries = 0; retries < 10 && !pregapFound; retries++)
                 {
                     sense = supportsRwSubchannel ? GetSectorForPregapRaw(dev, (uint)lba, dbDev, out subBuf)
                                 : GetSectorForPregapQ16(dev, (uint)lba, dbDev, out subBuf);
