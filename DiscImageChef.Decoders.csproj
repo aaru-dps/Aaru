@@ -167,6 +167,7 @@
     <Compile Include="Sega\Dreamcast.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj" />
     <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
