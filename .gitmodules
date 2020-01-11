@@ -19,3 +19,6 @@
 [submodule "DiscImageChef.Helpers"]
 	path = DiscImageChef.Helpers
 	url = https://github.com/discimagechef/DiscImageChef.Helpers.git
+[submodule "DiscImageChef.Checksums"]
+	path = DiscImageChef.Checksums
+	url = https://github.com/discimagechef/DiscImageChef.Checksums.git
