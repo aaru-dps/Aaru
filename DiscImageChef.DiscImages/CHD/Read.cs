@@ -43,7 +43,9 @@ using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.CommonTypes.Structs.Devices.ATA;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.CD;
 using DiscImageChef.Helpers;
+using Session = DiscImageChef.CommonTypes.Structs.Session;
 
 namespace DiscImageChef.DiscImages
 {
@@ -1198,16 +1200,32 @@ namespace DiscImageChef.DiscImages
                 return sector;
 
             uint sectorOffset;
+            bool mode2 = false;
 
             switch(track.TrackType)
             {
                 case TrackType.CdMode1:
-                case TrackType.CdMode2Form1:
                 {
                     if(track.TrackRawBytesPerSector == 2352)
                     {
                         sectorOffset = 16;
                         sectorSize   = 2048;
+                    }
+                    else
+                    {
+                        sectorOffset = 0;
+                        sectorSize   = 2048;
+                    }
+
+                    break;
+                }
+                case TrackType.CdMode2Form1:
+                {
+                    if(track.TrackRawBytesPerSector == 2352)
+                    {
+                        sectorOffset = 0;
+                        sectorSize   = 2352;
+                        mode2        = true;
                     }
                     else
                     {
@@ -1222,8 +1240,9 @@ namespace DiscImageChef.DiscImages
                 {
                     if(track.TrackRawBytesPerSector == 2352)
                     {
-                        sectorOffset = 16;
-                        sectorSize   = 2324;
+                        sectorOffset = 0;
+                        sectorSize   = 2352;
+                        mode2        = true;
                     }
                     else
                     {
@@ -1236,16 +1255,9 @@ namespace DiscImageChef.DiscImages
 
                 case TrackType.CdMode2Formless:
                 {
-                    if(track.TrackRawBytesPerSector == 2352)
-                    {
-                        sectorOffset = 16;
-                        sectorSize   = 2336;
-                    }
-                    else
-                    {
-                        sectorOffset = 0;
-                        sectorSize   = 2336;
-                    }
+                    sectorOffset = 0;
+                    sectorSize   = (uint)track.TrackRawBytesPerSector;
+                    mode2        = true;
 
                     break;
                 }
@@ -1263,7 +1275,9 @@ namespace DiscImageChef.DiscImages
 
             byte[] buffer = new byte[sectorSize];
 
-            if(track.TrackType == TrackType.Audio && swapAudio)
+            if(mode2)
+                buffer = Sector.GetUserDataFromMode2(sector);
+            else if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
                 {
                     buffer[i + 1] = sector[i];

@@ -42,7 +42,9 @@ using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
 using DiscImageChef.Console;
+using DiscImageChef.Decoders.CD;
 using Schemas;
+using Session = DiscImageChef.CommonTypes.Structs.Session;
 
 namespace DiscImageChef.DiscImages
 {
@@ -1319,6 +1321,7 @@ namespace DiscImageChef.DiscImages
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
+            bool mode2 = false;
 
             switch(dicTrack.TrackType)
             {
@@ -1342,6 +1345,7 @@ namespace DiscImageChef.DiscImages
                 case CDRWIN_TRACK_TYPE_MODE2_FORMLESS:
                 case CDRWIN_TRACK_TYPE_CDI:
                 {
+                    mode2        = true;
                     sectorOffset = 0;
                     sectorSize   = 2336;
                     sectorSkip   = 0;
@@ -1365,17 +1369,11 @@ namespace DiscImageChef.DiscImages
                     break;
                 }
                 case CDRWIN_TRACK_TYPE_MODE2_RAW:
-                {
-                    sectorOffset = 16;
-                    sectorSize   = 2336;
-                    sectorSkip   = 0;
-
-                    break;
-                }
                 case CDRWIN_TRACK_TYPE_CDI_RAW:
                 {
-                    sectorOffset = 16;
-                    sectorSize   = 2336;
+                    mode2        = true;
+                    sectorOffset = 0;
+                    sectorSize   = 2352;
                     sectorSkip   = 0;
 
                     break;
@@ -1400,8 +1398,24 @@ namespace DiscImageChef.DiscImages
                Seek((long)dicTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
-            if(sectorOffset == 0 &&
-               sectorSkip   == 0)
+            if(mode2)
+            {
+                var mode2Ms = new MemoryStream((int)(sectorSize * length));
+
+                buffer = br.ReadBytes((int)(sectorSize * length));
+
+                for(int i = 0; i < length; i++)
+                {
+                    byte[] sector = new byte[sectorSize];
+                    Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
+                    sector = Sector.GetUserDataFromMode2(sector);
+                    mode2Ms.Write(sector, 0, sector.Length);
+                }
+
+                buffer = mode2Ms.ToArray();
+            }
+            else if(sectorOffset == 0 &&
+                    sectorSkip   == 0)
                 buffer = br.ReadBytes((int)(sectorSize * length));
             else
                 for(int i = 0; i < length; i++)
