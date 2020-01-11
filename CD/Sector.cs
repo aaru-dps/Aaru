@@ -32,6 +32,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 
 namespace DiscImageChef.Decoders.CD
@@ -205,5 +206,95 @@ namespace DiscImageChef.Decoders.CD
 
             return scrambled;
         }
+
+        // public static byte[] GetUserDataFromMode2(byte[] data)
+        // {
+        //     byte[] sector;
+        //
+        //     DiscImageChef.Checksums.CdChecksums.
+        //                         EccInit();
+        //
+        //                     if(sectorPrefixDdt == null) sectorPrefixDdt = new uint[imageInfo.Sectors];
+        //
+        //                     sector = new byte[2328];
+        //                     if(ArrayHelpers.ArrayIsNullOrEmpty(data))
+        //                     {
+        //                         sectorPrefixDdt[sectorAddress] = (uint)CdFixFlags.NotDumped;
+        //                         return WriteSector(sector, sectorAddress);
+        //                     }
+        //
+        //                     prefixCorrect = true;
+        //
+        //                     if(data[0x00] != 0x00 || data[0x01] != 0xFF || data[0x02] != 0xFF || data[0x03] != 0xFF ||
+        //                        data[0x04] != 0xFF || data[0x05] != 0xFF || data[0x06] != 0xFF || data[0x07] != 0xFF ||
+        //                        data[0x08] != 0xFF || data[0x09] != 0xFF || data[0x0A] != 0xFF || data[0x0B] != 0x00 ||
+        //                        data[0x0F] != 0x02) prefixCorrect = false;
+        //
+        //                     if(prefixCorrect)
+        //                     {
+        //                         minute        = (data[0x0C] >> 4) * 10                 + (data[0x0C] & 0x0F);
+        //                         second        = (data[0x0D] >> 4) * 10                 + (data[0x0D] & 0x0F);
+        //                         frame         = (data[0x0E] >> 4) * 10                 + (data[0x0E] & 0x0F);
+        //                         storedLba     = minute * 60 * 75 + second * 75 + frame - 150;
+        //                         prefixCorrect = storedLba == (int)sectorAddress;
+        //                     }
+        //
+        //                     if(prefixCorrect) sectorPrefixDdt[sectorAddress] = (uint)CdFixFlags.Correct;
+        //                     else
+        //                     {
+        //                         if((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) > 0)
+        //                             sectorPrefixMs.Position =
+        //                                 ((sectorPrefixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 16;
+        //                         else sectorPrefixMs.Seek(0, SeekOrigin.End);
+        //
+        //                         sectorPrefixDdt[sectorAddress] = (uint)(sectorPrefixMs.Position / 16 + 1);
+        //
+        //                         sectorPrefixMs.Write(data, 0, 16);
+        //                     }
+        //
+        //                     if(mode2Subheaders == null) mode2Subheaders = new byte[imageInfo.Sectors * 8];
+        //
+        //                     bool correctEcc = SuffixIsCorrectMode2(data);
+        //                     bool correctEdc = false;
+        //
+        //                     if(correctEcc)
+        //                     {
+        //                         uint computedEdc = ComputeEdc(0, data, 0x808, 0x10);
+        //                         uint edc         = BitConverter.ToUInt32(data, 0x818);
+        //                         correctEdc = computedEdc == edc;
+        //                     }
+        //                     else
+        //                     {
+        //                         uint computedEdc = ComputeEdc(0, data, 0x91C, 0x10);
+        //                         uint edc         = BitConverter.ToUInt32(data, 0x92C);
+        //                         correctEdc = computedEdc == edc;
+        //                     }
+        //
+        //                     if(correctEcc && correctEdc)
+        //                     {
+        //                         sector = new byte[2048];
+        //                         if(sectorSuffixDdt == null) sectorSuffixDdt = new uint[imageInfo.Sectors];
+        //                         sectorSuffixDdt[sectorAddress] = (uint)CdFixFlags.Mode2Form1Ok;
+        //                         Array.Copy(data, 24, sector, 0, 2048);
+        //                     }
+        //                     else if(correctEdc)
+        //                     {
+        //                         sector = new byte[2324];
+        //                         if(sectorSuffixDdt == null) sectorSuffixDdt = new uint[imageInfo.Sectors];
+        //                         sectorSuffixDdt[sectorAddress] = (uint)CdFixFlags.Mode2Form2Ok;
+        //                         Array.Copy(data, 24, sector, 0, 2324);
+        //                     }
+        //                     else if(BitConverter.ToUInt32(data, 0x92C) == 0)
+        //                     {
+        //                         sector = new byte[2324];
+        //                         if(sectorSuffixDdt == null) sectorSuffixDdt = new uint[imageInfo.Sectors];
+        //                         sectorSuffixDdt[sectorAddress] = (uint)CdFixFlags.Mode2Form2NoCrc;
+        //                         Array.Copy(data, 24, sector, 0, 2324);
+        //                     }
+        //                     else Array.Copy(data, 24, sector, 0, 2328);
+        //
+        //                     Array.Copy(data, 16, mode2Subheaders, (int)sectorAddress * 8, 8);
+        //                     return WriteSector(sector, sectorAddress);
+        // }
     }
 }

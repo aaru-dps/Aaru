@@ -87,7 +87,6 @@
     <Compile Include="SCSI\MMC\Hybrid.cs" />
     <Compile Include="SCSI\MMC\WriteProtect.cs" />
     <Compile Include="SCSI\MMC\DiscInformation.cs" />
-    <Compile Include="SCSI\Enums.cs" />
     <Compile Include="SCSI\Modes\00_SFF.cs" />
     <Compile Include="SCSI\Modes\01.cs" />
     <Compile Include="SCSI\Modes\01_MMC.cs" />
@@ -168,6 +167,7 @@
     <Compile Include="Sega\Dreamcast.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
     <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>

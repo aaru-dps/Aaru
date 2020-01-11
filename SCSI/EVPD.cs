@@ -36,7 +36,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using DiscImageChef.Decoders.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -293,31 +294,44 @@ namespace DiscImageChef.Decoders.SCSI
         public enum IdentificationAssociation : byte
         {
             /// <summary>Identifier field is associated with the addressed logical unit</summary>
-            LogicalUnit = 0, /// <summary>Identifier field is associated with the target port</summary>
-            TargetPort = 1, /// <summary>Identifier field is associated with the target device that contains the LUN</summary>
+            LogicalUnit = 0,
+            /// <summary>Identifier field is associated with the target port</summary>
+            TargetPort = 1,
+            /// <summary>Identifier field is associated with the target device that contains the LUN</summary>
             TargetDevice = 2
         }
 
         public enum IdentificationCodeSet : byte
         {
             /// <summary>Identifier is binary</summary>
-            Binary = 1, /// <summary>Identifier is pure ASCII</summary>
-            ASCII = 2, /// <summary>Identifier is in UTF-8</summary>
+            Binary = 1,
+            /// <summary>Identifier is pure ASCII</summary>
+            ASCII = 2,
+            /// <summary>Identifier is in UTF-8</summary>
             UTF8 = 3
         }
 
         public enum IdentificationTypes : byte
         {
             /// <summary>No assignment authority was used and there is no guarantee the identifier is unique</summary>
-            NoAuthority = 0, /// <summary>Concatenates vendor and product identifier from INQUIRY plus unit serial number from page 80h</summary>
-            Inquiry = 1, /// <summary>Identifier is a 64-bit IEEE EUI-64, or extended</summary>
-            EUI = 2, /// <summary>Identifier is compatible with 64-bit FC-PH Name_Identifier</summary>
-            NAA = 3, /// <summary>Identifier to relative port in device</summary>
-            Relative = 4, /// <summary>Identifier to group of target ports in device</summary>
-            TargetPortGroup = 5, /// <summary>Identifier to group of target LUNs in device</summary>
-            LogicalUnitGroup = 6, /// <summary>MD5 of device identification values</summary>
-            MD5 = 7, /// <summary>SCSI name string</summary>
-            SCSI = 8, /// <summary>Protocol specific port identifier</summary>
+            NoAuthority = 0,
+            /// <summary>Concatenates vendor and product identifier from INQUIRY plus unit serial number from page 80h</summary>
+            Inquiry = 1,
+            /// <summary>Identifier is a 64-bit IEEE EUI-64, or extended</summary>
+            EUI = 2,
+            /// <summary>Identifier is compatible with 64-bit FC-PH Name_Identifier</summary>
+            NAA = 3,
+            /// <summary>Identifier to relative port in device</summary>
+            Relative = 4,
+            /// <summary>Identifier to group of target ports in device</summary>
+            TargetPortGroup = 5,
+            /// <summary>Identifier to group of target LUNs in device</summary>
+            LogicalUnitGroup = 6,
+            /// <summary>MD5 of device identification values</summary>
+            MD5 = 7,
+            /// <summary>SCSI name string</summary>
+            SCSI = 8,
+            /// <summary>Protocol specific port identifier</summary>
             ProtocolSpecific = 9
         }
 
@@ -1461,7 +1475,7 @@ namespace DiscImageChef.Decoders.SCSI
             if(id != null)
             {
                 sb.AppendLine("\tATA IDENTIFY information follows:");
-                sb.AppendFormat("{0}", Identify.Prettify(id)).AppendLine();
+                sb.AppendFormat("{0}", ATA.Identify.Prettify(id)).AppendLine();
             }
             else
                 sb.AppendLine("\tCould not decode ATA IDENTIFY information");

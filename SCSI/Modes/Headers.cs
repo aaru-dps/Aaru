@@ -32,6 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 
 namespace DiscImageChef.Decoders.SCSI
 {

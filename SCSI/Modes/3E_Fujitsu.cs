@@ -33,6 +33,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 
 namespace DiscImageChef.Decoders.SCSI
 {
@@ -44,8 +45,10 @@ namespace DiscImageChef.Decoders.SCSI
         public enum Fujitsu_VerifyModes : byte
         {
             /// <summary>Always verify after writing</summary>
-            Always = 0, /// <summary>Never verify after writing</summary>
-            Never = 1, /// <summary>Verify after writing depending on condition</summary>
+            Always = 0,
+            /// <summary>Never verify after writing</summary>
+            Never = 1,
+            /// <summary>Verify after writing depending on condition</summary>
             Depends = 2, Reserved = 4
         }
 
