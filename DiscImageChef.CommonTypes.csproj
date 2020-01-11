@@ -97,6 +97,10 @@
     <Compile Include="MediaType.cs" />
     <Compile Include="MediaTypeFromSCSI.cs" />
     <Compile Include="PluginBase.cs" />
+    <Compile Include="Structs\Devices\ATA\Identify.cs" />
+    <Compile Include="Structs\Devices\SCSI\Enums.cs" />
+    <Compile Include="Structs\Devices\SCSI\Inquiry.cs" />
+    <Compile Include="Structs\Devices\SCSI\Modes\2A.cs" />
     <Compile Include="Structs\Filesystems.cs" />
     <Compile Include="Structs\Images.cs" />
     <Compile Include="Structs\TapeFile.cs" />
@@ -115,7 +119,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj" />
+    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj" />
+    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

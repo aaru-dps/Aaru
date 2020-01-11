@@ -39,9 +39,9 @@
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI.Modes;
 using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
@@ -484,57 +484,57 @@ namespace DiscImageChef.CommonTypes.Metadata
 
     public class mmcModeType
     {
-        public bool                                AccurateCDDA                     { get; set; }
-        public bool                                BCK                              { get; set; }
-        public ushort                              BufferSize                       { get; set; }
-        public bool                                BufferUnderRunProtection         { get; set; }
-        public bool                                CanEject                         { get; set; }
-        public bool                                CanLockMedia                     { get; set; }
-        public bool                                CDDACommand                      { get; set; }
-        public bool                                CompositeAudioVideo              { get; set; }
-        public bool                                CSSandCPPMSupported              { get; set; }
-        public ushort                              CurrentSpeed                     { get; set; }
-        public ushort                              CurrentWriteSpeed                { get; set; }
-        public ushort                              CurrentWriteSpeedSelected        { get; set; }
-        public bool                                DeterministicSlotChanger         { get; set; }
-        public bool                                DigitalPort1                     { get; set; }
-        public bool                                DigitalPort2                     { get; set; }
-        public bool                                LeadInPW                         { get; set; }
-        public byte                                LoadingMechanismType             { get; set; }
-        public bool                                LockStatus                       { get; set; }
-        public bool                                LSBF                             { get; set; }
-        public ushort                              MaximumSpeed                     { get; set; }
-        public ushort                              MaximumWriteSpeed                { get; set; }
-        public bool                                PlaysAudio                       { get; set; }
-        public bool                                PreventJumperStatus              { get; set; }
-        public bool                                RCK                              { get; set; }
-        public bool                                ReadsBarcode                     { get; set; }
-        public bool                                ReadsBothSides                   { get; set; }
-        public bool                                ReadsCDR                         { get; set; }
-        public bool                                ReadsCDRW                        { get; set; }
-        public bool                                ReadsDeinterlavedSubchannel      { get; set; }
-        public bool                                ReadsDVDR                        { get; set; }
-        public bool                                ReadsDVDRAM                      { get; set; }
-        public bool                                ReadsDVDROM                      { get; set; }
-        public bool                                ReadsISRC                        { get; set; }
-        public bool                                ReadsMode2Form2                  { get; set; }
-        public bool                                ReadsMode2Form1                  { get; set; }
-        public bool                                ReadsPacketCDR                   { get; set; }
-        public bool                                ReadsSubchannel                  { get; set; }
-        public bool                                ReadsUPC                         { get; set; }
-        public bool                                ReturnsC2Pointers                { get; set; }
-        public byte                                RotationControlSelected          { get; set; }
-        public bool                                SeparateChannelMute              { get; set; }
-        public bool                                SeparateChannelVolume            { get; set; }
-        public bool                                SSS                              { get; set; }
-        public bool                                SupportsMultiSession             { get; set; }
-        public ushort                              SupportedVolumeLevels            { get; set; }
-        public bool                                TestWrite                        { get; set; }
-        public bool                                WritesCDR                        { get; set; }
-        public bool                                WritesCDRW                       { get; set; }
-        public bool                                WritesDVDR                       { get; set; }
-        public bool                                WritesDVDRAM                     { get; set; }
-        public Modes.ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors { get; set; }
+        public bool                          AccurateCDDA                     { get; set; }
+        public bool                          BCK                              { get; set; }
+        public ushort                        BufferSize                       { get; set; }
+        public bool                          BufferUnderRunProtection         { get; set; }
+        public bool                          CanEject                         { get; set; }
+        public bool                          CanLockMedia                     { get; set; }
+        public bool                          CDDACommand                      { get; set; }
+        public bool                          CompositeAudioVideo              { get; set; }
+        public bool                          CSSandCPPMSupported              { get; set; }
+        public ushort                        CurrentSpeed                     { get; set; }
+        public ushort                        CurrentWriteSpeed                { get; set; }
+        public ushort                        CurrentWriteSpeedSelected        { get; set; }
+        public bool                          DeterministicSlotChanger         { get; set; }
+        public bool                          DigitalPort1                     { get; set; }
+        public bool                          DigitalPort2                     { get; set; }
+        public bool                          LeadInPW                         { get; set; }
+        public byte                          LoadingMechanismType             { get; set; }
+        public bool                          LockStatus                       { get; set; }
+        public bool                          LSBF                             { get; set; }
+        public ushort                        MaximumSpeed                     { get; set; }
+        public ushort                        MaximumWriteSpeed                { get; set; }
+        public bool                          PlaysAudio                       { get; set; }
+        public bool                          PreventJumperStatus              { get; set; }
+        public bool                          RCK                              { get; set; }
+        public bool                          ReadsBarcode                     { get; set; }
+        public bool                          ReadsBothSides                   { get; set; }
+        public bool                          ReadsCDR                         { get; set; }
+        public bool                          ReadsCDRW                        { get; set; }
+        public bool                          ReadsDeinterlavedSubchannel      { get; set; }
+        public bool                          ReadsDVDR                        { get; set; }
+        public bool                          ReadsDVDRAM                      { get; set; }
+        public bool                          ReadsDVDROM                      { get; set; }
+        public bool                          ReadsISRC                        { get; set; }
+        public bool                          ReadsMode2Form2                  { get; set; }
+        public bool                          ReadsMode2Form1                  { get; set; }
+        public bool                          ReadsPacketCDR                   { get; set; }
+        public bool                          ReadsSubchannel                  { get; set; }
+        public bool                          ReadsUPC                         { get; set; }
+        public bool                          ReturnsC2Pointers                { get; set; }
+        public byte                          RotationControlSelected          { get; set; }
+        public bool                          SeparateChannelMute              { get; set; }
+        public bool                          SeparateChannelVolume            { get; set; }
+        public bool                          SSS                              { get; set; }
+        public bool                          SupportsMultiSession             { get; set; }
+        public ushort                        SupportedVolumeLevels            { get; set; }
+        public bool                          TestWrite                        { get; set; }
+        public bool                          WritesCDR                        { get; set; }
+        public bool                          WritesCDRW                       { get; set; }
+        public bool                          WritesDVDR                       { get; set; }
+        public bool                          WritesDVDRAM                     { get; set; }
+        public ModePage_2A_WriteDescriptor[] WriteSpeedPerformanceDescriptors { get; set; }
 
         [XmlIgnore]
         public bool MaximumSpeedSpecified { get; set; }

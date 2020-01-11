@@ -43,9 +43,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI.Modes;
 using Newtonsoft.Json;
 
 // ReSharper disable VirtualMemberNeverOverridden.Global
@@ -474,10 +474,10 @@ namespace DiscImageChef.CommonTypes.Metadata
             if(ata.WRVSectorCountMode2Specified)
                 identifyDevice.WRVSectorCountMode2 = ata.WRVSectorCountMode2;
 
-            Identify = Decoders.ATA.Identify.Encode(identifyDevice);
+            Identify = Structs.Devices.ATA.Identify.Encode(identifyDevice);
         }
 
-        public Identify.IdentifyDevice? IdentifyDevice => Decoders.ATA.Identify.Decode(Identify);
+        public Identify.IdentifyDevice? IdentifyDevice => Structs.Devices.ATA.Identify.Decode(Identify);
 
         [JsonIgnore]
         public int Id { get;                                     set; }
@@ -550,7 +550,7 @@ namespace DiscImageChef.CommonTypes.Metadata
             if(InquiryData != null)
                 return;
 
-            var inq = new Inquiry.SCSIInquiry();
+            var inq = new Inquiry();
 
             if(scsi.Inquiry.ANSIVersionSpecified)
                 inq.ANSIVersion = scsi.Inquiry.ANSIVersion;
@@ -620,10 +620,10 @@ namespace DiscImageChef.CommonTypes.Metadata
             inq.WBus16               = scsi.Inquiry.WideBus16;
             inq.WBus32               = scsi.Inquiry.WideBus32;
 
-            InquiryData = Decoders.SCSI.Inquiry.Encode(inq);
+            InquiryData = Structs.Devices.SCSI.Inquiry.Encode(inq);
         }
 
-        public Inquiry.SCSIInquiry? Inquiry => Decoders.SCSI.Inquiry.Decode(InquiryData);
+        public Inquiry? Inquiry => Structs.Devices.SCSI.Inquiry.Decode(InquiryData);
 
         [JsonIgnore]
         public int Id { get; set; }
@@ -766,7 +766,7 @@ namespace DiscImageChef.CommonTypes.Metadata
         public Mmc(mmcType mmc)
         {
             if(mmc.ModeSense2A != null)
-                ModeSense2AData = Modes.EncodeModePage_2A(new Modes.ModePage_2A
+                ModeSense2AData = ModePage_2A.Encode(new ModePage_2A
                 {
                     AccurateCDDA                     = mmc.ModeSense2A.AccurateCDDA, BCK = mmc.ModeSense2A.BCK,
                     BufferSize                       = mmc.ModeSense2A.BufferSize,
@@ -833,7 +833,7 @@ namespace DiscImageChef.CommonTypes.Metadata
 
         [JsonIgnore]
         public int Id { get; set; }
-        public virtual Modes.ModePage_2A ModeSense2A     => Modes.DecodeModePage_2A(ModeSense2AData);
+        public virtual ModePage_2A       ModeSense2A     => ModePage_2A.Decode(ModeSense2AData);
         public virtual MmcFeatures       Features        { get; set; }
         public virtual List<TestedMedia> TestedMedia     { get; set; }
         public         byte[]            ModeSense2AData { get; set; }
