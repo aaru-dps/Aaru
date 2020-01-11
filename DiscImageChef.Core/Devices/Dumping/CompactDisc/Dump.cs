@@ -284,11 +284,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     }
 
                     _dumpLog.WriteLine("Drive can read without subchannel...");
-                    _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
                     UpdateStatus?.Invoke("Drive can read without subchannel...");
-
-                    UpdateStatus?.
-                        Invoke("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
 
                     subSize = 0;
                     subType = TrackSubchannelType.None;
@@ -440,6 +436,15 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                 trkList.AddRange(tracks);
                 tracks = trkList.ToArray();
+            }
+
+            if(tracks.Any(t => t.TrackType == TrackType.Audio) &&
+               supportedSubchannel != MmcSubchannel.Raw)
+            {
+                _dumpLog.WriteLine("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
+
+                UpdateStatus?.
+                    Invoke("WARNING: If disc says CD+G, CD+EG, CD-MIDI, CD Graphics or CD Enhanced Graphics, dump will be incorrect!");
             }
 
             // Check mode for tracks
