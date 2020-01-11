@@ -184,6 +184,18 @@
         <e p="Partition.cs" t="Include" />
         <e p="PluginBase.cs" t="Include" />
         <e p="Structs" t="Include">
+          <e p="Devices" t="Include">
+            <e p="ATA" t="Include">
+              <e p="Identify.cs" t="Include" />
+            </e>
+            <e p="SCSI" t="Include">
+              <e p="Enums.cs" t="Include" />
+              <e p="Inquiry.cs" t="Include" />
+              <e p="Modes" t="Include">
+                <e p="2A.cs" t="Include" />
+              </e>
+            </e>
+          </e>
           <e p="Filesystems.cs" t="Include" />
           <e p="Images.cs" t="Include" />
           <e p="TapeFile.cs" t="Include" />
@@ -515,7 +527,6 @@
         <e p="SCSI" t="Include">
           <e p="DiscStructureCapabilities.cs" t="Include" />
           <e p="EVPD.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
           <e p="Inquiry.cs" t="Include" />
           <e p="MMC" t="Include">
             <e p="AACS.cs" t="Include" />

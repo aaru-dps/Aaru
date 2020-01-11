@@ -33,6 +33,7 @@
 using System.Threading;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Decoders.SCSI;
 
 namespace DiscImageChef.Core.Devices.Dumping

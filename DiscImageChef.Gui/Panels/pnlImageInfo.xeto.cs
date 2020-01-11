@@ -37,6 +37,7 @@ using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
@@ -48,6 +49,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
+using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
 using Session = DiscImageChef.CommonTypes.Structs.Session;
 
 namespace DiscImageChef.Gui.Panels
@@ -258,7 +260,7 @@ namespace DiscImageChef.Gui.Panels
 
             PeripheralDeviceTypes scsiDeviceType  = PeripheralDeviceTypes.DirectAccess;
             byte[]                scsiInquiryData = null;
-            Inquiry.SCSIInquiry?  scsiInquiry     = null;
+            CommonTypes.Structs.Devices.SCSI.Inquiry?  scsiInquiry     = null;
             Modes.DecodedMode?    scsiMode        = null;
             byte[]                scsiModeSense6  = null;
             byte[]                scsiModeSense10 = null;
@@ -270,7 +272,7 @@ namespace DiscImageChef.Gui.Panels
 
                 scsiDeviceType = (PeripheralDeviceTypes)(scsiInquiryData[0] & 0x1F);
 
-                scsiInquiry = Inquiry.Decode(scsiInquiryData);
+                scsiInquiry = CommonTypes.Structs.Devices.SCSI.Inquiry.Decode(scsiInquiryData);
             }
 
             if(imageFormat.Info.ReadableMediaTags != null &&

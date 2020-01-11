@@ -36,6 +36,7 @@ using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.Bluray;
@@ -47,6 +48,7 @@ using DiscImageChef.Decoders.Xbox;
 using Schemas;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
 using Session = DiscImageChef.CommonTypes.Structs.Session;
 using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
@@ -57,55 +59,80 @@ namespace DiscImageChef.Core
         public static void PrintImageInfo(IMediaImage imageFormat)
         {
             DicConsole.WriteLine("Image information:");
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Version))
                 DicConsole.WriteLine("Format: {0} version {1}", imageFormat.Format, imageFormat.Info.Version);
-            else DicConsole.WriteLine("Format: {0}",            imageFormat.Format);
+            else
+                DicConsole.WriteLine("Format: {0}", imageFormat.Format);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application) &&
                !string.IsNullOrWhiteSpace(imageFormat.Info.ApplicationVersion))
                 DicConsole.WriteLine("Was created with {0} version {1}", imageFormat.Info.Application,
                                      imageFormat.Info.ApplicationVersion);
             else if(!string.IsNullOrWhiteSpace(imageFormat.Info.Application))
                 DicConsole.WriteLine("Was created with {0}", imageFormat.Info.Application);
+
             DicConsole.WriteLine("Image without headers is {0} bytes long", imageFormat.Info.ImageSize);
+
             DicConsole.WriteLine("Contains a media of {0} sectors with a maximum sector size of {1} bytes (if all sectors are of the same size this would be {2} bytes)",
                                  imageFormat.Info.Sectors, imageFormat.Info.SectorSize,
                                  imageFormat.Info.Sectors * imageFormat.Info.SectorSize);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Creator))
                 DicConsole.WriteLine("Created by: {0}", imageFormat.Info.Creator);
+
             if(imageFormat.Info.CreationTime != DateTime.MinValue)
                 DicConsole.WriteLine("Created on {0}", imageFormat.Info.CreationTime);
+
             if(imageFormat.Info.LastModificationTime != DateTime.MinValue)
                 DicConsole.WriteLine("Last modified on {0}", imageFormat.Info.LastModificationTime);
+
             DicConsole.WriteLine("Contains a media of type {0} and XML type {1}", imageFormat.Info.MediaType,
                                  imageFormat.Info.XmlMediaType);
+
             DicConsole.WriteLine("{0} partitions", imageFormat.Info.HasPartitions ? "Has" : "Doesn't have");
-            DicConsole.WriteLine("{0} sessions",   imageFormat.Info.HasSessions ? "Has" : "Doesn't have");
+            DicConsole.WriteLine("{0} sessions", imageFormat.Info.HasSessions ? "Has" : "Doesn't have");
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.Comments))
                 DicConsole.WriteLine("Comments: {0}", imageFormat.Info.Comments);
-            if(imageFormat.Info.MediaSequence != 0 && imageFormat.Info.LastMediaSequence != 0)
+
+            if(imageFormat.Info.MediaSequence     != 0 &&
+               imageFormat.Info.LastMediaSequence != 0)
                 DicConsole.WriteLine("Media is number {0} on a set of {1} medias", imageFormat.Info.MediaSequence,
                                      imageFormat.Info.LastMediaSequence);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaTitle))
                 DicConsole.WriteLine("Media title: {0}", imageFormat.Info.MediaTitle);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaManufacturer))
                 DicConsole.WriteLine("Media manufacturer: {0}", imageFormat.Info.MediaManufacturer);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaModel))
                 DicConsole.WriteLine("Media model: {0}", imageFormat.Info.MediaModel);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaSerialNumber))
                 DicConsole.WriteLine("Media serial number: {0}", imageFormat.Info.MediaSerialNumber);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaBarcode))
                 DicConsole.WriteLine("Media barcode: {0}", imageFormat.Info.MediaBarcode);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.MediaPartNumber))
                 DicConsole.WriteLine("Media part number: {0}", imageFormat.Info.MediaPartNumber);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveManufacturer))
                 DicConsole.WriteLine("Drive manufacturer: {0}", imageFormat.Info.DriveManufacturer);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveModel))
                 DicConsole.WriteLine("Drive model: {0}", imageFormat.Info.DriveModel);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveSerialNumber))
                 DicConsole.WriteLine("Drive serial number: {0}", imageFormat.Info.DriveSerialNumber);
+
             if(!string.IsNullOrWhiteSpace(imageFormat.Info.DriveFirmwareRevision))
                 DicConsole.WriteLine("Drive firmware info: {0}", imageFormat.Info.DriveFirmwareRevision);
-            if(imageFormat.Info.Cylinders       > 0                         && imageFormat.Info.Heads > 0 &&
+
+            if(imageFormat.Info.Cylinders       > 0                         &&
+               imageFormat.Info.Heads           > 0                         &&
                imageFormat.Info.SectorsPerTrack > 0                         &&
                imageFormat.Info.XmlMediaType    != XmlMediaType.OpticalDisc &&
                (!(imageFormat is ITapeImage tapeImage) || !tapeImage.IsTape))
@@ -113,19 +140,25 @@ namespace DiscImageChef.Core
                                      imageFormat.Info.Cylinders, imageFormat.Info.Heads,
                                      imageFormat.Info.SectorsPerTrack);
 
-            if(imageFormat.Info.ReadableMediaTags != null && imageFormat.Info.ReadableMediaTags.Count > 0)
+            if(imageFormat.Info.ReadableMediaTags       != null &&
+               imageFormat.Info.ReadableMediaTags.Count > 0)
             {
                 DicConsole.WriteLine("Contains {0} readable media tags:", imageFormat.Info.ReadableMediaTags.Count);
+
                 foreach(MediaTagType tag in imageFormat.Info.ReadableMediaTags.OrderBy(t => t))
                     DicConsole.Write("{0} ", tag);
+
                 DicConsole.WriteLine();
             }
 
-            if(imageFormat.Info.ReadableSectorTags != null && imageFormat.Info.ReadableSectorTags.Count > 0)
+            if(imageFormat.Info.ReadableSectorTags       != null &&
+               imageFormat.Info.ReadableSectorTags.Count > 0)
             {
                 DicConsole.WriteLine("Contains {0} readable sector tags:", imageFormat.Info.ReadableSectorTags.Count);
+
                 foreach(SectorTagType tag in imageFormat.Info.ReadableSectorTags.OrderBy(t => t))
                     DicConsole.Write("{0} ", tag);
+
                 DicConsole.WriteLine();
             }
 
@@ -139,6 +172,7 @@ namespace DiscImageChef.Core
                 byte[] inquiry = imageFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
 
                 scsiDeviceType = (PeripheralDeviceTypes)(inquiry[0] & 0x1F);
+
                 if(inquiry.Length >= 16)
                 {
                     scsiVendorId = new byte[8];
@@ -213,6 +247,7 @@ namespace DiscImageChef.Core
                 if(toc.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(toc, 0));
+
                     if(dataLen + 2 != toc.Length)
                     {
                         byte[] tmp = new byte[toc.Length + 2];
@@ -236,6 +271,7 @@ namespace DiscImageChef.Core
                 if(pma.Length > 0)
                 {
                     ushort dataLen = Swapping.Swap(BitConverter.ToUInt16(pma, 0));
+
                     if(dataLen + 2 != pma.Length)
                     {
                         byte[] tmp = new byte[pma.Length + 2];
@@ -257,6 +293,7 @@ namespace DiscImageChef.Core
                 byte[] atip = imageFormat.ReadDiskTag(MediaTagType.CD_ATIP);
 
                 uint dataLen = Swapping.Swap(BitConverter.ToUInt32(atip, 0));
+
                 if(dataLen + 4 != atip.Length)
                 {
                     byte[] tmp = new byte[atip.Length + 4];
@@ -279,6 +316,7 @@ namespace DiscImageChef.Core
                 byte[] cdtext = imageFormat.ReadDiskTag(MediaTagType.CD_TEXT);
 
                 uint dataLen = Swapping.Swap(BitConverter.ToUInt32(cdtext, 0));
+
                 if(dataLen + 4 != cdtext.Length)
                 {
                     byte[] tmp = new byte[cdtext.Length + 4];
@@ -302,6 +340,7 @@ namespace DiscImageChef.Core
 
                 DicConsole.WriteLine("CompactDisc Media Catalogue Number contained in image: {0}",
                                      Encoding.UTF8.GetString(mcn));
+
                 DicConsole.WriteLine();
             }
 
@@ -362,6 +401,7 @@ namespace DiscImageChef.Core
 
                 DicConsole.WriteLine("PCMCIA CIS:");
                 Tuple[] tuples = CIS.GetTuples(cis);
+
                 if(tuples != null)
                     foreach(Tuple tuple in tuples)
                         switch(tuple.Code)
@@ -371,12 +411,15 @@ namespace DiscImageChef.Core
                             case TupleCodes.CISTPL_DEVICEGEO:
                             case TupleCodes.CISTPL_DEVICEGEO_A:
                                 DicConsole.WriteLine("{0}", CIS.PrettifyDeviceGeometryTuple(tuple));
+
                                 break;
                             case TupleCodes.CISTPL_MANFID:
                                 DicConsole.WriteLine("{0}", CIS.PrettifyManufacturerIdentificationTuple(tuple));
+
                                 break;
                             case TupleCodes.CISTPL_VERS_1:
                                 DicConsole.WriteLine("{0}", CIS.PrettifyLevel1VersionTuple(tuple));
+
                                 break;
                             case TupleCodes.CISTPL_ALTSTR:
                             case TupleCodes.CISTPL_BAR:
@@ -414,13 +457,16 @@ namespace DiscImageChef.Core
                             case TupleCodes.CISTPL_VERS_2:
                                 DicConsole.DebugWriteLine("Device-Info command", "Found undecoded tuple ID {0}",
                                                           tuple.Code);
+
                                 break;
                             default:
                                 DicConsole.DebugWriteLine("Device-Info command", "Found unknown tuple ID 0x{0:X2}",
                                                           (byte)tuple.Code);
+
                                 break;
                         }
-                else DicConsole.DebugWriteLine("Device-Info command", "Could not get tuples");
+                else
+                    DicConsole.DebugWriteLine("Device-Info command", "Could not get tuples");
             }
 
             if(imageFormat.Info.ReadableMediaTags != null &&
@@ -521,6 +567,7 @@ namespace DiscImageChef.Core
                 if(DMI.IsXbox(xdmi))
                 {
                     DMI.XboxDMI? xmi = DMI.DecodeXbox(xdmi);
+
                     if(xmi.HasValue)
                     {
                         DicConsole.WriteLine("Xbox DMI contained in image:");
@@ -532,6 +579,7 @@ namespace DiscImageChef.Core
                 if(DMI.IsXbox360(xdmi))
                 {
                     DMI.Xbox360DMI? xmi = DMI.DecodeXbox360(xdmi);
+
                     if(xmi.HasValue)
                     {
                         DicConsole.WriteLine("Xbox 360 DMI contained in image:");
@@ -555,16 +603,21 @@ namespace DiscImageChef.Core
             {
                 try
                 {
-                    if(opticalImage.Sessions != null && opticalImage.Sessions.Count > 0)
+                    if(opticalImage.Sessions       != null &&
+                       opticalImage.Sessions.Count > 0)
                     {
                         DicConsole.WriteLine("Image sessions:");
+
                         DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", "Session", "First track",
                                              "Last track", "Start", "End");
+
                         DicConsole.WriteLine("=========================================================");
+
                         foreach(Session session in opticalImage.Sessions)
                             DicConsole.WriteLine("{0,-9}{1,-13}{2,-12}{3,-12}{4,-12}", session.SessionSequence,
                                                  session.StartTrack, session.EndTrack, session.StartSector,
                                                  session.EndSector);
+
                         DicConsole.WriteLine();
                     }
                 }
@@ -575,18 +628,23 @@ namespace DiscImageChef.Core
 
                 try
                 {
-                    if(opticalImage.Tracks != null && opticalImage.Tracks.Count > 0)
+                    if(opticalImage.Tracks       != null &&
+                       opticalImage.Tracks.Count > 0)
                     {
                         DicConsole.WriteLine("Image tracks:");
+
                         DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}", "Track", "Type",
                                              "Bps", "Raw bps", "Subchannel", "Pregap", "Start", "End");
-                        DicConsole
-                           .WriteLine("=================================================================================");
+
+                        DicConsole.
+                            WriteLine("=================================================================================");
+
                         foreach(Track track in opticalImage.Tracks)
                             DicConsole.WriteLine("{0,-7}{1,-17}{2,-6}{3,-8}{4,-12}{5,-8}{6,-12}{7,-12}",
                                                  track.TrackSequence, track.TrackType, track.TrackBytesPerSector,
                                                  track.TrackRawBytesPerSector, track.TrackSubchannelType,
                                                  track.TrackPregap, track.TrackStartSector, track.TrackEndSector);
+
                         DicConsole.WriteLine();
                     }
                 }
@@ -596,7 +654,8 @@ namespace DiscImageChef.Core
                 }
             }
 
-            if(imageFormat.DumpHardware == null) return;
+            if(imageFormat.DumpHardware == null)
+                return;
 
             const string MANUFACTURER_STRING = "Manufacturer";
             const string MODEL_STRING        = "Model";
@@ -616,19 +675,31 @@ namespace DiscImageChef.Core
 
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
-                if(dump.Manufacturer?.Length > manufacturerLen) manufacturerLen = dump.Manufacturer.Length;
-                if(dump.Model?.Length        > modelLen) modelLen               = dump.Model.Length;
-                if(dump.Serial?.Length       > serialLen) serialLen             = dump.Serial.Length;
+                if(dump.Manufacturer?.Length > manufacturerLen)
+                    manufacturerLen = dump.Manufacturer.Length;
+
+                if(dump.Model?.Length > modelLen)
+                    modelLen = dump.Model.Length;
+
+                if(dump.Serial?.Length > serialLen)
+                    serialLen = dump.Serial.Length;
+
                 if(dump.Software?.Name?.Length > softwareLen)
                     softwareLen = dump.Software.Name.Length;
+
                 if(dump.Software?.Version?.Length > versionLen)
                     versionLen = dump.Software.Version.Length;
+
                 if(dump.Software?.OperatingSystem?.Length > osLen)
                     osLen = dump.Software.OperatingSystem.Length;
+
                 foreach(ExtentType extent in dump.Extents)
                 {
-                    if($"{extent.Start}".Length > sectorLen) sectorLen = $"{extent.Start}".Length;
-                    if($"{extent.End}".Length   > sectorLen) sectorLen = $"{extent.End}".Length;
+                    if($"{extent.Start}".Length > sectorLen)
+                        sectorLen = $"{extent.Start}".Length;
+
+                    if($"{extent.End}".Length > sectorLen)
+                        sectorLen = $"{extent.End}".Length;
                 }
             }
 
@@ -643,14 +714,20 @@ namespace DiscImageChef.Core
 
             char[] separator = new char[manufacturerLen + modelLen + serialLen + softwareLen + versionLen + osLen +
                                         sectorLen       + sectorLen];
-            for(int i = 0; i < separator.Length; i++) separator[i] = '=';
+
+            for(int i = 0; i < separator.Length; i++)
+                separator[i] = '=';
+
             string format =
                 $"{{0,-{manufacturerLen}}}{{1,-{modelLen}}}{{2,-{serialLen}}}{{3,-{softwareLen}}}{{4,-{versionLen}}}{{5,-{osLen}}}{{6,-{sectorLen}}}{{7,-{sectorLen}}}";
 
             DicConsole.WriteLine("Dump hardware information:");
+
             DicConsole.WriteLine(format, MANUFACTURER_STRING, MODEL_STRING, SERIAL_STRING, SOFTWARE_STRING,
                                  VERSION_STRING, OS_STRING, START_STRING, END_STRING);
+
             DicConsole.WriteLine(new string(separator));
+
             foreach(DumpHardwareType dump in imageFormat.DumpHardware)
             {
                 foreach(ExtentType extent in dump.Extents)

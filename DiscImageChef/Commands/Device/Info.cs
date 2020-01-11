@@ -35,6 +35,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
 using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Database;
@@ -47,6 +48,7 @@ using DiscImageChef.Decoders.SCSI.SSC;
 using DiscImageChef.Devices;
 using Command = System.CommandLine.Command;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
+using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
 
 namespace DiscImageChef.Commands.Device
 {

@@ -34,11 +34,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
+using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
 
 namespace DiscImageChef.Gui.Tabs
 {
@@ -46,7 +48,7 @@ namespace DiscImageChef.Gui.Tabs
     {
         private byte[] configuration;
         private Dictionary<byte, byte[]> evpdPages;
-        private Inquiry.SCSIInquiry? inquiry;
+        private CommonTypes.Structs.Devices.SCSI.Inquiry? inquiry;
         private byte[] inquiryData;
         private Modes.DecodedMode? mode;
         private byte[] modeSense10;
@@ -58,7 +60,7 @@ namespace DiscImageChef.Gui.Tabs
             XamlReader.Load(this);
         }
 
-        internal void LoadData(byte[] scsiInquiryData, Inquiry.SCSIInquiry? scsiInquiry,
+        internal void LoadData(byte[] scsiInquiryData, CommonTypes.Structs.Devices.SCSI.Inquiry? scsiInquiry,
             Dictionary<byte, byte[]> scsiEvpdPages, Modes.DecodedMode? scsiMode,
             PeripheralDeviceTypes scsiType, byte[] scsiModeSense6,
             byte[] scsiModeSense10,

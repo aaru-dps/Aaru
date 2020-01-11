@@ -35,17 +35,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using static DiscImageChef.Devices.FreeBSD.Extern;
 
 namespace DiscImageChef.Devices.FreeBSD
 {
-    static class ListDevices
+    internal static class ListDevices
     {
-        /// <summary>
-        ///     Gets a list of all known storage devices on FreeBSD
-        /// </summary>
+        /// <summary>Gets a list of all known storage devices on FreeBSD</summary>
         /// <returns>List of devices</returns>
         internal static DeviceInfo[] GetList()
         {
@@ -54,15 +52,16 @@ namespace DiscImageChef.Devices.FreeBSD
 
             foreach(string passDevice in passDevices)
             {
-                DeviceInfo deviceInfo = new DeviceInfo();
-                IntPtr     dev        = cam_open_device(passDevice, FileFlags.ReadWrite);
-                CamDevice  camDevice  = (CamDevice)Marshal.PtrToStructure(dev, typeof(CamDevice));
+                var    deviceInfo = new DeviceInfo();
+                IntPtr dev        = cam_open_device(passDevice, FileFlags.ReadWrite);
+                var    camDevice  = (CamDevice)Marshal.PtrToStructure(dev, typeof(CamDevice));
 
                 IntPtr ccbPtr = cam_getccb(dev);
 
-                if(ccbPtr.ToInt64() == 0) continue;
+                if(ccbPtr.ToInt64() == 0)
+                    continue;
 
-                CcbGetdev cgd = (CcbGetdev)Marshal.PtrToStructure(ccbPtr, typeof(CcbGetdev));
+                var cgd = (CcbGetdev)Marshal.PtrToStructure(ccbPtr, typeof(CcbGetdev));
 
                 cgd.ccb_h.func_code = XptOpcode.XptGdevType;
 
@@ -73,6 +72,7 @@ namespace DiscImageChef.Devices.FreeBSD
                 if(error < 0)
                 {
                     cam_freeccb(ccbPtr);
+
                     continue;
                 }
 
@@ -96,6 +96,7 @@ namespace DiscImageChef.Devices.FreeBSD
                         // Little-endian FreeBSD gives it resorted
                         // Big-endian FreeBSD, no idea
                         byte[] atadTneid = new byte[512];
+
                         for(int aIndex = 0; aIndex < 512; aIndex += 2)
                         {
                             atadTneid[aIndex] = cgd.ident_data[aIndex + 1];
@@ -103,6 +104,7 @@ namespace DiscImageChef.Devices.FreeBSD
                         }
 
                         Identify.IdentifyDevice? idt = Identify.Decode(atadTneid);
+
                         if(idt.HasValue)
                         {
                             string[] separated = idt.Value.Model.Split(' ');
@@ -123,12 +125,15 @@ namespace DiscImageChef.Devices.FreeBSD
                             deviceInfo.Supported = simName != "ata";
                         }
 
-                        if(cgd.protocol == CamProto.ProtoAtapi) goto case CamProto.ProtoScsi;
+                        if(cgd.protocol == CamProto.ProtoAtapi)
+                            goto case CamProto.ProtoScsi;
+
                         break;
                     }
                     case CamProto.ProtoScsi:
                     {
-                        Inquiry.SCSIInquiry? inq = Inquiry.Decode(cgd.inq_data);
+                        Inquiry? inq = Inquiry.Decode(cgd.inq_data);
+
                         if(inq.HasValue)
                         {
                             deviceInfo.Vendor    = StringHandlers.CToString(inq.Value.VendorIdentification).Trim();
@@ -142,11 +147,13 @@ namespace DiscImageChef.Devices.FreeBSD
                     case CamProto.ProtoNvme:
                         deviceInfo.Bus       = "NVMe";
                         deviceInfo.Supported = false;
+
                         break;
                     case CamProto.ProtoMmcsd:
                         deviceInfo.Model     = "Unknown card";
                         deviceInfo.Bus       = "MMC/SD";
                         deviceInfo.Supported = false;
+
                         break;
                 }
 

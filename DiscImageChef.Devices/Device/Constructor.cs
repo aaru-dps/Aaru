@@ -37,7 +37,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.Decoders.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
 using DiscImageChef.Decoders.SecureDigital;
@@ -50,6 +51,7 @@ using FileAttributes = DiscImageChef.Devices.Windows.FileAttributes;
 using FileFlags = DiscImageChef.Devices.Linux.FileFlags;
 using FileMode = DiscImageChef.Devices.Windows.FileMode;
 using FileShare = DiscImageChef.Devices.Windows.FileShare;
+using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
 using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
@@ -761,7 +763,7 @@ namespace DiscImageChef.Devices
 
             if(!scsiSense)
             {
-                Inquiry.SCSIInquiry? inquiry = Inquiry.Decode(inqBuf);
+                Inquiry? inquiry = Inquiry.Decode(inqBuf);
 
                 Type = DeviceType.SCSI;
                 bool serialSense = ScsiInquiry(out inqBuf, out _, 0x80);

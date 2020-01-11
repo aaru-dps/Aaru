@@ -40,12 +40,14 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.DVD;
 using DiscImageChef.Decoders.SCSI;
 using Schemas;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
 using Session = DiscImageChef.CommonTypes.Structs.Session;
 using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
 
@@ -781,7 +783,7 @@ namespace DiscImageChef.DiscImages
             if (mediaTags.ContainsKey(MediaTagType.SCSI_INQUIRY))
             {
                 var devType = PeripheralDeviceTypes.DirectAccess;
-                Inquiry.SCSIInquiry? scsiInq = null;
+                Inquiry? scsiInq = null;
                 if (mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out var inq))
                 {
                     scsiInq = Inquiry.Decode(inq);
@@ -858,7 +860,7 @@ namespace DiscImageChef.DiscImages
             // It's ATA, check tags
             if (mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out var identifyBuf))
             {
-                var ataId = Decoders.ATA.Identify.Decode(identifyBuf);
+                var ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identifyBuf);
                 if (ataId.HasValue)
                 {
                     imageInfo.MediaType = (ushort) ataId.Value.GeneralConfiguration == 0x848A

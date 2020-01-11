@@ -37,7 +37,7 @@ using System.Linq;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Decoders.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
 using DiscImageChef.Helpers;
 using Schemas;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
@@ -47,37 +47,49 @@ namespace DiscImageChef.DiscImages
     public partial class RsIde
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
-                           uint   sectorSize)
+                           uint sectorSize)
         {
-            if(sectorSize != 256 && sectorSize != 512)
+            if(sectorSize != 256 &&
+               sectorSize != 512)
             {
                 ErrorMessage = "Unsupported sector size";
+
                 return false;
             }
 
             if(sectors > 63 * 16 * 1024)
             {
                 ErrorMessage = "Too many sectors";
+
                 return false;
             }
 
             if(!SupportedMediaTypes.Contains(mediaType))
             {
                 ErrorMessage = $"Unsupport media format {mediaType}";
+
                 return false;
             }
 
-            imageInfo = new ImageInfo {MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors};
+            imageInfo = new ImageInfo
+            {
+                MediaType = mediaType, SectorSize = sectorSize, Sectors = sectors
+            };
 
-            try { writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+            try
+            {
+                writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
             catch(IOException e)
             {
                 ErrorMessage = $"Could not create new image file, exception {e.Message}";
+
                 return false;
             }
 
             IsWriting    = true;
             ErrorMessage = null;
+
             return true;
         }
 
@@ -86,17 +98,20 @@ namespace DiscImageChef.DiscImages
             if(tag != MediaTagType.ATA_IDENTIFY)
             {
                 ErrorMessage = $"Unsupported media tag {tag}.";
+
                 return false;
             }
 
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             identify = new byte[106];
             Array.Copy(data, 0, identify, 0, 106);
+
             return true;
         }
 
@@ -105,26 +120,31 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length != imageInfo.SectorSize)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress >= imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * imageInfo.SectorSize)),
                                SeekOrigin.Begin);
+
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
@@ -133,38 +153,45 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Tried to write on a non-writable image";
+
                 return false;
             }
 
             if(data.Length % imageInfo.SectorSize != 0)
             {
                 ErrorMessage = "Incorrect data size";
+
                 return false;
             }
 
             if(sectorAddress + length > imageInfo.Sectors)
             {
                 ErrorMessage = "Tried to write past image size";
+
                 return false;
             }
 
-            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + sectorAddress * imageInfo.SectorSize),
+            writingStream.Seek((long)((ulong)Marshal.SizeOf<RsIdeHeader>() + (sectorAddress * imageInfo.SectorSize)),
                                SeekOrigin.Begin);
+
             writingStream.Write(data, 0, data.Length);
 
             ErrorMessage = "";
+
             return true;
         }
 
         public bool WriteSectorLong(byte[] data, ulong sectorAddress)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
         public bool WriteSectorsLong(byte[] data, ulong sectorAddress, uint length)
         {
             ErrorMessage = "Writing sectors with tags is not supported.";
+
             return false;
         }
 
@@ -173,6 +200,7 @@ namespace DiscImageChef.DiscImages
             if(!IsWriting)
             {
                 ErrorMessage = "Image is not opened for writing";
+
                 return false;
             }
 
@@ -194,52 +222,53 @@ namespace DiscImageChef.DiscImages
 
                     imageInfo.Cylinders = (uint)(imageInfo.Sectors / imageInfo.Heads / imageInfo.SectorsPerTrack);
 
-                    if(imageInfo.Cylinders == 0 && imageInfo.Heads == 0 && imageInfo.SectorsPerTrack == 0) break;
+                    if(imageInfo.Cylinders       == 0 &&
+                       imageInfo.Heads           == 0 &&
+                       imageInfo.SectorsPerTrack == 0)
+                        break;
                 }
             }
 
-            RsIdeHeader header = new RsIdeHeader
+            var header = new RsIdeHeader
             {
-                magic    = signature,
-                identify = new byte[106],
-                dataOff  = (ushort)Marshal.SizeOf<RsIdeHeader>(),
-                revision = 1,
-                reserved = new byte[11]
+                magic    = signature, identify = new byte[106], dataOff = (ushort)Marshal.SizeOf<RsIdeHeader>(),
+                revision = 1, reserved         = new byte[11]
             };
-            if(imageInfo.SectorSize == 256) header.flags = RsIdeFlags.HalfSectors;
+
+            if(imageInfo.SectorSize == 256)
+                header.flags = RsIdeFlags.HalfSectors;
 
             if(identify == null)
             {
-                Identify.IdentifyDevice ataId = new Identify.IdentifyDevice
+                var ataId = new Identify.IdentifyDevice
                 {
                     GeneralConfiguration =
-                        Decoders.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
-                        Decoders.ATA.Identify.GeneralConfigurationBit.Fixed        |
-                        Decoders.ATA.Identify.GeneralConfigurationBit.NotMFM       |
-                        Decoders.ATA.Identify.GeneralConfigurationBit.SoftSector,
-                    Cylinders       = (ushort)imageInfo.Cylinders,
-                    Heads           = (ushort)imageInfo.Heads,
-                    SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
-                    VendorWord47    = 0x80,
-                    Capabilities =
-                        Decoders.ATA.Identify.CapabilitiesBit.DMASupport |
-                        Decoders.ATA.Identify.CapabilitiesBit.IORDY      |
-                        Decoders.ATA.Identify.CapabilitiesBit.LBASupport,
-                    ExtendedIdentify       = Decoders.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
-                    CurrentCylinders       = (ushort)imageInfo.Cylinders,
-                    CurrentHeads           = (ushort)imageInfo.Heads,
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.UltraFastIDE |
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.Fixed        |
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.NotMFM       |
+                        CommonTypes.Structs.Devices.ATA.Identify.GeneralConfigurationBit.SoftSector,
+                    Cylinders       = (ushort)imageInfo.Cylinders, Heads              = (ushort)imageInfo.Heads,
+                    SectorsPerTrack = (ushort)imageInfo.SectorsPerTrack, VendorWord47 = 0x80,
+                    Capabilities = CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.DMASupport |
+                                   CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.IORDY      |
+                                   CommonTypes.Structs.Devices.ATA.Identify.CapabilitiesBit.LBASupport,
+                    ExtendedIdentify =
+                        CommonTypes.Structs.Devices.ATA.Identify.ExtendedIdentifyBit.Words54to58Valid,
+                    CurrentCylinders       = (ushort)imageInfo.Cylinders, CurrentHeads = (ushort)imageInfo.Heads,
                     CurrentSectorsPerTrack = (ushort)imageInfo.SectorsPerTrack,
-                    CurrentSectors         = (uint)imageInfo.Sectors,
-                    LBASectors             = (uint)imageInfo.Sectors,
-                    DMASupported           = Decoders.ATA.Identify.TransferMode.Mode0,
-                    DMAActive              = Decoders.ATA.Identify.TransferMode.Mode0
+                    CurrentSectors         = (uint)imageInfo.Sectors, LBASectors = (uint)imageInfo.Sectors,
+                    DMASupported           = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0,
+                    DMAActive              = CommonTypes.Structs.Devices.ATA.Identify.TransferMode.Mode0
                 };
 
-                if(string.IsNullOrEmpty(imageInfo.DriveManufacturer)) imageInfo.DriveManufacturer = "DiscImageChef";
+                if(string.IsNullOrEmpty(imageInfo.DriveManufacturer))
+                    imageInfo.DriveManufacturer = "DiscImageChef";
 
-                if(string.IsNullOrEmpty(imageInfo.DriveModel)) imageInfo.DriveModel = "";
+                if(string.IsNullOrEmpty(imageInfo.DriveModel))
+                    imageInfo.DriveModel = "";
 
-                if(string.IsNullOrEmpty(imageInfo.DriveFirmwareRevision)) Version.GetVersion();
+                if(string.IsNullOrEmpty(imageInfo.DriveFirmwareRevision))
+                    Version.GetVersion();
 
                 if(string.IsNullOrEmpty(imageInfo.DriveSerialNumber))
                     imageInfo.DriveSerialNumber = $"{new Random().NextDouble():16X}";
@@ -247,17 +276,21 @@ namespace DiscImageChef.DiscImages
                 byte[] ataIdBytes = new byte[Marshal.SizeOf<Identify.IdentifyDevice>()];
                 IntPtr ptr        = System.Runtime.InteropServices.Marshal.AllocHGlobal(512);
                 System.Runtime.InteropServices.Marshal.StructureToPtr(ataId, ptr, true);
+
                 System.Runtime.InteropServices.Marshal.Copy(ptr, ataIdBytes, 0,
                                                             Marshal.SizeOf<Identify.IdentifyDevice>());
+
                 System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
 
                 Array.Copy(ScrambleAtaString(imageInfo.DriveManufacturer + " " + imageInfo.DriveModel, 40), 0,
                            ataIdBytes, 27 * 2, 40);
-                Array.Copy(ScrambleAtaString(imageInfo.DriveFirmwareRevision, 8),  0, ataIdBytes,      23 * 2, 8);
-                Array.Copy(ScrambleAtaString(imageInfo.DriveSerialNumber,     20), 0, ataIdBytes,      10 * 2, 20);
-                Array.Copy(ataIdBytes,                                             0, header.identify, 0,      106);
+
+                Array.Copy(ScrambleAtaString(imageInfo.DriveFirmwareRevision, 8), 0, ataIdBytes, 23 * 2, 8);
+                Array.Copy(ScrambleAtaString(imageInfo.DriveSerialNumber, 20), 0, ataIdBytes, 10    * 2, 20);
+                Array.Copy(ataIdBytes, 0, header.identify, 0, 106);
             }
-            else Array.Copy(identify, 0, header.identify, 0, 106);
+            else
+                Array.Copy(identify, 0, header.identify, 0, 106);
 
             byte[] hdr    = new byte[Marshal.SizeOf<RsIdeHeader>()];
             IntPtr hdrPtr = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<RsIdeHeader>());
@@ -273,6 +306,7 @@ namespace DiscImageChef.DiscImages
 
             IsWriting    = false;
             ErrorMessage = "";
+
             return true;
         }
 
@@ -291,18 +325,21 @@ namespace DiscImageChef.DiscImages
             if(cylinders > ushort.MaxValue)
             {
                 ErrorMessage = "Too many cylinders.";
+
                 return false;
             }
 
             if(heads > ushort.MaxValue)
             {
                 ErrorMessage = "Too many heads.";
+
                 return false;
             }
 
             if(sectorsPerTrack > ushort.MaxValue)
             {
                 ErrorMessage = "Too many sectors per track.";
+
                 return false;
             }
 
@@ -316,12 +353,14 @@ namespace DiscImageChef.DiscImages
         public bool WriteSectorTag(byte[] data, ulong sectorAddress, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 
         public bool WriteSectorsTag(byte[] data, ulong sectorAddress, uint length, SectorTagType tag)
         {
             ErrorMessage = "Unsupported feature";
+
             return false;
         }
 

@@ -35,6 +35,7 @@ using DiscImageChef.CommonTypes.Metadata;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Devices;
+using Identify = DiscImageChef.CommonTypes.Structs.Devices.ATA.Identify;
 
 namespace DiscImageChef.Core.Devices.Report
 {

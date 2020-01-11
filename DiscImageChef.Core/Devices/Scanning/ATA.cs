@@ -32,38 +32,39 @@
 
 using System;
 using System.Collections.Generic;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
 using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.ATA;
 
 namespace DiscImageChef.Core.Devices.Scanning
 {
-    /// <summary>
-    ///     Implements scanning the media from an ATA device
-    /// </summary>
+    /// <summary>Implements scanning the media from an ATA device</summary>
     public partial class MediaScan
     {
-        /// <summary>
-        ///     Scans the media from an ATA device
-        /// </summary>
+        /// <summary>Scans the media from an ATA device</summary>
         /// <returns>Scanning results</returns>
         ScanResults Ata()
         {
-            ScanResults results = new ScanResults();
-            bool        sense;
+            var  results = new ScanResults();
+            bool sense;
             results.Blocks = 0;
             const ushort ATA_PROFILE = 0x0001;
             const uint   TIMEOUT     = 5;
 
             sense = dev.AtaIdentify(out byte[] cmdBuf, out _);
-            if(!sense && Identify.Decode(cmdBuf).HasValue)
+
+            if(!sense &&
+               Identify.Decode(cmdBuf).HasValue)
             {
                 // Initializate reader
-                Reader ataReader = new Reader(dev, TIMEOUT, cmdBuf);
+                var ataReader = new Reader(dev, TIMEOUT, cmdBuf);
+
                 // Fill reader blocks
                 results.Blocks = ataReader.GetDeviceBlocks();
+
                 if(ataReader.FindReadCommand())
                 {
                     StoppingErrorMessage?.Invoke(ataReader.ErrorMessage);
+
                     return results;
                 }
 
@@ -71,14 +72,17 @@ namespace DiscImageChef.Core.Devices.Scanning
                 if(ataReader.GetBlockSize())
                 {
                     StoppingErrorMessage?.Invoke(ataReader.ErrorMessage);
+
                     return results;
                 }
 
                 uint blockSize = ataReader.LogicalBlockSize;
+
                 // Check how many blocks to read, if error show and return
                 if(ataReader.GetBlocksToRead())
                 {
                     StoppingErrorMessage?.Invoke(ataReader.ErrorMessage);
+
                     return results;
                 }
 
@@ -108,11 +112,12 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 double seekCur;
 
-                Random rnd = new Random();
+                var rnd = new Random();
 
                 MhddLog mhddLog;
                 IbgLog  ibgLog;
                 double  duration;
+
                 if(ataReader.IsLba)
                 {
                     UpdateStatus?.Invoke($"Reading {blocksToRead} sectors at a time.");
@@ -125,15 +130,23 @@ namespace DiscImageChef.Core.Devices.Scanning
                     DateTime timeSpeedStart   = DateTime.UtcNow;
                     ulong    sectorSpeedStart = 0;
                     InitProgress?.Invoke();
+
                     for(ulong i = 0; i < results.Blocks; i += blocksToRead)
                     {
-                        if(aborted) break;
+                        if(aborted)
+                            break;
 
-                        if(results.Blocks - i < blocksToRead) blocksToRead = (byte)(results.Blocks - i);
+                        if(results.Blocks - i < blocksToRead)
+                            blocksToRead = (byte)(results.Blocks - i);
 
                         #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                        if(currentSpeed > results.MaxSpeed && currentSpeed != 0) results.MaxSpeed = currentSpeed;
-                        if(currentSpeed < results.MinSpeed && currentSpeed != 0) results.MinSpeed = currentSpeed;
+                        if(currentSpeed > results.MaxSpeed &&
+                           currentSpeed != 0)
+                            results.MaxSpeed = currentSpeed;
+
+                        if(currentSpeed < results.MinSpeed &&
+                           currentSpeed != 0)
+                            results.MinSpeed = currentSpeed;
                         #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                         UpdateProgress?.Invoke($"Reading sector {i} of {results.Blocks} ({currentSpeed:F3} MiB/sec.)",
@@ -143,12 +156,18 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                         if(!error)
                         {
-                            if(duration      >= 500) results.F += blocksToRead;
-                            else if(duration >= 150) results.E += blocksToRead;
-                            else if(duration >= 50) results.D  += blocksToRead;
-                            else if(duration >= 10) results.C  += blocksToRead;
-                            else if(duration >= 3) results.B   += blocksToRead;
-                            else results.A                     += blocksToRead;
+                            if(duration >= 500)
+                                results.F += blocksToRead;
+                            else if(duration >= 150)
+                                results.E += blocksToRead;
+                            else if(duration >= 50)
+                                results.D += blocksToRead;
+                            else if(duration >= 10)
+                                results.C += blocksToRead;
+                            else if(duration >= 3)
+                                results.B += blocksToRead;
+                            else
+                                results.A += blocksToRead;
 
                             ScanTime?.Invoke(i, duration);
                             mhddLog.Write(i, duration);
@@ -158,7 +177,9 @@ namespace DiscImageChef.Core.Devices.Scanning
                         {
                             ScanUnreadable?.Invoke(i);
                             results.Errored += blocksToRead;
-                            for(ulong b = i; b < i + blocksToRead; b++) results.UnreadableSectors.Add(b);
+
+                            for(ulong b = i; b < i + blocksToRead; b++)
+                                results.UnreadableSectors.Add(b);
 
                             mhddLog.Write(i, duration < 500 ? 65535 : duration);
 
@@ -168,10 +189,12 @@ namespace DiscImageChef.Core.Devices.Scanning
                         sectorSpeedStart += blocksToRead;
 
                         double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
-                        if(elapsed < 1) continue;
 
-                        currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
-                        ScanSpeed?.Invoke(i, currentSpeed                      * 1024);
+                        if(elapsed < 1)
+                            continue;
+
+                        currentSpeed = (sectorSpeedStart  * blockSize) / (1048576 * elapsed);
+                        ScanSpeed?.Invoke(i, currentSpeed * 1024);
                         sectorSpeedStart = 0;
                         timeSpeedStart   = DateTime.UtcNow;
                     }
@@ -179,16 +202,19 @@ namespace DiscImageChef.Core.Devices.Scanning
                     end = DateTime.UtcNow;
                     EndProgress?.Invoke();
                     mhddLog.Close();
+
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 blockSize * (double)(results.Blocks + 1) / 1024 /
+                                 (blockSize              * (double)(results.Blocks + 1)) / 1024 /
                                  (results.ProcessingTime / 1000),
                                  devicePath);
 
                     InitProgress?.Invoke();
+
                     if(ataReader.CanSeekLba)
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
-                            if(aborted) break;
+                            if(aborted)
+                                break;
 
                             uint seekPos = (uint)rnd.Next((int)results.Blocks);
 
@@ -197,8 +223,13 @@ namespace DiscImageChef.Core.Devices.Scanning
                             ataReader.Seek(seekPos, out seekCur);
 
                             #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                            if(seekCur > results.SeekMax && seekCur != 0) results.SeekMax = seekCur;
-                            if(seekCur < results.SeekMin && seekCur != 0) results.SeekMin = seekCur;
+                            if(seekCur > results.SeekMax &&
+                               seekCur != 0)
+                                results.SeekMax = seekCur;
+
+                            if(seekCur < results.SeekMin &&
+                               seekCur != 0)
+                                results.SeekMin = seekCur;
                             #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                             results.SeekTotal += seekCur;
@@ -219,34 +250,45 @@ namespace DiscImageChef.Core.Devices.Scanning
                     DateTime timeSpeedStart   = DateTime.UtcNow;
                     ulong    sectorSpeedStart = 0;
                     InitProgress?.Invoke();
+
                     for(ushort cy = 0; cy < cylinders; cy++)
                     {
                         for(byte hd = 0; hd < heads; hd++)
                         {
                             for(byte sc = 1; sc < sectors; sc++)
                             {
-                                if(aborted) break;
+                                if(aborted)
+                                    break;
 
                                 #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                                if(currentSpeed > results.MaxSpeed && currentSpeed != 0)
+                                if(currentSpeed > results.MaxSpeed &&
+                                   currentSpeed != 0)
                                     results.MaxSpeed = currentSpeed;
-                                if(currentSpeed < results.MinSpeed && currentSpeed != 0)
+
+                                if(currentSpeed < results.MinSpeed &&
+                                   currentSpeed != 0)
                                     results.MinSpeed = currentSpeed;
                                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
-                                PulseProgress
-                                  ?.Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
+                                PulseProgress?.
+                                    Invoke($"Reading cylinder {cy} head {hd} sector {sc} ({currentSpeed:F3} MiB/sec.)");
 
                                 bool error = ataReader.ReadChs(out cmdBuf, cy, hd, sc, out duration);
 
                                 if(!error)
                                 {
-                                    if(duration      >= 500) results.F += blocksToRead;
-                                    else if(duration >= 150) results.E += blocksToRead;
-                                    else if(duration >= 50) results.D  += blocksToRead;
-                                    else if(duration >= 10) results.C  += blocksToRead;
-                                    else if(duration >= 3) results.B   += blocksToRead;
-                                    else results.A                     += blocksToRead;
+                                    if(duration >= 500)
+                                        results.F += blocksToRead;
+                                    else if(duration >= 150)
+                                        results.E += blocksToRead;
+                                    else if(duration >= 50)
+                                        results.D += blocksToRead;
+                                    else if(duration >= 10)
+                                        results.C += blocksToRead;
+                                    else if(duration >= 3)
+                                        results.B += blocksToRead;
+                                    else
+                                        results.A += blocksToRead;
 
                                     ScanTime?.Invoke(currentBlock, duration);
                                     mhddLog.Write(currentBlock, duration);
@@ -266,10 +308,12 @@ namespace DiscImageChef.Core.Devices.Scanning
                                 currentBlock++;
 
                                 double elapsed = (DateTime.UtcNow - timeSpeedStart).TotalSeconds;
-                                if(elapsed < 1) continue;
 
-                                currentSpeed = sectorSpeedStart * blockSize / (1048576 * elapsed);
-                                ScanSpeed?.Invoke(currentBlock, currentSpeed           * 1024);
+                                if(elapsed < 1)
+                                    continue;
+
+                                currentSpeed = (sectorSpeedStart             * blockSize) / (1048576 * elapsed);
+                                ScanSpeed?.Invoke(currentBlock, currentSpeed * 1024);
                                 sectorSpeedStart = 0;
                                 timeSpeedStart   = DateTime.UtcNow;
                             }
@@ -279,29 +323,37 @@ namespace DiscImageChef.Core.Devices.Scanning
                     end = DateTime.UtcNow;
                     EndProgress?.Invoke();
                     mhddLog.Close();
+
                     ibgLog.Close(dev, results.Blocks, blockSize, (end - start).TotalSeconds, currentSpeed * 1024,
-                                 blockSize * (double)(results.Blocks + 1) / 1024 /
+                                 (blockSize              * (double)(results.Blocks + 1)) / 1024 /
                                  (results.ProcessingTime / 1000),
                                  devicePath);
 
                     InitProgress?.Invoke();
+
                     if(ataReader.CanSeek)
                         for(int i = 0; i < SEEK_TIMES; i++)
                         {
-                            if(aborted) break;
+                            if(aborted)
+                                break;
 
                             ushort seekCy = (ushort)rnd.Next(cylinders);
                             byte   seekHd = (byte)rnd.Next(heads);
                             byte   seekSc = (byte)rnd.Next(sectors);
 
-                            PulseProgress
-                              ?.Invoke($"\rSeeking to cylinder {seekCy}, head {seekHd}, sector {seekSc}...\t\t");
+                            PulseProgress?.
+                                Invoke($"\rSeeking to cylinder {seekCy}, head {seekHd}, sector {seekSc}...\t\t");
 
                             ataReader.SeekChs(seekCy, seekHd, seekSc, out seekCur);
 
                             #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
-                            if(seekCur > results.SeekMax && seekCur != 0) results.SeekMax = seekCur;
-                            if(seekCur < results.SeekMin && seekCur != 0) results.SeekMin = seekCur;
+                            if(seekCur > results.SeekMax &&
+                               seekCur != 0)
+                                results.SeekMax = seekCur;
+
+                            if(seekCur < results.SeekMin &&
+                               seekCur != 0)
+                                results.SeekMin = seekCur;
                             #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
 
                             results.SeekTotal += seekCur;
@@ -313,13 +365,14 @@ namespace DiscImageChef.Core.Devices.Scanning
 
                 results.ProcessingTime /= 1000;
                 results.TotalTime      =  (end - start).TotalSeconds;
-                results.AvgSpeed       =  blockSize * (double)(results.Blocks + 1) / 1048576 / results.ProcessingTime;
+                results.AvgSpeed       =  (blockSize * (double)(results.Blocks + 1)) / 1048576 / results.ProcessingTime;
                 results.SeekTimes      =  SEEK_TIMES;
 
                 return results;
             }
 
             StoppingErrorMessage?.Invoke("Unable to communicate with ATA device.");
+
             return results;
         }
     }

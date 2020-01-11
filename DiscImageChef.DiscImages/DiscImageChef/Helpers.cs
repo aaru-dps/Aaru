@@ -33,31 +33,33 @@
 using System;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.SCSI;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Decoders.SecureDigital;
 using DiscImageChef.Helpers;
-using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
 
 namespace DiscImageChef.DiscImages
 {
     public partial class DiscImageChef
     {
-        /// <summary>
-        ///     Checks for media tags that may contain metadata and sets it up if not already set
-        /// </summary>
+        /// <summary>Checks for media tags that may contain metadata and sets it up if not already set</summary>
         void SetMetadataFromTags()
         {
             // Search for SecureDigital CID
             if(mediaTags.TryGetValue(MediaTagType.SD_CID, out byte[] sdCid))
             {
                 CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(sdCid);
+
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
                     imageInfo.DriveManufacturer = VendorString.Prettify(decoded.Manufacturer);
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel)) imageInfo.DriveModel = decoded.ProductName;
+
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
+                    imageInfo.DriveModel = decoded.ProductName;
+
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
                     imageInfo.DriveFirmwareRevision =
                         $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
                     imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
             }
@@ -66,12 +68,17 @@ namespace DiscImageChef.DiscImages
             if(mediaTags.TryGetValue(MediaTagType.MMC_CID, out byte[] mmcCid))
             {
                 Decoders.MMC.CID decoded = Decoders.MMC.Decoders.DecodeCID(mmcCid);
+
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
                     imageInfo.DriveManufacturer = Decoders.MMC.VendorString.Prettify(decoded.Manufacturer);
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel)) imageInfo.DriveModel = decoded.ProductName;
+
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
+                    imageInfo.DriveModel = decoded.ProductName;
+
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
                     imageInfo.DriveFirmwareRevision =
                         $"{(decoded.ProductRevision & 0xF0) >> 4:X2}.{decoded.ProductRevision & 0x0F:X2}";
+
                 if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
                     imageInfo.DriveSerialNumber = $"{decoded.ProductSerialNumber}";
             }
@@ -79,15 +86,18 @@ namespace DiscImageChef.DiscImages
             // Search for SCSI INQUIRY
             if(mediaTags.TryGetValue(MediaTagType.SCSI_INQUIRY, out byte[] scsiInquiry))
             {
-                Inquiry.SCSIInquiry? nullableInquiry = Inquiry.Decode(scsiInquiry);
+                Inquiry? nullableInquiry = Inquiry.Decode(scsiInquiry);
 
                 if(nullableInquiry.HasValue)
                 {
-                    Inquiry.SCSIInquiry inquiry = nullableInquiry.Value;
+                    Inquiry inquiry = nullableInquiry.Value;
+
                     if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
                         imageInfo.DriveManufacturer = StringHandlers.CToString(inquiry.VendorIdentification)?.Trim();
+
                     if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
                         imageInfo.DriveModel = StringHandlers.CToString(inquiry.ProductIdentification)?.Trim();
+
                     if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
                         imageInfo.DriveFirmwareRevision =
                             StringHandlers.CToString(inquiry.ProductRevisionLevel)?.Trim();
@@ -95,29 +105,34 @@ namespace DiscImageChef.DiscImages
             }
 
             // Search for ATA or ATAPI IDENTIFY
-            if(!mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY,   out byte[] ataIdentify) &&
-               !mediaTags.TryGetValue(MediaTagType.ATAPI_IDENTIFY, out ataIdentify)) return;
+            if(!mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] ataIdentify) &&
+               !mediaTags.TryGetValue(MediaTagType.ATAPI_IDENTIFY, out ataIdentify))
+                return;
 
-            Identify.IdentifyDevice? nullableIdentify = Decoders.ATA.Identify.Decode(ataIdentify);
+            Identify.IdentifyDevice? nullableIdentify = CommonTypes.Structs.Devices.ATA.Identify.Decode(ataIdentify);
 
-            if(!nullableIdentify.HasValue) return;
+            if(!nullableIdentify.HasValue)
+                return;
 
             Identify.IdentifyDevice identify = nullableIdentify.Value;
 
             string[] separated = identify.Model.Split(' ');
 
             if(separated.Length == 1)
-                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel)) imageInfo.DriveModel = separated[0];
+                if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
+                    imageInfo.DriveModel = separated[0];
                 else
                 {
                     if(string.IsNullOrWhiteSpace(imageInfo.DriveManufacturer))
                         imageInfo.DriveManufacturer = separated[0];
+
                     if(string.IsNullOrWhiteSpace(imageInfo.DriveModel))
                         imageInfo.DriveModel = separated[separated.Length - 1];
                 }
 
             if(string.IsNullOrWhiteSpace(imageInfo.DriveFirmwareRevision))
                 imageInfo.DriveFirmwareRevision = identify.FirmwareRevision;
+
             if(string.IsNullOrWhiteSpace(imageInfo.DriveSerialNumber))
                 imageInfo.DriveSerialNumber = identify.SerialNumber;
         }
@@ -225,9 +240,11 @@ namespace DiscImageChef.DiscImages
         // Gets a DDT entry
         ulong GetDdtEntry(ulong sectorAddress)
         {
-            if(inMemoryDdt) return userDataDdt[sectorAddress];
+            if(inMemoryDdt)
+                return userDataDdt[sectorAddress];
 
-            if(ddtEntryCache.TryGetValue(sectorAddress, out ulong entry)) return entry;
+            if(ddtEntryCache.TryGetValue(sectorAddress, out ulong entry))
+                return entry;
 
             long oldPosition = imageStream.Position;
             imageStream.Position =  outMemoryDdtPosition + Marshal.SizeOf<DdtHeader>();
@@ -237,9 +254,11 @@ namespace DiscImageChef.DiscImages
             imageStream.Position = oldPosition;
             entry                = BitConverter.ToUInt64(temp, 0);
 
-            if(ddtEntryCache.Count >= MAX_DDT_ENTRY_CACHE) ddtEntryCache.Clear();
+            if(ddtEntryCache.Count >= MAX_DDT_ENTRY_CACHE)
+                ddtEntryCache.Clear();
 
             ddtEntryCache.Add(sectorAddress, entry);
+
             return entry;
         }
 
@@ -248,8 +267,11 @@ namespace DiscImageChef.DiscImages
         {
             if(inMemoryDdt)
             {
-                if(IsTape) tapeDdt[sectorAddress] = pointer;
-                else userDataDdt[sectorAddress]   = pointer;
+                if(IsTape)
+                    tapeDdt[sectorAddress] = pointer;
+                else
+                    userDataDdt[sectorAddress] = pointer;
+
                 return;
             }
 

@@ -681,7 +681,7 @@ namespace DiscImageChef.Core
 
             if(image.Info.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
             {
-                Identify.IdentifyDevice? ataId = Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
+                CommonTypes.Structs.Devices.ATA.Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
 
                 if(ataId.HasValue)
                     if(ataId.Value.CurrentCylinders       > 0 &&

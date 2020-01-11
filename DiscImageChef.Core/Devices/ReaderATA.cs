@@ -34,10 +34,11 @@ using System;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
+using Identify = DiscImageChef.CommonTypes.Structs.Devices.ATA.Identify;
 
 namespace DiscImageChef.Core.Devices
 {
-    partial class Reader
+    internal partial class Reader
     {
         Identify.IdentifyDevice ataId;
         bool                    ataRead;
@@ -60,9 +61,12 @@ namespace DiscImageChef.Core.Devices
 
         (uint, byte, byte) GetDeviceChs()
         {
-            if(dev.Type != DeviceType.ATA) return (0, 0, 0);
+            if(dev.Type != DeviceType.ATA)
+                return(0, 0, 0);
 
-            if(ataId.CurrentCylinders > 0 && ataId.CurrentHeads > 0 && ataId.CurrentSectorsPerTrack > 0)
+            if(ataId.CurrentCylinders       > 0 &&
+               ataId.CurrentHeads           > 0 &&
+               ataId.CurrentSectorsPerTrack > 0)
             {
                 Cylinders = ataId.CurrentCylinders;
                 Heads     = (byte)ataId.CurrentHeads;
@@ -70,17 +74,18 @@ namespace DiscImageChef.Core.Devices
                 Blocks    = (ulong)(Cylinders * Heads * Sectors);
             }
 
-            if(ataId.CurrentCylinders != 0 && ataId.CurrentHeads != 0 && ataId.CurrentSectorsPerTrack != 0 ||
-               ataId.Cylinders       <= 0                                                                  ||
-               ataId.Heads           <= 0                                                                  ||
-               ataId.SectorsPerTrack <= 0) return (Cylinders, Heads, Sectors);
+            if((ataId.CurrentCylinders != 0 && ataId.CurrentHeads != 0 && ataId.CurrentSectorsPerTrack != 0) ||
+               ataId.Cylinders       <= 0                                                                    ||
+               ataId.Heads           <= 0                                                                    ||
+               ataId.SectorsPerTrack <= 0)
+                return(Cylinders, Heads, Sectors);
 
             Cylinders = ataId.Cylinders;
             Heads     = (byte)ataId.Heads;
             Sectors   = (byte)ataId.SectorsPerTrack;
             Blocks    = (ulong)(Cylinders * Heads * Sectors);
 
-            return (Cylinders, Heads, Sectors);
+            return(Cylinders, Heads, Sectors);
         }
 
         ulong AtaGetBlocks()
@@ -93,7 +98,8 @@ namespace DiscImageChef.Core.Devices
                 IsLba  = true;
             }
 
-            if(!ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48)) return Blocks;
+            if(!ataId.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
+                return Blocks;
 
             Blocks = ataId.LBA48Sectors;
             IsLba  = true;
@@ -105,6 +111,7 @@ namespace DiscImageChef.Core.Devices
         {
             bool sense = dev.Read(out byte[] cmdBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1, timeout,
                                   out _);
+
             ataRead         = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
             sense           = dev.Read(out cmdBuf, out errorChs, true, 0, 0, 1, 1, timeout, out _);
             ataReadRetry    = !sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && cmdBuf.Length > 0;
@@ -134,40 +141,62 @@ namespace DiscImageChef.Core.Devices
 
             if(IsLba)
             {
-                if(Blocks > 0xFFFFFFF && !ataReadLba48 && !ataReadDmaLba48)
+                if(Blocks > 0xFFFFFFF &&
+                   !ataReadLba48      &&
+                   !ataReadDmaLba48)
                 {
                     ErrorMessage = "Device needs 48-bit LBA commands but I can't issue them... Aborting.";
+
                     return true;
                 }
 
-                if(!ataReadLba && !ataReadRetryLba && !ataReadDmaLba && !ataReadDmaRetryLba)
+                if(!ataReadLba      &&
+                   !ataReadRetryLba &&
+                   !ataReadDmaLba   &&
+                   !ataReadDmaRetryLba)
                 {
                     ErrorMessage = "Device needs 28-bit LBA commands but I can't issue them... Aborting.";
+
                     return true;
                 }
             }
             else
             {
-                if(!ataRead && !ataReadRetry && !ataReadDma && !ataReadDmaRetry)
+                if(!ataRead      &&
+                   !ataReadRetry &&
+                   !ataReadDma   &&
+                   !ataReadDmaRetry)
                 {
                     ErrorMessage = "Device needs CHS commands but I can't issue them... Aborting.";
+
                     return true;
                 }
             }
 
-            if(ataReadDmaLba48) DicConsole.WriteLine("Using ATA READ DMA EXT command.");
-            else if(ataReadLba48) DicConsole.WriteLine("Using ATA READ EXT command.");
-            else if(ataReadDmaRetryLba) DicConsole.WriteLine("Using ATA READ DMA command with retries (LBA).");
-            else if(ataReadDmaLba) DicConsole.WriteLine("Using ATA READ DMA command (LBA).");
-            else if(ataReadRetryLba) DicConsole.WriteLine("Using ATA READ command with retries (LBA).");
-            else if(ataReadLba) DicConsole.WriteLine("Using ATA READ command (LBA).");
-            else if(ataReadDmaRetry) DicConsole.WriteLine("Using ATA READ DMA command with retries (CHS).");
-            else if(ataReadDma) DicConsole.WriteLine("Using ATA READ DMA command (CHS).");
-            else if(ataReadRetry) DicConsole.WriteLine("Using ATA READ command with retries (CHS).");
-            else if(ataRead) DicConsole.WriteLine("Using ATA READ command (CHS).");
+            if(ataReadDmaLba48)
+                DicConsole.WriteLine("Using ATA READ DMA EXT command.");
+            else if(ataReadLba48)
+                DicConsole.WriteLine("Using ATA READ EXT command.");
+            else if(ataReadDmaRetryLba)
+                DicConsole.WriteLine("Using ATA READ DMA command with retries (LBA).");
+            else if(ataReadDmaLba)
+                DicConsole.WriteLine("Using ATA READ DMA command (LBA).");
+            else if(ataReadRetryLba)
+                DicConsole.WriteLine("Using ATA READ command with retries (LBA).");
+            else if(ataReadLba)
+                DicConsole.WriteLine("Using ATA READ command (LBA).");
+            else if(ataReadDmaRetry)
+                DicConsole.WriteLine("Using ATA READ DMA command with retries (CHS).");
+            else if(ataReadDma)
+                DicConsole.WriteLine("Using ATA READ DMA command (CHS).");
+            else if(ataReadRetry)
+                DicConsole.WriteLine("Using ATA READ command with retries (CHS).");
+            else if(ataRead)
+                DicConsole.WriteLine("Using ATA READ command (CHS).");
             else
             {
                 ErrorMessage = "Could not get a working read command!";
+
                 return true;
             }
 
@@ -176,18 +205,22 @@ namespace DiscImageChef.Core.Devices
 
         bool AtaGetBlockSize()
         {
-            if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 && (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
+            if((ataId.PhysLogSectorSize & 0x8000) == 0x0000 &&
+               (ataId.PhysLogSectorSize & 0x4000) == 0x4000)
             {
                 if((ataId.PhysLogSectorSize & 0x1000) == 0x1000)
-                    if(ataId.LogicalSectorWords <= 255 || ataId.LogicalAlignment == 0xFFFF)
+                    if(ataId.LogicalSectorWords <= 255 ||
+                       ataId.LogicalAlignment   == 0xFFFF)
                         LogicalBlockSize = 512;
                     else
                         LogicalBlockSize = ataId.LogicalSectorWords * 2;
-                else LogicalBlockSize = 512;
+                else
+                    LogicalBlockSize = 512;
 
                 if((ataId.PhysLogSectorSize & 0x2000) == 0x2000)
-                    PhysicalBlockSize  = LogicalBlockSize * (uint)Math.Pow(2, ataId.PhysLogSectorSize & 0xF);
-                else PhysicalBlockSize = LogicalBlockSize;
+                    PhysicalBlockSize = LogicalBlockSize * (uint)Math.Pow(2, ataId.PhysLogSectorSize & 0xF);
+                else
+                    PhysicalBlockSize = LogicalBlockSize;
             }
             else
             {
@@ -208,6 +241,7 @@ namespace DiscImageChef.Core.Devices
             if(!IsLba)
             {
                 BlocksToRead = 1;
+
                 return false;
             }
 
@@ -218,6 +252,7 @@ namespace DiscImageChef.Core.Devices
                 byte[]                 cmdBuf;
                 bool                   sense;
                 AtaErrorRegistersLba48 errorLba48;
+
                 if(ataReadDmaLba48)
                 {
                     sense = dev.ReadDma(out cmdBuf, out errorLba48, 0, (byte)BlocksToRead, timeout, out _);
@@ -231,6 +266,7 @@ namespace DiscImageChef.Core.Devices
                 else
                 {
                     AtaErrorRegistersLba28 errorLba;
+
                     if(ataReadDmaRetryLba)
                     {
                         sense = dev.ReadDma(out cmdBuf, out errorLba, true, 0, (byte)BlocksToRead, timeout, out _);
@@ -253,15 +289,21 @@ namespace DiscImageChef.Core.Devices
                     }
                 }
 
-                if(error) BlocksToRead /= 2;
+                if(error)
+                    BlocksToRead /= 2;
 
-                if(!error || BlocksToRead == 1) break;
+                if(!error ||
+                   BlocksToRead == 1)
+                    break;
             }
 
-            if(!error || !IsLba) return false;
+            if(!error ||
+               !IsLba)
+                return false;
 
             BlocksToRead = 1;
             ErrorMessage = $"Device error {dev.LastError} trying to guess ideal transfer length.";
+
             return true;
         }
 
@@ -293,6 +335,7 @@ namespace DiscImageChef.Core.Devices
             {
                 sense = dev.ReadDma(out buffer, out errorLba, true, (uint)block, (byte)count, timeout,
                                         out duration);
+
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
@@ -301,6 +344,7 @@ namespace DiscImageChef.Core.Devices
             {
                 sense = dev.ReadDma(out buffer, out errorLba, false, (uint)block, (byte)count, timeout,
                                         out duration);
+
                 error     = !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0 && buffer.Length > 0);
                 status    = errorLba.Status;
                 errorByte = errorLba.Error;
@@ -320,7 +364,8 @@ namespace DiscImageChef.Core.Devices
                 errorByte = errorLba.Error;
             }
 
-            if(error) DicConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+            if(error)
+                DicConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
 
             return error;
         }
@@ -338,6 +383,7 @@ namespace DiscImageChef.Core.Devices
             {
                 sense = dev.ReadDma(out buffer, out errorChs, true, cylinder, head, sectir, 1, timeout,
                                         out duration);
+
                 error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status    = errorChs.Status;
                 errorByte = errorChs.Error;
@@ -346,6 +392,7 @@ namespace DiscImageChef.Core.Devices
             {
                 sense = dev.ReadDma(out buffer, out errorChs, false, cylinder, head, sectir, 1, timeout,
                                         out duration);
+
                 error     = !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0 && buffer.Length > 0);
                 status    = errorChs.Status;
                 errorByte = errorChs.Error;
@@ -365,7 +412,8 @@ namespace DiscImageChef.Core.Devices
                 errorByte = errorChs.Error;
             }
 
-            if(error) DicConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+            if(error)
+                DicConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
 
             return error;
         }
@@ -373,13 +421,15 @@ namespace DiscImageChef.Core.Devices
         bool AtaSeek(ulong block, out double duration)
         {
             bool sense = dev.Seek(out AtaErrorRegistersLba28 errorLba, (uint)block, timeout, out duration);
-            return !(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0);
+
+            return!(!sense && (errorLba.Status & 0x27) == 0 && errorLba.Error == 0);
         }
 
         bool AtaSeekChs(ushort cylinder, byte head, byte sector, out double duration)
         {
             bool sense = dev.Seek(out AtaErrorRegistersChs errorChs, cylinder, head, sector, timeout, out duration);
-            return !(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0);
+
+            return!(!sense && (errorChs.Status & 0x27) == 0 && errorChs.Error == 0);
         }
     }
 }

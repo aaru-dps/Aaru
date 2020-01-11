@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Extents;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;

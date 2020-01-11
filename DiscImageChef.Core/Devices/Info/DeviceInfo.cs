@@ -33,10 +33,12 @@
 using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
+using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace DiscImageChef.Core.Devices.Info
 {

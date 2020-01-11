@@ -35,6 +35,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Interfaces;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.Bluray;
 using DiscImageChef.Decoders.CD;
@@ -48,6 +49,7 @@ using BCA = DiscImageChef.Decoders.Bluray.BCA;
 using Cartridge = DiscImageChef.Decoders.Bluray.Cartridge;
 using DDS = DiscImageChef.Decoders.DVD.DDS;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
 using Spare = DiscImageChef.Decoders.DVD.Spare;
 
 namespace DiscImageChef.Gui.Forms

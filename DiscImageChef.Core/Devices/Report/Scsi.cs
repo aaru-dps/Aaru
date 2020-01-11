@@ -34,9 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DiscImageChef.CommonTypes.Metadata;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Devices;
+using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace DiscImageChef.Core.Devices.Report
 {
@@ -52,12 +54,12 @@ namespace DiscImageChef.Core.Devices.Report
             if(sense)
                 return null;
 
-            Inquiry.SCSIInquiry? decodedNullable = Inquiry.Decode(buffer);
+            Inquiry? decodedNullable = Inquiry.Decode(buffer);
 
             if(!decodedNullable.HasValue)
                 return null;
 
-            Inquiry.SCSIInquiry decoded = decodedNullable.Value;
+            Inquiry decoded = decodedNullable.Value;
 
             // Clear Seagate serial number
             if(decoded.SeagatePresent &&

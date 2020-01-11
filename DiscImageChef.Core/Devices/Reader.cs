@@ -32,7 +32,7 @@
 
 using System;
 using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Decoders.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
 using DiscImageChef.Devices;
 
 namespace DiscImageChef.Core.Devices

@@ -39,6 +39,7 @@ using DiscImageChef.CommonTypes.Extents;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Interop;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Logging;
 using DiscImageChef.Decoders.DVD;

@@ -37,7 +37,7 @@ using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Decoders.ATA;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
 using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
@@ -54,7 +54,8 @@ namespace DiscImageChef.DiscImages
 
             RsIdeHeader hdr = Marshal.ByteArrayToStructureLittleEndian<RsIdeHeader>(hdrB);
 
-            if(!hdr.magic.SequenceEqual(signature)) return false;
+            if(!hdr.magic.SequenceEqual(signature))
+                return false;
 
             dataOff = hdr.dataOff;
 
@@ -72,7 +73,7 @@ namespace DiscImageChef.DiscImages
             {
                 identify = new byte[512];
                 Array.Copy(hdr.identify, 0, identify, 0, hdr.identify.Length);
-                Identify.IdentifyDevice? ataId = Decoders.ATA.Identify.Decode(identify);
+                Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identify);
 
                 if(ataId.HasValue)
                 {
@@ -88,7 +89,9 @@ namespace DiscImageChef.DiscImages
                 }
             }
 
-            if(imageInfo.Cylinders == 0 || imageInfo.Heads == 0 || imageInfo.SectorsPerTrack == 0)
+            if(imageInfo.Cylinders       == 0 ||
+               imageInfo.Heads           == 0 ||
+               imageInfo.SectorsPerTrack == 0)
             {
                 imageInfo.Cylinders       = (uint)(imageInfo.Sectors / 16 / 63);
                 imageInfo.Heads           = 16;
@@ -114,7 +117,7 @@ namespace DiscImageChef.DiscImages
 
             Stream stream = rsIdeImageFilter.GetDataForkStream();
 
-            stream.Seek((long)(dataOff + sectorAddress * imageInfo.SectorSize), SeekOrigin.Begin);
+            stream.Seek((long)(dataOff + (sectorAddress * imageInfo.SectorSize)), SeekOrigin.Begin);
 
             stream.Read(buffer, 0, (int)(length * imageInfo.SectorSize));
 
@@ -123,11 +126,13 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(!imageInfo.ReadableMediaTags.Contains(tag) || tag != MediaTagType.ATA_IDENTIFY)
+            if(!imageInfo.ReadableMediaTags.Contains(tag) ||
+               tag != MediaTagType.ATA_IDENTIFY)
                 throw new FeatureUnsupportedImageException("Feature not supported by image format");
 
             byte[] buffer = new byte[512];
             Array.Copy(identify, 0, buffer, 0, 512);
+
             return buffer;
         }
     }

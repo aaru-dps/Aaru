@@ -41,8 +41,8 @@ using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Exceptions;
 using DiscImageChef.CommonTypes.Interfaces;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
 using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Helpers;
 
 namespace DiscImageChef.DiscImages
@@ -55,7 +55,9 @@ namespace DiscImageChef.DiscImages
             stream.Seek(0, SeekOrigin.Begin);
             byte[] magic = new byte[8];
             stream.Read(magic, 0, 8);
-            if(!chdTag.SequenceEqual(magic)) return false;
+
+            if(!chdTag.SequenceEqual(magic))
+                return false;
 
             // Read length
             byte[] buffer = new byte[4];
@@ -77,23 +79,23 @@ namespace DiscImageChef.DiscImages
                 {
                     ChdHeaderV1 hdrV1 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV1>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"",
-                                              Encoding.ASCII.GetString(hdrV1.tag));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV1.length = {0} bytes", hdrV1.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.version = {0}",      hdrV1.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}",        (ChdFlags)hdrV1.flags);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.version = {0}", hdrV1.version);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}", (ChdFlags)hdrV1.flags);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV1.compression = {0}",
                                               (ChdCompression)hdrV1.compression);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.hunksize = {0}",   hdrV1.hunksize);
+
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.hunksize = {0}", hdrV1.hunksize);
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.cylinders = {0}",  hdrV1.cylinders);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.heads = {0}",      hdrV1.heads);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.sectors = {0}",    hdrV1.sectors);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.md5 = {0}",
-                                              ArrayHelpers.ByteArrayToHex(hdrV1.md5));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.cylinders = {0}", hdrV1.cylinders);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.heads = {0}", hdrV1.heads);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.sectors = {0}", hdrV1.sectors);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV1.parentmd5 = {0}",
-                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5)
-                                                  ? "null"
+                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV1.parentmd5));
 
                     DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
@@ -101,22 +103,26 @@ namespace DiscImageChef.DiscImages
 
                     hunkTable = new ulong[hdrV1.totalhunks];
 
-                    uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV1.totalhunks * 8 / 512);
+                    uint hunkSectorCount = (uint)Math.Ceiling(((double)hdrV1.totalhunks * 8) / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
 
                     for(int i = 0; i < hunkSectorCount; i++)
                     {
                         stream.Read(hunkSectorBytes, 0, 512);
+
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
                         HunkSector hunkSector = Marshal.ByteArrayToStructureLittleEndian<HunkSector>(hunkSectorBytes);
+
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
-                        if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512 / 8);
+
+                        if(hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, hunkTable.Length - i * 512 / 8);
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8,
+                                       hunkTable.Length - ((i * 512)          / 8));
                     }
 
                     DateTime end = DateTime.UtcNow;
@@ -146,24 +152,25 @@ namespace DiscImageChef.DiscImages
                 {
                     ChdHeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV2>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"",
-                                              Encoding.ASCII.GetString(hdrV2.tag));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV2.length = {0} bytes", hdrV2.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.version = {0}",      hdrV2.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}",        (ChdFlags)hdrV2.flags);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.version = {0}", hdrV2.version);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}", (ChdFlags)hdrV2.flags);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV2.compression = {0}",
                                               (ChdCompression)hdrV2.compression);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.hunksize = {0}",   hdrV2.hunksize);
+
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.hunksize = {0}", hdrV2.hunksize);
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.cylinders = {0}",  hdrV2.cylinders);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.heads = {0}",      hdrV2.heads);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.sectors = {0}",    hdrV2.sectors);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.md5 = {0}",
-                                              ArrayHelpers.ByteArrayToHex(hdrV2.md5));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.cylinders = {0}", hdrV2.cylinders);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.heads = {0}", hdrV2.heads);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.sectors = {0}", hdrV2.sectors);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV2.parentmd5 = {0}",
-                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5)
-                                                  ? "null"
+                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV2.parentmd5));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV2.seclen = {0}", hdrV2.seclen);
 
                     DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
@@ -172,22 +179,26 @@ namespace DiscImageChef.DiscImages
                     hunkTable = new ulong[hdrV2.totalhunks];
 
                     // How many sectors uses the BAT
-                    uint hunkSectorCount = (uint)Math.Ceiling((double)hdrV2.totalhunks * 8 / 512);
+                    uint hunkSectorCount = (uint)Math.Ceiling(((double)hdrV2.totalhunks * 8) / 512);
 
                     byte[] hunkSectorBytes = new byte[512];
 
                     for(int i = 0; i < hunkSectorCount; i++)
                     {
                         stream.Read(hunkSectorBytes, 0, 512);
+
                         // This does the big-endian trick but reverses the order of elements also
                         Array.Reverse(hunkSectorBytes);
                         HunkSector hunkSector = Marshal.ByteArrayToStructureLittleEndian<HunkSector>(hunkSectorBytes);
+
                         // This restores the order of elements
                         Array.Reverse(hunkSector.hunkEntry);
-                        if(hunkTable.Length >= i * 512 / 8 + 512 / 8)
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, 512 / 8);
+
+                        if(hunkTable.Length >= ((i * 512) / 8) + (512 / 8))
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8, 512 / 8);
                         else
-                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, i * 512 / 8, hunkTable.Length - i * 512 / 8);
+                            Array.Copy(hunkSector.hunkEntry, 0, hunkTable, (i * 512) / 8,
+                                       hunkTable.Length - ((i * 512)          / 8));
                     }
 
                     DateTime end = DateTime.UtcNow;
@@ -217,28 +228,30 @@ namespace DiscImageChef.DiscImages
                 {
                     ChdHeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV3>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"",
-                                              Encoding.ASCII.GetString(hdrV3.tag));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.length = {0} bytes", hdrV3.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.version = {0}",      hdrV3.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}",        (ChdFlags)hdrV3.flags);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.version = {0}", hdrV3.version);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}", (ChdFlags)hdrV3.flags);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.compression = {0}",
                                               (ChdCompression)hdrV3.compression);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.totalhunks = {0}",   hdrV3.totalhunks);
+
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.metaoffset = {0}",   hdrV3.metaoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.md5 = {0}",
-                                              ArrayHelpers.ByteArrayToHex(hdrV3.md5));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.metaoffset = {0}", hdrV3.metaoffset);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.parentmd5 = {0}",
-                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5)
-                                                  ? "null"
+                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV3.parentmd5));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.sha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV3.sha1));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV3.parentsha1 = {0}",
-                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1)
-                                                  ? "null"
+                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV3.parentsha1));
 
                     DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
@@ -267,23 +280,26 @@ namespace DiscImageChef.DiscImages
                 {
                     ChdHeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV4>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"",
-                                              Encoding.ASCII.GetString(hdrV4.tag));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV4.length = {0} bytes", hdrV4.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.version = {0}",      hdrV4.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}",        (ChdFlags)hdrV4.flags);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.version = {0}", hdrV4.version);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}", (ChdFlags)hdrV4.flags);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV4.compression = {0}",
                                               (ChdCompression)hdrV4.compression);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.totalhunks = {0}",   hdrV4.totalhunks);
+
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.metaoffset = {0}",   hdrV4.metaoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.hunkbytes = {0}",    hdrV4.hunkbytes);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.metaoffset = {0}", hdrV4.metaoffset);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.hunkbytes = {0}", hdrV4.hunkbytes);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV4.sha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV4.sha1));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV4.parentsha1 = {0}",
-                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1)
-                                                  ? "null"
+                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV4.parentsha1));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV4.rawsha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV4.rawsha1));
 
@@ -313,33 +329,39 @@ namespace DiscImageChef.DiscImages
                 {
                     ChdHeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV5>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"",
-                                              Encoding.ASCII.GetString(hdrV5.tag));
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.length = {0} bytes", hdrV5.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.version = {0}",      hdrV5.version);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.version = {0}", hdrV5.version);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor0 = \"{0}\"",
-                                              Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                          .GetBytes(hdrV5.compressor0)));
+                                              Encoding.ASCII.GetString(BigEndianBitConverter.
+                                                                           GetBytes(hdrV5.compressor0)));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor1 = \"{0}\"",
-                                              Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                          .GetBytes(hdrV5.compressor1)));
+                                              Encoding.ASCII.GetString(BigEndianBitConverter.
+                                                                           GetBytes(hdrV5.compressor1)));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor2 = \"{0}\"",
-                                              Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                          .GetBytes(hdrV5.compressor2)));
+                                              Encoding.ASCII.GetString(BigEndianBitConverter.
+                                                                           GetBytes(hdrV5.compressor2)));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor3 = \"{0}\"",
-                                              Encoding.ASCII.GetString(BigEndianBitConverter
-                                                                          .GetBytes(hdrV5.compressor3)));
+                                              Encoding.ASCII.GetString(BigEndianBitConverter.
+                                                                           GetBytes(hdrV5.compressor3)));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.mapoffset = {0}",    hdrV5.mapoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.metaoffset = {0}",   hdrV5.metaoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.hunkbytes = {0}",    hdrV5.hunkbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.unitbytes = {0}",    hdrV5.unitbytes);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.mapoffset = {0}", hdrV5.mapoffset);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.metaoffset = {0}", hdrV5.metaoffset);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.hunkbytes = {0}", hdrV5.hunkbytes);
+                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.unitbytes = {0}", hdrV5.unitbytes);
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.sha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV5.sha1));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.parentsha1 = {0}",
-                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1)
-                                                  ? "null"
+                                              ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV5.parentsha1));
+
                     DicConsole.DebugWriteLine("CHD plugin", "hdrV5.rawsha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV5.rawsha1));
 
@@ -351,7 +373,7 @@ namespace DiscImageChef.DiscImages
 
                         hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
 
-                        uint hunkSectorCount = (uint)Math.Ceiling((double)hunkTableSmall.Length * 4 / 512);
+                        uint hunkSectorCount = (uint)Math.Ceiling(((double)hunkTableSmall.Length * 4) / 512);
 
                         byte[] hunkSectorBytes = new byte[512];
 
@@ -360,23 +382,28 @@ namespace DiscImageChef.DiscImages
                         for(int i = 0; i < hunkSectorCount; i++)
                         {
                             stream.Read(hunkSectorBytes, 0, 512);
+
                             // This does the big-endian trick but reverses the order of elements also
                             Array.Reverse(hunkSectorBytes);
+
                             HunkSectorSmall hunkSector =
                                 Marshal.ByteArrayToStructureLittleEndian<HunkSectorSmall>(hunkSectorBytes);
+
                             // This restores the order of elements
                             Array.Reverse(hunkSector.hunkEntry);
-                            if(hunkTableSmall.Length >= i * 512 / 4 + 512 / 4)
-                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, i * 512 / 4, 512 / 4);
+
+                            if(hunkTableSmall.Length >= ((i * 512) / 4) + (512 / 4))
+                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, (i * 512) / 4, 512 / 4);
                             else
-                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, i * 512 / 4,
-                                           hunkTableSmall.Length - i * 512            / 4);
+                                Array.Copy(hunkSector.hunkEntry, 0, hunkTableSmall, (i * 512) / 4,
+                                           hunkTableSmall.Length - ((i * 512)          / 4));
                         }
 
                         DateTime end = DateTime.UtcNow;
                         DicConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
                     }
-                    else throw new ImageNotSupportedException("Cannot read compressed CHD version 5");
+                    else
+                        throw new ImageNotSupportedException("Cannot read compressed CHD version 5");
 
                     nextMetaOff = hdrV5.metaoffset;
 
@@ -418,6 +445,7 @@ namespace DiscImageChef.DiscImages
                     ChdMetadataHeader header = Marshal.ByteArrayToStructureBigEndian<ChdMetadataHeader>(hdrBytes);
                     byte[]            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                     stream.Read(meta, 0, meta.Length);
+
                     DicConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));
 
@@ -430,8 +458,9 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a hard disk and a C/GD-ROM at the same time, aborting.");
 
                             string gddd      = StringHandlers.CToString(meta);
-                            Regex  gdddRegEx = new Regex(REGEX_METADATA_HDD);
+                            var    gdddRegEx = new Regex(REGEX_METADATA_HDD);
                             Match  gdddMatch = gdddRegEx.Match(gddd);
+
                             if(gdddMatch.Success)
                             {
                                 isHdd                     = true;
@@ -442,6 +471,7 @@ namespace DiscImageChef.DiscImages
                             }
 
                             break;
+
                         // "CHCD"
                         case CDROM_OLD_METADATA:
                             if(isHdd)
@@ -455,60 +485,69 @@ namespace DiscImageChef.DiscImages
                             uint chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                             // Byteswapped
-                            if(chdTracksNumber > 99) chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
+                            if(chdTracksNumber > 99)
+                                chdTracksNumber = BigEndianBitConverter.ToUInt32(meta, 0);
 
                             currentSector = 0;
 
                             for(uint i = 0; i < chdTracksNumber; i++)
                             {
-                                ChdTrackOld chdTrack = new ChdTrackOld
+                                var chdTrack = new ChdTrackOld
                                 {
-                                    type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 0)),
-                                    subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 4)),
-                                    dataSize    = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 8)),
-                                    subSize     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 12)),
-                                    frames      = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 16)),
-                                    extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + i * 24 + 20))
+                                    type        = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 0)),
+                                    subType     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 4)),
+                                    dataSize    = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 8)),
+                                    subSize     = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 12)),
+                                    frames      = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 16)),
+                                    extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 20))
                                 };
 
-                                Track dicTrack = new Track();
+                                var dicTrack = new Track();
+
                                 switch((ChdOldTrackType)chdTrack.type)
                                 {
                                     case ChdOldTrackType.Audio:
                                         dicTrack.TrackBytesPerSector    = 2352;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.Audio;
+
                                         break;
                                     case ChdOldTrackType.Mode1:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case ChdOldTrackType.Mode1Raw:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case ChdOldTrackType.Mode2:
                                     case ChdOldTrackType.Mode2FormMix:
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2336;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     case ChdOldTrackType.Mode2Form1:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode2Form1;
+
                                         break;
                                     case ChdOldTrackType.Mode2Form2:
                                         dicTrack.TrackBytesPerSector    = 2324;
                                         dicTrack.TrackRawBytesPerSector = 2324;
                                         dicTrack.TrackType              = TrackType.CdMode2Form2;
+
                                         break;
                                     case ChdOldTrackType.Mode2Raw:
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported track type {chdTrack.type}");
@@ -520,14 +559,17 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     case ChdOldSubType.None:
                                         dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+
                                         break;
                                     case ChdOldSubType.Raw:
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     default:
                                         throw new
@@ -535,8 +577,8 @@ namespace DiscImageChef.DiscImages
                                 }
 
                                 dicTrack.Indexes          =  new Dictionary<int, ulong>();
-                                dicTrack.TrackDescription =  $"Track {i + 1}";
-                                dicTrack.TrackEndSector   =  currentSector + chdTrack.frames - 1;
+                                dicTrack.TrackDescription =  $"Track {i     + 1}";
+                                dicTrack.TrackEndSector   =  (currentSector + chdTrack.frames) - 1;
                                 dicTrack.TrackFile        =  imageFilter.GetFilename();
                                 dicTrack.TrackFileType    =  "BINARY";
                                 dicTrack.TrackFilter      =  imageFilter;
@@ -550,6 +592,7 @@ namespace DiscImageChef.DiscImages
                             isCdrom = true;
 
                             break;
+
                         // "CHTR"
                         case CDROM_TRACK_METADATA:
                             if(isHdd)
@@ -561,8 +604,9 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
                             string chtr      = StringHandlers.CToString(meta);
-                            Regex  chtrRegEx = new Regex(REGEX_METADATA_CDROM);
+                            var    chtrRegEx = new Regex(REGEX_METADATA_CDROM);
                             Match  chtrMatch = chtrRegEx.Match(chtr);
+
                             if(chtrMatch.Success)
                             {
                                 isCdrom = true;
@@ -575,25 +619,29 @@ namespace DiscImageChef.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                Track dicTrack = new Track();
+                                var dicTrack = new Track();
+
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
                                         dicTrack.TrackBytesPerSector    = 2352;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.Audio;
+
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
@@ -601,24 +649,28 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2336;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode2Form1;
+
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
                                         dicTrack.TrackBytesPerSector    = 2324;
                                         dicTrack.TrackRawBytesPerSector = 2324;
                                         dicTrack.TrackType              = TrackType.CdMode2Form2;
+
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
@@ -630,14 +682,17 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     case SUB_TYPE_NONE:
                                         dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+
                                         break;
                                     case SUB_TYPE_RAW:
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
@@ -645,7 +700,7 @@ namespace DiscImageChef.DiscImages
 
                                 dicTrack.Indexes          =  new Dictionary<int, ulong>();
                                 dicTrack.TrackDescription =  $"Track {trackNo}";
-                                dicTrack.TrackEndSector   =  currentSector + frames - 1;
+                                dicTrack.TrackEndSector   =  (currentSector + frames) - 1;
                                 dicTrack.TrackFile        =  imageFilter.GetFilename();
                                 dicTrack.TrackFileType    =  "BINARY";
                                 dicTrack.TrackFilter      =  imageFilter;
@@ -658,6 +713,7 @@ namespace DiscImageChef.DiscImages
                             }
 
                             break;
+
                         // "CHT2"
                         case CDROM_TRACK_METADATA2:
                             if(isHdd)
@@ -669,8 +725,9 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a GD-ROM and a CD-ROM at the same time, aborting.");
 
                             string cht2      = StringHandlers.CToString(meta);
-                            Regex  cht2RegEx = new Regex(REGEX_METADATA_CDROM2);
+                            var    cht2RegEx = new Regex(REGEX_METADATA_CDROM2);
                             Match  cht2Match = cht2RegEx.Match(cht2);
+
                             if(cht2Match.Success)
                             {
                                 isCdrom = true;
@@ -679,6 +736,7 @@ namespace DiscImageChef.DiscImages
                                 uint   frames    = uint.Parse(cht2Match.Groups["frames"].Value);
                                 string subtype   = cht2Match.Groups["sub_type"].Value;
                                 string tracktype = cht2Match.Groups["track_type"].Value;
+
                                 // TODO: Check pregap and postgap behaviour
                                 uint   pregap        = uint.Parse(cht2Match.Groups["pregap"].Value);
                                 string pregapType    = cht2Match.Groups["pgtype"].Value;
@@ -688,25 +746,29 @@ namespace DiscImageChef.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                Track dicTrack = new Track();
+                                var dicTrack = new Track();
+
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
                                         dicTrack.TrackBytesPerSector    = 2352;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.Audio;
+
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
@@ -714,24 +776,28 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2336;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode2Form1;
+
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
                                         dicTrack.TrackBytesPerSector    = 2324;
                                         dicTrack.TrackRawBytesPerSector = 2324;
                                         dicTrack.TrackType              = TrackType.CdMode2Form2;
+
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
@@ -743,14 +809,17 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     case SUB_TYPE_NONE:
                                         dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+
                                         break;
                                     case SUB_TYPE_RAW:
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
@@ -758,7 +827,7 @@ namespace DiscImageChef.DiscImages
 
                                 dicTrack.Indexes          =  new Dictionary<int, ulong>();
                                 dicTrack.TrackDescription =  $"Track {trackNo}";
-                                dicTrack.TrackEndSector   =  currentSector + frames - 1;
+                                dicTrack.TrackEndSector   =  (currentSector + frames) - 1;
                                 dicTrack.TrackFile        =  imageFilter.GetFilename();
                                 dicTrack.TrackFileType    =  "BINARY";
                                 dicTrack.TrackFilter      =  imageFilter;
@@ -771,10 +840,12 @@ namespace DiscImageChef.DiscImages
                             }
 
                             break;
+
                         // "CHGT"
                         case GDROM_OLD_METADATA:
                             swapAudio = true;
                             goto case GDROM_METADATA;
+
                         // "CHGD"
                         case GDROM_METADATA:
                             if(isHdd)
@@ -786,8 +857,9 @@ namespace DiscImageChef.DiscImages
                                     ImageNotSupportedException("Image cannot be a CD-ROM and a GD-ROM at the same time, aborting.");
 
                             string chgd      = StringHandlers.CToString(meta);
-                            Regex  chgdRegEx = new Regex(REGEX_METADATA_GDROM);
+                            var    chgdRegEx = new Regex(REGEX_METADATA_GDROM);
                             Match  chgdMatch = chgdRegEx.Match(chgd);
+
                             if(chgdMatch.Success)
                             {
                                 isGdrom = true;
@@ -796,6 +868,7 @@ namespace DiscImageChef.DiscImages
                                 uint   frames    = uint.Parse(chgdMatch.Groups["frames"].Value);
                                 string subtype   = chgdMatch.Groups["sub_type"].Value;
                                 string tracktype = chgdMatch.Groups["track_type"].Value;
+
                                 // TODO: Check pregap, postgap and pad behaviour
                                 uint   pregap        = uint.Parse(chgdMatch.Groups["pregap"].Value);
                                 string pregapType    = chgdMatch.Groups["pgtype"].Value;
@@ -806,25 +879,29 @@ namespace DiscImageChef.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                Track dicTrack = new Track();
+                                var dicTrack = new Track();
+
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
                                         dicTrack.TrackBytesPerSector    = 2352;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.Audio;
+
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode1;
+
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
@@ -832,24 +909,28 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2336;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
                                         dicTrack.TrackBytesPerSector    = 2048;
                                         dicTrack.TrackRawBytesPerSector = 2048;
                                         dicTrack.TrackType              = TrackType.CdMode2Form1;
+
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
                                         dicTrack.TrackBytesPerSector    = 2324;
                                         dicTrack.TrackRawBytesPerSector = 2324;
                                         dicTrack.TrackType              = TrackType.CdMode2Form2;
+
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
                                         dicTrack.TrackBytesPerSector    = 2336;
                                         dicTrack.TrackRawBytesPerSector = 2352;
                                         dicTrack.TrackType              = TrackType.CdMode2Formless;
+
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported track type {tracktype}");
@@ -861,14 +942,17 @@ namespace DiscImageChef.DiscImages
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     case SUB_TYPE_NONE:
                                         dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+
                                         break;
                                     case SUB_TYPE_RAW:
                                         dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
                                         dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
                                         dicTrack.TrackSubchannelFilter = imageFilter;
+
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
@@ -876,7 +960,7 @@ namespace DiscImageChef.DiscImages
 
                                 dicTrack.Indexes          =  new Dictionary<int, ulong>();
                                 dicTrack.TrackDescription =  $"Track {trackNo}";
-                                dicTrack.TrackEndSector   =  currentSector + frames - 1;
+                                dicTrack.TrackEndSector   =  (currentSector + frames) - 1;
                                 dicTrack.TrackFile        =  imageFilter.GetFilename();
                                 dicTrack.TrackFileType    =  "BINARY";
                                 dicTrack.TrackFilter      =  imageFilter;
@@ -889,9 +973,11 @@ namespace DiscImageChef.DiscImages
                             }
 
                             break;
+
                         // "IDNT"
                         case HARD_DISK_IDENT_METADATA:
-                            Identify.IdentifyDevice? idnt = Decoders.ATA.Identify.Decode(meta);
+                            Identify.IdentifyDevice? idnt = CommonTypes.Structs.Devices.ATA.Identify.Decode(meta);
+
                             if(idnt.HasValue)
                             {
                                 imageInfo.MediaManufacturer     = idnt.Value.MediaManufacturer;
@@ -899,7 +985,9 @@ namespace DiscImageChef.DiscImages
                                 imageInfo.DriveModel            = idnt.Value.Model;
                                 imageInfo.DriveSerialNumber     = idnt.Value.SerialNumber;
                                 imageInfo.DriveFirmwareRevision = idnt.Value.FirmwareRevision;
-                                if(idnt.Value.CurrentCylinders       > 0 && idnt.Value.CurrentHeads > 0 &&
+
+                                if(idnt.Value.CurrentCylinders       > 0 &&
+                                   idnt.Value.CurrentHeads           > 0 &&
                                    idnt.Value.CurrentSectorsPerTrack > 0)
                                 {
                                     imageInfo.Cylinders       = idnt.Value.CurrentCylinders;
@@ -915,13 +1003,17 @@ namespace DiscImageChef.DiscImages
                             }
 
                             identify = meta;
+
                             if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
                                 imageInfo.ReadableMediaTags.Add(MediaTagType.ATA_IDENTIFY);
+
                             break;
                         case PCMCIA_CIS_METADATA:
                             cis = meta;
+
                             if(!imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
                                 imageInfo.ReadableMediaTags.Add(MediaTagType.PCMCIA_CIS);
+
                             break;
                     }
 
@@ -943,7 +1035,7 @@ namespace DiscImageChef.DiscImages
                     imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                     foreach(Track dicTrack in tracks.Values)
-                        imageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
+                        imageInfo.Sectors += (dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1;
                 }
                 else if(isGdrom)
                 {
@@ -953,9 +1045,10 @@ namespace DiscImageChef.DiscImages
                     imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
                     foreach(Track dicTrack in tracks.Values)
-                        imageInfo.Sectors += dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1;
+                        imageInfo.Sectors += (dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1;
                 }
-                else throw new ImageNotSupportedException("Image does not represent a known media, aborting");
+                else
+                    throw new ImageNotSupportedException("Image does not represent a known media, aborting");
             }
 
             if(isCdrom || isGdrom)
@@ -963,20 +1056,19 @@ namespace DiscImageChef.DiscImages
                 offsetmap  = new Dictionary<ulong, uint>();
                 partitions = new List<Partition>();
                 ulong partPos = 0;
+
                 foreach(Track dicTrack in tracks.Values)
                 {
-                    Partition partition = new Partition
+                    var partition = new Partition
                     {
                         Description = dicTrack.TrackDescription,
-                        Size =
-                            (dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1) *
-                            (ulong)dicTrack.TrackRawBytesPerSector,
-                        Length   = dicTrack.TrackEndSector - dicTrack.TrackStartSector + 1,
-                        Sequence = dicTrack.TrackSequence,
-                        Offset   = partPos,
-                        Start    = dicTrack.TrackStartSector,
+                        Size = ((dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1) *
+                               (ulong)dicTrack.TrackRawBytesPerSector,
+                        Length   = (dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1,
+                        Sequence = dicTrack.TrackSequence, Offset = partPos, Start = dicTrack.TrackStartSector,
                         Type     = dicTrack.TrackType.ToString()
                     };
+
                     partPos += partition.Length;
                     offsetmap.Add(dicTrack.TrackStartSector, dicTrack.TrackSequence);
 
@@ -992,16 +1084,22 @@ namespace DiscImageChef.DiscImages
                             {
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEcc))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEcc);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccP))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccP);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEccQ))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEccQ);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             }
@@ -1012,10 +1110,13 @@ namespace DiscImageChef.DiscImages
                             {
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubHeader);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
                             }
@@ -1026,6 +1127,7 @@ namespace DiscImageChef.DiscImages
                             {
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
+
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
                             }
@@ -1053,7 +1155,8 @@ namespace DiscImageChef.DiscImages
 
             // TODO: Detect CompactFlash
             // TODO: Get manufacturer and drive name from CIS if applicable
-            if(cis != null) imageInfo.MediaType = MediaType.PCCardTypeI;
+            if(cis != null)
+                imageInfo.MediaType = MediaType.PCCardTypeI;
 
             return true;
         }
@@ -1064,32 +1167,35 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            Track track = new Track();
-            uint  sectorSize;
+            var  track = new Track();
+            uint sectorSize;
 
             if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
-                if(isHdd) sectorSize = imageInfo.SectorSize;
+                if(isHdd)
+                    sectorSize = imageInfo.SectorSize;
                 else
                 {
                     track      = GetTrack(sectorAddress);
                     sectorSize = (uint)track.TrackRawBytesPerSector;
                 }
 
-                ulong hunkNo = sectorAddress              / sectorsPerHunk;
-                ulong secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress                / sectorsPerHunk;
+                ulong secOff = (sectorAddress * sectorSize) % (sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
                 sector = new byte[imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-                if(sectorCache.Count >= maxSectorCache) sectorCache.Clear();
+                if(sectorCache.Count >= maxSectorCache)
+                    sectorCache.Clear();
 
                 sectorCache.Add(sectorAddress, sector);
             }
 
-            if(isHdd) return sector;
+            if(isHdd)
+                return sector;
 
             uint sectorOffset;
 
@@ -1148,6 +1254,7 @@ namespace DiscImageChef.DiscImages
                 {
                     sectorOffset = 0;
                     sectorSize   = 2352;
+
                     break;
                 }
 
@@ -1162,20 +1269,22 @@ namespace DiscImageChef.DiscImages
                     buffer[i + 1] = sector[i];
                     buffer[i]     = sector[i + 1];
                 }
-            else Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
+            else
+                Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
             return buffer;
         }
 
         public byte[] ReadSectorTag(ulong sectorAddress, SectorTagType tag)
         {
-            if(isHdd) throw new FeatureNotPresentImageException("Hard disk images do not have sector tags");
+            if(isHdd)
+                throw new FeatureNotPresentImageException("Hard disk images do not have sector tags");
 
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            Track track = new Track();
+            var track = new Track();
 
             uint sectorSize;
 
@@ -1184,20 +1293,22 @@ namespace DiscImageChef.DiscImages
                 track      = GetTrack(sectorAddress);
                 sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress              / sectorsPerHunk;
-                ulong secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress                / sectorsPerHunk;
+                ulong secOff = (sectorAddress * sectorSize) % (sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
                 sector = new byte[imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-                if(sectorCache.Count >= maxSectorCache) sectorCache.Clear();
+                if(sectorCache.Count >= maxSectorCache)
+                    sectorCache.Clear();
 
                 sectorCache.Add(sectorAddress, sector);
             }
 
-            if(isHdd) return sector;
+            if(isHdd)
+                return sector;
 
             uint sectorOffset;
 
@@ -1209,6 +1320,7 @@ namespace DiscImageChef.DiscImages
                     case TrackSubchannelType.RawInterleaved:
                         sectorOffset = (uint)track.TrackRawBytesPerSector;
                         sectorSize   = 96;
+
                         break;
                     default:
                         throw new
@@ -1227,6 +1339,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 0;
                                     sectorSize   = 12;
+
                                     break;
                                 }
 
@@ -1234,6 +1347,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 12;
                                     sectorSize   = 4;
+
                                     break;
                                 }
 
@@ -1244,6 +1358,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 2076;
                                     sectorSize   = 276;
+
                                     break;
                                 }
 
@@ -1251,6 +1366,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 2076;
                                     sectorSize   = 172;
+
                                     break;
                                 }
 
@@ -1258,6 +1374,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 2248;
                                     sectorSize   = 104;
+
                                     break;
                                 }
 
@@ -1265,12 +1382,14 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 2064;
                                     sectorSize   = 4;
+
                                     break;
                                 }
 
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
-                        else throw new FeatureNotPresentImageException("Requested sector does not contain tags");
+                        else
+                            throw new FeatureNotPresentImageException("Requested sector does not contain tags");
 
                         break;
                     }
@@ -1284,6 +1403,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 0;
                                     sectorSize   = 12;
+
                                     break;
                                 }
 
@@ -1291,6 +1411,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 12;
                                     sectorSize   = 4;
+
                                     break;
                                 }
 
@@ -1298,6 +1419,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 16;
                                     sectorSize   = 8;
+
                                     break;
                                 }
 
@@ -1305,6 +1427,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 2348;
                                     sectorSize   = 4;
+
                                     break;
                                 }
 
@@ -1325,6 +1448,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 0;
                                     sectorSize   = 8;
+
                                     break;
                                 }
 
@@ -1332,6 +1456,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 2332;
                                     sectorSize   = 4;
+
                                     break;
                                 }
 
@@ -1357,6 +1482,7 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 0;
                                     sectorSize   = 8;
+
                                     break;
                                 }
 
@@ -1364,12 +1490,14 @@ namespace DiscImageChef.DiscImages
                                 {
                                     sectorOffset = 2332;
                                     sectorSize   = 4;
+
                                     break;
                                 }
 
                                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
                             }
-                        else throw new FeatureNotPresentImageException("Requested sector does not contain tags");
+                        else
+                            throw new FeatureNotPresentImageException("Requested sector does not contain tags");
 
                         break;
                     }
@@ -1387,7 +1515,8 @@ namespace DiscImageChef.DiscImages
                     buffer[i + 1] = sector[i];
                     buffer[i]     = sector[i + 1];
                 }
-            else Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
+            else
+                Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
             if(track.TrackType == TrackType.Audio && swapAudio)
                 for(int i = 0; i < 2352; i += 2)
@@ -1395,7 +1524,8 @@ namespace DiscImageChef.DiscImages
                     buffer[i + 1] = sector[i];
                     buffer[i]     = sector[i + 1];
                 }
-            else Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
+            else
+                Array.Copy(sector, sectorOffset, buffer, 0, sectorSize);
 
             return buffer;
         }
@@ -1410,7 +1540,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
@@ -1431,7 +1561,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
@@ -1444,28 +1574,30 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadSectorLong(ulong sectorAddress)
         {
-            if(isHdd) return ReadSector(sectorAddress);
+            if(isHdd)
+                return ReadSector(sectorAddress);
 
             if(sectorAddress > imageInfo.Sectors - 1)
                 throw new ArgumentOutOfRangeException(nameof(sectorAddress),
                                                       $"Sector address {sectorAddress} not found");
 
-            Track track = new Track();
+            var track = new Track();
 
             if(!sectorCache.TryGetValue(sectorAddress, out byte[] sector))
             {
                 track = GetTrack(sectorAddress);
                 uint sectorSize = (uint)track.TrackRawBytesPerSector;
 
-                ulong hunkNo = sectorAddress              / sectorsPerHunk;
-                ulong secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
+                ulong hunkNo = sectorAddress                / sectorsPerHunk;
+                ulong secOff = (sectorAddress * sectorSize) % (sectorsPerHunk * sectorSize);
 
                 byte[] hunk = GetHunk(hunkNo);
 
                 sector = new byte[imageInfo.SectorSize];
                 Array.Copy(hunk, (int)secOff, sector, 0, sector.Length);
 
-                if(sectorCache.Count >= maxSectorCache) sectorCache.Clear();
+                if(sectorCache.Count >= maxSectorCache)
+                    sectorCache.Clear();
 
                 sectorCache.Add(sectorAddress, sector);
             }
@@ -1478,7 +1610,8 @@ namespace DiscImageChef.DiscImages
                     buffer[i + 1] = sector[i];
                     buffer[i]     = sector[i + 1];
                 }
-            else Array.Copy(sector, 0, buffer, 0, track.TrackRawBytesPerSector);
+            else
+                Array.Copy(sector, 0, buffer, 0, track.TrackRawBytesPerSector);
 
             return buffer;
         }
@@ -1493,7 +1626,7 @@ namespace DiscImageChef.DiscImages
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       $"Requested more sectors ({sectorAddress + length}) than available ({imageInfo.Sectors})");
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
 
             for(uint i = 0; i < length; i++)
             {
@@ -1506,9 +1639,11 @@ namespace DiscImageChef.DiscImages
 
         public byte[] ReadDiskTag(MediaTagType tag)
         {
-            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY)) return identify;
+            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
+                return identify;
 
-            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS)) return cis;
+            if(imageInfo.ReadableMediaTags.Contains(MediaTagType.PCMCIA_CIS))
+                return cis;
 
             throw new FeatureUnsupportedImageException("Feature not supported by image format");
         }

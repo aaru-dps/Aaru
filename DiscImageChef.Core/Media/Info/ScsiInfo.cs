@@ -36,6 +36,7 @@ using System.Linq;
 using System.Threading;
 using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Core.Media.Detection;
 using DiscImageChef.Decoders.CD;
@@ -47,6 +48,7 @@ using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
+using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
 
 namespace DiscImageChef.Core.Media.Info
 {
@@ -1289,7 +1291,7 @@ namespace DiscImageChef.Core.Media.Info
 
                     if(!sense)
                     {
-                        Inquiry.SCSIInquiry? inq = Inquiry.Decode(inqBuffer);
+                        var inq = CommonTypes.Structs.Devices.SCSI.Inquiry.Decode(inqBuffer);
 
                         if(inq.HasValue &&
                            inq.Value.KreonPresent)
