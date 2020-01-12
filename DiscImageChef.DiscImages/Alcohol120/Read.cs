@@ -808,31 +808,15 @@ namespace DiscImageChef.DiscImages
                 }
 
                 case AlcoholTrackMode.Mode2:
+                case AlcoholTrackMode.Mode2F1:
+                case AlcoholTrackMode.Mode2F1Alt:
+                case AlcoholTrackMode.Mode2F2:
+                case AlcoholTrackMode.Mode2F2Alt:
                 {
                     mode2        = true;
                     sectorOffset = 0;
                     sectorSize   = 2352;
                     sectorSkip   = 0;
-
-                    break;
-                }
-
-                case AlcoholTrackMode.Mode2F1:
-                case AlcoholTrackMode.Mode2F1Alt:
-                {
-                    sectorOffset = 24;
-                    sectorSize   = 2048;
-                    sectorSkip   = 280;
-
-                    break;
-                }
-
-                case AlcoholTrackMode.Mode2F2:
-                case AlcoholTrackMode.Mode2F2Alt:
-                {
-                    sectorOffset = 24;
-                    sectorSize   = 2324;
-                    sectorSkip   = 4;
 
                     break;
                 }
@@ -884,12 +868,12 @@ namespace DiscImageChef.DiscImages
             {
                 var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
-                buffer = br.ReadBytes((int)(sectorSize * length));
+                buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector = new byte[sectorSize];
-                    Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
+                    Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                     sector = Sector.GetUserDataFromMode2(sector);
                     mode2Ms.Write(sector, 0, sector.Length);
                 }

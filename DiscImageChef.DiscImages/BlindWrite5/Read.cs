@@ -1348,12 +1348,12 @@ namespace DiscImageChef.DiscImages
             {
                 var mode2Ms = new MemoryStream((int)(sectorSize * length));
 
-                buffer = br.ReadBytes((int)(sectorSize * length));
+                buffer = br.ReadBytes((int)((sectorSize + sectorSkip) * length));
 
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector = new byte[sectorSize];
-                    Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
+                    Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                     sector = Sector.GetUserDataFromMode2(sector);
                     mode2Ms.Write(sector, 0, sector.Length);
                 }

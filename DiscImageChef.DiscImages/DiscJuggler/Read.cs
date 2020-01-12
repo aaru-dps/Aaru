@@ -304,8 +304,7 @@ namespace DiscImageChef.DiscImages
                                     track.TrackSubchannelOffset = currentOffset;
                                     track.TrackSubchannelType   = TrackSubchannelType.Q16Interleaved;
 
-                                    currentOffset +=
-                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
+                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
 
                                     break;
                                 case 4:
@@ -317,8 +316,7 @@ namespace DiscImageChef.DiscImages
                                     track.TrackSubchannelOffset = currentOffset;
                                     track.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
 
-                                    currentOffset +=
-                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
+                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
 
                                     break;
                                 default: throw new ImageNotSupportedException($"Unknown read mode {readMode}");
@@ -383,8 +381,7 @@ namespace DiscImageChef.DiscImages
                                     track.TrackSubchannelOffset = currentOffset;
                                     track.TrackSubchannelType   = TrackSubchannelType.Q16Interleaved;
 
-                                    currentOffset +=
-                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
+                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
 
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -416,8 +413,7 @@ namespace DiscImageChef.DiscImages
                                     track.TrackSubchannelOffset = currentOffset;
                                     track.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
 
-                                    currentOffset +=
-                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
+                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
 
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -488,8 +484,7 @@ namespace DiscImageChef.DiscImages
                                     track.TrackSubchannelOffset = currentOffset;
                                     track.TrackSubchannelType   = TrackSubchannelType.Q16Interleaved;
 
-                                    currentOffset +=
-                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
+                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 16);
 
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -509,8 +504,7 @@ namespace DiscImageChef.DiscImages
                                     track.TrackSubchannelOffset = currentOffset;
                                     track.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
 
-                                    currentOffset +=
-                                        trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
+                                    currentOffset += trackLen * (ulong)(track.TrackRawBytesPerSector + 96);
 
                                     if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                         imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -821,14 +815,14 @@ namespace DiscImageChef.DiscImages
 
             if(mode2)
             {
-                var mode2Ms = new MemoryStream((int)(sectorSize * length));
+                var mode2Ms = new MemoryStream((int)((sectorSize + sectorSkip) * length));
 
                 imageStream.Read(buffer, 0, buffer.Length);
 
                 for(int i = 0; i < length; i++)
                 {
                     byte[] sector = new byte[sectorSize];
-                    Array.Copy(buffer, sectorSize * i, sector, 0, sectorSize);
+                    Array.Copy(buffer, (sectorSize + sectorSkip) * i, sector, 0, sectorSize);
                     sector = Sector.GetUserDataFromMode2(sector);
                     mode2Ms.Write(sector, 0, sector.Length);
                 }
