@@ -1676,7 +1676,7 @@ namespace DiscImageChef.DiscImages
                                             ((sectorSuffixDdt[sectorAddress] & CD_DFIX_MASK) - 1) * 288;
 
                                         sectorSuffixMs.Read(sector, form2 ? 2348 : 2072, form2 ? 4 : 280);
-                                        Array.Copy(data, 0, sector, 24, form2 ? 2336 : 2048);
+                                        Array.Copy(data, 0, sector, 24, form2 ? 2324 : 2048);
                                     }
                                 }
                             }
