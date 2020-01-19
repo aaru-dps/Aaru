@@ -122,6 +122,21 @@ namespace DiscImageChef.Core.Media.Info
                             if(!sense &&
                                !dev.Error)
                             {
+                                // Clear cache
+                                for(int i = 0; i < 63; i++)
+                                {
+                                    sense = dev.ReadCd(out _, out _, (uint)(wantedLba + 3 + (16 * i)), sectorSize, 16, MmcSectorTypes.AllTypes, false,
+                                                       false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                       MmcSubchannel.None, dev.Timeout, out _);
+
+                                    if(sense || dev.Error)
+                                        break;
+                                }
+
+                                sense = dev.ReadCd(out cmdBuf, out _, wantedLba, sectorSize, 3, MmcSectorTypes.Cdda, false,
+                                                   false, false, MmcHeaderCodes.None, true, false, MmcErrorField.None,
+                                                   MmcSubchannel.None, dev.Timeout, out _);
+
                                 for(int i = 0; i < cmdBuf.Length - sectorSync.Length; i++)
                                 {
                                     Array.Copy(cmdBuf, i, tmpBuf, 0, sectorSync.Length);
