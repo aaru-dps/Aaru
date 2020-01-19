@@ -39,6 +39,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Decoders.CD;
 using DiscImageChef.Decoders.Sega;
 using DiscImageChef.Devices;
+
 // ReSharper disable JoinDeclarationAndInitializer
 
 namespace DiscImageChef.Core.Media.Detection
@@ -382,34 +383,38 @@ namespace DiscImageChef.Core.Media.Detection
 
             if(decodedToc.HasValue)
             {
-                FullTOC.TrackDataDescriptor firstTrack = decodedToc.Value.TrackDescriptors.First(t => t.POINT == 1);
+                FullTOC.TrackDataDescriptor firstTrack =
+                    decodedToc.Value.TrackDescriptors.FirstOrDefault(t => t.POINT == 1);
 
-                uint firstTrackSector = (uint)(((firstTrack.PHOUR * 3600 * 75) + (firstTrack.PMIN * 60 * 75) +
-                                                (firstTrack.PSEC         * 75) + firstTrack.PFRAME) - 150);
-
-                // Check for hidden data before start of track 1
-                if(firstTrackSector > 0)
+                if(firstTrack.POINT == 1)
                 {
-                    sense = dev.ReadCd(out sector0, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
-                                       MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None, MmcSubchannel.None,
-                                       dev.Timeout, out _);
+                    uint firstTrackSector = (uint)(((firstTrack.PHOUR * 3600 * 75) + (firstTrack.PMIN * 60 * 75) +
+                                                    (firstTrack.PSEC         * 75) + firstTrack.PFRAME) - 150);
 
-                    if(!dev.Error &&
-                       !sense)
+                    // Check for hidden data before start of track 1
+                    if(firstTrackSector > 0)
                     {
-                        hiddenTrack = true;
+                        sense = dev.ReadCd(out sector0, out _, 0, 2352, 1, MmcSectorTypes.AllTypes, false, false, true,
+                                           MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
+                                           MmcSubchannel.None, dev.Timeout, out _);
 
-                        hiddenData = IsData(sector0);
-
-                        if(hiddenData)
+                        if(!dev.Error &&
+                           !sense)
                         {
-                            sense = dev.ReadCd(out byte[] sector16, out _, 16, 2352, 1, MmcSectorTypes.AllTypes, false, false,
-                                               true, MmcHeaderCodes.AllHeaders, true, true, MmcErrorField.None,
-                                               MmcSubchannel.None, dev.Timeout, out _);
+                            hiddenTrack = true;
 
-                            if(IsCdi(sector0, sector16))
+                            hiddenData = IsData(sector0);
+
+                            if(hiddenData)
                             {
-                                mediaType = MediaType.CDIREADY;
+                                sense = dev.ReadCd(out byte[] sector16, out _, 16, 2352, 1, MmcSectorTypes.AllTypes,
+                                                   false, false, true, MmcHeaderCodes.AllHeaders, true, true,
+                                                   MmcErrorField.None, MmcSubchannel.None, dev.Timeout, out _);
+
+                                if(IsCdi(sector0, sector16))
+                                {
+                                    mediaType = MediaType.CDIREADY;
+                                }
                             }
                         }
                     }
