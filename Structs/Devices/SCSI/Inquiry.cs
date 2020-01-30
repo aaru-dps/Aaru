@@ -198,6 +198,21 @@ namespace DiscImageChef.CommonTypes.Structs.Devices.SCSI
         /// <summary>Kreon version string Bytes 42 to 46</summary>
         public byte[] KreonVersion;
         #endregion Kreon vendor unique inquiry data structure
+
+        #region Sony Hi-MD data
+        /// <summary>Set if Hi-MD signature is present</summary>
+        public bool IsHiMD;
+        /// <summary>Hi-MD signature, bytes 36 to 44</summary>
+        public byte[] HiMDSignature;
+        /// <summary>Unknown data, bytes 44 to 55</summary>
+        public byte[] HiMDSpecific;
+        #endregion Sony Hi-MD data
+
+        static readonly byte[] HiMDSignatureContents =
+        {
+            0x48, 0x69, 0x2D, 0x4D, 0x44, 0x20, 0x20, 0x20
+        };
+
         #region Public methods
         public static Inquiry? Decode(byte[] SCSIInquiryResponse)
         {
@@ -315,6 +330,11 @@ namespace DiscImageChef.CommonTypes.Structs.Devices.SCSI
                 decoded.SeagatePresent            = true;
                 decoded.Seagate_DriveSerialNumber = new byte[8];
                 Array.Copy(SCSIInquiryResponse, 36, decoded.Seagate_DriveSerialNumber, 0, 8);
+
+                // Hi-MD
+                decoded.HiMDSignature = new byte[8];
+                Array.Copy(SCSIInquiryResponse, 36, decoded.HiMDSignature, 0, 8);
+                decoded.IsHiMD = HiMDSignatureContents.SequenceEqual(decoded.HiMDSignature);
             }
 
             if(SCSIInquiryResponse.Length >= 46)
@@ -346,8 +366,16 @@ namespace DiscImageChef.CommonTypes.Structs.Devices.SCSI
 
             if(SCSIInquiryResponse.Length >= 56)
             {
-                decoded.VendorSpecific = new byte[20];
-                Array.Copy(SCSIInquiryResponse, 36, decoded.VendorSpecific, 0, 20);
+                if(decoded.IsHiMD)
+                {
+                    decoded.HiMDSpecific = new byte[12];
+                    Array.Copy(SCSIInquiryResponse, 44, decoded.HiMDSpecific, 0, 12);
+                }
+                else
+                {
+                    decoded.VendorSpecific = new byte[20];
+                    Array.Copy(SCSIInquiryResponse, 36, decoded.VendorSpecific, 0, 20);
+                }
 
                 // Quantum
                 decoded.QuantumPresent                  = true;
