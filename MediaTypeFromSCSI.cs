@@ -533,6 +533,7 @@ namespace DiscImageChef.CommonTypes
                             {
                                 case 112311: return MediaType.MD60;
                                 case 138363: return MediaType.MD74;
+                                case 149373: return MediaType.MD80;
                                 case 494023: return MediaType.HiMD;
                             }
 
