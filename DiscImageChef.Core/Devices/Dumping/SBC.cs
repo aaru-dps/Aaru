@@ -172,10 +172,23 @@ namespace DiscImageChef.Core.Devices.Dumping
                 dskType = MediaTypeFromScsi.Get((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model, scsiMediumType,
                                                 scsiDensityCode, blocks, blockSize);
 
-            if(dskType == MediaType.Unknown &&
-               _dev.IsUsb                   &&
-               containsFloppyPage)
-                dskType = MediaType.FlashDrive;
+            switch(dskType)
+            {
+                // Hi-MD devices show the disks while in Hi-MD mode, but they cannot be read using any known command
+                // SonicStage changes the device mode, so it is no longer a mass storage device, and can only read
+                // tracks written by that same application ID (changes between computers).
+                case MediaType.MD:
+                    _dumpLog.WriteLine("MiniDisc albums, NetMD discs or user-written audio MiniDisc cannot be dumped.");
+
+                    StoppingErrorMessage?.
+                        Invoke("MiniDisc albums, NetMD discs or user-written audio MiniDisc cannot be dumped.");
+
+                    return;
+                case MediaType.Unknown when _dev.IsUsb && containsFloppyPage:
+                    dskType = MediaType.FlashDrive;
+
+                    break;
+            }
 
             if(scsiReader.FindReadCommand())
             {
