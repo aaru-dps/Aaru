@@ -531,6 +531,7 @@ namespace DiscImageChef.CommonTypes
                         {
                             switch(blocks)
                             {
+                                case 112311: return MediaType.MD60;
                                 case 494023: return MediaType.HiMD;
                             }
 
