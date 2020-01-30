@@ -304,7 +304,7 @@ namespace DiscImageChef.CommonTypes.Metadata
                     break;
                 case CommonTypes.MediaType.HiMD:
                     discType    = "MiniDisc";
-                    discSubType = "HiMD";
+                    discSubType = "Hi-MD";
 
                     break;
                 case CommonTypes.MediaType.HVD:
@@ -335,6 +335,21 @@ namespace DiscImageChef.CommonTypes.Metadata
                 case CommonTypes.MediaType.MD:
                     discType    = "MiniDisc";
                     discSubType = "MiniDisc";
+
+                    break;
+                case CommonTypes.MediaType.MD60:
+                    discType    = "MiniDisc";
+                    discSubType = "MiniDisc (60 minute)";
+
+                    break;
+                case CommonTypes.MediaType.MD74:
+                    discType    = "MiniDisc";
+                    discSubType = "MiniDisc (74 minute)";
+
+                    break;
+                case CommonTypes.MediaType.MD80:
+                    discType    = "MiniDisc";
+                    discSubType = "MiniDisc (80 minute)";
 
                     break;
                 case CommonTypes.MediaType.MEGACD:

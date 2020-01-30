@@ -533,6 +533,9 @@ namespace DiscImageChef.CommonTypes.Metadata
                 case CommonTypes.MediaType.MD:
                 case CommonTypes.MediaType.MDData:
                 case CommonTypes.MediaType.MDData2:
+                case CommonTypes.MediaType.MD60:
+                case CommonTypes.MediaType.MD74:
+                case CommonTypes.MediaType.MD80:
                     dmns.Height          = 68;
                     dmns.HeightSpecified = true;
                     dmns.Width           = 71.5;

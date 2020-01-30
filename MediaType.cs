@@ -206,7 +206,17 @@ namespace DiscImageChef.CommonTypes
         /// <summary>Sony Hi-MD</summary>
         HiMD = 90,
         /// <summary>Sony MiniDisc</summary>
-        MD = 91, MDData = 92, MDData2 = 93,
+        MD = 91,
+        /// <summary>Sony MD-Data</summary>
+        MDData = 92,
+        /// <summary>Sony MD-Data2</summary>
+        MDData2 = 93,
+        /// <summary>Sony MiniDisc, 60 minutes, formatted with Hi-MD format</summary>
+        MD60 = 94,
+        /// <summary>Sony MiniDisc, 74 minutes, formatted with Hi-MD format</summary>
+        MD74 = 95,
+        /// <summary>Sony MiniDisc, 80 minutes, formatted with Hi-MD format</summary>
+        MD80 = 96,
         #endregion MiniDisc based, types 90 to 99
 
         #region Plasmon UDO, types 100 to 109
