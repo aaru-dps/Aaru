@@ -429,6 +429,11 @@ namespace DiscImageChef.CommonTypes
                                 // TODO: Unknown value
                                 default: return MediaType.REV70;
                             }
+                        case 0x44:
+                            switch(blocks)
+                            {
+                                case 494023 when blockSize == 2048: return MediaType.HiMD;
+                            }
 
                             break;
                         case 0x93: return MediaType.NEC_35_HD_15;
@@ -522,6 +527,15 @@ namespace DiscImageChef.CommonTypes
                         }
 
                             break;
+                        case 2048:
+                        {
+                            switch(blocks)
+                            {
+                                case 494023: return MediaType.HiMD;
+                            }
+
+                            break;
+                        }
                     }
 
                     return MediaType.Unknown;
