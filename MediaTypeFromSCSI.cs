@@ -1540,6 +1540,12 @@ namespace DiscImageChef.CommonTypes
                        mediumType != 0x07)
                         return MediaType.UnknownMO;
 
+                    // Audio format MiniDisc, cannot be read with a Hi-MD drive afaik
+                    if(blockSize == 0 &&
+                       blocks    == 0 &&
+                       model.StartsWith("Hi-MD"))
+                        return MediaType.MD;
+
                     switch(blockSize)
                     {
                         case 512:
