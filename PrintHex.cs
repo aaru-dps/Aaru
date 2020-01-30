@@ -61,6 +61,9 @@ namespace DiscImageChef
             int    offsetLength = $"{array.Length:X}".Length;
             var    sb           = new StringBuilder();
 
+            if(last > 0)
+                rows++;
+
             if(last == 0)
                 last = 16;
 
@@ -119,7 +122,7 @@ namespace DiscImageChef
                 for(int j = 0; j < lastBytes; j++)
                 {
                     int v = array[b];
-                    sb.Append(v > 31 && v < 127 || v > 159 ? (char)v : '.');
+                    sb.Append((v > 31 && v < 127) || v > 159 ? (char)v : '.');
                     b++;
                 }
 
