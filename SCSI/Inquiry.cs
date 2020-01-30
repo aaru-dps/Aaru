@@ -2429,7 +2429,8 @@ namespace DiscImageChef.Decoders.SCSI
                 sb.AppendLine("============================================================");
             }
 
-            if(response.VendorSpecific != null)
+            if(response.VendorSpecific != null &&
+               response.IsHiMD)
                 if(response.KreonPresent)
                 {
                     byte[] vendor = new byte[7];
@@ -2446,6 +2447,19 @@ namespace DiscImageChef.Decoders.SCSI
                     sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.VendorSpecific, 60));
                     sb.AppendLine("============================================================");
                 }
+
+            if(response.IsHiMD)
+            {
+                sb.AppendLine("Hi-MD device.");
+
+                if(response.HiMDSpecific != null)
+                {
+                    sb.AppendLine("Hi-MD specific bytes 44 to 55");
+                    sb.AppendLine("============================================================");
+                    sb.AppendLine(PrintHex.ByteArrayToHexArrayString(response.HiMDSpecific, 60));
+                    sb.AppendLine("============================================================");
+                }
+            }
 
             if(response.VendorSpecific2 == null)
                 return sb.ToString();
