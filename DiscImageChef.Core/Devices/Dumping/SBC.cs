@@ -92,44 +92,6 @@ namespace DiscImageChef.Core.Devices.Dumping
             ulong blocks     = scsiReader.GetDeviceBlocks();
             uint  blockSize  = scsiReader.LogicalBlockSize;
 
-            if(scsiReader.FindReadCommand())
-            {
-                _dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", scsiReader.ErrorMessage);
-                StoppingErrorMessage?.Invoke("Unable to read medium.");
-
-                return;
-            }
-
-            if(blocks    != 0 &&
-               blockSize != 0)
-            {
-                blocks++;
-
-                UpdateStatus?.
-                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {blocks * (ulong)blockSize} bytes)");
-            }
-
-            // Check how many blocks to read, if error show and return
-            if(scsiReader.GetBlocksToRead(_maximumReadable))
-            {
-                _dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", scsiReader.ErrorMessage);
-                StoppingErrorMessage?.Invoke(scsiReader.ErrorMessage);
-
-                return;
-            }
-
-            uint blocksToRead      = scsiReader.BlocksToRead;
-            uint logicalBlockSize  = blockSize;
-            uint physicalBlockSize = scsiReader.PhysicalBlockSize;
-
-            if(blocks == 0)
-            {
-                _dumpLog.WriteLine("ERROR: Unable to read medium or empty medium present...");
-                StoppingErrorMessage?.Invoke("Unable to read medium or empty medium present...");
-
-                return;
-            }
-
             if(!opticalDisc)
             {
                 mediaTags = new Dictionary<MediaTagType, byte[]>();
@@ -214,6 +176,44 @@ namespace DiscImageChef.Core.Devices.Dumping
                _dev.IsUsb                   &&
                containsFloppyPage)
                 dskType = MediaType.FlashDrive;
+
+            if(scsiReader.FindReadCommand())
+            {
+                _dumpLog.WriteLine("ERROR: Cannot find correct read command: {0}.", scsiReader.ErrorMessage);
+                StoppingErrorMessage?.Invoke("Unable to read medium.");
+
+                return;
+            }
+
+            if(blocks    != 0 &&
+               blockSize != 0)
+            {
+                blocks++;
+
+                UpdateStatus?.
+                    Invoke($"Media has {blocks} blocks of {blockSize} bytes/each. (for a total of {blocks * (ulong)blockSize} bytes)");
+            }
+
+            // Check how many blocks to read, if error show and return
+            if(scsiReader.GetBlocksToRead(_maximumReadable))
+            {
+                _dumpLog.WriteLine("ERROR: Cannot get blocks to read: {0}.", scsiReader.ErrorMessage);
+                StoppingErrorMessage?.Invoke(scsiReader.ErrorMessage);
+
+                return;
+            }
+
+            uint blocksToRead      = scsiReader.BlocksToRead;
+            uint logicalBlockSize  = blockSize;
+            uint physicalBlockSize = scsiReader.PhysicalBlockSize;
+
+            if(blocks == 0)
+            {
+                _dumpLog.WriteLine("ERROR: Unable to read medium or empty medium present...");
+                StoppingErrorMessage?.Invoke("Unable to read medium or empty medium present...");
+
+                return;
+            }
 
             UpdateStatus?.Invoke($"Device reports {blocks} blocks ({blocks * blockSize} bytes).");
             UpdateStatus?.Invoke($"Device can read {blocksToRead} blocks at a time.");
