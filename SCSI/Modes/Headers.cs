@@ -94,8 +94,9 @@ namespace DiscImageChef.Decoders.SCSI
                 case MediumTypes.WORM_RW:
                     return "a combination of write-once and erasable optical";
                 */
-                case MediumTypes.DOW: return"a direct-overwrite optical";
-                default:              return$"Unknown medium type 0x{(byte)type:X2}";
+                case MediumTypes.DOW:  return"a direct-overwrite optical";
+                case MediumTypes.HiMD: return"a Sony Hi-MD disc";
+                default:               return$"Unknown medium type 0x{(byte)type:X2}";
             }
         }
 
