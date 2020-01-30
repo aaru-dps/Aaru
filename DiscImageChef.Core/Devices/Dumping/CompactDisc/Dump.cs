@@ -62,8 +62,7 @@ namespace DiscImageChef.Core.Devices.Dumping
     partial class Dump
     {
         /// <summary>Dumps a compact disc</summary>
-        /// <param name="dskType">Disc type as detected in MMC layer</param>
-        void CompactDisc(out MediaType dskType)
+        void CompactDisc()
         {
             ExtentsULong           audioExtents;                                 // Extents with audio sectors
             ulong                  blocks;                                       // Total number of positive sectors
@@ -115,7 +114,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             Dictionary<MediaTagType, byte[]> mediaTags = new Dictionary<MediaTagType, byte[]>(); // Media tags
 
-            dskType = MediaType.CD;
+            MediaType dskType = MediaType.CD;
 
             if(_dumpRaw)
             {

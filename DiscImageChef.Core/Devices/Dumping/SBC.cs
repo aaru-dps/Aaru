@@ -60,7 +60,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <param name="opticalDisc">If device contains an optical disc (e.g. DVD or BD)</param>
         /// <param name="mediaTags">Media tags as retrieved in MMC layer</param>
         /// <param name="dskType">Disc type as detected in SCSI or MMC layer</param>
-        internal void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType, bool opticalDisc)
+        internal void Sbc(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType, bool opticalDisc)
         {
             bool               sense;
             byte               scsiMediumType     = 0;

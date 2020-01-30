@@ -45,8 +45,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>Dumps a SCSI Block Commands device or a Reduced Block Commands devices</summary>
         public void Scsi()
         {
-            MediaType dskType = MediaType.Unknown;
-            int       resets  = 0;
+            int resets = 0;
 
             if(_dev.IsRemovable)
             {
@@ -235,14 +234,14 @@ namespace DiscImageChef.Core.Devices.Dumping
                     return;
                 case PeripheralDeviceTypes.MultiMediaDevice:
                     if(_outputPlugin is IWritableOpticalImage)
-                        Mmc(ref dskType);
+                        Mmc();
                     else
                         StoppingErrorMessage?.
                             Invoke("The specified plugin does not support storing optical disc images.");
 
                     return;
                 default:
-                    Sbc(null, ref dskType, false);
+                    Sbc(null, MediaType.Unknown, false);
 
                     break;
             }

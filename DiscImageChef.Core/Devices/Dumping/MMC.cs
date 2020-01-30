@@ -50,12 +50,13 @@ namespace DiscImageChef.Core.Devices.Dumping
     partial class Dump
     {
         /// <summary>Dumps an optical disc</summary>
-        void Mmc(ref MediaType dskType)
+        void Mmc()
         {
-            bool   sense;
-            byte[] tmpBuf;
-            bool   compactDisc = true;
-            bool   isXbox      = false;
+            MediaType dskType = MediaType.Unknown;
+            bool      sense;
+            byte[]    tmpBuf;
+            bool      compactDisc = true;
+            bool      isXbox      = false;
             _speedMultiplier = 1;
 
             // TODO: Log not only what is it reading, but if it was read correctly or not.
@@ -194,7 +195,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(compactDisc)
             {
-                CompactDisc(out dskType);
+                CompactDisc();
 
                 return;
             }
@@ -681,12 +682,12 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(isXbox)
             {
-                Xgd(mediaTags, ref dskType);
+                Xgd(mediaTags, dskType);
 
                 return;
             }
 
-            Sbc(mediaTags, ref dskType, true);
+            Sbc(mediaTags, dskType, true);
         }
 
         static void AddMediaTagToSidecar(string outputPath, KeyValuePair<MediaTagType, byte[]> tag,

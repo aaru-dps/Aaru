@@ -59,7 +59,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         /// <summary>Dumps an Xbox Game Disc using a Kreon drive</summary>
         /// <param name="mediaTags">Media tags as retrieved in MMC layer</param>
         /// <param name="dskType">Disc type as detected in MMC layer</param>
-        internal void Xgd(Dictionary<MediaTagType, byte[]> mediaTags, ref MediaType dskType)
+        internal void Xgd(Dictionary<MediaTagType, byte[]> mediaTags, MediaType dskType)
         {
             bool       sense;
             const uint BLOCK_SIZE   = 2048;
