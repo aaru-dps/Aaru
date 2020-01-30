@@ -663,7 +663,17 @@ namespace DiscImageChef.CommonTypes.Structs.Devices.SCSI
                 Array.Copy(decoded.HP_OBDR, 0, buffer, 43, 6);
             }
 
-            if(decoded.VendorSpecific != null)
+            if(decoded.IsHiMD)
+            {
+                length = 56;
+                Array.Copy(HiMDSignatureContents, 0, buffer, 36, 8);
+
+                if(decoded.HiMDSpecific != null)
+                    Array.Copy(decoded.HiMDSpecific, 0, buffer, 44, 12);
+            }
+
+            if(decoded.VendorSpecific != null &&
+               !decoded.IsHiMD)
             {
                 length = 56;
                 Array.Copy(decoded.VendorSpecific, 0, buffer, 36, 20);
