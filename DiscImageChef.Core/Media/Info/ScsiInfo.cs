@@ -48,7 +48,7 @@ using DiscImageChef.Decoders.Xbox;
 using DiscImageChef.Devices;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
+using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
 namespace DiscImageChef.Core.Media.Info
 {
@@ -1291,7 +1291,7 @@ namespace DiscImageChef.Core.Media.Info
 
                     if(!sense)
                     {
-                        var inq = CommonTypes.Structs.Devices.SCSI.Inquiry.Decode(inqBuffer);
+                        Inquiry? inq = Inquiry.Decode(inqBuffer);
 
                         if(inq.HasValue &&
                            inq.Value.KreonPresent)
@@ -1429,8 +1429,8 @@ namespace DiscImageChef.Core.Media.Info
                 #endregion Xbox
 
                 case MediaType.Unknown:
-                    MediaType = MediaTypeFromScsi.Get((byte)dev.ScsiType, dev.Manufacturer, dev.Model, scsiMediumType,
-                                                      scsiDensityCode, Blocks, BlockSize);
+                    MediaType = MediaTypeFromDevice.GetFromScsi((byte)dev.ScsiType, dev.Manufacturer, dev.Model,
+                                                                scsiMediumType, scsiDensityCode, Blocks, BlockSize);
 
                     break;
             }

@@ -808,7 +808,7 @@ namespace DiscImageChef.Devices
                 Error     = false;
             }
 
-            if((scsiSense && (IsUsb || IsFireWire)) ||
+            if((scsiSense && !(IsUsb || IsFireWire)) ||
                Manufacturer == "ATA")
             {
                 bool ataSense = AtaIdentify(out ataBuf, out _);

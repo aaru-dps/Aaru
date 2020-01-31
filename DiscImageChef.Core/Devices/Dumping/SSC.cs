@@ -310,8 +310,8 @@ namespace DiscImageChef.Core.Devices.Dumping
                 blockSize = 1;
 
             if(dskType == MediaType.Unknown)
-                dskType = MediaTypeFromScsi.Get((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model, scsiMediumTypeTape,
-                                                scsiDensityCodeTape, blocks, blockSize);
+                dskType = MediaTypeFromDevice.GetFromScsi((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model,
+                                                          scsiMediumTypeTape, scsiDensityCodeTape, blocks, blockSize);
 
             if(dskType == MediaType.Unknown)
                 dskType = MediaType.UnknownTape;

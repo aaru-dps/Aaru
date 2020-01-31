@@ -988,9 +988,9 @@ namespace DiscImageChef.DiscImages
                     imageInfo.DriveFirmwareRevision =
                         StringHandlers.CToString(scsiInq.Value.ProductRevisionLevel).Trim();
 
-                    imageInfo.MediaType = MediaTypeFromScsi.Get((byte)devType, imageInfo.DriveManufacturer,
-                                                                imageInfo.DriveModel, mediumType, densityCode,
-                                                                imageInfo.Sectors, imageInfo.SectorSize);
+                    imageInfo.MediaType = MediaTypeFromDevice.GetFromScsi((byte)devType, imageInfo.DriveManufacturer,
+                                                                          imageInfo.DriveModel, mediumType, densityCode,
+                                                                          imageInfo.Sectors, imageInfo.SectorSize);
                 }
 
                 if(imageInfo.MediaType == MediaType.Unknown)
