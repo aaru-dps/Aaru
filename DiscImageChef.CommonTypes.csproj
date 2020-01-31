@@ -95,7 +95,7 @@
     <Compile Include="Metadata\Version.cs" />
     <Compile Include="Partition.cs" />
     <Compile Include="MediaType.cs" />
-    <Compile Include="MediaTypeFromSCSI.cs" />
+    <Compile Include="MediaTypeFromDevice.cs" />
     <Compile Include="PluginBase.cs" />
     <Compile Include="Structs\Devices\ATA\Identify.cs" />
     <Compile Include="Structs\Devices\SCSI\Enums.cs" />

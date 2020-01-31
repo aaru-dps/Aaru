@@ -41,7 +41,7 @@ using System;
 namespace DiscImageChef.CommonTypes
 {
     #pragma warning disable RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
-    public static class MediaTypeFromScsi
+    public static class MediaTypeFromDevice
     {
         /// <summary>Tries to guess, from SCSI information, the media type of a device and/or its inserted media</summary>
         /// <param name="scsiPeripheralType">The SCSI Peripheral Type as indicated in the INQUIRY response</param>
@@ -52,8 +52,8 @@ namespace DiscImageChef.CommonTypes
         /// <param name="blocks">How many blocks are on the media</param>
         /// <param name="blockSize">Size in bytes of each block</param>
         /// <returns></returns>
-        public static MediaType Get(byte scsiPeripheralType, string vendor, string model, byte mediumType,
-                                    byte densityCode, ulong blocks, uint blockSize)
+        public static MediaType GetFromScsi(byte scsiPeripheralType, string vendor, string model, byte mediumType,
+                                            byte densityCode, ulong blocks, uint blockSize)
         {
             switch(scsiPeripheralType)
             {
