@@ -69,6 +69,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             const ushort ATA_PROFILE        = 0x0001;
             const uint   TIMEOUT            = 5;
             double       imageWriteDuration = 0;
+            MediaType    mediaType          = MediaType.Unknown;
 
             UpdateStatus?.Invoke("Requesting ATA IDENTIFY DEVICE.");
             _dumpLog.WriteLine("Requesting ATA IDENTIFY DEVICE.");
@@ -214,9 +215,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                         }
                     }
 
-                    ret = _outputPlugin.Create(_outputPath,
-                                               _dev.IsCompactFlash ? MediaType.CompactFlash : MediaType.GENERIC_HDD,
-                                               _formatOptions, blocks, blockSize);
+                    mediaType = MediaTypeFromDevice.GetFromAta(_dev.Manufacturer, _dev.Model, _dev.IsRemovable,
+                                                               _dev.IsCompactFlash, _dev.IsPcmcia, blocks, blockSize);
+
+                    ret = _outputPlugin.Create(_outputPath, mediaType, _formatOptions, blocks, blockSize);
 
                     // Cannot create image
                     if(!ret)
@@ -765,17 +767,10 @@ namespace DiscImageChef.Core.Devices.Dumping
                                                    filesystem.start);
                             }
 
-                        (string type, string subType) xmlType;
+                        (string type, string subType) = CommonTypes.Metadata.MediaType.MediaTypeToString(mediaType);
 
-                        if(_dev.IsCompactFlash)
-                            xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.CompactFlash);
-                        else if(_dev.IsPcmcia)
-                            xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.PCCardTypeI);
-                        else
-                            xmlType = CommonTypes.Metadata.MediaType.MediaTypeToString(MediaType.GENERIC_HDD);
-
-                        sidecar.BlockMedia[0].DiskType          = xmlType.type;
-                        sidecar.BlockMedia[0].DiskSubType       = xmlType.subType;
+                        sidecar.BlockMedia[0].DiskType          = type;
+                        sidecar.BlockMedia[0].DiskSubType       = subType;
                         sidecar.BlockMedia[0].Interface         = "ATA";
                         sidecar.BlockMedia[0].LogicalBlocks     = blocks;
                         sidecar.BlockMedia[0].PhysicalBlockSize = physicalsectorsize;
@@ -824,12 +819,7 @@ namespace DiscImageChef.Core.Devices.Dumping
                     UpdateStatus?.Invoke("");
                 }
 
-                if(_dev.IsCompactFlash)
-                    Statistics.AddMedia(MediaType.CompactFlash, true);
-                else if(_dev.IsPcmcia)
-                    Statistics.AddMedia(MediaType.PCCardTypeI, true);
-                else
-                    Statistics.AddMedia(MediaType.GENERIC_HDD, true);
+                Statistics.AddMedia(mediaType, true);
             }
             else
                 StoppingErrorMessage?.Invoke("Unable to communicate with ATA device.");

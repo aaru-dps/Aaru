@@ -30,17 +30,19 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
+using DiscImageChef.CommonTypes;
 using DiscImageChef.CommonTypes.Enums;
+using DiscImageChef.CommonTypes.Structs.Devices.ATA;
 using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
 using DiscImageChef.Console;
 using DiscImageChef.Core;
 using DiscImageChef.Database;
 using DiscImageChef.Database.Models;
-using DiscImageChef.Decoders.ATA;
 using DiscImageChef.Decoders.PCMCIA;
 using DiscImageChef.Decoders.SCSI;
 using DiscImageChef.Decoders.SCSI.MMC;
@@ -49,6 +51,7 @@ using DiscImageChef.Devices;
 using Command = System.CommandLine.Command;
 using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
 using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
+using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
 
 namespace DiscImageChef.Commands.Device
 {
@@ -227,7 +230,8 @@ namespace DiscImageChef.Commands.Device
                 DataFile.WriteTo("Device-Info command", outputPrefix, "_ata_identify.bin", "ATA IDENTIFY",
                                  devInfo.AtaIdentify);
 
-                DicConsole.WriteLine(Identify.Prettify(devInfo.AtaIdentify));
+                Identify.IdentifyDevice? decodedIdentify = Identify.Decode(devInfo.AtaIdentify);
+                DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(decodedIdentify));
 
                 if(devInfo.AtaMcptError.HasValue)
                 {
@@ -271,6 +275,60 @@ namespace DiscImageChef.Commands.Device
                     if(specificData != 0)
                         DicConsole.WriteLine("Card specific data: 0x{0:X4}", specificData);
                 }
+
+                if(decodedIdentify.HasValue)
+                {
+                    Identify.IdentifyDevice ATAID = decodedIdentify.Value;
+
+                    uint blockSize;
+
+                    if((ATAID.PhysLogSectorSize & 0x8000) == 0x0000 &&
+                       (ATAID.PhysLogSectorSize & 0x4000) == 0x4000)
+                    {
+                        if((ATAID.PhysLogSectorSize & 0x1000) == 0x1000)
+                            if(ATAID.LogicalSectorWords <= 255 ||
+                               ATAID.LogicalAlignment   == 0xFFFF)
+                                blockSize = 512;
+                            else
+                                blockSize = ATAID.LogicalSectorWords * 2;
+                        else
+                            blockSize = 512;
+                    }
+                    else
+                    {
+                        blockSize = 512;
+                    }
+
+                    ulong blocks;
+
+                    if(ATAID.CurrentCylinders       > 0 &&
+                       ATAID.CurrentHeads           > 0 &&
+                       ATAID.CurrentSectorsPerTrack > 0)
+                    {
+                        blocks =
+                            (ulong)Math.Max(ATAID.CurrentCylinders * ATAID.CurrentHeads * ATAID.CurrentSectorsPerTrack,
+                                            ATAID.CurrentSectors);
+                    }
+                    else
+                    {
+                        blocks = (ulong)(ATAID.Cylinders * ATAID.Heads * ATAID.SectorsPerTrack);
+                    }
+
+                    if(ATAID.Capabilities.HasFlag(Identify.CapabilitiesBit.LBASupport))
+                        blocks = ATAID.LBASectors;
+
+                    if(ATAID.CommandSet2.HasFlag(Identify.CommandSetBit2.LBA48))
+                        blocks = ATAID.LBA48Sectors;
+
+                    bool removable = ATAID.GeneralConfiguration.HasFlag(Identify.GeneralConfigurationBit.Removable);
+
+                    MediaType mediaType = MediaTypeFromDevice.GetFromAta(dev.Manufacturer, dev.Model, removable,
+                                                                         dev.IsCompactFlash, dev.IsPcmcia, blocks,
+                                                                         blockSize);
+
+                    DicConsole.WriteLine(removable ? "Media identified as {0}" : "Device identified as {0}", mediaType);
+                    Statistics.AddMedia(mediaType, true);
+                }
             }
 
             if(devInfo.AtapiIdentify != null)
@@ -278,7 +336,7 @@ namespace DiscImageChef.Commands.Device
                 DataFile.WriteTo("Device-Info command", outputPrefix, "_atapi_identify.bin", "ATAPI IDENTIFY",
                                  devInfo.AtapiIdentify);
 
-                DicConsole.WriteLine(Identify.Prettify(devInfo.AtapiIdentify));
+                DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(devInfo.AtapiIdentify));
             }
 
             if(devInfo.ScsiInquiry != null)
