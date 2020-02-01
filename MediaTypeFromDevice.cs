@@ -1684,6 +1684,20 @@ namespace DiscImageChef.CommonTypes
 
             return MediaType.Unknown;
         }
+
+        public static MediaType
+            GetFromAta(string manufacturer, string model, bool removable, bool compactFlash, bool pcmcia, ulong blocks, uint blockSize)
+        {
+            if(!removable)
+            {
+                if(compactFlash)
+                    return MediaType.CompactFlash;
+
+                return pcmcia ? MediaType.PCCardTypeI : MediaType.GENERIC_HDD;
+            }
+
+            return MediaType.Unknown;
+        }
     }
     #pragma warning restore RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
 }
