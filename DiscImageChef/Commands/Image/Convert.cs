@@ -258,9 +258,10 @@ namespace DiscImageChef.Commands.Image
                         sidecar = (CICMMetadataType)xs.Deserialize(sr);
                         sr.Close();
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
+                        DicConsole.DebugWriteLine("Image conversion", $"{ex}");
 
                         return(int)ErrorNumber.InvalidSidecar;
                     }
@@ -281,9 +282,10 @@ namespace DiscImageChef.Commands.Image
                         resume = (Resume)xs.Deserialize(sr);
                         sr.Close();
                     }
-                    catch
+                    catch(Exception ex)
                     {
                         DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
+                        DicConsole.DebugWriteLine("Image conversion", $"{ex}");
 
                         return(int)ErrorNumber.InvalidResume;
                     }
