@@ -1685,8 +1685,8 @@ namespace DiscImageChef.CommonTypes
             return MediaType.Unknown;
         }
 
-        public static MediaType
-            GetFromAta(string manufacturer, string model, bool removable, bool compactFlash, bool pcmcia, ulong blocks, uint blockSize)
+        public static MediaType GetFromAta(string manufacturer, string model, bool removable, bool compactFlash,
+                                           bool pcmcia, ulong blocks, uint blockSize)
         {
             if(!removable)
             {
@@ -1695,6 +1695,11 @@ namespace DiscImageChef.CommonTypes
 
                 return pcmcia ? MediaType.PCCardTypeI : MediaType.GENERIC_HDD;
             }
+
+            if(manufacturer.ToLowerInvariant() == "syquest" &&
+               model.ToLowerInvariant()        == "sparq"   &&
+               blocks                          == 1961069)
+                return MediaType.SparQ;
 
             return MediaType.Unknown;
         }
