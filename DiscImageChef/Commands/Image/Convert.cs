@@ -46,6 +46,7 @@ using DiscImageChef.Console;
 using DiscImageChef.Core;
 using Schemas;
 using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
+using MediaType = DiscImageChef.CommonTypes.MediaType;
 using Version = DiscImageChef.CommonTypes.Interop.Version;
 
 namespace DiscImageChef.Commands.Image
@@ -247,6 +248,7 @@ namespace DiscImageChef.Commands.Image
 
             Resume           resume  = null;
             CICMMetadataType sidecar = null;
+            MediaType        mediaType;
 
             var xs = new XmlSerializer(typeof(CICMMetadataType));
 
@@ -339,6 +341,14 @@ namespace DiscImageChef.Commands.Image
                     return(int)ErrorNumber.CannotOpenFormat;
                 }
 
+                mediaType = inputFormat.Info.MediaType;
+
+                // Obsolete types
+                #pragma warning disable 612
+                if(mediaType == MediaType.SQ1500)
+                    mediaType = MediaType.SyJet;
+                #pragma warning restore 612
+
                 DicConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
 
                 DicConsole.DebugWriteLine("Convert-image command", "Image without headers is {0} bytes.",
@@ -346,11 +356,10 @@ namespace DiscImageChef.Commands.Image
 
                 DicConsole.DebugWriteLine("Convert-image command", "Image has {0} sectors.", inputFormat.Info.Sectors);
 
-                DicConsole.DebugWriteLine("Convert-image command", "Image identifies media type as {0}.",
-                                          inputFormat.Info.MediaType);
+                DicConsole.DebugWriteLine("Convert-image command", "Image identifies media type as {0}.", mediaType);
 
                 Statistics.AddMediaFormat(inputFormat.Format);
-                Statistics.AddMedia(inputFormat.Info.MediaType, false);
+                Statistics.AddMedia(mediaType, false);
                 Statistics.AddFilter(inputFilter.Name);
             }
             catch(Exception ex)
@@ -401,7 +410,7 @@ namespace DiscImageChef.Commands.Image
             else
                 DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
 
-            if(!outputFormat.SupportedMediaTypes.Contains(inputFormat.Info.MediaType))
+            if(!outputFormat.SupportedMediaTypes.Contains(mediaType))
             {
                 DicConsole.ErrorWriteLine("Output format does not support media type, cannot continue...");
 
@@ -444,7 +453,7 @@ namespace DiscImageChef.Commands.Image
                 return(int)ErrorNumber.DataWillBeLost;
             }
 
-            if(!outputFormat.Create(outputPath, inputFormat.Info.MediaType, parsedOptions, inputFormat.Info.Sectors,
+            if(!outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
                                     inputFormat.Info.SectorSize))
             {
                 DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
