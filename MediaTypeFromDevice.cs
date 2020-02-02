@@ -82,6 +82,7 @@ namespace DiscImageChef.CommonTypes
                         switch(blocks)
                         {
                             case 262144: return MediaType.EZ135;
+                            case 450560: return MediaType.EZ230;
                             case 524288: return MediaType.SQ327;
                         }
 
