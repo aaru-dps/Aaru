@@ -170,7 +170,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             if(dskType == MediaType.Unknown)
                 dskType = MediaTypeFromDevice.GetFromScsi((byte)_dev.ScsiType, _dev.Manufacturer, _dev.Model,
-                                                          scsiMediumType, scsiDensityCode, blocks, blockSize);
+                                                          scsiMediumType, scsiDensityCode, blocks + 1, blockSize);
 
             switch(dskType)
             {
