@@ -156,6 +156,15 @@ namespace DiscImageChef.CommonTypes
                         return blocks == 625134256 ? MediaType.RDX320 : MediaType.RDX;
                     }
 
+                    if(vendor.ToLowerInvariant().StartsWith("cws orb"))
+                    {
+                        switch(blocks)
+                        {
+                            case 4307184 when blockSize == 512: return MediaType.Orb;
+                            default: return MediaType.Unknown;
+                        }
+                    }
+
                     switch(mediumType)
                     {
                         case 0x01:
