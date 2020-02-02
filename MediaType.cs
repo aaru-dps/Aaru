@@ -39,6 +39,8 @@
 // ReSharper disable InconsistentNaming
 // TODO: Rename contents
 
+using System;
+
 namespace DiscImageChef.CommonTypes
 {
     public enum MediaEncoding
@@ -599,11 +601,35 @@ namespace DiscImageChef.CommonTypes
         #endregion PCMCIA / ExpressCard, types 420 to 429
 
         #region SyQuest, types 430 to 449
-        EZ135  = 430, EZ230 = 431, Quest  = 432,
-        SparQ  = 433, SQ100 = 434, SQ200  = 435,
-        SQ300  = 436, SQ310 = 437, SQ327  = 438,
-        SQ400  = 439, SQ800 = 440, SQ1500 = 441,
-        SQ2000 = 442, SyJet = 443,
+        /// <summary>SyQuest 135Mb cartridge for use in EZ135 and EZFlyer drives</summary>
+        EZ135 = 430,
+        /// <summary>SyQuest EZFlyer 230Mb cartridge for use in EZFlyer drive</summary>
+        EZ230 = 431,
+        /// <summary>SyQuest 4.7Gb for use in Quest drive</summary>
+        Quest = 432,
+        /// <summary>SyQuest SparQ 1Gb cartridge</summary>
+        SparQ = 433,
+        /// <summary>SyQuest 5Mb cartridge for SQ306RD drive</summary>
+        SQ100 = 434,
+        /// <summary>SyQuest 10Mb cartridge for SQ312RD drive</summary>
+        SQ200 = 435,
+        /// <summary>SyQuest 15Mb cartridge for SQ319RD drive</summary>
+        SQ300 = 436,
+        /// <summary>SyQuest 105Mb cartridge for SQ3105 and SQ3270 drives</summary>
+        SQ310 = 437,
+        /// <summary>SyQuest 270Mb cartridge for SQ3270 drive</summary>
+        SQ327 = 438,
+        /// <summary>SyQuest 44Mb cartridge for SQ555, SQ5110 and SQ5200C/SQ200 drives</summary>
+        SQ400 = 439,
+        /// <summary>SyQuest 88Mb cartridge for SQ5110 and SQ5200C/SQ200 drives</summary>
+        SQ800 = 440,
+        /// <summary>SyQuest 1.5Gb cartridge for SyJet drive</summary>
+        [Obsolete]
+        SQ1500 = 441,
+        /// <summary>SyQuest 200Mb cartridge for use in SQ5200C drive</summary>
+        SQ2000 = 442,
+        /// <summary>SyQuest 1.5Gb cartridge for SyJet drive</summary>
+        SyJet = 443,
         #endregion SyQuest, types 430 to 449
 
         #region Nintendo, types 450 to 469
