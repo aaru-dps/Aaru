@@ -371,16 +371,19 @@ namespace DiscImageChef.Core.Devices.Dumping
 
                     if(retries == 10)
                     {
-                        dumpLog?.WriteLine($"Could not get correct subchannel for sector {lba}");
-                        updateStatus?.Invoke($"Could not get correct subchannel for sector {lba}");
-
                         if(sense)
                         {
+                            dumpLog?.WriteLine($"Could not read subchannel for sector {lba}");
+                            updateStatus?.Invoke($"Could not read subchannel for sector {lba}");
+
                             lba++;
                             forward = true;
 
                             continue;
                         }
+
+                        dumpLog?.WriteLine($"Could not get correct subchannel for sector {lba}");
+                        updateStatus?.Invoke($"Could not get correct subchannel for sector {lba}");
                     }
 
                     if(subBuf.All(b => b == 0))
