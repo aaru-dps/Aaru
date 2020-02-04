@@ -175,6 +175,8 @@ namespace DiscImageChef.Core.Devices.Dumping
 
             foreach(Track track in tracks)
             {
+                int trackRetries = 0;
+
                 // First track of each session has at least 150 sectors of pregap and is not readable always
                 if(tracks.Where(t => t.TrackSession == track.TrackSession).OrderBy(t => t.TrackSequence).
                           FirstOrDefault().TrackSequence == track.TrackSequence)
@@ -373,6 +375,44 @@ namespace DiscImageChef.Core.Devices.Dumping
                     {
                         if(sense)
                         {
+                            trackRetries++;
+
+                            if(trackRetries >= 10)
+                            {
+                                if(pregaps[track.TrackSequence] == 0)
+                                {
+                                    if((previousTrack.TrackType == TrackType.Audio &&
+                                        track.TrackType         != TrackType.Audio) ||
+                                       (previousTrack.TrackType != TrackType.Audio &&
+                                        track.TrackType         == TrackType.Audio))
+                                    {
+                                        dumpLog?.
+                                            WriteLine($"Could not read subchannel for this track, supposing 150 sectors.");
+
+                                        updateStatus?.
+                                            Invoke($"Could not read subchannel for this track, supposing 150 sectors.");
+                                    }
+                                    else
+                                    {
+                                        dumpLog?.
+                                            WriteLine($"Could not read subchannel for this track, supposing 0 sectors.");
+
+                                        updateStatus?.
+                                            Invoke($"Could not read subchannel for this track, supposing 0 sectors.");
+                                    }
+                                }
+                                else
+                                {
+                                    dumpLog?.
+                                        WriteLine($"Could not read subchannel for this track, supposing {pregaps[track.TrackSequence]} sectors.");
+
+                                    updateStatus?.
+                                        Invoke($"Could not read subchannel for this track, supposing {pregaps[track.TrackSequence]} sectors.");
+                                }
+
+                                break;
+                            }
+
                             dumpLog?.WriteLine($"Could not read subchannel for sector {lba}");
                             updateStatus?.Invoke($"Could not read subchannel for sector {lba}");
 
