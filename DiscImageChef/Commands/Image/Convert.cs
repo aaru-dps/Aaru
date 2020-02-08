@@ -345,8 +345,21 @@ namespace DiscImageChef.Commands.Image
 
                 // Obsolete types
                 #pragma warning disable 612
-                if(mediaType == MediaType.SQ1500)
-                    mediaType = MediaType.SyJet;
+                switch(mediaType)
+                {
+                    case MediaType.SQ1500:
+                        mediaType = MediaType.SyJet;
+
+                        break;
+                    case MediaType.Bernoulli:
+                        mediaType = MediaType.Bernoulli10;
+
+                        break;
+                    case MediaType.Bernoulli2:
+                        mediaType = MediaType.BernoulliBox2_20;
+
+                        break;
+                }
                 #pragma warning restore 612
 
                 DicConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
