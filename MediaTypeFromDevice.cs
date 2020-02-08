@@ -91,29 +91,46 @@ namespace DiscImageChef.CommonTypes
                         return MediaType.Unknown;
                     }
 
-                    if(vendor.ToLowerInvariant().StartsWith("iomega", StringComparison.Ordinal) &&
-                       (model.ToLowerInvariant().StartsWith("clik", StringComparison.Ordinal) ||
-                        model.ToLowerInvariant().StartsWith("pocketzip", StringComparison.Ordinal)) &&
-                       blockSize == 512                                                             &&
-                       blocks    == 78882)
-                        return MediaType.PocketZip;
+                    if(vendor.ToLowerInvariant().StartsWith("iomega"))
 
-                    if(model.ToLowerInvariant().StartsWith("zip", StringComparison.Ordinal))
                     {
-                        if(blockSize != 512)
-                            return MediaType.Unknown;
+                        switch(blockSize)
+                        {
+                            case 256:
+                            {
+                                switch(blocks)
+                                {
+                                    case 39168:
+                                    case 41004: return MediaType.Bernoulli10;
+                                }
 
+                                break;
+                            }
+                            case 512:
+                            {
+                                switch(blocks)
+                                {
+                                    case 78882:  return MediaType.PocketZip;
+                                    case 175856: return MediaType.Bernoulli90;
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+
+                    if(model.ToLowerInvariant().StartsWith("zip", StringComparison.Ordinal) &&
+                       blockSize == 512)
+                    {
                         if(blocks == 196608)
                             return MediaType.ZIP100;
 
                         return blocks == 489532 ? MediaType.ZIP250 : MediaType.ZIP750;
                     }
 
-                    if(model.ToLowerInvariant().StartsWith("jaz", StringComparison.Ordinal))
+                    if(model.ToLowerInvariant().StartsWith("jaz", StringComparison.Ordinal) &&
+                       blockSize == 512)
                     {
-                        if(blockSize != 512)
-                            return MediaType.Unknown;
-
                         if(blocks == 2091050)
                             return MediaType.Jaz;
 
@@ -148,20 +165,16 @@ namespace DiscImageChef.CommonTypes
                         return MediaType.Unknown;
                     }
 
-                    if(model.ToLowerInvariant().StartsWith("rdx", StringComparison.Ordinal))
-                    {
-                        if(blockSize != 512)
-                            return MediaType.Unknown;
-
+                    if(model.ToLowerInvariant().StartsWith("rdx", StringComparison.Ordinal) &&
+                       blockSize == 512)
                         return blocks == 625134256 ? MediaType.RDX320 : MediaType.RDX;
-                    }
 
                     if(vendor.ToLowerInvariant().StartsWith("cws orb"))
                     {
                         switch(blocks)
                         {
                             case 4307184 when blockSize == 512: return MediaType.Orb;
-                            default: return MediaType.Unknown;
+                            default:                            return MediaType.Unknown;
                         }
                     }
 

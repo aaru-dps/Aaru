@@ -684,11 +684,20 @@ namespace DiscImageChef.CommonTypes.Metadata
                     return dmns;
                 case CommonTypes.MediaType.EZ135:
                 case CommonTypes.MediaType.EZ230:
+                case CommonTypes.MediaType.SQ327:
                     dmns.Height          = 97;
                     dmns.HeightSpecified = true;
                     dmns.Width           = 98;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 9.5;
+
+                    return dmns;
+                case CommonTypes.MediaType.SQ800:
+                    dmns.Height          = 137;
+                    dmns.HeightSpecified = true;
+                    dmns.Width           = 137;
+                    dmns.WidthSpecified  = true;
+                    dmns.Thickness       = 12;
 
                     return dmns;
                 case CommonTypes.MediaType.ZIP100:
@@ -725,6 +734,19 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Width           = 100;
                     dmns.WidthSpecified  = true;
                     dmns.Thickness       = 9.7;
+
+                    return dmns;
+                case CommonTypes.MediaType.ProfessionalDisc:
+                case CommonTypes.MediaType.ProfessionalDiscDual:
+                case CommonTypes.MediaType.ProfessionalDiscTriple:
+                case CommonTypes.MediaType.ProfessionalDiscQuad:
+                case CommonTypes.MediaType.PDD:
+                case CommonTypes.MediaType.PDD_WORM:
+                    dmns.Height          = 130;
+                    dmns.HeightSpecified = true;
+                    dmns.Width           = 128.5;
+                    dmns.WidthSpecified  = true;
+                    dmns.Thickness       = 9;
 
                     return dmns;
                 case CommonTypes.MediaType.SLR1:
@@ -839,14 +861,6 @@ namespace DiscImageChef.CommonTypes.Metadata
                     dmns.Thickness       = 16.51;
 
                     return dmns;
-                case CommonTypes.MediaType.Bernoulli2:
-                    dmns.Height          = 136;
-                    dmns.HeightSpecified = true;
-                    dmns.Width           = 140;
-                    dmns.WidthSpecified  = true;
-                    dmns.Thickness       = 9;
-
-                    return dmns;
                 case CommonTypes.MediaType.MLR1:
                 case CommonTypes.MediaType.MLR3:
                 case CommonTypes.MediaType.MLR1SL:
@@ -871,11 +885,29 @@ namespace DiscImageChef.CommonTypes.Metadata
 
                     return dmns;
                 case CommonTypes.MediaType.Bernoulli:
-                    dmns.Height          = 275;
+                case CommonTypes.MediaType.Bernoulli10:
+                case CommonTypes.MediaType.Bernoulli20:
+                    dmns.Height          = 280;
                     dmns.HeightSpecified = true;
-                    dmns.Width           = 210;
+                    dmns.Width           = 209;
                     dmns.WidthSpecified  = true;
-                    dmns.Thickness       = 0;
+                    dmns.Thickness       = 18;
+
+                    return dmns;
+                case CommonTypes.MediaType.Bernoulli2:
+                case CommonTypes.MediaType.BernoulliBox2_20:
+                case CommonTypes.MediaType.Bernoulli35:
+                case CommonTypes.MediaType.Bernoulli44:
+                case CommonTypes.MediaType.Bernoulli65:
+                case CommonTypes.MediaType.Bernoulli90:
+                case CommonTypes.MediaType.Bernoulli105:
+                case CommonTypes.MediaType.Bernoulli150:
+                case CommonTypes.MediaType.Bernoulli230:
+                    dmns.Height          = 138;
+                    dmns.HeightSpecified = true;
+                    dmns.Width           = 136;
+                    dmns.WidthSpecified  = true;
+                    dmns.Thickness       = 9;
 
                     return dmns;
                 case CommonTypes.MediaType.DTF:

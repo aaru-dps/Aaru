@@ -552,11 +552,29 @@ namespace DiscImageChef.CommonTypes
         #endregion Advanced Intelligent Tape, types 320 to 339
 
         #region Iomega, types 340 to 359
-        Bernoulli = 340, Bernoulli2 = 341, Ditto  = 342,
-        DittoMax  = 343, Jaz        = 344, Jaz2   = 345,
-        PocketZip = 346, REV120     = 347, REV35  = 348,
-        REV70     = 349, ZIP100     = 350, ZIP250 = 351,
-        ZIP750    = 352,
+        /// <summary>Obsolete type for 8"x11" Bernoulli Box disk</summary>
+        [Obsolete]
+        Bernoulli = 340,
+        /// <summary>Obsolete type for 5⅓" Bernoulli Box II disks</summary>
+        [Obsolete]
+        Bernoulli2 = 341, Ditto = 342, DittoMax  = 343, Jaz    = 344,
+        Jaz2                    = 345, PocketZip = 346, REV120 = 347,
+        REV35                   = 348, REV70     = 349, ZIP100 = 350,
+        ZIP250                  = 351, ZIP750    = 352,
+        /// <summary>5⅓" Bernoulli Box II disk with 35Mb capacity</summary>
+        Bernoulli35 = 353,
+        /// <summary>5⅓" Bernoulli Box II disk with 44Mb capacity</summary>
+        Bernoulli44 = 354,
+        /// <summary>5⅓" Bernoulli Box II disk with 65Mb capacity</summary>
+        Bernoulli65 = 355,
+        /// <summary>5⅓" Bernoulli Box II disk with 90Mb capacity</summary>
+        Bernoulli90 = 356,
+        /// <summary>5⅓" Bernoulli Box II disk with 105Mb capacity</summary>
+        Bernoulli105 = 357,
+        /// <summary>5⅓" Bernoulli Box II disk with 150Mb capacity</summary>
+        Bernoulli150 = 358,
+        /// <summary>5⅓" Bernoulli Box II disk with 230Mb capacity</summary>
+        Bernoulli230 = 359,
         #endregion Iomega, types 340 to 359
 
         #region Audio or video media, types 360 to 369
@@ -928,7 +946,57 @@ namespace DiscImageChef.CommonTypes
         #endregion Imation, types 730 to 739
 
         #region VideoNow, types 740 to 749
-        VideoNow = 740, VideoNowColor = 741, VideoNowXp = 742
+        VideoNow = 740, VideoNowColor = 741, VideoNowXp = 742,
         #endregion
+
+        #region Iomega, types 750 to 759
+        /// <summary>8"x11" Bernoulli Box disk with 10Mb capacity</summary>
+        Bernoulli10 = 750,
+        /// <summary>8"x11" Bernoulli Box disk with 20Mb capacity</summary>
+        Bernoulli20 = 751,
+        /// <summary>5⅓" Bernoulli Box II disk with 20Mb capacity</summary>
+        BernoulliBox2_20 = 752,
+        #endregion Iomega, types 750 to 759
+
+        #region Kodak, types 760 to 769
+        KodakVerbatim3 = 760, KodakVerbatim6 = 761, KodakVerbatim12 = 762,
+        #endregion Kodak, types 760 to 769
+
+        #region Sony and Panasonic Blu-ray derived, types 770 to 799
+        /// <summary>Professional Disc for video, single layer, rewritable, 23Gb</summary>
+        ProfessionalDisc = 770,
+        /// <summary>Professional Disc for video, dual layer, rewritable, 50Gb</summary>
+        ProfessionalDiscDual = 771,
+        /// <summary>Professional Disc for video, triple layer, rewritable, 100Gb</summary>
+        ProfessionalDiscTriple = 772,
+        /// <summary>Professional Disc for video, quad layer, write once, 128Gb</summary>
+        ProfessionalDiscQuad = 773,
+        /// <summary>Professional Disc for DATA, single layer, rewritable, 23Gb</summary>
+        PDD = 774,
+        /// <summary>Professional Disc for DATA, single layer, write once, 23Gb</summary>
+        PDD_WORM = 775,
+        /// <summary>Archival Disc, 1st gen., 300Gb</summary>
+        ArchivalDisc = 776,
+        /// <summary>Archival Disc, 2nd gen., 500Gb</summary>
+        ArchivalDisc2 = 777,
+        /// <summary>Archival Disc, 3rd gen., 1Tb</summary>
+        ArchivalDisc3 = 778,
+        /// <summary>Optical Disc archive, 1st gen., write once, 300Gb</summary>
+        ODC300R = 779,
+        /// <summary>Optical Disc archive, 1st gen., rewritable, 300Gb</summary>
+        ODC300RE = 780,
+        /// <summary>Optical Disc archive, 2nd gen., write once, 600Gb</summary>
+        ODC600R = 781,
+        /// <summary>Optical Disc archive, 2nd gen., rewritable, 600Gb</summary>
+        ODC600RE = 782,
+        /// <summary>Optical Disc archive, 3rd gen., rewritable, 1200Gb</summary>
+        ODC1200RE = 783,
+        /// <summary>Optical Disc archive, 3rd gen., write once, 1500Gb</summary>
+        ODC1500R = 784,
+        /// <summary>Optical Disc archive, 4th gen., write once, 3300Gb</summary>
+        ODC3300R = 785,
+        /// <summary>Optical Disc archive, 5th gen., write once, 5500Gb</summary>
+        ODC5500R = 786
+        #endregion Sony and Panasonic Blu-ray derived, types 770 to 799
     }
 }

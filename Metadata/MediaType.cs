@@ -1113,13 +1113,55 @@ namespace DiscImageChef.CommonTypes.Metadata
 
                     break;
                 case CommonTypes.MediaType.Bernoulli:
-                    discType    = "Iomega Bernoulli";
-                    discSubType = "Iomega Bernoulli";
+                case CommonTypes.MediaType.Bernoulli10:
+                    discType    = "Iomega Bernoulli Box";
+                    discSubType = "Iomega Bernoulli Box 10Mb";
 
                     break;
+                case CommonTypes.MediaType.Bernoulli20:
+                    discType    = "Iomega Bernoulli Box";
+                    discSubType = "Iomega Bernoulli Box 20Mb";
+
+                    break;
+                case CommonTypes.MediaType.BernoulliBox2_20:
                 case CommonTypes.MediaType.Bernoulli2:
-                    discType    = "Iomega Bernoulli";
-                    discSubType = "Iomega Bernoulli 2";
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 20Mb";
+
+                    break;
+                case CommonTypes.MediaType.Bernoulli35:
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 35Mb";
+
+                    break;
+                case CommonTypes.MediaType.Bernoulli44:
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 44Mb";
+
+                    break;
+                case CommonTypes.MediaType.Bernoulli65:
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 65Mb";
+
+                    break;
+                case CommonTypes.MediaType.Bernoulli90:
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 90Mb";
+
+                    break;
+                case CommonTypes.MediaType.Bernoulli105:
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 105Mb";
+
+                    break;
+                case CommonTypes.MediaType.Bernoulli150:
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 150Mb";
+
+                    break;
+                case CommonTypes.MediaType.Bernoulli230:
+                    discType    = "Iomega Bernoulli Box II";
+                    discSubType = "Iomega Bernoulli Box II 230Mb";
 
                     break;
                 case CommonTypes.MediaType.Ditto:
@@ -2341,6 +2383,106 @@ namespace DiscImageChef.CommonTypes.Metadata
                 case CommonTypes.MediaType.VideoNowXp:
                     discType    = "VideoNow";
                     discSubType = "VideoNow XP";
+
+                    break;
+                case CommonTypes.MediaType.KodakVerbatim3:
+                    discType    = "Kodak Verbatim";
+                    discSubType = "Kodak Verbatim (3 Mb)";
+
+                    break;
+                case CommonTypes.MediaType.KodakVerbatim6:
+                    discType    = "Kodak Verbatim";
+                    discSubType = "Kodak Verbatim (6 Mb)";
+
+                    break;
+                case CommonTypes.MediaType.KodakVerbatim12:
+                    discType    = "Kodak Verbatim";
+                    discSubType = "Kodak Verbatim (12 Mb)";
+
+                    break;
+                case CommonTypes.MediaType.ProfessionalDisc:
+                    discType    = "Sony Professional Disc";
+                    discSubType = "Sony Professional Disc (single layer)";
+
+                    break;
+                case CommonTypes.MediaType.ProfessionalDiscDual:
+                    discType    = "Sony Professional Disc";
+                    discSubType = "Sony Professional Disc (double layer)";
+
+                    break;
+                case CommonTypes.MediaType.ProfessionalDiscTriple:
+                    discType    = "Sony Professional Disc";
+                    discSubType = "Sony Professional Disc (triple layer)";
+
+                    break;
+                case CommonTypes.MediaType.ProfessionalDiscQuad:
+                    discType    = "Sony Professional Disc";
+                    discSubType = "Sony Professional Disc (quad layer)";
+
+                    break;
+                case CommonTypes.MediaType.PDD:
+                    discType    = "Sony Professional Disc for DATA";
+                    discSubType = "Sony Professional Disc for DATA";
+
+                    break;
+                case CommonTypes.MediaType.PDD_WORM:
+                    discType    = "Sony Professional Disc for DATA";
+                    discSubType = "Sony Professional Disc for DATA (write-once)";
+
+                    break;
+                case CommonTypes.MediaType.ArchivalDisc:
+                    discType    = "Archival Disc";
+                    discSubType = "Archival Disc";
+
+                    break;
+                case CommonTypes.MediaType.ArchivalDisc2:
+                    discType    = "Archival Disc";
+                    discSubType = "Archival Disc (2nd generation)";
+
+                    break;
+                case CommonTypes.MediaType.ArchivalDisc3:
+                    discType    = "Archival Disc";
+                    discSubType = "Archival Disc (3rd generation)";
+
+                    break;
+                case CommonTypes.MediaType.ODC300R:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC300R";
+
+                    break;
+                case CommonTypes.MediaType.ODC300RE:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC300RE";
+
+                    break;
+                case CommonTypes.MediaType.ODC600R:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC600R";
+
+                    break;
+                case CommonTypes.MediaType.ODC600RE:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC600RE";
+
+                    break;
+                case CommonTypes.MediaType.ODC1200RE:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC1200RE";
+
+                    break;
+                case CommonTypes.MediaType.ODC1500R:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC1500R";
+
+                    break;
+                case CommonTypes.MediaType.ODC3300R:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC3300R";
+
+                    break;
+                case CommonTypes.MediaType.ODC5500R:
+                    discType    = "Optical Disc Archive";
+                    discSubType = "ODC5500R";
 
                     break;
                 default:
