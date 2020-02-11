@@ -699,8 +699,6 @@ namespace DiscImageChef.CommonTypes
                                 case 0x8C:
                                 {
                                     return MediaType.DDS1;
-
-                                    break;
                                 }
                             }
 
