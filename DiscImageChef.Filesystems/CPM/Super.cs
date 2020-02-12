@@ -367,7 +367,7 @@ namespace DiscImageChef.Filesystems.CPM
                         // allocate block 0 for a file because that's where the directory resides.
                         // There is also a field telling how many bytes are used in the last block, but its meaning is
                         // non-standard so we must ignore it.
-                        foreach(ushort blk in entry.allocations.Cast<ushort>()
+                        foreach(ushort blk in entry.allocations
                                                    .Where(blk => !blocks.Contains(blk) && blk != 0)) blocks.Add(blk);
 
                         // Save the file

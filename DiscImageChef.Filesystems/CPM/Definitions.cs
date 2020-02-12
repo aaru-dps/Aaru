@@ -81,7 +81,7 @@ namespace DiscImageChef.Filesystems.CPM
     /// <summary>
     ///     CP/M disk definitions
     /// </summary>
-    class CpmDefinitions
+    public class CpmDefinitions
     {
         /// <summary>
         ///     Timestamp of creation of the CP/M disk definitions list
@@ -96,7 +96,7 @@ namespace DiscImageChef.Filesystems.CPM
     /// <summary>
     ///     CP/M disk definition
     /// </summary>
-    class CpmDefinition
+    public class CpmDefinition
     {
         /// <summary>
         ///     Maps the first 16 allocation blocks for reservation, high byte
@@ -196,7 +196,7 @@ namespace DiscImageChef.Filesystems.CPM
     /// <summary>
     ///     Side descriptions
     /// </summary>
-    class Side
+    public class Side
     {
         /// <summary>
         ///     Software interleaving mask, [1,3,0,2] means CP/M LBA 0 is physical sector 1, LBA 1 = 3, so on
