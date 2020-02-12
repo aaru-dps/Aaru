@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -59,7 +59,7 @@ namespace DiscImageChef.DiscImages
             stream.Read(headerB, 0, 256);
             CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
 
-            if(!cpcdskId.SequenceEqual(header.magic) &&
+            if(!cpcdskId.SequenceEqual(header.magic.Take(cpcdskId.Length)) &&
                !edskId.SequenceEqual(header.magic)   &&
                !du54Id.SequenceEqual(header.magic))
                 return false;
