@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -41,7 +41,7 @@ namespace DiscImageChef.DiscImages
         struct CpcDiskInfo
         {
             /// <summary>
-            ///     Magic number, "MV - CPCEMU Disk-File" in old files, "EXTENDED CPC DSK File" in extended ones
+            ///     Magic number, "MV - CPC" in old files, "EXTENDED CPC DSK File" in extended ones
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 21)]
             public byte[] magic;

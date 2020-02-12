@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -54,7 +54,7 @@ namespace DiscImageChef.DiscImages
             DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                       StringHandlers.CToString(header.magic));
 
-            return cpcdskId.SequenceEqual(header.magic) || edskId.SequenceEqual(header.magic) ||
+            return cpcdskId.SequenceEqual(header.magic.Take(cpcdskId.Length)) || edskId.SequenceEqual(header.magic) ||
                    du54Id.SequenceEqual(header.magic);
         }
     }

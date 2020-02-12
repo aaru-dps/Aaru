@@ -1,4 +1,4 @@
-﻿// /***************************************************************************
+// /***************************************************************************
 // The Disc Image Chef
 // ----------------------------------------------------------------------------
 //
@@ -35,12 +35,11 @@ namespace DiscImageChef.DiscImages
     public partial class Cpcdsk
     {
         /// <summary>
-        ///     Identifier for CPCEMU disk images, "MV - CPCEMU Disk-File"
+        ///     Identifier for CPCEMU disk images, "MV - CPC" + usually : "EMU Disk-File\r\nDisk-Info\r\n" but not required
         /// </summary>
         readonly byte[] cpcdskId =
         {
-            0x4D, 0x56, 0x20, 0x2D, 0x20, 0x43, 0x50, 0x43, 0x45, 0x4D, 0x55, 0x20, 0x44, 0x69, 0x73, 0x6B, 0x2D,
-            0x46, 0x69, 0x6C, 0x65
+            0x4D, 0x56, 0x20, 0x2D, 0x20, 0x43, 0x50, 0x43
         };
         /// <summary>
         ///     Identifier for DU54 disk images, "MV - CPC format Disk Image (DU54)"
