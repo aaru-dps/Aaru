@@ -451,11 +451,11 @@ namespace DiscImageChef.CommonTypes
                             switch(blocks)
                             {
                                 case 58620544: return MediaType.REV120;
+                                case 34185728: return MediaType.REV70;
                                 case 17090880: return MediaType.REV35;
-
-                                // TODO: Unknown value
-                                default: return MediaType.REV70;
                             }
+
+                            break;
                         case 0x44:
                             switch(blocks)
                             {
