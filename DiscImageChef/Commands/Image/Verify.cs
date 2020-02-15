@@ -165,7 +165,7 @@ namespace DiscImageChef.Commands.Image
                 List<ulong> failingLbas = new List<ulong>();
                 List<ulong> unknownLbas = new List<ulong>();
 
-                if(verifiableSectorsImage is IOpticalMediaImage opticalMediaImage)
+                if(verifiableSectorsImage is IOpticalMediaImage opticalMediaImage && opticalMediaImage.Tracks != null)
                 {
                     List<Track> inputTracks      = opticalMediaImage.Tracks;
                     ulong       currentSectorAll = 0;
