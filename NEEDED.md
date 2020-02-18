@@ -56,8 +56,7 @@ doubt, please contact us.
 Media
 =====
 This is the media for the drives listed above, or media for drives we do have, but lack and thus cannot test the actual hardware.
-- 3.5" magneto-optical media: 540MiB, 2.3GiB GigaMO
-- 5.25" magneto-optical media: 128MiB, 640MiB, 9.6GiB
+- 5.25" magneto-optical media: 128MiB
 - ADR tapes
 - AIT tapes
 - Apple FileWare "twiggy" floppies
@@ -76,13 +75,11 @@ This is the media for the drives listed above, or media for drives we do have, b
 - Sony HiFD floppy
 - Sony MD-DATA discs
 - Stringy floppy
-- Syquest EZ135 media
 - Syquest Quest media
 - Syquest SQ2542 media
 - Syquest SQ100 media
 - Syquest SQ200 media
 - Syquest SQ300 media
-- Syquest SQ2000 media
 - Syquest SQ400 media
 - Syquest SyJet media
 - T9840, T9940, T10000 tapes
