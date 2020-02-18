@@ -54,6 +54,10 @@
     <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppleHFS\AppleHFS.cs" />
+    <Compile Include="AppleHFS\Consts.cs" />
+    <Compile Include="AppleHFS\Info.cs" />
+    <Compile Include="AppleHFS\Structs.cs" />
     <Compile Include="FATX\Consts.cs" />
     <Compile Include="FATX\Dir.cs" />
     <Compile Include="FATX\FATX.cs" />
@@ -88,7 +92,6 @@
     <Compile Include="Opera\Super.cs" />
     <Compile Include="PCFX.cs" />
     <Compile Include="AmigaDOS.cs" />
-    <Compile Include="AppleHFS.cs" />
     <Compile Include="AppleHFSPlus.cs" />
     <Compile Include="BFS.cs" />
     <Compile Include="ext2FS.cs" />
