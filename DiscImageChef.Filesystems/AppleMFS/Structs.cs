@@ -38,13 +38,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace DiscImageChef.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+    [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "NotAccessedField.Local")]
     public partial class AppleMFS
     {
-        /// <summary>
-        ///     Master Directory Block, should be at offset 0x0400 bytes in volume
-        /// </summary>
+        /// <summary>Master Directory Block, should be at offset 0x0400 bytes in volume</summary>
         struct MFS_MasterDirectoryBlock
         {
             /// <summary>0x000, Signature, 0xD2D7</summary>
@@ -79,71 +76,59 @@ namespace DiscImageChef.Filesystems.AppleMFS
             public string drVN;
         }
 
-        /// <summary>
-        ///     Should be at offset 0x0000 in volume, followed by boot code
-        /// </summary>
+        /// <summary>Should be at offset 0x0000 in volume, followed by boot code</summary>
         struct MFS_BootBlock
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
-            public ushort signature;
+            public ushort bbID;
             /// <summary>0x002, Branch</summary>
-            public uint branch;
+            public uint bbEntry;
             /// <summary>0x006, Boot block flags</summary>
             public byte boot_flags;
             /// <summary>0x007, Boot block version</summary>
-            public byte boot_version;
+            public byte bbVersion;
             /// <summary>0x008, Allocate secondary buffers</summary>
-            public short sec_sv_pages;
+            public short bbPageFlags;
             /// <summary>0x00A, System file name (16 bytes)</summary>
-            public string system_name;
+            public string bbSysName;
             /// <summary>0x01A, Finder file name (16 bytes)</summary>
-            public string finder_name;
+            public string bbShellName;
             /// <summary>0x02A, Debugger file name (16 bytes)</summary>
-            public string debug_name;
+            public string bbDbg1Name;
             /// <summary>0x03A, Disassembler file name (16 bytes)</summary>
-            public string disasm_name;
+            public string bbDbg2Name;
             /// <summary>0x04A, Startup screen file name (16 bytes)</summary>
-            public string stupscr_name;
+            public string bbScreenName;
             /// <summary>0x05A, First program to execute on boot (16 bytes)</summary>
-            public string bootup_name;
+            public string bbHelloName;
             /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
-            public string clipbrd_name;
+            public string bbScrapName;
             /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
-            public ushort max_files;
+            public ushort bbCntFCBs;
             /// <summary>0x07C, Event queue size</summary>
-            public ushort queue_size;
+            public ushort bbCntEvts;
             /// <summary>0x07E, Heap size on a Mac with 128KiB of RAM</summary>
-            public uint heap_128k;
+            public uint bb128KSHeap;
             /// <summary>0x082, Heap size on a Mac with 256KiB of RAM</summary>
-            public uint heap_256k;
+            public uint bb256KSHeap;
             /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
-            public uint heap_512k;
+            public uint bbSysHeapSize;
         }
 
         [Flags]
         enum MFS_FileFlags : byte
         {
-            Locked = 0x01,
-            Used   = 0x80
+            Locked = 0x01, Used = 0x80
         }
 
         [Flags]
         enum MFS_FinderFlags : ushort
         {
-            kIsOnDesk            = 0x0001,
-            kColor               = 0x000E,
-            kRequireSwitchLaunch = 0x0020,
-            kIsShared            = 0x0040,
-            kHasNoINITs          = 0x0080,
-            kHasBeenInited       = 0x0100,
-            kHasCustomIcon       = 0x0400,
-            kLetter              = 0x0200,
-            kChanged             = 0x0200,
-            kIsStationery        = 0x0800,
-            kNameLocked          = 0x1000,
-            kHasBundle           = 0x2000,
-            kIsInvisible         = 0x4000,
-            kIsAlias             = 0x8000
+            kIsOnDesk      = 0x0001, kColor      = 0x000E, kRequireSwitchLaunch = 0x0020,
+            kIsShared      = 0x0040, kHasNoINITs = 0x0080, kHasBeenInited       = 0x0100,
+            kHasCustomIcon = 0x0400, kLetter     = 0x0200, kChanged             = 0x0200,
+            kIsStationery  = 0x0800, kNameLocked = 0x1000, kHasBundle           = 0x2000,
+            kIsInvisible   = 0x4000, kIsAlias    = 0x8000
         }
 
         struct MFS_Point

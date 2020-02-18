@@ -1317,7 +1317,12 @@
           <e p="Super.cs" t="Include" />
           <e p="Xattr.cs" t="Include" />
         </e>
-        <e p="AppleHFS.cs" t="Include" />
+        <e p="AppleHFS" t="Include">
+          <e p="AppleHFS.cs" t="Include" />
+          <e p="Consts.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+        </e>
         <e p="AppleHFSPlus.cs" t="Include" />
         <e p="AppleMFS" t="Include">
           <e p="AppleMFS.cs" t="Include" />

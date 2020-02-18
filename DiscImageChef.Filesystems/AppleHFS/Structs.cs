@@ -43,50 +43,50 @@ namespace DiscImageChef.Filesystems
         struct HfsBootBlock // Should be sectors 0 and 1 in volume
         {
             /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
-            public readonly ushort signature;
+            public readonly ushort bbID;
             /// <summary>0x002, Branch</summary>
-            public readonly uint branch;
+            public readonly uint bbEntry;
             /// <summary>0x007, Boot block version</summary>
-            public readonly ushort boot_version;
+            public readonly ushort bbVersion;
             /// <summary>0x006, Boot block flags</summary>
-            public readonly short boot_flags;
+            public readonly short bbPageFlags;
             /// <summary>0x00A, System file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] system_name;
+            public readonly byte[] bbSysName;
             /// <summary>0x01A, Finder file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] finder_name;
+            public readonly byte[] bbShellName;
             /// <summary>0x02A, Debugger file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] debug_name;
+            public readonly byte[] bbDbg1Name;
             /// <summary>0x03A, Disassembler file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] disasm_name;
+            public readonly byte[] bbDbg2Name;
             /// <summary>0x04A, Startup screen file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] stupscr_name;
+            public readonly byte[] bbScreenName;
             /// <summary>0x05A, First program to execute on boot (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] bootup_name;
+            public readonly byte[] bbHelloName;
             /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public readonly byte[] clipbrd_name;
+            public readonly byte[] bbScrapName;
             /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
-            public readonly ushort max_files;
+            public readonly ushort bbCntFCBs;
             /// <summary>0x07C, Event queue size</summary>
-            public readonly ushort queue_size;
+            public readonly ushort bbCntEvts;
             /// <summary>0x07E, Heap size on a Mac with 128KiB of RAM</summary>
-            public readonly uint heap_128k;
+            public readonly uint bb128KSHeap;
             /// <summary>0x082, Heap size on a Mac with 256KiB of RAM</summary>
-            public readonly uint heap_256k;
+            public readonly uint bb256KSHeap;
             /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
-            public readonly uint heap_512k;
+            public readonly uint bbSysHeapSize;
             /// <summary>Padding</summary>
-            public readonly ushort padding;
+            public readonly ushort filler;
             /// <summary>Additional system heap space</summary>
-            public readonly uint heap_extra;
+            public readonly uint bbSysHeapExtra;
             /// <summary>Fraction of RAM for system heap</summary>
-            public readonly uint heap_fract;
+            public readonly uint bbSysHeapFract;
         }
 
         /// <summary>Master Directory Block, should be sector 2 in volume</summary>

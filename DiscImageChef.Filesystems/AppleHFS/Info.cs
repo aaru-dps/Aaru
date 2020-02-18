@@ -238,50 +238,50 @@ namespace DiscImageChef.Filesystems
                 sb.AppendFormat("{0} blocks in volume common cache", mdb.drCtlCSize).AppendLine();
             }
 
-            if(bb.signature == HFSBB_MAGIC)
+            if(bb.bbID == HFSBB_MAGIC)
             {
                 sb.AppendLine("Volume is bootable.");
                 sb.AppendLine();
                 sb.AppendLine("Boot Block:");
 
-                if((bb.boot_flags & 0x40) == 0x40)
+                if((bb.bbPageFlags & 0x40) == 0x40)
                     sb.AppendLine("Boot block should be executed.");
 
-                if((bb.boot_flags & 0x80) == 0x80)
+                if((bb.bbPageFlags & 0x80) == 0x80)
                     sb.AppendLine("Boot block is in new unknown format.");
                 else
                 {
-                    if(bb.boot_flags > 0)
+                    if(bb.bbPageFlags > 0)
                         sb.AppendLine("Allocate secondary sound buffer at boot.");
-                    else if(bb.boot_flags < 0)
+                    else if(bb.bbPageFlags < 0)
                         sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
-                    sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.system_name, Encoding)).
+                    sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, Encoding)).
                        AppendLine();
 
-                    sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.finder_name, Encoding)).
+                    sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, Encoding)).
                        AppendLine();
 
-                    sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.debug_name, Encoding)).
+                    sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, Encoding)).
                        AppendLine();
 
                     sb.AppendFormat("Disassembler filename: {0}",
-                                    StringHandlers.PascalToString(bb.disasm_name, Encoding)).AppendLine();
+                                    StringHandlers.PascalToString(bb.bbDbg2Name, Encoding)).AppendLine();
 
                     sb.AppendFormat("Startup screen filename: {0}",
-                                    StringHandlers.PascalToString(bb.stupscr_name, Encoding)).AppendLine();
+                                    StringHandlers.PascalToString(bb.bbScreenName, Encoding)).AppendLine();
 
                     sb.AppendFormat("First program to execute at boot: {0}",
-                                    StringHandlers.PascalToString(bb.bootup_name, Encoding)).AppendLine();
+                                    StringHandlers.PascalToString(bb.bbHelloName, Encoding)).AppendLine();
 
-                    sb.AppendFormat("Clipboard filename: {0}",
-                                    StringHandlers.PascalToString(bb.clipbrd_name, Encoding)).AppendLine();
+                    sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, Encoding)).
+                       AppendLine();
 
-                    sb.AppendFormat("Maximum opened files: {0}", bb.max_files * 4).AppendLine();
-                    sb.AppendFormat("Event queue size: {0}", bb.queue_size).AppendLine();
-                    sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.heap_128k).AppendLine();
-                    sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.heap_256k).AppendLine();
-                    sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.heap_512k).AppendLine();
+                    sb.AppendFormat("Maximum opened files: {0}", bb.bbCntFCBs * 4).AppendLine();
+                    sb.AppendFormat("Event queue size: {0}", bb.bbCntEvts).AppendLine();
+                    sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.bb128KSHeap).AppendLine();
+                    sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.bb256KSHeap).AppendLine();
+                    sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.bbSysHeapSize).AppendLine();
                 }
             }
             else if(mdb.drFndrInfo0 != 0 ||
@@ -301,7 +301,7 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.BackupDateSpecified = true;
             }
 
-            XmlFsType.Bootable = bb.signature    == HFSBB_MAGIC || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
+            XmlFsType.Bootable = bb.bbID         == HFSBB_MAGIC || mdb.drFndrInfo0 != 0 || mdb.drFndrInfo3 != 0 ||
                                  mdb.drFndrInfo5 != 0;
 
             XmlFsType.Clusters    = mdb.drNmAlBlks;
