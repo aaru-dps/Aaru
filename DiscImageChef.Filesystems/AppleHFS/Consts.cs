@@ -36,11 +36,6 @@ namespace DiscImageChef.Filesystems
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
     public partial class AppleHFS
     {
-        /// <summary>"BD", HFS magic</summary>
-        const ushort HFS_MAGIC = 0x4244;
-        /// <summary>"H+", HFS+ magic</summary>
-        const ushort HFSP_MAGIC = 0x482B;
-
         /// <summary>Parent ID of the root directory.</summary>
         const uint kRootParentCnid = 1;
         /// <summary>Directory ID of the root directory.</summary>

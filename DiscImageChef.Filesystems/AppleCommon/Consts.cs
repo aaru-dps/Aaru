@@ -38,5 +38,11 @@ namespace DiscImageChef.Filesystems
     {
         /// <summary>"LK", HFS bootblock magic</summary>
         internal const ushort BB_MAGIC = 0x4C4B;
+        /// <summary>"BD", HFS magic</summary>
+        internal const ushort HFS_MAGIC = 0x4244;
+        /// <summary>"H+", HFS+ magic</summary>
+        internal const ushort HFSP_MAGIC = 0x482B;
+        /// <summary>"HX", HFSX magic</summary>
+        internal const ushort HFSX_MAGIC = 0x4858;
     }
 }

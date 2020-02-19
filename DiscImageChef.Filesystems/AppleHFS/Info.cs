@@ -64,13 +64,13 @@ namespace DiscImageChef.Filesystems
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, offset);
 
-                    if(drSigWord != HFS_MAGIC)
+                    if(drSigWord != AppleCommon.HFS_MAGIC)
                         continue;
 
                     drSigWord =
                         BigEndianBitConverter.ToUInt16(mdbSector, offset + 0x7C); // Seek to embedded HFS+ signature
 
-                    return drSigWord != HFSP_MAGIC;
+                    return drSigWord != AppleCommon.HFSP_MAGIC;
                 }
             }
             else
@@ -78,12 +78,12 @@ namespace DiscImageChef.Filesystems
                 mdbSector = imagePlugin.ReadSector(2 + partition.Start);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
-                if(drSigWord != HFS_MAGIC)
+                if(drSigWord != AppleCommon.HFS_MAGIC)
                     return false;
 
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0x7C); // Seek to embedded HFS+ signature
 
-                return drSigWord != HFSP_MAGIC;
+                return drSigWord != AppleCommon.HFSP_MAGIC;
             }
 
             return false;
@@ -116,7 +116,7 @@ namespace DiscImageChef.Filesystems
                 {
                     drSigWord = BigEndianBitConverter.ToUInt16(tmpSector, offset);
 
-                    if(drSigWord != HFS_MAGIC)
+                    if(drSigWord != AppleCommon.HFS_MAGIC)
                         continue;
 
                     bbSector  = new byte[1024];
@@ -139,7 +139,7 @@ namespace DiscImageChef.Filesystems
                 mdbSector = imagePlugin.ReadSector(2 + partition.Start);
                 drSigWord = BigEndianBitConverter.ToUInt16(mdbSector, 0);
 
-                if(drSigWord == HFS_MAGIC)
+                if(drSigWord == AppleCommon.HFS_MAGIC)
                     bbSector = imagePlugin.ReadSector(partition.Start);
                 else
                     return;
@@ -225,7 +225,7 @@ namespace DiscImageChef.Filesystems
                mdb.drFndrInfo7 != 0)
                 sb.AppendFormat("Mac OS X Volume ID: {0:X8}{1:X8}", mdb.drFndrInfo6, mdb.drFndrInfo7).AppendLine();
 
-            if(mdb.drEmbedSigWord == HFSP_MAGIC)
+            if(mdb.drEmbedSigWord == AppleCommon.HFSP_MAGIC)
             {
                 sb.AppendLine("Volume wraps a HFS+ volume.");
                 sb.AppendFormat("Starting block of the HFS+ volume: {0}", mdb.xdrStABNt).AppendLine();

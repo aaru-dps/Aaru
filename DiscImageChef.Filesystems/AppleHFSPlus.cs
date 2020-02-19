@@ -43,13 +43,6 @@ namespace DiscImageChef.Filesystems
     // Information from Apple TechNote 1150: https://developer.apple.com/legacy/library/technotes/tn/tn1150.html
     public class AppleHFSPlus : IFilesystem
     {
-        /// <summary>"BD", HFS magic</summary>
-        const ushort HFS_MAGIC = 0x4244;
-        /// <summary>"H+", HFS+ magic</summary>
-        const ushort HFSP_MAGIC = 0x482B;
-        /// <summary>"HX", HFSX magic</summary>
-        const ushort HFSX_MAGIC = 0x4858;
-
         public FileSystemType XmlFsType { get; private set; }
         public Encoding       Encoding  { get; private set; }
         public string         Name      => "Apple HFS+ filesystem";
@@ -72,11 +65,11 @@ namespace DiscImageChef.Filesystems
 
             ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
-            if(drSigWord == HFS_MAGIC) // "BD"
+            if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x47C); // Read embedded HFS+ signature
 
-                if(drSigWord == HFSP_MAGIC) // "H+"
+                if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
                 {
                     ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
@@ -96,7 +89,7 @@ namespace DiscImageChef.Filesystems
 
             drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
-            return drSigWord == HFSP_MAGIC || drSigWord == HFSX_MAGIC;
+            return drSigWord == AppleCommon.HFSP_MAGIC || drSigWord == AppleCommon.HFSX_MAGIC;
         }
 
         public void GetInformation(IMediaImage imagePlugin, Partition partition, out string information,
@@ -119,11 +112,11 @@ namespace DiscImageChef.Filesystems
 
             ushort drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
-            if(drSigWord == HFS_MAGIC) // "BD"
+            if(drSigWord == AppleCommon.HFS_MAGIC) // "BD"
             {
                 drSigWord = BigEndianBitConverter.ToUInt16(vhSector, 0x47C); // Read embedded HFS+ signature
 
-                if(drSigWord == HFSP_MAGIC) // "H+"
+                if(drSigWord == AppleCommon.HFSP_MAGIC) // "H+"
                 {
                     ushort xdrStABNt = BigEndianBitConverter.ToUInt16(vhSector, 0x47E);
 
@@ -150,8 +143,8 @@ namespace DiscImageChef.Filesystems
 
             vh.signature = BigEndianBitConverter.ToUInt16(vhSector, 0x400);
 
-            if(vh.signature != HFSP_MAGIC &&
-               vh.signature != HFSX_MAGIC)
+            if(vh.signature != AppleCommon.HFSP_MAGIC &&
+               vh.signature != AppleCommon.HFSX_MAGIC)
                 return;
 
             var sb = new StringBuilder();
