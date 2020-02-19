@@ -1310,6 +1310,7 @@
         <e p="AmigaDOS.cs" t="Include" />
         <e p="AppleCommon" t="Include">
           <e p="Consts.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
           <e p="Info.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
         </e>

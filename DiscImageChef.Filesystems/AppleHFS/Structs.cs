@@ -49,7 +49,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x006, Volume last modification date</summary>
             public readonly uint drLsMod;
             /// <summary>0x00A, Volume attributes</summary>
-            public readonly ushort drAtrb;
+            public readonly AppleCommon.VolumeAttributes drAtrb;
             /// <summary>0x00C, Files in root directory</summary>
             public readonly ushort drNmFls;
             /// <summary>0x00E, Start 512-byte sector of volume bitmap</summary>

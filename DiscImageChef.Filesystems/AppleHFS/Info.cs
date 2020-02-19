@@ -165,30 +165,31 @@ namespace DiscImageChef.Filesystems
             else
                 sb.AppendLine("Volume has never been backed up");
 
-            if((mdb.drAtrb & 0x80) == 0x80)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.HardwareLock))
                 sb.AppendLine("Volume is locked by hardware.");
 
-            sb.AppendLine((mdb.drAtrb & 0x100) == 0x100 ? "Volume was unmonted." : "Volume is mounted.");
+            sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted) ? "Volume was unmonted."
+                              : "Volume is mounted.");
 
-            if((mdb.drAtrb & 0x200) == 0x200)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SparedBadBlocks))
                 sb.AppendLine("Volume has spared bad blocks.");
 
-            if((mdb.drAtrb & 0x400) == 0x400)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.DoesNotNeedCache))
                 sb.AppendLine("Volume does not need cache.");
 
-            if((mdb.drAtrb & 0x800) == 0x800)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.BootInconsistent))
                 sb.AppendLine("Boot volume is inconsistent.");
 
-            if((mdb.drAtrb & 0x1000) == 0x1000)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.ReusedIds))
                 sb.AppendLine("There are reused CNIDs.");
 
-            if((mdb.drAtrb & 0x2000) == 0x2000)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Journaled))
                 sb.AppendLine("Volume is journaled.");
 
-            if((mdb.drAtrb & 0x4000) == 0x4000)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Inconsistent))
                 sb.AppendLine("Volume is seriously inconsistent.");
 
-            if((mdb.drAtrb & 0x8000) == 0x8000)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SoftwareLock))
                 sb.AppendLine("Volume is locked by software.");
 
             sb.AppendFormat("{0} files on root directory", mdb.drNmFls).AppendLine();
@@ -274,7 +275,7 @@ namespace DiscImageChef.Filesystems
                 XmlFsType.CreationDateSpecified = true;
             }
 
-            XmlFsType.Dirty                 = (mdb.drAtrb & 0x100) != 0x100;
+            XmlFsType.Dirty                 = !mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted);
             XmlFsType.Files                 = mdb.drFilCnt;
             XmlFsType.FilesSpecified        = true;
             XmlFsType.FreeClusters          = mdb.drFreeBks;

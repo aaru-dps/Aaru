@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppleCommon\Consts.cs" />
+    <Compile Include="AppleCommon\Enums.cs" />
     <Compile Include="AppleCommon\Info.cs" />
     <Compile Include="AppleCommon\Structs.cs" />
     <Compile Include="AppleHFS\AppleHFS.cs" />

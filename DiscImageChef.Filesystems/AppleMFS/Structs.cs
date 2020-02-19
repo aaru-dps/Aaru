@@ -51,7 +51,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             /// <summary>0x006, Volume last backup date</summary>
             public uint drLsBkUp;
             /// <summary>0x00A, Volume attributes</summary>
-            public ushort drAtrb;
+            public AppleCommon.VolumeAttributes drAtrb;
             /// <summary>0x00C, Volume number of files</summary>
             public ushort drNmFls;
             /// <summary>0x00E, First directory sector</summary>

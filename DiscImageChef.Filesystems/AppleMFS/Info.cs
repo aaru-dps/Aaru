@@ -77,7 +77,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             mdb.drCrDate   = BigEndianBitConverter.ToUInt32(mdbSector, 0x002);
             mdb.drLsBkUp   = BigEndianBitConverter.ToUInt32(mdbSector, 0x006);
-            mdb.drAtrb     = BigEndianBitConverter.ToUInt16(mdbSector, 0x00A);
+            mdb.drAtrb     = (AppleCommon.VolumeAttributes)BigEndianBitConverter.ToUInt16(mdbSector, 0x00A);
             mdb.drNmFls    = BigEndianBitConverter.ToUInt16(mdbSector, 0x00C);
             mdb.drDirSt    = BigEndianBitConverter.ToUInt16(mdbSector, 0x00E);
             mdb.drBlLen    = BigEndianBitConverter.ToUInt16(mdbSector, 0x010);
@@ -98,10 +98,28 @@ namespace DiscImageChef.Filesystems.AppleMFS
             sb.AppendFormat("Creation date: {0}", DateHandlers.MacToDateTime(mdb.drCrDate)).AppendLine();
             sb.AppendFormat("Last backup date: {0}", DateHandlers.MacToDateTime(mdb.drLsBkUp)).AppendLine();
 
-            if((mdb.drAtrb & 0x80) == 0x80)
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.HardwareLock))
                 sb.AppendLine("Volume is locked by hardware.");
 
-            if((mdb.drAtrb & 0x8000) == 0x8000)
+            sb.AppendLine(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Unmounted) ? "Volume was unmonted."
+                              : "Volume is mounted.");
+
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SparedBadBlocks))
+                sb.AppendLine("Volume has spared bad blocks.");
+
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.DoesNotNeedCache))
+                sb.AppendLine("Volume does not need cache.");
+
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.BootInconsistent))
+                sb.AppendLine("Boot volume is inconsistent.");
+
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.ReusedIds))
+                sb.AppendLine("There are reused CNIDs.");
+
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.Inconsistent))
+                sb.AppendLine("Volume is seriously inconsistent.");
+
+            if(mdb.drAtrb.HasFlag(AppleCommon.VolumeAttributes.SoftwareLock))
                 sb.AppendLine("Volume is locked by software.");
 
             sb.AppendFormat("{0} files on volume", mdb.drNmFls).AppendLine();

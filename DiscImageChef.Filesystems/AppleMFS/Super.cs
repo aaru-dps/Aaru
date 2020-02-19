@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             volMDB.drCrDate   = BigEndianBitConverter.ToUInt32(mdbBlocks, 0x002);
             volMDB.drLsBkUp   = BigEndianBitConverter.ToUInt32(mdbBlocks, 0x006);
-            volMDB.drAtrb     = BigEndianBitConverter.ToUInt16(mdbBlocks, 0x00A);
+            volMDB.drAtrb     = (AppleCommon.VolumeAttributes)BigEndianBitConverter.ToUInt16(mdbBlocks, 0x00A);
             volMDB.drNmFls    = BigEndianBitConverter.ToUInt16(mdbBlocks, 0x00C);
             volMDB.drDirSt    = BigEndianBitConverter.ToUInt16(mdbBlocks, 0x00E);
             volMDB.drBlLen    = BigEndianBitConverter.ToUInt16(mdbBlocks, 0x010);
