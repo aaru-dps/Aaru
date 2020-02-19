@@ -82,31 +82,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
             Locked = 0x01, Used = 0x80
         }
 
-        [Flags]
-        enum MFS_FinderFlags : ushort
-        {
-            kIsOnDesk      = 0x0001, kColor      = 0x000E, kRequireSwitchLaunch = 0x0020,
-            kIsShared      = 0x0040, kHasNoINITs = 0x0080, kHasBeenInited       = 0x0100,
-            kHasCustomIcon = 0x0400, kLetter     = 0x0200, kChanged             = 0x0200,
-            kIsStationery  = 0x0800, kNameLocked = 0x1000, kHasBundle           = 0x2000,
-            kIsInvisible   = 0x4000, kIsAlias    = 0x8000
-        }
-
-        struct MFS_Point
-        {
-            public short x;
-            public short y;
-        }
-
-        struct MFS_FinderInfo
-        {
-            public uint            fdType;
-            public uint            fdCreator;
-            public MFS_FinderFlags fdFlags;
-            public MFS_Point       fdLocation;
-            public short           fdFldr;
-        }
-
         struct MFS_FileEntry
         {
             /// <summary>0x00, Entry flags</summary>
@@ -114,7 +89,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             /// <summary>0x01, Version number</summary>
             public byte flTyp;
             /// <summary>0x02, FinderInfo</summary>
-            public byte[] flUsrWds;
+            public AppleCommon.FInfo flUsrWds;
             /// <summary>0x12, file ID</summary>
             public uint flFlNum;
             /// <summary>0x16, first allocation block of data fork</summary>

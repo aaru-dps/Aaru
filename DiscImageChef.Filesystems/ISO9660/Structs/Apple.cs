@@ -52,12 +52,12 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct AppleHFSSystemUse
         {
-            public readonly ushort  signature;
-            public readonly byte    length;
-            public readonly AppleId id;
-            public readonly uint    type;
-            public readonly uint    creator;
-            public readonly FinderFlags  finder_flags;
+            public readonly ushort                  signature;
+            public readonly byte                    length;
+            public readonly AppleId                 id;
+            public readonly uint                    type;
+            public readonly uint                    creator;
+            public readonly AppleCommon.FinderFlags finder_flags;
         }
 
         // Little-endian

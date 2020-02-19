@@ -69,7 +69,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public List<(uint extent, uint size)> Extents;
             public string                         Filename;
             public byte                           FileUnitSize;
-            public FinderInfo                     FinderInfo;
+            public AppleCommon.FInfo?             FinderInfo;
             public FileFlags                      Flags;
             public byte                           Interleave;
             public PosixAttributes?               PosixAttributes;
@@ -93,40 +93,6 @@ namespace DiscImageChef.Filesystems.ISO9660
             public byte                           XattrLength;
 
             public override string ToString() => Filename;
-        }
-
-        [Flags]
-        enum FinderFlags : ushort
-        {
-            kIsOnDesk            = 0x0001,
-            kColor               = 0x000E,
-            kRequireSwitchLaunch = 0x0020,
-            kIsShared            = 0x0040,
-            kHasNoINITs          = 0x0080,
-            kHasBeenInited       = 0x0100,
-            kHasCustomIcon       = 0x0400,
-            kLetter              = 0x0200,
-            kChanged             = 0x0200,
-            kIsStationery        = 0x0800,
-            kNameLocked          = 0x1000,
-            kHasBundle           = 0x2000,
-            kIsInvisible         = 0x4000,
-            kIsAlias             = 0x8000
-        }
-
-        struct Point
-        {
-            public short x;
-            public short y;
-        }
-
-        class FinderInfo
-        {
-            public uint        fdCreator;
-            public FinderFlags fdFlags;
-            public short       fdFldr;
-            public Point       fdLocation;
-            public uint        fdType;
         }
 
         class PathTableEntryInternal

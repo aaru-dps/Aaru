@@ -233,7 +233,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>File type.</summary>
             public readonly sbyte filType;
             /// <summary>Finder information.</summary>
-            public readonly FInfo filUsrWds;
+            public readonly AppleCommon.FInfo filUsrWds;
             /// <summary>File ID.</summary>
             public readonly uint filFlNum;
             /// <summary>First allocation block of data fork.</summary>
@@ -328,32 +328,12 @@ namespace DiscImageChef.Filesystems
             public readonly ushort xkrFABN;
         }
 
-        struct Point
-        {
-            public ushort v;
-            public ushort h;
-        }
-
         struct Rect
         {
             public ushort top;
             public ushort left;
             public ushort bottom;
             public ushort right;
-        }
-
-        struct FInfo
-        {
-            /// <summary>The type of the file.</summary>
-            public uint fdType;
-            /// <summary>The file's creator.</summary>
-            public uint fdCreator;
-            /// <summary>Flags.</summary>
-            public FinderFlags fdFlags;
-            /// <summary>File's location in the folder.</summary>
-            public Point fdLocation;
-            /// <summary>Folder file belongs to (used only in flat filesystems like MFS).</summary>
-            public FinderFolder fdFldr;
         }
 
         struct FXInfo
@@ -375,9 +355,9 @@ namespace DiscImageChef.Filesystems
             /// <summary>Position and dimensions of the folder's window.</summary>
             public Rect frRect;
             /// <summary>Flags.</summary>
-            public FinderFlags frFlags;
+            public AppleCommon.FinderFlags frFlags;
             /// <summary>Folder's location in the parent folder.</summary>
-            public Point frLocation;
+            public AppleCommon.Point frLocation;
             /// <summary>Finder view selected for folder.</summary>
             public ushort frView;
         }
@@ -385,7 +365,7 @@ namespace DiscImageChef.Filesystems
         struct DXInfo
         {
             /// <summary>Scroll position for icon views.</summary>
-            public Point frScroll;
+            public AppleCommon.Point frScroll;
             /// <summary>Directory ID chain of open folders.</summary>
             public uint frOpenChain;
             /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>

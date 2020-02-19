@@ -34,82 +34,48 @@ using System;
 
 namespace DiscImageChef.Filesystems
 {
-    internal enum NodeType : sbyte
+    public partial class AppleHFS
     {
-        /// <summary>Index node</summary>
-        ndIndxNode = 0,
-        /// <summary>Header node</summary>
-        ndHdrNode = 1,
-        /// <summary>Map node</summary>
-        ndMapNode = 2,
-        /// <summary>Leaf node</summary>
-        ndLeafNode = -1
-    }
+        internal enum NodeType : sbyte
+        {
+            /// <summary>Index node</summary>
+            ndIndxNode = 0,
+            /// <summary>Header node</summary>
+            ndHdrNode = 1,
+            /// <summary>Map node</summary>
+            ndMapNode = 2,
+            /// <summary>Leaf node</summary>
+            ndLeafNode = -1
+        }
 
-    internal enum CatDataType : sbyte
-    {
-        /// <summary>Directory record</summary>
-        cdrDirRec = 1,
-        /// <summary>File record</summary>
-        cdrFilRec = 2,
-        /// <summary>Directory thread record</summary>
-        cdrThdRec = 3,
-        /// <summary>File thread record</summary>
-        cdrFThdRec = 4
-    }
+        internal enum CatDataType : sbyte
+        {
+            /// <summary>Directory record</summary>
+            cdrDirRec = 1,
+            /// <summary>File record</summary>
+            cdrFilRec = 2,
+            /// <summary>Directory thread record</summary>
+            cdrThdRec = 3,
+            /// <summary>File thread record</summary>
+            cdrFThdRec = 4
+        }
 
-    internal enum ForkType : sbyte
-    {
-        Data = 0, Resource = -1
-    }
+        internal enum ForkType : sbyte
+        {
+            Data = 0, Resource = -1
+        }
 
-    [Flags]
-    internal enum FinderFlags : ushort
-    {
-        /// <summary>Is on desktop.</summary>
-        kIsOnDesk = 0x0001,
-        /// <summary>Color mask.</summary>
-        kColor = 0x000E, kRequireSwitchLaunch = 0x0020,
-        /// <summary>If clear, the application needs to write to its resource fork, and therefore cannot be shared on a server.</summary>
-        kIsShared = 0x0040,
-        /// <summary>Extension or control panel with no INIT entries in resource fork.</summary>
-        kHasNoINITs = 0x0080,
-        /// <summary>
-        ///     Clear if the file contains desktop database resources ('BNDL', 'FREF', 'open', 'kind'...) that have not been
-        ///     added yet. Set only by the Finder. Reserved for folders - make sure this bit is cleared for folders.
-        /// </summary>
-        kHasBeenInited = 0x0100,
-        /// <summary>PowerTalk</summary>
-        kAOCE = 0x200,
-        /// <summary>Has a custom icon in the resource fork.</summary>
-        kHasCustomIcon = 0x0400,
-        /// <summary>Is a stationery.</summary>
-        kIsStationery = 0x0800,
-        /// <summary>Cannot be renamed.</summary>
-        kNameLocked = 0x1000,
-        /// <summary>Indicates that a file has a BNDL resource or that a folder is displayed as a package.</summary>
-        kHasBundle = 0x2000,
-        /// <summary>Hidden.</summary>
-        kIsInvisible = 0x4000,
-        /// <summary>Is an alias</summary>
-        kIsAlias = 0x8000
-    }
-
-    [Flags]
-    internal enum ExtendedFinderFlags : ushort
-    {
-        /// <summary>If set the other extended flags are ignored.</summary>
-        kExtendedFlagsAreInvalid = 0x8000,
-        /// <summary>Set if the file or folder has a badge resource.</summary>
-        kExtendedFlagHasCustomBadge = 0x0100,
-        /// <summary>Set if the object is marked as busy/incomplete.</summary>
-        kExtendedFlagObjectIsBusy = 0x0080,
-        /// <summary>Set if the file contains routing info resource.</summary>
-        kExtendedFlagHasRoutingInfo = 0x0004
-    }
-
-    internal enum FinderFolder : short
-    {
-        fTrash = -3, fDesktop = -2, fDisk = 0
+        [Flags]
+        internal enum ExtendedFinderFlags : ushort
+        {
+            /// <summary>If set the other extended flags are ignored.</summary>
+            kExtendedFlagsAreInvalid = 0x8000,
+            /// <summary>Set if the file or folder has a badge resource.</summary>
+            kExtendedFlagHasCustomBadge = 0x0100,
+            /// <summary>Set if the object is marked as busy/incomplete.</summary>
+            kExtendedFlagObjectIsBusy = 0x0080,
+            /// <summary>Set if the file contains routing info resource.</summary>
+            kExtendedFlagHasRoutingInfo = 0x0004
+        }
     }
 }

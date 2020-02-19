@@ -177,31 +177,33 @@ namespace DiscImageChef.Filesystems.ISO9660
 
             if(entry.FinderInfo != null)
             {
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsAlias))
+                AppleCommon.FInfo finderInfo = entry.FinderInfo.Value;
+
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
                     stat.Attributes |= FileAttributes.Alias;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsInvisible))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible))
                     stat.Attributes |= FileAttributes.Hidden;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasBeenInited))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBeenInited))
                     stat.Attributes |= FileAttributes.HasBeenInited;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasCustomIcon))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasCustomIcon))
                     stat.Attributes |= FileAttributes.HasCustomIcon;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasNoINITs))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasNoINITs))
                     stat.Attributes |= FileAttributes.HasNoINITs;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsOnDesk))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk))
                     stat.Attributes |= FileAttributes.IsOnDesk;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsShared))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsShared))
                     stat.Attributes |= FileAttributes.Shared;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kIsStationery))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsStationery))
                     stat.Attributes |= FileAttributes.Stationery;
 
-                if(entry.FinderInfo.fdFlags.HasFlag(FinderFlags.kHasBundle))
+                if(finderInfo.fdFlags.HasFlag(AppleCommon.FinderFlags.kHasBundle))
                     stat.Attributes |= FileAttributes.Bundle;
             }
 

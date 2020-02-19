@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using DiscImageChef.CommonTypes.Enums;
 using DiscImageChef.CommonTypes.Structs;
+using DiscImageChef.Helpers;
 
 namespace DiscImageChef.Filesystems.AppleMFS
 {
@@ -44,20 +45,27 @@ namespace DiscImageChef.Filesystems.AppleMFS
         public Errno ListXAttr(string path, out List<string> xattrs)
         {
             xattrs = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1) return Errno.NotSupported;
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
+
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
 
             path = pathElements[0];
 
             xattrs = new List<string>();
 
             if(debug)
-                if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
+                if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
+                   string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
+                   string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
                 {
                     if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                         xattrs.Add("com.apple.macintosh.tags");
@@ -65,20 +73,25 @@ namespace DiscImageChef.Filesystems.AppleMFS
                     return Errno.NoError;
                 }
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+                return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+                return Errno.NoSuchFile;
 
             if(entry.flRLgLen > 0)
             {
                 xattrs.Add("com.apple.ResourceFork");
+
                 if(debug && device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                     xattrs.Add("com.apple.ResourceFork.tags");
             }
 
-            if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds)) xattrs.Add("com.apple.FinderInfo");
+            xattrs.Add("com.apple.FinderInfo");
 
-            if(debug && device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) && entry.flLgLen > 0)
+            if(debug                                                                 &&
+               device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
+               entry.flLgLen > 0)
                 xattrs.Add("com.apple.macintosh.tags");
 
             xattrs.Sort();
@@ -88,18 +101,24 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
         public Errno GetXattr(string path, string xattr, ref byte[] buf)
         {
-            if(!mounted) return Errno.AccessDenied;
+            if(!mounted)
+                return Errno.AccessDenied;
 
-            string[] pathElements = path.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
-            if(pathElements.Length != 1) return Errno.NotSupported;
+            string[] pathElements = path.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
+
+            if(pathElements.Length != 1)
+                return Errno.NotSupported;
 
             path = pathElements[0];
 
             if(debug)
-                if(string.Compare(path, "$",       StringComparison.InvariantCulture) == 0 ||
+                if(string.Compare(path, "$", StringComparison.InvariantCulture)       == 0 ||
                    string.Compare(path, "$Bitmap", StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$Boot",   StringComparison.InvariantCulture) == 0 ||
-                   string.Compare(path, "$MDB",    StringComparison.InvariantCulture) == 0)
+                   string.Compare(path, "$Boot", StringComparison.InvariantCulture)   == 0 ||
+                   string.Compare(path, "$MDB", StringComparison.InvariantCulture)    == 0)
                     if(device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) &&
                        string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) == 0)
                     {
@@ -107,6 +126,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                         {
                             buf = new byte[directoryTags.Length];
                             Array.Copy(directoryTags, 0, buf, 0, buf.Length);
+
                             return Errno.NoError;
                         }
 
@@ -114,6 +134,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                         {
                             buf = new byte[bitmapTags.Length];
                             Array.Copy(bitmapTags, 0, buf, 0, buf.Length);
+
                             return Errno.NoError;
                         }
 
@@ -121,6 +142,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                         {
                             buf = new byte[bootTags.Length];
                             Array.Copy(bootTags, 0, buf, 0, buf.Length);
+
                             return Errno.NoError;
                         }
 
@@ -128,6 +150,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
                         {
                             buf = new byte[mdbTags.Length];
                             Array.Copy(mdbTags, 0, buf, 0, buf.Length);
+
                             return Errno.NoError;
                         }
                     }
@@ -136,14 +159,17 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             Errno error;
 
-            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId)) return Errno.NoSuchFile;
+            if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
+                return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry)) return Errno.NoSuchFile;
+            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+                return Errno.NoSuchFile;
 
             if(entry.flRLgLen                                                                     > 0 &&
                string.Compare(xattr, "com.apple.ResourceFork", StringComparison.InvariantCulture) == 0)
             {
                 error = ReadFile(path, out buf, true, false);
+
                 return error;
             }
 
@@ -151,22 +177,24 @@ namespace DiscImageChef.Filesystems.AppleMFS
                string.Compare(xattr, "com.apple.ResourceFork.tags", StringComparison.InvariantCulture) == 0)
             {
                 error = ReadFile(path, out buf, true, true);
+
                 return error;
             }
 
-            if(!ArrayHelpers.ArrayIsNullOrEmpty(entry.flUsrWds) &&
-               string.Compare(xattr, "com.apple.FinderInfo", StringComparison.InvariantCulture) == 0)
+            if(string.Compare(xattr, "com.apple.FinderInfo", StringComparison.InvariantCulture) == 0)
             {
-                buf = new byte[16];
-                Array.Copy(entry.flUsrWds, 0, buf, 0, 16);
+                buf = Marshal.StructureToByteArrayBigEndian(entry.flUsrWds);
+
                 return Errno.NoError;
             }
 
-            if(!debug || !device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
+            if(!debug                                                                 ||
+               !device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag) ||
                string.Compare(xattr, "com.apple.macintosh.tags", StringComparison.InvariantCulture) != 0)
                 return Errno.NoSuchExtendedAttribute;
 
             error = ReadFile(path, out buf, false, true);
+
             return error;
         }
     }

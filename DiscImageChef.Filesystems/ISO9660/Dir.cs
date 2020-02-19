@@ -518,8 +518,9 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             int systemAreaOff = start;
             hasResourceFork = false;
-            bool continueSymlink          = false;
-            bool continueSymlinkComponent = false;
+            bool              continueSymlink          = false;
+            bool              continueSymlinkComponent = false;
+            AppleCommon.FInfo fInfo;
 
             while(systemAreaOff + 2 <= end)
             {
@@ -563,10 +564,11 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                                 hasResourceFork = true;
 
-                                entry.FinderInfo           = new FinderInfo();
-                                entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
-                                entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
-                                entry.FinderInfo.fdType    = appleHfsSystemUse.type;
+                                fInfo            = new AppleCommon.FInfo();
+                                fInfo.fdCreator  = appleHfsSystemUse.creator;
+                                fInfo.fdFlags    = appleHfsSystemUse.finder_flags;
+                                fInfo.fdType     = appleHfsSystemUse.type;
+                                entry.FinderInfo = fInfo;
 
                                 break;
                         }
@@ -606,9 +608,10 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                                 hasResourceFork = true;
 
-                                entry.FinderInfo           = new FinderInfo();
-                                entry.FinderInfo.fdCreator = appleHfsTypeCreatorSystemUse.creator;
-                                entry.FinderInfo.fdType    = appleHfsTypeCreatorSystemUse.type;
+                                fInfo            = new AppleCommon.FInfo();
+                                fInfo.fdCreator  = appleHfsTypeCreatorSystemUse.creator;
+                                fInfo.fdType     = appleHfsTypeCreatorSystemUse.type;
+                                entry.FinderInfo = fInfo;
 
                                 systemAreaOff += Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>();
 
@@ -624,10 +627,11 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                                 hasResourceFork = true;
 
-                                entry.FinderInfo           = new FinderInfo();
-                                entry.FinderInfo.fdCreator = appleHfsIconSystemUse.creator;
-                                entry.FinderInfo.fdType    = appleHfsIconSystemUse.type;
-                                entry.AppleIcon            = appleHfsIconSystemUse.icon;
+                                fInfo            = new AppleCommon.FInfo();
+                                fInfo.fdCreator  = appleHfsIconSystemUse.creator;
+                                fInfo.fdType     = appleHfsIconSystemUse.type;
+                                entry.FinderInfo = fInfo;
+                                entry.AppleIcon  = appleHfsIconSystemUse.icon;
 
                                 systemAreaOff += Marshal.SizeOf<AppleHFSIconSystemUse>();
 
@@ -642,10 +646,11 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                                 hasResourceFork = true;
 
-                                entry.FinderInfo           = new FinderInfo();
-                                entry.FinderInfo.fdCreator = appleHfsSystemUse.creator;
-                                entry.FinderInfo.fdFlags   = (FinderFlags)appleHfsSystemUse.finder_flags;
-                                entry.FinderInfo.fdType    = appleHfsSystemUse.type;
+                                fInfo            = new AppleCommon.FInfo();
+                                fInfo.fdCreator  = appleHfsSystemUse.creator;
+                                fInfo.fdFlags    = (AppleCommon.FinderFlags)appleHfsSystemUse.finder_flags;
+                                fInfo.fdType     = appleHfsSystemUse.type;
+                                entry.FinderInfo = fInfo;
 
                                 systemAreaOff += Marshal.SizeOf<AppleHFSOldSystemUse>();
 

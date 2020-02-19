@@ -88,5 +88,25 @@ namespace DiscImageChef.Filesystems
             /// <summary>0x090, Fraction of RAM for system heap</summary>
             public readonly uint bbSysHeapFract;
         }
+
+        internal struct Point
+        {
+            public ushort v;
+            public ushort h;
+        }
+
+        internal struct FInfo
+        {
+            /// <summary>The type of the file.</summary>
+            public uint fdType;
+            /// <summary>The file's creator.</summary>
+            public uint fdCreator;
+            /// <summary>Flags.</summary>
+            public FinderFlags fdFlags;
+            /// <summary>File's location in the folder.</summary>
+            public Point fdLocation;
+            /// <summary>Folder file belongs to (used only in flat filesystems like MFS).</summary>
+            public FinderFolder fdFldr;
+        }
     }
 }
