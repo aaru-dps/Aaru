@@ -215,9 +215,9 @@ namespace DiscImageChef.Filesystems
             /// <summary>Date and time of last backup.</summary>
             public readonly uint dirBkDat;
             /// <summary>Finder information.</summary>
-            public readonly DInfo dirUsrInfo;
+            public readonly AppleCommon.DInfo dirUsrInfo;
             /// <summary>Additional Finder information.</summary>
-            public readonly DXInfo dirFndrInfo;
+            public readonly AppleCommon.DXInfo dirFndrInfo;
             /// <summary>Reserved</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
             public readonly uint[] dirResrv;
@@ -255,7 +255,7 @@ namespace DiscImageChef.Filesystems
             /// <summary>Date and time of last backup.</summary>
             public readonly uint filBkDat;
             /// <summary>Additional Finder information.</summary>
-            public readonly FXInfo filFndrInfo;
+            public readonly AppleCommon.FXInfo filFndrInfo;
             /// <summary>File clump size.</summary>
             public readonly ushort filClpSize;
             /// <summary>First data fork extent record.</summary>
@@ -326,54 +326,6 @@ namespace DiscImageChef.Filesystems
             public readonly uint xkrFNum;
             /// <summary>Starting file allocation block.</summary>
             public readonly ushort xkrFABN;
-        }
-
-        struct Rect
-        {
-            public ushort top;
-            public ushort left;
-            public ushort bottom;
-            public ushort right;
-        }
-
-        struct FXInfo
-        {
-            /// <summary>Resource fork ID of file icon.</summary>
-            public ushort fdIconID;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public byte[] fdUnused;
-            /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
-            public ExtendedFinderFlags fdXFlags;
-            /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
-            public ushort fdComment;
-            /// <summary>Put away folder ID.</summary>
-            public uint fdPutAway;
-        }
-
-        struct DInfo
-        {
-            /// <summary>Position and dimensions of the folder's window.</summary>
-            public Rect frRect;
-            /// <summary>Flags.</summary>
-            public AppleCommon.FinderFlags frFlags;
-            /// <summary>Folder's location in the parent folder.</summary>
-            public AppleCommon.Point frLocation;
-            /// <summary>Finder view selected for folder.</summary>
-            public ushort frView;
-        }
-
-        struct DXInfo
-        {
-            /// <summary>Scroll position for icon views.</summary>
-            public AppleCommon.Point frScroll;
-            /// <summary>Directory ID chain of open folders.</summary>
-            public uint frOpenChain;
-            /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
-            public ExtendedFinderFlags frXFlags;
-            /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
-            public ushort frComment;
-            /// <summary>Put away folder ID.</summary>
-            public uint frPutAway;
         }
     }
 }

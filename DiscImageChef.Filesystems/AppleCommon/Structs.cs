@@ -89,6 +89,14 @@ namespace DiscImageChef.Filesystems
             public readonly uint bbSysHeapFract;
         }
 
+        internal struct Rect
+        {
+            public ushort top;
+            public ushort left;
+            public ushort bottom;
+            public ushort right;
+        }
+
         internal struct Point
         {
             public ushort v;
@@ -107,6 +115,46 @@ namespace DiscImageChef.Filesystems
             public Point fdLocation;
             /// <summary>Folder file belongs to (used only in flat filesystems like MFS).</summary>
             public FinderFolder fdFldr;
+        }
+
+        internal struct FXInfo
+        {
+            /// <summary>Resource fork ID of file icon.</summary>
+            public ushort fdIconID;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] fdUnused;
+            /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
+            public ExtendedFinderFlags fdXFlags;
+            /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
+            public ushort fdComment;
+            /// <summary>Put away folder ID.</summary>
+            public uint fdPutAway;
+        }
+
+        internal struct DInfo
+        {
+            /// <summary>Position and dimensions of the folder's window.</summary>
+            public Rect frRect;
+            /// <summary>Flags.</summary>
+            public FinderFlags frFlags;
+            /// <summary>Folder's location in the parent folder.</summary>
+            public Point frLocation;
+            /// <summary>Finder view selected for folder.</summary>
+            public ushort frView;
+        }
+
+        internal struct DXInfo
+        {
+            /// <summary>Scroll position for icon views.</summary>
+            public Point frScroll;
+            /// <summary>Directory ID chain of open folders.</summary>
+            public uint frOpenChain;
+            /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
+            public ExtendedFinderFlags frXFlags;
+            /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
+            public ushort frComment;
+            /// <summary>Put away folder ID.</summary>
+            public uint frPutAway;
         }
     }
 }

@@ -30,8 +30,6 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using System;
-
 namespace DiscImageChef.Filesystems
 {
     public partial class AppleHFS
@@ -63,19 +61,6 @@ namespace DiscImageChef.Filesystems
         internal enum ForkType : sbyte
         {
             Data = 0, Resource = -1
-        }
-
-        [Flags]
-        internal enum ExtendedFinderFlags : ushort
-        {
-            /// <summary>If set the other extended flags are ignored.</summary>
-            kExtendedFlagsAreInvalid = 0x8000,
-            /// <summary>Set if the file or folder has a badge resource.</summary>
-            kExtendedFlagHasCustomBadge = 0x0100,
-            /// <summary>Set if the object is marked as busy/incomplete.</summary>
-            kExtendedFlagObjectIsBusy = 0x0080,
-            /// <summary>Set if the file contains routing info resource.</summary>
-            kExtendedFlagHasRoutingInfo = 0x0004
         }
     }
 }
