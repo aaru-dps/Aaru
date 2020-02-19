@@ -34,11 +34,9 @@ namespace DiscImageChef.Filesystems
 {
     // Information from Inside Macintosh
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf
-    public partial class AppleHFS
+    internal static partial class AppleCommon
     {
-        /// <summary>"BD", HFS magic</summary>
-        const ushort HFS_MAGIC = 0x4244;
-        /// <summary>"H+", HFS+ magic</summary>
-        const ushort HFSP_MAGIC = 0x482B;
+        /// <summary>"LK", HFS bootblock magic</summary>
+        internal const ushort BB_MAGIC = 0x4C4B;
     }
 }

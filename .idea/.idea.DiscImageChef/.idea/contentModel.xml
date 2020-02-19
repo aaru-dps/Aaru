@@ -1308,6 +1308,11 @@
         <e p="APFS.cs" t="Include" />
         <e p="Acorn.cs" t="Include" />
         <e p="AmigaDOS.cs" t="Include" />
+        <e p="AppleCommon" t="Include">
+          <e p="Consts.cs" t="Include" />
+          <e p="Info.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+        </e>
         <e p="AppleDOS" t="Include">
           <e p="AppleDOS.cs" t="Include" />
           <e p="Dir.cs" t="Include" />

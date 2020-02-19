@@ -76,45 +76,6 @@ namespace DiscImageChef.Filesystems.AppleMFS
             public string drVN;
         }
 
-        /// <summary>Should be at offset 0x0000 in volume, followed by boot code</summary>
-        struct MFS_BootBlock
-        {
-            /// <summary>0x000, Signature, 0x4C4B if bootable</summary>
-            public ushort bbID;
-            /// <summary>0x002, Branch</summary>
-            public uint bbEntry;
-            /// <summary>0x006, Boot block flags</summary>
-            public byte boot_flags;
-            /// <summary>0x007, Boot block version</summary>
-            public byte bbVersion;
-            /// <summary>0x008, Allocate secondary buffers</summary>
-            public short bbPageFlags;
-            /// <summary>0x00A, System file name (16 bytes)</summary>
-            public string bbSysName;
-            /// <summary>0x01A, Finder file name (16 bytes)</summary>
-            public string bbShellName;
-            /// <summary>0x02A, Debugger file name (16 bytes)</summary>
-            public string bbDbg1Name;
-            /// <summary>0x03A, Disassembler file name (16 bytes)</summary>
-            public string bbDbg2Name;
-            /// <summary>0x04A, Startup screen file name (16 bytes)</summary>
-            public string bbScreenName;
-            /// <summary>0x05A, First program to execute on boot (16 bytes)</summary>
-            public string bbHelloName;
-            /// <summary>0x06A, Clipboard file name (16 bytes)</summary>
-            public string bbScrapName;
-            /// <summary>0x07A, 1/4 of maximum opened at a time files</summary>
-            public ushort bbCntFCBs;
-            /// <summary>0x07C, Event queue size</summary>
-            public ushort bbCntEvts;
-            /// <summary>0x07E, Heap size on a Mac with 128KiB of RAM</summary>
-            public uint bb128KSHeap;
-            /// <summary>0x082, Heap size on a Mac with 256KiB of RAM</summary>
-            public uint bb256KSHeap;
-            /// <summary>0x086, Heap size on a Mac with 512KiB of RAM or more</summary>
-            public uint bbSysHeapSize;
-        }
-
         [Flags]
         enum MFS_FileFlags : byte
         {
