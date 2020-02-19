@@ -53,10 +53,9 @@ namespace DiscImageChef.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructureLittleEndian<T>(byte[] bytes) where T : struct
         {
-            GCHandle ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+            var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
-            var str =
-                (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
+            var str = (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
 
             ptr.Free();
 
@@ -84,10 +83,9 @@ namespace DiscImageChef.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T ByteArrayToStructureBigEndian<T>(byte[] bytes) where T : struct
         {
-            GCHandle ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+            var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
-            object str =
-                (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
+            object str = (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
 
             ptr.Free();
 
@@ -116,7 +114,7 @@ namespace DiscImageChef.Helpers
         public static T ByteArrayToStructurePdpEndian<T>(byte[] bytes) where T : struct
         {
             {
-                GCHandle ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+                var ptr = GCHandle.Alloc(bytes, GCHandleType.Pinned);
 
                 object str =
                     (T)System.Runtime.InteropServices.Marshal.PtrToStructure(ptr.AddrOfPinnedObject(), typeof(T));
@@ -175,7 +173,7 @@ namespace DiscImageChef.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructureBigEndian<T>(ReadOnlySpan<byte> bytes) where T : struct
         {
-            var str = SpanToStructureLittleEndian<T>(bytes);
+            T str = SpanToStructureLittleEndian<T>(bytes);
 
             return(T)SwapStructureMembersEndian(str);
         }
@@ -192,7 +190,7 @@ namespace DiscImageChef.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T SpanToStructureBigEndian<T>(ReadOnlySpan<byte> bytes, int start, int length) where T : struct
         {
-            var str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
+            T str = SpanToStructureLittleEndian<T>(bytes.Slice(start, length));
 
             return(T)SwapStructureMembersEndian(str);
         }
@@ -255,7 +253,6 @@ namespace DiscImageChef.Helpers
                     return properties.HasReferences ? ByteArrayToStructureBigEndian<T>(bytes)
                                : SpanToStructureBigEndian<T>(bytes);
 
-
                 case BitEndian.Pdp:
                     return properties.HasReferences ? ByteArrayToStructurePdpEndian<T>(bytes)
                                : SpanToStructurePdpEndian<T>(bytes);
@@ -273,18 +270,21 @@ namespace DiscImageChef.Helpers
             FieldInfo[] fieldInfo = t.GetFields();
 
             foreach(FieldInfo fi in fieldInfo)
-                if(fi.FieldType == typeof(short))
+                if(fi.FieldType == typeof(short) ||
+                   (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(short)))
                 {
                     short x = (short)fi.GetValue(str);
                     fi.SetValue(str, (short)((x << 8) | ((x >> 8) & 0xFF)));
                 }
-                else if(fi.FieldType == typeof(int))
+                else if(fi.FieldType == typeof(int) ||
+                        (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int)))
                 {
                     int x = (int)fi.GetValue(str);
                     x = (int)(((x                   << 8) & 0xFF00FF00) | (((uint)x >> 8) & 0xFF00FF));
                     fi.SetValue(str, (int)(((uint)x << 16) | (((uint)x >> 16) & 0xFFFF)));
                 }
-                else if(fi.FieldType == typeof(long))
+                else if(fi.FieldType == typeof(long) ||
+                        (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(long)))
                 {
                     long x = (long)fi.GetValue(str);
                     x = ((x & 0x00000000FFFFFFFF) << 32) | (long)(((ulong)x & 0xFFFFFFFF00000000) >> 32);
@@ -293,18 +293,21 @@ namespace DiscImageChef.Helpers
 
                     fi.SetValue(str, x);
                 }
-                else if(fi.FieldType == typeof(ushort))
+                else if(fi.FieldType == typeof(ushort) ||
+                        (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ushort)))
                 {
                     ushort x = (ushort)fi.GetValue(str);
                     fi.SetValue(str, (ushort)((x << 8) | (x >> 8)));
                 }
-                else if(fi.FieldType == typeof(uint))
+                else if(fi.FieldType == typeof(uint) ||
+                        (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint)))
                 {
                     uint x = (uint)fi.GetValue(str);
                     x = ((x             << 8) & 0xFF00FF00) | ((x >> 8) & 0xFF00FF);
                     fi.SetValue(str, (x << 16) | (x               >> 16));
                 }
-                else if(fi.FieldType == typeof(ulong))
+                else if(fi.FieldType == typeof(ulong) ||
+                        (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(ulong)))
                 {
                     ulong x = (ulong)fi.GetValue(str);
                     x = ((x & 0x00000000FFFFFFFF) << 32) | ((x & 0xFFFFFFFF00000000) >> 32);
@@ -342,7 +345,7 @@ namespace DiscImageChef.Helpers
                     // TODO: Swap GUID
                 }
 
-                // TODO: Swap arrays and enums
+                // TODO: Swap arrays
                 else if(fi.FieldType.IsValueType &&
                         !fi.FieldType.IsEnum     &&
                         !fi.FieldType.IsArray)
@@ -374,18 +377,20 @@ namespace DiscImageChef.Helpers
                 {
                     // Do nothing
                 }
-                else if(fi.FieldType == typeof(int))
+                else if(fi.FieldType == typeof(int) ||
+                        (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(int)))
                 {
                     int x = (int)fi.GetValue(str);
                     fi.SetValue(str, ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16));
                 }
-                else if(fi.FieldType == typeof(uint))
+                else if(fi.FieldType == typeof(uint) ||
+                        (fi.FieldType.IsEnum && fi.FieldType.GetEnumUnderlyingType() == typeof(uint)))
                 {
                     uint x = (uint)fi.GetValue(str);
                     fi.SetValue(str, ((x & 0xffff) << 16) | ((x & 0xffff0000) >> 16));
                 }
 
-                // TODO: Swap arrays and enums
+                // TODO: Swap arrays
                 else if(fi.FieldType.IsValueType &&
                         !fi.FieldType.IsEnum     &&
                         !fi.FieldType.IsArray)
@@ -405,8 +410,8 @@ namespace DiscImageChef.Helpers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte[] StructureToByteArrayLittleEndian<T>(T str) where T : struct
         {
-            byte[]   buf = new byte[SizeOf<T>()];
-            GCHandle ptr = GCHandle.Alloc(buf, GCHandleType.Pinned);
+            byte[] buf = new byte[SizeOf<T>()];
+            var    ptr = GCHandle.Alloc(buf, GCHandleType.Pinned);
             System.Runtime.InteropServices.Marshal.StructureToPtr(str, ptr.AddrOfPinnedObject(), false);
             ptr.Free();
 
