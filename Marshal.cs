@@ -417,5 +417,13 @@ namespace DiscImageChef.Helpers
 
             return buf;
         }
+
+        /// <summary>Marshal a structure to little-endian binary data</summary>
+        /// <param name="bytes">Byte array containing the binary data</param>
+        /// <typeparam name="T">Type of the structure to marshal</typeparam>
+        /// <returns>The binary data marshalled in a structure with the specified type</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static byte[] StructureToByteArrayBigEndian<T>(T str) where T : struct =>
+            StructureToByteArrayLittleEndian((T)SwapStructureMembersEndian(str));
     }
 }
