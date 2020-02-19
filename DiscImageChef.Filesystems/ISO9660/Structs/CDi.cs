@@ -40,7 +40,7 @@ namespace DiscImageChef.Filesystems.ISO9660
     {
         static DecodedVolumeDescriptor DecodeVolumeDescriptor(FileStructureVolumeDescriptor pvd)
         {
-            DecodedVolumeDescriptor decodedVD = new DecodedVolumeDescriptor
+            var decodedVD = new DecodedVolumeDescriptor
             {
                 SystemIdentifier       = StringHandlers.CToString(pvd.system_id).TrimEnd(),
                 VolumeIdentifier       = StringHandlers.CToString(pvd.volume_id).TrimEnd(),
@@ -50,12 +50,14 @@ namespace DiscImageChef.Filesystems.ISO9660
                 ApplicationIdentifier  = StringHandlers.CToString(pvd.application_data).TrimEnd()
             };
 
-            if(pvd.creation_date[0] == '0' || pvd.creation_date[0] == 0x00) decodedVD.CreationTime = DateTime.MinValue;
+            if(pvd.creation_date[0] == '0' ||
+               pvd.creation_date[0] == 0x00)
+                decodedVD.CreationTime = DateTime.MinValue;
             else
-                decodedVD.CreationTime =
-                    DateHandlers.HighSierraToDateTime(pvd.creation_date);
+                decodedVD.CreationTime = DateHandlers.HighSierraToDateTime(pvd.creation_date);
 
-            if(pvd.modification_date[0] == '0' || pvd.modification_date[0] == 0x00)
+            if(pvd.modification_date[0] == '0' ||
+               pvd.modification_date[0] == 0x00)
                 decodedVD.HasModificationTime = false;
             else
             {
@@ -63,14 +65,18 @@ namespace DiscImageChef.Filesystems.ISO9660
                 decodedVD.ModificationTime    = DateHandlers.HighSierraToDateTime(pvd.modification_date);
             }
 
-            if(pvd.expiration_date[0] == '0' || pvd.expiration_date[0] == 0x00) decodedVD.HasExpirationTime = false;
+            if(pvd.expiration_date[0] == '0' ||
+               pvd.expiration_date[0] == 0x00)
+                decodedVD.HasExpirationTime = false;
             else
             {
                 decodedVD.HasExpirationTime = true;
                 decodedVD.ExpirationTime    = DateHandlers.HighSierraToDateTime(pvd.expiration_date);
             }
 
-            if(pvd.effective_date[0] == '0' || pvd.effective_date[0] == 0x00) decodedVD.HasEffectiveTime = false;
+            if(pvd.effective_date[0] == '0' ||
+               pvd.effective_date[0] == 0x00)
+                decodedVD.HasEffectiveTime = false;
             else
             {
                 decodedVD.HasEffectiveTime = true;
@@ -98,6 +104,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
             public readonly byte[] reserved1;
             public readonly uint volume_space_size;
+
             // Only used in SVDs
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
             public readonly byte[] escape_sequences;
@@ -169,6 +176,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public readonly ushort              reserved4;
             public readonly ushort              volume_sequence_number;
             public readonly byte                name_len;
+
             // Followed by name[name_len] and then CdiSystemArea until length arrives
         }
 
@@ -176,12 +184,12 @@ namespace DiscImageChef.Filesystems.ISO9660
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct CdiSystemArea
         {
-            public readonly ushort group;
-            public readonly ushort owner;
-            public readonly ushort attributes;
-            public readonly ushort reserved1;
-            public readonly byte   file_no;
-            public readonly byte   reserved2;
+            public readonly ushort        group;
+            public readonly ushort        owner;
+            public readonly CdiAttributes attributes;
+            public readonly ushort        reserved1;
+            public readonly byte          file_no;
+            public readonly byte          reserved2;
         }
     }
 }

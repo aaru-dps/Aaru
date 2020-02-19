@@ -57,7 +57,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             public readonly AppleId id;
             public readonly uint    type;
             public readonly uint    creator;
-            public readonly ushort  finder_flags;
+            public readonly FinderFlags  finder_flags;
         }
 
         // Little-endian

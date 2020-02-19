@@ -49,11 +49,15 @@ namespace DiscImageChef.Filesystems.ISO9660
         public Errno ReadDir(string path, out List<string> contents)
         {
             contents = null;
-            if(!mounted) return Errno.AccessDenied;
 
-            if(string.IsNullOrWhiteSpace(path) || path == "/")
+            if(!mounted)
+                return Errno.AccessDenied;
+
+            if(string.IsNullOrWhiteSpace(path) ||
+               path == "/")
             {
                 contents = GetFilenames(rootDirectoryCache);
+
                 return Errno.NoError;
             }
 
@@ -64,17 +68,23 @@ namespace DiscImageChef.Filesystems.ISO9660
             if(directoryCache.TryGetValue(cutPath, out Dictionary<string, DecodedDirectoryEntry> currentDirectory))
             {
                 contents = currentDirectory.Keys.ToList();
+
                 return Errno.NoError;
             }
 
-            string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+            string[] pieces = cutPath.Split(new[]
+            {
+                '/'
+            }, StringSplitOptions.RemoveEmptyEntries);
 
             KeyValuePair<string, DecodedDirectoryEntry> entry =
                 rootDirectoryCache.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[0]);
 
-            if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
+            if(string.IsNullOrEmpty(entry.Key))
+                return Errno.NoSuchFile;
 
-            if(!entry.Value.Flags.HasFlag(FileFlags.Directory)) return Errno.NotDirectory;
+            if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
+                return Errno.NotDirectory;
 
             string currentPath = pieces[0];
 
@@ -84,18 +94,24 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 entry = currentDirectory.FirstOrDefault(t => t.Key.ToLower(CultureInfo.CurrentUICulture) == pieces[p]);
 
-                if(string.IsNullOrEmpty(entry.Key)) return Errno.NoSuchFile;
+                if(string.IsNullOrEmpty(entry.Key))
+                    return Errno.NoSuchFile;
 
-                if(!entry.Value.Flags.HasFlag(FileFlags.Directory)) return Errno.NotDirectory;
+                if(!entry.Value.Flags.HasFlag(FileFlags.Directory))
+                    return Errno.NotDirectory;
 
                 currentPath = p == 0 ? pieces[0] : $"{currentPath}/{pieces[p]}";
 
-                if(directoryCache.TryGetValue(currentPath, out currentDirectory)) continue;
+                if(directoryCache.TryGetValue(currentPath, out currentDirectory))
+                    continue;
 
-                if(entry.Value.Extents.Count == 0) return Errno.InvalidArgument;
+                if(entry.Value.Extents.Count == 0)
+                    return Errno.InvalidArgument;
 
                 uint dirSizeInSectors = entry.Value.Extents[0].size / 2048;
-                if(entry.Value.Size % 2048 > 0) dirSizeInSectors++;
+
+                if(entry.Value.Size % 2048 > 0)
+                    dirSizeInSectors++;
 
                 currentDirectory = cdi
                                        ? DecodeCdiDirectory(entry.Value.Extents[0].extent, dirSizeInSectors,
@@ -118,19 +134,20 @@ namespace DiscImageChef.Filesystems.ISO9660
             }
 
             contents = GetFilenames(currentDirectory);
+
             return Errno.NoError;
         }
 
         List<string> GetFilenames(Dictionary<string, DecodedDirectoryEntry> dirents)
         {
             List<string> contents = new List<string>();
+
             foreach(DecodedDirectoryEntry entry in dirents.Values)
                 switch(@namespace)
                 {
                     case Namespace.Normal:
                         contents.Add(entry.Filename.EndsWith(";1", StringComparison.Ordinal)
-                                         ? entry.Filename.Substring(0, entry.Filename.Length - 2)
-                                         : entry.Filename);
+                                         ? entry.Filename.Substring(0, entry.Filename.Length - 2) : entry.Filename);
 
                         break;
                     case Namespace.Vms:
@@ -138,6 +155,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     case Namespace.Rrip:
                     case Namespace.Romeo:
                         contents.Add(entry.Filename);
+
                         break;
                     default: throw new ArgumentOutOfRangeException();
                 }
@@ -160,46 +178,55 @@ namespace DiscImageChef.Filesystems.ISO9660
                         Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(data, entryOff,
                                                                                   CdiDirectoryRecordSize);
 
-                    if(record.length == 0) break;
+                    if(record.length == 0)
+                        break;
 
                     // Special entries for current and parent directories, skip them
                     if(record.name_len == 1)
-                        if(data[entryOff + DirectoryRecordSize] == 0 || data[entryOff + DirectoryRecordSize] == 1)
+                        if(data[entryOff + DirectoryRecordSize] == 0 ||
+                           data[entryOff + DirectoryRecordSize] == 1)
                         {
                             entryOff += record.length;
+
                             continue;
                         }
 
-                    DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                    var entry = new DecodedDirectoryEntry
                     {
                         Size = record.size,
                         Filename =
                             Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
                         VolumeSequenceNumber = record.volume_sequence_number,
-                        Timestamp            = DecodeHighSierraDateTime(record.date),
-                        XattrLength          = record.xattr_len
+                        Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
                     };
 
                     if(record.size != 0)
-                        entry.Extents = new List<(uint extent, uint size)> {(record.start_lbn, record.size)};
+                        entry.Extents = new List<(uint extent, uint size)>
+                        {
+                            (record.start_lbn, record.size)
+                        };
 
                     if(record.flags.HasFlag(CdiFileFlags.Hidden))
                     {
                         entry.Flags |= FileFlags.Hidden;
+
                         continue;
                     }
 
                     int systemAreaStart = entryOff + record.name_len + CdiDirectoryRecordSize;
 
-                    if(systemAreaStart % 2 != 0) systemAreaStart++;
+                    if(systemAreaStart % 2 != 0)
+                        systemAreaStart++;
+
                     entry.CdiSystemArea =
                         Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(data, systemAreaStart, CdiSystemAreaSize);
 
-                    if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.Directory))
+                    if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
                         entry.Flags |= FileFlags.Directory;
 
-                    if(!((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.Directory) ||
-                       !usePathTable) entries[entry.Filename] = entry;
+                    if(!entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory) ||
+                       !usePathTable)
+                        entries[entry.Filename] = entry;
 
                     entryOff += record.length;
                 }
@@ -225,38 +252,43 @@ namespace DiscImageChef.Filesystems.ISO9660
                         Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(data, entryOff,
                                                                                             HighSierraDirectoryRecordSize);
 
-                    if(record.length == 0) break;
+                    if(record.length == 0)
+                        break;
 
                     // Special entries for current and parent directories, skip them
                     if(record.name_len == 1)
-                        if(data[entryOff + DirectoryRecordSize] == 0 || data[entryOff + DirectoryRecordSize] == 1)
+                        if(data[entryOff + DirectoryRecordSize] == 0 ||
+                           data[entryOff + DirectoryRecordSize] == 1)
                         {
                             entryOff += record.length;
+
                             continue;
                         }
 
-                    DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                    var entry = new DecodedDirectoryEntry
                     {
-                        Size                 = record.size,
-                        Flags                = record.flags,
-                        Interleave           = record.interleave,
+                        Size                 = record.size, Flags = record.flags, Interleave = record.interleave,
                         VolumeSequenceNumber = record.volume_sequence_number,
                         Filename =
                             Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                        Timestamp   = DecodeHighSierraDateTime(record.date),
-                        XattrLength = record.xattr_len
+                        Timestamp = DecodeHighSierraDateTime(record.date), XattrLength = record.xattr_len
                     };
 
                     if(record.size != 0)
-                        entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
+                        entry.Extents = new List<(uint extent, uint size)>
+                        {
+                            (record.extent, record.size)
+                        };
 
                     if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
                     {
                         entryOff += record.length;
+
                         continue;
                     }
 
-                    if(!entries.ContainsKey(entry.Filename)) entries.Add(entry.Filename, entry);
+                    if(!entries.ContainsKey(entry.Filename))
+                        entries.Add(entry.Filename, entry);
 
                     entryOff += record.length;
                 }
@@ -264,7 +296,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 entryOff = 0;
             }
 
-            if(useTransTbl) DecodeTransTable(entries);
+            if(useTransTbl)
+                DecodeTransTable(entries);
 
             return entries;
         }
@@ -283,38 +316,41 @@ namespace DiscImageChef.Filesystems.ISO9660
                     DirectoryRecord record =
                         Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(data, entryOff, DirectoryRecordSize);
 
-                    if(record.length == 0) break;
+                    if(record.length == 0)
+                        break;
 
                     // Special entries for current and parent directories, skip them
                     if(record.name_len == 1)
-                        if(data[entryOff + DirectoryRecordSize] == 0 || data[entryOff + DirectoryRecordSize] == 1)
+                        if(data[entryOff + DirectoryRecordSize] == 0 ||
+                           data[entryOff + DirectoryRecordSize] == 1)
                         {
                             entryOff += record.length;
+
                             continue;
                         }
 
-                    DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                    var entry = new DecodedDirectoryEntry
                     {
-                        Size  = record.size,
-                        Flags = record.flags,
+                        Size = record.size, Flags = record.flags,
                         Filename =
-                            joliet
-                                ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
-                                                                      record.name_len)
+                            joliet ? Encoding.BigEndianUnicode.GetString(data, entryOff + DirectoryRecordSize,
+                                                                         record.name_len)
                                 : Encoding.GetString(data, entryOff + DirectoryRecordSize, record.name_len),
-                        FileUnitSize         = record.file_unit_size,
-                        Interleave           = record.interleave,
+                        FileUnitSize         = record.file_unit_size, Interleave = record.interleave,
                         VolumeSequenceNumber = record.volume_sequence_number,
-                        Timestamp            = DecodeIsoDateTime(record.date),
-                        XattrLength          = record.xattr_len
+                        Timestamp            = DecodeIsoDateTime(record.date), XattrLength = record.xattr_len
                     };
 
                     if(record.size != 0)
-                        entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
+                        entry.Extents = new List<(uint extent, uint size)>
+                        {
+                            (record.extent, record.size)
+                        };
 
                     if(entry.Flags.HasFlag(FileFlags.Directory) && usePathTable)
                     {
                         entryOff += record.length;
+
                         continue;
                     }
 
@@ -365,16 +401,15 @@ namespace DiscImageChef.Filesystems.ISO9660
                             {
                                 Size                 = 0,
                                 Flags                = record.flags ^ FileFlags.Associated,
-                                FileUnitSize         = 0,
-                                Interleave           = 0,
-                                VolumeSequenceNumber = record.volume_sequence_number,
-                                Filename             = entry.Filename,
-                                Timestamp            = DecodeIsoDateTime(record.date),
-                                XattrLength          = 0
+                                FileUnitSize         = 0, Interleave                               = 0,
+                                VolumeSequenceNumber = record.volume_sequence_number, Filename     = entry.Filename,
+                                Timestamp            = DecodeIsoDateTime(record.date), XattrLength = 0
                             };
 
-                            if(hasResourceFork) entries[entry.Filename].ResourceFork = entry;
-                            else entries[entry.Filename].AssociatedFile              = entry;
+                            if(hasResourceFork)
+                                entries[entry.Filename].ResourceFork = entry;
+                            else
+                                entries[entry.Filename].AssociatedFile = entry;
                         }
                     }
                     else
@@ -398,7 +433,8 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                             entries[entry.Filename].Extents.Add(entry.Extents[0]);
                         }
-                        else entries[entry.Filename] = entry;
+                        else
+                            entries[entry.Filename] = entry;
                     }
 
                     entryOff += record.length;
@@ -407,7 +443,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                 entryOff = 0;
             }
 
-            if(useTransTbl) DecodeTransTable(entries);
+            if(useTransTbl)
+                DecodeTransTable(entries);
 
             // Relocated directories should be shown in correct place when using Rock Ridge namespace
             return @namespace == Namespace.Rrip
@@ -422,16 +459,19 @@ namespace DiscImageChef.Filesystems.ISO9660
                                             (e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) == "trans.tbl" ||
                                              e.Value.Filename.ToLower(CultureInfo.CurrentUICulture) == "trans.tbl;1"));
 
-            if(transTblEntry.Value == null) return;
+            if(transTblEntry.Value == null)
+                return;
 
             // The probability of a TRANS.TBL to be bigger than 2GiB is nil
             uint transTblSectors = (uint)transTblEntry.Value.Size / 2048;
-            if(transTblEntry.Value.Size % 2048 > 0) transTblSectors++;
+
+            if(transTblEntry.Value.Size % 2048 > 0)
+                transTblSectors++;
 
             byte[] transTbl = ReadSectors(transTblEntry.Value.Extents[0].extent, transTblSectors);
 
-            MemoryStream mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
-            StreamReader sr = new StreamReader(mr, Encoding);
+            var mr = new MemoryStream(transTbl, 0, (int)transTblEntry.Value.Size, false);
+            var sr = new StreamReader(mr, Encoding);
 
             string line = sr.ReadLine();
 
@@ -473,7 +513,7 @@ namespace DiscImageChef.Filesystems.ISO9660
             entries.Remove(transTblEntry.Key);
         }
 
-        void DecodeSystemArea(byte[]   data, int start, int end, ref DecodedDirectoryEntry entry,
+        void DecodeSystemArea(byte[] data, int start, int end, ref DecodedDirectoryEntry entry,
                               out bool hasResourceFork)
         {
             int systemAreaOff = start;
@@ -485,24 +525,27 @@ namespace DiscImageChef.Filesystems.ISO9660
             {
                 ushort systemAreaSignature = BigEndianBitConverter.ToUInt16(data, systemAreaOff);
 
-                if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC) systemAreaSignature = XA_MAGIC;
+                if(BigEndianBitConverter.ToUInt16(data, systemAreaOff + 6) == XA_MAGIC)
+                    systemAreaSignature = XA_MAGIC;
 
                 switch(systemAreaSignature)
                 {
                     case APPLE_MAGIC:
-                        byte    appleLength = data[systemAreaOff + 2];
-                        AppleId appleId     = (AppleId)data[systemAreaOff + 3];
+                        byte appleLength = data[systemAreaOff + 2];
+                        var  appleId     = (AppleId)data[systemAreaOff + 3];
 
                         // Old AAIP
-                        if(appleId == AppleId.ProDOS && appleLength != 7) goto case AAIP_MAGIC;
+                        if(appleId     == AppleId.ProDOS &&
+                           appleLength != 7)
+                            goto case AAIP_MAGIC;
 
                         switch(appleId)
                         {
                             case AppleId.ProDOS:
                                 AppleProDOSSystemUse appleProDosSystemUse =
                                     Marshal.ByteArrayToStructureLittleEndian<AppleProDOSSystemUse>(data, systemAreaOff,
-                                                                                                   Marshal
-                                                                                                      .SizeOf<
+                                                                                                   Marshal.
+                                                                                                       SizeOf<
                                                                                                            AppleProDOSSystemUse
                                                                                                        >());
 
@@ -513,8 +556,8 @@ namespace DiscImageChef.Filesystems.ISO9660
                             case AppleId.HFS:
                                 AppleHFSSystemUse appleHfsSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSSystemUse>(data, systemAreaOff,
-                                                                                             Marshal
-                                                                                                .SizeOf<
+                                                                                             Marshal.
+                                                                                                 SizeOf<
                                                                                                      AppleHFSSystemUse
                                                                                                  >());
 
@@ -529,9 +572,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                         }
 
                         systemAreaOff += appleLength;
+
                         break;
                     case APPLE_MAGIC_OLD:
-                        AppleOldId appleOldId = (AppleOldId)data[systemAreaOff + 2];
+                        var appleOldId = (AppleOldId)data[systemAreaOff + 2];
 
                         switch(appleOldId)
                         {
@@ -539,22 +583,24 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 AppleProDOSOldSystemUse appleProDosOldSystemUse =
                                     Marshal.ByteArrayToStructureLittleEndian<AppleProDOSOldSystemUse>(data,
                                                                                                       systemAreaOff,
-                                                                                                      Marshal
-                                                                                                         .SizeOf<
+                                                                                                      Marshal.
+                                                                                                          SizeOf<
                                                                                                               AppleProDOSOldSystemUse
                                                                                                           >());
+
                                 entry.AppleProDosType = appleProDosOldSystemUse.aux_type;
                                 entry.AppleDosType    = appleProDosOldSystemUse.type;
 
                                 systemAreaOff += Marshal.SizeOf<AppleProDOSOldSystemUse>();
+
                                 break;
                             case AppleOldId.TypeCreator:
                             case AppleOldId.TypeCreatorBundle:
                                 AppleHFSTypeCreatorSystemUse appleHfsTypeCreatorSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSTypeCreatorSystemUse>(data,
                                                                                                         systemAreaOff,
-                                                                                                        Marshal
-                                                                                                           .SizeOf<
+                                                                                                        Marshal.
+                                                                                                            SizeOf<
                                                                                                                 AppleHFSTypeCreatorSystemUse
                                                                                                             >());
 
@@ -565,13 +611,14 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 entry.FinderInfo.fdType    = appleHfsTypeCreatorSystemUse.type;
 
                                 systemAreaOff += Marshal.SizeOf<AppleHFSTypeCreatorSystemUse>();
+
                                 break;
                             case AppleOldId.TypeCreatorIcon:
                             case AppleOldId.TypeCreatorIconBundle:
                                 AppleHFSIconSystemUse appleHfsIconSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSIconSystemUse>(data, systemAreaOff,
-                                                                                                 Marshal
-                                                                                                    .SizeOf<
+                                                                                                 Marshal.
+                                                                                                     SizeOf<
                                                                                                          AppleHFSIconSystemUse
                                                                                                      >());
 
@@ -583,12 +630,13 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 entry.AppleIcon            = appleHfsIconSystemUse.icon;
 
                                 systemAreaOff += Marshal.SizeOf<AppleHFSIconSystemUse>();
+
                                 break;
                             case AppleOldId.HFS:
                                 AppleHFSOldSystemUse appleHfsSystemUse =
                                     Marshal.ByteArrayToStructureBigEndian<AppleHFSOldSystemUse>(data, systemAreaOff,
-                                                                                                Marshal
-                                                                                                   .SizeOf<
+                                                                                                Marshal.
+                                                                                                    SizeOf<
                                                                                                         AppleHFSOldSystemUse
                                                                                                     >());
 
@@ -600,10 +648,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 entry.FinderInfo.fdType    = appleHfsSystemUse.type;
 
                                 systemAreaOff += Marshal.SizeOf<AppleHFSOldSystemUse>();
+
                                 break;
                             default:
                                 // Cannot continue as we don't know this structure size
                                 systemAreaOff = end;
+
                                 break;
                         }
 
@@ -613,7 +663,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                                   Marshal.SizeOf<CdromXa>());
 
                         systemAreaOff += Marshal.SizeOf<CdromXa>();
+
                         break;
+
                     // All of these follow the SUSP indication of 2 bytes for signature 1 byte for length
                     case AAIP_MAGIC:
                     case AMIGA_MAGIC:
@@ -629,20 +681,21 @@ namespace DiscImageChef.Filesystems.ISO9660
                                 Marshal.ByteArrayToStructureBigEndian<AmigaProtection>(data,
                                                                                        systemAreaOff +
                                                                                        Marshal.SizeOf<AmigaEntry>(),
-                                                                                       Marshal
-                                                                                          .SizeOf<AmigaProtection>());
+                                                                                       Marshal.
+                                                                                           SizeOf<AmigaProtection>());
 
                             protectionLength = Marshal.SizeOf<AmigaProtection>();
                         }
 
                         if(amiga.flags.HasFlag(AmigaFlags.Comment))
                         {
-                            if(entry.AmigaComment is null) entry.AmigaComment = new byte[0];
+                            if(entry.AmigaComment is null)
+                                entry.AmigaComment = new byte[0];
 
-                            byte[] newComment = new byte[entry.AmigaComment.Length +
-                                                         data
-                                                             [systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength] -
-                                                         1];
+                            byte[] newComment = new byte[(entry.AmigaComment.Length +
+                                                          data
+                                                              [systemAreaOff + Marshal.SizeOf<AmigaEntry>() + protectionLength]
+                                                         ) - 1];
 
                             Array.Copy(entry.AmigaComment, 0, newComment, 0, entry.AmigaComment.Length);
 
@@ -654,7 +707,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                         }
 
                         systemAreaOff += amiga.length;
+
                         break;
+
                     // This merely indicates the existence of RRIP extensions, we don't need it
                     case RRIP_MAGIC:
                         byte rripLength = data[systemAreaOff + 2];
@@ -667,28 +722,31 @@ namespace DiscImageChef.Filesystems.ISO9660
                         if(pxLength == 36)
                             entry.PosixAttributesOld =
                                 Marshal.ByteArrayToStructureLittleEndian<PosixAttributesOld>(data, systemAreaOff,
-                                                                                             Marshal
-                                                                                                .SizeOf<
+                                                                                             Marshal.
+                                                                                                 SizeOf<
                                                                                                      PosixAttributesOld
                                                                                                  >());
                         else if(pxLength >= 44)
                             entry.PosixAttributes =
                                 Marshal.ByteArrayToStructureLittleEndian<PosixAttributes>(data, systemAreaOff,
-                                                                                          Marshal
-                                                                                             .SizeOf<PosixAttributes
+                                                                                          Marshal.
+                                                                                              SizeOf<PosixAttributes
                                                                                               >());
 
                         systemAreaOff += pxLength;
+
                         break;
                     case RRIP_POSIX_DEV_NO:
                         byte pnLength = data[systemAreaOff + 2];
 
                         entry.PosixDeviceNumber =
                             Marshal.ByteArrayToStructureLittleEndian<PosixDeviceNumber>(data, systemAreaOff,
-                                                                                        Marshal
-                                                                                           .SizeOf<PosixDeviceNumber
+                                                                                        Marshal.
+                                                                                            SizeOf<PosixDeviceNumber
                                                                                             >());
+
                         systemAreaOff += pnLength;
+
                         break;
                     case RRIP_SYMLINK:
                         byte slLength = data[systemAreaOff + 2];
@@ -700,20 +758,28 @@ namespace DiscImageChef.Filesystems.ISO9660
                         SymbolicLinkComponent slc =
                             Marshal.ByteArrayToStructureLittleEndian<SymbolicLinkComponent>(data,
                                                                                             systemAreaOff +
-                                                                                            Marshal
-                                                                                               .SizeOf<SymbolicLink>(),
-                                                                                            Marshal
-                                                                                               .SizeOf<
+                                                                                            Marshal.
+                                                                                                SizeOf<SymbolicLink>(),
+                                                                                            Marshal.
+                                                                                                SizeOf<
                                                                                                     SymbolicLinkComponent
                                                                                                 >());
 
-                        if(!continueSymlink || entry.SymbolicLink is null) entry.SymbolicLink = "";
+                        if(!continueSymlink ||
+                           entry.SymbolicLink is null)
+                            entry.SymbolicLink = "";
 
-                        if(slc.flags.HasFlag(SymlinkComponentFlags.Root)) entry.SymbolicLink    =  "/";
-                        if(slc.flags.HasFlag(SymlinkComponentFlags.Current)) entry.SymbolicLink += ".";
-                        if(slc.flags.HasFlag(SymlinkComponentFlags.Parent)) entry.SymbolicLink  += "..";
+                        if(slc.flags.HasFlag(SymlinkComponentFlags.Root))
+                            entry.SymbolicLink = "/";
 
-                        if(!continueSymlinkComponent && !slc.flags.HasFlag(SymlinkComponentFlags.Root))
+                        if(slc.flags.HasFlag(SymlinkComponentFlags.Current))
+                            entry.SymbolicLink += ".";
+
+                        if(slc.flags.HasFlag(SymlinkComponentFlags.Parent))
+                            entry.SymbolicLink += "..";
+
+                        if(!continueSymlinkComponent &&
+                           !slc.flags.HasFlag(SymlinkComponentFlags.Root))
                             entry.SymbolicLink += "/";
 
                         entry.SymbolicLink += slc.flags.HasFlag(SymlinkComponentFlags.Networkname)
@@ -721,10 +787,10 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                   : joliet
                                                       ? Encoding.BigEndianUnicode.GetString(data,
                                                                                             systemAreaOff +
-                                                                                            Marshal
-                                                                                               .SizeOf<SymbolicLink>() +
-                                                                                            Marshal
-                                                                                               .SizeOf<
+                                                                                            Marshal.
+                                                                                                SizeOf<SymbolicLink>() +
+                                                                                            Marshal.
+                                                                                                SizeOf<
                                                                                                     SymbolicLinkComponent
                                                                                                 >(), slc.length)
                                                       : Encoding.GetString(data,
@@ -737,6 +803,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         continueSymlinkComponent = slc.flags.HasFlag(SymlinkComponentFlags.Continue);
 
                         systemAreaOff += slLength;
+
                         break;
                     case RRIP_NAME:
                         byte nmLength = data[systemAreaOff + 2];
@@ -744,6 +811,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         if(@namespace != Namespace.Rrip)
                         {
                             systemAreaOff += nmLength;
+
                             break;
                         }
 
@@ -752,9 +820,9 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                                     Marshal.SizeOf<AlternateName>());
 
                         byte[] nm;
+
                         if(alternateName.flags.HasFlag(AlternateNameFlags.Networkname))
-                            nm = joliet
-                                     ? Encoding.BigEndianUnicode.GetBytes(Environment.MachineName)
+                            nm = joliet ? Encoding.BigEndianUnicode.GetBytes(Environment.MachineName)
                                      : Encoding.GetBytes(Environment.MachineName);
                         else
                         {
@@ -763,25 +831,25 @@ namespace DiscImageChef.Filesystems.ISO9660
                             Array.Copy(data, systemAreaOff + Marshal.SizeOf<AlternateName>(), nm, 0, nm.Length);
                         }
 
-                        if(entry.RockRidgeAlternateName is null) entry.RockRidgeAlternateName = new byte[0];
+                        if(entry.RockRidgeAlternateName is null)
+                            entry.RockRidgeAlternateName = new byte[0];
 
                         byte[] newNm = new byte[entry.RockRidgeAlternateName.Length + nm.Length];
-                        Array.Copy(entry.RockRidgeAlternateName, 0, newNm, 0,
-                                   entry.RockRidgeAlternateName.Length);
-                        Array.Copy(nm, 0, newNm, entry.RockRidgeAlternateName.Length,
-                                   nm.Length);
+                        Array.Copy(entry.RockRidgeAlternateName, 0, newNm, 0, entry.RockRidgeAlternateName.Length);
+                        Array.Copy(nm, 0, newNm, entry.RockRidgeAlternateName.Length, nm.Length);
 
                         entry.RockRidgeAlternateName = newNm;
 
                         if(!alternateName.flags.HasFlag(AlternateNameFlags.Continue))
                         {
-                            entry.Filename = joliet
-                                                 ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
+                            entry.Filename = joliet ? Encoding.BigEndianUnicode.GetString(entry.RockRidgeAlternateName)
                                                  : Encoding.GetString(entry.RockRidgeAlternateName);
+
                             entry.RockRidgeAlternateName = null;
                         }
 
                         systemAreaOff += nmLength;
+
                         break;
                     case RRIP_CHILDLINK:
                         byte clLength = data[systemAreaOff + 2];
@@ -790,6 +858,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         if(@namespace != Namespace.Rrip || usePathTable)
                         {
                             systemAreaOff += clLength;
+
                             break;
                         }
 
@@ -798,13 +867,17 @@ namespace DiscImageChef.Filesystems.ISO9660
                                                                                 Marshal.SizeOf<ChildLink>());
 
                         byte[] childSector = ReadSectors(cl.child_dir_lba, 1);
+
                         DirectoryRecord childRecord =
                             Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(childSector);
 
                         // As per RRIP 4.1.5.1, we leave name as in previous entry, substitute location with the one in
                         // the CL, and replace all other fields with the ones found in the first entry of the child
-                        entry.Extents =
-                            new List<(uint extent, uint size)> {(cl.child_dir_lba, childRecord.size)};
+                        entry.Extents = new List<(uint extent, uint size)>
+                        {
+                            (cl.child_dir_lba, childRecord.size)
+                        };
+
                         entry.Size                 = childRecord.size;
                         entry.Flags                = childRecord.flags;
                         entry.FileUnitSize         = childRecord.file_unit_size;
@@ -888,6 +961,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                         }
 
                         systemAreaOff += tfLength;
+
                         break;
                     case RRIP_SPARSE:
                         // TODO
@@ -900,13 +974,15 @@ namespace DiscImageChef.Filesystems.ISO9660
 
                         ContinuationArea ca =
                             Marshal.ByteArrayToStructureLittleEndian<ContinuationArea>(data, systemAreaOff,
-                                                                                       Marshal
-                                                                                          .SizeOf<ContinuationArea>());
+                                                                                       Marshal.
+                                                                                           SizeOf<ContinuationArea>());
 
                         uint caOffSector    = ca.offset    / 2048;
                         uint caOff          = ca.offset    % 2048;
                         uint caLenInSectors = ca.ca_length / 2048;
-                        if((ca.ca_length + caOff) % 2048 > 0) caLenInSectors++;
+
+                        if((ca.ca_length + caOff) % 2048 > 0)
+                            caLenInSectors++;
 
                         byte[] caData = ReadSectors(ca.block + caOffSector, caLenInSectors);
 
@@ -914,6 +990,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                                          out hasResourceFork);
 
                         systemAreaOff += ceLength;
+
                         break;
                     case SUSP_PADDING:
                         // Just padding, skip
@@ -954,6 +1031,7 @@ namespace DiscImageChef.Filesystems.ISO9660
                     default:
                         // Cannot continue as we don't know this structure size
                         systemAreaOff = end;
+
                         break;
                 }
             }
@@ -964,14 +1042,19 @@ namespace DiscImageChef.Filesystems.ISO9660
             IEnumerable<PathTableEntryInternal> tableEntries;
             List<PathTableEntryInternal>        pathTableList = new List<PathTableEntryInternal>(pathTable);
 
-            if(path == "" || path == "/") tableEntries = pathTable.Where(p => p.Parent == 1 && p != pathTable[0]);
+            if(path == "" ||
+               path == "/")
+                tableEntries = pathTable.Where(p => p.Parent == 1 && p != pathTable[0]);
             else
             {
                 string cutPath = path.StartsWith("/", StringComparison.Ordinal)
                                      ? path.Substring(1).ToLower(CultureInfo.CurrentUICulture)
                                      : path.ToLower(CultureInfo.CurrentUICulture);
 
-                string[] pieces = cutPath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
+                string[] pieces = cutPath.Split(new[]
+                {
+                    '/'
+                }, StringSplitOptions.RemoveEmptyEntries);
 
                 int currentParent = 1;
                 int currentPiece  = 0;
@@ -979,11 +1062,12 @@ namespace DiscImageChef.Filesystems.ISO9660
                 while(currentPiece < pieces.Length)
                 {
                     PathTableEntryInternal currentEntry = pathTable.FirstOrDefault(p => p.Parent == currentParent &&
-                                                                                        p.Name.ToLower(CultureInfo
-                                                                                                          .CurrentUICulture) ==
+                                                                                        p.Name.ToLower(CultureInfo.
+                                                                                                           CurrentUICulture) ==
                                                                                         pieces[currentPiece]);
 
-                    if(currentEntry is null) break;
+                    if(currentEntry is null)
+                        break;
 
                     currentPiece++;
                     currentParent = pathTableList.IndexOf(currentEntry) + 1;
@@ -999,37 +1083,43 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
             List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
                 byte[] sector = ReadSectors(tEntry.Extent, 1);
+
                 CdiDirectoryRecord record =
                     Marshal.ByteArrayToStructureBigEndian<CdiDirectoryRecord>(sector, tEntry.XattrLength,
                                                                               CdiDirectoryRecordSize);
 
-                if(record.length == 0) break;
+                if(record.length == 0)
+                    break;
 
-                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                var entry = new DecodedDirectoryEntry
                 {
-                    Size                 = record.size,
-                    Filename             = tEntry.Name,
+                    Size                 = record.size, Filename = tEntry.Name,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeHighSierraDateTime(record.date),
-                    XattrLength          = tEntry.XattrLength
+                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = tEntry.XattrLength
                 };
 
                 if(record.size != 0)
-                    entry.Extents = new List<(uint extent, uint size)> {(record.start_lbn, record.size)};
+                    entry.Extents = new List<(uint extent, uint size)>
+                    {
+                        (record.start_lbn, record.size)
+                    };
 
-                if(record.flags.HasFlag(CdiFileFlags.Hidden)) entry.Flags |= FileFlags.Hidden;
+                if(record.flags.HasFlag(CdiFileFlags.Hidden))
+                    entry.Flags |= FileFlags.Hidden;
 
                 int systemAreaStart = record.name_len + CdiDirectoryRecordSize;
 
-                if(systemAreaStart % 2 != 0) systemAreaStart++;
+                if(systemAreaStart % 2 != 0)
+                    systemAreaStart++;
 
                 entry.CdiSystemArea =
                     Marshal.ByteArrayToStructureBigEndian<CdiSystemArea>(sector, systemAreaStart, CdiSystemAreaSize);
 
-                if(((CdiAttributes)entry.CdiSystemArea.Value.attributes).HasFlag(CdiAttributes.Directory))
+                if(entry.CdiSystemArea.Value.attributes.HasFlag(CdiAttributes.Directory))
                     entry.Flags |= FileFlags.Directory;
 
                 entries.Add(entry);
@@ -1042,28 +1132,32 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
             List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
                 byte[] sector = ReadSectors(tEntry.Extent, 1);
+
                 DirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<DirectoryRecord>(sector, tEntry.XattrLength,
                                                                               DirectoryRecordSize);
 
-                if(record.length == 0) break;
+                if(record.length == 0)
+                    break;
 
-                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                var entry = new DecodedDirectoryEntry
                 {
-                    Size                 = record.size,
-                    Flags                = record.flags,
+                    Size                 = record.size, Flags = record.flags,
                     Filename             = tEntry.Name,
-                    FileUnitSize         = record.file_unit_size,
-                    Interleave           = record.interleave,
-                    VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeIsoDateTime(record.date),
+                    FileUnitSize         = record.file_unit_size, Interleave        = record.interleave,
+                    VolumeSequenceNumber = record.volume_sequence_number, Timestamp = DecodeIsoDateTime(record.date),
                     XattrLength          = tEntry.XattrLength
                 };
 
-                if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
+                if(record.size != 0)
+                    entry.Extents = new List<(uint extent, uint size)>
+                    {
+                        (record.extent, record.size)
+                    };
 
                 int systemAreaStart  = record.name_len                 + DirectoryRecordSize;
                 int systemAreaLength = record.length - record.name_len - DirectoryRecordSize;
@@ -1086,25 +1180,28 @@ namespace DiscImageChef.Filesystems.ISO9660
         {
             PathTableEntryInternal[]    tableEntries = GetPathTableEntries(path);
             List<DecodedDirectoryEntry> entries      = new List<DecodedDirectoryEntry>();
+
             foreach(PathTableEntryInternal tEntry in tableEntries)
             {
                 byte[] sector = ReadSectors(tEntry.Extent, 1);
+
                 HighSierraDirectoryRecord record =
                     Marshal.ByteArrayToStructureLittleEndian<HighSierraDirectoryRecord>(sector, tEntry.XattrLength,
                                                                                         HighSierraDirectoryRecordSize);
 
-                DecodedDirectoryEntry entry = new DecodedDirectoryEntry
+                var entry = new DecodedDirectoryEntry
                 {
-                    Size                 = record.size,
-                    Flags                = record.flags,
-                    Filename             = tEntry.Name,
+                    Size                 = record.size, Flags = record.flags, Filename = tEntry.Name,
                     Interleave           = record.interleave,
                     VolumeSequenceNumber = record.volume_sequence_number,
-                    Timestamp            = DecodeHighSierraDateTime(record.date),
-                    XattrLength          = tEntry.XattrLength
+                    Timestamp            = DecodeHighSierraDateTime(record.date), XattrLength = tEntry.XattrLength
                 };
 
-                if(record.size != 0) entry.Extents = new List<(uint extent, uint size)> {(record.extent, record.size)};
+                if(record.size != 0)
+                    entry.Extents = new List<(uint extent, uint size)>
+                    {
+                        (record.extent, record.size)
+                    };
 
                 entries.Add(entry);
             }
