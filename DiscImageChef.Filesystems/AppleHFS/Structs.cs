@@ -32,6 +32,9 @@
 
 using System.Runtime.InteropServices;
 
+// ReSharper disable IdentifierTypo
+// ReSharper disable MemberCanBePrivate.Local
+
 namespace DiscImageChef.Filesystems
 {
     // Information from Inside Macintosh
@@ -125,6 +128,272 @@ namespace DiscImageChef.Filesystems
             public readonly uint drXTFlSize;
             /// <summary>0x092, Bytes in the catalog B-Tree 3 HFS extents following, 32 bits each</summary>
             public readonly uint drCTFlSize;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct NodeDescriptor
+        {
+            /// <summary>A link to the next node of this type, or <c>null</c> if this is the last one.</summary>
+            public readonly uint ndFLink;
+            /// <summary>A link to the previous node of this type, or <c>null</c> if this is the first one.</summary>
+            public readonly uint ndBLink;
+            /// <summary>The type of this node.</summary>
+            public readonly NodeType ndType;
+            /// <summary>The depth of this node in the B*-tree hierarchy. Maximum depth is apparently 8.</summary>
+            public readonly sbyte ndNHeight;
+            /// <summary>The number of records contained in this node.</summary>
+            public readonly ushort ndNRecs;
+            /// <summary>Reserved, should be 0.</summary>
+            public readonly ushort ndResv2;
+        }
+
+        /// <summary>B*-tree header</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct BTHdrRed
+        {
+            /// <summary>Current depth of tree.</summary>
+            public readonly ushort bthDepth;
+            /// <summary>Number of root node.</summary>
+            public readonly uint bthRoot;
+            /// <summary>Number of leaf records in tree.</summary>
+            public readonly uint bthNRecs;
+            /// <summary>Number of first leaf node.</summary>
+            public readonly uint bthFNode;
+            /// <summary>Number of last leaf node.</summary>
+            public readonly uint bthLNode;
+            /// <summary>Size of a node.</summary>
+            public readonly ushort bthNodeSize;
+            /// <summary>Maximum length of a key.</summary>
+            public readonly ushort bthKeyLen;
+            /// <summary>Total number of nodes in tree.</summary>
+            public readonly uint bthNNodes;
+            /// <summary>Number of free nodes.</summary>
+            public readonly uint bthFree;
+            /// <summary>Reserved</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 76)]
+            public readonly sbyte[] bthResv;
+        }
+
+        /// <summary>Catalog key record</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CatKeyRec
+        {
+            /// <summary>Key length.</summary>
+            public readonly sbyte ckrKeyLen;
+            /// <summary>Reserved.</summary>
+            public readonly sbyte ckrResrv1;
+            /// <summary>Parent directory ID.</summary>
+            public readonly uint ckrParID;
+            /// <summary>Catalog node name. Full 32 bytes in index nodes but only the needed bytes, padded to word, in leaf nodes.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public readonly byte[] ckrCName;
+        }
+
+        /// <summary>Catalog data record header</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CatDataRec
+        {
+            public readonly CatDataType cdrType;
+            public readonly sbyte       cdrResvr2;
+        }
+
+        /// <summary>Directory record</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CdrDirRec
+        {
+            public readonly CatDataRec dirHdr;
+            /// <summary>Directory flags.</summary>
+            public readonly ushort dirFlags;
+            /// <summary>Directory valence.</summary>
+            public readonly ushort dirVal;
+            /// <summary>Directory ID.</summary>
+            public readonly uint dirDirID;
+            /// <summary>Date and time of creation.</summary>
+            public readonly uint dirCrDat;
+            /// <summary>Date and time of last modification.</summary>
+            public readonly uint dirMdDat;
+            /// <summary>Date and time of last backup.</summary>
+            public readonly uint dirBkDat;
+            /// <summary>Finder information.</summary>
+            public readonly DInfo dirUsrInfo;
+            /// <summary>Additional Finder information.</summary>
+            public readonly DXInfo dirFndrInfo;
+            /// <summary>Reserved</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public readonly uint[] dirResrv;
+        }
+
+        /// <summary>File record</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CdrFilRec
+        {
+            public readonly CatDataRec filHdr;
+            /// <summary>File flags.</summary>
+            public readonly sbyte filFlags;
+            /// <summary>File type.</summary>
+            public readonly sbyte filType;
+            /// <summary>Finder information.</summary>
+            public readonly FInfo filUsrWds;
+            /// <summary>File ID.</summary>
+            public readonly uint filFlNum;
+            /// <summary>First allocation block of data fork.</summary>
+            public readonly ushort filStBlk;
+            /// <summary>Logical EOF of data fork.</summary>
+            public readonly uint filLgLen;
+            /// <summary>Physical EOF of data fork.</summary>
+            public readonly uint filPyLen;
+            /// <summary>First allocation block of resource fork.</summary>
+            public readonly ushort filRStBlk;
+            /// <summary>Logical EOF of resource fork.</summary>
+            public readonly uint filRLgLen;
+            /// <summary>Physical EOF of resource fork.</summary>
+            public readonly uint filRPyLen;
+            /// <summary>Date and time of creation.</summary>
+            public readonly uint filCrDat;
+            /// <summary>Date and time of last modification.</summary>
+            public readonly uint filMdDat;
+            /// <summary>Date and time of last backup.</summary>
+            public readonly uint filBkDat;
+            /// <summary>Additional Finder information.</summary>
+            public readonly FXInfo filFndrInfo;
+            /// <summary>File clump size.</summary>
+            public readonly ushort filClpSize;
+            /// <summary>First data fork extent record.</summary>
+            public readonly ExtDataRec filExtRec;
+            /// <summary>First resource fork extent record.</summary>
+            public readonly ExtDataRec filRExtRec;
+            /// <summary>Reserved</summary>
+            public readonly uint filResrv;
+        }
+
+        /// <summary>Directory thread record</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CdrThdRec
+        {
+            public readonly CatDataRec thdHdr;
+            /// <summary>Reserved.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public readonly uint[] thdResrv;
+            /// <summary>Parent ID for this directory.</summary>
+            public readonly uint thdParID;
+            /// <summary>Name of this directory.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public readonly byte[] thdCName;
+        }
+
+        /// <summary>File thread record</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct CdrFThdRec
+        {
+            public readonly CatDataRec fthdHdr;
+            /// <summary>Reserved.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public readonly uint[] fthdResrv;
+            /// <summary>Parent ID for this file.</summary>
+            public readonly uint fthdParID;
+            /// <summary>Name of this file.</summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public readonly byte[] fthdCName;
+        }
+
+        /// <summary>Extent descriptor</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ExtDescriptor
+        {
+            /// <summary>First allocation block</summary>
+            public readonly ushort xdrStABN;
+            /// <summary>Number of allocation blocks</summary>
+            public readonly ushort xdrNumABlks;
+        }
+
+        /// <summary>Extent data record</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ExtDataRec
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+            public readonly ExtDescriptor[] xdr;
+        }
+
+        /// <summary>Extent key record</summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct ExtKeyRec
+        {
+            /// <summary>Key length.</summary>
+            public readonly sbyte xkrKeyLen;
+            /// <summary>Fork type.</summary>
+            public readonly ForkType xkrFkType;
+            /// <summary>File number.</summary>
+            public readonly uint xkrFNum;
+            /// <summary>Starting file allocation block.</summary>
+            public readonly ushort xkrFABN;
+        }
+
+        struct Point
+        {
+            public ushort v;
+            public ushort h;
+        }
+
+        struct Rect
+        {
+            public ushort top;
+            public ushort left;
+            public ushort bottom;
+            public ushort right;
+        }
+
+        struct FInfo
+        {
+            /// <summary>The type of the file.</summary>
+            public uint fdType;
+            /// <summary>The file's creator.</summary>
+            public uint fdCreator;
+            /// <summary>Flags.</summary>
+            public FinderFlags fdFlags;
+            /// <summary>File's location in the folder.</summary>
+            public Point fdLocation;
+            /// <summary>Folder file belongs to (used only in flat filesystems like MFS).</summary>
+            public FinderFolder fdFldr;
+        }
+
+        struct FXInfo
+        {
+            /// <summary>Resource fork ID of file icon.</summary>
+            public ushort fdIconID;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public byte[] fdUnused;
+            /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
+            public ExtendedFinderFlags fdXFlags;
+            /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
+            public ushort fdComment;
+            /// <summary>Put away folder ID.</summary>
+            public uint fdPutAway;
+        }
+
+        struct DInfo
+        {
+            /// <summary>Position and dimensions of the folder's window.</summary>
+            public Rect frRect;
+            /// <summary>Flags.</summary>
+            public FinderFlags frFlags;
+            /// <summary>Folder's location in the parent folder.</summary>
+            public Point frLocation;
+            /// <summary>Finder view selected for folder.</summary>
+            public ushort frView;
+        }
+
+        struct DXInfo
+        {
+            /// <summary>Scroll position for icon views.</summary>
+            public Point frScroll;
+            /// <summary>Directory ID chain of open folders.</summary>
+            public uint frOpenChain;
+            /// <summary>Extended flags. If high-bit is set, most significant byte is script code and least significant byte are flags.</summary>
+            public ExtendedFinderFlags frXFlags;
+            /// <summary>Resource fork ID of directory comment if high bit is clear.</summary>
+            public ushort frComment;
+            /// <summary>Put away folder ID.</summary>
+            public uint frPutAway;
         }
     }
 }

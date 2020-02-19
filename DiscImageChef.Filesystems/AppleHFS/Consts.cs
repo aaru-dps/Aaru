@@ -40,5 +40,16 @@ namespace DiscImageChef.Filesystems
         const ushort HFS_MAGIC = 0x4244;
         /// <summary>"H+", HFS+ magic</summary>
         const ushort HFSP_MAGIC = 0x482B;
+
+        /// <summary>Parent ID of the root directory.</summary>
+        const uint kRootParentCnid = 1;
+        /// <summary>Directory ID of the root directory.</summary>
+        const uint kRootCnid = 2;
+        /// <summary>File number of the extents file.</summary>
+        const uint kExtentsFileCnid = 3;
+        /// <summary>File number of the catalog file.</summary>
+        const uint kCatalogFileCnid = 4;
+        /// <summary>File number of the bad allocation block file.</summary>
+        const uint kBadBlocksFileCnid = 5;
     }
 }

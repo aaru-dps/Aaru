@@ -60,6 +60,7 @@
     <Compile Include="AppleCommon\Structs.cs" />
     <Compile Include="AppleHFS\AppleHFS.cs" />
     <Compile Include="AppleHFS\Consts.cs" />
+    <Compile Include="AppleHFS\Enums.cs" />
     <Compile Include="AppleHFS\Info.cs" />
     <Compile Include="AppleHFS\Structs.cs" />
     <Compile Include="FATX\Consts.cs" />

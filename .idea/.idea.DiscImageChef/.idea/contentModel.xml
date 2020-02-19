@@ -1326,6 +1326,7 @@
         <e p="AppleHFS" t="Include">
           <e p="AppleHFS.cs" t="Include" />
           <e p="Consts.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
           <e p="Info.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
         </e>
