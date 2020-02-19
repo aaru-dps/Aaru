@@ -53,45 +53,53 @@ namespace DiscImageChef.Filesystems
             var sb = new StringBuilder();
             sb.AppendLine("Boot Block:");
 
-            if((bb.bbPageFlags & 0x40) == 0x40)
+            if((bb.bbVersion & 0x8000) > 0)
+            {
+                sb.AppendLine("Boot block is in new format.");
+
+                if((bb.bbVersion & 0x4000) > 0)
+                {
+                    sb.AppendLine("Boot block should be executed.");
+
+                    if((bb.bbVersion & 0x2000) > 0)
+                        sb.
+                            AppendFormat("System heap will be extended by {0} bytes and a {1} fraction of the available RAM",
+                                         bb.bbSysHeapExtra, bb.bbSysHeapFract).AppendLine();
+                }
+            }
+            else if((bb.bbVersion & 0xFF) == 0x0D)
                 sb.AppendLine("Boot block should be executed.");
 
-            if((bb.bbPageFlags & 0x80) == 0x80)
-                sb.AppendLine("Boot block is in new unknown format.");
-            else
-            {
-                if(bb.bbPageFlags > 0)
-                    sb.AppendLine("Allocate secondary sound buffer at boot.");
-                else if(bb.bbPageFlags < 0)
-                    sb.AppendLine("Allocate secondary sound and video buffers at boot.");
+            if(bb.bbPageFlags > 0)
+                sb.AppendLine("Allocate secondary sound buffer at boot.");
+            else if(bb.bbPageFlags < 0)
+                sb.AppendLine("Allocate secondary sound and video buffers at boot.");
 
-                sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, Encoding)).
-                   AppendLine();
+            sb.AppendFormat("System filename: {0}", StringHandlers.PascalToString(bb.bbSysName, Encoding)).AppendLine();
 
-                sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, Encoding)).
-                   AppendLine();
+            sb.AppendFormat("Finder filename: {0}", StringHandlers.PascalToString(bb.bbShellName, Encoding)).
+               AppendLine();
 
-                sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, Encoding)).
-                   AppendLine();
+            sb.AppendFormat("Debugger filename: {0}", StringHandlers.PascalToString(bb.bbDbg1Name, Encoding)).
+               AppendLine();
 
-                sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, Encoding)).
-                   AppendLine();
+            sb.AppendFormat("Disassembler filename: {0}", StringHandlers.PascalToString(bb.bbDbg2Name, Encoding)).
+               AppendLine();
 
-                sb.AppendFormat("Startup screen filename: {0}",
-                                StringHandlers.PascalToString(bb.bbScreenName, Encoding)).AppendLine();
+            sb.AppendFormat("Startup screen filename: {0}", StringHandlers.PascalToString(bb.bbScreenName, Encoding)).
+               AppendLine();
 
-                sb.AppendFormat("First program to execute at boot: {0}",
-                                StringHandlers.PascalToString(bb.bbHelloName, Encoding)).AppendLine();
+            sb.AppendFormat("First program to execute at boot: {0}",
+                            StringHandlers.PascalToString(bb.bbHelloName, Encoding)).AppendLine();
 
-                sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, Encoding)).
-                   AppendLine();
+            sb.AppendFormat("Clipboard filename: {0}", StringHandlers.PascalToString(bb.bbScrapName, Encoding)).
+               AppendLine();
 
-                sb.AppendFormat("Maximum opened files: {0}", bb.bbCntFCBs * 4).AppendLine();
-                sb.AppendFormat("Event queue size: {0}", bb.bbCntEvts).AppendLine();
-                sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.bb128KSHeap).AppendLine();
-                sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.bb256KSHeap).AppendLine();
-                sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.bbSysHeapSize).AppendLine();
-            }
+            sb.AppendFormat("Maximum opened files: {0}", bb.bbCntFCBs * 4).AppendLine();
+            sb.AppendFormat("Event queue size: {0}", bb.bbCntEvts).AppendLine();
+            sb.AppendFormat("Heap size with 128KiB of RAM: {0} bytes", bb.bb128KSHeap).AppendLine();
+            sb.AppendFormat("Heap size with 256KiB of RAM: {0} bytes", bb.bb256KSHeap).AppendLine();
+            sb.AppendFormat("Heap size with 512KiB of RAM or more: {0} bytes", bb.bbSysHeapSize).AppendLine();
 
             return sb.ToString();
         }

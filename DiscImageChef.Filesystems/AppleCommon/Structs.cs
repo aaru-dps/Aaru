@@ -46,9 +46,9 @@ namespace DiscImageChef.Filesystems
             public readonly ushort bbID;
             /// <summary>0x002, Branch</summary>
             public readonly uint bbEntry;
-            /// <summary>0x007, Boot block version</summary>
+            /// <summary>0x007, Boot block version and flags</summary>
             public readonly ushort bbVersion;
-            /// <summary>0x006, Boot block flags</summary>
+            /// <summary>0x006, Boot block page flags</summary>
             public readonly short bbPageFlags;
             /// <summary>0x00A, System file name (16 bytes)</summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
