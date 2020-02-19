@@ -57,7 +57,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(options.TryGetValue("debug", out string debugString))
                 bool.TryParse(debugString, out debug);
 
-            volMDB = new MFS_MasterDirectoryBlock();
+            volMDB = new MasterDirectoryBlock();
 
             mdbBlocks  = device.ReadSector(2 + partitionStart);
             bootBlocks = device.ReadSector(0 + partitionStart);

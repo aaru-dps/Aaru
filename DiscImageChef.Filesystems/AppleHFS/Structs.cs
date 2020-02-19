@@ -43,7 +43,7 @@ namespace DiscImageChef.Filesystems
     {
         /// <summary>Master Directory Block, should be sector 2 in volume</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct HfsMasterDirectoryBlock // Should be sector 2 in volume
+        struct MasterDirectoryBlock // Should be sector 2 in volume
         {
             /// <summary>0x000, Signature, 0x4244</summary>
             public readonly ushort drSigWord;

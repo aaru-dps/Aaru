@@ -73,19 +73,19 @@ namespace DiscImageChef.Filesystems.AppleMFS
         bool FillDirectory()
         {
             idToFilename = new Dictionary<uint, string>();
-            idToEntry    = new Dictionary<uint, MFS_FileEntry>();
+            idToEntry    = new Dictionary<uint, FileEntry>();
             filenameToId = new Dictionary<string, uint>();
 
             int offset = 0;
 
             while(offset + 51 < directoryBlocks.Length)
             {
-                var entry = new MFS_FileEntry
+                var entry = new FileEntry
                 {
-                    flFlags = (MFS_FileFlags)directoryBlocks[offset + 0]
+                    flFlags = (FileFlags)directoryBlocks[offset + 0]
                 };
 
-                if(!entry.flFlags.HasFlag(MFS_FileFlags.Used))
+                if(!entry.flFlags.HasFlag(FileFlags.Used))
                     break;
 
                 entry.flTyp = directoryBlocks[offset + 1];
@@ -108,10 +108,10 @@ namespace DiscImageChef.Filesystems.AppleMFS
                 string lowerFilename = StringHandlers.
                                        PascalToString(entry.flNam, Encoding).ToLowerInvariant().Replace('/', ':');
 
-                if(entry.flFlags.HasFlag(MFS_FileFlags.Used) &&
-                   !idToFilename.ContainsKey(entry.flFlNum)  &&
-                   !idToEntry.ContainsKey(entry.flFlNum)     &&
-                   !filenameToId.ContainsKey(lowerFilename)  &&
+                if(entry.flFlags.HasFlag(FileFlags.Used)    &&
+                   !idToFilename.ContainsKey(entry.flFlNum) &&
+                   !idToEntry.ContainsKey(entry.flFlNum)    &&
+                   !filenameToId.ContainsKey(lowerFilename) &&
                    entry.flFlNum > 0)
                 {
                     idToEntry.Add(entry.flFlNum, entry);

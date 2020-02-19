@@ -76,7 +76,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             if(entry.flRLgLen > 0)
@@ -162,7 +162,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             if(entry.flRLgLen                                                                     > 0 &&

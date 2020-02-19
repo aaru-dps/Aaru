@@ -41,26 +41,24 @@ namespace DiscImageChef.Filesystems.AppleMFS
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS : IReadOnlyFilesystem
     {
-        bool        mounted;
-        bool        debug;
-        IMediaImage device;
-        ulong       partitionStart;
-
-        Dictionary<uint, string>        idToFilename;
-        Dictionary<uint, MFS_FileEntry> idToEntry;
-        Dictionary<string, uint>        filenameToId;
-
-        MFS_MasterDirectoryBlock volMDB;
-        byte[]                   bootBlocks;
-        byte[]                   mdbBlocks;
-        byte[]                   directoryBlocks;
-        byte[]                   blockMapBytes;
-        uint[]                   blockMap;
-        int                      sectorsPerBlock;
-        byte[]                   bootTags;
-        byte[]                   mdbTags;
-        byte[]                   directoryTags;
-        byte[]                   bitmapTags;
+        bool                        mounted;
+        bool                        debug;
+        IMediaImage                 device;
+        ulong                       partitionStart;
+        Dictionary<uint, string>    idToFilename;
+        Dictionary<uint, FileEntry> idToEntry;
+        Dictionary<string, uint>    filenameToId;
+        MasterDirectoryBlock        volMDB;
+        byte[]                      bootBlocks;
+        byte[]                      mdbBlocks;
+        byte[]                      directoryBlocks;
+        byte[]                      blockMapBytes;
+        uint[]                      blockMap;
+        int                         sectorsPerBlock;
+        byte[]                      bootTags;
+        byte[]                      mdbTags;
+        byte[]                      directoryTags;
+        byte[]                      bitmapTags;
 
         public FileSystemType XmlFsType { get; private set; }
         public string         Name      => "Apple Macintosh File System";
@@ -70,11 +68,16 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
         // TODO: Implement Finder namespace (requires decoding Desktop database)
         public IEnumerable<(string name, Type type, string description)> SupportedOptions =>
-            new (string name, Type type, string description)[] { };
+            new (string name, Type type, string description)[]
+                { };
 
         public Dictionary<string, string> Namespaces => null;
 
-        static Dictionary<string, string> GetDefaultOptions() =>
-            new Dictionary<string, string> {{"debug", false.ToString()}};
+        static Dictionary<string, string> GetDefaultOptions() => new Dictionary<string, string>
+        {
+            {
+                "debug", false.ToString()
+            }
+        };
     }
 }

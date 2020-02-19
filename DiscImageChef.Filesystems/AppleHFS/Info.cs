@@ -145,7 +145,7 @@ namespace DiscImageChef.Filesystems
                     return;
             }
 
-            HfsMasterDirectoryBlock mdb = Marshal.ByteArrayToStructureBigEndian<HfsMasterDirectoryBlock>(mdbSector);
+            MasterDirectoryBlock mdb = Marshal.ByteArrayToStructureBigEndian<MasterDirectoryBlock>(mdbSector);
 
             sb.AppendLine("Apple Hierarchical File System");
             sb.AppendLine();

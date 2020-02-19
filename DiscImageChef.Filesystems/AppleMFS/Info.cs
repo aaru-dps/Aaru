@@ -63,7 +63,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
 
             var sb = new StringBuilder();
 
-            var mdb = new MFS_MasterDirectoryBlock();
+            var mdb = new MasterDirectoryBlock();
 
             byte[] pString = new byte[16];
 

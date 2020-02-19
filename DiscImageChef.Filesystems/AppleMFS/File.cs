@@ -62,7 +62,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             if(fileBlock > entry.flPyLen / volMDB.drAlBlkSiz)
@@ -111,7 +111,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsAlias))
@@ -132,7 +132,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsInvisible))
                 attributes |= FileAttributes.Hidden;
 
-            if(entry.flFlags.HasFlag(MFS_FileFlags.Locked))
+            if(entry.flFlags.HasFlag(FileFlags.Locked))
                 attributes |= FileAttributes.Immutable;
 
             if(entry.flUsrWds.fdFlags.HasFlag(AppleCommon.FinderFlags.kIsOnDesk))
@@ -258,7 +258,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             Errno error = GetAttributes(path, out FileAttributes attr);
@@ -304,7 +304,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
             if(!filenameToId.TryGetValue(path.ToLowerInvariant(), out uint fileId))
                 return Errno.NoSuchFile;
 
-            if(!idToEntry.TryGetValue(fileId, out MFS_FileEntry entry))
+            if(!idToEntry.TryGetValue(fileId, out FileEntry entry))
                 return Errno.NoSuchFile;
 
             uint nextBlock;

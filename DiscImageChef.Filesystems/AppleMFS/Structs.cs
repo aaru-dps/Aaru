@@ -42,7 +42,7 @@ namespace DiscImageChef.Filesystems.AppleMFS
     public partial class AppleMFS
     {
         /// <summary>Master Directory Block, should be at offset 0x0400 bytes in volume</summary>
-        struct MFS_MasterDirectoryBlock
+        struct MasterDirectoryBlock
         {
             /// <summary>0x000, Signature, 0xD2D7</summary>
             public ushort drSigWord;
@@ -77,15 +77,15 @@ namespace DiscImageChef.Filesystems.AppleMFS
         }
 
         [Flags]
-        enum MFS_FileFlags : byte
+        enum FileFlags : byte
         {
             Locked = 0x01, Used = 0x80
         }
 
-        struct MFS_FileEntry
+        struct FileEntry
         {
             /// <summary>0x00, Entry flags</summary>
-            public MFS_FileFlags flFlags;
+            public FileFlags flFlags;
             /// <summary>0x01, Version number</summary>
             public byte flTyp;
             /// <summary>0x02, FinderInfo</summary>
