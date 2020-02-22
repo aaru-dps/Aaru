@@ -1350,6 +1350,26 @@ namespace DiscImageChef.CommonTypes
                         }
 
                             break;
+                        case 0xB6:
+                        {
+                            switch(densityCode)
+                            {
+                                case 0x45:
+                                    // HP Colorado tapes have a different capacity but return same density code at least in Seagate drives
+                                    return MediaType.Travan4;
+                            }
+                        }
+
+                            break;
+                        case 0xB7:
+                        {
+                            switch(densityCode)
+                            {
+                                case 0x47: return MediaType.Travan5;
+                            }
+                        }
+
+                            break;
                         case 0xC1:
                         {
                             switch(densityCode)
