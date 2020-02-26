@@ -61,7 +61,7 @@
       <Compile Include="UsbVendorDto.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
+      <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
     </ItemGroup>
     <ProjectExtensions>
         <MonoDevelop>
