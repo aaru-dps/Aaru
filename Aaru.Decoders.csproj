@@ -167,13 +167,13 @@
     <Compile Include="Sega\Dreamcast.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj" />
-    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
-    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
