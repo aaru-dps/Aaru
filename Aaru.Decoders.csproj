@@ -7,7 +7,7 @@
     <ProjectGuid>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Decoders</RootNamespace>
-    <AssemblyName>DiscImageChef.Decoders</AssemblyName>
+    <AssemblyName>Aaru.Decoders</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
