@@ -119,8 +119,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj" />
-    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj" />
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj" />
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
