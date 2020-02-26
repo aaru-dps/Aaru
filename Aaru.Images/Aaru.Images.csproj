@@ -7,7 +7,7 @@
     <ProjectGuid>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.DiscImages</RootNamespace>
-    <AssemblyName>Aaru.DiscImages</AssemblyName>
+    <AssemblyName>Aaru.Images</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

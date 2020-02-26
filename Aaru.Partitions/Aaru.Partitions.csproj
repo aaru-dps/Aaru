@@ -79,7 +79,7 @@
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Aaru.DiscImages\Aaru.DiscImages.csproj">
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj">
       <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
       <Name>DiscImageChef.DiscImages</Name>
     </ProjectReference>

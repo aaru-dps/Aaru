@@ -704,579 +704,6 @@
           </e>
         </e>
       </e>
-      <e p="Aaru.DiscImages" t="IncludeRecursive">
-        <e p="Aaru.DiscImages.csproj" t="IncludeRecursive" />
-        <e p="Alcohol120" t="Include">
-          <e p="Alcohol120.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="Anex86" t="Include">
-          <e p="Anex86.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="Apple2MG" t="Include">
-          <e p="Apple2MG.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="AppleDOS" t="Include">
-          <e p="AppleDOS.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="AppleNIB" t="Include">
-          <e p="AppleNIB.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="Apridisk" t="Include">
-          <e p="Apridisk.cs" t="Include" />
-          <e p="Compression.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="BLU" t="Include">
-          <e p="BLU.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="BlindWrite4" t="Include">
-          <e p="BlindWrite4.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="BlindWrite5" t="Include">
-          <e p="BlindWrite5.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="CDRDAO" t="Include">
-          <e p="CDRDAO.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="CDRWin" t="Include">
-          <e p="CDRWin.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="CHD" t="Include">
-          <e p="CHD.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="CPCDSK" t="Include">
-          <e p="CPCDSK.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="CisCopy" t="Include">
-          <e p="CisCopy.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="CloneCD" t="Include">
-          <e p="CloneCD.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="CopyQM" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="CopyQM.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="CopyTape" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="CopyTape.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="D88" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="D88.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="DART" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="DART.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="DIM" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="DIM.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="DiscFerret" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="DiscFerret.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="DiscImageChef" t="Include">
-          <e p="CdEcc.cs" t="Include" />
-          <e p="ClauniaSubchannelTransform.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="DiscImageChef.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Tape.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="DiscJuggler" t="Include">
-          <e p="DiscJuggler.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="DiskCopy42" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="DiskCopy42.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="DriDiskCopy" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="DriDiskCopy.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="GDI" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="GDI.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="HDCopy" t="Include">
-          <e p="HDCopy.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="IMD" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="IMD.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="KryoFlux" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="KryoFlux.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="MaxiDisk" t="Include">
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="MaxiDisk.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="NDIF" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="NDIF.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="NHDr0" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="NHDr0.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="Nero" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Nero.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="Parallels" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Parallels.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="PartClone" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="PartClone.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="Partimage" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Partimage.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="QCOW" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="QCOW.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="QCOW2" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="QCOW2.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="QED" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="QED.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="RayDIM" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="RayDIM.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="Register.cs" t="Include" />
-        <e p="RsIde" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="RsIde.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="SaveDskF" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="SaveDskF.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="SuperCardPro" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="SuperCardPro.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="T98" t="Include">
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="T98.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="TeleDisk" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="TeleDisk.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="UDIF" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="UDIF.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="UkvFdi" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="UkvFdi.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-        </e>
-        <e p="VDI" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="VDI.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="VHD" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="VHD.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="VHDX" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="VHDX.cs" t="Include" />
-        </e>
-        <e p="VMware" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="VMware.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="Virtual98" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="Virtual98.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-        </e>
-        <e p="WCDiskImage" t="Include">
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Unsupported.cs" t="Include" />
-          <e p="WCDiskImage.cs" t="Include" />
-        </e>
-        <e p="ZZZRawImage" t="Include">
-          <e p="Constants.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
-          <e p="ZZZRawImage.cs" t="Include" />
-        </e>
-        <e p="bin" t="ExcludeRecursive" />
-        <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="net461" t="Include">
-              <e p="Aaru.DiscImages.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="netcoreapp2.0" t="Include">
-              <e p="Aaru.DiscImages.AssemblyInfo.cs" t="Include" />
-            </e>
-            <e p="netstandard2.0" t="Include">
-              <e p="Aaru.DiscImages.AssemblyInfo.cs" t="Include" />
-            </e>
-          </e>
-        </e>
-      </e>
       <e p="Aaru.Dto" t="IncludeRecursive">
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Dto.csproj" t="IncludeRecursive" />
@@ -1942,6 +1369,579 @@
             </e>
             <e p="netstandard2.0" t="Include">
               <e p="Aaru.Helpers.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="Aaru.Images" t="IncludeRecursive">
+        <e p="Aaru.Images.csproj" t="IncludeRecursive" />
+        <e p="Alcohol120" t="Include">
+          <e p="Alcohol120.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="Anex86" t="Include">
+          <e p="Anex86.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="Apple2MG" t="Include">
+          <e p="Apple2MG.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="AppleDOS" t="Include">
+          <e p="AppleDOS.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="AppleNIB" t="Include">
+          <e p="AppleNIB.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="Apridisk" t="Include">
+          <e p="Apridisk.cs" t="Include" />
+          <e p="Compression.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="BLU" t="Include">
+          <e p="BLU.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="BlindWrite4" t="Include">
+          <e p="BlindWrite4.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="BlindWrite5" t="Include">
+          <e p="BlindWrite5.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="CDRDAO" t="Include">
+          <e p="CDRDAO.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="CDRWin" t="Include">
+          <e p="CDRWin.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="CHD" t="Include">
+          <e p="CHD.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="CPCDSK" t="Include">
+          <e p="CPCDSK.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="CisCopy" t="Include">
+          <e p="CisCopy.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="CloneCD" t="Include">
+          <e p="CloneCD.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="CopyQM" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="CopyQM.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="CopyTape" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="CopyTape.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="D88" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="D88.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="DART" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="DART.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="DIM" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="DIM.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="DiscFerret" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="DiscFerret.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="DiscImageChef" t="Include">
+          <e p="CdEcc.cs" t="Include" />
+          <e p="ClauniaSubchannelTransform.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="DiscImageChef.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Tape.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="DiscJuggler" t="Include">
+          <e p="DiscJuggler.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="DiskCopy42" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="DiskCopy42.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="DriDiskCopy" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="DriDiskCopy.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="GDI" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="GDI.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="HDCopy" t="Include">
+          <e p="HDCopy.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="IMD" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="IMD.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="KryoFlux" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="KryoFlux.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="MaxiDisk" t="Include">
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="MaxiDisk.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="NDIF" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="NDIF.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="NHDr0" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="NHDr0.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="Nero" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Nero.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="Parallels" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Parallels.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="PartClone" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="PartClone.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="Partimage" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Partimage.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="QCOW" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="QCOW.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="QCOW2" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="QCOW2.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="QED" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="QED.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="RayDIM" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="RayDIM.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="Register.cs" t="Include" />
+        <e p="RsIde" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="RsIde.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="SaveDskF" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="SaveDskF.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="SuperCardPro" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="SuperCardPro.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="T98" t="Include">
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="T98.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="TeleDisk" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="TeleDisk.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+        </e>
+        <e p="UDIF" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="UDIF.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="UkvFdi" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="UkvFdi.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+        </e>
+        <e p="VDI" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="VDI.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="VHD" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="VHD.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="VHDX" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="VHDX.cs" t="Include" />
+        </e>
+        <e p="VMware" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="VMware.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="Virtual98" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="Virtual98.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
+        <e p="WCDiskImage" t="Include">
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Unsupported.cs" t="Include" />
+          <e p="WCDiskImage.cs" t="Include" />
+        </e>
+        <e p="ZZZRawImage" t="Include">
+          <e p="Constants.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+          <e p="ZZZRawImage.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="net461" t="Include">
+              <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netcoreapp2.0" t="Include">
+              <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
+            </e>
+            <e p="netstandard2.0" t="Include">
+              <e p="Aaru.Images.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>

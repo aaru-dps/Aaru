@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Checksums", "Aaru.Chec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Helpers", "Aaru.Helpers\Aaru.Helpers.csproj", "{F8BDF57B-1571-4CD0-84B3-B422088D359A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.DiscImages", "Aaru.DiscImages\Aaru.DiscImages.csproj", "{74032CBC-339B-42F3-AF6F-E96C261F3E6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Images", "Aaru.Images\Aaru.Images.csproj", "{74032CBC-339B-42F3-AF6F-E96C261F3E6A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.CommonTypes", "Aaru.CommonTypes\Aaru.CommonTypes.csproj", "{F2B84194-26EB-4227-B1C5-6602517E85AE}"
 EndProject

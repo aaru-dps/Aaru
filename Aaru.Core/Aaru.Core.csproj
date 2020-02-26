@@ -135,7 +135,7 @@
       <Project>{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}</Project>
       <Name>DiscImageChef.Partitions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Aaru.DiscImages\Aaru.DiscImages.csproj">
+    <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj">
       <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
       <Name>DiscImageChef.DiscImages</Name>
     </ProjectReference>
