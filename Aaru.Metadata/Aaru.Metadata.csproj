@@ -59,19 +59,19 @@
     <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj">
       <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
       <Name>DiscImageChef.CommonTypes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj">
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
       <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Interop\DiscImageChef.Interop.csproj">
+    <ProjectReference Include="..\Aaru.Interop\Aaru.Interop.csproj">
       <Project>{9183f2e0-a879-4f23-9ee3-c6908f1332b2}</Project>
       <Name>DiscImageChef.Interop</Name>
     </ProjectReference>

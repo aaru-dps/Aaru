@@ -23,10 +23,10 @@
         <NrtShowRevision>true</NrtShowRevision>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj" />
-        <ProjectReference Include="..\DiscImageChef.Database\DiscImageChef.Database.csproj" />
-        <ProjectReference Include="..\DiscImageChef.Gui\DiscImageChef.Gui.csproj" />
-        <ProjectReference Include="..\DiscImageChef.Settings\DiscImageChef.Settings.csproj" />
+        <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />
+        <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
+        <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj" />
+        <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Eto.Platform.Gtk" Version="2.5.0-rc.4" />

@@ -131,8 +131,8 @@
     <Compile Include="Models\Version.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
-    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj" />
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

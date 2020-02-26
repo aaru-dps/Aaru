@@ -81,19 +81,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj">
+    <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj">
       <Project>{679659b8-25d0-4279-b632-56ef8f94adc0}</Project>
       <Name>DiscImageChef.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Database\DiscImageChef.Database.csproj">
+    <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj">
       <Project>{fa0749b5-efe0-4148-9545-cd420b45bc36}</Project>
       <Name>DiscImageChef.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Gui\DiscImageChef.Gui.csproj">
+    <ProjectReference Include="..\Aaru.Gui\Aaru.Gui.csproj">
       <Project>{cf61ad81-3f98-4e7b-8f00-9957a6cde5fa}</Project>
       <Name>DiscImageChef.Gui</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Settings\DiscImageChef.Settings.csproj">
+    <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj">
       <Project>{5c4c7baa-cf60-4233-84ed-39cb2312af38}</Project>
       <Name>DiscImageChef.Settings</Name>
     </ProjectReference>

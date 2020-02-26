@@ -508,31 +508,31 @@
     <Compile Include="RayDIM\RayDIM.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj">
       <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
       <Name>DiscImageChef.CommonTypes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj">
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
       <Name>DiscImageChef.Checksums</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Compression\DiscImageChef.Compression.csproj">
+    <ProjectReference Include="..\Aaru.Compression\Aaru.Compression.csproj">
       <Project>{858398d1-7321-4763-8bab-56bbfec74e29}</Project>
       <Name>DiscImageChef.Compression</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj">
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
       <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
+    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj">
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>DiscImageChef.Filters</Name>
     </ProjectReference>

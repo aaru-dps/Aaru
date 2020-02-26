@@ -25,9 +25,9 @@
         <PackageReference Include="Unclassified.NetRevisionTask" Version="0.3.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj" />
-        <ProjectReference Include="..\DiscImageChef.Devices\DiscImageChef.Devices.csproj" />
-        <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj" />
+        <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj" />
+        <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj" />
+        <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Assets\Logos\Media\AIT1.png" />

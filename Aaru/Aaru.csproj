@@ -194,52 +194,52 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Checksums\DiscImageChef.Checksums.csproj">
+    <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj">
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
       <Name>DiscImageChef.Checksums</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Database\DiscImageChef.Database.csproj" />
-    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+    <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj">
+    <ProjectReference Include="..\Aaru.DiscImages\Aaru.DiscImages.csproj">
       <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
       <Name>DiscImageChef.DiscImages</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj">
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj">
       <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
       <Name>DiscImageChef.CommonTypes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Partitions\DiscImageChef.Partitions.csproj">
+    <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj">
       <Project>{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}</Project>
       <Name>DiscImageChef.Partitions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj">
+    <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj">
       <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>
       <Name>DiscImageChef.Filesystems</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj">
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
       <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Devices\DiscImageChef.Devices.csproj">
+    <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj">
       <Project>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</Project>
       <Name>DiscImageChef.Devices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Settings\DiscImageChef.Settings.csproj">
+    <ProjectReference Include="..\Aaru.Settings\Aaru.Settings.csproj">
       <Project>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</Project>
       <Name>DiscImageChef.Settings</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Filters\DiscImageChef.Filters.csproj">
+    <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj">
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
       <Name>DiscImageChef.Filters</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Core\DiscImageChef.Core.csproj">
+    <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj">
       <Project>{679659B8-25D0-4279-B632-56EF8F94ADC0}</Project>
       <Name>DiscImageChef.Core</Name>
     </ProjectReference>

@@ -10,7 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DiscImageChef.Database\DiscImageChef.Database.csproj" />
+      <ProjectReference Include="..\Aaru.Database\Aaru.Database.csproj" />
     </ItemGroup>
 
 </Project>

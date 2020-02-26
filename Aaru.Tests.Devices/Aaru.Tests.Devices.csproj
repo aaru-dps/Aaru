@@ -82,19 +82,19 @@
     <Compile Include="DecodeATARegisters.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.Console\DiscImageChef.Console.csproj">
+    <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
       <Name>DiscImageChef.Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Devices\DiscImageChef.Devices.csproj">
+    <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj">
       <Project>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</Project>
       <Name>DiscImageChef.Devices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Decoders\DiscImageChef.Decoders.csproj">
+    <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj">
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
       <Name>DiscImageChef.Decoders</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DiscImageChef.Helpers\DiscImageChef.Helpers.csproj">
+    <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
       <Name>DiscImageChef.Helpers</Name>
     </ProjectReference>

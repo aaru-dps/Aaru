@@ -57,7 +57,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj" />
+    <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj" />
   </ItemGroup>
     <ItemGroup Condition="$(TargetFramework.StartsWith('netcoreapp')) == true">
         <PackageReference Include="Microsoft.Win32.Registry" Version="4.6.0" />
