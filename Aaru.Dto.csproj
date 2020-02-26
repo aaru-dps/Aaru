@@ -7,7 +7,7 @@
         <ProjectGuid>{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}</ProjectGuid>
         <OutputType>Library</OutputType>
         <RootNamespace>DiscImageChef.Dto</RootNamespace>
-        <AssemblyName>DiscImageChef.Dto</AssemblyName>
+        <AssemblyName>Aaru.Dto</AssemblyName>
         <ReleaseVersion>$(Version)</ReleaseVersion>
         <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
