@@ -3,43 +3,43 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Checksums", "DiscImageChef.Checksums\DiscImageChef.Checksums.csproj", "{CC48B324-A532-4A45-87A6-6F91F7141E8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Checksums", "Aaru.Checksums\Aaru.Checksums.csproj", "{CC48B324-A532-4A45-87A6-6F91F7141E8D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Helpers", "DiscImageChef.Helpers\DiscImageChef.Helpers.csproj", "{F8BDF57B-1571-4CD0-84B3-B422088D359A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Helpers", "Aaru.Helpers\Aaru.Helpers.csproj", "{F8BDF57B-1571-4CD0-84B3-B422088D359A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.DiscImages", "DiscImageChef.DiscImages\DiscImageChef.DiscImages.csproj", "{74032CBC-339B-42F3-AF6F-E96C261F3E6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.DiscImages", "Aaru.DiscImages\Aaru.DiscImages.csproj", "{74032CBC-339B-42F3-AF6F-E96C261F3E6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.CommonTypes", "DiscImageChef.CommonTypes\DiscImageChef.CommonTypes.csproj", "{F2B84194-26EB-4227-B1C5-6602517E85AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.CommonTypes", "Aaru.CommonTypes\Aaru.CommonTypes.csproj", "{F2B84194-26EB-4227-B1C5-6602517E85AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Partitions", "DiscImageChef.Partitions\DiscImageChef.Partitions.csproj", "{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Partitions", "Aaru.Partitions\Aaru.Partitions.csproj", "{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Filesystems", "DiscImageChef.Filesystems\DiscImageChef.Filesystems.csproj", "{D7016DF2-5A5E-4524-B40D-BA2D59576688}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Filesystems", "Aaru.Filesystems\Aaru.Filesystems.csproj", "{D7016DF2-5A5E-4524-B40D-BA2D59576688}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Decoders", "DiscImageChef.Decoders\DiscImageChef.Decoders.csproj", "{0BEB3088-B634-4289-AE17-CDF2D25D00D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Decoders", "Aaru.Decoders\Aaru.Decoders.csproj", "{0BEB3088-B634-4289-AE17-CDF2D25D00D5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Devices", "DiscImageChef.Devices\DiscImageChef.Devices.csproj", "{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Devices", "Aaru.Devices\Aaru.Devices.csproj", "{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Console", "DiscImageChef.Console\DiscImageChef.Console.csproj", "{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Console", "Aaru.Console\Aaru.Console.csproj", "{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Settings", "DiscImageChef.Settings\DiscImageChef.Settings.csproj", "{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Settings", "Aaru.Settings\Aaru.Settings.csproj", "{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Filters", "DiscImageChef.Filters\DiscImageChef.Filters.csproj", "{D571B8EF-903D-4353-BDD5-B834F9F029EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Filters", "Aaru.Filters\Aaru.Filters.csproj", "{D571B8EF-903D-4353-BDD5-B834F9F029EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Core", "DiscImageChef.Core\DiscImageChef.Core.csproj", "{679659B8-25D0-4279-B632-56EF8F94ADC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Core", "Aaru.Core\Aaru.Core.csproj", "{679659B8-25D0-4279-B632-56EF8F94ADC0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Tests", "DiscImageChef.Tests\DiscImageChef.Tests.csproj", "{B2ABC1F2-C365-4515-9F23-A5725050CC48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Tests", "Aaru.Tests\Aaru.Tests.csproj", "{B2ABC1F2-C365-4515-9F23-A5725050CC48}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Tests.Devices", "DiscImageChef.Tests.Devices\DiscImageChef.Tests.Devices.csproj", "{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Tests.Devices", "Aaru.Tests.Devices\Aaru.Tests.Devices.csproj", "{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Compression", "DiscImageChef.Compression\DiscImageChef.Compression.csproj", "{858398D1-7321-4763-8BAB-56BBFEC74E29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Compression", "Aaru.Compression\Aaru.Compression.csproj", "{858398D1-7321-4763-8BAB-56BBFEC74E29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Database", "DiscImageChef.Database\DiscImageChef.Database.csproj", "{FA0749B5-EFE0-4148-9545-CD420B45BC36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Database", "Aaru.Database\Aaru.Database.csproj", "{FA0749B5-EFE0-4148-9545-CD420B45BC36}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Gui", "DiscImageChef.Gui\DiscImageChef.Gui.csproj", "{CF61AD81-3F98-4E7B-8F00-9957A6CDE5FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Gui", "Aaru.Gui\Aaru.Gui.csproj", "{CF61AD81-3F98-4E7B-8F00-9957A6CDE5FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.EntityFramework", "DiscImageChef.EntityFramework\DiscImageChef.EntityFramework.csproj", "{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.EntityFramework", "Aaru.EntityFramework\Aaru.EntityFramework.csproj", "{F73EE2BD-6009-4590-9F5A-68198CA5C0DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscImageChef.Dto", "DiscImageChef.Dto\DiscImageChef.Dto.csproj", "{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aaru.Dto", "Aaru.Dto\Aaru.Dto.csproj", "{F4399FF5-9BD0-475A-9EA7-3DAE45291FE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
