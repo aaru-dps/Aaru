@@ -7,7 +7,7 @@
     <ProjectGuid>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Helpers</RootNamespace>
-    <AssemblyName>DiscImageChef.Helpers</AssemblyName>
+    <AssemblyName>Aaru.Helpers</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
