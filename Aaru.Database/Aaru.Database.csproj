@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputType>Library</OutputType>
     <RootNamespace>DiscImageChef.Database</RootNamespace>
-    <AssemblyName>DiscImageChef.Database</AssemblyName>
+    <AssemblyName>Aaru.Database</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

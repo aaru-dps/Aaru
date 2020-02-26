@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <RootNamespace>DiscImageChef.Gui</RootNamespace>
-        <AssemblyName>DiscImageChef.Gui</AssemblyName>
+        <AssemblyName>Aaru.Gui</AssemblyName>
         <ReleaseVersion>$(Version)</ReleaseVersion>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <Version>4.5.99.1693</Version>

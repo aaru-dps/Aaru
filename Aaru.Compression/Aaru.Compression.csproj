@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DiscImageChef.Compression</RootNamespace>
-    <AssemblyName>DiscImageChef.Compression</AssemblyName>
+    <AssemblyName>Aaru.Compression</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
