@@ -1,19 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="GUI" type="DotNetProject" factoryName=".NET Project">
-    <option name="EXE_PATH" value="" />
+  <configuration default="false" name="Aaru.Tests" type="DotNetProject" factoryName=".NET Project">
+    <option name="EXE_PATH" value="$PROJECT_DIR$/Aaru.Tests/bin/Debug/net461/Aaru.Tests.exe" />
     <option name="PROGRAM_PARAMETERS" value="" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/DiscImageChef/bin/Debug/netcoreapp2.0" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Aaru.Tests" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="USE_MONO" value="0" />
     <option name="RUNTIME_ARGUMENTS" value="" />
-    <option name="PROJECT_PATH" value="$PROJECT_DIR$/DiscImageChef/DiscImageChef.csproj" />
-    <option name="PROJECT_EXE_PATH_TRACKING" value="0" />
+    <option name="PROJECT_PATH" value="$PROJECT_DIR$/Aaru.Tests/Aaru.Tests.csproj" />
+    <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
     <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
     <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
     <option name="PROJECT_KIND" value="DotNetCore" />
-    <option name="PROJECT_TFM" value=".NETCoreApp,Version=v2.0" />
-    <browser url="http://localhost:5000" />
+    <option name="PROJECT_TFM" value=".NETFramework,Version=v4.6.1" />
     <method v="2">
       <option name="Build" enabled="true" />
     </method>
