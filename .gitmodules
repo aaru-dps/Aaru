@@ -4,3 +4,21 @@
 [submodule "cuetoolsnet"]
 	path = cuetoolsnet
 	url = https://github.com/claunia/cuetoolsnet.git
+[submodule "Aaru.Checksums"]
+	path = Aaru.Checksums
+	url = https://github.com/aaru-mps/Aaru.Checksums
+[submodule "Aaru.CommonTypes"]
+	path = Aaru.CommonTypes
+	url = https://github.com/aaru-mps/Aaru.CommonTypes
+[submodule "Aaru.Console"]
+	path = Aaru.Console
+	url = https://github.com/aaru-mps/Aaru.Console
+[submodule "Aaru.Decoders"]
+	path = Aaru.Decoders
+	url = https://github.com/aaru-mps/Aaru.Decoders
+[submodule "Aaru.Dto"]
+	path = Aaru.Dto
+	url = https://github.com/aaru-mps/Aaru.Dto
+[submodule "Aaru.Helpers"]
+	path = Aaru.Helpers
+	url = https://github.com/aaru-mps/Aaru.Helpers
