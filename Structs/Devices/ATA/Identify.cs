@@ -916,7 +916,7 @@ namespace Aaru.CommonTypes.Structs.Devices.ATA
 
             if(IdentifyDeviceResponse.Length != 512)
             {
-                DicConsole.DebugWriteLine("ATA/ATAPI IDENTIFY decoder",
+                AaruConsole.DebugWriteLine("ATA/ATAPI IDENTIFY decoder",
                                           "IDENTIFY response is different than 512 bytes, not decoding.");
 
                 return null;

@@ -222,7 +222,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
             if(SCSIInquiryResponse.Length < 36 &&
                SCSIInquiryResponse.Length != 5)
             {
-                DicConsole.DebugWriteLine("SCSI INQUIRY decoder",
+                AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
                                           "INQUIRY response is {0} bytes, less than minimum of 36 bytes, decoded data can be incorrect, not decoding.",
                                           SCSIInquiryResponse.Length);
 
@@ -232,7 +232,7 @@ namespace Aaru.CommonTypes.Structs.Devices.SCSI
             if(SCSIInquiryResponse.Length < SCSIInquiryResponse[4] + 4 &&
                SCSIInquiryResponse.Length != SCSIInquiryResponse[4])
             {
-                DicConsole.DebugWriteLine("SCSI INQUIRY decoder",
+                AaruConsole.DebugWriteLine("SCSI INQUIRY decoder",
                                           "INQUIRY response length ({0} bytes) is different than specified in length field ({1} bytes), decoded data can be incorrect, not decoding.",
                                           SCSIInquiryResponse.Length, SCSIInquiryResponse[4] + 4);
 

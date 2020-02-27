@@ -68,7 +68,7 @@ namespace Aaru.CommonTypes
                 }
                 catch(Exception exception)
                 {
-                    DicConsole.ErrorWriteLine("Exception {0}", exception);
+                    AaruConsole.ErrorWriteLine("Exception {0}", exception);
                 }
         }
 
