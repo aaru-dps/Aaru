@@ -1,4 +1,4 @@
-// The Disc Image Chef
+// Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
 // Filename       : Unsupported.cs

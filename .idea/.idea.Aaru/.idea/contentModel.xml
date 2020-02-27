@@ -84,6 +84,7 @@
         </e>
       </e>
       <e p="Aaru.Checksums" t="IncludeRecursive">
+        <e p=".gitignore" t="Include" />
         <e p="Aaru.Checksums.csproj" t="IncludeRecursive" />
         <e p="Adler32Context.cs" t="Include" />
         <e p="CDChecksums.cs" t="Include" />
