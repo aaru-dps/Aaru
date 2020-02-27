@@ -7,14 +7,14 @@
         <SchemaVersion>2.0</SchemaVersion>
         <Version>4.5.99.1693</Version>
         <Company>Claunia.com</Company>
-        <Product>The Disc Image Chef</Product>
-        <Title>The Disc Image Chef</Title>
+        <Product>Aaru Media Preservation Suite</Product>
+        <Title>Aaru Media Preservation Suite</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <ReleaseVersion>$(Version)</ReleaseVersion>
         <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
-        <AssemblyTitle>DiscImageChef</AssemblyTitle>
-        <AssemblyName>DiscImageChefGui</AssemblyName>
+        <AssemblyTitle>Aaru</AssemblyTitle>
+        <AssemblyName>AaruGui</AssemblyName>
         <RuntimeIdentifiers>alpine-x64;linux-arm;linux-arm64;linux-x64;linux-x86</RuntimeIdentifiers>
     </PropertyGroup>
     <PropertyGroup>

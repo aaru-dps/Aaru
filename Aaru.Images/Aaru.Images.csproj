@@ -14,8 +14,8 @@
     <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
-    <Product>The Disc Image Chef</Product>
-    <Title>DiscImageChef.DiscImages</Title>
+    <Product>Aaru Media Preservation Suite</Product>
+    <Title>Aaru.DiscImages</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
     <TargetFrameworks>net461;netstandard2.0;netcoreapp2.0</TargetFrameworks>
     <NoWarn>CS0649</NoWarn>
@@ -211,19 +211,19 @@
     <Compile Include="DiscFerret\Read.cs" />
     <Compile Include="DiscFerret\Structs.cs" />
     <Compile Include="DiscFerret\Verify.cs" />
-    <Compile Include="DiscImageChef\CdEcc.cs" />
-    <Compile Include="DiscImageChef\ClauniaSubchannelTransform.cs" />
-    <Compile Include="DiscImageChef\Constants.cs" />
-    <Compile Include="DiscImageChef\DiscImageChef.cs" />
-    <Compile Include="DiscImageChef\Enums.cs" />
-    <Compile Include="DiscImageChef\Helpers.cs" />
-    <Compile Include="DiscImageChef\Identify.cs" />
-    <Compile Include="DiscImageChef\Properties.cs" />
-    <Compile Include="DiscImageChef\Read.cs" />
-    <Compile Include="DiscImageChef\Structs.cs" />
-    <Compile Include="DiscImageChef\Tape.cs" />
-    <Compile Include="DiscImageChef\Verify.cs" />
-    <Compile Include="DiscImageChef\Write.cs" />
+    <Compile Include="Aaru\CdEcc.cs" />
+    <Compile Include="Aaru\ClauniaSubchannelTransform.cs" />
+    <Compile Include="Aaru\Constants.cs" />
+    <Compile Include="Aaru\Aaru.cs" />
+    <Compile Include="Aaru\Enums.cs" />
+    <Compile Include="Aaru\Helpers.cs" />
+    <Compile Include="Aaru\Identify.cs" />
+    <Compile Include="Aaru\Properties.cs" />
+    <Compile Include="Aaru\Read.cs" />
+    <Compile Include="Aaru\Structs.cs" />
+    <Compile Include="Aaru\Tape.cs" />
+    <Compile Include="Aaru\Verify.cs" />
+    <Compile Include="Aaru\Write.cs" />
     <Compile Include="DiscJuggler\Helpers.cs" />
     <Compile Include="DiscJuggler\Identify.cs" />
     <Compile Include="DiscJuggler\Properties.cs" />
@@ -510,31 +510,31 @@
   <ItemGroup>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj">
       <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
-      <Name>DiscImageChef.CommonTypes</Name>
+      <Name>Aaru.CommonTypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj">
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
-      <Name>DiscImageChef.Checksums</Name>
+      <Name>Aaru.Checksums</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Compression\Aaru.Compression.csproj">
       <Project>{858398d1-7321-4763-8bab-56bbfec74e29}</Project>
-      <Name>DiscImageChef.Compression</Name>
+      <Name>Aaru.Compression</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
-      <Name>DiscImageChef.Helpers</Name>
+      <Name>Aaru.Helpers</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
-      <Name>DiscImageChef.Console</Name>
+      <Name>Aaru.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj">
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
-      <Name>DiscImageChef.Decoders</Name>
+      <Name>Aaru.Decoders</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj">
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
-      <Name>DiscImageChef.Filters</Name>
+      <Name>Aaru.Filters</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -546,7 +546,7 @@
     <MonoDevelop>
       <Properties>
         <Policies>
-          <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;The Disc Image Chef&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/" />
+          <StandardHeader IncludeInNewFiles="True" Text="/***************************************************************************&#xA;Aaru Media Preservation Suite&#xA;----------------------------------------------------------------------------&#xA; &#xA;Filename       : ${FileName}&#xA;Author(s)      : ${AuthorName} &lt;${AuthorEmail}&gt;&#xA;&#xA;Component      : Component&#xA; &#xA;--[ Description ] ----------------------------------------------------------&#xA; &#xA;    Description&#xA; &#xA;--[ License ] --------------------------------------------------------------&#xA; &#xA;    This library is free software; you can redistribute it and/or modify&#xA;    it under the terms of the GNU Lesser General Public License as&#xA;    published by the Free Software Foundation; either version 2.1 of the&#xA;    License, or (at your option) any later version.&#xA;&#xA;    This library is distributed in the hope that it will be useful, but&#xA;    WITHOUT ANY WARRANTY; without even the implied warranty of&#xA;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU&#xA;    Lesser General Public License for more details.&#xA;&#xA;    You should have received a copy of the GNU Lesser General Public&#xA;    License along with this library; if not, see &lt;http://www.gnu.org/licenses/&gt;.&#xA;&#xA;----------------------------------------------------------------------------&#xA;Copyright © 2011-${Year} ${CopyrightHolder}&#xA;****************************************************************************/" />
           <TextStylePolicy FileWidth="120" TabWidth="4" TabsToSpaces="False" IndentWidth="4" RemoveTrailingWhitespace="True" NoTabsAfterNonTabs="False" EolMarker="Unix" scope="text/x-csharp" />
           <CSharpFormattingPolicy IndentBlock="True" IndentBraces="False" IndentSwitchSection="True" IndentSwitchCaseSection="True" LabelPositioning="OneLess" NewLinesForBracesInTypes="True" NewLinesForBracesInMethods="True" NewLinesForBracesInProperties="True" NewLinesForBracesInAccessors="True" NewLinesForBracesInAnonymousMethods="True" NewLinesForBracesInControlBlocks="True" NewLinesForBracesInAnonymousTypes="True" NewLinesForBracesInObjectCollectionArrayInitializers="True" NewLinesForBracesInLambdaExpressionBody="True" NewLineForElse="True" NewLineForCatch="True" NewLineForFinally="True" SpacingAfterMethodDeclarationName="False" SpaceWithinMethodDeclarationParenthesis="False" SpaceBetweenEmptyMethodDeclarationParentheses="False" SpaceAfterMethodCallName="False" SpaceWithinMethodCallParentheses="False" SpaceBetweenEmptyMethodCallParentheses="False" SpaceWithinExpressionParentheses="False" SpaceWithinCastParentheses="False" SpaceWithinOtherParentheses="False" SpaceAfterCast="False" SpacesIgnoreAroundVariableDeclaration="False" SpaceBeforeOpenSquareBracket="False" SpaceBetweenEmptySquareBrackets="False" SpaceWithinSquareBrackets="False" SpaceAfterColonInBaseTypeDeclaration="True" SpaceAfterComma="True" SpaceAfterDot="False" SpaceAfterSemicolonsInForStatement="True" SpaceBeforeColonInBaseTypeDeclaration="True" SpaceBeforeComma="False" SpaceBeforeDot="False" SpaceBeforeSemicolonsInForStatement="False" SpacingAroundBinaryOperator="Single" WrappingPreserveSingleLine="True" WrappingKeepStatementsOnSingleLine="True" PlaceSystemDirectiveFirst="True" NewLineForMembersInObjectInit="False" NewLineForMembersInAnonymousTypes="False" NewLineForClausesInQuery="False" SpaceAfterControlFlowStatementKeyword="False" scope="text/x-csharp" />
         </Policies>

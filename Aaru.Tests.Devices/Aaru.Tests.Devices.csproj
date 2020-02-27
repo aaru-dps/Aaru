@@ -6,7 +6,7 @@
     <ProjectGuid>{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Aaru.Tests.Devices</RootNamespace>
-    <AssemblyName>DiscImageChef.Tests.Devices</AssemblyName>
+    <AssemblyName>Aaru.Tests.Devices</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
@@ -14,8 +14,8 @@
     <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
-    <Product>The Disc Image Chef</Product>
-    <Title>DiscImageChef.Tests.Devices</Title>
+    <Product>Aaru Media Preservation Suite</Product>
+    <Title>Aaru.Tests.Devices</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup>
@@ -84,19 +84,19 @@
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Console\Aaru.Console.csproj">
       <Project>{CCAA7AFE-C094-4D82-A66D-630DE8A3F545}</Project>
-      <Name>DiscImageChef.Console</Name>
+      <Name>Aaru.Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Devices\Aaru.Devices.csproj">
       <Project>{57BB2341-AB62-48FD-91B8-46F5A2F9ED51}</Project>
-      <Name>DiscImageChef.Devices</Name>
+      <Name>Aaru.Devices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Decoders\Aaru.Decoders.csproj">
       <Project>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</Project>
-      <Name>DiscImageChef.Decoders</Name>
+      <Name>Aaru.Decoders</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Helpers\Aaru.Helpers.csproj">
       <Project>{F8BDF57B-1571-4CD0-84B3-B422088D359A}</Project>
-      <Name>DiscImageChef.Helpers</Name>
+      <Name>Aaru.Helpers</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
