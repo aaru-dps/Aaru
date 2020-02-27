@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Enums;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         /// <summary>Header, at start of file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Unicode)]

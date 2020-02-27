@@ -36,7 +36,7 @@ using Aaru.CommonTypes.Enums;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         byte[] eccBTable;
         byte[] eccFTable;

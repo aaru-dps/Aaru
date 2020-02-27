@@ -54,7 +54,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         public bool Open(IFilter imageFilter)
         {

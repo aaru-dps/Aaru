@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         /// <summary>List of known compression types</summary>
         enum CompressionType : ushort

@@ -81,7 +81,7 @@ using SharpCompress.Compressors.LZMA;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
+    public partial class AaruFormat : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
     {
         bool alreadyWrittenZero;
         /// <summary>Cache of uncompressed blocks.</summary>
@@ -164,7 +164,7 @@ namespace Aaru.DiscImages
         bool  writingLong;
         ulong writtenSectors;
 
-        public DiscImageChef()
+        public AaruFormat()
         {
             imageInfo = new ImageInfo
             {

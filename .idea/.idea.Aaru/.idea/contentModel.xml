@@ -1375,6 +1375,21 @@
       </e>
       <e p="Aaru.Images" t="IncludeRecursive">
         <e p="Aaru.Images.csproj" t="IncludeRecursive" />
+        <e p="AaruFormat" t="Include">
+          <e p="AaruFormat.cs" t="Include" />
+          <e p="CdEcc.cs" t="Include" />
+          <e p="ClauniaSubchannelTransform.cs" t="Include" />
+          <e p="Constants.cs" t="Include" />
+          <e p="Enums.cs" t="Include" />
+          <e p="Helpers.cs" t="Include" />
+          <e p="Identify.cs" t="Include" />
+          <e p="Properties.cs" t="Include" />
+          <e p="Read.cs" t="Include" />
+          <e p="Structs.cs" t="Include" />
+          <e p="Tape.cs" t="Include" />
+          <e p="Verify.cs" t="Include" />
+          <e p="Write.cs" t="Include" />
+        </e>
         <e p="Alcohol120" t="Include">
           <e p="Alcohol120.cs" t="Include" />
           <e p="Constants.cs" t="Include" />
@@ -1586,21 +1601,6 @@
           <e p="Read.cs" t="Include" />
           <e p="Structs.cs" t="Include" />
           <e p="Verify.cs" t="Include" />
-        </e>
-        <e p="DiscImageChef" t="Include">
-          <e p="CdEcc.cs" t="Include" />
-          <e p="ClauniaSubchannelTransform.cs" t="Include" />
-          <e p="Constants.cs" t="Include" />
-          <e p="DiscImageChef.cs" t="Include" />
-          <e p="Enums.cs" t="Include" />
-          <e p="Helpers.cs" t="Include" />
-          <e p="Identify.cs" t="Include" />
-          <e p="Properties.cs" t="Include" />
-          <e p="Read.cs" t="Include" />
-          <e p="Structs.cs" t="Include" />
-          <e p="Tape.cs" t="Include" />
-          <e p="Verify.cs" t="Include" />
-          <e p="Write.cs" t="Include" />
         </e>
         <e p="DiscJuggler" t="Include">
           <e p="DiscJuggler.cs" t="Include" />

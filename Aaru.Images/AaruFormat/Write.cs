@@ -55,7 +55,7 @@ using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         public bool Create(string path, MediaType mediaType, Dictionary<string, string> options, ulong sectors,
                            uint sectorSize)
@@ -271,8 +271,8 @@ namespace Aaru.DiscImages
             header.application             = "DiscImageChef";
             header.imageMajorVersion       = DICF_VERSION;
             header.imageMinorVersion       = 0;
-            header.applicationMajorVersion = (byte)typeof(DiscImageChef).Assembly.GetName().Version.Major;
-            header.applicationMinorVersion = (byte)typeof(DiscImageChef).Assembly.GetName().Version.Minor;
+            header.applicationMajorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Major;
+            header.applicationMinorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Minor;
 
             index = new List<IndexEntry>();
 

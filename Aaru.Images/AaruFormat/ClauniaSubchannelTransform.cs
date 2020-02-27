@@ -35,7 +35,7 @@ using Aaru.Console;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         static byte[] ClauniaSubchannelTransform(byte[] interleaved)
         {

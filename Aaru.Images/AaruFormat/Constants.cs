@@ -32,7 +32,7 @@
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         /// <summary>Magic identidier = "DICMFMT".</summary>
         const ulong DIC_MAGIC = 0x544D52464D434944;

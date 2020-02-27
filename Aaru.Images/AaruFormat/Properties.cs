@@ -40,7 +40,7 @@ using Schemas;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "DiscImageChef format";

@@ -39,7 +39,7 @@ using Aaru.Helpers;
 
 namespace Aaru.DiscImages
 {
-    public partial class DiscImageChef
+    public partial class AaruFormat
     {
         public bool? VerifyMediaImage()
         {
