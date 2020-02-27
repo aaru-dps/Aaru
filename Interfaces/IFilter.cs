@@ -129,7 +129,7 @@ namespace Aaru.CommonTypes.Interfaces
 
         /// <summary>
         ///     Returns true if the filter has a file/stream/buffer currently opened and no
-        ///     <see cref="M:DiscImageChef.Filters.Filter.Close" /> has been issued.
+        ///     <see cref="M:Aaru.Filters.Filter.Close" /> has been issued.
         /// </summary>
         bool IsOpened();
 

@@ -53,7 +53,7 @@ namespace Aaru.CommonTypes
         /// <summary>Fills the list of all known filters</summary>
         public FiltersList()
         {
-            Assembly assembly = Assembly.Load("DiscImageChef.Filters");
+            Assembly assembly = Assembly.Load("Aaru.Filters");
             Filters = new SortedDictionary<string, IFilter>();
 
             foreach(Type type in assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IFilter))))
