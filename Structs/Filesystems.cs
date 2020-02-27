@@ -5,7 +5,7 @@
 // Filename       : Structs.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef filesystem plugins.
+// Component      : Aaru filesystem plugins.
 //
 // --[ Description ] ----------------------------------------------------------
 //

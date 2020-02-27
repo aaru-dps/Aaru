@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Returns DiscImageChef version in XML software type format.
+//     Returns Aaru version in XML software type format.
 //
 // --[ License ] --------------------------------------------------------------
 //

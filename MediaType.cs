@@ -5,7 +5,7 @@
 // Filename       : MediaType.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef common types.
+// Component      : Aaru common types.
 //
 // --[ Description ] ----------------------------------------------------------
 //
