@@ -735,7 +735,7 @@ namespace Aaru.Core
                     #if DEBUG
                         System.Console.WriteLine("Uploading statistics");
                     #else
-                            DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading statistics");
+                            Aaru.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading statistics");
                     #endif
 
                         string json = JsonConvert.SerializeObject(dto, Formatting.Indented, new JsonSerializerSettings
@@ -1088,7 +1088,7 @@ namespace Aaru.Core
                     #if DEBUG
                         System.Console.WriteLine("Uploading partial statistics file {0}", statsFile);
                     #else
-                    DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
+                    Aaru.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading partial statistics file {0}", statsFile);
                     #endif
 
                         var fs = new FileStream(statsFile, FileMode.Open, FileAccess.Read);

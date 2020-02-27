@@ -68,7 +68,7 @@ namespace Aaru.Core
                     #if DEBUG
                     System.Console.WriteLine("Uploading device report");
                     #else
-                    DiscImageChef.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
+                    Aaru.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
                     #endif
 
                     string json = JsonConvert.SerializeObject(report, Formatting.Indented,
