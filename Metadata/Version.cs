@@ -47,7 +47,7 @@ namespace Aaru.CommonTypes.Metadata
         /// <returns>XML software type</returns>
         public static SoftwareType GetSoftwareType() => new SoftwareType
         {
-            Name    = "DiscImageChef", OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
+            Name    = "Aaru", OperatingSystem = DetectOS.GetRealPlatformID().ToString(),
             Version = typeof(Version).Assembly.GetName().Version.ToString()
         };
     }
