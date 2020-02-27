@@ -262,7 +262,7 @@ namespace Aaru.DiscImages
                 };
 
                 if(string.IsNullOrEmpty(imageInfo.DriveManufacturer))
-                    imageInfo.DriveManufacturer = "DiscImageChef";
+                    imageInfo.DriveManufacturer = "Aaru";
 
                 if(string.IsNullOrEmpty(imageInfo.DriveModel))
                     imageInfo.DriveModel = "";
