@@ -107,7 +107,7 @@ namespace Aaru.Devices.Remote
 
             var clientHello = new DicPacketHello
             {
-                application = "DiscImageChef",
+                application = "Aaru",
                 version = Version.GetVersion(),
                 maxProtocol = Consts.MaxProtocol,
                 sysname = DetectOS.GetPlatformName(
