@@ -514,7 +514,7 @@ namespace Aaru.Core
                 SubmitStats();
         }
 
-        /// <summary>Submits statistics to DiscImageChef.Server</summary>
+        /// <summary>Submits statistics to Aaru.Server</summary>
         public static void SubmitStats()
         {
             var submitThread = new Thread(() =>

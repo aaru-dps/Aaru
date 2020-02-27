@@ -53,7 +53,7 @@ namespace Aaru.Settings
 
         /// <summary>If set to <c>true</c>, reports will be saved locally</summary>
         public bool SaveReportsGlobally;
-        /// <summary>If set to <c>true</c>, reports will be sent to DiscImageChef.Server</summary>
+        /// <summary>If set to <c>true</c>, reports will be sent to Aaru.Server</summary>
         public bool ShareReports;
         /// <summary>Statistics</summary>
         public StatsSettings Stats;
@@ -88,7 +88,7 @@ namespace Aaru.Settings
         public bool MediaStats;
         /// <summary>If set to <c>true</c>, partition schemes statistics will be stored</summary>
         public bool PartitionStats;
-        /// <summary>If set to <c>true</c>, statistics will be sent to DiscImageChef.Server</summary>
+        /// <summary>If set to <c>true</c>, statistics will be sent to Aaru.Server</summary>
         public bool ShareStats;
         /// <summary>If set to <c>true</c>, dump media verification statistics will be stored</summary>
         public bool VerifyStats;

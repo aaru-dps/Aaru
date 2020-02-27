@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Handles connections to DiscImageChef.Server.
+//     Handles connections to Aaru.Server.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -51,7 +51,7 @@ using Version = Aaru.CommonTypes.Metadata.Version;
 namespace Aaru.Core
 {
     /// <summary>
-    ///     Handles connections to DiscImageChef.Server
+    ///     Handles connections to Aaru.Server
     /// </summary>
     public static class Remote
     {
