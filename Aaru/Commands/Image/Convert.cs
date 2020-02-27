@@ -476,7 +476,7 @@ namespace Aaru.Commands.Image
 
             var metadata = new ImageInfo
             {
-                Application           = "DiscImageChef",
+                Application           = "Aaru",
                 ApplicationVersion    = Version.GetVersion(),
                 Comments              = comments              ?? inputFormat.Info.Comments,
                 Creator               = creator               ?? inputFormat.Info.Creator,
