@@ -692,7 +692,7 @@ namespace Aaru.DiscImages
             DicConsole.VerboseWriteLine("Alcohol 120% image describes a disc of type {0}", imageInfo.MediaType);
 
             if(oldIncorrectImage)
-                DicConsole.WriteLine("Incorrect Alcohol 120% image created by an old version of DiscImageChef. Convert image to correct it.");
+                DicConsole.WriteLine("Incorrect Alcohol 120% image created by an old version of Aaru. Convert image to correct it.");
 
             return true;
         }
