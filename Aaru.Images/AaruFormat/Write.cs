@@ -268,7 +268,7 @@ namespace Aaru.DiscImages
                 imageStream.Write(new byte[Marshal.SizeOf<DicHeader>()], 0, Marshal.SizeOf<DicHeader>());
             }
 
-            header.application             = "DiscImageChef";
+            header.application             = "Aaru";
             header.imageMajorVersion       = DICF_VERSION;
             header.imageMinorVersion       = 0;
             header.applicationMajorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Major;
@@ -927,7 +927,7 @@ namespace Aaru.DiscImages
             if(flakeWriterSettings.BlockSize < MIN_FLAKE_BLOCK)
                 flakeWriterSettings.BlockSize = MIN_FLAKE_BLOCK;
 
-            FlakeWriter.Vendor = "DiscImageChef";
+            FlakeWriter.Vendor = "Aaru";
 
             IsWriting    = true;
             ErrorMessage = null;

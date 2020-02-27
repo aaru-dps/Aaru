@@ -173,7 +173,7 @@ namespace Aaru.DiscImages
                 HasPartitions         = false,
                 HasSessions           = false,
                 Version               = null,
-                Application           = "DiscImageChef",
+                Application           = "Aaru",
                 ApplicationVersion    = null,
                 Creator               = null,
                 Comments              = null,
