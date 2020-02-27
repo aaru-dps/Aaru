@@ -278,13 +278,13 @@ namespace Aaru.DiscImages
                                     {"Attributes", "0x0050"},
                                     {
                                         "CFName",
-                                        "whole disk (DiscImageChef : 0)"
+                                        "whole disk (Aaru : 0)"
                                     },
                                     {"Data", chunkMs.ToArray()},
                                     {"ID", "0"},
                                     {
                                         "Name",
-                                        "whole disk (DiscImageChef : 0)"
+                                        "whole disk (Aaru : 0)"
                                     }
                                 }
                             }
