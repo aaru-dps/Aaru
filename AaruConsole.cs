@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : DicConsole.cs
+// Filename       : AaruConsole.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Console.
@@ -54,7 +54,7 @@ namespace Aaru.Console
     ///     Implements a console abstraction that defines four level of messages that can be routed to different consoles:
     ///     standard, error, verbose and debug.
     /// </summary>
-    public static class DicConsole
+    public static class AaruConsole
     {
         public static event WriteLineHandler                WriteLineEvent;
         public static event ErrorWriteLineHandler           ErrorWriteLineEvent;
