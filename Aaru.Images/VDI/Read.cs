@@ -128,6 +128,9 @@ namespace Aaru.DiscImages
                 case DIC_VDI:
                     imageInfo.Application = "DiscImageChef";
                     break;
+                case DIC_AARU:
+                    imageInfo.Application = "Aaru";
+                    break;
             }
 
             imageStream = stream;

@@ -85,7 +85,7 @@ namespace Aaru.DiscImages
 
             vHdr = new VdiHeader
             {
-                creator      = DIC_VDI,
+                creator      = DIC_AARU,
                 magic        = VDI_MAGIC,
                 majorVersion = 1,
                 minorVersion = 1,
