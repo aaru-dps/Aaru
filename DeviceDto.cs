@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Metadata;
+using Aaru.CommonTypes.Metadata;
 
 // ReSharper disable VirtualMemberCallInConstructor
 
-namespace DiscImageChef.Dto
+namespace Aaru.Dto
 {
     public class DeviceDto : DeviceReportV2
     {

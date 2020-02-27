@@ -30,9 +30,9 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Metadata;
+using Aaru.CommonTypes.Metadata;
 
-namespace DiscImageChef.Dto
+namespace Aaru.Dto
 {
     public class CdOffsetDto : CdOffset
     {

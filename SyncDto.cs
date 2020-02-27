@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DiscImageChef.Dto
+namespace Aaru.Dto
 {
     public class SyncDto
     {
