@@ -33,7 +33,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Decoders.Floppy
+namespace Aaru.Decoders.Floppy
 {
     // Information from:
     // National Semiconductor PC87332VLJ datasheet

@@ -34,7 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace DiscImageChef.Decoders.MMC
+namespace Aaru.Decoders.MMC
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]

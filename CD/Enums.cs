@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.CD
+namespace Aaru.Decoders.CD
 {
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum TocAdr : byte

@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Decoders.SecureDigital
+namespace Aaru.Decoders.SecureDigital
 {
     public static class VendorString
     {

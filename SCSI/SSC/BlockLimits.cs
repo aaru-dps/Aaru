@@ -34,7 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace DiscImageChef.Decoders.SCSI.SSC
+namespace Aaru.Decoders.SCSI.SSC
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.Floppy
+namespace Aaru.Decoders.Floppy
 {
     /// <summary>In-sector code for sector size</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]

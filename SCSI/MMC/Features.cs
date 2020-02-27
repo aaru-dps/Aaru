@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
 
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace DiscImageChef.Decoders.SCSI.MMC
+namespace Aaru.Decoders.SCSI.MMC
 {
     /// <summary>MMC Feature enumeration</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]

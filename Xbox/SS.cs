@@ -33,9 +33,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DiscImageChef.Decoders.DVD;
+using Aaru.Decoders.DVD;
 
-namespace DiscImageChef.Decoders.Xbox
+namespace Aaru.Decoders.Xbox
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]

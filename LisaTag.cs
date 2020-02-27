@@ -33,7 +33,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders
+namespace Aaru.Decoders
 {
     [SuppressMessage("ReSharper", "MemberCanBeInternal"), SuppressMessage("ReSharper", "NotAccessedField.Global"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

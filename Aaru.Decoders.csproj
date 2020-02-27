@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0BEB3088-B634-4289-AE17-CDF2D25D00D5}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Decoders</RootNamespace>
+    <RootNamespace>Aaru.Decoders</RootNamespace>
     <AssemblyName>Aaru.Decoders</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

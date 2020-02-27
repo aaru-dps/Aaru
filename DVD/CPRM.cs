@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.DVD
+namespace Aaru.Decoders.DVD
 {
     /// <summary>
     ///     Information from the following standards: ANSI X3.304-1997 T10/1048-D revision 9.0 T10/1048-D revision 10a

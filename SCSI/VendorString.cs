@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Decoders.SCSI
+namespace Aaru.Decoders.SCSI
 {
     public static class VendorString
     {

@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.SCSI.MMC
+namespace Aaru.Decoders.SCSI.MMC
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public enum FormatLayerTypeCodes : ushort

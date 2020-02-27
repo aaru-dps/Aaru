@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Decoders.MMC
+namespace Aaru.Decoders.MMC
 {
     public static class VendorString
     {

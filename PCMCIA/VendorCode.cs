@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.PCMCIA
+namespace Aaru.Decoders.PCMCIA
 {
     [SuppressMessage("ReSharper", "MemberCanBeInternal")]
     public static class VendorCode

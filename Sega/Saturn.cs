@@ -35,10 +35,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.Console;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.Console;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Decoders.Sega
+namespace Aaru.Decoders.Sega
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

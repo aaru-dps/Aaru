@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.PCMCIA
+namespace Aaru.Decoders.PCMCIA
 {
     /// <summary>Basic classure of a PCMCIA tuple</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),

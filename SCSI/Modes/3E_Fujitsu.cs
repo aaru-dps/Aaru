@@ -33,9 +33,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
 
-namespace DiscImageChef.Decoders.SCSI
+namespace Aaru.Decoders.SCSI
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]

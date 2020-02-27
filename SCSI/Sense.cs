@@ -34,9 +34,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DiscImageChef.Decoders.ATA;
+using Aaru.Decoders.ATA;
 
-namespace DiscImageChef.Decoders.SCSI
+namespace Aaru.Decoders.SCSI
 {
     public enum SenseType
     {

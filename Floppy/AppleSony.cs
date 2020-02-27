@@ -37,7 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Decoders.Floppy
+namespace Aaru.Decoders.Floppy
 {
     // Information from:
     // Inside Macintosh, Volume II, ISBN 0-201-17732-3

@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.DVD
+namespace Aaru.Decoders.DVD
 {
     #region Public enumerations
     [SuppressMessage("ReSharper", "InconsistentNaming")]

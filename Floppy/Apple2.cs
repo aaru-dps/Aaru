@@ -36,9 +36,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Decoders.Floppy
+namespace Aaru.Decoders.Floppy
 {
     /// <summary>Methods and structures for Apple ][ floppy decoding</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),

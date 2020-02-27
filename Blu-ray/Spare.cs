@@ -32,9 +32,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Decoders.Bluray
+namespace Aaru.Decoders.Bluray
 {
     /// <summary>
     ///     Information from the following standards: ANSI X3.304-1997 T10/1048-D revision 9.0 T10/1048-D revision 10a

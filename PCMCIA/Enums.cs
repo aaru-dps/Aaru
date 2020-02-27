@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.PCMCIA
+namespace Aaru.Decoders.PCMCIA
 {
     /// <summary>Tuple codes.</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming")]

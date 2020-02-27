@@ -34,7 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace DiscImageChef.Decoders.SCSI.MMC
+namespace Aaru.Decoders.SCSI.MMC
 {
     /// <summary>
     ///     Information from the following standards: ANSI X3.304-1997 T10/1048-D revision 9.0 T10/1048-D revision 10a

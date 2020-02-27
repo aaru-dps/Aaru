@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Decoders.SCSI
+namespace Aaru.Decoders.SCSI
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum MediumTypes : byte

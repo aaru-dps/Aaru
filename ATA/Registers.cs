@@ -32,7 +32,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Decoders.ATA
+namespace Aaru.Decoders.ATA
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct AtaRegistersChs
