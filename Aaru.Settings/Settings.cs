@@ -127,7 +127,7 @@ namespace Aaru.Settings
             {
                 switch(ptId)
                 {
-                    // In case of macOS or iOS statistics and reports will be saved in ~/Library/Application Support/Claunia.com/DiscImageChef
+                    // In case of macOS or iOS statistics and reports will be saved in ~/Library/Application Support/Claunia.com/Aaru
                     case PlatformID.MacOSX:
                     case PlatformID.iOS:
                     {
@@ -139,19 +139,23 @@ namespace Aaru.Settings
                             Directory.CreateDirectory(appSupportPath);
 
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
+                        string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                        if(!Directory.Exists(dicPath))
-                            Directory.CreateDirectory(dicPath);
+                        if(Directory.Exists(dicPath) && !Directory.Exists(aaruPath))
+                            Directory.Move(dicPath, aaruPath);
 
-                        LocalDbPath  = Path.Combine(dicPath, LocalDbPath);
-                        MasterDbPath = Path.Combine(dicPath, MasterDbPath);
+                        if(!Directory.Exists(aaruPath))
+                            Directory.CreateDirectory(aaruPath);
 
-                        ReportsPath = Path.Combine(dicPath, "Reports");
+                        LocalDbPath  = Path.Combine(aaruPath, LocalDbPath);
+                        MasterDbPath = Path.Combine(aaruPath, MasterDbPath);
+
+                        ReportsPath = Path.Combine(aaruPath, "Reports");
 
                         if(!Directory.Exists(ReportsPath))
                             Directory.CreateDirectory(ReportsPath);
 
-                        StatsPath = Path.Combine(dicPath, "Statistics");
+                        StatsPath = Path.Combine(aaruPath, "Statistics");
 
                         if(!Directory.Exists(StatsPath))
                             Directory.CreateDirectory(StatsPath);
@@ -174,19 +178,24 @@ namespace Aaru.Settings
                             Directory.CreateDirectory(appSupportPath);
 
                         string dicPath = Path.Combine(appSupportPath, "DiscImageChef");
+                        string aaruPath = Path.Combine(appSupportPath, "Aaru");
 
-                        if(!Directory.Exists(dicPath))
-                            Directory.CreateDirectory(dicPath);
+                        if(Directory.Exists(dicPath) &&
+                           !Directory.Exists(aaruPath))
+                            Directory.Move(dicPath, aaruPath);
 
-                        LocalDbPath  = Path.Combine(dicPath, LocalDbPath);
-                        MasterDbPath = Path.Combine(dicPath, MasterDbPath);
+                        if(!Directory.Exists(aaruPath))
+                            Directory.CreateDirectory(aaruPath);
 
-                        ReportsPath = Path.Combine(dicPath, "Reports");
+                        LocalDbPath  = Path.Combine(aaruPath, LocalDbPath);
+                        MasterDbPath = Path.Combine(aaruPath, MasterDbPath);
+
+                        ReportsPath = Path.Combine(aaruPath, "Reports");
 
                         if(!Directory.Exists(ReportsPath))
                             Directory.CreateDirectory(ReportsPath);
 
-                        StatsPath = Path.Combine(dicPath, "Statistics");
+                        StatsPath = Path.Combine(aaruPath, "Statistics");
 
                         if(!Directory.Exists(StatsPath))
                             Directory.CreateDirectory(StatsPath);
@@ -203,26 +212,31 @@ namespace Aaru.Settings
 
                         string oldDicPath = Path.Combine(homePath, ".claunia.com", "DiscImageChef");
                         string dicPath    = Path.Combine(xdgDataPath, "DiscImageChef");
+                        string aaruPath = Path.Combine(xdgDataPath, "Aaru");
 
                         if(Directory.Exists(oldDicPath) &&
-                           !Directory.Exists(dicPath))
+                           !Directory.Exists(aaruPath))
                         {
-                            Directory.Move(oldDicPath, dicPath);
+                            Directory.Move(oldDicPath, aaruPath);
                             Directory.Delete(Path.Combine(homePath, ".claunia.com"));
                         }
 
-                        if(!Directory.Exists(dicPath))
-                            Directory.CreateDirectory(dicPath);
+                        if(Directory.Exists(dicPath) &&
+                           !Directory.Exists(aaruPath))
+                            Directory.Move(dicPath, aaruPath);
 
-                        LocalDbPath  = Path.Combine(dicPath, LocalDbPath);
-                        MasterDbPath = Path.Combine(dicPath, MasterDbPath);
+                        if(!Directory.Exists(aaruPath))
+                            Directory.CreateDirectory(aaruPath);
 
-                        ReportsPath = Path.Combine(dicPath, "Reports");
+                        LocalDbPath  = Path.Combine(aaruPath, LocalDbPath);
+                        MasterDbPath = Path.Combine(aaruPath, MasterDbPath);
+
+                        ReportsPath = Path.Combine(aaruPath, "Reports");
 
                         if(!Directory.Exists(ReportsPath))
                             Directory.CreateDirectory(ReportsPath);
 
-                        StatsPath = Path.Combine(dicPath, "Statistics");
+                        StatsPath = Path.Combine(aaruPath, "Statistics");
 
                         if(!Directory.Exists(StatsPath))
                             Directory.CreateDirectory(StatsPath);
@@ -251,7 +265,11 @@ namespace Aaru.Settings
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
                                          "Preferences");
 
-                        string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
+                        string dicPreferencesFilePath = Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
+                        string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.aaru.plist");
+
+                        if(File.Exists(dicPreferencesFilePath))
+                            File.Move(dicPreferencesFilePath, preferencesFilePath);
 
                         if(!File.Exists(preferencesFilePath))
                         {
@@ -338,7 +356,40 @@ namespace Aaru.Settings
                             return;
                         }
 
-                        RegistryKey key = parentKey.OpenSubKey("DiscImageChef");
+                        RegistryKey dicKey = parentKey.OpenSubKey("DiscImageChef");
+                        RegistryKey key = parentKey.OpenSubKey("Aaru");
+                        bool stats;
+
+                        if(dicKey != null &&
+                           key    == null)
+                        {
+                            Current.SaveReportsGlobally = Convert.ToBoolean(dicKey.GetValue("SaveReportsGlobally"));
+                            Current.ShareReports        = Convert.ToBoolean(dicKey.GetValue("ShareReports"));
+                            Current.GdprCompliance      = Convert.ToUInt64(dicKey.GetValue("GdprCompliance"));
+
+                            stats = Convert.ToBoolean(dicKey.GetValue("Statistics"));
+
+                            if(stats)
+                                Current.Stats = new StatsSettings
+                                {
+                                    ShareStats      = Convert.ToBoolean(dicKey.GetValue("ShareStats")),
+                                    CommandStats    = Convert.ToBoolean(dicKey.GetValue("CommandStats")),
+                                    DeviceStats     = Convert.ToBoolean(dicKey.GetValue("DeviceStats")),
+                                    FilesystemStats = Convert.ToBoolean(dicKey.GetValue("FilesystemStats")),
+                                    FilterStats     = Convert.ToBoolean(dicKey.GetValue("FilterStats")),
+                                    MediaImageStats = Convert.ToBoolean(dicKey.GetValue("MediaImageStats")),
+                                    MediaScanStats  = Convert.ToBoolean(dicKey.GetValue("MediaScanStats")),
+                                    PartitionStats  = Convert.ToBoolean(dicKey.GetValue("PartitionStats")),
+                                    MediaStats      = Convert.ToBoolean(dicKey.GetValue("MediaStats")),
+                                    VerifyStats     = Convert.ToBoolean(dicKey.GetValue("VerifyStats"))
+                                };
+
+                            SaveSettings();
+
+                            parentKey.DeleteSubKeyTree("DiscImageChef");
+
+                            return;
+                        }
 
                         if(key == null)
                         {
@@ -352,7 +403,7 @@ namespace Aaru.Settings
                         Current.ShareReports        = Convert.ToBoolean(key.GetValue("ShareReports"));
                         Current.GdprCompliance      = Convert.ToUInt64(key.GetValue("GdprCompliance"));
 
-                        bool stats = Convert.ToBoolean(key.GetValue("Statistics"));
+                        stats = Convert.ToBoolean(key.GetValue("Statistics"));
 
                         if(stats)
                             Current.Stats = new StatsSettings
@@ -386,7 +437,8 @@ namespace Aaru.Settings
                                          Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
                                          XDG_CONFIG_HOME_RESOLVED);
 
-                        string settingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
+                        string dicSettingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
+                        string settingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
 
                         if(File.Exists(oldSettingsPath) &&
                            !File.Exists(settingsPath))
@@ -396,6 +448,10 @@ namespace Aaru.Settings
 
                             File.Move(oldSettingsPath, settingsPath);
                         }
+
+                        if(File.Exists(dicSettingsPath) &&
+                           !File.Exists(settingsPath))
+                            File.Move(dicSettingsPath, settingsPath);
 
                         if(!File.Exists(settingsPath))
                         {
@@ -490,7 +546,7 @@ namespace Aaru.Settings
                             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Library",
                                          "Preferences");
 
-                        string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.discimagechef.plist");
+                        string preferencesFilePath = Path.Combine(preferencesPath, "com.claunia.aaru.plist");
 
                         var fs = new FileStream(preferencesFilePath, FileMode.Create);
                         BinaryPropertyListWriter.Write(fs, root);
@@ -510,7 +566,7 @@ namespace Aaru.Settings
                         RegistryKey parentKey =
                             Registry.CurrentUser.OpenSubKey("SOFTWARE", true)?.CreateSubKey("Claunia.com");
 
-                        RegistryKey key = parentKey?.CreateSubKey("DiscImageChef");
+                        RegistryKey key = parentKey?.CreateSubKey("Aaru");
 
                         if(key != null)
                         {
@@ -561,7 +617,7 @@ namespace Aaru.Settings
                                          Environment.GetEnvironmentVariable(XDG_CONFIG_HOME) ??
                                          XDG_CONFIG_HOME_RESOLVED);
 
-                        string settingsPath = Path.Combine(xdgConfigPath, "DiscImageChef.xml");
+                        string settingsPath = Path.Combine(xdgConfigPath, "Aaru.xml");
 
                         if(!Directory.Exists(xdgConfigPath))
                             Directory.CreateDirectory(xdgConfigPath);
