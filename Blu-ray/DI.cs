@@ -87,7 +87,7 @@ namespace Aaru.Decoders.Bluray
 
             if(DIResponse.Length != 4100)
             {
-                DicConsole.DebugWriteLine("BD Disc Information decoder",
+                AaruConsole.DebugWriteLine("BD Disc Information decoder",
                                           "Found incorrect Blu-ray Disc Information size ({0} bytes)",
                                           DIResponse.Length);
 
@@ -177,7 +177,7 @@ namespace Aaru.Decoders.Bluray
 
                     default:
                     {
-                        DicConsole.DebugWriteLine("BD Disc Information decoder",
+                        AaruConsole.DebugWriteLine("BD Disc Information decoder",
                                                   "Found unknown disc type identifier \"{0}\"",
                                                   Encoding.ASCII.GetString(unit.DiscTypeIdentifier));
 

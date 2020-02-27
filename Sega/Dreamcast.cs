@@ -54,51 +54,51 @@ namespace Aaru.Decoders.Sega
 
             var ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.maker_id = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.maker_id = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.maker_id));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space1 = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space1 = \"{0}\"",
                                       (char)ipbin.spare_space1);
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.dreamcast_media = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.dreamcast_media = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.dreamcast_media));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no = {0}", (char)ipbin.disc_no);
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no_separator = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_no_separator = \"{0}\"",
                                       (char)ipbin.disc_no_separator);
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_total_nos = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.disc_total_nos = \"{0}\"",
                                       (char)ipbin.disc_total_nos);
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space2 = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space2 = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.spare_space2));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.region_codes = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.region_codes = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.region_codes));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.peripherals = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.peripherals = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.peripherals));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_no = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_no = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_no));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_version = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_version = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_version));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.release_date = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.release_date = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space3 = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.spare_space3 = \"{0}\"",
                                       (char)ipbin.spare_space3);
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.boot_filename = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.boot_filename = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.boot_filename));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.producer = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.producer = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.producer));
 
-            DicConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_name = \"{0}\"",
+            AaruConsole.DebugWriteLine("Dreamcast IP.BIN Decoder", "dreamcast_ipbin.product_name = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_name));
 
             return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGAKATANA " ? ipbin : (IPBin?)null;

@@ -60,7 +60,7 @@ namespace Aaru.Decoders.CD
 
             if(decoded.DataLength + 2 != CDSessionInfoResponse.Length)
             {
-                DicConsole.DebugWriteLine("CD Session Info decoder",
+                AaruConsole.DebugWriteLine("CD Session Info decoder",
                                           "Expected CDSessionInfo size ({0} bytes) is not received size ({1} bytes), not decoding",
                                           decoded.DataLength + 2, CDSessionInfoResponse.Length);
 

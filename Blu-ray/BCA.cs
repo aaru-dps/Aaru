@@ -67,7 +67,7 @@ namespace Aaru.Decoders.Bluray
 
             if(BCAResponse.Length != 68)
             {
-                DicConsole.DebugWriteLine("BD BCA decoder", "Found incorrect Blu-ray BCA size ({0} bytes)",
+                AaruConsole.DebugWriteLine("BD BCA decoder", "Found incorrect Blu-ray BCA size ({0} bytes)",
                                           BCAResponse.Length);
 
                 return null;

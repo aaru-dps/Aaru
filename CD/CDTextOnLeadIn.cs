@@ -85,7 +85,7 @@ namespace Aaru.Decoders.CD
 
             if(decoded.DataLength + 2 != CDTextResponse.Length)
             {
-                DicConsole.DebugWriteLine("CD-TEXT decoder",
+                AaruConsole.DebugWriteLine("CD-TEXT decoder",
                                           "Expected CD-TEXT size ({0} bytes) is not received size ({1} bytes), not decoding",
                                           decoded.DataLength + 2, CDTextResponse.Length);
 

@@ -82,7 +82,7 @@ namespace Aaru.Decoders.Bluray
 
             if(CSResponse.Length != 8)
             {
-                DicConsole.DebugWriteLine("BD Cartridge Status decoder",
+                AaruConsole.DebugWriteLine("BD Cartridge Status decoder",
                                           "Found incorrect Blu-ray Cartridge Status size ({0} bytes)",
                                           CSResponse.Length);
 

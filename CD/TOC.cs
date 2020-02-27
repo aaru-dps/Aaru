@@ -61,7 +61,7 @@ namespace Aaru.Decoders.CD
 
             if(decoded.DataLength + 2 != CDTOCResponse.Length)
             {
-                DicConsole.DebugWriteLine("CD TOC decoder",
+                AaruConsole.DebugWriteLine("CD TOC decoder",
                                           "Expected CDTOC size ({0} bytes) is not received size ({1} bytes), not decoding",
                                           decoded.DataLength + 2, CDTOCResponse.Length);
 

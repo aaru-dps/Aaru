@@ -60,7 +60,7 @@ namespace Aaru.Decoders.CD
 
             if(decoded.DataLength + 2 != CDPMAResponse.Length)
             {
-                DicConsole.DebugWriteLine("CD PMA decoder",
+                AaruConsole.DebugWriteLine("CD PMA decoder",
                                           "Expected CDPMA size ({0} bytes) is not received size ({1} bytes), not decoding",
                                           decoded.DataLength + 2, CDPMAResponse.Length);
 

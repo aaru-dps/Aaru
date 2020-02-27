@@ -54,42 +54,42 @@ namespace Aaru.Decoders.Sega
 
             var ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.maker_id = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.maker_id = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.maker_id));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_no = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_no = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_no));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_version = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_version = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_version));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_datedate = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_datedate = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.saturn_media = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.saturn_media = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.saturn_media));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no = {0}", (char)ipbin.disc_no);
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no = {0}", (char)ipbin.disc_no);
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no_separator = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_no_separator = \"{0}\"",
                                       (char)ipbin.disc_no_separator);
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_total_nos = {0}",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.disc_total_nos = {0}",
                                       (char)ipbin.disc_total_nos);
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_date = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.release_date = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.spare_space1 = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.spare_space1 = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.spare_space1));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.region_codes = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.region_codes = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.region_codes));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.peripherals = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.peripherals = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.peripherals));
 
-            DicConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_name = \"{0}\"",
+            AaruConsole.DebugWriteLine("Saturn IP.BIN Decoder", "saturn_ipbin.product_name = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_name));
 
             return Encoding.ASCII.GetString(ipbin.SegaHardwareID) == "SEGA SEGASATURN " ? ipbin : (IPBin?)null;

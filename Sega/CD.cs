@@ -54,61 +54,61 @@ namespace Aaru.Decoders.Sega
 
             var ipbin = Marshal.ByteArrayToStructureLittleEndian<IPBin>(ipbin_sector);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_name = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_name = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.volume_name));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_name = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_name = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.system_name));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_version = \"{0:X}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_version = \"{0:X}\"",
                                       ipbin.volume_version);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.volume_type = 0x{0:X8}",
                                       ipbin.volume_type);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_version = 0x{0:X8}",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.system_version = 0x{0:X8}",
                                       ipbin.system_version);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_loadsize = {0}", ipbin.ip_loadsize);
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_address = 0x{0:X8}", ipbin.ip_address);
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_loadsize = {0}", ipbin.ip_loadsize);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_entry_address = 0x{0:X8}",
                                       ipbin.ip_entry_address);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_work_ram_size = {0}",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.ip_work_ram_size = {0}",
                                       ipbin.ip_work_ram_size);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_loadsize = {0}", ipbin.sp_loadsize);
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_address = 0x{0:X8}", ipbin.sp_address);
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_loadsize = {0}", ipbin.sp_loadsize);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_entry_address = 0x{0:X8}",
                                       ipbin.sp_entry_address);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_work_ram_size = {0}",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.sp_work_ram_size = {0}",
                                       ipbin.sp_work_ram_size);
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date2 = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.release_date2 = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.release_date2));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.developer_code = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.developer_code = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.developer_code));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.domestic_title = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.domestic_title = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.domestic_title));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.overseas_title = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.overseas_title = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.overseas_title));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.product_code = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.product_code = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.product_code));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.peripherals = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.peripherals = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.peripherals));
 
-            DicConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.region_codes = \"{0}\"",
+            AaruConsole.DebugWriteLine("SegaCD IP.BIN Decoder", "segacd_ipbin.region_codes = \"{0}\"",
                                       Encoding.ASCII.GetString(ipbin.region_codes));
 
             string id = Encoding.ASCII.GetString(ipbin.SegaHardwareID);

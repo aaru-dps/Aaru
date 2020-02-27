@@ -267,7 +267,7 @@ namespace Aaru.Decoders.Floppy
                     if(data[position]     == 0xD5 &&
                        data[position + 1] == 0xAA)
                     {
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
 
                         // Epilogue not in correct position
                         if(data[position + 11] != 0xDE ||
@@ -305,23 +305,23 @@ namespace Aaru.Decoders.Floppy
                             }
                         };
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Volume {0}",
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Volume {0}",
                                                   (((sector.addressField.volume[0] & 0x55) << 1) |
                                                    (sector.addressField.volume[1] & 0x55)) & 0xFF);
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Track {0}",
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Track {0}",
                                                   (((sector.addressField.track[0] & 0x55) << 1) |
                                                    (sector.addressField.track[1] & 0x55)) & 0xFF);
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Sector {0}",
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Sector {0}",
                                                   (((sector.addressField.sector[0] & 0x55) << 1) |
                                                    (sector.addressField.sector[1] & 0x55)) & 0xFF);
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Checksum {0}",
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Checksum {0}",
                                                   (((sector.addressField.checksum[0] & 0x55) << 1) |
                                                    (sector.addressField.checksum[1] & 0x55)) & 0xFF);
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Epilogue {0:X2}{1:X2}{2:X2}",
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Epilogue {0:X2}{1:X2}{2:X2}",
                                                   sector.addressField.epilogue[0], sector.addressField.epilogue[1],
                                                   sector.addressField.epilogue[2]);
 
@@ -350,10 +350,10 @@ namespace Aaru.Decoders.Floppy
                         sector.innerGap  = gaps.ToArray();
                         sector.dataField = new RawDataField();
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Inner gap has {0} bytes",
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Inner gap has {0} bytes",
                                                   sector.innerGap.Length);
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Prologue found at {0}", position);
                         sector.dataField.prologue    =  new byte[3];
                         sector.dataField.prologue[0] =  data[position];
                         sector.dataField.prologue[1] =  data[position + 1];
@@ -376,7 +376,7 @@ namespace Aaru.Decoders.Floppy
 
                         sector.dataField.data = gaps.ToArray();
 
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Data has {0} bytes",
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Data has {0} bytes",
                                                   sector.dataField.data.Length);
 
                         sector.dataField.checksum    = data[position];
@@ -407,8 +407,8 @@ namespace Aaru.Decoders.Floppy
 
                         // Return current position to be able to read separate sectors
                         endOffset = position;
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Got {0} bytes of gap", sector.gap.Length);
-                        DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Finished sector at {0}", position);
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Got {0} bytes of gap", sector.gap.Length);
+                        AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Finished sector at {0}", position);
 
                         return sector;
                     }
@@ -518,7 +518,7 @@ namespace Aaru.Decoders.Floppy
                     break;
                 }
 
-                DicConsole.DebugWriteLine("Apple ][ GCR Decoder", "Adding sector {0} of track {1}",
+                AaruConsole.DebugWriteLine("Apple ][ GCR Decoder", "Adding sector {0} of track {1}",
                                           (((sector.addressField.sector[0] & 0x55) << 1) |
                                            (sector.addressField.sector[1] & 0x55)) & 0xFF,
                                           (((sector.addressField.track[0] & 0x55) << 1) |

@@ -56,7 +56,7 @@ namespace Aaru.Decoders.CD
             if(CDATIPResponse.Length != 32 &&
                CDATIPResponse.Length != 28)
             {
-                DicConsole.DebugWriteLine("CD ATIP decoder",
+                AaruConsole.DebugWriteLine("CD ATIP decoder",
                                           "Expected CD ATIP size (32 bytes) is not received size ({0} bytes), not decoding",
                                           CDATIPResponse.Length);
 

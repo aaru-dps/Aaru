@@ -70,7 +70,7 @@ namespace Aaru.Decoders.Bluray
 
             if(SAIResponse.Length != 16)
             {
-                DicConsole.DebugWriteLine("BD Spare Area Information decoder",
+                AaruConsole.DebugWriteLine("BD Spare Area Information decoder",
                                           "Found incorrect Blu-ray Spare Area Information size ({0} bytes)",
                                           SAIResponse.Length);
 
