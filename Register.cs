@@ -40,9 +40,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     public class Register : IPluginRegister
     {

@@ -34,9 +34,9 @@
 
 using System.IO;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>
     ///     Implements the Fletcher-32 algorithm

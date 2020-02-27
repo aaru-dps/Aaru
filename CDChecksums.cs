@@ -33,9 +33,9 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>Implements ReedSolomon and CRC32 algorithms as used by CD-ROM</summary>
     public static class CdChecksums

@@ -33,9 +33,9 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>
     ///     Wraps up .NET SHA512 implementation to a Init(), Update(), Final() context.

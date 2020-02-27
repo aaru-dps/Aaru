@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Checksums</RootNamespace>
+    <RootNamespace>Aaru.Checksums</RootNamespace>
     <AssemblyName>Aaru.Checksums</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

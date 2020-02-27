@@ -32,9 +32,9 @@
 
 using System.IO;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>
     ///     Implements a CRC32 algorithm

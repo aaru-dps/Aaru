@@ -42,9 +42,9 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>
     ///     Implements the SpamSum fuzzy hashing algorithm.

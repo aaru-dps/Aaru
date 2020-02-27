@@ -33,9 +33,9 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>Implements a CRC16 algorithm</summary>
     public class Crc16Context : IChecksum

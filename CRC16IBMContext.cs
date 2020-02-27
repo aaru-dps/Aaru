@@ -1,4 +1,4 @@
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     public class CRC16IBMContext : Crc16Context
     {

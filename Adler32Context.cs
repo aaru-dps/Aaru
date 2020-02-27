@@ -32,9 +32,9 @@
 
 using System.IO;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>
     ///     Implements the Adler-32 algorithm

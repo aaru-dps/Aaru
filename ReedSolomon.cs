@@ -58,9 +58,9 @@
  */
 
 using System;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Checksums
+namespace Aaru.Checksums
 {
     /// <summary>
     ///     Implements the Reed-Solomon algorithm
