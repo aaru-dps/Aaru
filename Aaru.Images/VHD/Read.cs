@@ -272,6 +272,14 @@ namespace Aaru.DiscImages
                         $"{(thisFooter.CreatorVersion & 0xFF000000) >> 24}.{(thisFooter.CreatorVersion & 0xFF0000) >> 16}.{(thisFooter.CreatorVersion & 0xFF00) >> 8}.{thisFooter.CreatorVersion & 0xFF}";
                 }
                     break;
+
+                case CREATOR_AARU:
+                {
+                    imageInfo.Application = "Aaru";
+                    imageInfo.ApplicationVersion =
+                        $"{(thisFooter.CreatorVersion & 0xFF000000) >> 24}.{(thisFooter.CreatorVersion & 0xFF0000) >> 16}.{(thisFooter.CreatorVersion & 0xFF00) >> 8}.{thisFooter.CreatorVersion & 0xFF}";
+                }
+                    break;
                 default:
                 {
                     imageInfo.Application =

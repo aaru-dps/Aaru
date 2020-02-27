@@ -81,7 +81,10 @@ namespace Aaru.DiscImages
         ///     Created by DiscImageChef, "dic "
         /// </summary>
         const uint CREATOR_DISCIMAGECHEF = 0x64696320;
-
+        /// <summary>
+        ///     Created by Aaru, "aaru"
+        /// </summary>
+        const uint CREATOR_AARU = 0x61617275;
         /// <summary>
         ///     Disk image created by Virtual Server 2004
         /// </summary>

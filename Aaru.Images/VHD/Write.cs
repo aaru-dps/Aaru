@@ -187,7 +187,7 @@ namespace Aaru.DiscImages
                 Version  = VERSION1,
                 Timestamp =
                     (uint)(DateTime.Now - new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
-                CreatorApplication = CREATOR_DISCIMAGECHEF,
+                CreatorApplication = CREATOR_AARU,
                 CreatorVersion =
                     (uint)(((thisVersion.Major & 0xFF) << 24) + ((thisVersion.Minor & 0xFF) << 16) +
                            ((thisVersion.Build & 0xFF) << 8)  + (thisVersion.Revision & 0xFF)),
