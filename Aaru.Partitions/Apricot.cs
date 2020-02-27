@@ -82,163 +82,163 @@ namespace Aaru.Partitions
             if(label.operatingSystem      > 4             || label.bootType       > 5 || label.partitionCount > 8 ||
                deviceSizeAccordingToLabel > deviceSectors || label.firstDataBlock > deviceSectors) return false;
 
-            DicConsole.DebugWriteLine("Apricot partitions", "label.version = \"{0}\"",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.version = \"{0}\"",
                                       StringHandlers.CToString(label.version));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.operatingSystem = {0} ({1})", label.operatingSystem,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.operatingSystem = {0} ({1})", label.operatingSystem,
                                       label.operatingSystem < operatingSystemCodes.Length
                                           ? operatingSystemCodes[label.operatingSystem]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.writeProtected = {0}", label.writeProtected);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.copyProtected = {0}",  label.copyProtected);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bootType = {0} ({1})", label.bootType,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.writeProtected = {0}", label.writeProtected);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.copyProtected = {0}",  label.copyProtected);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.bootType = {0} ({1})", label.bootType,
                                       label.bootType < bootTypeCodes.Length
                                           ? bootTypeCodes[label.bootType]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.partitionCount = {0}",   label.partitionCount);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.winchester = {0}",       label.winchester);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.sectorSize = {0}",       label.sectorSize);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spt = {0}",              label.spt);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.cylinders = {0}",        label.cylinders);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.heads = {0}",            label.heads);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.interleave = {0}",       label.interleave);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.skew = {0}",             label.skew);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bootLocation = {0}",     label.bootLocation);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bootSize = {0}",         label.bootSize);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bootAddress = 0x{0:X8}", label.bootAddress);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bootOffset:label.bootSegment = {0:X4}:{1:X4}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.partitionCount = {0}",   label.partitionCount);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.winchester = {0}",       label.winchester);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.sectorSize = {0}",       label.sectorSize);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spt = {0}",              label.spt);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.cylinders = {0}",        label.cylinders);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.heads = {0}",            label.heads);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.interleave = {0}",       label.interleave);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.skew = {0}",             label.skew);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.bootLocation = {0}",     label.bootLocation);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.bootSize = {0}",         label.bootSize);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.bootAddress = 0x{0:X8}", label.bootAddress);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.bootOffset:label.bootSegment = {0:X4}:{1:X4}",
                                       label.bootOffset, label.bootSegment);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.firstDataBlock = {0}", label.firstDataBlock);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.generation = {0}",     label.generation);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.copyCount = {0}",      label.copyCount);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.maxCopies = {0}",      label.maxCopies);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.serialNumber = \"{0}\"",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.firstDataBlock = {0}", label.firstDataBlock);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.generation = {0}",     label.generation);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.copyCount = {0}",      label.copyCount);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.maxCopies = {0}",      label.maxCopies);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.serialNumber = \"{0}\"",
                                       StringHandlers.CToString(label.serialNumber));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.partNumber = \"{0}\"",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.partNumber = \"{0}\"",
                                       StringHandlers.CToString(label.partNumber));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.copyright = \"{0}\"",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.copyright = \"{0}\"",
                                       StringHandlers.CToString(label.copyright));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.bps = {0}",      label.mainBPB.bps);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spc = {0}",      label.mainBPB.spc);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.rsectors = {0}", label.mainBPB.rsectors);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.fats_no = {0}",  label.mainBPB.fats_no);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.root_ent = {0}", label.mainBPB.root_ent);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.sectors = {0}",  label.mainBPB.sectors);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.media = {0}",    label.mainBPB.media);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spfat = {0}",    label.mainBPB.spfat);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.diskType = {0} ({1})",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.bps = {0}",      label.mainBPB.bps);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spc = {0}",      label.mainBPB.spc);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.rsectors = {0}", label.mainBPB.rsectors);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.fats_no = {0}",  label.mainBPB.fats_no);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.root_ent = {0}", label.mainBPB.root_ent);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.sectors = {0}",  label.mainBPB.sectors);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.media = {0}",    label.mainBPB.media);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.spfat = {0}",    label.mainBPB.spfat);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.diskType = {0} ({1})",
                                       label.mainBPB.diskType,
                                       label.mainBPB.diskType < diskTypeCodes.Length
                                           ? diskTypeCodes[label.mainBPB.diskType]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.startSector = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.mainBPB.startSector = {0}",
                                       label.mainBPB.startSector);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.fontName = \"{0}\"",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.fontName = \"{0}\"",
                                       StringHandlers.CToString(label.fontName));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardName = \"{0}\"",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.keyboardName = \"{0}\"",
                                       StringHandlers.CToString(label.keyboardName));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.biosMajorVersion = {0}", label.biosMajorVersion);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.biosMinorVersion = {0}", label.biosMinorVersion);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.diagnosticsFlag = {0}",  label.diagnosticsFlag);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.prnDevice = {0} ({1})", label.prnDevice,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.biosMajorVersion = {0}", label.biosMajorVersion);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.biosMinorVersion = {0}", label.biosMinorVersion);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.diagnosticsFlag = {0}",  label.diagnosticsFlag);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.prnDevice = {0} ({1})", label.prnDevice,
                                       label.prnDevice < printDevices.Length
                                           ? printDevices[label.prnDevice]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.bellVolume = {0}",         label.bellVolume);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.enableCache = {0}",        label.enableCache);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.enableGraphics = {0}",     label.enableGraphics);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.dosLength = {0}",          label.dosLength);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.fontLength = {0}",         label.fontLength);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardLength = {0}",     label.keyboardLength);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.dosStart = {0}",           label.dosStart);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.fontStart = {0}",          label.fontStart);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardStart = {0}",      label.keyboardStart);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.keyboardVolume = {0}",     label.keyboardVolume);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeat = {0}",         label.autorepeat);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeatLeadIn = {0}",   label.autorepeatLeadIn);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.autorepeatInterval = {0}", label.autorepeatInterval);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.microscreenMode = {0}",    label.microscreenMode);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spareKeyboard is null? = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.bellVolume = {0}",         label.bellVolume);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.enableCache = {0}",        label.enableCache);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.enableGraphics = {0}",     label.enableGraphics);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.dosLength = {0}",          label.dosLength);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.fontLength = {0}",         label.fontLength);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.keyboardLength = {0}",     label.keyboardLength);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.dosStart = {0}",           label.dosStart);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.fontStart = {0}",          label.fontStart);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.keyboardStart = {0}",      label.keyboardStart);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.keyboardVolume = {0}",     label.keyboardVolume);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.autorepeat = {0}",         label.autorepeat);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.autorepeatLeadIn = {0}",   label.autorepeatLeadIn);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.autorepeatInterval = {0}", label.autorepeatInterval);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.microscreenMode = {0}",    label.microscreenMode);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spareKeyboard is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareKeyboard));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.lineMode = {0} ({1} lines)", label.lineMode,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.lineMode = {0} ({1} lines)", label.lineMode,
                                       label.lineMode < lineModes.Length ? lineModes[label.lineMode] : 0);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.lineWidth = {0} ({1} columns)", label.lineWidth,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.lineWidth = {0} ({1} columns)", label.lineWidth,
                                       label.lineWidth < lineWidths.Length ? lineWidths[label.lineWidth] : 0);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.imageOff = {0}", label.imageOff);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spareScreen is null? = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.imageOff = {0}", label.imageOff);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spareScreen is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareScreen));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.txBaudRate = {0} ({1} bps)", label.txBaudRate,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.txBaudRate = {0} ({1} bps)", label.txBaudRate,
                                       label.txBaudRate < baudRates.Length ? baudRates[label.txBaudRate] : 0);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.rxBaudRate = {0} ({1} bps)", label.rxBaudRate,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.rxBaudRate = {0} ({1} bps)", label.rxBaudRate,
                                       label.rxBaudRate < baudRates.Length ? baudRates[label.rxBaudRate] : 0);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.txBits = {0}", label.txBits);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.rxBits = {0}", label.rxBits);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.stopBits = {0} ({1} bits)", label.stopBits,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.txBits = {0}", label.txBits);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.rxBits = {0}", label.rxBits);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.stopBits = {0} ({1} bits)", label.stopBits,
                                       label.stopBits < stopBits.Length ? stopBits[label.stopBits] : 0);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.parityCheck = {0}", label.parityCheck);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.parityType = {0} ({1})", label.parityType,
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.parityCheck = {0}", label.parityCheck);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.parityType = {0} ({1})", label.parityType,
                                       label.parityType < parityTypes.Length
                                           ? parityTypes[label.parityType]
                                           : "Unknown");
-            DicConsole.DebugWriteLine("Apricot partitions", "label.txXonXoff = {0}",       label.txXonXoff);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoff = {0}",       label.rxXonXoff);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.xonCharacter = {0}",    label.xonCharacter);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.xoffCharacter = {0}",   label.xoffCharacter);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoffBuffer = {0}", label.rxXonXoffBuffer);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.dtrDsr = {0}",          label.dtrDsr);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.ctsRts = {0}",          label.ctsRts);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterCr = {0}",    label.nullsAfterCr);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterFF = {0}",    label.nullsAfterFF);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.lfAfterCRSerial = {0}", label.lfAfterCRSerial);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.biosErrorReportSerial = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.txXonXoff = {0}",       label.txXonXoff);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoff = {0}",       label.rxXonXoff);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.xonCharacter = {0}",    label.xonCharacter);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.xoffCharacter = {0}",   label.xoffCharacter);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.rxXonXoffBuffer = {0}", label.rxXonXoffBuffer);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.dtrDsr = {0}",          label.dtrDsr);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.ctsRts = {0}",          label.ctsRts);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterCr = {0}",    label.nullsAfterCr);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.nullsAfterFF = {0}",    label.nullsAfterFF);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.lfAfterCRSerial = {0}", label.lfAfterCRSerial);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.biosErrorReportSerial = {0}",
                                       label.biosErrorReportSerial);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spareSerial is null? = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spareSerial is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareSerial));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.lfAfterCrParallel = {0}", label.lfAfterCrParallel);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.selectLine = {0}",        label.selectLine);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.paperEmpty = {0}",        label.paperEmpty);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.faultLine = {0}",         label.faultLine);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.biosErrorReportParallel = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.lfAfterCrParallel = {0}", label.lfAfterCrParallel);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.selectLine = {0}",        label.selectLine);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.paperEmpty = {0}",        label.paperEmpty);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.faultLine = {0}",         label.faultLine);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.biosErrorReportParallel = {0}",
                                       label.biosErrorReportParallel);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spareParallel is null? = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spareParallel is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareParallel));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spareWinchester is null? = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spareWinchester is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareWinchester));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.parkingEnabled = {0}",   label.parkingEnabled);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.formatProtection = {0}", label.formatProtection);
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spareRamDisk is null? = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.parkingEnabled = {0}",   label.parkingEnabled);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.formatProtection = {0}", label.formatProtection);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spareRamDisk is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spareRamDisk));
             for(int i = 0; i < 32; i++)
-                DicConsole.DebugWriteLine("Apricot partitions", "label.badBlocks[{1}] = {0}", label.badBlocks[i], i);
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.badBlocks[{1}] = {0}", label.badBlocks[i], i);
             for(int i = 0; i < 8; i++)
             {
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].bps = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].bps = {0}",
                                           label.partitions[i].bps, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].spc = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].spc = {0}",
                                           label.partitions[i].spc, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].rsectors = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].rsectors = {0}",
                                           label.partitions[i].rsectors, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].fats_no = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].fats_no = {0}",
                                           label.partitions[i].fats_no, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].root_ent = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].root_ent = {0}",
                                           label.partitions[i].root_ent, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].sectors = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].sectors = {0}",
                                           label.partitions[i].sectors, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].media = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].media = {0}",
                                           label.partitions[i].media, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].spfat = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].spfat = {0}",
                                           label.partitions[i].spfat, i);
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].diskType = {0} ({2})",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].diskType = {0} ({2})",
                                           label.partitions[i].diskType, i,
                                           label.partitions[i].diskType < diskTypeCodes.Length
                                               ? diskTypeCodes[label.partitions[i].diskType]
                                               : "Unknown");
-                DicConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].startSector = {0}",
+                AaruConsole.DebugWriteLine("Apricot partitions", "label.partitions[{1}].startSector = {0}",
                                           label.partitions[i].startSector, i);
             }
 
-            DicConsole.DebugWriteLine("Apricot partitions", "label.spare is null? = {0}",
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.spare is null? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(label.spare));
-            DicConsole.DebugWriteLine("Apricot partitions", "label.cpmDoubleSided = {0}", label.cpmDoubleSided);
+            AaruConsole.DebugWriteLine("Apricot partitions", "label.cpmDoubleSided = {0}", label.cpmDoubleSided);
 
             // Only hard disks can contain partitions
             if(!label.winchester) return false;

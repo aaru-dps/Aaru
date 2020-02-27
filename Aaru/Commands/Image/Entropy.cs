@@ -82,26 +82,26 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("entropy");
 
-            DicConsole.DebugWriteLine("Entropy command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", duplicatedSectors);
-            DicConsole.DebugWriteLine("Entropy command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}", separatedTracks);
-            DicConsole.DebugWriteLine("Entropy command", "--verbose={0}", verbose);
-            DicConsole.DebugWriteLine("Entropy command", "--whole-disc={0}", wholeDisc);
+            AaruConsole.DebugWriteLine("Entropy command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Entropy command", "--duplicated-sectors={0}", duplicatedSectors);
+            AaruConsole.DebugWriteLine("Entropy command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Entropy command", "--separated-tracks={0}", separatedTracks);
+            AaruConsole.DebugWriteLine("Entropy command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Entropy command", "--whole-disc={0}", wholeDisc);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -110,7 +110,7 @@ namespace Aaru.Commands.Image
 
             if(inputFormat == null)
             {
-                DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
+                AaruConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
 
                 return(int)ErrorNumber.UnrecognizedFormat;
             }
@@ -134,10 +134,10 @@ namespace Aaru.Commands.Image
 
                 foreach(EntropyResults trackEntropy in tracksEntropy)
                 {
-                    DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
+                    AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track, trackEntropy.Entropy);
 
                     if(trackEntropy.UniqueSectors != null)
-                        DicConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
+                        AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
                                              trackEntropy.UniqueSectors,
                                              (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
                 }
@@ -148,10 +148,10 @@ namespace Aaru.Commands.Image
 
             EntropyResults entropy = entropyCalculator.CalculateMediaEntropy(duplicatedSectors);
 
-            DicConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
+            AaruConsole.WriteLine("Entropy for disk is {0:F4}.", entropy.Entropy);
 
             if(entropy.UniqueSectors != null)
-                DicConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
+                AaruConsole.WriteLine("Disk has {0} unique sectors ({1:P3})", entropy.UniqueSectors,
                                      (double)entropy.UniqueSectors / (double)entropy.Sectors);
 
             return(int)ErrorNumber.NoError;

@@ -90,7 +90,7 @@ namespace Aaru.Filesystems.FAT
                 default: return Errno.InvalidArgument;
             }
 
-            DicConsole.DebugWriteLine("FAT plugin", "Reading BPB");
+            AaruConsole.DebugWriteLine("FAT plugin", "Reading BPB");
 
             uint sectorsPerBpb = imagePlugin.Info.SectorSize < 512 ? 512 / imagePlugin.Info.SectorSize : 1;
 
@@ -632,12 +632,12 @@ namespace Aaru.Filesystems.FAT
             }
             else if(fat16)
             {
-                DicConsole.DebugWriteLine("FAT plugin", "Reading FAT16");
+                AaruConsole.DebugWriteLine("FAT plugin", "Reading FAT16");
 
                 byte[] fatBytes =
                     imagePlugin.ReadSectors(fatFirstSector + (useFirstFat ? 0 : sectorsPerFat), sectorsPerFat);
 
-                DicConsole.DebugWriteLine("FAT plugin", "Casting FAT");
+                AaruConsole.DebugWriteLine("FAT plugin", "Casting FAT");
                 fatEntries = MemoryMarshal.Cast<byte, ushort>(fatBytes).ToArray();
             }
 

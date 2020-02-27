@@ -164,13 +164,13 @@ namespace Aaru.DiscImages
                             if(!ccdVerMatch.Success)
                                 continue;
 
-                            DicConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CloneCD plugin", "Found Version at line {0}", lineNumber);
 
                             imageInfo.Version = ccdVerMatch.Groups["value"].Value;
 
                             if(imageInfo.Version != "2" &&
                                imageInfo.Version != "3")
-                                DicConsole.
+                                AaruConsole.
                                     ErrorWriteLine("(CloneCD plugin): Warning! Unknown CCD image version {0}, may not work!",
                                                    imageInfo.Version);
                         }
@@ -183,22 +183,22 @@ namespace Aaru.DiscImages
                             Match discCatMatch  = discCatRegex.Match(line);
 
                             if(discEntMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found TocEntries at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found TocEntries at line {0}", lineNumber);
                             else if(discSessMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Sessions at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found Sessions at line {0}", lineNumber);
                             else if(discScrMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found DataTracksScrambled at line {0}",
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found DataTracksScrambled at line {0}",
                                                           lineNumber);
 
                                 scrambled |= discScrMatch.Groups["value"].Value == "1";
                             }
                             else if(cdtLenMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found CDTextLength at line {0}",
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found CDTextLength at line {0}",
                                                           lineNumber);
                             else if(discCatMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Catalog at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found Catalog at line {0}", lineNumber);
                                 catalog = discCatMatch.Groups["value"].Value;
                             }
                         }
@@ -210,11 +210,11 @@ namespace Aaru.DiscImages
                             Match cdtEntMatch  = cdtEntRegex.Match(line);
 
                             if(cdtEntsMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entries at line {0}",
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entries at line {0}",
                                                           lineNumber);
                             else if(cdtEntMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entry at line {0}",
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found CD-Text Entry at line {0}",
                                                           lineNumber);
 
                                 string[] bytes = cdtEntMatch.Groups["value"].Value.Split(new[]
@@ -234,9 +234,9 @@ namespace Aaru.DiscImages
                             Match sessSubcMatch = sessSubcRegex.Match(line);
 
                             if(sessPregMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PreGapMode at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PreGapMode at line {0}", lineNumber);
                             else if(sessSubcMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PreGapSubC at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PreGapSubC at line {0}", lineNumber);
                         }
                         else if(inEntry)
                         {
@@ -257,7 +257,7 @@ namespace Aaru.DiscImages
 
                             if(entSessMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Session at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found Session at line {0}", lineNumber);
                                 currentEntry.SessionNumber = Convert.ToByte(entSessMatch.Groups["value"].Value, 10);
 
                                 if(currentEntry.SessionNumber < minSession)
@@ -268,65 +268,65 @@ namespace Aaru.DiscImages
                             }
                             else if(entPointMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Point at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found Point at line {0}", lineNumber);
                                 currentEntry.POINT = Convert.ToByte(entPointMatch.Groups["value"].Value, 16);
                             }
                             else if(entAdrMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found ADR at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found ADR at line {0}", lineNumber);
                                 currentEntry.ADR = Convert.ToByte(entAdrMatch.Groups["value"].Value, 16);
                             }
                             else if(entCtrlMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Control at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found Control at line {0}", lineNumber);
                                 currentEntry.CONTROL = Convert.ToByte(entCtrlMatch.Groups["value"].Value, 16);
                             }
                             else if(entTnoMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found TrackNo at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found TrackNo at line {0}", lineNumber);
                                 currentEntry.TNO = Convert.ToByte(entTnoMatch.Groups["value"].Value, 10);
                             }
                             else if(entAMinMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found AMin at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found AMin at line {0}", lineNumber);
                                 currentEntry.Min = Convert.ToByte(entAMinMatch.Groups["value"].Value, 10);
                             }
                             else if(entASecMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found ASec at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found ASec at line {0}", lineNumber);
                                 currentEntry.Sec = Convert.ToByte(entASecMatch.Groups["value"].Value, 10);
                             }
                             else if(entAFrameMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found AFrame at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found AFrame at line {0}", lineNumber);
                                 currentEntry.Frame = Convert.ToByte(entAFrameMatch.Groups["value"].Value, 10);
                             }
                             else if(entAlbaMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found ALBA at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found ALBA at line {0}", lineNumber);
                             else if(entZeroMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found Zero at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found Zero at line {0}", lineNumber);
                                 currentEntry.Zero  = Convert.ToByte(entZeroMatch.Groups["value"].Value, 10);
                                 currentEntry.HOUR  = (byte)((currentEntry.Zero & 0xF0) >> 4);
                                 currentEntry.PHOUR = (byte)(currentEntry.Zero & 0x0F);
                             }
                             else if(entPMinMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PMin at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PMin at line {0}", lineNumber);
                                 currentEntry.PMIN = Convert.ToByte(entPMinMatch.Groups["value"].Value, 10);
                             }
                             else if(entPSecMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PSec at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PSec at line {0}", lineNumber);
                                 currentEntry.PSEC = Convert.ToByte(entPSecMatch.Groups["value"].Value, 10);
                             }
                             else if(entPFrameMatch.Success)
                             {
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PFrame at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PFrame at line {0}", lineNumber);
                                 currentEntry.PFRAME = Convert.ToByte(entPFrameMatch.Groups["value"].Value, 10);
                             }
                             else if(entPlbaMatch.Success)
-                                DicConsole.DebugWriteLine("CloneCD plugin", "Found PLBA at line {0}", lineNumber);
+                                AaruConsole.DebugWriteLine("CloneCD plugin", "Found PLBA at line {0}", lineNumber);
                         }
                     }
                 }
@@ -365,7 +365,7 @@ namespace Aaru.DiscImages
                 fulltoc = tocMs.ToArray();
                 imageInfo.ReadableMediaTags.Add(MediaTagType.CD_FullTOC);
 
-                DicConsole.DebugWriteLine("CloneCD plugin", "{0}", FullTOC.Prettify(toc));
+                AaruConsole.DebugWriteLine("CloneCD plugin", "{0}", FullTOC.Prettify(toc));
 
                 string dataFile = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".img";
                 string subFile  = Path.GetFileNameWithoutExtension(imageFilter.GetBasePath()) + ".sub";
@@ -415,7 +415,7 @@ namespace Aaru.DiscImages
                             {
                                 case 0xA0:
                                     byte discType = descriptor.PSEC;
-                                    DicConsole.DebugWriteLine("CloneCD plugin", "Disc Type: {0}", discType);
+                                    AaruConsole.DebugWriteLine("CloneCD plugin", "Disc Type: {0}", discType);
 
                                     break;
                                 case 0xA2:
@@ -644,7 +644,7 @@ namespace Aaru.DiscImages
                                         imageInfo.MediaManufacturer = ATIP.ManufacturerFromATIP(descriptor.PSEC, frm);
 
                                         if(imageInfo.MediaManufacturer != "")
-                                            DicConsole.DebugWriteLine("CloneCD plugin", "Disc manufactured by: {0}",
+                                            AaruConsole.DebugWriteLine("CloneCD plugin", "Disc manufactured by: {0}",
                                                                       imageInfo.MediaManufacturer);
                                     }
 
@@ -655,7 +655,7 @@ namespace Aaru.DiscImages
                         case 6:
                         {
                             uint id = (uint)((descriptor.Min << 16) + (descriptor.Sec << 8) + descriptor.Frame);
-                            DicConsole.DebugWriteLine("CloneCD plugin", "Disc ID: {0:X6}", id & 0x00FFFFFF);
+                            AaruConsole.DebugWriteLine("CloneCD plugin", "Disc ID: {0:X6}", id & 0x00FFFFFF);
                             imageInfo.MediaSerialNumber = $"{id                               & 0x00FFFFFF:X6}";
 
                             break;
@@ -785,9 +785,9 @@ namespace Aaru.DiscImages
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetFilename());
-                DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetFilename());
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
+                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 
                 return false;
             }

@@ -57,16 +57,16 @@ namespace Aaru.DiscImages
 
             if(!nhdhdr.szFileID.SequenceEqual(signature)) return false;
 
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szFileID = \"{0}\"",
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szFileID = \"{0}\"",
                                       StringHandlers.CToString(nhdhdr.szFileID, shiftjis));
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.reserved1 = {0}", nhdhdr.reserved1);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szComment = \"{0}\"",
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.reserved1 = {0}", nhdhdr.reserved1);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.szComment = \"{0}\"",
                                       StringHandlers.CToString(nhdhdr.szComment, shiftjis));
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwHeadSize = {0}", nhdhdr.dwHeadSize);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwCylinder = {0}", nhdhdr.dwCylinder);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}",      nhdhdr.wHead);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}",      nhdhdr.wSect);
-            DicConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}",   nhdhdr.wSectLen);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwHeadSize = {0}", nhdhdr.dwHeadSize);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.dwCylinder = {0}", nhdhdr.dwCylinder);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wHead = {0}",      nhdhdr.wHead);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSect = {0}",      nhdhdr.wSect);
+            AaruConsole.DebugWriteLine("NHDr0 plugin", "nhdhdr.wSectLen = {0}",   nhdhdr.wSectLen);
 
             return true;
         }

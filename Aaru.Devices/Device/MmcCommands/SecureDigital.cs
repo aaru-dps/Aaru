@@ -48,7 +48,7 @@ namespace Aaru.Devices
                                        out response, out duration, out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SecureDigital Device", "SD_STATUS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SecureDigital Device", "SD_STATUS took {0} ms.", duration);
 
             return sense;
         }
@@ -65,7 +65,7 @@ namespace Aaru.Devices
                                        out duration,                                                       out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SecureDigital Device", "SD_SEND_OP_COND took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SecureDigital Device", "SD_SEND_OP_COND took {0} ms.", duration);
 
             return sense;
         }
@@ -82,7 +82,7 @@ namespace Aaru.Devices
                                        out response, out duration, out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SecureDigital Device", "SEND_SCR took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_SCR took {0} ms.", duration);
 
             return sense;
         }

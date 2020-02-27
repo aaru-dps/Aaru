@@ -52,7 +52,7 @@ namespace Aaru.DiscImages
             stream.Read(header, 0, 2 + 2 * 82);
 
             HdcpFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<HdcpFileHeader>(header);
-            DicConsole.DebugWriteLine("HDCP plugin",
+            AaruConsole.DebugWriteLine("HDCP plugin",
                                       "Detected HD-Copy image with {0} tracks and {1} sectors per track.",
                                       fheader.lastCylinder + 1, fheader.sectorsPerTrack);
 
@@ -91,7 +91,7 @@ namespace Aaru.DiscImages
                     // assume block sizes are positive
                     if(blkLength < 0) return false;
 
-                    DicConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset,
+                    AaruConsole.DebugWriteLine("HDCP plugin", "Track {0} offset 0x{1:x8}, size={2:x4}", i, currentOffset,
                                               blkLength);
                     trackOffset[i] = currentOffset;
 

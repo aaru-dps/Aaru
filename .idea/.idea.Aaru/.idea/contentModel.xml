@@ -235,7 +235,7 @@
       <e p="Aaru.Console" t="IncludeRecursive">
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Console.csproj" t="IncludeRecursive" />
-        <e p="DicConsole.cs" t="Include" />
+        <e p="AaruConsole.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

@@ -155,11 +155,11 @@ namespace Aaru.DiscImages
             end = DateTime.UtcNow;
             TimeSpan sequentialize = end - start;
 
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to deinterleave subchannel.",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to deinterleave subchannel.",
                                       deinterleave.TotalMilliseconds);
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to sequentialize subchannel.",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to sequentialize subchannel.",
                                       sequentialize.TotalMilliseconds);
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to transform subchannel.",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to transform subchannel.",
                                       deinterleave.TotalMilliseconds + sequentialize.TotalMilliseconds);
 
             return sequential;
@@ -283,11 +283,11 @@ namespace Aaru.DiscImages
             end = DateTime.UtcNow;
             TimeSpan interleave = end - start;
 
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to de-sequentialize subchannel.",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to de-sequentialize subchannel.",
                                       desequentialize.TotalMilliseconds);
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to interleave subchannel.",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to interleave subchannel.",
                                       interleave.TotalMilliseconds);
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to untransform subchannel.",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to untransform subchannel.",
                                       interleave.TotalMilliseconds + desequentialize.TotalMilliseconds);
 
             return interleaved;

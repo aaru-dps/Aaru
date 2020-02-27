@@ -351,7 +351,7 @@ namespace Aaru.Filesystems.AppleMFS
 
                 if(blockMap[nextBlock] == BMAP_FREE)
                 {
-                    DicConsole.ErrorWriteLine("File truncated at block {0}", nextBlock);
+                    AaruConsole.ErrorWriteLine("File truncated at block {0}", nextBlock);
 
                     break;
                 }

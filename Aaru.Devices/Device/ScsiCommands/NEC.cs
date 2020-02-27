@@ -66,7 +66,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "READ CD-DA took {0} ms.", duration);
 
             return sense;
         }

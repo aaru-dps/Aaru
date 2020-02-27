@@ -71,7 +71,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA took {0} ms.", duration);
 
             return sense;
         }
@@ -112,7 +112,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-DA MSF took {0} ms.", duration);
 
             return sense;
         }
@@ -168,7 +168,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PIONEER READ CD-XA took {0} ms.", duration);
 
             return sense;
         }

@@ -55,19 +55,19 @@ namespace Aaru.DiscImages
 
             Header = Marshal.ByteArrayToStructureLittleEndian<ScpHeader>(hdr);
 
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"",
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.signature = \"{0}\"",
                                       StringHandlers.CToString(Header.signature));
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.version = {0}.{1}", (Header.version & 0xF0) >> 4,
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.version = {0}.{1}", (Header.version & 0xF0) >> 4,
                                       Header.version & 0xF);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}",            Header.type);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}",     Header.revolutions);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}",           Header.start);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.end = {0}",             Header.end);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.flags = {0}",           Header.flags);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.bitCellEncoding = {0}", Header.bitCellEncoding);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.heads = {0}",           Header.heads);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}",        Header.reserved);
-            DicConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}",   Header.checksum);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.type = {0}",            Header.type);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.revolutions = {0}",     Header.revolutions);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.start = {0}",           Header.start);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.end = {0}",             Header.end);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.flags = {0}",           Header.flags);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.bitCellEncoding = {0}", Header.bitCellEncoding);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.heads = {0}",           Header.heads);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.reserved = {0}",        Header.reserved);
+            AaruConsole.DebugWriteLine("SuperCardPro plugin", "header.checksum = 0x{0:X8}",   Header.checksum);
 
             if(!scpSignature.SequenceEqual(Header.signature)) return false;
 
@@ -85,19 +85,19 @@ namespace Aaru.DiscImages
 
                 if(!trk.Signature.SequenceEqual(trkSignature))
                 {
-                    DicConsole.DebugWriteLine("SuperCardPro plugin",
+                    AaruConsole.DebugWriteLine("SuperCardPro plugin",
                                               "Track header at {0} contains incorrect signature.", Header.offsets[t]);
                     continue;
                 }
 
                 if(trk.TrackNumber != t)
                 {
-                    DicConsole.DebugWriteLine("SuperCardPro plugin", "Track number at {0} should be {1} but is {2}.",
+                    AaruConsole.DebugWriteLine("SuperCardPro plugin", "Track number at {0} should be {1} but is {2}.",
                                               Header.offsets[t], t, trk.TrackNumber);
                     continue;
                 }
 
-                DicConsole.DebugWriteLine("SuperCardPro plugin", "Found track {0} at {1}.", t, Header.offsets[t]);
+                AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found track {0} at {1}.", t, Header.offsets[t]);
 
                 for(byte r = 0; r < Header.revolutions; r++)
                 {
@@ -127,39 +127,39 @@ namespace Aaru.DiscImages
                     {
                         scpStream.Seek(-Marshal.SizeOf<ScpFooter>(), SeekOrigin.Current);
 
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", scpStream.Position);
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "Found footer at {0}", scpStream.Position);
 
                         byte[] ftr = new byte[Marshal.SizeOf<ScpFooter>()];
                         scpStream.Read(ftr, 0, Marshal.SizeOf<ScpFooter>());
 
                         ScpFooter footer = Marshal.ByteArrayToStructureLittleEndian<ScpFooter>(ftr);
 
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.manufacturerOffset = 0x{0:X8}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.manufacturerOffset = 0x{0:X8}",
                                                   footer.manufacturerOffset);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.modelOffset = 0x{0:X8}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.modelOffset = 0x{0:X8}",
                                                   footer.modelOffset);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.serialOffset = 0x{0:X8}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.serialOffset = 0x{0:X8}",
                                                   footer.serialOffset);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.creatorOffset = 0x{0:X8}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.creatorOffset = 0x{0:X8}",
                                                   footer.creatorOffset);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationOffset = 0x{0:X8}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationOffset = 0x{0:X8}",
                                                   footer.applicationOffset);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.commentsOffset = 0x{0:X8}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.commentsOffset = 0x{0:X8}",
                                                   footer.commentsOffset);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.creationTime = {0}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.creationTime = {0}",
                                                   footer.creationTime);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.modificationTime = {0}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.modificationTime = {0}",
                                                   footer.modificationTime);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationVersion = {0}.{1}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.applicationVersion = {0}.{1}",
                                                   (footer.applicationVersion & 0xF0) >> 4,
                                                   footer.applicationVersion & 0xF);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.hardwareVersion = {0}.{1}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.hardwareVersion = {0}.{1}",
                                                   (footer.hardwareVersion & 0xF0) >> 4, footer.hardwareVersion & 0xF);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.firmwareVersion = {0}.{1}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.firmwareVersion = {0}.{1}",
                                                   (footer.firmwareVersion & 0xF0) >> 4, footer.firmwareVersion & 0xF);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.imageVersion = {0}.{1}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.imageVersion = {0}.{1}",
                                                   (footer.imageVersion & 0xF0) >> 4, footer.imageVersion & 0xF);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "footer.signature = \"{0}\"",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "footer.signature = \"{0}\"",
                                                   StringHandlers.CToString(BitConverter.GetBytes(footer.signature)));
 
                         imageInfo.DriveManufacturer = ReadPStringUtf8(scpStream, footer.manufacturerOffset);
@@ -169,17 +169,17 @@ namespace Aaru.DiscImages
                         imageInfo.Application       = ReadPStringUtf8(scpStream, footer.applicationOffset);
                         imageInfo.Comments          = ReadPStringUtf8(scpStream, footer.commentsOffset);
 
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveManufacturer = \"{0}\"",
                                                   imageInfo.DriveManufacturer);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveModel = \"{0}\"",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveModel = \"{0}\"",
                                                   imageInfo.DriveModel);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveSerialNumber = \"{0}\"",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.driveSerialNumber = \"{0}\"",
                                                   imageInfo.DriveSerialNumber);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreator = \"{0}\"",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreator = \"{0}\"",
                                                   imageInfo.Creator);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageApplication = \"{0}\"",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageApplication = \"{0}\"",
                                                   imageInfo.Application);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageComments = \"{0}\"",
                                                   imageInfo.Comments);
 
                         imageInfo.CreationTime = footer.creationTime != 0
@@ -190,9 +190,9 @@ namespace Aaru.DiscImages
                                                              ? DateHandlers.UnixToDateTime(footer.modificationTime)
                                                              : imageFilter.GetLastWriteTime();
 
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageCreationTime = {0}",
                                                   imageInfo.CreationTime);
-                        DicConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageLastModificationTime = {0}",
+                        AaruConsole.DebugWriteLine("SuperCardPro plugin", "ImageInfo.imageLastModificationTime = {0}",
                                                   imageInfo.LastModificationTime);
 
                         imageInfo.ApplicationVersion =

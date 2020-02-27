@@ -44,12 +44,12 @@ namespace Aaru.Core.Devices.Report
         {
             var report = new MmcSd();
 
-            DicConsole.WriteLine("Trying to get CID...");
+            AaruConsole.WriteLine("Trying to get CID...");
             bool sense = _dev.ReadCid(out byte[] cid, out _, _dev.Timeout, out _);
 
             if(!sense)
             {
-                DicConsole.WriteLine("CID obtained correctly...");
+                AaruConsole.WriteLine("CID obtained correctly...");
 
                 switch(_dev.Type)
                 {
@@ -77,22 +77,22 @@ namespace Aaru.Core.Devices.Report
                 report.CID = cid;
             }
             else
-                DicConsole.WriteLine("Could not read CID...");
+                AaruConsole.WriteLine("Could not read CID...");
 
-            DicConsole.WriteLine("Trying to get CSD...");
+            AaruConsole.WriteLine("Trying to get CSD...");
             sense = _dev.ReadCsd(out byte[] csd, out _, _dev.Timeout, out _);
 
             if(!sense)
             {
-                DicConsole.WriteLine("CSD obtained correctly...");
+                AaruConsole.WriteLine("CSD obtained correctly...");
                 report.CSD = csd;
             }
             else
-                DicConsole.WriteLine("Could not read CSD...");
+                AaruConsole.WriteLine("Could not read CSD...");
 
             sense = true;
             byte[] ocr = null;
-            DicConsole.WriteLine("Trying to get OCR...");
+            AaruConsole.WriteLine("Trying to get OCR...");
 
             switch(_dev.Type)
             {
@@ -112,41 +112,41 @@ namespace Aaru.Core.Devices.Report
 
             if(!sense)
             {
-                DicConsole.WriteLine("OCR obtained correctly...");
+                AaruConsole.WriteLine("OCR obtained correctly...");
                 report.OCR = ocr;
             }
             else
-                DicConsole.WriteLine("Could not read OCR...");
+                AaruConsole.WriteLine("Could not read OCR...");
 
             switch(_dev.Type)
             {
                 case DeviceType.MMC:
                 {
-                    DicConsole.WriteLine("Trying to get Extended CSD...");
+                    AaruConsole.WriteLine("Trying to get Extended CSD...");
                     sense = _dev.ReadExtendedCsd(out byte[] ecsd, out _, _dev.Timeout, out _);
 
                     if(!sense)
                     {
-                        DicConsole.WriteLine("Extended CSD obtained correctly...");
+                        AaruConsole.WriteLine("Extended CSD obtained correctly...");
                         report.ExtendedCSD = ecsd;
                     }
                     else
-                        DicConsole.WriteLine("Could not read Extended CSD...");
+                        AaruConsole.WriteLine("Could not read Extended CSD...");
 
                     break;
                 }
                 case DeviceType.SecureDigital:
                 {
-                    DicConsole.WriteLine("Trying to get SCR...");
+                    AaruConsole.WriteLine("Trying to get SCR...");
                     sense = _dev.ReadScr(out byte[] scr, out _, _dev.Timeout, out _);
 
                     if(!sense)
                     {
-                        DicConsole.WriteLine("SCR obtained correctly...");
+                        AaruConsole.WriteLine("SCR obtained correctly...");
                         report.SCR = scr;
                     }
                     else
-                        DicConsole.WriteLine("Could not read SCR...");
+                        AaruConsole.WriteLine("Could not read SCR...");
 
                     break;
                 }

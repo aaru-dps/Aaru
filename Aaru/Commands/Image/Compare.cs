@@ -69,17 +69,17 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("compare");
 
-            DicConsole.DebugWriteLine("Compare command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Compare command", "--input1={0}", imagePath1);
-            DicConsole.DebugWriteLine("Compare command", "--input2={0}", imagePath2);
-            DicConsole.DebugWriteLine("Compare command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Compare command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Compare command", "--input1={0}", imagePath1);
+            AaruConsole.DebugWriteLine("Compare command", "--input2={0}", imagePath2);
+            AaruConsole.DebugWriteLine("Compare command", "--verbose={0}", verbose);
 
             var     filtersList  = new FiltersList();
             IFilter inputFilter1 = filtersList.GetFilter(imagePath1);
@@ -88,14 +88,14 @@ namespace Aaru.Commands.Image
 
             if(inputFilter1 == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open input file 1");
+                AaruConsole.ErrorWriteLine("Cannot open input file 1");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
 
             if(inputFilter2 == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open input file 2");
+                AaruConsole.ErrorWriteLine("Cannot open input file 2");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -105,29 +105,29 @@ namespace Aaru.Commands.Image
 
             if(input1Format == null)
             {
-                DicConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
+                AaruConsole.ErrorWriteLine("Input file 1 format not identified, not proceeding with comparison.");
 
                 return(int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
-                DicConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
+                AaruConsole.VerboseWriteLine("Input file 1 format identified by {0} ({1}).", input1Format.Name,
                                             input1Format.Id);
             else
-                DicConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
+                AaruConsole.WriteLine("Input file 1 format identified by {0}.", input1Format.Name);
 
             if(input2Format == null)
             {
-                DicConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
+                AaruConsole.ErrorWriteLine("Input file 2 format not identified, not proceeding with comparison.");
 
                 return(int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
-                DicConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
+                AaruConsole.VerboseWriteLine("Input file 2 format identified by {0} ({1}).", input2Format.Name,
                                             input2Format.Id);
             else
-                DicConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
+                AaruConsole.WriteLine("Input file 2 format identified by {0}.", input2Format.Name);
 
             input1Format.Open(inputFilter1);
             input2Format.Open(inputFilter2);
@@ -258,7 +258,7 @@ namespace Aaru.Commands.Image
                                     image2DiskTags.ContainsKey(disktag)).AppendLine();
             }
 
-            DicConsole.WriteLine("Comparing disk image characteristics");
+            AaruConsole.WriteLine("Comparing disk image characteristics");
 
             if(image1Info.HasPartitions != image2Info.HasPartitions)
             {
@@ -321,11 +321,11 @@ namespace Aaru.Commands.Image
             else
                 leastSectors = image1Info.Sectors;
 
-            DicConsole.WriteLine("Comparing sectors...");
+            AaruConsole.WriteLine("Comparing sectors...");
 
             for(ulong sector = 0; sector < leastSectors; sector++)
             {
-                DicConsole.Write("\rComparing sector {0} of {1}...", sector + 1, leastSectors);
+                AaruConsole.Write("\rComparing sector {0} of {1}...", sector + 1, leastSectors);
 
                 try
                 {
@@ -355,11 +355,11 @@ namespace Aaru.Commands.Image
                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             }
 
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
 
             sb.AppendLine(imagesDiffer ? "Images differ" : "Images do not differ");
 
-            DicConsole.WriteLine(sb.ToString());
+            AaruConsole.WriteLine(sb.ToString());
 
             return(int)ErrorNumber.NoError;
         }

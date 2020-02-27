@@ -564,7 +564,7 @@ namespace Aaru.Gui.Tabs
 
                         evpdPageTitle = $"Page {page.Key:X2}h";
                         evpdDecodedPage = "Undecoded";
-                        DicConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "Found undecoded SCSI VPD page 0x{0:X2}",
                             page.Key);
                     }
 
@@ -589,16 +589,16 @@ namespace Aaru.Gui.Tabs
 
                 var ftr = Features.Separate(configuration);
 
-                DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes",
+                AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION length is {0} bytes",
                     ftr.DataLength);
-                DicConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h",
+                AaruConsole.DebugWriteLine("Device-Info command", "GET CONFIGURATION current profile is {0:X4}h",
                     ftr.CurrentProfile);
                 if (ftr.Descriptors != null)
                     foreach (var desc in ftr.Descriptors)
                     {
                         var featureNumber = $"Feature {desc.Code:X4}h";
                         string featureDescription;
-                        DicConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
+                        AaruConsole.DebugWriteLine("Device-Info command", "Feature {0:X4}h", desc.Code);
 
                         switch (desc.Code)
                         {
@@ -784,7 +784,7 @@ namespace Aaru.Gui.Tabs
                         featuresList.Add(new TreeGridItem {Values = new object[] {featureNumber, featureDescription}});
                     }
                 else
-                    DicConsole.DebugWriteLine("Device-Info command",
+                    AaruConsole.DebugWriteLine("Device-Info command",
                         "GET CONFIGURATION returned no feature descriptors");
             }
 

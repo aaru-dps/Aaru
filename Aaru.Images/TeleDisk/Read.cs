@@ -76,17 +76,17 @@ namespace Aaru.DiscImages
             Array.Copy(headerBytes, headerBytesForCrc, 10);
             ushort calculatedHeaderCrc = TeleDiskCrc(0x0000, headerBytesForCrc);
 
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}",      header.Signature);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}",       header.Sequence);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}",        header.DiskSet);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}",        header.Version);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}",       header.DataRate);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}",      header.DriveType);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}",       header.Stepping);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}",  header.DosAllocation);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}",          header.Sides);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}",            header.Crc);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCrc);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}",      header.Signature);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}",       header.Sequence);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}",        header.DiskSet);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}",        header.Version);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}",       header.DataRate);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}",      header.DriveType);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}",       header.Stepping);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}",  header.DosAllocation);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}",          header.Sides);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}",            header.Crc);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCrc);
 
             // We need more checks as the magic is too simply.
             // This may deny legal images
@@ -95,7 +95,7 @@ namespace Aaru.DiscImages
             if(header.Crc != calculatedHeaderCrc)
             {
                 aDiskCrcHasFailed = true;
-                DicConsole.DebugWriteLine("TeleDisk plugin", "Calculated CRC does not coincide with stored one.");
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "Calculated CRC does not coincide with stored one.");
             }
 
             if(header.Sequence != 0x00) return false;
@@ -158,17 +158,17 @@ namespace Aaru.DiscImages
 
                 ushort cmtcrc = TeleDiskCrc(0, commentBlockForCrc);
 
-                DicConsole.DebugWriteLine("TeleDisk plugin", "Comment header");
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.crc = 0x{0:X4}", commentHeader.Crc);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tCalculated CRC = 0x{0:X4}",    cmtcrc);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes",
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "Comment header");
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.crc = 0x{0:X4}", commentHeader.Crc);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tCalculated CRC = 0x{0:X4}",    cmtcrc);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.length = {0} bytes",
                                           commentHeader.Length);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.year = {0}",   commentHeader.Year);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.month = {0}",  commentHeader.Month);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.day = {0}",    commentHeader.Day);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.hour = {0}",   commentHeader.Hour);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.minute = {0}", commentHeader.Minute);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.second = {0}", commentHeader.Second);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.year = {0}",   commentHeader.Year);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.month = {0}",  commentHeader.Month);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.day = {0}",    commentHeader.Day);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.hour = {0}",   commentHeader.Hour);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.minute = {0}", commentHeader.Minute);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tcommentheader.second = {0}", commentHeader.Second);
 
                 aDiskCrcHasFailed |= cmtcrc != commentHeader.Crc;
 
@@ -179,8 +179,8 @@ namespace Aaru.DiscImages
 
                 imageInfo.Comments = Encoding.ASCII.GetString(commentBlock);
 
-                DicConsole.DebugWriteLine("TeleDisk plugin", "Comment");
-                DicConsole.DebugWriteLine("TeleDisk plugin", "{0}", imageInfo.Comments);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "Comment");
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "{0}", imageInfo.Comments);
 
                 imageInfo.CreationTime = new DateTime(commentHeader.Year + 1900, commentHeader.Month + 1,
                                                       commentHeader.Day, commentHeader.Hour, commentHeader.Minute,
@@ -190,10 +190,10 @@ namespace Aaru.DiscImages
             if(imageInfo.CreationTime == DateTime.MinValue) imageInfo.CreationTime = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-            DicConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}",  imageInfo.CreationTime);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", imageInfo.LastModificationTime);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "Image created on {0}",  imageInfo.CreationTime);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "Image modified on {0}", imageInfo.LastModificationTime);
 
-            DicConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "Parsing image");
 
             totalDiskSize       = 0;
             imageInfo.ImageSize = 0;
@@ -321,7 +321,7 @@ namespace Aaru.DiscImages
             // Total sectors per track
             uint[][] spts = new uint[totalCylinders][];
 
-            DicConsole.DebugWriteLine("TeleDisk plugin",
+            AaruConsole.DebugWriteLine("TeleDisk plugin",
                                       "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
                                       totalCylinders, totalHeads, maxSector);
 
@@ -352,19 +352,19 @@ namespace Aaru.DiscImages
 
                 byte tdTrackCalculatedCrc = (byte)(TeleDiskCrc(0, tdTrackForCrc) & 0xFF);
 
-                DicConsole.DebugWriteLine("TeleDisk plugin", "Track follows");
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack cylinder: {0}\t",   teleDiskTrack.Cylinder);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack head: {0}\t",       teleDiskTrack.Head);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tSectors in track: {0}\t", teleDiskTrack.Sectors);
-                DicConsole.DebugWriteLine("TeleDisk plugin", "\tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t",
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "Track follows");
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tTrack cylinder: {0}\t",   teleDiskTrack.Cylinder);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tTrack head: {0}\t",       teleDiskTrack.Head);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tSectors in track: {0}\t", teleDiskTrack.Sectors);
+                AaruConsole.DebugWriteLine("TeleDisk plugin", "\tTrack header CRC: 0x{0:X2} (calculated 0x{1:X2})\t",
                                           teleDiskTrack.Crc, tdTrackCalculatedCrc);
 
                 aDiskCrcHasFailed |= tdTrackCalculatedCrc != teleDiskTrack.Crc;
 
                 if(teleDiskTrack.Sectors == 0xFF) // End of disk image
                 {
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "End of disk image arrived");
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "Total of {0} data sectors, for {1} bytes",
                                               totalSectors, totalDiskSize);
 
                     break;
@@ -384,16 +384,16 @@ namespace Aaru.DiscImages
                     teleDiskSector.Flags        = (byte)stream.ReadByte();
                     teleDiskSector.Crc          = (byte)stream.ReadByte();
 
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\tSector follows");
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark cylinder: {0}",
                                               teleDiskSector.Cylinder);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", teleDiskSector.Head);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark sector number: {0}",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark head: {0}", teleDiskSector.Head);
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tAddressMark sector number: {0}",
                                               teleDiskSector.SectorNumber);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector size: {0}",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector size: {0}",
                                               teleDiskSector.SectorSize);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector flags: 0x{0:X2}", teleDiskSector.Flags);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector flags: 0x{0:X2}", teleDiskSector.Flags);
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tSector CRC (plus headers): 0x{0:X2}",
                                               teleDiskSector.Crc);
 
                     uint lba = (uint)(teleDiskSector.Cylinder * header.Sides * imageInfo.SectorsPerTrack +
@@ -409,9 +409,9 @@ namespace Aaru.DiscImages
                         teleDiskData.DataEncoding =  (byte)stream.ReadByte();
                         byte[] data = new byte[teleDiskData.DataSize];
                         stream.Read(data, 0, teleDiskData.DataSize);
-                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}",
+                        AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData size (in-image): {0}",
                                                   teleDiskData.DataSize);
-                        DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tData encoding: 0x{0:X2}",
                                                   teleDiskData.DataEncoding);
 
                         decodedData = DecodeTeleDiskData(teleDiskSector.SectorSize, teleDiskData.DataEncoding, data);
@@ -420,7 +420,7 @@ namespace Aaru.DiscImages
 
                         if(tdSectorCalculatedCrc != teleDiskSector.Crc)
                         {
-                            DicConsole.DebugWriteLine("TeleDisk plugin",
+                            AaruConsole.DebugWriteLine("TeleDisk plugin",
                                                       "Sector {0}:{3}:{4} calculated CRC 0x{1:X2} differs from stored CRC 0x{2:X2}",
                                                       teleDiskTrack.Cylinder, tdSectorCalculatedCrc, teleDiskSector.Crc,
                                                       teleDiskTrack.Cylinder, teleDiskSector.SectorNumber);
@@ -430,12 +430,12 @@ namespace Aaru.DiscImages
                     }
                     else decodedData = new byte[128 << teleDiskSector.SectorSize];
 
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", lba);
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "\t\tLBA: {0}", lba);
 
                     if((teleDiskSector.Flags & FLAGS_SECTOR_NO_ID) == FLAGS_SECTOR_NO_ID) continue;
 
                     if(sectorsData[teleDiskTrack.Cylinder][teleDiskTrack.Head][teleDiskSector.SectorNumber] != null)
-                        DicConsole.DebugWriteLine("TeleDisk plugin",
+                        AaruConsole.DebugWriteLine("TeleDisk plugin",
                                                   (teleDiskSector.Flags & FLAGS_SECTOR_DUPLICATE) ==
                                                   FLAGS_SECTOR_DUPLICATE
                                                       ? "\t\tSector {0} on cylinder {1} head {2} is duplicate, and marked so"
@@ -474,9 +474,9 @@ namespace Aaru.DiscImages
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            DicConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("TeleDisk image contains a disk of type {0}", imageInfo.MediaType);
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                DicConsole.VerboseWriteLine("TeleDisk comments: {0}", imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("TeleDisk comments: {0}", imageInfo.Comments);
 
             inStream.Dispose();
             stream.Dispose();

@@ -177,18 +177,18 @@ namespace Aaru.Core
                     File.Delete(filename);
                 else
                 {
-                    DicConsole.ErrorWriteLine("Not overwriting file {0}", filename);
+                    AaruConsole.ErrorWriteLine("Not overwriting file {0}", filename);
                     return;
                 }
 
             try
             {
-                DicConsole.DebugWriteLine(who, "Writing " + whatWriting + " to {0}", filename);
+                AaruConsole.DebugWriteLine(who, "Writing " + whatWriting + " to {0}", filename);
                 FileStream outputFs = new FileStream(filename, FileMode.CreateNew);
                 outputFs.Write(data, 0, data.Length);
                 outputFs.Close();
             }
-            catch { DicConsole.ErrorWriteLine("Unable to write file {0}", filename); }
+            catch { AaruConsole.ErrorWriteLine("Unable to write file {0}", filename); }
         }
     }
 }

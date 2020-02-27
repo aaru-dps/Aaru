@@ -86,26 +86,26 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("analyze");
 
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Analyze command", "--encoding={0}", encoding);
-            DicConsole.DebugWriteLine("Analyze command", "--filesystems={0}", filesystems);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("Analyze command", "--partitions={0}", partitions);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Analyze command", "--encoding={0}", encoding);
+            AaruConsole.DebugWriteLine("Analyze command", "--filesystems={0}", filesystems);
+            AaruConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Analyze command", "--partitions={0}", partitions);
+            AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -118,11 +118,11 @@ namespace Aaru.Commands.Image
                     encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
                     if(verbose)
-                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                        AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
                 }
                 catch(ArgumentException)
                 {
-                    DicConsole.ErrorWriteLine("Specified encoding is not supported.");
+                    AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
                     return(int)ErrorNumber.EncodingUnknown;
                 }
@@ -137,25 +137,25 @@ namespace Aaru.Commands.Image
 
                 if(imageFormat == null)
                 {
-                    DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                    AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
 
                     return(int)ErrorNumber.UnrecognizedFormat;
                 }
 
                 if(verbose)
-                    DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
+                    AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                 imageFormat.Id);
                 else
-                    DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                    AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
 
                 try
                 {
                     if(!imageFormat.Open(inputFilter))
                     {
-                        DicConsole.WriteLine("Unable to open image format");
-                        DicConsole.WriteLine("No error given");
+                        AaruConsole.WriteLine("Unable to open image format");
+                        AaruConsole.WriteLine("No error given");
 
                         return(int)ErrorNumber.CannotOpenFormat;
                     }
@@ -163,7 +163,7 @@ namespace Aaru.Commands.Image
                     if(verbose)
                     {
                         ImageInfo.PrintImageInfo(imageFormat);
-                        DicConsole.WriteLine();
+                        AaruConsole.WriteLine();
                     }
 
                     Statistics.AddMediaFormat(imageFormat.Format);
@@ -172,9 +172,9 @@ namespace Aaru.Commands.Image
                 }
                 catch(Exception ex)
                 {
-                    DicConsole.ErrorWriteLine("Unable to open image format");
-                    DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                    DicConsole.DebugWriteLine("Analyze command", "Stack trace: {0}", ex.StackTrace);
+                    AaruConsole.ErrorWriteLine("Unable to open image format");
+                    AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    AaruConsole.DebugWriteLine("Analyze command", "Stack trace: {0}", ex.StackTrace);
 
                     return(int)ErrorNumber.CannotOpenFormat;
                 }
@@ -190,11 +190,11 @@ namespace Aaru.Commands.Image
 
                     if(partitionsList.Count == 0)
                     {
-                        DicConsole.DebugWriteLine("Analyze command", "No partitions found");
+                        AaruConsole.DebugWriteLine("Analyze command", "No partitions found");
 
                         if(!filesystems)
                         {
-                            DicConsole.WriteLine("No partitions founds, not searching for filesystems");
+                            AaruConsole.WriteLine("No partitions founds, not searching for filesystems");
 
                             return(int)ErrorNumber.NothingFound;
                         }
@@ -203,47 +203,47 @@ namespace Aaru.Commands.Image
                     }
                     else
                     {
-                        DicConsole.WriteLine("{0} partitions found.", partitionsList.Count);
+                        AaruConsole.WriteLine("{0} partitions found.", partitionsList.Count);
 
                         for(int i = 0; i < partitionsList.Count; i++)
                         {
-                            DicConsole.WriteLine();
-                            DicConsole.WriteLine("Partition {0}:", partitionsList[i].Sequence);
-                            DicConsole.WriteLine("Partition name: {0}", partitionsList[i].Name);
-                            DicConsole.WriteLine("Partition type: {0}", partitionsList[i].Type);
+                            AaruConsole.WriteLine();
+                            AaruConsole.WriteLine("Partition {0}:", partitionsList[i].Sequence);
+                            AaruConsole.WriteLine("Partition name: {0}", partitionsList[i].Name);
+                            AaruConsole.WriteLine("Partition type: {0}", partitionsList[i].Type);
 
-                            DicConsole.WriteLine("Partition start: sector {0}, byte {1}", partitionsList[i].Start,
+                            AaruConsole.WriteLine("Partition start: sector {0}, byte {1}", partitionsList[i].Start,
                                                  partitionsList[i].Offset);
 
-                            DicConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitionsList[i].Length,
+                            AaruConsole.WriteLine("Partition length: {0} sectors, {1} bytes", partitionsList[i].Length,
                                                  partitionsList[i].Size);
 
-                            DicConsole.WriteLine("Partition scheme: {0}", partitionsList[i].Scheme);
-                            DicConsole.WriteLine("Partition description:");
-                            DicConsole.WriteLine(partitionsList[i].Description);
+                            AaruConsole.WriteLine("Partition scheme: {0}", partitionsList[i].Scheme);
+                            AaruConsole.WriteLine("Partition description:");
+                            AaruConsole.WriteLine(partitionsList[i].Description);
 
                             if(!filesystems)
                                 continue;
 
-                            DicConsole.WriteLine("Identifying filesystem on partition");
+                            AaruConsole.WriteLine("Identifying filesystem on partition");
 
                             Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partitionsList[i]);
 
                             if(idPlugins.Count == 0)
-                                DicConsole.WriteLine("Filesystem not identified");
+                                AaruConsole.WriteLine("Filesystem not identified");
                             else if(idPlugins.Count > 1)
                             {
-                                DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                                AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                                 foreach(string pluginName in idPlugins)
                                     if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                                     {
-                                        DicConsole.WriteLine($"As identified by {plugin.Name}.");
+                                        AaruConsole.WriteLine($"As identified by {plugin.Name}.");
 
                                         plugin.GetInformation(imageFormat, partitionsList[i], out information,
                                                               encodingClass);
 
-                                        DicConsole.Write(information);
+                                        AaruConsole.Write(information);
                                         Statistics.AddFilesystem(plugin.XmlFsType.Type);
                                     }
                             }
@@ -254,9 +254,9 @@ namespace Aaru.Commands.Image
                                 if(plugin == null)
                                     continue;
 
-                                DicConsole.WriteLine($"Identified by {plugin.Name}.");
+                                AaruConsole.WriteLine($"Identified by {plugin.Name}.");
                                 plugin.GetInformation(imageFormat, partitionsList[i], out information, encodingClass);
-                                DicConsole.Write("{0}", information);
+                                AaruConsole.Write("{0}", information);
                                 Statistics.AddFilesystem(plugin.XmlFsType.Type);
                             }
                         }
@@ -274,17 +274,17 @@ namespace Aaru.Commands.Image
                     Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                     if(idPlugins.Count == 0)
-                        DicConsole.WriteLine("Filesystem not identified");
+                        AaruConsole.WriteLine("Filesystem not identified");
                     else if(idPlugins.Count > 1)
                     {
-                        DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                        AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                         foreach(string pluginName in idPlugins)
                             if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
                             {
-                                DicConsole.WriteLine($"As identified by {plugin.Name}.");
+                                AaruConsole.WriteLine($"As identified by {plugin.Name}.");
                                 plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
-                                DicConsole.Write(information);
+                                AaruConsole.Write(information);
                                 Statistics.AddFilesystem(plugin.XmlFsType.Type);
                             }
                     }
@@ -294,9 +294,9 @@ namespace Aaru.Commands.Image
 
                         if(plugin != null)
                         {
-                            DicConsole.WriteLine($"Identified by {plugin.Name}.");
+                            AaruConsole.WriteLine($"Identified by {plugin.Name}.");
                             plugin.GetInformation(imageFormat, wholePart, out information, encodingClass);
-                            DicConsole.Write(information);
+                            AaruConsole.Write(information);
                             Statistics.AddFilesystem(plugin.XmlFsType.Type);
                         }
                     }
@@ -304,8 +304,8 @@ namespace Aaru.Commands.Image
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
+                AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+                AaruConsole.DebugWriteLine("Analyze command", ex.StackTrace);
 
                 return(int)ErrorNumber.UnexpectedException;
             }

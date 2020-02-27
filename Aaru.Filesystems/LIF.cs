@@ -58,7 +58,7 @@ namespace Aaru.Filesystems
 
             byte[]         sector = imagePlugin.ReadSector(partition.Start);
             LifSystemBlock lifSb  = Marshal.ByteArrayToStructureBigEndian<LifSystemBlock>(sector);
-            DicConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
+            AaruConsole.DebugWriteLine("LIF plugin", "magic 0x{0:X8} (expected 0x{1:X8})", lifSb.magic, LIF_MAGIC);
 
             return lifSb.magic == LIF_MAGIC;
         }

@@ -77,7 +77,7 @@ namespace Aaru.Core.Devices.Dumping
 
                 if(!isAdmin)
                 {
-                    DicConsole.
+                    AaruConsole.
                         ErrorWriteLine("Because of the commands sent to a device, dumping XGD must be done with administrative privileges. Cannot continue.");
 
                     _dumpLog.WriteLine("Cannot dump XGD without administrative privileges.");
@@ -144,7 +144,7 @@ namespace Aaru.Core.Devices.Dumping
             mediaTags.Add(MediaTagType.Xbox_SecuritySector, tmpBuf);
 
             // Get video partition size
-            DicConsole.DebugWriteLine("Dump-media command", "Getting video partition size");
+            AaruConsole.DebugWriteLine("Dump-media command", "Getting video partition size");
             UpdateStatus?.Invoke("Locking drive.");
             _dumpLog.WriteLine("Locking drive.");
             sense = _dev.KreonLock(out senseBuf, _dev.Timeout, out _);
@@ -189,7 +189,7 @@ namespace Aaru.Core.Devices.Dumping
             tmpBuf = new byte[readBuffer.Length - 4];
             Array.Copy(readBuffer, 4, tmpBuf, 0, readBuffer.Length - 4);
             mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
-            DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
+            AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
             ulong l0Video =
                 (PFI.Decode(readBuffer).Value.Layer0EndPSN - PFI.Decode(readBuffer).Value.DataAreaStartPSN) + 1;
@@ -226,7 +226,7 @@ namespace Aaru.Core.Devices.Dumping
                 Array.Copy(coldPfi, 4, tmpBuf, 0, coldPfi.Length - 4);
                 mediaTags.Remove(MediaTagType.DVD_PFI);
                 mediaTags.Add(MediaTagType.DVD_PFI, tmpBuf);
-                DicConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
+                AaruConsole.DebugWriteLine("Dump-media command", "Video partition total size: {0} sectors", totalSize);
 
                 l0Video = (PFI.Decode(coldPfi).Value.Layer0EndPSN - PFI.Decode(coldPfi).Value.DataAreaStartPSN) + 1;
 
@@ -244,7 +244,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             // Get game partition size
-            DicConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
+            AaruConsole.DebugWriteLine("Dump-media command", "Getting game partition size");
             UpdateStatus?.Invoke("Unlocking drive (Xtreme).");
             _dumpLog.WriteLine("Unlocking drive (Xtreme).");
             sense = _dev.KreonUnlockXtreme(out senseBuf, _dev.Timeout, out _);
@@ -272,10 +272,10 @@ namespace Aaru.Core.Devices.Dumping
             ulong gameSize =
                 (ulong)((readBuffer[0] << 24) + (readBuffer[1] << 16) + (readBuffer[2] << 8) + readBuffer[3]) + 1;
 
-            DicConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors", gameSize);
+            AaruConsole.DebugWriteLine("Dump-media command", "Game partition total size: {0} sectors", gameSize);
 
             // Get middle zone size
-            DicConsole.DebugWriteLine("Dump-media command", "Getting middle zone size");
+            AaruConsole.DebugWriteLine("Dump-media command", "Getting middle zone size");
             UpdateStatus?.Invoke("Unlocking drive (Wxripper).");
             _dumpLog.WriteLine("Unlocking drive (Wxripper).");
             sense = _dev.KreonUnlockWxripper(out senseBuf, _dev.Timeout, out _);
@@ -315,7 +315,7 @@ namespace Aaru.Core.Devices.Dumping
                 return;
             }
 
-            DicConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
+            AaruConsole.DebugWriteLine("Dump-media command", "Unlocked total size: {0} sectors", totalSize);
             ulong                         blocks      = totalSize + 1;
             PFI.PhysicalFormatInformation wxRipperPfi = PFI.Decode(readBuffer).Value;
 
@@ -615,7 +615,7 @@ namespace Aaru.Core.Devices.Dumping
                         for(ulong b = i; b < i + _skip; b++)
                             _resume.BadBlocks.Add(b);
 
-                        DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+                        AaruConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
                         mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                         ibgLog.Write(i, 0);
@@ -806,7 +806,7 @@ namespace Aaru.Core.Devices.Dumping
                     // TODO: Handle errors in video partition
                     //errored += blocksToRead;
                     //resume.BadBlocks.Add(l1);
-                    DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+                    AaruConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
                     mhddLog.Write(l1, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(l1, 0);
@@ -860,7 +860,7 @@ namespace Aaru.Core.Devices.Dumping
             }
 
             end = DateTime.UtcNow;
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
             mhddLog.Close();
 
             ibgLog.Close(_dev, blocks, BLOCK_SIZE, (end - start).TotalSeconds, currentSpeed * 1024,
@@ -1030,7 +1030,7 @@ namespace Aaru.Core.Devices.Dumping
                         UpdateStatus?.
                             Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
 
-                        DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                        AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
 
                         _dumpLog.
                             WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
@@ -1120,7 +1120,7 @@ namespace Aaru.Core.Devices.Dumping
             {
                 if(tag.Value is null)
                 {
-                    DicConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                    AaruConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
 
                     continue;
                 }

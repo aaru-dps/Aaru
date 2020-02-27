@@ -81,26 +81,26 @@ namespace Aaru.DiscImages
                 {
                     ChdHeaderV1 hdrV1 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV1>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.length = {0} bytes", hdrV1.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.version = {0}", hdrV1.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}", (ChdFlags)hdrV1.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV1.tag));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.length = {0} bytes", hdrV1.length);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.version = {0}", hdrV1.version);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.flags = {0}", (ChdFlags)hdrV1.flags);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.compression = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.compression = {0}",
                                               (ChdCompression)hdrV1.compression);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.hunksize = {0}", hdrV1.hunksize);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.cylinders = {0}", hdrV1.cylinders);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.heads = {0}", hdrV1.heads);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.sectors = {0}", hdrV1.sectors);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.hunksize = {0}", hdrV1.hunksize);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.totalhunks = {0}", hdrV1.totalhunks);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.cylinders = {0}", hdrV1.cylinders);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.heads = {0}", hdrV1.heads);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.sectors = {0}", hdrV1.sectors);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV1.md5));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV1.parentmd5 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV1.parentmd5 = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentmd5) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV1.parentmd5));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                    AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
                     hunkTable = new ulong[hdrV1.totalhunks];
@@ -128,7 +128,7 @@ namespace Aaru.DiscImages
                     }
 
                     DateTime end = DateTime.UtcNow;
-                    DicConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                    AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
                     imageInfo.MediaType    = MediaType.GENERIC_HDD;
                     imageInfo.Sectors      = hdrV1.hunksize * hdrV1.totalhunks;
@@ -154,28 +154,28 @@ namespace Aaru.DiscImages
                 {
                     ChdHeaderV2 hdrV2 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV2>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.length = {0} bytes", hdrV2.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.version = {0}", hdrV2.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}", (ChdFlags)hdrV2.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV2.tag));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.length = {0} bytes", hdrV2.length);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.version = {0}", hdrV2.version);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.flags = {0}", (ChdFlags)hdrV2.flags);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.compression = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.compression = {0}",
                                               (ChdCompression)hdrV2.compression);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.hunksize = {0}", hdrV2.hunksize);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.cylinders = {0}", hdrV2.cylinders);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.heads = {0}", hdrV2.heads);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.sectors = {0}", hdrV2.sectors);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.hunksize = {0}", hdrV2.hunksize);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.totalhunks = {0}", hdrV2.totalhunks);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.cylinders = {0}", hdrV2.cylinders);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.heads = {0}", hdrV2.heads);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.sectors = {0}", hdrV2.sectors);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV2.md5));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.parentmd5 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.parentmd5 = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentmd5) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV2.parentmd5));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV2.seclen = {0}", hdrV2.seclen);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV2.seclen = {0}", hdrV2.seclen);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                    AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
                     hunkTable = new ulong[hdrV2.totalhunks];
@@ -204,7 +204,7 @@ namespace Aaru.DiscImages
                     }
 
                     DateTime end = DateTime.UtcNow;
-                    DicConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                    AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
                     imageInfo.MediaType    = MediaType.GENERIC_HDD;
                     imageInfo.Sectors      = hdrV2.hunksize * hdrV2.totalhunks;
@@ -230,40 +230,40 @@ namespace Aaru.DiscImages
                 {
                     ChdHeaderV3 hdrV3 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV3>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.length = {0} bytes", hdrV3.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.version = {0}", hdrV3.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}", (ChdFlags)hdrV3.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV3.tag));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.length = {0} bytes", hdrV3.length);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.version = {0}", hdrV3.version);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.flags = {0}", (ChdFlags)hdrV3.flags);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.compression = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.compression = {0}",
                                               (ChdCompression)hdrV3.compression);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.metaoffset = {0}", hdrV3.metaoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.totalhunks = {0}", hdrV3.totalhunks);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.logicalbytes = {0}", hdrV3.logicalbytes);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.metaoffset = {0}", hdrV3.metaoffset);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.md5 = {0}", ArrayHelpers.ByteArrayToHex(hdrV3.md5));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.parentmd5 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.parentmd5 = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentmd5) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV3.parentmd5));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.hunkbytes = {0}", hdrV3.hunkbytes);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.sha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.sha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV3.sha1));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV3.parentsha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV3.parentsha1 = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentsha1) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV3.parentsha1));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                    AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
                     hunkMap = new byte[hdrV3.totalhunks * 16];
                     stream.Read(hunkMap, 0, hunkMap.Length);
 
                     DateTime end = DateTime.UtcNow;
-                    DicConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                    AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
                     nextMetaOff = hdrV3.metaoffset;
 
@@ -282,37 +282,37 @@ namespace Aaru.DiscImages
                 {
                     ChdHeaderV4 hdrV4 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV4>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.length = {0} bytes", hdrV4.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.version = {0}", hdrV4.version);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}", (ChdFlags)hdrV4.flags);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV4.tag));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.length = {0} bytes", hdrV4.length);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.version = {0}", hdrV4.version);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.flags = {0}", (ChdFlags)hdrV4.flags);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.compression = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.compression = {0}",
                                               (ChdCompression)hdrV4.compression);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.metaoffset = {0}", hdrV4.metaoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.hunkbytes = {0}", hdrV4.hunkbytes);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.totalhunks = {0}", hdrV4.totalhunks);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.logicalbytes = {0}", hdrV4.logicalbytes);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.metaoffset = {0}", hdrV4.metaoffset);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.hunkbytes = {0}", hdrV4.hunkbytes);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.sha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.sha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV4.sha1));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.parentsha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.parentsha1 = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentsha1) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV4.parentsha1));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV4.rawsha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV4.rawsha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV4.rawsha1));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                    AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                     DateTime start = DateTime.UtcNow;
 
                     hunkMap = new byte[hdrV4.totalhunks * 16];
                     stream.Read(hunkMap, 0, hunkMap.Length);
 
                     DateTime end = DateTime.UtcNow;
-                    DicConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                    AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
 
                     nextMetaOff = hdrV4.metaoffset;
 
@@ -331,46 +331,46 @@ namespace Aaru.DiscImages
                 {
                     ChdHeaderV5 hdrV5 = Marshal.ByteArrayToStructureBigEndian<ChdHeaderV5>(buffer);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.length = {0} bytes", hdrV5.length);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.version = {0}", hdrV5.version);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.tag = \"{0}\"", Encoding.ASCII.GetString(hdrV5.tag));
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.length = {0} bytes", hdrV5.length);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.version = {0}", hdrV5.version);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor0 = \"{0}\"",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor0 = \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.
                                                                            GetBytes(hdrV5.compressor0)));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor1 = \"{0}\"",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor1 = \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.
                                                                            GetBytes(hdrV5.compressor1)));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor2 = \"{0}\"",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor2 = \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.
                                                                            GetBytes(hdrV5.compressor2)));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor3 = \"{0}\"",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.compressor3 = \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.
                                                                            GetBytes(hdrV5.compressor3)));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.mapoffset = {0}", hdrV5.mapoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.metaoffset = {0}", hdrV5.metaoffset);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.hunkbytes = {0}", hdrV5.hunkbytes);
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.unitbytes = {0}", hdrV5.unitbytes);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.logicalbytes = {0}", hdrV5.logicalbytes);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.mapoffset = {0}", hdrV5.mapoffset);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.metaoffset = {0}", hdrV5.metaoffset);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.hunkbytes = {0}", hdrV5.hunkbytes);
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.unitbytes = {0}", hdrV5.unitbytes);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.sha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.sha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV5.sha1));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.parentsha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.parentsha1 = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1) ? "null"
                                                   : ArrayHelpers.ByteArrayToHex(hdrV5.parentsha1));
 
-                    DicConsole.DebugWriteLine("CHD plugin", "hdrV5.rawsha1 = {0}",
+                    AaruConsole.DebugWriteLine("CHD plugin", "hdrV5.rawsha1 = {0}",
                                               ArrayHelpers.ByteArrayToHex(hdrV5.rawsha1));
 
                     // TODO: Implement compressed CHD v5
                     if(hdrV5.compressor0 == 0)
                     {
-                        DicConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
+                        AaruConsole.DebugWriteLine("CHD plugin", "Reading Hunk map.");
                         DateTime start = DateTime.UtcNow;
 
                         hunkTableSmall = new uint[hdrV5.logicalbytes / hdrV5.hunkbytes];
@@ -402,7 +402,7 @@ namespace Aaru.DiscImages
                         }
 
                         DateTime end = DateTime.UtcNow;
-                        DicConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
+                        AaruConsole.DebugWriteLine("CHD plugin", "Took {0} seconds", (end - start).TotalSeconds);
                     }
                     else
                         throw new ImageNotSupportedException("Cannot read compressed CHD version 5");
@@ -434,7 +434,7 @@ namespace Aaru.DiscImages
                 swapAudio = false;
                 tracks    = new Dictionary<uint, Track>();
 
-                DicConsole.DebugWriteLine("CHD plugin", "Reading metadata.");
+                AaruConsole.DebugWriteLine("CHD plugin", "Reading metadata.");
 
                 ulong currentSector = 0;
                 uint  currentTrack  = 1;
@@ -448,7 +448,7 @@ namespace Aaru.DiscImages
                     byte[]            meta   = new byte[header.flagsAndLength & 0xFFFFFF];
                     stream.Read(meta, 0, meta.Length);
 
-                    DicConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
+                    AaruConsole.DebugWriteLine("CHD plugin", "Found metadata \"{0}\"",
                                               Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(header.tag)));
 
                     switch(header.tag)

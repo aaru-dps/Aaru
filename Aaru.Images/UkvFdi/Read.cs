@@ -56,19 +56,19 @@ namespace Aaru.DiscImages
 
             hdr = Marshal.ByteArrayToStructureLittleEndian<FdiHeader>(hdrB);
 
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}",  hdr.cylinders);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}",    hdr.dataOff);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}",    hdr.descOff);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}",      hdr.flags);
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}",      hdr.heads);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.addInfoLen = {0}", hdr.addInfoLen);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.cylinders = {0}",  hdr.cylinders);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.dataOff = {0}",    hdr.dataOff);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.descOff = {0}",    hdr.descOff);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.flags = {0}",      hdr.flags);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.heads = {0}",      hdr.heads);
 
             stream.Seek(hdr.descOff, SeekOrigin.Begin);
             byte[] description = new byte[hdr.dataOff - hdr.descOff];
             stream.Read(description, 0, description.Length);
             imageInfo.Comments = StringHandlers.CToString(description);
 
-            DicConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", imageInfo.Comments);
+            AaruConsole.DebugWriteLine("UkvFdi plugin", "hdr.description = \"{0}\"", imageInfo.Comments);
 
             stream.Seek(0xE + hdr.addInfoLen, SeekOrigin.Begin);
 
@@ -93,10 +93,10 @@ namespace Aaru.DiscImages
                     byte sectors = (byte)stream.ReadByte();
                     uint trkOff  = BitConverter.ToUInt32(sctB, 0);
 
-                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}",       cyl);
-                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}",       head);
-                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
-                    DicConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}",     trkOff);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.c = {0}",       cyl);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.h = {0}",       head);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.sectors = {0}", sectors);
+                    AaruConsole.DebugWriteLine("UkvFdi plugin", "trkhdr.off = {0}",     trkOff);
 
                     sectorsOff[cyl][head]  = new uint[sectors];
                     sectorsData[cyl][head] = new byte[sectors][];
@@ -114,12 +114,12 @@ namespace Aaru.DiscImages
                         stream.Read(offB, 0, 2);
                         ushort secOff = BitConverter.ToUInt16(offB, 0);
 
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}",       c);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}",       h);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}",       r);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.n = {0} ({1})", n, 128 << n);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}",       f);
-                        DicConsole.DebugWriteLine("UkvFdi plugin", "sechdr.off = {0} ({1})", secOff,
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.c = {0}",       c);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.h = {0}",       h);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.r = {0}",       r);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.n = {0} ({1})", n, 128 << n);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.f = {0}",       f);
+                        AaruConsole.DebugWriteLine("UkvFdi plugin", "sechdr.off = {0} ({1})", secOff,
                                                   secOff + trkOff + hdr.dataOff);
 
                         // TODO: This assumes sequential sectors.

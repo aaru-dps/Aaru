@@ -68,7 +68,7 @@ namespace Aaru.Core
                         if(partitionPlugin.GetInformation(image, out List<Partition> partitions, tapeFile.FirstBlock))
                         {
                             foundPartitions.AddRange(partitions);
-                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
+                            AaruConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
                                                       tapeFile.FirstBlock);
                         }
 
@@ -82,7 +82,7 @@ namespace Aaru.Core
                         if(partitionPlugin.GetInformation(image, out List<Partition> partitions, imagePartition.Start))
                         {
                             foundPartitions.AddRange(partitions);
-                            DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
+                            AaruConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
                                                       imagePartition.Start);
                         }
 
@@ -95,7 +95,7 @@ namespace Aaru.Core
                     if(partitionPlugin.GetInformation(image, out List<Partition> partitions, 0))
                     {
                         foundPartitions.AddRange(partitions);
-                        DicConsole.DebugWriteLine("Partitions", "Found {0} @ 0", partitionPlugin.Name);
+                        AaruConsole.DebugWriteLine("Partitions", "Found {0} @ 0", partitionPlugin.Name);
                     }
 
                 checkedLocations.Add(0);
@@ -114,19 +114,19 @@ namespace Aaru.Core
 
                 foreach(IPartition partitionPlugin in plugins.PartPluginsList.Values)
                 {
-                    DicConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name,
+                    AaruConsole.DebugWriteLine("Partitions", "Trying {0} @ {1}", partitionPlugin.Name,
                                               foundPartitions[0].Start);
                     if(!partitionPlugin.GetInformation(image, out List<Partition> partitions, foundPartitions[0].Start))
                         continue;
 
-                    DicConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
+                    AaruConsole.DebugWriteLine("Partitions", "Found {0} @ {1}", partitionPlugin.Name,
                                               foundPartitions[0].Start);
                     childs.AddRange(partitions);
                 }
 
                 checkedLocations.Add(foundPartitions[0].Start);
 
-                DicConsole.DebugWriteLine("Partitions", "Got {0} childs", childs.Count);
+                AaruConsole.DebugWriteLine("Partitions", "Got {0} childs", childs.Count);
 
                 if(childs.Count > 0)
                 {
@@ -142,8 +142,8 @@ namespace Aaru.Core
                     foundPartitions.RemoveAt(0);
                 }
 
-                DicConsole.DebugWriteLine("Partitions", "Got {0} parents",    foundPartitions.Count);
-                DicConsole.DebugWriteLine("Partitions", "Got {0} partitions", childPartitions.Count);
+                AaruConsole.DebugWriteLine("Partitions", "Got {0} parents",    foundPartitions.Count);
+                AaruConsole.DebugWriteLine("Partitions", "Got {0} partitions", childPartitions.Count);
             }
 
             // Be sure that device partitions are not excluded if not mapped by any scheme...

@@ -54,7 +54,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART DISABLE OPERATIONS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE OPERATIONS took {0} ms.", duration);
 
             return sense;
         }
@@ -78,7 +78,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART ENABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
 
             return sense;
         }
@@ -101,7 +101,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART DISABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART DISABLE ATTRIBUTE AUTOSAVE took {0} ms.", duration);
 
             return sense;
         }
@@ -123,7 +123,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART ENABLE OPERATIONS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART ENABLE OPERATIONS took {0} ms.", duration);
 
             return sense;
         }
@@ -147,7 +147,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART EXECUTE OFF-LINE IMMEDIATE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART EXECUTE OFF-LINE IMMEDIATE took {0} ms.", duration);
 
             return sense;
         }
@@ -170,7 +170,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART READ DATA took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART READ DATA took {0} ms.", duration);
 
             return sense;
         }
@@ -194,7 +194,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART READ LOG took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART READ LOG took {0} ms.", duration);
 
             return sense;
         }
@@ -216,7 +216,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SMART RETURN STATUS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SMART RETURN STATUS took {0} ms.", duration);
 
             return sense;
         }

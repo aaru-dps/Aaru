@@ -54,25 +54,25 @@ namespace Aaru.DiscImages
             stream.Read(hdr, 0, 40);
             header = Marshal.ByteArrayToStructureLittleEndian<SaveDskFHeader>(hdr);
 
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}",      header.magic);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}",  header.mediaType);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorSize = {0}",      header.sectorSize);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clusterMask = {0}",     header.clusterMask);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clusterShift = {0}",    header.clusterShift);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.reservedSectors = {0}", header.reservedSectors);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.fatCopies = {0}",       header.fatCopies);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.rootEntries = {0}",     header.rootEntries);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.firstCluster = {0}",    header.firstCluster);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.clustersCopied = {0}",  header.clustersCopied);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerFat = {0}",   header.sectorsPerFat);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.checksum = 0x{0:X8}",   header.checksum);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.cylinders = {0}",       header.cylinders);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.heads = {0}",           header.heads);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerTrack = {0}", header.sectorsPerTrack);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.padding = {0}",         header.padding);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsCopied = {0}",   header.sectorsCopied);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}",   header.commentOffset);
-            DicConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}",      header.dataOffset);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.magic = 0x{0:X4}",      header.magic);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.mediaType = 0x{0:X2}",  header.mediaType);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorSize = {0}",      header.sectorSize);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterMask = {0}",     header.clusterMask);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clusterShift = {0}",    header.clusterShift);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.reservedSectors = {0}", header.reservedSectors);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.fatCopies = {0}",       header.fatCopies);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.rootEntries = {0}",     header.rootEntries);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.firstCluster = {0}",    header.firstCluster);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.clustersCopied = {0}",  header.clustersCopied);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerFat = {0}",   header.sectorsPerFat);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.checksum = 0x{0:X8}",   header.checksum);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.cylinders = {0}",       header.cylinders);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.heads = {0}",           header.heads);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsPerTrack = {0}", header.sectorsPerTrack);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.padding = {0}",         header.padding);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.sectorsCopied = {0}",   header.sectorsCopied);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.commentOffset = {0}",   header.commentOffset);
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "header.dataOffset = {0}",      header.dataOffset);
 
             if(header.dataOffset == 0 && header.magic == SDF_MAGIC_OLD) header.dataOffset = 512;
 
@@ -92,7 +92,7 @@ namespace Aaru.DiscImages
             }
             while(b >= 0);
 
-            DicConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
+            AaruConsole.DebugWriteLine("SaveDskF plugin", "Calculated checksum = 0x{0:X8}, {1}", calculatedChk,
                                       calculatedChk == header.checksum);
 
             imageInfo.Application          = "SaveDskF";
@@ -108,9 +108,9 @@ namespace Aaru.DiscImages
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            DicConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("SaveDskF image contains a disk of type {0}", imageInfo.MediaType);
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                DicConsole.VerboseWriteLine("SaveDskF comments: {0}", imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("SaveDskF comments: {0}", imageInfo.Comments);
 
             // TODO: Support compressed images
             if(header.magic == SDF_MAGIC_COMPRESSED)

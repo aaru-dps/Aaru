@@ -71,7 +71,7 @@ namespace Aaru.Filesystems
             Array.Copy(hbSector, 0x1F0, magicB, 0, 12);
             string magic = Encoding.ASCII.GetString(magicB);
 
-            DicConsole.DebugWriteLine("Files-11 plugin", "magic: \"{0}\"", magic);
+            AaruConsole.DebugWriteLine("Files-11 plugin", "magic: \"{0}\"", magic);
 
             if(magic == "DECFILE11A  " || magic == "DECFILE11B  ") return true;
 
@@ -85,7 +85,7 @@ namespace Aaru.Filesystems
             Array.Copy(hbSector, 0x3F0, magicB, 0, 12);
             magic = Encoding.ASCII.GetString(magicB);
 
-            DicConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
+            AaruConsole.DebugWriteLine("Files-11 plugin", "unaligned magic: \"{0}\"", magic);
 
             return magic == "DECFILE11A  " || magic == "DECFILE11B  ";
         }

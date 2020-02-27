@@ -55,23 +55,23 @@ namespace Aaru.DiscImages
             stream.Read(pHdrB, 0, Marshal.SizeOf<ParallelsHeader>());
             pHdr = Marshal.ByteArrayToStructureLittleEndian<ParallelsHeader>(pHdrB);
 
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}",
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.magic = {0}",
                                       StringHandlers.CToString(pHdr.magic));
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}",      pHdr.version);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}",        pHdr.heads);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}",    pHdr.cylinders);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.cluster_size = {0}", pHdr.cluster_size);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}",  pHdr.bat_entries);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}",      pHdr.sectors);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}",  pHdr.in_use);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}",     pHdr.data_off);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}",        pHdr.flags);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}",      pHdr.ext_off);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.version = {0}",      pHdr.version);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.heads = {0}",        pHdr.heads);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cylinders = {0}",    pHdr.cylinders);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.cluster_size = {0}", pHdr.cluster_size);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.bat_entries = {0}",  pHdr.bat_entries);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.sectors = {0}",      pHdr.sectors);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.in_use = 0x{0:X8}",  pHdr.in_use);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.data_off = {0}",     pHdr.data_off);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.flags = {0}",        pHdr.flags);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.ext_off = {0}",      pHdr.ext_off);
 
             extended = parallelsExtMagic.SequenceEqual(pHdr.magic);
-            DicConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", extended);
+            AaruConsole.DebugWriteLine("Parallels plugin", "pHdr.extended = {0}", extended);
 
-            DicConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
+            AaruConsole.DebugWriteLine("Parallels plugin", "Reading BAT");
             bat = new uint[pHdr.bat_entries];
             byte[] batB = new byte[pHdr.bat_entries * 4];
             stream.Read(batB, 0, batB.Length);

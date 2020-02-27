@@ -353,15 +353,15 @@ namespace Aaru.Gui.Forms
                     return;
                 }
 
-                DicConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+                AaruConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
 
                 try
                 {
                     if(!imageFormat.Open(inputFilter))
                     {
                         MessageBox.Show("Unable to open image format", MessageBoxType.Error);
-                        DicConsole.ErrorWriteLine("Unable to open image format");
-                        DicConsole.ErrorWriteLine("No error given");
+                        AaruConsole.ErrorWriteLine("Unable to open image format");
+                        AaruConsole.ErrorWriteLine("No error given");
 
                         return;
                     }
@@ -392,13 +392,13 @@ namespace Aaru.Gui.Forms
 
                     if(partitions.Count == 0)
                     {
-                        DicConsole.DebugWriteLine("Analyze command", "No partitions found");
+                        AaruConsole.DebugWriteLine("Analyze command", "No partitions found");
 
                         checkraw = true;
                     }
                     else
                     {
-                        DicConsole.WriteLine("{0} partitions found.", partitions.Count);
+                        AaruConsole.WriteLine("{0} partitions found.", partitions.Count);
 
                         foreach(string scheme in partitions.Select(p => p.Scheme).Distinct().OrderBy(s => s))
                         {
@@ -423,15 +423,15 @@ namespace Aaru.Gui.Forms
                                     }
                                 };
 
-                                DicConsole.WriteLine("Identifying filesystem on partition");
+                                AaruConsole.WriteLine("Identifying filesystem on partition");
 
                                 Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
 
                                 if(idPlugins.Count == 0)
-                                    DicConsole.WriteLine("Filesystem not identified");
+                                    AaruConsole.WriteLine("Filesystem not identified");
                                 else
                                 {
-                                    DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                                    AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                                     foreach(string pluginName in idPlugins)
                                         if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
@@ -490,10 +490,10 @@ namespace Aaru.Gui.Forms
                         Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                         if(idPlugins.Count == 0)
-                            DicConsole.WriteLine("Filesystem not identified");
+                            AaruConsole.WriteLine("Filesystem not identified");
                         else
                         {
-                            DicConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
+                            AaruConsole.WriteLine($"Identified by {idPlugins.Count} plugins");
 
                             foreach(string pluginName in idPlugins)
                                 if(plugins.PluginsList.TryGetValue(pluginName, out plugin))
@@ -544,16 +544,16 @@ namespace Aaru.Gui.Forms
                 catch(Exception ex)
                 {
                     MessageBox.Show("Unable to open image format", MessageBoxType.Error);
-                    DicConsole.ErrorWriteLine("Unable to open image format");
-                    DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                    DicConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
+                    AaruConsole.ErrorWriteLine("Unable to open image format");
+                    AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    AaruConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
                 }
             }
             catch(Exception ex)
             {
                 MessageBox.Show("Exception reading file", MessageBoxType.Error);
-                DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                DicConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+                AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+                AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
             }
 
             Statistics.AddCommand("image-info");
@@ -601,13 +601,13 @@ namespace Aaru.Gui.Forms
         {
             try
             {
-                DicConsole.WriteLine("Refreshing devices");
+                AaruConsole.WriteLine("Refreshing devices");
                 devicesRoot.Children.Clear();
 
                 foreach(DeviceInfo device in Device.ListDevices().Where(d => d.Supported).OrderBy(d => d.Vendor).
                                                     ThenBy(d => d.Model))
                 {
-                    DicConsole.DebugWriteLine("Main window",
+                    AaruConsole.DebugWriteLine("Main window",
                                               "Found supported device model {0} by manufacturer {1} on bus {2} and path {3}",
                                               device.Model, device.Vendor, device.Bus, device.Path);
 
@@ -684,7 +684,7 @@ namespace Aaru.Gui.Forms
             }
             catch(InvalidOperationException ex)
             {
-                DicConsole.ErrorWriteLine(ex.Message);
+                AaruConsole.ErrorWriteLine(ex.Message);
             }
         }
 
@@ -765,7 +765,7 @@ namespace Aaru.Gui.Forms
                         selectedItem.Values[3] = ex.Message;
                         lblError.Text          = ex.Message;
                         splMain.Panel2         = lblError;
-                        DicConsole.ErrorWriteLine(ex.Message);
+                        AaruConsole.ErrorWriteLine(ex.Message);
                     }
 
                     break;
@@ -800,7 +800,7 @@ namespace Aaru.Gui.Forms
 
                         if(errno != Errno.NoError)
                         {
-                            DicConsole.
+                            AaruConsole.
                                 ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
 
                             continue;
@@ -854,7 +854,7 @@ namespace Aaru.Gui.Forms
                     deviceItem.Values[3] = ex.Message;
                     e.Cancel             = true;
                     treeImages.ReloadData();
-                    DicConsole.ErrorWriteLine(ex.Message);
+                    AaruConsole.ErrorWriteLine(ex.Message);
                     treeImages.SelectedItem = deviceItem;
 
                     return;
@@ -928,7 +928,7 @@ namespace Aaru.Gui.Forms
 
                         if(errno != Errno.NoError)
                         {
-                            DicConsole.
+                            AaruConsole.
                                 ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
 
                             continue;
@@ -973,7 +973,7 @@ namespace Aaru.Gui.Forms
 
                         if(errno != Errno.NoError)
                         {
-                            DicConsole.
+                            AaruConsole.
                                 ErrorWriteLine($"Error {errno} trying to get information about filesystem entry named {dirent}");
 
                             continue;

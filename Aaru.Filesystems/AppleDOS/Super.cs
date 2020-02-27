@@ -56,19 +56,19 @@ namespace Aaru.Filesystems.AppleDOS
 
             if(device.Info.Sectors != 455 && device.Info.Sectors != 560)
             {
-                DicConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
+                AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect device size.");
                 return Errno.InOutError;
             }
 
             if(start > 0)
             {
-                DicConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
+                AaruConsole.DebugWriteLine("Apple DOS plugin", "Partitions are not supported.");
                 return Errno.InOutError;
             }
 
             if(device.Info.SectorSize != 256)
             {
-                DicConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
+                AaruConsole.DebugWriteLine("Apple DOS plugin", "Incorrect sector size.");
                 return Errno.InOutError;
             }
 
@@ -85,14 +85,14 @@ namespace Aaru.Filesystems.AppleDOS
             Errno error = ReadCatalog();
             if(error != Errno.NoError)
             {
-                DicConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
+                AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable to read catalog.");
                 return error;
             }
 
             error = CacheAllFiles();
             if(error != Errno.NoError)
             {
-                DicConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
+                AaruConsole.DebugWriteLine("Apple DOS plugin", "Unable cache all files.");
                 return error;
             }
 

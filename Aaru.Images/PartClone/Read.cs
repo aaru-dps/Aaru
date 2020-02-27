@@ -57,32 +57,32 @@ namespace Aaru.DiscImages
             stream.Read(pHdrB, 0, Marshal.SizeOf<PartCloneHeader>());
             pHdr = Marshal.ByteArrayToStructureLittleEndian<PartCloneHeader>(pHdrB);
 
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.magic = {0}", StringHandlers.CToString(pHdr.magic));
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.filesystem = {0}",
                                       StringHandlers.CToString(pHdr.filesystem));
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}",
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.version = {0}",
                                       StringHandlers.CToString(pHdr.version));
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}",   pHdr.blockSize);
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}",  pHdr.deviceSize);
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.totalBlocks = {0}", pHdr.totalBlocks);
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}",  pHdr.usedBlocks);
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.blockSize = {0}",   pHdr.blockSize);
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.deviceSize = {0}",  pHdr.deviceSize);
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.totalBlocks = {0}", pHdr.totalBlocks);
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.usedBlocks = {0}",  pHdr.usedBlocks);
 
             byteMap = new byte[pHdr.totalBlocks];
-            DicConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", byteMap.Length);
+            AaruConsole.DebugWriteLine("PartClone plugin", "Reading bytemap {0} bytes", byteMap.Length);
             stream.Read(byteMap, 0, byteMap.Length);
 
             byte[] bitmagic = new byte[8];
             stream.Read(bitmagic, 0, 8);
 
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.bitmagic = {0}", StringHandlers.CToString(bitmagic));
 
             if(!biTmAgIc.SequenceEqual(bitmagic))
                 throw new ImageNotSupportedException("Could not find partclone BiTmAgIc, not continuing...");
 
             dataOff = stream.Position;
-            DicConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", dataOff);
+            AaruConsole.DebugWriteLine("PartClone plugin", "pHdr.dataOff = {0}", dataOff);
 
-            DicConsole.DebugWriteLine("PartClone plugin", "Filling extents");
+            AaruConsole.DebugWriteLine("PartClone plugin", "Filling extents");
             DateTime start = DateTime.Now;
             extents    = new ExtentsULong();
             extentsOff = new Dictionary<ulong, ulong>();
@@ -113,7 +113,7 @@ namespace Aaru.DiscImages
             }
 
             DateTime end = DateTime.Now;
-            DicConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents",
+            AaruConsole.DebugWriteLine("PartClone plugin", "Took {0} seconds to fill extents",
                                       (end - start).TotalSeconds);
 
             sectorCache = new Dictionary<ulong, byte[]>();

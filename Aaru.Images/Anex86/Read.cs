@@ -59,7 +59,7 @@ namespace Aaru.DiscImages
                                                          false));
             if(imageInfo.MediaType == MediaType.Unknown) imageInfo.MediaType = MediaType.GENERIC_HDD;
 
-            DicConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", imageInfo.MediaType);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "MediaType: {0}", imageInfo.MediaType);
 
             imageInfo.ImageSize            = (ulong)fdihdr.dskSize;
             imageInfo.CreationTime         = imageFilter.GetCreationTime();

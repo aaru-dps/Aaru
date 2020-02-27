@@ -121,23 +121,23 @@ namespace Aaru.Filesystems.AppleMFS
 
                     filenameToId.Add(lowerFilename, entry.flFlNum);
 
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flTyp = {0}", entry.flTyp);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlNum = {0}", entry.flFlNum);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flStBlk = {0}", entry.flStBlk);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flLgLen = {0}", entry.flLgLen);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flPyLen = {0}", entry.flPyLen);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRStBlk = {0}", entry.flRStBlk);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRLgLen = {0}", entry.flRLgLen);
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRPyLen = {0}", entry.flRPyLen);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlags = {0}", entry.flFlags);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flTyp = {0}", entry.flTyp);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flFlNum = {0}", entry.flFlNum);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flStBlk = {0}", entry.flStBlk);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flLgLen = {0}", entry.flLgLen);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flPyLen = {0}", entry.flPyLen);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRStBlk = {0}", entry.flRStBlk);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRLgLen = {0}", entry.flRLgLen);
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flRPyLen = {0}", entry.flRPyLen);
 
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flCrDat = {0}",
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flCrDat = {0}",
                                               DateHandlers.MacToDateTime(entry.flCrDat));
 
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}",
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flMdDat = {0}",
                                               DateHandlers.MacToDateTime(entry.flMdDat));
 
-                    DicConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}",
+                    AaruConsole.DebugWriteLine("DEBUG (AppleMFS plugin)", "entry.flNam0 = {0}",
                                               StringHandlers.PascalToString(entry.flNam, Encoding));
                 }
 

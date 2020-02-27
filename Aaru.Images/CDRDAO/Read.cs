@@ -128,7 +128,7 @@ namespace Aaru.DiscImages
 
                     if(!matchDiskType.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Not a CDRDAO TOC or TOC type not in line {0}.",
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Not a CDRDAO TOC or TOC type not in line {0}.",
                                                   lineNumber);
 
                         return false;
@@ -182,14 +182,14 @@ namespace Aaru.DiscImages
                         if(matchComment.Groups["comment"].Value.StartsWith(" Track ", StringComparison.Ordinal))
                             continue;
 
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found comment \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found comment \"{1}\" at line {0}", lineNumber,
                                                   matchComment.Groups["comment"].Value.Trim());
 
                         commentBuilder.AppendLine(matchComment.Groups["comment"].Value.Trim());
                     }
                     else if(matchDiskType.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found {1} at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} at line {0}", lineNumber,
                                                   matchDiskType.Groups["type"].Value);
 
                         discimage.Disktypestr = matchDiskType.Groups["type"].Value;
@@ -220,7 +220,7 @@ namespace Aaru.DiscImages
                     }
                     else if(matchMcn.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found CATALOG \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found CATALOG \"{1}\" at line {0}", lineNumber,
                                                   matchMcn.Groups["catalog"].Value);
 
                         discimage.Mcn = matchMcn.Groups["catalog"].Value;
@@ -228,11 +228,11 @@ namespace Aaru.DiscImages
                     else if(matchTrack.Success)
                     {
                         if(matchTrack.Groups["subchan"].Value == "")
-                            DicConsole.DebugWriteLine("CDRDAO plugin",
+                            AaruConsole.DebugWriteLine("CDRDAO plugin",
                                                       "Found TRACK type \"{1}\" with no subchannel at line {0}",
                                                       lineNumber, matchTrack.Groups["type"].Value);
                         else
-                            DicConsole.DebugWriteLine("CDRDAO plugin",
+                            AaruConsole.DebugWriteLine("CDRDAO plugin",
                                                       "Found TRACK type \"{1}\" subchannel {2} at line {0}", lineNumber,
                                                       matchTrack.Groups["type"].Value,
                                                       matchTrack.Groups["subchan"].Value);
@@ -307,28 +307,28 @@ namespace Aaru.DiscImages
                     }
                     else if(matchCopy.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found {1} COPY at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} COPY at line {0}", lineNumber,
                                                   matchCopy.Groups["no"].Value);
 
                         currenttrack.FlagDcp |= intrack && matchCopy.Groups["no"].Value == "";
                     }
                     else if(matchEmphasis.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found {1} PRE_EMPHASIS at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1} PRE_EMPHASIS at line {0}", lineNumber,
                                                   matchEmphasis.Groups["no"].Value);
 
                         currenttrack.FlagPre |= intrack && matchEmphasis.Groups["no"].Value == "";
                     }
                     else if(matchStereo.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found {1}_CHANNEL_AUDIO at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found {1}_CHANNEL_AUDIO at line {0}", lineNumber,
                                                   matchStereo.Groups["num"].Value);
 
                         currenttrack.Flag_4Ch |= intrack && matchStereo.Groups["num"].Value == "FOUR";
                     }
                     else if(matchIsrc.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found ISRC \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ISRC \"{1}\" at line {0}", lineNumber,
                                                   matchIsrc.Groups["isrc"].Value);
 
                         if(intrack)
@@ -336,7 +336,7 @@ namespace Aaru.DiscImages
                     }
                     else if(matchIndex.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found INDEX \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found INDEX \"{1}\" at line {0}", lineNumber,
                                                   matchIndex.Groups["address"].Value);
 
                         string[] lengthString = matchFile.Groups["length"].Value.Split(':');
@@ -349,7 +349,7 @@ namespace Aaru.DiscImages
                     }
                     else if(matchPregap.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found START \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found START \"{1}\" at line {0}", lineNumber,
                                                   matchPregap.Groups["address"].Value);
 
                         currenttrack.Indexes.Add(0, currenttrack.StartSector);
@@ -367,7 +367,7 @@ namespace Aaru.DiscImages
                     }
                     else if(matchZeroPregap.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found PREGAP \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found PREGAP \"{1}\" at line {0}", lineNumber,
                                                   matchZeroPregap.Groups["length"].Value);
 
                         currenttrack.Indexes.Add(0, currenttrack.StartSector);
@@ -377,10 +377,10 @@ namespace Aaru.DiscImages
                                               (ulong.Parse(lengthString[1])      * 75) + ulong.Parse(lengthString[2]);
                     }
                     else if(matchZeroData.Success)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found ZERO \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ZERO \"{1}\" at line {0}", lineNumber,
                                                   matchZeroData.Groups["length"].Value);
                     else if(matchZeroAudio.Success)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "Found SILENCE \"{1}\" at line {0}", lineNumber,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "Found SILENCE \"{1}\" at line {0}", lineNumber,
                                                   matchZeroAudio.Groups["length"].Value);
                     else
                     {
@@ -388,7 +388,7 @@ namespace Aaru.DiscImages
 
                         if(matchAudioFile.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found AUDIOFILE \"{1}\" at line {0}",
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found AUDIOFILE \"{1}\" at line {0}",
                                                       lineNumber, matchAudioFile.Groups["filename"].Value);
 
                             filtersList = new FiltersList();
@@ -431,7 +431,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchFile.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found DATAFILE \"{1}\" at line {0}", lineNumber,
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found DATAFILE \"{1}\" at line {0}", lineNumber,
                                                       matchFile.Groups["filename"].Value);
 
                             filtersList = new FiltersList();
@@ -462,7 +462,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchTitle.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found TITLE \"{1}\" at line {0}", lineNumber,
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found TITLE \"{1}\" at line {0}", lineNumber,
                                                       matchTitle.Groups["title"].Value);
 
                             if(intrack)
@@ -472,7 +472,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchPerformer.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found PERFORMER \"{1}\" at line {0}",
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found PERFORMER \"{1}\" at line {0}",
                                                       lineNumber, matchPerformer.Groups["performer"].Value);
 
                             if(intrack)
@@ -482,7 +482,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchSongwriter.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found SONGWRITER \"{1}\" at line {0}",
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found SONGWRITER \"{1}\" at line {0}",
                                                       lineNumber, matchSongwriter.Groups["songwriter"].Value);
 
                             if(intrack)
@@ -492,7 +492,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchComposer.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found COMPOSER \"{1}\" at line {0}", lineNumber,
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found COMPOSER \"{1}\" at line {0}", lineNumber,
                                                       matchComposer.Groups["composer"].Value);
 
                             if(intrack)
@@ -502,7 +502,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchArranger.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found ARRANGER \"{1}\" at line {0}", lineNumber,
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found ARRANGER \"{1}\" at line {0}", lineNumber,
                                                       matchArranger.Groups["arranger"].Value);
 
                             if(intrack)
@@ -512,7 +512,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchMessage.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found MESSAGE \"{1}\" at line {0}", lineNumber,
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found MESSAGE \"{1}\" at line {0}", lineNumber,
                                                       matchMessage.Groups["message"].Value);
 
                             if(intrack)
@@ -522,7 +522,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchDiscId.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found DISC_ID \"{1}\" at line {0}", lineNumber,
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found DISC_ID \"{1}\" at line {0}", lineNumber,
                                                       matchDiscId.Groups["discid"].Value);
 
                             if(!intrack)
@@ -530,7 +530,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchUpc.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRDAO plugin", "Found UPC_EAN \"{1}\" at line {0}", lineNumber,
+                            AaruConsole.DebugWriteLine("CDRDAO plugin", "Found UPC_EAN \"{1}\" at line {0}", lineNumber,
                                                       matchUpc.Groups["catalog"].Value);
 
                             if(!intrack)
@@ -568,127 +568,127 @@ namespace Aaru.DiscImages
                 discimage.Comment = commentBuilder.ToString();
 
                 // DEBUG information
-                DicConsole.DebugWriteLine("CDRDAO plugin", "Disc image parsing results");
-                DicConsole.DebugWriteLine("CDRDAO plugin", "Disc CD-TEXT:");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc image parsing results");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc CD-TEXT:");
 
                 if(discimage.Arranger == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tArranger is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tArranger is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tArranger: {0}", discimage.Arranger);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tArranger: {0}", discimage.Arranger);
 
                 if(discimage.Composer == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tComposer is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComposer is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tComposer: {0}", discimage.Composer);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComposer: {0}", discimage.Composer);
 
                 if(discimage.Performer == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer: {0}", discimage.Performer);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPerformer: {0}", discimage.Performer);
 
                 if(discimage.Songwriter == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter: {0}", discimage.Songwriter);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tSongwriter: {0}", discimage.Songwriter);
 
                 if(discimage.Title == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tTitle is not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTitle is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tTitle: {0}", discimage.Title);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTitle: {0}", discimage.Title);
 
-                DicConsole.DebugWriteLine("CDRDAO plugin", "Disc information:");
-                DicConsole.DebugWriteLine("CDRDAO plugin", "\tGuessed disk type: {0}", discimage.Disktype);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "Disc information:");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tGuessed disk type: {0}", discimage.Disktype);
 
                 if(discimage.Barcode == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode: {0}", discimage.Barcode);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tBarcode: {0}", discimage.Barcode);
 
                 if(discimage.DiskId == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID: {0}", discimage.DiskId);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc ID: {0}", discimage.DiskId);
 
                 if(discimage.Mcn == null)
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tMCN not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tMCN not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tMCN: {0}", discimage.Mcn);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tMCN: {0}", discimage.Mcn);
 
                 if(string.IsNullOrEmpty(discimage.Comment))
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tComment not set.");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComment not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tComment: \"{0}\"", discimage.Comment);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tComment: \"{0}\"", discimage.Comment);
 
-                DicConsole.DebugWriteLine("CDRDAO plugin", "Track information:");
-                DicConsole.DebugWriteLine("CDRDAO plugin", "\tDisc contains {0} tracks", discimage.Tracks.Count);
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "Track information:");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "\tDisc contains {0} tracks", discimage.Tracks.Count);
 
                 for(int i = 0; i < discimage.Tracks.Count; i++)
                 {
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tTrack {0} information:",
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tTrack {0} information:",
                                               discimage.Tracks[i].Sequence);
 
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\t\t{0} bytes per sector", discimage.Tracks[i].Bps);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tPregap: {0} sectors", discimage.Tracks[i].Pregap);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t{0} bytes per sector", discimage.Tracks[i].Bps);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPregap: {0} sectors", discimage.Tracks[i].Pregap);
 
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tData: {0} sectors starting at sector {1}",
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tData: {0} sectors starting at sector {1}",
                                               discimage.Tracks[i].Sectors, discimage.Tracks[i].StartSector);
 
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tPostgap: {0} sectors", discimage.Tracks[i].Postgap);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPostgap: {0} sectors", discimage.Tracks[i].Postgap);
 
                     if(discimage.Tracks[i].Flag_4Ch)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack is flagged as quadraphonic");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack is flagged as quadraphonic");
 
                     if(discimage.Tracks[i].FlagDcp)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack allows digital copy");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack allows digital copy");
 
                     if(discimage.Tracks[i].FlagPre)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack has pre-emphasis applied");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTrack has pre-emphasis applied");
 
-                    DicConsole.DebugWriteLine("CDRDAO plugin",
+                    AaruConsole.DebugWriteLine("CDRDAO plugin",
                                               "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
                                               discimage.Tracks[i].Trackfile.Datafilter.GetFilename(),
                                               discimage.Tracks[i].Trackfile.Filetype,
                                               discimage.Tracks[i].Trackfile.Offset);
 
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tIndexes:");
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tIndexes:");
 
                     foreach(KeyValuePair<int, ulong> kvp in discimage.Tracks[i].Indexes)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
                                                   kvp.Value);
 
                     if(discimage.Tracks[i].Isrc == null)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC is not set.");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC: {0}", discimage.Tracks[i].Isrc);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tISRC: {0}", discimage.Tracks[i].Isrc);
 
                     if(discimage.Tracks[i].Arranger == null)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger is not set.");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger: {0}", discimage.Tracks[i].Arranger);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tArranger: {0}", discimage.Tracks[i].Arranger);
 
                     if(discimage.Tracks[i].Composer == null)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer is not set.");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer: {0}", discimage.Tracks[i].Composer);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tComposer: {0}", discimage.Tracks[i].Composer);
 
                     if(discimage.Tracks[i].Performer == null)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer is not set.");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer: {0}", discimage.Tracks[i].Performer);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tPerformer: {0}", discimage.Tracks[i].Performer);
 
                     if(discimage.Tracks[i].Songwriter == null)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter is not set.");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter: {0}",
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tSongwriter: {0}",
                                                   discimage.Tracks[i].Songwriter);
 
                     if(discimage.Tracks[i].Title == null)
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle is not set.");
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle: {0}", discimage.Tracks[i].Title);
+                        AaruConsole.DebugWriteLine("CDRDAO plugin", "\t\tTitle: {0}", discimage.Tracks[i].Title);
                 }
 
-                DicConsole.DebugWriteLine("CDRDAO plugin", "Building offset map");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "Building offset map");
 
                 Partitions = new List<Partition>();
                 offsetmap  = new Dictionary<uint, ulong>();
@@ -734,18 +734,18 @@ namespace Aaru.DiscImages
                 }
 
                 // Print partition map
-                DicConsole.DebugWriteLine("CDRDAO plugin", "printing partition map");
+                AaruConsole.DebugWriteLine("CDRDAO plugin", "printing partition map");
 
                 foreach(Partition partition in Partitions)
                 {
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "Partition sequence: {0}", partition.Sequence);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition name: {0}", partition.Name);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition description: {0}", partition.Description);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition type: {0}", partition.Type);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting sector: {0}", partition.Start);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition sectors: {0}", partition.Length);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting offset: {0}", partition.Offset);
-                    DicConsole.DebugWriteLine("CDRDAO plugin", "\tPartition size in bytes: {0}", partition.Size);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "Partition sequence: {0}", partition.Sequence);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition name: {0}", partition.Name);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition description: {0}", partition.Description);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition type: {0}", partition.Type);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting sector: {0}", partition.Start);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition sectors: {0}", partition.Length);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition starting offset: {0}", partition.Offset);
+                    AaruConsole.DebugWriteLine("CDRDAO plugin", "\tPartition size in bytes: {0}", partition.Size);
                 }
 
                 foreach(CdrdaoTrack track in discimage.Tracks)
@@ -852,18 +852,18 @@ namespace Aaru.DiscImages
 
                 imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                DicConsole.VerboseWriteLine("CDRDAO image describes a disc of type {0}", imageInfo.MediaType);
+                AaruConsole.VerboseWriteLine("CDRDAO image describes a disc of type {0}", imageInfo.MediaType);
 
                 if(!string.IsNullOrEmpty(imageInfo.Comments))
-                    DicConsole.VerboseWriteLine("CDRDAO comments: {0}", imageInfo.Comments);
+                    AaruConsole.VerboseWriteLine("CDRDAO comments: {0}", imageInfo.Comments);
 
                 return true;
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter);
-                DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
+                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 
                 return false;
             }

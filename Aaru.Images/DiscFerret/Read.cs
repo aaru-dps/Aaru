@@ -65,17 +65,17 @@ namespace Aaru.DiscImages
                 stream.Read(blk, 0, Marshal.SizeOf<DfiBlockHeader>());
                 DfiBlockHeader blockHeader = Marshal.ByteArrayToStructureBigEndian<DfiBlockHeader>(blk);
 
-                DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
+                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.cylinder = {1}", thisOffset,
                                           blockHeader.cylinder);
-                DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
-                DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset,
+                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.head = {1}", thisOffset, blockHeader.head);
+                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.sector = {1}", thisOffset,
                                           blockHeader.sector);
-                DicConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset,
+                AaruConsole.DebugWriteLine("DiscFerret plugin", "block@{0}.length = {1}", thisOffset,
                                           blockHeader.length);
 
                 if(stream.Position + blockHeader.length > stream.Length)
                 {
-                    DicConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
+                    AaruConsole.DebugWriteLine("DiscFerret plugin", "Invalid track block found at {0}", thisOffset);
                     break;
                 }
 

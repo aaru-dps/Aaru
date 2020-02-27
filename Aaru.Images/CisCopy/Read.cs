@@ -175,7 +175,7 @@ namespace Aaru.DiscImages
 
             decodedImage.Close();
 
-            DicConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("CisCopy image contains a disk of type {0}", imageInfo.MediaType);
 
             return true;
         }

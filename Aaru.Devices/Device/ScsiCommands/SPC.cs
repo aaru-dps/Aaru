@@ -99,7 +99,7 @@ namespace Aaru.Devices
                                         out sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
 
             return sense;
         }
@@ -170,7 +170,7 @@ namespace Aaru.Devices
                                         out sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "INQUIRY took {0} ms.", duration);
 
             return sense;
         }
@@ -192,7 +192,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "TEST UNIT READY took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "TEST UNIT READY took {0} ms.", duration);
 
             return sense;
         }
@@ -269,7 +269,7 @@ namespace Aaru.Devices
                                         out sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "MODE SENSE(6) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "MODE SENSE(6) took {0} ms.", duration);
 
             return sense;
         }
@@ -356,7 +356,7 @@ namespace Aaru.Devices
                                         out sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "MODE SENSE(10) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "MODE SENSE(10) took {0} ms.", duration);
 
             return sense;
         }
@@ -421,7 +421,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PREVENT ALLOW MEDIUM REMOVAL took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PREVENT ALLOW MEDIUM REMOVAL took {0} ms.", duration);
 
             return sense;
         }
@@ -472,7 +472,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "READ CAPACITY took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "READ CAPACITY took {0} ms.", duration);
 
             return sense;
         }
@@ -531,7 +531,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "READ CAPACITY(16) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "READ CAPACITY(16) took {0} ms.", duration);
 
             return sense;
         }
@@ -575,7 +575,7 @@ namespace Aaru.Devices
                                         out sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "READ MEDIA SERIAL NUMBER took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "READ MEDIA SERIAL NUMBER took {0} ms.", duration);
 
             return sense;
         }
@@ -720,7 +720,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "MODE SELECT(6) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "MODE SELECT(6) took {0} ms.", duration);
 
             return sense;
         }
@@ -765,7 +765,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "MODE SELECT(10) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "MODE SELECT(10) took {0} ms.", duration);
 
             return sense;
         }
@@ -789,7 +789,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "REQUEST SENSE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "REQUEST SENSE took {0} ms.", duration);
 
             return sense;
         }

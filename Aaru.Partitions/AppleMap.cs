@@ -86,13 +86,13 @@ namespace Aaru.Partitions
 
             AppleDriverDescriptorMap ddm = Marshal.ByteArrayToStructureBigEndian<AppleDriverDescriptorMap>(ddmSector);
 
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}",  ddm.sbSig);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlocks = {0}",    ddm.sbBlocks);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevType = {0}",   ddm.sbDevType);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevId = {0}",     ddm.sbDevId);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbData = 0x{0:X8}", ddm.sbData);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDrvrCount = {0}", ddm.sbDrvrCount);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbSig = 0x{0:X4}",  ddm.sbSig);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlockSize = {0}", ddm.sbBlockSize);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbBlocks = {0}",    ddm.sbBlocks);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevType = {0}",   ddm.sbDevType);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDevId = {0}",     ddm.sbDevId);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbData = 0x{0:X8}", ddm.sbData);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbDrvrCount = {0}", ddm.sbDrvrCount);
 
             uint sequence = 0;
 
@@ -105,11 +105,11 @@ namespace Aaru.Partitions
                         byte[] tmp = new byte[8];
                         Array.Copy(ddmSector, 18 + i * 8, tmp, 0, 8);
                         ddm.sbMap[i] = Marshal.ByteArrayToStructureBigEndian<AppleDriverEntry>(tmp);
-                        DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}",
+                        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddBlock = {0}",
                                                   ddm.sbMap[i].ddBlock, i);
-                        DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize,
+                        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddSize = {0}", ddm.sbMap[i].ddSize,
                                                   i);
-                        DicConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType,
+                        AaruConsole.DebugWriteLine("AppleMap Plugin", "ddm.sbMap[{1}].ddType = {0}", ddm.sbMap[i].ddType,
                                                   i);
 
                         if(ddm.sbMap[i].ddSize == 0) continue;
@@ -145,11 +145,11 @@ namespace Aaru.Partitions
                     Array.Copy(partSector, i, tmp, 0, 12);
                     AppleMapOldPartitionEntry oldEntry =
                         Marshal.ByteArrayToStructureBigEndian<AppleMapOldPartitionEntry>(tmp);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdStart = {0}", oldEntry.pdStart,
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdStart = {0}", oldEntry.pdStart,
                                               (i - 2) / 12);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", oldEntry.pdSize,
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdSize = {0}", oldEntry.pdSize,
                                               (i - 2) / 12);
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}",
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "old_map.sbMap[{1}].pdFSID = 0x{0:X8}",
                                               oldEntry.pdFSID, (i - 2) / 12);
 
                     if(oldEntry.pdSize == 0 && oldEntry.pdFSID == 0)
@@ -193,7 +193,7 @@ namespace Aaru.Partitions
                 // Check for a partition entry that's 512-byte aligned
                 if(entry.signature == APM_MAGIC)
                 {
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "Found misaligned entry.");
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "Found misaligned entry.");
                     entrySize     = 512;
                     entryCount    = entry.entries;
                     skipDdm       = 512;
@@ -204,7 +204,7 @@ namespace Aaru.Partitions
                     entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
                     if(entry.signature == APM_MAGIC)
                     {
-                        DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                        AaruConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
                         entrySize     = sectorSize;
                         entryCount    = entry.entries;
                         skipDdm       = sectorSize;
@@ -218,7 +218,7 @@ namespace Aaru.Partitions
                 entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(partSector);
                 if(entry.signature == APM_MAGIC)
                 {
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "Found aligned entry.");
                     entrySize     = sectorSize;
                     entryCount    = entry.entries;
                     skipDdm       = sectorSize;
@@ -228,10 +228,10 @@ namespace Aaru.Partitions
             }
 
             byte[] entries = imagePlugin.ReadSectors(sectorOffset, sectorsToRead);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}",      entrySize);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}",     entryCount);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}",        skipDdm);
-            DicConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectorsToRead);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "entry_size = {0}",      entrySize);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "entry_count = {0}",     entryCount);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "skip_ddm = {0}",        skipDdm);
+            AaruConsole.DebugWriteLine("AppleMap Plugin", "sectors_to_read = {0}", sectorsToRead);
 
             byte[] copy = new byte[entries.Length - skipDdm];
             Array.Copy(entries, skipDdm, copy, 0, copy.Length);
@@ -244,32 +244,32 @@ namespace Aaru.Partitions
                 entry = Marshal.ByteArrayToStructureBigEndian<AppleMapPartitionEntry>(tmp);
                 if(entry.signature != APM_MAGIC) continue;
 
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}",        i, entry.entries);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}",          i, entry.start);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}",        i, entry.sectors);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].name = \"{1}\"", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].signature = 0x{1:X4}", i, entry.signature);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].reserved1 = 0x{1:X4}", i, entry.reserved1);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entries = {1}",        i, entry.entries);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].start = {1}",          i, entry.start);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].sectors = {1}",        i, entry.sectors);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].name = \"{1}\"", i,
                                           StringHandlers.CToString(entry.name));
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].type = \"{1}\"", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].type = \"{1}\"", i,
                                           StringHandlers.CToString(entry.type));
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_data_block = {1}", i,
                                           entry.first_data_block);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].data_sectors = {1}", i, entry.data_sectors);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].flags = {1}", i,
                                           (AppleMapFlags)entry.flags);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].first_boot_block = {1}", i,
                                           entry.first_boot_block);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].boot_size = {1}", i, entry.boot_size);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address = 0x{1:X8}", i,
                                           entry.load_address);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].load_address2 = 0x{1:X8}", i,
                                           entry.load_address2);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i, entry.entry_point);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point = 0x{1:X8}", i, entry.entry_point);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].entry_point2 = 0x{1:X8}", i,
                                           entry.entry_point2);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
-                DicConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].processor = \"{1}\"", i,
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].checksum = 0x{1:X8}", i, entry.checksum);
+                AaruConsole.DebugWriteLine("AppleMap Plugin", "dpme[{0}].processor = \"{1}\"", i,
                                           StringHandlers.CToString(entry.processor));
 
                 AppleMapFlags flags = (AppleMapFlags)entry.flags;
@@ -322,14 +322,14 @@ namespace Aaru.Partitions
                 // Some CD and DVDs end with an Apple_Free that expands beyond the disc size...
                 else if(partition.Start < imagePlugin.Info.Sectors)
                 {
-                    DicConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
+                    AaruConsole.DebugWriteLine("AppleMap Plugin", "Cutting last partition end ({0}) to media size ({1})",
                                               partition.End, imagePlugin.Info.Sectors - 1);
                     partition.Length = imagePlugin.Info.Sectors - partition.Start;
                     partitions.Add(partition);
                     sequence++;
                 }
                 else
-                    DicConsole.DebugWriteLine("AppleMap Plugin",
+                    AaruConsole.DebugWriteLine("AppleMap Plugin",
                                               "Not adding partition becaus start ({0}) is outside media size ({1})",
                                               partition.Start, imagePlugin.Info.Sectors - 1);
             }

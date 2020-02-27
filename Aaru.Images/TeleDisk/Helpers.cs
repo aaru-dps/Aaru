@@ -119,13 +119,13 @@ namespace Aaru.DiscImages
                         outs += decodedPiece.Length;
                     }
 
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Input data size: {0} bytes",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Input data size: {0} bytes",
                                               encodedData.Length);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed input: {0} bytes",
                                               ins);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Output data size: {0} bytes",
                                               decodedData.Length);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(Block pattern decoder): Processed Output: {0} bytes",
                                               outs);
                     break;
                 }
@@ -159,12 +159,12 @@ namespace Aaru.DiscImages
                         }
                     }
 
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Input data size: {0} bytes",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Input data size: {0} bytes",
                                               encodedData.Length);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed input: {0} bytes", ins);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Output data size: {0} bytes",
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed input: {0} bytes", ins);
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Output data size: {0} bytes",
                                               decodedData.Length);
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed Output: {0} bytes", outs);
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "(RLE decoder): Processed Output: {0} bytes", outs);
 
                     break;
                 }
@@ -228,7 +228,7 @@ namespace Aaru.DiscImages
                         case 737280:  return MediaType.ECMA_78_2;
                         default:
                         {
-                            DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes",
+                            AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 5,25\" disk with {0} bytes",
                                                       totalDiskSize);
                             return MediaType.Unknown;
                         }
@@ -260,7 +260,7 @@ namespace Aaru.DiscImages
                         case 1261568: return MediaType.SHARP_35;
                         default:
                         {
-                            DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes",
+                            AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 3,5\" disk with {0} bytes",
                                                       totalDiskSize);
                             return MediaType.Unknown;
                         }
@@ -295,7 +295,7 @@ namespace Aaru.DiscImages
                         case 1021696: return MediaType.ECMA_69_26;
                         default:
                         {
-                            DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes",
+                            AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown 8\" disk with {0} bytes",
                                                       totalDiskSize);
                             return MediaType.Unknown;
                         }
@@ -303,7 +303,7 @@ namespace Aaru.DiscImages
                 }
                 default:
                 {
-                    DicConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", totalDiskSize,
+                    AaruConsole.DebugWriteLine("TeleDisk plugin", "Unknown drive type {1} with {0} bytes", totalDiskSize,
                                               header.DriveType);
                     return MediaType.Unknown;
                 }

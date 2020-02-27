@@ -56,7 +56,7 @@ namespace Aaru.Partitions
             byte[] sector;
             ulong  sectsPerUnit;
 
-            DicConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
+            AaruConsole.DebugWriteLine("Human68k plugin", "sectorSize = {0}", imagePlugin.Info.SectorSize);
 
             if(sectorOffset + 4 >= imagePlugin.Info.Sectors) return false;
 
@@ -79,26 +79,26 @@ namespace Aaru.Partitions
 
             X68kTable table = Marshal.ByteArrayToStructureBigEndian<X68kTable>(sector);
 
-            DicConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
+            AaruConsole.DebugWriteLine("Human68k plugin", "table.magic = {0:X4}", table.magic);
 
             if(table.magic != X68K_MAGIC) return false;
 
             for(int i = 0; i < table.entries.Length; i++)
                 table.entries[i] = (X68kEntry)Marshal.SwapStructureMembersEndian(table.entries[i]);
 
-            DicConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}",    table.size);
-            DicConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}",   table.size2);
-            DicConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
+            AaruConsole.DebugWriteLine("Human68k plugin", "table.size = {0:X4}",    table.size);
+            AaruConsole.DebugWriteLine("Human68k plugin", "table.size2 = {0:X4}",   table.size2);
+            AaruConsole.DebugWriteLine("Human68k plugin", "table.unknown = {0:X4}", table.unknown);
 
             ulong counter = 0;
 
             foreach(X68kEntry entry in table.entries)
             {
-                DicConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
+                AaruConsole.DebugWriteLine("Human68k plugin", "entry.name = {0}",
                                           StringHandlers.CToString(entry.name, Encoding.GetEncoding(932)));
-                DicConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
-                DicConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}",     entry.length);
-                DicConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
+                AaruConsole.DebugWriteLine("Human68k plugin", "entry.stateStart = {0}", entry.stateStart);
+                AaruConsole.DebugWriteLine("Human68k plugin", "entry.length = {0}",     entry.length);
+                AaruConsole.DebugWriteLine("Human68k plugin", "sectsPerUnit = {0} {1}", sectsPerUnit,
                                           imagePlugin.Info.SectorSize);
 
                 Partition part = new Partition

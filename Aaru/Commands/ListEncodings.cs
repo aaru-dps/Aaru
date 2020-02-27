@@ -51,15 +51,15 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("list-encodings");
 
-            DicConsole.DebugWriteLine("List-Encodings command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("List-Encodings command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("List-Encodings command", "--verbose={0}", verbose);
 
             List<CommonEncodingInfo> encodings = Encoding.GetEncodings().Select(info => new CommonEncodingInfo
             {
@@ -71,10 +71,10 @@ namespace Aaru.Commands
                 Name = info.Name, DisplayName = info.DisplayName
             }));
 
-            DicConsole.WriteLine("{0,-16} {1,-8}", "Name", "Description");
+            AaruConsole.WriteLine("{0,-16} {1,-8}", "Name", "Description");
 
             foreach(CommonEncodingInfo info in encodings.OrderBy(t => t.DisplayName))
-                DicConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
+                AaruConsole.WriteLine("{0,-16} {1,-8}", info.Name, info.DisplayName);
 
             return(int)ErrorNumber.NoError;
         }

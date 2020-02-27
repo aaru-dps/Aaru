@@ -73,7 +73,7 @@ namespace Aaru.Filesystems
 
                     XFS_Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
+                    AaruConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
                                               location, xfsSb.magicnum, XFS_MAGIC);
 
                     if(xfsSb.magicnum == XFS_MAGIC) return true;
@@ -92,7 +92,7 @@ namespace Aaru.Filesystems
 
                     XFS_Superblock xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
+                    AaruConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
                                               xfsSb.magicnum, XFS_MAGIC);
 
                     if(xfsSb.magicnum == XFS_MAGIC) return true;
@@ -127,7 +127,7 @@ namespace Aaru.Filesystems
 
                     xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sbpiece);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
+                    AaruConsole.DebugWriteLine("XFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8})",
                                               location, xfsSb.magicnum, XFS_MAGIC);
 
                     if(xfsSb.magicnum == XFS_MAGIC) break;
@@ -145,7 +145,7 @@ namespace Aaru.Filesystems
 
                     xfsSb = Marshal.ByteArrayToStructureBigEndian<XFS_Superblock>(sector);
 
-                    DicConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
+                    AaruConsole.DebugWriteLine("XFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8})", location,
                                               xfsSb.magicnum, XFS_MAGIC);
 
                     if(xfsSb.magicnum == XFS_MAGIC) break;

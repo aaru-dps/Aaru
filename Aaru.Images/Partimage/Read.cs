@@ -56,13 +56,13 @@ namespace Aaru.DiscImages
             stream.Read(hdrB, 0, Marshal.SizeOf<PartimageHeader>());
             cVolumeHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageHeader>(hdrB);
 
-            DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.magic = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.magic = {0}",
                                       StringHandlers.CToString(cVolumeHeader.magic));
-            DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.version = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.version = {0}",
                                       StringHandlers.CToString(cVolumeHeader.version));
-            DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.volumeNumber = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.volumeNumber = {0}",
                                       cVolumeHeader.volumeNumber);
-            DicConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.identificator = {0:X16}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CVolumeHeader.identificator = {0:X16}",
                                       cVolumeHeader.identificator);
 
             // TODO: Support multifile volumes
@@ -73,90 +73,90 @@ namespace Aaru.DiscImages
             stream.Read(hdrB, 0, Marshal.SizeOf<PartimageMainHeader>());
             cMainHeader = Marshal.ByteArrayToStructureLittleEndian<PartimageMainHeader>(hdrB);
 
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFileSystem = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFileSystem = {0}",
                                       StringHandlers.CToString(cMainHeader.szFileSystem));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szPartDescription = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szPartDescription = {0}",
                                       StringHandlers.CToString(cMainHeader.szPartDescription));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szOriginalDevice = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szOriginalDevice = {0}",
                                       StringHandlers.CToString(cMainHeader.szOriginalDevice));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFirstImageFilepath = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szFirstImageFilepath = {0}",
                                       StringHandlers.CToString(cMainHeader.szFirstImageFilepath));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameSysname = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameSysname = {0}",
                                       StringHandlers.CToString(cMainHeader.szUnameSysname));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameNodename = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameNodename = {0}",
                                       StringHandlers.CToString(cMainHeader.szUnameNodename));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameRelease = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameRelease = {0}",
                                       StringHandlers.CToString(cMainHeader.szUnameRelease));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameVersion = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameVersion = {0}",
                                       StringHandlers.CToString(cMainHeader.szUnameVersion));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameMachine = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szUnameMachine = {0}",
                                       StringHandlers.CToString(cMainHeader.szUnameMachine));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwCompression = {0} ({1})",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwCompression = {0} ({1})",
                                       cMainHeader.dwCompression, (uint)cMainHeader.dwCompression);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMainFlags = {0}", cMainHeader.dwMainFlags);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_sec = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMainFlags = {0}", cMainHeader.dwMainFlags);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_sec = {0}",
                                       cMainHeader.dateCreate.Second);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_min = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_min = {0}",
                                       cMainHeader.dateCreate.Minute);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_hour = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_hour = {0}",
                                       cMainHeader.dateCreate.Hour);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_mday = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_mday = {0}",
                                       cMainHeader.dateCreate.DayOfMonth);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_mon = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_mon = {0}",
                                       cMainHeader.dateCreate.Month);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_year = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_year = {0}",
                                       cMainHeader.dateCreate.Year);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_wday = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_wday = {0}",
                                       cMainHeader.dateCreate.DayOfWeek);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_yday = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_yday = {0}",
                                       cMainHeader.dateCreate.DayOfYear);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_isdst = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_isdst = {0}",
                                       cMainHeader.dateCreate.IsDst);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_gmtoffsec = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_gmtoffsec = {0}",
                                       cMainHeader.dateCreate.GmtOff);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_zone = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate.tm_zone = {0}",
                                       cMainHeader.dateCreate.Timezone);
 
             DateTime dateCreate = new DateTime(1900                              + (int)cMainHeader.dateCreate.Year,
                                                (int)cMainHeader.dateCreate.Month + 1,
                                                (int)cMainHeader.dateCreate.DayOfMonth, (int)cMainHeader.dateCreate.Hour,
                                                (int)cMainHeader.dateCreate.Minute, (int)cMainHeader.dateCreate.Second);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate = {0}", dateCreate);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dateCreate = {0}", dateCreate);
 
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.qwPartSize = {0}", cMainHeader.qwPartSize);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szHostname = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.qwPartSize = {0}", cMainHeader.qwPartSize);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szHostname = {0}",
                                       StringHandlers.CToString(cMainHeader.szHostname));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szVersion = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.szVersion = {0}",
                                       StringHandlers.CToString(cMainHeader.szVersion));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrCount = {0}", cMainHeader.dwMbrCount);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrSize = {0}",  cMainHeader.dwMbrSize);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwEncryptAlgo = {0} ({1})",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrCount = {0}", cMainHeader.dwMbrCount);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwMbrSize = {0}",  cMainHeader.dwMbrSize);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwEncryptAlgo = {0} ({1})",
                                       cMainHeader.dwEncryptAlgo, (uint)cMainHeader.dwEncryptAlgo);
-            DicConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CMainHeader.cHashTestKey) = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CMainHeader.cHashTestKey) = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(cMainHeader.cHashTestKey));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture000 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture000 = {0}",
                                       cMainHeader.dwReservedFuture000);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture001 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture001 = {0}",
                                       cMainHeader.dwReservedFuture001);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture002 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture002 = {0}",
                                       cMainHeader.dwReservedFuture002);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture003 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture003 = {0}",
                                       cMainHeader.dwReservedFuture003);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture004 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture004 = {0}",
                                       cMainHeader.dwReservedFuture004);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture005 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture005 = {0}",
                                       cMainHeader.dwReservedFuture005);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture006 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture006 = {0}",
                                       cMainHeader.dwReservedFuture006);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture007 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture007 = {0}",
                                       cMainHeader.dwReservedFuture007);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture008 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture008 = {0}",
                                       cMainHeader.dwReservedFuture008);
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture009 = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.dwReservedFuture009 = {0}",
                                       cMainHeader.dwReservedFuture009);
-            DicConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CMainHeader.cReserved) = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CMainHeader.cReserved) = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(cMainHeader.cReserved));
-            DicConsole.DebugWriteLine("Partimage plugin", "CMainHeader.crc = 0x{0:X8}", cMainHeader.crc);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CMainHeader.crc = 0x{0:X8}", cMainHeader.crc);
 
             // partimage 0.6.1 does not support them either
             if(cMainHeader.dwEncryptAlgo != PEncryption.None)
@@ -187,18 +187,18 @@ namespace Aaru.DiscImages
             stream.Read(hdrB, 0, Marshal.SizeOf<CLocalHeader>());
             CLocalHeader localHeader = Marshal.ByteArrayToStructureLittleEndian<CLocalHeader>(hdrB);
 
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}",  localHeader.qwBlockSize);
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwUsedBlocks = {0}", localHeader.qwUsedBlocks);
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlocksCount = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlockSize = {0}",  localHeader.qwBlockSize);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwUsedBlocks = {0}", localHeader.qwUsedBlocks);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBlocksCount = {0}",
                                       localHeader.qwBlocksCount);
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBitmapSize = {0}", localHeader.qwBitmapSize);
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBadBlocksCount = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBitmapSize = {0}", localHeader.qwBitmapSize);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.qwBadBlocksCount = {0}",
                                       localHeader.qwBadBlocksCount);
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.szLabel = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.szLabel = {0}",
                                       StringHandlers.CToString(localHeader.szLabel));
-            DicConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CLocalHeader.cReserved) = {0}",
+            AaruConsole.DebugWriteLine("Partimage plugin", "ArrayIsNullOrEmpty(CLocalHeader.cReserved) = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(localHeader.cReserved));
-            DicConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.crc = 0x{0:X8}", localHeader.crc);
+            AaruConsole.DebugWriteLine("Partimage plugin", "CLocalHeader.crc = 0x{0:X8}", localHeader.crc);
 
             hdrB = new byte[MAGIC_BEGIN_BITMAP.Length];
             stream.Read(hdrB, 0, MAGIC_BEGIN_BITMAP.Length);
@@ -223,7 +223,7 @@ namespace Aaru.DiscImages
 
             dataOff = stream.Position;
 
-            DicConsole.DebugWriteLine("Partimage plugin", "dataOff = {0}", dataOff);
+            AaruConsole.DebugWriteLine("Partimage plugin", "dataOff = {0}", dataOff);
 
             // Seek to tail
             stream.Seek(-(Marshal.SizeOf<CMainTail>() + MAGIC_BEGIN_TAIL.Length), SeekOrigin.End);
@@ -235,7 +235,7 @@ namespace Aaru.DiscImages
                 throw new
                     ImageNotSupportedException("Cannot find tail. Multiple volumes are not supported or image is corrupt.");
 
-            DicConsole.DebugWriteLine("Partimage plugin", "Filling extents");
+            AaruConsole.DebugWriteLine("Partimage plugin", "Filling extents");
             DateTime start = DateTime.Now;
             extents    = new ExtentsULong();
             extentsOff = new Dictionary<ulong, ulong>();
@@ -266,7 +266,7 @@ namespace Aaru.DiscImages
             }
 
             DateTime end = DateTime.Now;
-            DicConsole.DebugWriteLine("Partimage plugin", "Took {0} seconds to fill extents",
+            AaruConsole.DebugWriteLine("Partimage plugin", "Took {0} seconds to fill extents",
                                       (end - start).TotalSeconds);
 
             sectorCache = new Dictionary<ulong, byte[]>();

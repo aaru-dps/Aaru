@@ -70,9 +70,9 @@ namespace Aaru
 
             _assemblyCopyright = ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 
-            DicConsole.WriteLineEvent      += System.Console.WriteLine;
-            DicConsole.WriteEvent          += System.Console.Write;
-            DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
+            AaruConsole.WriteLineEvent      += System.Console.WriteLine;
+            AaruConsole.WriteEvent          += System.Console.Write;
+            AaruConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
             Aaru.Settings.Settings.LoadSettings();
 
@@ -92,7 +92,7 @@ namespace Aaru
 
             if(masterContext.Database.GetPendingMigrations().Any())
             {
-                DicConsole.WriteLine("New database version, updating...");
+                AaruConsole.WriteLine("New database version, updating...");
 
                 try
                 {
@@ -100,8 +100,8 @@ namespace Aaru
                 }
                 catch(Exception)
                 {
-                    DicConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
-                    DicConsole.ErrorWriteLine("Please manually remove file at {0}", Aaru.Settings.Settings.MasterDbPath);
+                    AaruConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
+                    AaruConsole.ErrorWriteLine("Please manually remove file at {0}", Aaru.Settings.Settings.MasterDbPath);
                 }
 
                 UpdateCommand.DoUpdate(true);
@@ -159,9 +159,9 @@ namespace Aaru
 
         internal static void PrintCopyright()
         {
-            DicConsole.WriteLine("{0} {1}", _assemblyTitle, _assemblyVersion?.InformationalVersion);
-            DicConsole.WriteLine("{0}", _assemblyCopyright);
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine("{0} {1}", _assemblyTitle, _assemblyVersion?.InformationalVersion);
+            AaruConsole.WriteLine("{0}", _assemblyCopyright);
+            AaruConsole.WriteLine();
         }
     }
 }

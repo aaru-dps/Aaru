@@ -78,31 +78,31 @@ namespace Aaru.Core.Devices.Info
 
                     if(sense)
                     {
-                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
+                        AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
+                        AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
                                                   errorRegisters.SectorCount);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
+                        AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
                                                   errorRegisters.CylinderHigh);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
                                                   errorRegisters.CylinderLow);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
                                                   errorRegisters.DeviceHead);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
+                        AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
                         break;
                     }
 
                     if(dev.Error)
                     {
-                        DicConsole.ErrorWriteLine("Error {0} querying ATA IDENTIFY", dev.LastError);
+                        AaruConsole.ErrorWriteLine("Error {0} querying ATA IDENTIFY", dev.LastError);
 
                         break;
                     }
@@ -124,24 +124,24 @@ namespace Aaru.Core.Devices.Info
 
                     if(sense)
                     {
-                        DicConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
-                        DicConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
+                        AaruConsole.DebugWriteLine("Device-Info command", "STATUS = 0x{0:X2}", errorRegisters.Status);
+                        AaruConsole.DebugWriteLine("Device-Info command", "ERROR = 0x{0:X2}", errorRegisters.Error);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "NSECTOR = 0x{0:X2}",
                                                   errorRegisters.SectorCount);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
+                        AaruConsole.DebugWriteLine("Device-Info command", "SECTOR = 0x{0:X2}", errorRegisters.Sector);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "CYLHIGH = 0x{0:X2}",
                                                   errorRegisters.CylinderHigh);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "CYLLOW = 0x{0:X2}",
                                                   errorRegisters.CylinderLow);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("Device-Info command", "DEVICE = 0x{0:X2}",
                                                   errorRegisters.DeviceHead);
 
-                        DicConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
+                        AaruConsole.DebugWriteLine("Device-Info command", "Error code = {0}", dev.LastError);
 
                         break;
                     }
@@ -149,7 +149,7 @@ namespace Aaru.Core.Devices.Info
                     if(!dev.Error)
                         AtapiIdentify = ataBuf;
                     else
-                        DicConsole.ErrorWriteLine("Error {0} querying ATA PACKET IDENTIFY", dev.LastError);
+                        AaruConsole.ErrorWriteLine("Error {0} querying ATA PACKET IDENTIFY", dev.LastError);
 
                     // ATAPI devices are also SCSI devices
                     goto case DeviceType.SCSI;
@@ -161,7 +161,7 @@ namespace Aaru.Core.Devices.Info
 
                     if(sense)
                     {
-                        DicConsole.ErrorWriteLine("SCSI error:\n{0}", Sense.PrettifySense(senseBuf));
+                        AaruConsole.ErrorWriteLine("SCSI error:\n{0}", Sense.PrettifySense(senseBuf));
 
                         break;
                     }
@@ -270,11 +270,11 @@ namespace Aaru.Core.Devices.Info
                                     foreach (Decoders.SCSI.DiscStructureCapabilities.Capability cap in caps)
                                     {
                                         if (cap.SDS && cap.RDS)
-                                            DicConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                            AaruConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                         else if (cap.SDS)
-                                            DicConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                            AaruConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                         else if (cap.RDS)
-                                            DicConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                            AaruConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                     }
                                 }
                             }
@@ -289,11 +289,11 @@ namespace Aaru.Core.Devices.Info
                                     foreach (Decoders.SCSI.DiscStructureCapabilities.Capability cap in caps)
                                     {
                                         if (cap.SDS && cap.RDS)
-                                            DicConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                            AaruConsole.WriteLine("Drive can READ/SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                         else if (cap.SDS)
-                                            DicConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                            AaruConsole.WriteLine("Drive can SEND DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                         else if (cap.RDS)
-                                            DicConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
+                                            AaruConsole.WriteLine("Drive can READ DISC STRUCTURE format {0:X2}h", cap.FormatCode);
                                     }
                                 }
                             }
@@ -418,10 +418,10 @@ namespace Aaru.Core.Devices.Info
                                         // TODO: Check which one is each one
                                         /*
                                             if(plxtBuf[6] > 0)
-                                                DicConsole.WriteLine("\tTray eject speed limited to {0}",
+                                                AaruConsole.WriteLine("\tTray eject speed limited to {0}",
                                                                      -(plxtBuf[6] + 48));
                                             if(plxtBuf[7] > 0)
-                                                DicConsole.WriteLine("\tTray eject speed limited to {0}",
+                                                AaruConsole.WriteLine("\tTray eject speed limited to {0}",
                                                                      plxtBuf[7] - 47);
                                         */
                                     }
@@ -506,14 +506,14 @@ namespace Aaru.Core.Devices.Info
                             sense = dev.ReadBlockLimits(out byte[] seqBuf, out senseBuf, dev.Timeout, out _);
 
                             if(sense)
-                                DicConsole.ErrorWriteLine("READ BLOCK LIMITS:\n{0}", Sense.PrettifySense(senseBuf));
+                                AaruConsole.ErrorWriteLine("READ BLOCK LIMITS:\n{0}", Sense.PrettifySense(senseBuf));
                             else
                                 BlockLimits = seqBuf;
 
                             sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, dev.Timeout, out _);
 
                             if(sense)
-                                DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}",
+                                AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT:\n{0}",
                                                           Sense.PrettifySense(senseBuf));
                             else
                             {
@@ -524,7 +524,7 @@ namespace Aaru.Core.Devices.Info
                             sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out _);
 
                             if(sense)
-                                DicConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}",
+                                AaruConsole.ErrorWriteLine("REPORT DENSITY SUPPORT (MEDIUM):\n{0}",
                                                           Sense.PrettifySense(senseBuf));
                             else
                             {
@@ -588,7 +588,7 @@ namespace Aaru.Core.Devices.Info
 
                     break;
                 default:
-                    DicConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
+                    AaruConsole.ErrorWriteLine("Unknown device type {0}, cannot get information.", dev.Type);
 
                     break;
             }

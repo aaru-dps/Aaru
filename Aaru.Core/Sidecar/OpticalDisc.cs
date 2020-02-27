@@ -763,7 +763,7 @@ namespace Aaru.Core
                             catch
                                 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                             {
-                                //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                                //AaruConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                             }
 
                         if(lstFs.Count > 0)
@@ -826,7 +826,7 @@ namespace Aaru.Core
                         catch
                             #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                         {
-                            //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                            //AaruConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                         }
 
                     if(lstFs.Count > 0)

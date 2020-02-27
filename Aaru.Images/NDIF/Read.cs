@@ -78,26 +78,26 @@ namespace Aaru.DiscImages
 
                 header = Marshal.ByteArrayToStructureBigEndian<ChunkHeader>(bcem);
 
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}",   header.version);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}",
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.type = {0}",   header.version);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.driver = {0}", header.driver);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.name = {0}",
                                           StringHandlers.PascalToString(header.name,
                                                                         Encoding.GetEncoding("macintosh")));
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}",            header.sectors);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}",         header.dataOffset);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}",           header.crc);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}",          header.segmented);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}",            header.p1);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}",            header.p2);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}",    header.unknown[0]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}",    header.unknown[1]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}",    header.unknown[2]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}",    header.unknown[3]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}",    header.unknown[4]);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}",          header.encrypted);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}",          header.hash);
-                DicConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}",             header.chunks);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.sectors = {0}",            header.sectors);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.maxSectorsPerChunk = {0}", header.maxSectorsPerChunk);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.dataOffset = {0}",         header.dataOffset);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.crc = 0x{0:X7}",           header.crc);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.segmented = {0}",          header.segmented);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.p1 = 0x{0:X8}",            header.p1);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.p2 = 0x{0:X8}",            header.p2);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[0] = 0x{0:X8}",    header.unknown[0]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[1] = 0x{0:X8}",    header.unknown[1]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[2] = 0x{0:X8}",    header.unknown[2]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[3] = 0x{0:X8}",    header.unknown[3]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.unknown[4] = 0x{0:X8}",    header.unknown[4]);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.encrypted = {0}",          header.encrypted);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.hash = 0x{0:X8}",          header.hash);
+                AaruConsole.DebugWriteLine("NDIF plugin", "footer.chunks = {0}",             header.chunks);
 
                 // Block chunks and headers
                 chunks = new Dictionary<ulong, BlockChunk>();
@@ -114,10 +114,10 @@ namespace Aaru.DiscImages
                     bChnk.offset = BigEndianBitConverter.ToUInt32(bcem, 128 + 4 + i * 12);
                     bChnk.length = BigEndianBitConverter.ToUInt32(bcem, 128 + 8 + i * 12);
 
-                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X2}", i, bChnk.type);
-                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].sector = {1}",    i, bChnk.sector);
-                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
-                    DicConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
+                    AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X2}", i, bChnk.type);
+                    AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].sector = {1}",    i, bChnk.sector);
+                    AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
+                    AaruConsole.DebugWriteLine("NDIF plugin", "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
 
                     if(bChnk.type == CHUNK_TYPE_END) break;
 
@@ -214,7 +214,7 @@ namespace Aaru.DiscImages
                 }
             }
 
-            DicConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", imageInfo.Application,
+            AaruConsole.DebugWriteLine("NDIF plugin", "Image application = {0} version {1}", imageInfo.Application,
                                       imageInfo.ApplicationVersion);
 
             sectorCache           = new Dictionary<ulong, byte[]>();

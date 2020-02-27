@@ -79,7 +79,7 @@ namespace Aaru.DiscImages
             imageInfo.CreationTime         = imageFilter.GetCreationTime();
             imageInfo.LastModificationTime = imageFilter.GetLastWriteTime();
 
-            DicConsole.DebugWriteLine("DRI DiskCopy plugin", "Image application = {0} version {1}",
+            AaruConsole.DebugWriteLine("DRI DiskCopy plugin", "Image application = {0} version {1}",
                                       imageInfo.Application, imageInfo.ApplicationVersion);
 
             // Correct some incorrect data in images of NEC 2HD disks
@@ -112,7 +112,7 @@ namespace Aaru.DiscImages
             }
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            DicConsole.VerboseWriteLine("Digital Research DiskCopy image contains a disk of type {0}",
+            AaruConsole.VerboseWriteLine("Digital Research DiskCopy image contains a disk of type {0}",
                                         imageInfo.MediaType);
 
             return true;

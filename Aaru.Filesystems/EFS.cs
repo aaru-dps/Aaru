@@ -73,7 +73,7 @@ namespace Aaru.Filesystems
 
                 EFS_Superblock efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
-                DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
+                AaruConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                           0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
                 if(efsSb.sb_magic == EFS_MAGIC || efsSb.sb_magic == EFS_MAGIC_NEW) return true;
@@ -88,7 +88,7 @@ namespace Aaru.Filesystems
 
                 EFS_Superblock efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
-                DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
+                AaruConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                           efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
 
                 if(efsSb.sb_magic == EFS_MAGIC || efsSb.sb_magic == EFS_MAGIC_NEW) return true;
@@ -121,7 +121,7 @@ namespace Aaru.Filesystems
 
                 efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sbpiece);
 
-                DicConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
+                AaruConsole.DebugWriteLine("EFS plugin", "magic at 0x{0:X3} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})",
                                           0x200, efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
             }
             else
@@ -134,7 +134,7 @@ namespace Aaru.Filesystems
 
                 efsSb = Marshal.ByteArrayToStructureBigEndian<EFS_Superblock>(sector);
 
-                DicConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
+                AaruConsole.DebugWriteLine("EFS plugin", "magic at {0} = 0x{1:X8} (expected 0x{2:X8} or 0x{3:X8})", 1,
                                           efsSb.sb_magic, EFS_MAGIC, EFS_MAGIC_NEW);
             }
 

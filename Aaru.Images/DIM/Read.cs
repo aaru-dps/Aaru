@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
                 case DiskType.Hd2:
                     if(diskSize % (2 * 8 * 1024) != 0)
                     {
-                        DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 8 * 1024));
+                        AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 8 * 1024));
                         return false;
                     }
 
@@ -82,7 +82,7 @@ namespace Aaru.DiscImages
                 case DiskType.Hs2:
                     if(diskSize % (2 * 9 * 512) != 0)
                     {
-                        DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
+                        AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
                         return false;
                     }
 
@@ -93,7 +93,7 @@ namespace Aaru.DiscImages
                 case DiskType.Hc2:
                     if(diskSize % (2 * 15 * 512) != 0)
                     {
-                        DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 15 * 512));
+                        AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 15 * 512));
                         return false;
                     }
 
@@ -104,7 +104,7 @@ namespace Aaru.DiscImages
                 case DiskType.Hde2:
                     if(diskSize % (2 * 9 * 512) != 0)
                     {
-                        DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
+                        AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 9 * 512));
                         return false;
                     }
 
@@ -115,7 +115,7 @@ namespace Aaru.DiscImages
                 case DiskType.Hq2:
                     if(diskSize % (2 * 18 * 512) != 0)
                     {
-                        DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 18 * 512));
+                        AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 18 * 512));
                         return false;
                     }
 
@@ -136,7 +136,7 @@ namespace Aaru.DiscImages
                     }
                     else
                     {
-                        DicConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 26 * 256));
+                        AaruConsole.ErrorWriteLine("DIM shows unknown image with {0} tracks", diskSize / (2 * 26 * 256));
                         return false;
                     }
 
@@ -144,9 +144,9 @@ namespace Aaru.DiscImages
                 default: return false;
             }
 
-            DicConsole.VerboseWriteLine("DIM image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("DIM image contains a disk of type {0}", imageInfo.MediaType);
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                DicConsole.VerboseWriteLine("DIM comments: {0}", imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("DIM comments: {0}", imageInfo.Comments);
 
             dimImageFilter = imageFilter;
 

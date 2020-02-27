@@ -71,15 +71,15 @@ namespace Aaru.DiscImages
             header.Valid        = buffer[0x52];
             header.Reserved     = buffer[0x53];
 
-            DicConsole.DebugWriteLine("DC42 plugin", "header.diskName = \"{0}\"",      header.DiskName);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.dataSize = {0} bytes",    header.DataSize);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.tagSize = {0} bytes",     header.TagSize);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.dataChecksum = 0x{0:X8}", header.DataChecksum);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.tagChecksum = 0x{0:X8}",  header.TagChecksum);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.format = 0x{0:X2}",       header.Format);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.fmtByte = 0x{0:X2}",      header.FmtByte);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.valid = {0}",             header.Valid);
-            DicConsole.DebugWriteLine("DC42 plugin", "header.reserved = {0}",          header.Reserved);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.diskName = \"{0}\"",      header.DiskName);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.dataSize = {0} bytes",    header.DataSize);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.tagSize = {0} bytes",     header.TagSize);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.dataChecksum = 0x{0:X8}", header.DataChecksum);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.tagChecksum = 0x{0:X8}",  header.TagChecksum);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.format = 0x{0:X2}",       header.Format);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.fmtByte = 0x{0:X2}",      header.FmtByte);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.valid = {0}",             header.Valid);
+            AaruConsole.DebugWriteLine("DC42 plugin", "header.reserved = {0}",          header.Reserved);
 
             if(header.Valid != 1 || header.Reserved != 0) return false;
 
@@ -101,7 +101,7 @@ namespace Aaru.DiscImages
                header.Format != kSonyFormat1680K && header.Format != kSigmaFormatTwiggy &&
                header.Format != kNotStandardFormat)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.Format);
+                AaruConsole.DebugWriteLine("DC42 plugin", "Unknown header.format = 0x{0:X2} value", header.Format);
 
                 return false;
             }
@@ -111,14 +111,14 @@ namespace Aaru.DiscImages
                header.FmtByte != kInvalidFmtByte           && header.FmtByte != kSigmaFmtByteTwiggy &&
                header.FmtByte != kFmtNotStandard           && header.FmtByte != kMacOSXFmtByte)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.FmtByte);
+                AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value", header.FmtByte);
 
                 return false;
             }
 
             if(header.FmtByte == kInvalidFmtByte)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
+                AaruConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
 
                 return false;
             }
@@ -134,11 +134,11 @@ namespace Aaru.DiscImages
             if(header.TagSize != 0)
             {
                 bptag = (uint)(header.TagSize / imageInfo.Sectors);
-                DicConsole.DebugWriteLine("DC42 plugin", "bptag = {0} bytes", bptag);
+                AaruConsole.DebugWriteLine("DC42 plugin", "bptag = {0} bytes", bptag);
 
                 if(bptag != 12 && bptag != 20 && bptag != 24)
                 {
-                    DicConsole.DebugWriteLine("DC42 plugin", "Unknown tag size");
+                    AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tag size");
                     return false;
                 }
 
@@ -219,7 +219,7 @@ namespace Aaru.DiscImages
                 // Detect a Macintosh Twiggy
                 if(mfsMagic == 0xD2D7 && mfsAllBlocks == 422)
                 {
-                    DicConsole.DebugWriteLine("DC42 plugin", "Macintosh Twiggy detected, reversing disk sides");
+                    AaruConsole.DebugWriteLine("DC42 plugin", "Macintosh Twiggy detected, reversing disk sides");
                     Array.Copy(data, header.DataSize / 2, twiggyCache,     0, header.DataSize / 2);
                     Array.Copy(tags, header.TagSize  / 2, twiggyCacheTags, 0, header.TagSize  / 2);
                     Array.Copy(data, 0,                   twiggyCache,     header.DataSize    / 2, header.DataSize / 2);
@@ -227,7 +227,7 @@ namespace Aaru.DiscImages
                 }
                 else
                 {
-                    DicConsole.DebugWriteLine("DC42 plugin", "Lisa Twiggy detected, reversing second half of disk");
+                    AaruConsole.DebugWriteLine("DC42 plugin", "Lisa Twiggy detected, reversing second half of disk");
                     Array.Copy(data, 0, twiggyCache,     0, header.DataSize / 2);
                     Array.Copy(tags, 0, twiggyCacheTags, 0, header.TagSize  / 2);
 
@@ -323,11 +323,11 @@ namespace Aaru.DiscImages
             }
             catch(InvalidCastException) { }
 
-            DicConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", imageInfo.Application,
+            AaruConsole.DebugWriteLine("DC42 plugin", "Image application = {0} version {1}", imageInfo.Application,
                                       imageInfo.ApplicationVersion);
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
-            DicConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("DiskCopy 4.2 image contains a disk of type {0}", imageInfo.MediaType);
 
             switch(imageInfo.MediaType)
             {

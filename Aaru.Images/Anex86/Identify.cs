@@ -51,14 +51,14 @@ namespace Aaru.DiscImages
 
             fdihdr = Marshal.SpanToStructureLittleEndian<Anex86Header>(hdrB);
 
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}",   fdihdr.unknown);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}",   fdihdr.hddtype);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}",   fdihdr.hdrSize);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}",   fdihdr.dskSize);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}",       fdihdr.bps);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}",       fdihdr.spt);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}",     fdihdr.heads);
-            DicConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", fdihdr.cylinders);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.unknown = {0}",   fdihdr.unknown);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hddtype = {0}",   fdihdr.hddtype);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.hdrSize = {0}",   fdihdr.hdrSize);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.dskSize = {0}",   fdihdr.dskSize);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.bps = {0}",       fdihdr.bps);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.spt = {0}",       fdihdr.spt);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.heads = {0}",     fdihdr.heads);
+            AaruConsole.DebugWriteLine("Anex86 plugin", "fdihdr.cylinders = {0}", fdihdr.cylinders);
 
             return stream.Length  == fdihdr.hdrSize + fdihdr.dskSize &&
                    fdihdr.dskSize == fdihdr.bps * fdihdr.spt * fdihdr.heads * fdihdr.cylinders;

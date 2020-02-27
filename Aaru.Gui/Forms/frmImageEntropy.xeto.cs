@@ -89,10 +89,10 @@ namespace Aaru.Gui.Forms
                     tracksEntropy = entropyCalculator.CalculateTracksEntropy(chkDuplicatedSectors.Checked == true);
                     foreach(EntropyResults trackEntropy in tracksEntropy)
                     {
-                        DicConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
+                        AaruConsole.WriteLine("Entropy for track {0} is {1:F4}.", trackEntropy.Track,
                                              trackEntropy.Entropy);
                         if(trackEntropy.UniqueSectors != null)
-                            DicConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
+                            AaruConsole.WriteLine("Track {0} has {1} unique sectors ({2:P3})", trackEntropy.Track,
                                                  trackEntropy.UniqueSectors,
                                                  (double)trackEntropy.UniqueSectors / (double)trackEntropy.Sectors);
                     }

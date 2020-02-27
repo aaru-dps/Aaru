@@ -106,7 +106,7 @@ namespace Aaru.Devices
             }
             catch(Exception)
             {
-                DicConsole.ErrorWriteLine("Error connecting to host.");
+                AaruConsole.ErrorWriteLine("Error connecting to host.");
 
                 return new DeviceInfo[0];
             }

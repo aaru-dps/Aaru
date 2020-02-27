@@ -69,7 +69,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "HL-DT-ST READ DVD (RAW) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "HL-DT-ST READ DVD (RAW) took {0} ms.", duration);
 
             return sense;
         }

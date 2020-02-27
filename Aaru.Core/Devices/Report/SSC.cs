@@ -44,7 +44,7 @@ namespace Aaru.Core.Devices.Report
         public Ssc ReportScsiSsc()
         {
             var report = new Ssc();
-            DicConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
+            AaruConsole.WriteLine("Querying SCSI READ BLOCK LIMITS...");
             bool sense = _dev.ReadBlockLimits(out byte[] buffer, out byte[] _, _dev.Timeout, out _);
 
             if(!sense)
@@ -64,7 +64,7 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
+            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT...");
             sense = _dev.ReportDensitySupport(out buffer, out byte[] _, false, false, _dev.Timeout, out _);
 
             if(!sense)
@@ -94,7 +94,7 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types...");
+            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types...");
             sense = _dev.ReportDensitySupport(out buffer, out byte[] _, true, false, _dev.Timeout, out _);
 
             if(sense)
@@ -141,7 +141,7 @@ namespace Aaru.Core.Devices.Report
 
             Modes.DecodedMode? decMode = null;
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
 
             bool sense = _dev.ModeSense10(out byte[] buffer, out byte[] _, false, true,
                                           ScsiModeSensePageControl.Current, 0x3F, 0x00, _dev.Timeout, out _);
@@ -153,7 +153,7 @@ namespace Aaru.Core.Devices.Report
                 seqTest.ModeSense10Data = buffer;
             }
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE...");
             sense = _dev.ModeSense(out buffer, out byte[] _, _dev.Timeout, out _);
 
             if(!sense &&
@@ -174,7 +174,7 @@ namespace Aaru.Core.Devices.Report
                     seqTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
             }
 
-            DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
+            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for current media...");
             sense = _dev.ReportDensitySupport(out buffer, out byte[] _, false, true, _dev.Timeout, out _);
 
             if(!sense)
@@ -204,7 +204,7 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            DicConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
+            AaruConsole.WriteLine("Querying SCSI REPORT DENSITY SUPPORT for medium types for current media...");
             sense = _dev.ReportDensitySupport(out buffer, out byte[] _, true, true, _dev.Timeout, out _);
 
             if(!sense)
@@ -244,7 +244,7 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
+            AaruConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
             seqTest.CanReadMediaSerial = !_dev.ReadMediaSerialNumber(out buffer, out byte[] _, _dev.Timeout, out _);
 
             return seqTest;

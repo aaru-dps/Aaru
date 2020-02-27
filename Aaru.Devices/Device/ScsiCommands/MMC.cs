@@ -101,7 +101,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "GET CONFIGURATION (Starting Feature Number: {1}, Return Type: {2}, Sense: {3}, Last Error: {4}) took {0} ms.",
                                       duration, startingFeatureNumber, rt, sense, LastError);
 
@@ -190,7 +190,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "READ DISC STRUCTURE (Media Type: {1}, Address: {2}, Layer Number: {3}, Format: {4}, AGID: {5}, Sense: {6}, Last Error: {7}) took {0} ms.",
                                       duration, mediaType, address, layerNumber, format, agid, sense, LastError);
 
@@ -316,7 +316,7 @@ namespace Aaru.Devices
             {
                 Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
-                DicConsole.DebugWriteLine("SCSI Device",
+                AaruConsole.DebugWriteLine("SCSI Device",
                                           "READ TOC/PMA/ATIP took (MSF: {1}, Format: {2}, Track/Session Number: {3}, Sense: {4}, LastError: {5}) {0} ms.",
                                           duration, msf, format, trackSessionNumber, sense, LastError);
 
@@ -332,7 +332,7 @@ namespace Aaru.Devices
 
             duration += tmpDuration;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "READ TOC/PMA/ATIP took (MSF: {1}, Format: {2}, Track/Session Number: {3}, Sense: {4}, LastError: {5}) {0} ms.",
                                       duration, msf, format, trackSessionNumber, sense, LastError);
 
@@ -381,7 +381,7 @@ namespace Aaru.Devices
             buffer = new byte[strctLength];
             Array.Copy(tmpBuffer, 0, buffer, 0, buffer.Length);
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "READ DISC INFORMATION (Data Type: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
                                       duration, dataType, sense, LastError);
 
@@ -451,7 +451,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "READ CD (LBA: {1}, Block Size: {2}, Transfer Length: {3}, Expected Sector Type: {4}, DAP: {5}, Relative Address: {6}, Sync: {7}, Headers: {8}, User Data: {9}, ECC/EDC: {10}, C2: {11}, Subchannel: {12}, Sense: {13}, Last Error: {14}) took {0} ms.",
                                       duration, lba, blockSize, transferLength, expectedSectorType, dap, relAddr, sync,
                                       headerCodes, userData, edcEcc, c2Error, subchannel, sense, LastError);
@@ -519,7 +519,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "READ CD MSF (Start MSF: {1}, End MSF: {2}, Block Size: {3}, Expected Sector Type: {4}, DAP: {5}, Sync: {6}, Headers: {7}, User Data: {8}, ECC/EDC: {9}, C2: {10}, Subchannel: {11}, Sense: {12}, LastError: {13}) took {0} ms.",
                                       duration, startMsf, endMsf, blockSize, expectedSectorType, dap, sync, headerCodes,
                                       userData, edcEcc, c2Error, subchannel, sense, LastError);
@@ -553,7 +553,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "PREVENT ALLOW MEDIUM REMOVAL (Persistent: {1}, Prevent: {2}, Sense: {3}, LastError: {4}) took {0} ms.",
                                       duration, persistent, prevent, sense, LastError);
 
@@ -605,7 +605,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "START STOP UNIT (Immediate: {1}, FormatLayer: {2}, Power Conditions: {3}, Change Format Layer: {4}, Load/Eject: {5}, Start: {6}, Sense: {7}, Last Error: {8}) took {0} ms.",
                                       duration, immediate, formatLayer, powerConditions, changeFormatLayer, loadEject,
                                       start, sense, LastError);
@@ -634,7 +634,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "READ READ SUB-CHANNEL (MCN, Sense {1}, Last Error {2}) took {0} ms.", duration,
                                       sense, LastError);
 
@@ -667,7 +667,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "READ READ SUB-CHANNEL (ISRC, Track Number: {1}, Sense: {2}, Last Error: {3}) took {0} ms.",
                                       duration, trackNumber, sense, LastError);
 
@@ -697,7 +697,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "SET CD SPEED (Rotational Control: {1}, Read Speed: {2}, Write Speed: {3}, Sense: {4}, Last Error: {5}) took {0} ms.",
                                       duration, rotationalControl, readSpeed, writeSpeed, sense, LastError);
 

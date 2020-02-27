@@ -44,7 +44,7 @@ namespace Aaru.DiscImages
         public bool? VerifyMediaImage()
         {
             // This will traverse all blocks and check their CRC64 without uncompressing them
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Checking index integrity at {0}",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Checking index integrity at {0}",
                                       header.indexOffset);
             imageStream.Position = (long)header.indexOffset;
 
@@ -54,11 +54,11 @@ namespace Aaru.DiscImages
 
             if(idxHeader.identifier != BlockType.Index)
             {
-                DicConsole.DebugWriteLine("Aaru Format plugin", "Incorrect index identifier");
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Incorrect index identifier");
                 return false;
             }
 
-            DicConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries",
+            AaruConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries",
                                       header.indexOffset, idxHeader.entries);
 
             structureBytes = new byte[Marshal.SizeOf<IndexEntry>() * idxHeader.entries];
@@ -67,7 +67,7 @@ namespace Aaru.DiscImages
 
             if(BitConverter.ToUInt64(verifyCrc, 0) != idxHeader.crc64)
             {
-                DicConsole.DebugWriteLine("Aaru Format plugin", "Expected index CRC {0:X16} but got {1:X16}",
+                AaruConsole.DebugWriteLine("Aaru Format plugin", "Expected index CRC {0:X16} but got {1:X16}",
                                           idxHeader.crc64, BitConverter.ToUInt64(verifyCrc, 0));
                 return false;
             }
@@ -80,7 +80,7 @@ namespace Aaru.DiscImages
                 structureBytes = new byte[Marshal.SizeOf<IndexEntry>()];
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
                 IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
-                DicConsole.DebugWriteLine("Aaru Format plugin",
+                AaruConsole.DebugWriteLine("Aaru Format plugin",
                                           "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
                                           entry.dataType, entry.offset);
                 vrIndex.Add(entry);
@@ -106,7 +106,7 @@ namespace Aaru.DiscImages
                         crcVerify = new Crc64Context();
                         readBytes = 0;
 
-                        DicConsole.DebugWriteLine("Aaru Format plugin",
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Verifying data block type {0} at position {1}", entry.dataType,
                                                   entry.offset);
 
@@ -126,7 +126,7 @@ namespace Aaru.DiscImages
 
                         if(BitConverter.ToUInt64(verifyCrc, 0) != blockHeader.cmpCrc64)
                         {
-                            DicConsole.DebugWriteLine("Aaru Format plugin",
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Expected block CRC {0:X16} but got {1:X16}",
                                                       blockHeader.cmpCrc64, BitConverter.ToUInt64(verifyCrc, 0));
                             return false;
@@ -141,7 +141,7 @@ namespace Aaru.DiscImages
                         crcVerify = new Crc64Context();
                         readBytes = 0;
 
-                        DicConsole.DebugWriteLine("Aaru Format plugin",
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Verifying deduplication table type {0} at position {1}",
                                                   entry.dataType, entry.offset);
 
@@ -161,7 +161,7 @@ namespace Aaru.DiscImages
 
                         if(BitConverter.ToUInt64(verifyCrc, 0) != ddtHeader.cmpCrc64)
                         {
-                            DicConsole.DebugWriteLine("Aaru Format plugin",
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Expected DDT CRC {0:X16} but got {1:X16}", ddtHeader.cmpCrc64,
                                                       BitConverter.ToUInt64(verifyCrc, 0));
                             return false;
@@ -173,7 +173,7 @@ namespace Aaru.DiscImages
                         imageStream.Read(structureBytes, 0, structureBytes.Length);
                         TracksHeader trkHeader = Marshal.SpanToStructureLittleEndian<TracksHeader>(structureBytes);
 
-                        DicConsole.DebugWriteLine("Aaru Format plugin",
+                        AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Track block at {0} contains {1} entries", header.indexOffset,
                                                   trkHeader.entries);
 
@@ -183,7 +183,7 @@ namespace Aaru.DiscImages
 
                         if(BitConverter.ToUInt64(verifyCrc, 0) != trkHeader.crc64)
                         {
-                            DicConsole.DebugWriteLine("Aaru Format plugin",
+                            AaruConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Expected index CRC {0:X16} but got {1:X16}", trkHeader.crc64,
                                                       BitConverter.ToUInt64(verifyCrc, 0));
                             return false;
@@ -191,7 +191,7 @@ namespace Aaru.DiscImages
 
                         break;
                     default:
-                        DicConsole.DebugWriteLine("Aaru Format plugin", "Ignored field type {0}",
+                        AaruConsole.DebugWriteLine("Aaru Format plugin", "Ignored field type {0}",
                                                   entry.blockType);
                         break;
                 }

@@ -60,27 +60,27 @@ namespace Aaru.Commands
                 MainClass.PrintCopyright();
 
                 if(debug)
-                    DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                    AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
                 if(verbose)
-                    DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                    AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
             }
 
             if(_gdprChange)
             {
-                DicConsole.WriteLine("In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n"    +
+                AaruConsole.WriteLine("In compliance with the European Union General Data Protection Regulation 2016/679 (GDPR),\n"    +
                                      "we must give you the following information about Aaru and ask if you want to opt-in\n" +
                                      "in some information sharing.");
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
 
-                DicConsole.WriteLine("Disclaimer: Because Aaru is an open source software this information, and therefore,\n" +
+                AaruConsole.WriteLine("Disclaimer: Because Aaru is an open source software this information, and therefore,\n" +
                                      "compliance with GDPR only holds true if you obtained a certificated copy from its original\n"    +
                                      "authors. In case of doubt, close Aaru now and ask in our IRC support channel.");
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
 
-                DicConsole.WriteLine("For any information sharing your IP address may be stored in our server, in a way that is not\n" +
+                AaruConsole.WriteLine("For any information sharing your IP address may be stored in our server, in a way that is not\n" +
                                      "possible for any person, manual, or automated process, to link with your identity, unless\n"     +
                                      "specified otherwise.");
             }
@@ -88,9 +88,9 @@ namespace Aaru.Commands
             var pressedKey = new ConsoleKeyInfo();
 
             #region Device reports
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
 
-            DicConsole.WriteLine(
+            AaruConsole.WriteLine(
                                  "With the 'device-report' command, Aaru creates a report of a device, that includes its\n"       +
                                  "manufacturer, model, firmware revision and/or version, attached bus, size, and supported commands.\n"    +
                                  "The serial number of the device is not stored in the report. If used with the debug parameter,\n"        +
@@ -102,17 +102,17 @@ namespace Aaru.Commands
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                DicConsole.Write("Do you want to save device reports in shared folder of your computer? (Y/N): ");
+                AaruConsole.Write("Do you want to save device reports in shared folder of your computer? (Y/N): ");
                 pressedKey = System.Console.ReadKey();
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             Aaru.Settings.Settings.Current.SaveReportsGlobally = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
 
-            DicConsole.WriteLine("Sharing a report with us will send it to our server, that's in the european union territory, where it\n"      +
+            AaruConsole.WriteLine("Sharing a report with us will send it to our server, that's in the european union territory, where it\n"      +
                                  "will be manually analyzed by an european union citizen to remove any trace of personal identification\n"      +
                                  "from it. Once that is done, it will be shared in our stats website, https://www.discimagechef.app\n"          +
                                  "These report will be used to improve Aaru support, and in some cases, to provide emulation of the\n" +
@@ -121,18 +121,18 @@ namespace Aaru.Commands
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                DicConsole.Write("Do you want to share your device reports with us? (Y/N): ");
+                AaruConsole.Write("Do you want to share your device reports with us? (Y/N): ");
                 pressedKey = System.Console.ReadKey();
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             Aaru.Settings.Settings.Current.ShareReports = pressedKey.Key == ConsoleKey.Y;
             #endregion Device reports
 
             #region Statistics
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
 
-            DicConsole.WriteLine("Aaru can store some usage statistics. These statistics are limited to the number of times a\n"        +
+            AaruConsole.WriteLine("Aaru can store some usage statistics. These statistics are limited to the number of times a\n"        +
                                  "command is executed, a filesystem, partition, or device is used, the operating system version, and other.\n"   +
                                  "In no case, any information besides pure statistical usage numbers is stored, and they're just joint to the\n" +
                                  "pool with no way of using them to identify you.");
@@ -142,9 +142,9 @@ namespace Aaru.Commands
             while(pressedKey.Key != ConsoleKey.Y &&
                   pressedKey.Key != ConsoleKey.N)
             {
-                DicConsole.Write("Do you want to save stats about your Aaru usage? (Y/N): ");
+                AaruConsole.Write("Do you want to save stats about your Aaru usage? (Y/N): ");
                 pressedKey = System.Console.ReadKey();
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             if(pressedKey.Key == ConsoleKey.Y)
@@ -156,9 +156,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to share your stats anonymously? (Y/N): ");
+                    AaruConsole.Write("Do you want to share your stats anonymously? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
@@ -168,9 +168,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about command usage? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about command usage? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
@@ -180,9 +180,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about found devices? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about found devices? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
@@ -192,9 +192,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about found filesystems? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about found filesystems? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
@@ -204,9 +204,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about found file filters? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about found file filters? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
@@ -216,9 +216,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about found media image formats? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about found media image formats? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
@@ -228,9 +228,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about scanned media? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about scanned media? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
@@ -240,9 +240,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about found partitioning schemes? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about found partitioning schemes? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
@@ -252,9 +252,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about media types? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about media types? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
@@ -264,9 +264,9 @@ namespace Aaru.Commands
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Do you want to gather statistics about media image verifications? (Y/N): ");
+                    AaruConsole.Write("Do you want to gather statistics about media image verifications? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 Aaru.Settings.Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;

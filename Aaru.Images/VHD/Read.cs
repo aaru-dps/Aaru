@@ -84,9 +84,9 @@ namespace Aaru.DiscImages
             uint headerCalculatedChecksum = VhdChecksum(header);
             uint footerCalculatedChecksum = VhdChecksum(footer);
 
-            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
                                       headerChecksum, headerCalculatedChecksum);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "Header checksum = 0x{0:X8}, calculated = 0x{1:X8}",
                                       footerChecksum, footerCalculatedChecksum);
 
             byte[] usableHeader;
@@ -133,33 +133,33 @@ namespace Aaru.DiscImages
             Sha1Context sha1Ctx = new Sha1Context();
             sha1Ctx.Update(thisFooter.Reserved);
 
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.cookie = 0x{0:X8}",   thisFooter.Cookie);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.features = 0x{0:X8}", thisFooter.Features);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.version = 0x{0:X8}",  thisFooter.Version);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.offset = {0}",        thisFooter.Offset);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.timestamp = 0x{0:X8} ({1})", thisFooter.Timestamp,
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.cookie = 0x{0:X8}",   thisFooter.Cookie);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.features = 0x{0:X8}", thisFooter.Features);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.version = 0x{0:X8}",  thisFooter.Version);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.offset = {0}",        thisFooter.Offset);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.timestamp = 0x{0:X8} ({1})", thisFooter.Timestamp,
                                       thisDateTime);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")",
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorApplication = 0x{0:X8} (\"{1}\")",
                                       thisFooter.CreatorApplication,
                                       Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisFooter
                                                                                                  .CreatorApplication)));
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorVersion = 0x{0:X8}",
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorVersion = 0x{0:X8}",
                                       thisFooter.CreatorVersion);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorHostOS = 0x{0:X8} (\"{1}\")",
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.creatorHostOS = 0x{0:X8} (\"{1}\")",
                                       thisFooter.CreatorHostOs,
                                       Encoding.ASCII.GetString(BigEndianBitConverter
                                                                   .GetBytes(thisFooter.CreatorHostOs)));
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.originalSize = {0}", thisFooter.OriginalSize);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.currentSize = {0}",  thisFooter.CurrentSize);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.originalSize = {0}", thisFooter.OriginalSize);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.currentSize = {0}",  thisFooter.CurrentSize);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.diskGeometry = 0x{0:X8} (C/H/S: {1}/{2}/{3})",
                                       thisFooter.DiskGeometry, (thisFooter.DiskGeometry & 0xFFFF0000) >> 16,
                                       (thisFooter.DiskGeometry                          & 0xFF00)     >> 8,
                                       thisFooter.DiskGeometry & 0xFF);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.diskType = 0x{0:X8}",     thisFooter.DiskType);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.checksum = 0x{0:X8}",     thisFooter.Checksum);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.uniqueId = {0}",          thisFooter.UniqueId);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.savedState = 0x{0:X2}",   thisFooter.SavedState);
-            DicConsole.DebugWriteLine("VirtualPC plugin", "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.diskType = 0x{0:X8}",     thisFooter.DiskType);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.checksum = 0x{0:X8}",     thisFooter.Checksum);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.uniqueId = {0}",          thisFooter.UniqueId);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.savedState = 0x{0:X2}",   thisFooter.SavedState);
+            AaruConsole.DebugWriteLine("VirtualPC plugin", "footer.reserved's SHA1 = 0x{0}", sha1Ctx.End());
 
             if(thisFooter.Version == VERSION1) imageInfo.Version = "1.0";
             else
@@ -317,7 +317,7 @@ namespace Aaru.DiscImages
 
                 uint dynamicChecksumCalculated = VhdChecksum(dynamicBytes);
 
-                DicConsole.DebugWriteLine("VirtualPC plugin",
+                AaruConsole.DebugWriteLine("VirtualPC plugin",
                                           "Dynamic header checksum = 0x{0:X8}, calculated = 0x{1:X8}", dynamicChecksum,
                                           dynamicChecksumCalculated);
 
@@ -364,42 +364,42 @@ namespace Aaru.DiscImages
                 sha1Ctx = new Sha1Context();
                 sha1Ctx.Update(thisDynamic.Reserved2);
 
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.cookie = 0x{0:X8}", thisDynamic.Cookie);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.dataOffset = {0}",  thisDynamic.DataOffset);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.tableOffset = {0}", thisDynamic.TableOffset);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.headerVersion = 0x{0:X8}",
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.cookie = 0x{0:X8}", thisDynamic.Cookie);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.dataOffset = {0}",  thisDynamic.DataOffset);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.tableOffset = {0}", thisDynamic.TableOffset);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.headerVersion = 0x{0:X8}",
                                           thisDynamic.HeaderVersion);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.maxTableEntries = {0}",
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.maxTableEntries = {0}",
                                           thisDynamic.MaxTableEntries);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.blockSize = {0}",     thisDynamic.BlockSize);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.checksum = 0x{0:X8}", thisDynamic.Checksum);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentID = {0}",      thisDynamic.ParentId);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentTimestamp = 0x{0:X8} ({1})",
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.blockSize = {0}",     thisDynamic.BlockSize);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.checksum = 0x{0:X8}", thisDynamic.Checksum);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentID = {0}",      thisDynamic.ParentId);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentTimestamp = 0x{0:X8} ({1})",
                                           thisDynamic.ParentTimestamp, parentDateTime);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved = 0x{0:X8}", thisDynamic.Reserved);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved = 0x{0:X8}", thisDynamic.Reserved);
                 for(int i = 0; i < 8; i++)
                 {
-                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                    AaruConsole.DebugWriteLine("VirtualPC plugin",
                                               "dynamic.locatorEntries[{0}].platformCode = 0x{1:X8} (\"{2}\")", i,
                                               thisDynamic.LocatorEntries[i].PlatformCode,
                                               Encoding.ASCII.GetString(BigEndianBitConverter.GetBytes(thisDynamic
                                                                                                      .LocatorEntries[i]
                                                                                                      .PlatformCode)));
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataSpace = {1}",
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].platformDataSpace = {1}",
                                               i, thisDynamic.LocatorEntries[i].PlatformDataSpace);
-                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                    AaruConsole.DebugWriteLine("VirtualPC plugin",
                                               "dynamic.locatorEntries[{0}].platformDataLength = {1}", i,
                                               thisDynamic.LocatorEntries[i].PlatformDataLength);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i,
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}].reserved = 0x{1:X8}", i,
                                               thisDynamic.LocatorEntries[i].Reserved);
-                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                    AaruConsole.DebugWriteLine("VirtualPC plugin",
                                               "dynamic.locatorEntries[{0}].platformDataOffset = {1}", i,
                                               thisDynamic.LocatorEntries[i].PlatformDataOffset);
                 }
 
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentName = \"{0}\"",
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.parentName = \"{0}\"",
                                           thisDynamic.ParentName);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.reserved2's SHA1 = 0x{0}", sha1Ctx.End());
 
                 if(thisDynamic.HeaderVersion != VERSION1)
                     throw new
@@ -423,7 +423,7 @@ namespace Aaru.DiscImages
                     blockAllocationTable[i] = Swapping.Swap(blockAllocationTable[i]);
 
                 DateTime endTime = DateTime.UtcNow;
-                DicConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds",
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "Filling the BAT took {0} seconds",
                                           (endTime - startTime).TotalSeconds);
 
                 bitmapSize = (uint)Math.Ceiling((double)thisDynamic.BlockSize / 512
@@ -431,7 +431,7 @@ namespace Aaru.DiscImages
                                                                               / 8
                                                                                 // and aligned to 512 byte boundary
                                                                               / 512);
-                DicConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", bitmapSize);
+                AaruConsole.DebugWriteLine("VirtualPC plugin", "Bitmap is {0} sectors", bitmapSize);
             }
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
@@ -460,24 +460,24 @@ namespace Aaru.DiscImages
                             {
                                 case PLATFORM_CODE_WINDOWS_ABSOLUTE:
                                 case PLATFORM_CODE_WINDOWS_RELATIVE:
-                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                    AaruConsole.DebugWriteLine("VirtualPC plugin",
                                                               "dynamic.locatorEntries[{0}] = \"{1}\"", i,
                                                               Encoding.ASCII.GetString(locatorEntriesData[i]));
                                     break;
                                 case PLATFORM_CODE_WINDOWS_ABSOLUTE_U:
                                 case PLATFORM_CODE_WINDOWS_RELATIVE_U:
-                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                    AaruConsole.DebugWriteLine("VirtualPC plugin",
                                                               "dynamic.locatorEntries[{0}] = \"{1}\"", i,
                                                               Encoding.BigEndianUnicode
                                                                       .GetString(locatorEntriesData[i]));
                                     break;
                                 case PLATFORM_CODE_MACINTOSH_URI:
-                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                    AaruConsole.DebugWriteLine("VirtualPC plugin",
                                                               "dynamic.locatorEntries[{0}] = \"{1}\"", i,
                                                               Encoding.UTF8.GetString(locatorEntriesData[i]));
                                     break;
                                 default:
-                                    DicConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] =", i);
+                                    AaruConsole.DebugWriteLine("VirtualPC plugin", "dynamic.locatorEntries[{0}] =", i);
                                     PrintHex.PrintHexArray(locatorEntriesData[i], 64);
                                     break;
                             }
@@ -506,7 +506,7 @@ namespace Aaru.DiscImages
                                     parentPath = parentPath.Remove(0, 16);
                                 else
                                 {
-                                    DicConsole.DebugWriteLine("VirtualPC plugin",
+                                    AaruConsole.DebugWriteLine("VirtualPC plugin",
                                                               "Unsupported protocol classified found in URI parent path: \"{0}\"",
                                                               parentPath);
                                     parentPath = null;
@@ -517,7 +517,7 @@ namespace Aaru.DiscImages
 
                         if(parentPath != null)
                         {
-                            DicConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
+                            AaruConsole.DebugWriteLine("VirtualPC plugin", "Possible parent path: \"{0}\"", parentPath);
                             IFilter parentFilter =
                                 new FiltersList().GetFilter(Path.Combine(imageFilter.GetParentFolder(), parentPath));
 
@@ -611,22 +611,22 @@ namespace Aaru.DiscImages
                     bool dirty = (bitmap[bitmapByte] & mask) == mask;
 
                     /*
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapSize = {0}", bitmapSize);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "blockNumber = {0}", blockNumber);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "sectorInBlock = {0}", sectorInBlock);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "blockOffset = {0}", blockOffset);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapByte = {0}", bitmapByte);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmapBit = {0}", bitmapBit);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "mask = 0x{0:X2}", mask);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "dirty = 0x{0}", dirty);
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "bitmap = ");
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "bitmapSize = {0}", bitmapSize);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "blockNumber = {0}", blockNumber);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "sectorInBlock = {0}", sectorInBlock);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "blockOffset = {0}", blockOffset);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "bitmapByte = {0}", bitmapByte);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "bitmapBit = {0}", bitmapBit);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "mask = 0x{0:X2}", mask);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "dirty = 0x{0}", dirty);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "bitmap = ");
                     PrintHex.PrintHexArray(bitmap, 64);
                     */
 
                     // Sector has been written, read from child image
                     if(!dirty) return parentImage.ReadSector(sectorAddress);
                     /* Too noisy
-                        DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is dirty", sectorAddress);
+                        AaruConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is dirty", sectorAddress);
                         */
 
                     byte[] data         = new byte[512];
@@ -639,7 +639,7 @@ namespace Aaru.DiscImages
                     return data;
 
                     /* Too noisy
-                    DicConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is clean", sectorAddress);
+                    AaruConsole.DebugWriteLine("VirtualPC plugin", "Sector {0} is clean", sectorAddress);
                     */
 
                     // Read sector from parent image

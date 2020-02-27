@@ -393,7 +393,7 @@ namespace Aaru.Core.Devices.Dumping
                     for(ulong b = i; b < i + _skip; b++)
                         _resume.BadBlocks.Add(b);
 
-                    DicConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+                    AaruConsole.DebugWriteLine("Dump-Media", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
                     mhddLog.Write(i, cmdDuration < 500 ? 65535 : cmdDuration);
 
                     ibgLog.Write(i, 0);

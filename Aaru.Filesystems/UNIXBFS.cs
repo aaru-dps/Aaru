@@ -85,15 +85,15 @@ namespace Aaru.Filesystems
             Array.Copy(bfsSbSector, 0x22, sbStrings, 0, 6);
             bfsSb.s_volume = StringHandlers.CToString(sbStrings, Encoding);
 
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}",   bfsSb.s_end);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}",  bfsSb.s_from);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}",    bfsSb.s_to);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bfrom: 0x{0:X8}", bfsSb.s_bfrom);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}",   bfsSb.s_bto);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}",   bfsSb.s_fsname);
-            DicConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}",   bfsSb.s_volume);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_magic: 0x{0:X8}", bfsSb.s_magic);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_start: 0x{0:X8}", bfsSb.s_start);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_end: 0x{0:X8}",   bfsSb.s_end);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_from: 0x{0:X8}",  bfsSb.s_from);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_to: 0x{0:X8}",    bfsSb.s_to);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bfrom: 0x{0:X8}", bfsSb.s_bfrom);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_bto: 0x{0:X8}",   bfsSb.s_bto);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_fsname: 0x{0}",   bfsSb.s_fsname);
+            AaruConsole.DebugWriteLine("BFS plugin", "bfs_sb.s_volume: 0x{0}",   bfsSb.s_volume);
 
             sb.AppendLine("UNIX Boot filesystem");
             sb.AppendFormat("Volume goes from byte {0} to byte {1}, for {2} bytes", bfsSb.s_start, bfsSb.s_end,

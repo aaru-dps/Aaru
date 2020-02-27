@@ -86,7 +86,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "IDENTIFY PACKET DEVICE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "IDENTIFY PACKET DEVICE took {0} ms.", duration);
 
             return sense;
         }

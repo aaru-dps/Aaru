@@ -76,25 +76,25 @@ namespace Aaru.Filesystems
                 sector = imagePlugin.ReadSector(position);
                 anchor = Marshal.ByteArrayToStructureLittleEndian<AnchorVolumeDescriptorPointer>(sector);
 
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagIdentifier = {0}", anchor.tag.tagIdentifier);
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorVersion = {0}",
                                           anchor.tag.descriptorVersion);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.reserved = {0}",         anchor.tag.reserved);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagSerialNumber = {0}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagChecksum = 0x{0:X2}", anchor.tag.tagChecksum);
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.reserved = {0}",         anchor.tag.reserved);
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagSerialNumber = {0}",
                                           anchor.tag.tagSerialNumber);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrc = 0x{0:X4}",
                                           anchor.tag.descriptorCrc);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrcLength = {0}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.descriptorCrcLength = {0}",
                                           anchor.tag.descriptorCrcLength);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagLocation = {0}", anchor.tag.tagLocation);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.length = {0}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.tag.tagLocation = {0}", anchor.tag.tagLocation);
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.length = {0}",
                                           anchor.mainVolumeDescriptorSequenceExtent.length);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.location = {0}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.mainVolumeDescriptorSequenceExtent.location = {0}",
                                           anchor.mainVolumeDescriptorSequenceExtent.location);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.length = {0}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.length = {0}",
                                           anchor.reserveVolumeDescriptorSequenceExtent.length);
-                DicConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
+                AaruConsole.DebugWriteLine("UDF Plugin", "anchor.reserveVolumeDescriptorSequenceExtent.location = {0}",
                                           anchor.reserveVolumeDescriptorSequenceExtent.location);
 
                 if(anchor.tag.tagIdentifier !=

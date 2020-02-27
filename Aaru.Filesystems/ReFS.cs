@@ -84,25 +84,25 @@ namespace Aaru.Filesystems
 
             RefsVolumeHeader refsVhdr = Marshal.ByteArrayToStructureLittleEndian<RefsVolumeHeader>(sector);
 
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.jump empty? = {0}",
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.jump empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.jump));
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.signature = {0}",
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.signature = {0}",
                                       StringHandlers.CToString(refsVhdr.signature));
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.mustBeZero empty? = {0}",
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.mustBeZero empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.mustBeZero));
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.identifier = {0}",
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.identifier = {0}",
                                       StringHandlers.CToString(BitConverter.GetBytes(refsVhdr.identifier)));
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.length = {0}",         refsVhdr.length);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.checksum = 0x{0:X4}",  refsVhdr.checksum);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectors = {0}",        refsVhdr.sectors);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.bytesPerSector = {0}", refsVhdr.bytesPerSector);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectorsPerCluster = {0}",
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.length = {0}",         refsVhdr.length);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.checksum = 0x{0:X4}",  refsVhdr.checksum);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectors = {0}",        refsVhdr.sectors);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.bytesPerSector = {0}", refsVhdr.bytesPerSector);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.sectorsPerCluster = {0}",
                                       refsVhdr.sectorsPerCluster);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown1 zero? = {0}", refsVhdr.unknown1 == 0);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown2 zero? = {0}", refsVhdr.unknown2 == 0);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown3 zero? = {0}", refsVhdr.unknown3 == 0);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown4 zero? = {0}", refsVhdr.unknown4 == 0);
-            DicConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown5 empty? = {0}",
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown1 zero? = {0}", refsVhdr.unknown1 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown2 zero? = {0}", refsVhdr.unknown2 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown3 zero? = {0}", refsVhdr.unknown3 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown4 zero? = {0}", refsVhdr.unknown4 == 0);
+            AaruConsole.DebugWriteLine("ReFS plugin", "VolumeHeader.unknown5 empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.unknown5));
 
             if(refsVhdr.identifier != FSRS || !ArrayHelpers.ArrayIsNullOrEmpty(refsVhdr.mustBeZero) ||

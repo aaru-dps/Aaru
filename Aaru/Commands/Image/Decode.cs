@@ -93,27 +93,27 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("decode");
 
-            DicConsole.DebugWriteLine("Decode command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Decode command", "--disk-tags={0}", diskTags);
-            DicConsole.DebugWriteLine("Decode command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("Decode command", "--length={0}", length);
-            DicConsole.DebugWriteLine("Decode command", "--sector-tags={0}", sectorTags);
-            DicConsole.DebugWriteLine("Decode command", "--start={0}", startSector);
-            DicConsole.DebugWriteLine("Decode command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Decode command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Decode command", "--disk-tags={0}", diskTags);
+            AaruConsole.DebugWriteLine("Decode command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Decode command", "--length={0}", length);
+            AaruConsole.DebugWriteLine("Decode command", "--sector-tags={0}", sectorTags);
+            AaruConsole.DebugWriteLine("Decode command", "--start={0}", startSector);
+            AaruConsole.DebugWriteLine("Decode command", "--verbose={0}", verbose);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -122,7 +122,7 @@ namespace Aaru.Commands.Image
 
             if(inputFormat == null)
             {
-                DicConsole.ErrorWriteLine("Unable to recognize image format, not decoding");
+                AaruConsole.ErrorWriteLine("Unable to recognize image format, not decoding");
 
                 return(int)ErrorNumber.UnrecognizedFormat;
             }
@@ -134,7 +134,7 @@ namespace Aaru.Commands.Image
 
             if(diskTags)
                 if(inputFormat.Info.ReadableMediaTags.Count == 0)
-                    DicConsole.WriteLine("There are no disk tags in chosen disc image.");
+                    AaruConsole.WriteLine("There are no disk tags in chosen disc image.");
                 else
                     foreach(MediaTagType tag in inputFormat.Info.ReadableMediaTags)
                         switch(tag)
@@ -144,17 +144,17 @@ namespace Aaru.Commands.Image
                                 byte[] inquiry = inputFormat.ReadDiskTag(MediaTagType.SCSI_INQUIRY);
 
                                 if(inquiry == null)
-                                    DicConsole.WriteLine("Error reading SCSI INQUIRY response from disc image");
+                                    AaruConsole.WriteLine("Error reading SCSI INQUIRY response from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("SCSI INQUIRY command response:");
+                                    AaruConsole.WriteLine("SCSI INQUIRY command response:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(Inquiry.Prettify(inquiry));
+                                    AaruConsole.WriteLine(Inquiry.Prettify(inquiry));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -165,17 +165,17 @@ namespace Aaru.Commands.Image
                                 byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATA_IDENTIFY);
 
                                 if(identify == null)
-                                    DicConsole.WriteLine("Error reading ATA IDENTIFY DEVICE response from disc image");
+                                    AaruConsole.WriteLine("Error reading ATA IDENTIFY DEVICE response from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
+                                    AaruConsole.WriteLine("ATA IDENTIFY DEVICE command response:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(Identify.Prettify(identify));
+                                    AaruConsole.WriteLine(Identify.Prettify(identify));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -186,18 +186,18 @@ namespace Aaru.Commands.Image
                                 byte[] identify = inputFormat.ReadDiskTag(MediaTagType.ATAPI_IDENTIFY);
 
                                 if(identify == null)
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("Error reading ATA IDENTIFY PACKET DEVICE response from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
+                                    AaruConsole.WriteLine("ATA IDENTIFY PACKET DEVICE command response:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(Identify.Prettify(identify));
+                                    AaruConsole.WriteLine(Identify.Prettify(identify));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -208,17 +208,17 @@ namespace Aaru.Commands.Image
                                 byte[] atip = inputFormat.ReadDiskTag(MediaTagType.CD_ATIP);
 
                                 if(atip == null)
-                                    DicConsole.WriteLine("Error reading CD ATIP from disc image");
+                                    AaruConsole.WriteLine("Error reading CD ATIP from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("CD ATIP:");
+                                    AaruConsole.WriteLine("CD ATIP:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(ATIP.Prettify(atip));
+                                    AaruConsole.WriteLine(ATIP.Prettify(atip));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -229,17 +229,17 @@ namespace Aaru.Commands.Image
                                 byte[] fullToc = inputFormat.ReadDiskTag(MediaTagType.CD_FullTOC);
 
                                 if(fullToc == null)
-                                    DicConsole.WriteLine("Error reading CD full TOC from disc image");
+                                    AaruConsole.WriteLine("Error reading CD full TOC from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("CD full TOC:");
+                                    AaruConsole.WriteLine("CD full TOC:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(FullTOC.Prettify(fullToc));
+                                    AaruConsole.WriteLine(FullTOC.Prettify(fullToc));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -250,17 +250,17 @@ namespace Aaru.Commands.Image
                                 byte[] pma = inputFormat.ReadDiskTag(MediaTagType.CD_PMA);
 
                                 if(pma == null)
-                                    DicConsole.WriteLine("Error reading CD PMA from disc image");
+                                    AaruConsole.WriteLine("Error reading CD PMA from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("CD PMA:");
+                                    AaruConsole.WriteLine("CD PMA:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(PMA.Prettify(pma));
+                                    AaruConsole.WriteLine(PMA.Prettify(pma));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -271,17 +271,17 @@ namespace Aaru.Commands.Image
                                 byte[] sessionInfo = inputFormat.ReadDiskTag(MediaTagType.CD_SessionInfo);
 
                                 if(sessionInfo == null)
-                                    DicConsole.WriteLine("Error reading CD session information from disc image");
+                                    AaruConsole.WriteLine("Error reading CD session information from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("CD session information:");
+                                    AaruConsole.WriteLine("CD session information:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(Session.Prettify(sessionInfo));
+                                    AaruConsole.WriteLine(Session.Prettify(sessionInfo));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -292,17 +292,17 @@ namespace Aaru.Commands.Image
                                 byte[] cdText = inputFormat.ReadDiskTag(MediaTagType.CD_TEXT);
 
                                 if(cdText == null)
-                                    DicConsole.WriteLine("Error reading CD-TEXT from disc image");
+                                    AaruConsole.WriteLine("Error reading CD-TEXT from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("CD-TEXT:");
+                                    AaruConsole.WriteLine("CD-TEXT:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(CDTextOnLeadIn.Prettify(cdText));
+                                    AaruConsole.WriteLine(CDTextOnLeadIn.Prettify(cdText));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
@@ -313,24 +313,24 @@ namespace Aaru.Commands.Image
                                 byte[] toc = inputFormat.ReadDiskTag(MediaTagType.CD_TOC);
 
                                 if(toc == null)
-                                    DicConsole.WriteLine("Error reading CD TOC from disc image");
+                                    AaruConsole.WriteLine("Error reading CD TOC from disc image");
                                 else
                                 {
-                                    DicConsole.WriteLine("CD TOC:");
+                                    AaruConsole.WriteLine("CD TOC:");
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
 
-                                    DicConsole.WriteLine(TOC.Prettify(toc));
+                                    AaruConsole.WriteLine(TOC.Prettify(toc));
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("================================================================================");
                                 }
 
                                 break;
                             }
                             default:
-                                DicConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
+                                AaruConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
                                                      tag);
 
                                 break;
@@ -343,21 +343,21 @@ namespace Aaru.Commands.Image
                 {
                     if(!ulong.TryParse(length, out ulong _))
                     {
-                        DicConsole.WriteLine("Value \"{0}\" is not a valid number for length.", length);
-                        DicConsole.WriteLine("Not decoding sectors tags");
+                        AaruConsole.WriteLine("Value \"{0}\" is not a valid number for length.", length);
+                        AaruConsole.WriteLine("Not decoding sectors tags");
 
                         return 3;
                     }
                 }
 
                 if(inputFormat.Info.ReadableSectorTags.Count == 0)
-                    DicConsole.WriteLine("There are no sector tags in chosen disc image.");
+                    AaruConsole.WriteLine("There are no sector tags in chosen disc image.");
                 else
                     foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
                         switch(tag)
                         {
                             default:
-                                DicConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
+                                AaruConsole.WriteLine("Decoder for disk tag type \"{0}\" not yet implemented, sorry.",
                                                      tag);
 
                                 break;

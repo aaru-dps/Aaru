@@ -294,12 +294,12 @@ namespace Aaru.Partitions
                 byte[] tmpSector = imagePlugin.ReadSector(rdbBlock + sectorOffset);
                 uint   magic     = BigEndianBitConverter.ToUInt32(tmpSector, 0);
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", rdbBlock,
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Possible magic at block {0} is 0x{1:X8}", rdbBlock,
                                           magic);
 
                 if(magic == RIGID_DISK_BLOCK_MAGIC)
                 {
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "Found RDB magic at block {0}", rdbBlock);
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found RDB magic at block {0}", rdbBlock);
 
                     foundRdb = true;
                     break;
@@ -388,68 +388,68 @@ namespace Aaru.Partitions
             rdb.Reserved24 = BigEndianBitConverter.ToUInt32(sector, 0xF8);
             rdb.Reserved25 = BigEndianBitConverter.ToUInt32(sector, 0xFC);
 
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.magic = 0x{0:X8}",             rdb.Magic);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.size = {0} longs, {1} bytes",  rdb.Size, rdb.Size * 4);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.checksum = 0x{0:X8}",          rdb.Checksum);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.targetID = {0}",               rdb.TargetId);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.block_size = {0}",             rdb.BlockSize);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.badblock_ptr = {0}",           rdb.BadblockPtr);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.partition_ptr = {0}",          rdb.PartitionPtr);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.fsheader_ptr = {0}",           rdb.FsheaderPtr);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.driveinitcode = {0}",          rdb.Driveinitcode);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved1 = 0x{0:X8}",         rdb.Reserved1);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved2 = 0x{0:X8}",         rdb.Reserved2);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved3 = 0x{0:X8}",         rdb.Reserved3);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved4 = 0x{0:X8}",         rdb.Reserved4);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved5 = 0x{0:X8}",         rdb.Reserved5);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved6 = 0x{0:X8}",         rdb.Reserved6);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.cylinders = {0}",              rdb.Cylinders);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.spt = {0}",                    rdb.Spt);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.heads = {0}",                  rdb.Heads);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.interleave = {0}",             rdb.Interleave);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.parking = {0}",                rdb.Parking);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved7 = 0x{0:X8}",         rdb.Reserved7);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved8 = 0x{0:X8}",         rdb.Reserved8);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved9 = 0x{0:X8}",         rdb.Reserved9);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.writeprecomp = {0}",           rdb.Writeprecomp);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reducedwrite = {0}",           rdb.Reducedwrite);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.steprate = {0}",               rdb.Steprate);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved10 = 0x{0:X8}",        rdb.Reserved10);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved11 = 0x{0:X8}",        rdb.Reserved11);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved12 = 0x{0:X8}",        rdb.Reserved12);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved13 = 0x{0:X8}",        rdb.Reserved13);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved14 = 0x{0:X8}",        rdb.Reserved14);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockLow = {0}",            rdb.RdbBlockLow);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockHigh = {0}",           rdb.RdbBlockHigh);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.LowCylinder = {0}",            rdb.LowCylinder);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}",           rdb.HighCylinder);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.CylBlocks = {0}",              rdb.CylBlocks);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.AutoParkSeconds = {0}",        rdb.AutoParkSeconds);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}",           rdb.HighCylinder);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved15 = 0x{0:X8}",        rdb.Reserved15);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskVendor = \"{0}\"",         rdb.DiskVendor);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskProduct = \"{0}\"",        rdb.DiskProduct);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskRevision = \"{0}\"",       rdb.DiskRevision);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerVendor = \"{0}\"",   rdb.ControllerVendor);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerProduct = \"{0}\"",  rdb.ControllerProduct);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerRevision = \"{0}\"", rdb.ControllerRevision);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved16 = 0x{0:X8}",        rdb.Reserved16);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved17 = 0x{0:X8}",        rdb.Reserved17);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved18 = 0x{0:X8}",        rdb.Reserved18);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved19 = 0x{0:X8}",        rdb.Reserved19);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved20 = 0x{0:X8}",        rdb.Reserved20);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved21 = 0x{0:X8}",        rdb.Reserved21);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved22 = 0x{0:X8}",        rdb.Reserved22);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved23 = 0x{0:X8}",        rdb.Reserved23);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved24 = 0x{0:X8}",        rdb.Reserved24);
-            DicConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved25 = 0x{0:X8}",        rdb.Reserved25);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.magic = 0x{0:X8}",             rdb.Magic);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.size = {0} longs, {1} bytes",  rdb.Size, rdb.Size * 4);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.checksum = 0x{0:X8}",          rdb.Checksum);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.targetID = {0}",               rdb.TargetId);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.block_size = {0}",             rdb.BlockSize);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.badblock_ptr = {0}",           rdb.BadblockPtr);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.partition_ptr = {0}",          rdb.PartitionPtr);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.fsheader_ptr = {0}",           rdb.FsheaderPtr);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.driveinitcode = {0}",          rdb.Driveinitcode);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved1 = 0x{0:X8}",         rdb.Reserved1);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved2 = 0x{0:X8}",         rdb.Reserved2);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved3 = 0x{0:X8}",         rdb.Reserved3);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved4 = 0x{0:X8}",         rdb.Reserved4);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved5 = 0x{0:X8}",         rdb.Reserved5);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved6 = 0x{0:X8}",         rdb.Reserved6);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.cylinders = {0}",              rdb.Cylinders);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.spt = {0}",                    rdb.Spt);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.heads = {0}",                  rdb.Heads);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.interleave = {0}",             rdb.Interleave);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.parking = {0}",                rdb.Parking);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved7 = 0x{0:X8}",         rdb.Reserved7);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved8 = 0x{0:X8}",         rdb.Reserved8);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved9 = 0x{0:X8}",         rdb.Reserved9);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.writeprecomp = {0}",           rdb.Writeprecomp);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reducedwrite = {0}",           rdb.Reducedwrite);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.steprate = {0}",               rdb.Steprate);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved10 = 0x{0:X8}",        rdb.Reserved10);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved11 = 0x{0:X8}",        rdb.Reserved11);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved12 = 0x{0:X8}",        rdb.Reserved12);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved13 = 0x{0:X8}",        rdb.Reserved13);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved14 = 0x{0:X8}",        rdb.Reserved14);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockLow = {0}",            rdb.RdbBlockLow);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.RDBBlockHigh = {0}",           rdb.RdbBlockHigh);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.LowCylinder = {0}",            rdb.LowCylinder);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}",           rdb.HighCylinder);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.CylBlocks = {0}",              rdb.CylBlocks);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.AutoParkSeconds = {0}",        rdb.AutoParkSeconds);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.HighCylinder = {0}",           rdb.HighCylinder);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved15 = 0x{0:X8}",        rdb.Reserved15);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskVendor = \"{0}\"",         rdb.DiskVendor);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskProduct = \"{0}\"",        rdb.DiskProduct);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.diskRevision = \"{0}\"",       rdb.DiskRevision);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerVendor = \"{0}\"",   rdb.ControllerVendor);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerProduct = \"{0}\"",  rdb.ControllerProduct);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.controllerRevision = \"{0}\"", rdb.ControllerRevision);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved16 = 0x{0:X8}",        rdb.Reserved16);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved17 = 0x{0:X8}",        rdb.Reserved17);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved18 = 0x{0:X8}",        rdb.Reserved18);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved19 = 0x{0:X8}",        rdb.Reserved19);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved20 = 0x{0:X8}",        rdb.Reserved20);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved21 = 0x{0:X8}",        rdb.Reserved21);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved22 = 0x{0:X8}",        rdb.Reserved22);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved23 = 0x{0:X8}",        rdb.Reserved23);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved24 = 0x{0:X8}",        rdb.Reserved24);
+            AaruConsole.DebugWriteLine("Amiga RDB plugin", "RDB.reserved25 = 0x{0:X8}",        rdb.Reserved25);
 
             // Reading BadBlock list
             List<BadBlockList> badBlockChain = new List<BadBlockList>();
             ulong              nextBlock     = rdb.BadblockPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a BadBlock block",
                                           nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
@@ -457,7 +457,7 @@ namespace Aaru.Partitions
 
                 if(magic != BAD_BLOCK_LIST_MAGIC) break;
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "Found BadBlock block");
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found BadBlock block");
 
                 BadBlockList chainEntry = new BadBlockList
                 {
@@ -471,13 +471,13 @@ namespace Aaru.Partitions
                 ulong entries = (chainEntry.Size - 6) / 2;
                 chainEntry.BlockPairs = new BadBlockEntry[entries];
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.magic = 0x{0:X8}", chainEntry.Magic);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.size = {0} longs, {1} bytes", chainEntry.Size,
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.magic = 0x{0:X8}", chainEntry.Magic);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.size = {0} longs, {1} bytes", chainEntry.Size,
                                           chainEntry.Size * 4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.checksum = 0x{0:X8}", chainEntry.Checksum);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.targetID = {0}",      chainEntry.TargetId);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.next_ptr = {0}",      chainEntry.NextPtr);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.reserved = 0x{0:X8}", chainEntry.Reserved);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.checksum = 0x{0:X8}", chainEntry.Checksum);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.targetID = {0}",      chainEntry.TargetId);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.next_ptr = {0}",      chainEntry.NextPtr);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "chainEntry.reserved = 0x{0:X8}", chainEntry.Reserved);
 
                 for(ulong i = 0; i < entries; i++)
                 {
@@ -485,7 +485,7 @@ namespace Aaru.Partitions
                     chainEntry.BlockPairs[i].GoodBlock =
                         BigEndianBitConverter.ToUInt32(sector, (int)(0x18 + i * 8 + 4));
 
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "Bad block at {0} replaced with good block at {1}",
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "Bad block at {0} replaced with good block at {1}",
                                               chainEntry.BlockPairs[i].BadBlock, chainEntry.BlockPairs[i].GoodBlock);
                 }
 
@@ -498,7 +498,7 @@ namespace Aaru.Partitions
             nextBlock = rdb.PartitionPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a PartitionEntry block",
                                           nextBlock + sectorOffset);
 
                 sector = imagePlugin.ReadSector(nextBlock + sectorOffset);
@@ -506,7 +506,7 @@ namespace Aaru.Partitions
 
                 if(magic != PARTITION_BLOCK_MAGIC) break;
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "Found PartitionEntry block");
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found PartitionEntry block");
 
                 PartitionEntry partEntry = new PartitionEntry
                 {
@@ -564,72 +564,72 @@ namespace Aaru.Partitions
                 Array.Copy(sector, 0x24, driveName, 0, 32);
                 partEntry.DriveName = StringHandlers.PascalToString(driveName, Encoding.GetEncoding("iso-8859-1"));
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.magic = 0x{0:X8}", partEntry.Magic);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.size = {0} longs, {1} bytes", partEntry.Size,
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.magic = 0x{0:X8}", partEntry.Magic);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.size = {0} longs, {1} bytes", partEntry.Size,
                                           partEntry.Size * 4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.checksum = 0x{0:X8}",  partEntry.Checksum);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.targetID = {0}",       partEntry.TargetId);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.next_ptr = {0}",       partEntry.NextPtr);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.flags = 0x{0:X8}",     partEntry.Flags);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved1 = 0x{0:X8}", partEntry.Reserved1);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved2 = 0x{0:X8}", partEntry.Reserved2);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.devFlags = 0x{0:X8}",  partEntry.DevFlags);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveNameLen = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.checksum = 0x{0:X8}",  partEntry.Checksum);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.targetID = {0}",       partEntry.TargetId);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.next_ptr = {0}",       partEntry.NextPtr);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.flags = 0x{0:X8}",     partEntry.Flags);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved1 = 0x{0:X8}", partEntry.Reserved1);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved2 = 0x{0:X8}", partEntry.Reserved2);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.devFlags = 0x{0:X8}",  partEntry.DevFlags);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveNameLen = {0}",
                                           partEntry.DriveNameLen);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveName = \"{0}\"",   partEntry.DriveName);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved3 = 0x{0:X8}",  partEntry.Reserved3);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved4 = 0x{0:X8}",  partEntry.Reserved4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved5 = 0x{0:X8}",  partEntry.Reserved5);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved6 = 0x{0:X8}",  partEntry.Reserved6);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved7 = 0x{0:X8}",  partEntry.Reserved7);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved8 = 0x{0:X8}",  partEntry.Reserved8);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved9 = 0x{0:X8}",  partEntry.Reserved9);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved10 = 0x{0:X8}", partEntry.Reserved10);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved11 = 0x{0:X8}", partEntry.Reserved11);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved12 = 0x{0:X8}", partEntry.Reserved12);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved13 = 0x{0:X8}", partEntry.Reserved13);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved14 = 0x{0:X8}", partEntry.Reserved14);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved15 = 0x{0:X8}", partEntry.Reserved15);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved16 = 0x{0:X8}", partEntry.Reserved16);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved17 = 0x{0:X8}", partEntry.Reserved17);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.driveName = \"{0}\"",   partEntry.DriveName);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved3 = 0x{0:X8}",  partEntry.Reserved3);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved4 = 0x{0:X8}",  partEntry.Reserved4);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved5 = 0x{0:X8}",  partEntry.Reserved5);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved6 = 0x{0:X8}",  partEntry.Reserved6);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved7 = 0x{0:X8}",  partEntry.Reserved7);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved8 = 0x{0:X8}",  partEntry.Reserved8);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved9 = 0x{0:X8}",  partEntry.Reserved9);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved10 = 0x{0:X8}", partEntry.Reserved10);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved11 = 0x{0:X8}", partEntry.Reserved11);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved12 = 0x{0:X8}", partEntry.Reserved12);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved13 = 0x{0:X8}", partEntry.Reserved13);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved14 = 0x{0:X8}", partEntry.Reserved14);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved15 = 0x{0:X8}", partEntry.Reserved15);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved16 = 0x{0:X8}", partEntry.Reserved16);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.reserved17 = 0x{0:X8}", partEntry.Reserved17);
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.size = {0} longs, {1} bytes",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.size = {0} longs, {1} bytes",
                                           partEntry.DosEnvVec.Size, partEntry.DosEnvVec.Size * 4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.block_size = {0} longs, {1} bytes",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.block_size = {0} longs, {1} bytes",
                                           partEntry.DosEnvVec.BlockSize, partEntry.DosEnvVec.BlockSize * 4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.sec_org = 0x{0:X8}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.sec_org = 0x{0:X8}",
                                           partEntry.DosEnvVec.SecOrg);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.surfaces = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.surfaces = {0}",
                                           partEntry.DosEnvVec.Surfaces);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.spb = {0}", partEntry.DosEnvVec.Spb);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bpt = {0}", partEntry.DosEnvVec.Bpt);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.reservedblocks = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.spb = {0}", partEntry.DosEnvVec.Spb);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bpt = {0}", partEntry.DosEnvVec.Bpt);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.reservedblocks = {0}",
                                           partEntry.DosEnvVec.Reservedblocks);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.prealloc = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.prealloc = {0}",
                                           partEntry.DosEnvVec.Prealloc);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.interleave = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.interleave = {0}",
                                           partEntry.DosEnvVec.Interleave);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.lowCylinder = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.lowCylinder = {0}",
                                           partEntry.DosEnvVec.LowCylinder);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.highCylinder = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.highCylinder = {0}",
                                           partEntry.DosEnvVec.HighCylinder);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.numBuffer = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.numBuffer = {0}",
                                           partEntry.DosEnvVec.NumBuffer);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bufMemType = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bufMemType = {0}",
                                           partEntry.DosEnvVec.BufMemType);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.maxTransfer = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.maxTransfer = {0}",
                                           partEntry.DosEnvVec.MaxTransfer);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.Mask = 0x{0:X8}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.Mask = 0x{0:X8}",
                                           partEntry.DosEnvVec.Mask);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bootPriority = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bootPriority = {0}",
                                           partEntry.DosEnvVec.BootPriority);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.dosType = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.dosType = {0}",
                                           AmigaDosTypeToString(partEntry.DosEnvVec.DosType));
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.baud = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.baud = {0}",
                                           partEntry.DosEnvVec.Baud);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.control = 0x{0:X8}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.control = 0x{0:X8}",
                                           partEntry.DosEnvVec.Control);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bootBlocks = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "partEntry.dosEnvVec.bootBlocks = {0}",
                                           partEntry.DosEnvVec.BootBlocks);
 
                 partitionEntries.Add(partEntry);
@@ -642,7 +642,7 @@ namespace Aaru.Partitions
             nextBlock = rdb.FsheaderPtr;
             while(nextBlock != 0xFFFFFFFF)
             {
-                DicConsole.DebugWriteLine("Amiga RDB plugin",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin",
                                           "Going to block {0} in search of a FileSystemHeader block", nextBlock);
 
                 sector = imagePlugin.ReadSector(nextBlock);
@@ -650,7 +650,7 @@ namespace Aaru.Partitions
 
                 if(magic != FILESYSTEM_HEADER_MAGIC) break;
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "Found FileSystemHeader block");
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found FileSystemHeader block");
 
                 FileSystemHeader fshd = new FileSystemHeader
                 {
@@ -679,38 +679,38 @@ namespace Aaru.Partitions
                     }
                 };
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.magic = 0x{0:X8}", fshd.Magic);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.size = {0} longs, {1} bytes", fshd.Size,
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.magic = 0x{0:X8}", fshd.Magic);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.size = {0} longs, {1} bytes", fshd.Size,
                                           fshd.Size * 4);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.checksum = 0x{0:X8}",  fshd.Checksum);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.targetID = {0}",       fshd.TargetId);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.next_ptr = {0}",       fshd.NextPtr);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.flags = 0x{0:X8}",     fshd.Flags);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.reserved1 = 0x{0:X8}", fshd.Reserved1);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.reserved2 = 0x{0:X8}", fshd.Reserved2);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dosType = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.checksum = 0x{0:X8}",  fshd.Checksum);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.targetID = {0}",       fshd.TargetId);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.next_ptr = {0}",       fshd.NextPtr);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.flags = 0x{0:X8}",     fshd.Flags);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.reserved1 = 0x{0:X8}", fshd.Reserved1);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.reserved2 = 0x{0:X8}", fshd.Reserved2);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dosType = {0}",
                                           AmigaDosTypeToString(fshd.DosType));
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.version = {0:D2}.{1:D2} (0x{2:X8})",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.version = {0:D2}.{1:D2} (0x{2:X8})",
                                           (fshd.Version & 0xFFFF0000) >> 16, fshd.Version & 0xFFFF, fshd.Version);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.patchFlags = 0x{0:X8}", fshd.PatchFlags);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.patchFlags = 0x{0:X8}", fshd.PatchFlags);
 
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.type = {0}",      fshd.Dnode.Type);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.task = {0}",      fshd.Dnode.Task);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.locked = {0}",    fshd.Dnode.Locked);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.handler = {0}",   fshd.Dnode.Handler);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.stackSize = {0}", fshd.Dnode.StackSize);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.priority = {0}",  fshd.Dnode.Priority);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.startup = {0}",   fshd.Dnode.Startup);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.seglist_ptr = {0}",
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.type = {0}",      fshd.Dnode.Type);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.task = {0}",      fshd.Dnode.Task);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.locked = {0}",    fshd.Dnode.Locked);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.handler = {0}",   fshd.Dnode.Handler);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.stackSize = {0}", fshd.Dnode.StackSize);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.priority = {0}",  fshd.Dnode.Priority);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.startup = {0}",   fshd.Dnode.Startup);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.seglist_ptr = {0}",
                                           fshd.Dnode.SeglistPtr);
-                DicConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.global_vec = 0x{0:X8}", fshd.Dnode.GlobalVec);
+                AaruConsole.DebugWriteLine("Amiga RDB plugin", "FSHD.dnode.global_vec = 0x{0:X8}", fshd.Dnode.GlobalVec);
 
                 nextBlock = fshd.Dnode.SeglistPtr;
                 bool        thereAreLoadSegments = false;
                 Sha1Context sha1Ctx              = new Sha1Context();
                 while(nextBlock != 0xFFFFFFFF)
                 {
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a LoadSegment block",
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "Going to block {0} in search of a LoadSegment block",
                                               nextBlock);
 
                     sector = imagePlugin.ReadSector(nextBlock);
@@ -718,7 +718,7 @@ namespace Aaru.Partitions
 
                     if(magicSeg != LOAD_SEG_MAGIC) break;
 
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "Found LoadSegment block");
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "Found LoadSegment block");
 
                     thereAreLoadSegments = true;
                     LoadSegment loadSeg = new LoadSegment
@@ -732,12 +732,12 @@ namespace Aaru.Partitions
                     loadSeg.LoadData = new byte[(loadSeg.Size - 5) * 4];
                     Array.Copy(sector, 0x14, loadSeg.LoadData, 0, (loadSeg.Size - 5) * 4);
 
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.magic = 0x{0:X8}", loadSeg.Magic);
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.size = {0} longs, {1} bytes", loadSeg.Size,
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.magic = 0x{0:X8}", loadSeg.Magic);
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.size = {0} longs, {1} bytes", loadSeg.Size,
                                               loadSeg.Size * 4);
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.checksum = 0x{0:X8}", loadSeg.Checksum);
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.targetID = {0}",      loadSeg.TargetId);
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.next_ptr = {0}",      loadSeg.NextPtr);
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.checksum = 0x{0:X8}", loadSeg.Checksum);
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.targetID = {0}",      loadSeg.TargetId);
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "loadSeg.next_ptr = {0}",      loadSeg.NextPtr);
 
                     segmentEntries.Add(loadSeg);
                     nextBlock = loadSeg.NextPtr;
@@ -748,7 +748,7 @@ namespace Aaru.Partitions
                 if(thereAreLoadSegments)
                 {
                     string loadSegSha1 = sha1Ctx.End();
-                    DicConsole.DebugWriteLine("Amiga RDB plugin", "LoadSegment data SHA1: {0}", loadSegSha1);
+                    AaruConsole.DebugWriteLine("Amiga RDB plugin", "LoadSegment data SHA1: {0}", loadSegSha1);
                 }
 
                 fshdEntries.Add(fshd);

@@ -412,26 +412,26 @@ namespace Aaru.Core.Devices
             if(CanReadRaw)
             {
                 if(readLong16)
-                    DicConsole.WriteLine("Using SCSI READ LONG (16) command.");
+                    AaruConsole.WriteLine("Using SCSI READ LONG (16) command.");
                 else if(readLong10 || readLongDvd)
-                    DicConsole.WriteLine("Using SCSI READ LONG (10) command.");
+                    AaruConsole.WriteLine("Using SCSI READ LONG (10) command.");
                 else if(syqReadLong10)
-                    DicConsole.WriteLine("Using SyQuest READ LONG (10) command.");
+                    AaruConsole.WriteLine("Using SyQuest READ LONG (10) command.");
                 else if(syqReadLong6)
-                    DicConsole.WriteLine("Using SyQuest READ LONG (6) command.");
+                    AaruConsole.WriteLine("Using SyQuest READ LONG (6) command.");
                 else if(hldtstReadRaw)
-                    DicConsole.WriteLine("Using HL-DT-ST raw DVD reading.");
+                    AaruConsole.WriteLine("Using HL-DT-ST raw DVD reading.");
                 else if(plextorReadRaw)
-                    DicConsole.WriteLine("Using Plextor raw DVD reading.");
+                    AaruConsole.WriteLine("Using Plextor raw DVD reading.");
             }
             else if(read16)
-                DicConsole.WriteLine("Using SCSI READ (16) command.");
+                AaruConsole.WriteLine("Using SCSI READ (16) command.");
             else if(read12)
-                DicConsole.WriteLine("Using SCSI READ (12) command.");
+                AaruConsole.WriteLine("Using SCSI READ (12) command.");
             else if(read10)
-                DicConsole.WriteLine("Using SCSI READ (10) command.");
+                AaruConsole.WriteLine("Using SCSI READ (10) command.");
             else if(read6)
-                DicConsole.WriteLine("Using SCSI READ (6) command.");
+                AaruConsole.WriteLine("Using SCSI READ (6) command.");
 
             return false;
         }
@@ -580,7 +580,7 @@ namespace Aaru.Core.Devices
                !dev.Error)
                 return false;
 
-            DicConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
+            AaruConsole.DebugWriteLine("SCSI Reader", "READ error:\n{0}", Sense.PrettifySense(senseBuf));
 
             return sense;
         }

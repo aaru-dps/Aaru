@@ -241,7 +241,7 @@ namespace Aaru.DiscImages
             }
             catch(InvalidCastException) { }
 
-            DicConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", imageInfo.Application,
+            AaruConsole.DebugWriteLine("DART plugin", "Image application = {0} version {1}", imageInfo.Application,
                                       imageInfo.ApplicationVersion);
 
             imageInfo.Sectors              = (ulong)(header.srcSize * 2);

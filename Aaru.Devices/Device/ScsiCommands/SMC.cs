@@ -93,7 +93,7 @@ namespace Aaru.Devices
                                         out sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "READ ATTRIBUTE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "READ ATTRIBUTE took {0} ms.", duration);
 
             return sense;
         }

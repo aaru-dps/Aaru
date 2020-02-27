@@ -63,14 +63,14 @@ namespace Aaru.Filesystems.LisaFS
                 if(device.Info.ReadableSectorTags == null ||
                    !device.Info.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                 {
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Underlying device does not support Lisa tags");
+                    AaruConsole.DebugWriteLine("LisaFS plugin", "Underlying device does not support Lisa tags");
                     return Errno.InOutError;
                 }
 
                 // Minimal LisaOS disk is 3.5" single sided double density, 800 sectors
                 if(device.Info.Sectors < 800)
                 {
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Device is too small");
+                    AaruConsole.DebugWriteLine("LisaFS plugin", "Device is too small");
                     return Errno.InOutError;
                 }
 
@@ -82,7 +82,7 @@ namespace Aaru.Filesystems.LisaFS
                 {
                     DecodeTag(device.ReadSectorTag(i, SectorTagType.AppleSectorTag), out LisaTag.PriamTag searchTag);
 
-                    DicConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
+                    AaruConsole.DebugWriteLine("LisaFS plugin", "Sector {0}, file ID 0x{1:X4}", i, searchTag.FileId);
 
                     if(volumePrefix == device.Info.Sectors && searchTag.FileId == FILEID_LOADER_SIGNED)
                         volumePrefix = i - 1;
@@ -185,7 +185,7 @@ namespace Aaru.Filesystems.LisaFS
                        mddf.blocksize || mddf.blocksize < device.Info.SectorSize ||
                        mddf.datasize                    != device.Info.SectorSize)
                     {
-                        DicConsole.DebugWriteLine("LisaFS plugin", "Incorrect MDDF found");
+                        AaruConsole.DebugWriteLine("LisaFS plugin", "Incorrect MDDF found");
                         return Errno.InvalidArgument;
                     }
 
@@ -193,16 +193,16 @@ namespace Aaru.Filesystems.LisaFS
                     switch(mddf.fsversion)
                     {
                         case LISA_V1:
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v1");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v1");
                             break;
                         case LISA_V2:
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v2");
                             break;
                         case LISA_V3:
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v3");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Mounting LisaFS v3");
                             break;
                         default:
-                            DicConsole.ErrorWriteLine("Cannot mount LisaFS version {0}", mddf.fsversion.ToString());
+                            AaruConsole.ErrorWriteLine("Cannot mount LisaFS version {0}", mddf.fsversion.ToString());
                             return Errno.NotSupported;
                     }
 
@@ -223,7 +223,7 @@ namespace Aaru.Filesystems.LisaFS
                     Errno error = ReadSRecords();
                     if(error != Errno.NoError)
                     {
-                        DicConsole.ErrorWriteLine("Error {0} reading S-Records file.", error);
+                        AaruConsole.ErrorWriteLine("Error {0} reading S-Records file.", error);
                         return error;
                     }
 
@@ -234,7 +234,7 @@ namespace Aaru.Filesystems.LisaFS
 
                     if(error != Errno.NoError)
                     {
-                        DicConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}",
+                        AaruConsole.DebugWriteLine("LisaFS plugin", "Cannot read Catalog File, error {0}",
                                                   error.ToString());
                         mounted = false;
                         return error;
@@ -246,7 +246,7 @@ namespace Aaru.Filesystems.LisaFS
                         error = ReadSystemFile(FILEID_BOOT_SIGNED, out _);
                         if(error != Errno.NoError)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot blocks");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot blocks");
                             mounted = false;
                             return error;
                         }
@@ -254,7 +254,7 @@ namespace Aaru.Filesystems.LisaFS
                         error = ReadSystemFile(FILEID_LOADER_SIGNED, out _);
                         if(error != Errno.NoError)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot loader");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read boot loader");
                             mounted = false;
                             return error;
                         }
@@ -262,7 +262,7 @@ namespace Aaru.Filesystems.LisaFS
                         error = ReadSystemFile((short)FILEID_MDDF, out _);
                         if(error != Errno.NoError)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read MDDF");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read MDDF");
                             mounted = false;
                             return error;
                         }
@@ -270,7 +270,7 @@ namespace Aaru.Filesystems.LisaFS
                         error = ReadSystemFile((short)FILEID_BITMAP, out _);
                         if(error != Errno.NoError)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read volume bitmap");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read volume bitmap");
                             mounted = false;
                             return error;
                         }
@@ -278,7 +278,7 @@ namespace Aaru.Filesystems.LisaFS
                         error = ReadSystemFile((short)FILEID_SRECORD, out _);
                         if(error != Errno.NoError)
                         {
-                            DicConsole.DebugWriteLine("LisaFS plugin", "Unable to read S-Records file");
+                            AaruConsole.DebugWriteLine("LisaFS plugin", "Unable to read S-Records file");
                             mounted = false;
                             return error;
                         }
@@ -312,12 +312,12 @@ namespace Aaru.Filesystems.LisaFS
                     return Errno.NoError;
                 }
 
-                DicConsole.DebugWriteLine("LisaFS plugin", "Not a Lisa filesystem");
+                AaruConsole.DebugWriteLine("LisaFS plugin", "Not a Lisa filesystem");
                 return Errno.NotSupported;
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception {0}, {1}, {2}", ex.Message, ex.InnerException, ex.StackTrace);
                 return Errno.InOutError;
             }
         }

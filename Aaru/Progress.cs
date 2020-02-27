@@ -40,57 +40,57 @@ namespace Aaru
 
         internal static void EndProgress()
         {
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
         }
 
         internal static void UpdateProgress(string text, long current, long maximum)
         {
             ClearCurrentConsoleLine();
-            DicConsole.Write(text);
+            AaruConsole.Write(text);
         }
 
         internal static void PulseProgress(string text)
         {
             ClearCurrentConsoleLine();
-            DicConsole.Write(text);
+            AaruConsole.Write(text);
         }
 
         internal static void InitProgress2() { }
 
         internal static void EndProgress2()
         {
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
         }
 
         internal static void UpdateProgress2(string text, long current, long maximum)
         {
             ClearCurrentConsoleLine();
-            DicConsole.Write(text);
+            AaruConsole.Write(text);
         }
 
         internal static void InitTwoProgress() { }
 
         internal static void EndTwoProgress()
         {
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
         }
 
         internal static void UpdateTwoProgress(string text, long current, long maximum, string text2, long current2,
                                                long   maximum2)
         {
             ClearCurrentConsoleLine();
-            DicConsole.Write(text + ": " + text2);
+            AaruConsole.Write(text + ": " + text2);
         }
 
         internal static void UpdateStatus(string text)
         {
             ClearCurrentConsoleLine();
-            DicConsole.WriteLine(text);
+            AaruConsole.WriteLine(text);
         }
 
         internal static void ErrorMessage(string text)
         {
-            DicConsole.ErrorWriteLine(text);
+            AaruConsole.ErrorWriteLine(text);
         }
 
         static void ClearCurrentConsoleLine()

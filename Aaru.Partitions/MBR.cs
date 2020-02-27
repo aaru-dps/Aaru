@@ -219,8 +219,8 @@ namespace Aaru.Partitions
             DiskManagerMasterBootRecord mbrOntrack =
                 Marshal.ByteArrayToStructureLittleEndian<DiskManagerMasterBootRecord>(sector);
 
-            DicConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}",     imagePlugin.Info.XmlMediaType);
-            DicConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
+            AaruConsole.DebugWriteLine("MBR plugin", "xmlmedia = {0}",     imagePlugin.Info.XmlMediaType);
+            AaruConsole.DebugWriteLine("MBR plugin", "mbr.magic = {0:X4}", mbr.magic);
 
             if(mbr.magic != MBR_MAGIC) return false; // Not MBR
 
@@ -228,7 +228,7 @@ namespace Aaru.Partitions
 
             ulong signature = BitConverter.ToUInt64(hdrBytes, 0);
 
-            DicConsole.DebugWriteLine("MBR Plugin", "gpt.signature = 0x{0:X16}", signature);
+            AaruConsole.DebugWriteLine("MBR Plugin", "gpt.signature = 0x{0:X16}", signature);
 
             if(signature == GPT_MAGIC) return false;
 
@@ -236,7 +236,7 @@ namespace Aaru.Partitions
             {
                 hdrBytes  = imagePlugin.ReadSector(sectorOffset);
                 signature = BitConverter.ToUInt64(hdrBytes, 512);
-                DicConsole.DebugWriteLine("MBR Plugin", "gpt.signature @ 0x200 = 0x{0:X16}", signature);
+                AaruConsole.DebugWriteLine("MBR Plugin", "gpt.signature @ 0x200 = 0x{0:X16}", signature);
                 if(signature == GPT_MAGIC) return false;
             }
 
@@ -300,21 +300,21 @@ namespace Aaru.Partitions
                 // Some buggy implementations do some rounding errors getting a few sectors beyond device size
                 if(lbaStart + lbaSectors > imagePlugin.Info.Sectors) lbaSectors = imagePlugin.Info.Sectors - lbaStart;
 
-                DicConsole.DebugWriteLine("MBR plugin", "entry.status {0}",         entry.status);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.type {0}",           entry.type);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.lba_start {0}",      entry.lba_start);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.lba_sectors {0}",    entry.lba_sectors);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.start_cylinder {0}", startCylinder);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.start_head {0}",     entry.start_head);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.start_sector {0}",   startSector);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.end_cylinder {0}",   endCylinder);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.end_head {0}",       entry.end_head);
-                DicConsole.DebugWriteLine("MBR plugin", "entry.end_sector {0}",     endSector);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.status {0}",         entry.status);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.type {0}",           entry.type);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.lba_start {0}",      entry.lba_start);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.lba_sectors {0}",    entry.lba_sectors);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.start_cylinder {0}", startCylinder);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.start_head {0}",     entry.start_head);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.start_sector {0}",   startSector);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.end_cylinder {0}",   endCylinder);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.end_head {0}",       entry.end_head);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.end_sector {0}",     endSector);
 
-                DicConsole.DebugWriteLine("MBR plugin", "entry.minix = {0}", minix);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.minix = {0}", minix);
 
-                DicConsole.DebugWriteLine("MBR plugin", "lba_start {0}",   lbaStart);
-                DicConsole.DebugWriteLine("MBR plugin", "lba_sectors {0}", lbaSectors);
+                AaruConsole.DebugWriteLine("MBR plugin", "lba_start {0}",   lbaStart);
+                AaruConsole.DebugWriteLine("MBR plugin", "lba_sectors {0}", lbaSectors);
 
                 if(valid && minix) // Let's mix the fun
                     if(GetMinix(imagePlugin, lbaStart, divider, sectorOffset, sectorSize, out List<Partition> mnxParts))
@@ -348,7 +348,7 @@ namespace Aaru.Partitions
                     }
                 }
 
-                DicConsole.DebugWriteLine("MBR plugin", "entry.extended = {0}", extended);
+                AaruConsole.DebugWriteLine("MBR plugin", "entry.extended = {0}", extended);
 
                 if(!extended) continue;
 
@@ -361,7 +361,7 @@ namespace Aaru.Partitions
 
                     ExtendedBootRecord ebr = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
-                    DicConsole.DebugWriteLine("MBR plugin", "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_MAGIC);
+                    AaruConsole.DebugWriteLine("MBR plugin", "ebr.magic == MBR_Magic = {0}", ebr.magic == MBR_MAGIC);
 
                     if(ebr.magic != MBR_MAGIC) break;
 
@@ -378,16 +378,16 @@ namespace Aaru.Partitions
                         ulong extSectors = ebrEntry.lba_sectors;
                         bool  extMinix   = false;
 
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.status {0}",         ebrEntry.status);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.type {0}",           ebrEntry.type);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_start {0}",      ebrEntry.lba_start);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_sectors {0}",    ebrEntry.lba_sectors);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_cylinder {0}", startCylinder);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_head {0}",     ebrEntry.start_head);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_sector {0}",   startSector);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_cylinder {0}",   endCylinder);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_head {0}",       ebrEntry.end_head);
-                        DicConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_sector {0}",     endSector);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.status {0}",         ebrEntry.status);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.type {0}",           ebrEntry.type);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_start {0}",      ebrEntry.lba_start);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.lba_sectors {0}",    ebrEntry.lba_sectors);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_cylinder {0}", startCylinder);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_head {0}",     ebrEntry.start_head);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.start_sector {0}",   startSector);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_cylinder {0}",   endCylinder);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_head {0}",       ebrEntry.end_head);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ebr_entry.end_sector {0}",     endSector);
 
                         // Let's start the fun...
                         extValid &= ebrEntry.status == 0x00 || ebrEntry.status == 0x80;
@@ -410,8 +410,8 @@ namespace Aaru.Partitions
                         extStart   /= divider;
                         extSectors /= divider;
 
-                        DicConsole.DebugWriteLine("MBR plugin", "ext_start {0}",   extStart);
-                        DicConsole.DebugWriteLine("MBR plugin", "ext_sectors {0}", extSectors);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ext_start {0}",   extStart);
+                        AaruConsole.DebugWriteLine("MBR plugin", "ext_sectors {0}", extSectors);
 
                         if(ebrEntry.type == 0x05 || ebrEntry.type == 0x0F || ebrEntry.type == 0x15 ||
                            ebrEntry.type == 0x1F || ebrEntry.type == 0x85 || ebrEntry.type == 0x91 ||
@@ -460,7 +460,7 @@ namespace Aaru.Partitions
                         partitions.Add(part);
                     }
 
-                    DicConsole.DebugWriteLine("MBR plugin", "next_start {0}", nextStart);
+                    AaruConsole.DebugWriteLine("MBR plugin", "next_start {0}", nextStart);
                     processingExtended &= nextStart != 0;
                     processingExtended &= nextStart <= imagePlugin.Info.Sectors;
                     lbaStart           =  nextStart;
@@ -481,7 +481,7 @@ namespace Aaru.Partitions
 
             ExtendedBootRecord mnx = Marshal.ByteArrayToStructureLittleEndian<ExtendedBootRecord>(sector);
 
-            DicConsole.DebugWriteLine("MBR plugin", "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_MAGIC);
+            AaruConsole.DebugWriteLine("MBR plugin", "mnx.magic == MBR_Magic = {0}", mnx.magic == MBR_MAGIC);
 
             if(mnx.magic != MBR_MAGIC) return false;
 
@@ -497,16 +497,16 @@ namespace Aaru.Partitions
                 ulong  mnxStart      = mnxEntry.lba_start;
                 ulong  mnxSectors    = mnxEntry.lba_sectors;
 
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.status {0}",         mnxEntry.status);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.type {0}",           mnxEntry.type);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_start {0}",      mnxEntry.lba_start);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_sectors {0}",    mnxEntry.lba_sectors);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_cylinder {0}", startCylinder);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_head {0}",     mnxEntry.start_head);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_sector {0}",   startSector);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_cylinder {0}",   endCylinder);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_head {0}",       mnxEntry.end_head);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_sector {0}",     endSector);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.status {0}",         mnxEntry.status);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.type {0}",           mnxEntry.type);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_start {0}",      mnxEntry.lba_start);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.lba_sectors {0}",    mnxEntry.lba_sectors);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_cylinder {0}", startCylinder);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_head {0}",     mnxEntry.start_head);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.start_sector {0}",   startSector);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_cylinder {0}",   endCylinder);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_head {0}",       mnxEntry.end_head);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_entry.end_sector {0}",     endSector);
 
                 mnxValid &= mnxEntry.status == 0x00 || mnxEntry.status == 0x80;
                 mnxValid &= mnxEntry.type   == 0x81 || mnxEntry.type   == 0x80;
@@ -525,8 +525,8 @@ namespace Aaru.Partitions
                 mnxStart   /= divider;
                 mnxSectors /= divider;
 
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_start {0}",   mnxStart);
-                DicConsole.DebugWriteLine("MBR plugin", "mnx_sectors {0}", mnxSectors);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_start {0}",   mnxStart);
+                AaruConsole.DebugWriteLine("MBR plugin", "mnx_sectors {0}", mnxSectors);
 
                 if(!mnxValid) continue;
 

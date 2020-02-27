@@ -90,27 +90,27 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("print-hex");
 
-            DicConsole.DebugWriteLine("PrintHex command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("PrintHex command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("PrintHex command", "--length={0}", length);
-            DicConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", longSectors);
-            DicConsole.DebugWriteLine("PrintHex command", "--start={0}", start);
-            DicConsole.DebugWriteLine("PrintHex command", "--verbose={0}", verbose);
-            DicConsole.DebugWriteLine("PrintHex command", "--width={0}", width);
+            AaruConsole.DebugWriteLine("PrintHex command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("PrintHex command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("PrintHex command", "--length={0}", length);
+            AaruConsole.DebugWriteLine("PrintHex command", "--long-sectors={0}", longSectors);
+            AaruConsole.DebugWriteLine("PrintHex command", "--start={0}", start);
+            AaruConsole.DebugWriteLine("PrintHex command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("PrintHex command", "--width={0}", width);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -119,7 +119,7 @@ namespace Aaru.Commands.Image
 
             if(inputFormat == null)
             {
-                DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
+                AaruConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
 
                 return(int)ErrorNumber.UnrecognizedFormat;
             }
@@ -128,11 +128,11 @@ namespace Aaru.Commands.Image
 
             for(ulong i = 0; i < length; i++)
             {
-                DicConsole.WriteLine("Sector {0}", start + i);
+                AaruConsole.WriteLine("Sector {0}", start + i);
 
                 if(inputFormat.Info.ReadableSectorTags == null)
                 {
-                    DicConsole.
+                    AaruConsole.
                         WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
 
                     longSectors = false;
@@ -141,7 +141,7 @@ namespace Aaru.Commands.Image
                 {
                     if(inputFormat.Info.ReadableSectorTags.Count == 0)
                     {
-                        DicConsole.
+                        AaruConsole.
                             WriteLine("Requested sectors with tags, unsupported by underlying image format, printing only user data.");
 
                         longSectors = false;

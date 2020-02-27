@@ -67,65 +67,65 @@ namespace Aaru.DiscImages
             stream.Read(hdr, 0, 260);
             header = Marshal.ByteArrayToStructureLittleEndian<Bw5Header>(hdr);
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.signature = {0}",
                                       StringHandlers.CToString(header.signature));
 
             for(int i = 0; i < header.unknown1.Length; i++)
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown1[{1}] = 0x{0:X8}", header.unknown1[i],
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown1[{1}] = 0x{0:X8}", header.unknown1[i],
                                           i);
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.profile = {0}", header.profile);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessions = {0}", header.sessions);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.profile = {0}", header.profile);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessions = {0}", header.sessions);
 
             for(int i = 0; i < header.unknown2.Length; i++)
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown2[{1}] = 0x{0:X8}", header.unknown2[i],
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown2[{1}] = 0x{0:X8}", header.unknown2[i],
                                           i);
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcnIsValid = {0}", header.mcnIsValid);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcn = {0}", StringHandlers.CToString(header.mcn));
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown3 = 0x{0:X4}", header.unknown3);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcnIsValid = {0}", header.mcnIsValid);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mcn = {0}", StringHandlers.CToString(header.mcn));
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown3 = 0x{0:X4}", header.unknown3);
 
             for(int i = 0; i < header.unknown4.Length; i++)
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown4[{1}] = 0x{0:X8}", header.unknown4[i],
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown4[{1}] = 0x{0:X8}", header.unknown4[i],
                                           i);
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.pmaLen = {0}", header.pmaLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.atipLen = {0}", header.atipLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdtLen = {0}", header.cdtLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdInfoLen = {0}", header.cdInfoLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.bcaLen = {0}", header.bcaLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.pmaLen = {0}", header.pmaLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.atipLen = {0}", header.atipLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdtLen = {0}", header.cdtLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.cdInfoLen = {0}", header.cdInfoLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.bcaLen = {0}", header.bcaLen);
 
             for(int i = 0; i < header.unknown5.Length; i++)
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown5[{1}] = 0x{0:X8}", header.unknown5[i],
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown5[{1}] = 0x{0:X8}", header.unknown5[i],
                                           i);
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdStrLen = {0}", header.dvdStrLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdInfoLen = {0}", header.dvdInfoLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdStrLen = {0}", header.dvdStrLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dvdInfoLen = {0}", header.dvdInfoLen);
 
             for(int i = 0; i < header.unknown6.Length; i++)
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown6[{1}] = 0x{0:X2}", header.unknown6[i],
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unknown6[{1}] = 0x{0:X2}", header.unknown6[i],
                                           i);
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.manufacturer = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.manufacturer = {0}",
                                       StringHandlers.CToString(header.manufacturer));
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.product = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.product = {0}",
                                       StringHandlers.CToString(header.product));
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.revision = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.revision = {0}",
                                       StringHandlers.CToString(header.revision));
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.vendor = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.vendor = {0}",
                                       StringHandlers.CToString(header.vendor));
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.volumeId = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.volumeId = {0}",
                                       StringHandlers.CToString(header.volumeId));
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.mode2ALen = {0}", header.mode2ALen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.unkBlkLen = {0}", header.unkBlkLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.dataLen = {0}", header.dataLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessionsLen = {0}", header.sessionsLen);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "header.dpmLen = {0}", header.dpmLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.mode2ALen = {0}", header.mode2ALen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.unkBlkLen = {0}", header.unkBlkLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dataLen = {0}", header.dataLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.sessionsLen = {0}", header.sessionsLen);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "header.dpmLen = {0}", header.dpmLen);
 
             mode2A = new byte[header.mode2ALen];
 
@@ -136,7 +136,7 @@ namespace Aaru.DiscImages
                 var decoded2A = ModePage_2A.Decode(mode2A);
 
                 if(!(decoded2A is null))
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "mode page 2A: {0}",
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "mode page 2A: {0}",
                                               Modes.PrettifyModePage_2A(decoded2A));
                 else
                     mode2A = null;
@@ -161,7 +161,7 @@ namespace Aaru.DiscImages
                 PMA.CDPMA? decodedPma = PMA.Decode(pma);
 
                 if(decodedPma.HasValue)
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "PMA: {0}", PMA.Prettify(decodedPma));
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "PMA: {0}", PMA.Prettify(decodedPma));
                 else
                     pma = null;
             }
@@ -180,7 +180,7 @@ namespace Aaru.DiscImages
                 ATIP.CDATIP? decodedAtip = ATIP.Decode(atip);
 
                 if(decodedAtip.HasValue)
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "ATIP: {0}", ATIP.Prettify(decodedAtip));
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ATIP: {0}", ATIP.Prettify(decodedAtip));
                 else
                     atip = null;
             }
@@ -199,7 +199,7 @@ namespace Aaru.DiscImages
                 CDTextOnLeadIn.CDText? decodedCdText = CDTextOnLeadIn.Decode(cdtext);
 
                 if(decodedCdText.HasValue)
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "CD-Text: {0}",
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "CD-Text: {0}",
                                               CDTextOnLeadIn.Prettify(decodedCdText));
                 else
                     cdtext = null;
@@ -231,7 +231,7 @@ namespace Aaru.DiscImages
                 PFI.PhysicalFormatInformation? decodedPfi = PFI.Decode(pfi);
 
                 if(decodedPfi.HasValue)
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "PFI: {0}", PFI.Prettify(decodedPfi));
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "PFI: {0}", PFI.Prettify(decodedPfi));
                 else
                 {
                     pfi = null;
@@ -263,7 +263,7 @@ namespace Aaru.DiscImages
             {
                 stream.Read(discInformation, 0, discInformation.Length);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "Disc information: {0}",
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Disc information: {0}",
                                           PrintHex.ByteArrayToHexArrayString(discInformation, 40));
             }
             else
@@ -279,7 +279,7 @@ namespace Aaru.DiscImages
             byte[] dataPathBytes = new byte[dataPathLen];
             stream.Read(dataPathBytes, 0, dataPathBytes.Length);
             dataPath = Encoding.Unicode.GetString(dataPathBytes);
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", dataPath);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Data path: {0}", dataPath);
 
             dataFiles = new List<Bw5DataFile>();
 
@@ -318,24 +318,24 @@ namespace Aaru.DiscImages
                 dataFile.Filename = Encoding.Unicode.GetString(dataFile.FilenameBytes);
                 dataFiles.Add(dataFile);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.type = 0x{0:X8}", dataFile.Type);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.length = {0}", dataFile.Length);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.type = 0x{0:X8}", dataFile.Type);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.length = {0}", dataFile.Length);
 
                 for(int i = 0; i < dataFile.Unknown1.Length; i++)
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown1[{1}] = {0}",
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown1[{1}] = {0}",
                                               dataFile.Unknown1[i], i);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.offset = {0}", dataFile.Offset);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.offset = {0}", dataFile.Offset);
 
                 for(int i = 0; i < dataFile.Unknown2.Length; i++)
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown2[{1}] = {0}",
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown2[{1}] = {0}",
                                               dataFile.Unknown2[i], i);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.startLba = {0}", dataFile.StartLba);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.sectors = {0}", dataFile.Sectors);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.filenameLen = {0}", dataFile.FilenameLen);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.filename = {0}", dataFile.Filename);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown3 = {0}", dataFile.Unknown3);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.startLba = {0}", dataFile.StartLba);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.sectors = {0}", dataFile.Sectors);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.filenameLen = {0}", dataFile.FilenameLen);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.filename = {0}", dataFile.Filename);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "dataFile.unknown3 = {0}", dataFile.Unknown3);
             }
 
             bwSessions = new List<Bw5SessionDescriptor>();
@@ -354,16 +354,16 @@ namespace Aaru.DiscImages
                 session.LastTrack  = BitConverter.ToUInt16(tmpArray, 14);
                 session.Tracks     = new Bw5TrackDescriptor[session.Entries];
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].filename = {1}", ses, session.Sequence);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].entries = {1}", ses, session.Entries);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].unknown = {1}", ses, session.Unknown);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].start = {1}", ses, session.Start);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].end = {1}", ses, session.End);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].filename = {1}", ses, session.Sequence);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].entries = {1}", ses, session.Entries);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].unknown = {1}", ses, session.Unknown);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].start = {1}", ses, session.Start);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].end = {1}", ses, session.End);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].firstTrack = {1}", ses,
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].firstTrack = {1}", ses,
                                           session.FirstTrack);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].lastTrack = {1}", ses, session.LastTrack);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].lastTrack = {1}", ses, session.LastTrack);
 
                 for(int tSeq = 0; tSeq < session.Entries; tSeq++)
                 {
@@ -379,82 +379,82 @@ namespace Aaru.DiscImages
                         stream.Seek(-8, SeekOrigin.Current);
                     }
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].type = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].type = {2}", ses, tSeq,
                                               session.Tracks[tSeq].type);
 
                     for(int i = 0; i < session.Tracks[tSeq].unknown1.Length; i++)
-                        DicConsole.DebugWriteLine("BlindWrite5 plugin",
+                        AaruConsole.DebugWriteLine("BlindWrite5 plugin",
                                                   "session[{0}].track[{1}].unknown1[{2}] = 0x{3:X2}", ses, tSeq, i,
                                                   session.Tracks[tSeq].unknown1[i]);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown2 = 0x{2:X8}", ses,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown2 = 0x{2:X8}", ses,
                                               tSeq, session.Tracks[tSeq].unknown2);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].subchannel = {2}", ses,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].subchannel = {2}", ses,
                                               tSeq, session.Tracks[tSeq].subchannel);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown3 = 0x{2:X2}", ses,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown3 = 0x{2:X2}", ses,
                                               tSeq, session.Tracks[tSeq].unknown3);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].ctl = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].ctl = {2}", ses, tSeq,
                                               session.Tracks[tSeq].ctl);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].adr = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].adr = {2}", ses, tSeq,
                                               session.Tracks[tSeq].adr);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].point = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].point = {2}", ses, tSeq,
                                               session.Tracks[tSeq].point);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown4 = 0x{2:X2}", ses,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown4 = 0x{2:X2}", ses,
                                               tSeq, session.Tracks[tSeq].tno);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].min = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].min = {2}", ses, tSeq,
                                               session.Tracks[tSeq].min);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sec = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sec = {2}", ses, tSeq,
                                               session.Tracks[tSeq].sec);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].frame = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].frame = {2}", ses, tSeq,
                                               session.Tracks[tSeq].frame);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].zero = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].zero = {2}", ses, tSeq,
                                               session.Tracks[tSeq].zero);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pmin = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pmin = {2}", ses, tSeq,
                                               session.Tracks[tSeq].pmin);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].psec = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].psec = {2}", ses, tSeq,
                                               session.Tracks[tSeq].psec);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pframe = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pframe = {2}", ses, tSeq,
                                               session.Tracks[tSeq].pframe);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown5 = 0x{2:X2}", ses,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown5 = 0x{2:X2}", ses,
                                               tSeq, session.Tracks[tSeq].unknown5);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pregap = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].pregap = {2}", ses, tSeq,
                                               session.Tracks[tSeq].pregap);
 
                     for(int i = 0; i < session.Tracks[tSeq].unknown6.Length; i++)
-                        DicConsole.DebugWriteLine("BlindWrite5 plugin",
+                        AaruConsole.DebugWriteLine("BlindWrite5 plugin",
                                                   "session[{0}].track[{1}].unknown6[{2}] = 0x{3:X8}", ses, tSeq, i,
                                                   session.Tracks[tSeq].unknown6[i]);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].startLba = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].startLba = {2}", ses, tSeq,
                                               session.Tracks[tSeq].startLba);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sectors = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].sectors = {2}", ses, tSeq,
                                               session.Tracks[tSeq].sectors);
 
                     for(int i = 0; i < session.Tracks[tSeq].unknown7.Length; i++)
-                        DicConsole.DebugWriteLine("BlindWrite5 plugin",
+                        AaruConsole.DebugWriteLine("BlindWrite5 plugin",
                                                   "session[{0}].track[{1}].unknown7[{2}] = 0x{3:X8}", ses, tSeq, i,
                                                   session.Tracks[tSeq].unknown7[i]);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].session = {2}", ses, tSeq,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].session = {2}", ses, tSeq,
                                               session.Tracks[tSeq].session);
 
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "session[{0}].track[{1}].unknown8 = 0x{2:X4}", ses,
                                               tSeq, session.Tracks[tSeq].unknown8);
 
                     if(session.Tracks[tSeq].type == Bw5TrackType.Dvd ||
@@ -463,7 +463,7 @@ namespace Aaru.DiscImages
 
                     {
                         for(int i = 0; i < session.Tracks[tSeq].unknown9.Length; i++)
-                            DicConsole.DebugWriteLine("BlindWrite5 plugin",
+                            AaruConsole.DebugWriteLine("BlindWrite5 plugin",
                                                       "session[{0}].track[{1}].unknown9[{2}] = 0x{3:X8}", ses, tSeq, i,
                                                       session.Tracks[tSeq].unknown9[i]);
                     }
@@ -483,9 +483,9 @@ namespace Aaru.DiscImages
             stream.Read(footer, 0, footer.Length);
 
             if(bw5Footer.SequenceEqual(footer))
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "Correctly arrived end of image");
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Correctly arrived end of image");
             else
-                DicConsole.
+                AaruConsole.
                     ErrorWriteLine("BlindWrite5 image ends after expected position. Probably new version with different data. Errors may occur.");
 
             filePaths = new List<DataFileCharacteristics>();
@@ -603,7 +603,7 @@ namespace Aaru.DiscImages
                                     }
                                     else
                                     {
-                                        DicConsole.ErrorWriteLine("Cannot find data file {0}", dataFile.Filename);
+                                        AaruConsole.ErrorWriteLine("Cannot find data file {0}", dataFile.Filename);
 
                                         return false;
                                     }
@@ -627,7 +627,7 @@ namespace Aaru.DiscImages
 
                             break;
                         default:
-                            DicConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}",
+                            AaruConsole.ErrorWriteLine("BlindWrite5 found unknown subchannel size: {0}",
                                                       sectorSize - 2352);
 
                             return false;
@@ -660,7 +660,7 @@ namespace Aaru.DiscImages
             trackFlags        = new Dictionary<uint, byte>();
             imageInfo.Sectors = 0;
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "Building maps");
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Building maps");
 
             foreach(Bw5SessionDescriptor ses in bwSessions)
             {
@@ -853,40 +853,40 @@ namespace Aaru.DiscImages
                 }
             }
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "printing track map");
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "printing track map");
 
             foreach(Track track in Tracks)
             {
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", track.TrackSequence);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", track.TrackDescription);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", track.TrackType);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", track.TrackSequence);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", track.TrackDescription);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", track.TrackType);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}",
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}",
                                           track.TrackStartSector);
 
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition ending sector: {0}", track.TrackEndSector);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition ending sector: {0}", track.TrackEndSector);
             }
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "printing partition map");
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "printing partition map");
 
             foreach(Partition partition in Partitions)
             {
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", partition.Sequence);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition name: {0}", partition.Name);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", partition.Description);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", partition.Type);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}", partition.Start);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition sectors: {0}", partition.Length);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting offset: {0}", partition.Offset);
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition size in bytes: {0}", partition.Size);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Partition sequence: {0}", partition.Sequence);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition name: {0}", partition.Name);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition description: {0}", partition.Description);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition type: {0}", partition.Type);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting sector: {0}", partition.Start);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition sectors: {0}", partition.Length);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition starting offset: {0}", partition.Offset);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "\tPartition size in bytes: {0}", partition.Size);
             }
 
             if(!isDvd)
             {
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "Rebuilding TOC");
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "Rebuilding TOC");
 
                 fullToc = fullTocStream.ToArray();
-                DicConsole.DebugWriteLine("BlindWrite5 plugin", "TOC len {0}", fullToc.Length);
+                AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC len {0}", fullToc.Length);
 
                 byte[] fullTocSize = BitConverter.GetBytes((short)(fullToc.Length - 2));
                 fullToc[0] = fullTocSize[1];
@@ -898,11 +898,11 @@ namespace Aaru.DiscImages
 
                 if(!decodedFullToc.HasValue)
                 {
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "TOC not correctly rebuilt");
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC not correctly rebuilt");
                     fullToc = null;
                 }
                 else
-                    DicConsole.DebugWriteLine("BlindWrite5 plugin", "TOC correctly rebuilt");
+                    AaruConsole.DebugWriteLine("BlindWrite5 plugin", "TOC correctly rebuilt");
 
                 imageInfo.ReadableSectorTags.Add(SectorTagType.CdTrackFlags);
             }
@@ -1099,7 +1099,7 @@ namespace Aaru.DiscImages
                         break;
                 }
 
-            DicConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", imageInfo.MediaType);
+            AaruConsole.DebugWriteLine("BlindWrite5 plugin", "ImageInfo.mediaType = {0}", imageInfo.MediaType);
 
             if(mode2A != null)
                 imageInfo.ReadableMediaTags.Add(MediaTagType.SCSI_MODEPAGE_2A);
@@ -1134,7 +1134,7 @@ namespace Aaru.DiscImages
                    imageInfo.Sectors == 4246304)   // Wxripper unlock
                     imageInfo.MediaType = MediaType.XGD3;
 
-            DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
 
             return true;
         }

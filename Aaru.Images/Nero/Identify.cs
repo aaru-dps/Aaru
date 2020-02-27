@@ -56,11 +56,11 @@ namespace Aaru.DiscImages
             footerV2.ChunkId          = BigEndianBitConverter.ToUInt32(buffer, 0);
             footerV2.FirstChunkOffset = BigEndianBitConverter.ToUInt64(buffer, 4);
 
-            DicConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}",        imageStream.Length);
-            DicConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8}",     footerV1.ChunkId);
-            DicConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
-            DicConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8}",     footerV2.ChunkId);
-            DicConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
+            AaruConsole.DebugWriteLine("Nero plugin", "imageStream.Length = {0}",        imageStream.Length);
+            AaruConsole.DebugWriteLine("Nero plugin", "footerV1.ChunkID = 0x{0:X8}",     footerV1.ChunkId);
+            AaruConsole.DebugWriteLine("Nero plugin", "footerV1.FirstChunkOffset = {0}", footerV1.FirstChunkOffset);
+            AaruConsole.DebugWriteLine("Nero plugin", "footerV2.ChunkID = 0x{0:X8}",     footerV2.ChunkId);
+            AaruConsole.DebugWriteLine("Nero plugin", "footerV2.FirstChunkOffset = {0}", footerV2.FirstChunkOffset);
 
             if(footerV2.ChunkId == NERO_FOOTER_V2 && footerV2.FirstChunkOffset < (ulong)imageStream.Length) return true;
 

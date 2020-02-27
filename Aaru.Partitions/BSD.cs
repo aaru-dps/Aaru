@@ -78,7 +78,7 @@ namespace Aaru.Partitions
 
                     Array.Copy(tmp, offset, sector, 0, MAX_LABEL_SIZE);
                     dl = Marshal.ByteArrayToStructureLittleEndian<DiskLabel>(sector);
-                    DicConsole.DebugWriteLine("BSD plugin",
+                    AaruConsole.DebugWriteLine("BSD plugin",
                                               "dl.magic on sector {0} at offset {1} = 0x{2:X8} (expected 0x{3:X8})",
                                               location + sectorOffset, offset, dl.d_magic, DISKMAGIC);
                     if((dl.d_magic != DISKMAGIC || dl.d_magic2 != DISKMAGIC) &&
@@ -95,53 +95,53 @@ namespace Aaru.Partitions
 
             if(dl.d_magic == DISKCIGAM && dl.d_magic2 == DISKCIGAM) dl = SwapDiskLabel(dl);
 
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}",    dl.d_type);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_subtype = {0}", dl.d_subtype);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_typename = {0}",
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_type = {0}",    dl.d_type);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_subtype = {0}", dl.d_subtype);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_typename = {0}",
                                       StringHandlers.CToString(dl.d_typename));
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_packname = {0}",
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_packname = {0}",
                                       StringHandlers.CToString(dl.d_packname));
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secsize = {0}",        dl.d_secsize);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_nsectors = {0}",       dl.d_nsectors);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ntracks = {0}",        dl.d_ntracks);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_ncylinders = {0}",     dl.d_ncylinders);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secpercyl = {0}",      dl.d_secpercyl);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_secperunit = {0}",     dl.d_secperunit);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sparespertrack = {0}", dl.d_sparespertrack);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sparespercyl = {0}",   dl.d_sparespercyl);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_acylinders = {0}",     dl.d_acylinders);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_rpm = {0}",            dl.d_rpm);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_interleave = {0}",     dl.d_interleave);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trackskew = {0}",      dl.d_trackskew);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_cylskeew = {0}",       dl.d_cylskeew);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_headswitch = {0}",     dl.d_headswitch);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_trkseek = {0}",        dl.d_trkseek);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_flags = {0}",          dl.d_flags);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[0] = {0}",   dl.d_drivedata[0]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[1] = {0}",   dl.d_drivedata[1]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[2] = {0}",   dl.d_drivedata[2]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[3] = {0}",   dl.d_drivedata[3]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[4] = {0}",   dl.d_drivedata[4]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[0] = {0}",       dl.d_spare[0]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[1] = {0}",       dl.d_spare[1]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[2] = {0}",       dl.d_spare[2]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[3] = {0}",       dl.d_spare[3]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_spare[4] = {0}",       dl.d_spare[4]);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_magic2 = 0x{0:X8}",    dl.d_magic2);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_checksum = 0x{0:X8}",  dl.d_checksum);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_npartitions = {0}",    dl.d_npartitions);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_bbsize = {0}",         dl.d_bbsize);
-            DicConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}",         dl.d_sbsize);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secsize = {0}",        dl.d_secsize);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_nsectors = {0}",       dl.d_nsectors);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_ntracks = {0}",        dl.d_ntracks);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_ncylinders = {0}",     dl.d_ncylinders);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secpercyl = {0}",      dl.d_secpercyl);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_secperunit = {0}",     dl.d_secperunit);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sparespertrack = {0}", dl.d_sparespertrack);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sparespercyl = {0}",   dl.d_sparespercyl);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_acylinders = {0}",     dl.d_acylinders);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_rpm = {0}",            dl.d_rpm);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_interleave = {0}",     dl.d_interleave);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_trackskew = {0}",      dl.d_trackskew);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_cylskeew = {0}",       dl.d_cylskeew);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_headswitch = {0}",     dl.d_headswitch);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_trkseek = {0}",        dl.d_trkseek);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_flags = {0}",          dl.d_flags);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[0] = {0}",   dl.d_drivedata[0]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[1] = {0}",   dl.d_drivedata[1]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[2] = {0}",   dl.d_drivedata[2]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[3] = {0}",   dl.d_drivedata[3]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_drivedata[4] = {0}",   dl.d_drivedata[4]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[0] = {0}",       dl.d_spare[0]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[1] = {0}",       dl.d_spare[1]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[2] = {0}",       dl.d_spare[2]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[3] = {0}",       dl.d_spare[3]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_spare[4] = {0}",       dl.d_spare[4]);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_magic2 = 0x{0:X8}",    dl.d_magic2);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_checksum = 0x{0:X8}",  dl.d_checksum);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_npartitions = {0}",    dl.d_npartitions);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_bbsize = {0}",         dl.d_bbsize);
+            AaruConsole.DebugWriteLine("BSD plugin", "dl.d_sbsize = {0}",         dl.d_sbsize);
 
             ulong counter         = 0;
             bool  addSectorOffset = false;
 
             for(int i = 0; i < dl.d_npartitions && i < 22; i++)
             {
-                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_offset = {0}",
+                AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_offset = {0}",
                                           dl.d_partitions[i].p_offset);
-                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_size = {0}", dl.d_partitions[i].p_size);
-                DicConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_fstype = {0} ({1})",
+                AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_size = {0}", dl.d_partitions[i].p_size);
+                AaruConsole.DebugWriteLine("BSD plugin", "dl.d_partitions[i].p_fstype = {0} ({1})",
                                           dl.d_partitions[i].p_fstype, fsTypeToString(dl.d_partitions[i].p_fstype));
                 Partition part = new Partition
                 {
@@ -164,8 +164,8 @@ namespace Aaru.Partitions
                     part.Offset += sectorOffset * imagePlugin.Info.SectorSize;
                 }
 
-                DicConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
-                DicConsole.DebugWriteLine("BSD plugin", "Adding it...");
+                AaruConsole.DebugWriteLine("BSD plugin", "part.start = {0}", part.Start);
+                AaruConsole.DebugWriteLine("BSD plugin", "Adding it...");
                 partitions.Add(part);
                 counter++;
             }

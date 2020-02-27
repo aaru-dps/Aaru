@@ -94,7 +94,7 @@ namespace Aaru.Gui.Forms
             sidecarClass.EndProgressEvent2    += EndProgress2;
             CICMMetadataType sidecar = sidecarClass.Create();
 
-            DicConsole.WriteLine("Writing metadata sidecar");
+            AaruConsole.WriteLine("Writing metadata sidecar");
 
             FileStream xmlFs = new FileStream(txtDestination.Text, FileMode.Create);
 

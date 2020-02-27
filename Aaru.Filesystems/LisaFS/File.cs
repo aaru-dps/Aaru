@@ -334,7 +334,7 @@ namespace Aaru.Filesystems.LisaFS
             {
                 if(fileSizeCache.TryGetValue(fileId, out int realSize))
                     if(realSize > temp.Length)
-                        DicConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
+                        AaruConsole.ErrorWriteLine("File {0} gets truncated.", fileId);
                 buf = temp;
 
                 fileCache.Add(fileId, buf);

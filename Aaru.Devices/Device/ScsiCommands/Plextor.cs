@@ -71,7 +71,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device",
+            AaruConsole.DebugWriteLine("SCSI Device",
                                       "Plextor READ CD-DA (LBA: {1}, Block Size: {2}, Transfer Length: {3}, Subchannel: {4}, Sense: {5}, Last Error: {6}) took {0} ms.",
                                       duration, lba, blockSize, transferLength, subchannel, sense, LastError);
 
@@ -107,7 +107,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "Plextor READ DVD (RAW) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "Plextor READ DVD (RAW) took {0} ms.", duration);
 
             return sense;
         }
@@ -132,7 +132,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
 
             return sense;
         }
@@ -157,7 +157,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
 
             return sense;
         }
@@ -188,7 +188,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR READ EEPROM took {0} ms.", duration);
 
             return sense;
         }
@@ -220,7 +220,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
             if(sense || Error)
                 return sense;
@@ -258,7 +258,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR POWEREC GET SPEEDS took {0} ms.", duration);
 
             if(sense || Error)
                 return sense;
@@ -292,7 +292,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SILENT MODE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SILENT MODE took {0} ms.", duration);
 
             return sense;
         }
@@ -319,7 +319,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET GIGAREC took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET GIGAREC took {0} ms.", duration);
 
             return sense;
         }
@@ -353,7 +353,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET VARIREC took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET VARIREC took {0} ms.", duration);
 
             return sense;
         }
@@ -379,7 +379,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SECUREC took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SECUREC took {0} ms.", duration);
 
             return sense;
         }
@@ -406,7 +406,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SPEEDREAD took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SPEEDREAD took {0} ms.", duration);
 
             return sense;
         }
@@ -433,7 +433,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SINGLE-SESSION / HIDE CD-R took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET SINGLE-SESSION / HIDE CD-R took {0} ms.", duration);
 
             return sense;
         }
@@ -467,7 +467,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET BOOK BITSETTING took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET BOOK BITSETTING took {0} ms.", duration);
 
             return sense;
         }
@@ -495,7 +495,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET TEST WRITE DVD+ took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "PLEXTOR GET TEST WRITE DVD+ took {0} ms.", duration);
 
             return sense;
         }

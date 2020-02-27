@@ -77,25 +77,25 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("verify");
 
-            DicConsole.DebugWriteLine("Verify command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Verify command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("Verify command", "--verbose={0}", verbose);
-            DicConsole.DebugWriteLine("Verify command", "--verify-disc={0}", verifyDisc);
-            DicConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", verifySectors);
+            AaruConsole.DebugWriteLine("Verify command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Verify command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Verify command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Verify command", "--verify-disc={0}", verifyDisc);
+            AaruConsole.DebugWriteLine("Verify command", "--verify-sectors={0}", verifySectors);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -104,7 +104,7 @@ namespace Aaru.Commands.Image
 
             if(inputFormat == null)
             {
-                DicConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
+                AaruConsole.ErrorWriteLine("Unable to recognize image format, not verifying");
 
                 return(int)ErrorNumber.FormatNotFound;
             }
@@ -125,7 +125,7 @@ namespace Aaru.Commands.Image
             if(verifiableImage is null &&
                verifiableSectorsImage is null)
             {
-                DicConsole.ErrorWriteLine("The specified image does not support any kind of verification");
+                AaruConsole.ErrorWriteLine("The specified image does not support any kind of verification");
 
                 return(int)ErrorNumber.NotVerificable;
             }
@@ -141,21 +141,21 @@ namespace Aaru.Commands.Image
                 switch(discCheckStatus)
                 {
                     case true:
-                        DicConsole.WriteLine("Disc image checksums are correct");
+                        AaruConsole.WriteLine("Disc image checksums are correct");
 
                         break;
                     case false:
-                        DicConsole.WriteLine("Disc image checksums are incorrect");
+                        AaruConsole.WriteLine("Disc image checksums are incorrect");
 
                         break;
                     case null:
-                        DicConsole.WriteLine("Disc image does not contain checksums");
+                        AaruConsole.WriteLine("Disc image does not contain checksums");
 
                         break;
                 }
 
                 correctImage = discCheckStatus;
-                DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
+                AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds", checkTime.TotalSeconds);
             }
 
             if(verifySectors)
@@ -179,7 +179,7 @@ namespace Aaru.Commands.Image
 
                         while(remainingSectors > 0)
                         {
-                            DicConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll,
+                            AaruConsole.Write("\rChecking sector {0} of {1}, on track {2}", currentSectorAll,
                                              inputFormat.Info.Sectors, currentTrack.TrackSequence);
 
                             List<ulong> tempFailingLbas;
@@ -223,7 +223,7 @@ namespace Aaru.Commands.Image
 
                     while(remainingSectors > 0)
                     {
-                        DicConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.Info.Sectors);
+                        AaruConsole.Write("\rChecking sector {0} of {1}", currentSector, inputFormat.Info.Sectors);
 
                         List<ulong> tempFailingLbas;
                         List<ulong> tempUnknownLbas;
@@ -256,43 +256,43 @@ namespace Aaru.Commands.Image
 
                 TimeSpan checkTime = endCheck - startCheck;
 
-                DicConsole.Write("\r" + new string(' ', System.Console.WindowWidth - 1) + "\r");
+                AaruConsole.Write("\r" + new string(' ', System.Console.WindowWidth - 1) + "\r");
 
                 if(unknownSectors > 0)
-                    DicConsole.WriteLine("There is at least one sector that does not contain a checksum");
+                    AaruConsole.WriteLine("There is at least one sector that does not contain a checksum");
 
                 if(errorSectors > 0)
-                    DicConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
+                    AaruConsole.WriteLine("There is at least one sector with incorrect checksum or errors");
 
                 if(unknownSectors == 0 &&
                    errorSectors   == 0)
-                    DicConsole.WriteLine("All sector checksums are correct");
+                    AaruConsole.WriteLine("All sector checksums are correct");
 
-                DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
+                AaruConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
 
                 if(verbose)
                 {
-                    DicConsole.VerboseWriteLine("LBAs with error:");
+                    AaruConsole.VerboseWriteLine("LBAs with error:");
 
                     if(failingLbas.Count == (int)inputFormat.Info.Sectors)
-                        DicConsole.VerboseWriteLine("\tall sectors.");
+                        AaruConsole.VerboseWriteLine("\tall sectors.");
                     else
                         foreach(ulong t in failingLbas)
-                            DicConsole.VerboseWriteLine("\t{0}", t);
+                            AaruConsole.VerboseWriteLine("\t{0}", t);
 
-                    DicConsole.WriteLine("LBAs without checksum:");
+                    AaruConsole.WriteLine("LBAs without checksum:");
 
                     if(unknownLbas.Count == (int)inputFormat.Info.Sectors)
-                        DicConsole.VerboseWriteLine("\tall sectors.");
+                        AaruConsole.VerboseWriteLine("\tall sectors.");
                     else
                         foreach(ulong t in unknownLbas)
-                            DicConsole.VerboseWriteLine("\t{0}", t);
+                            AaruConsole.VerboseWriteLine("\t{0}", t);
                 }
 
-                DicConsole.WriteLine("Total sectors........... {0}", inputFormat.Info.Sectors);
-                DicConsole.WriteLine("Total errors............ {0}", failingLbas.Count);
-                DicConsole.WriteLine("Total unknowns.......... {0}", unknownLbas.Count);
-                DicConsole.WriteLine("Total errors+unknowns... {0}", failingLbas.Count + unknownLbas.Count);
+                AaruConsole.WriteLine("Total sectors........... {0}", inputFormat.Info.Sectors);
+                AaruConsole.WriteLine("Total errors............ {0}", failingLbas.Count);
+                AaruConsole.WriteLine("Total unknowns.......... {0}", unknownLbas.Count);
+                AaruConsole.WriteLine("Total errors+unknowns... {0}", failingLbas.Count + unknownLbas.Count);
 
                 if(failingLbas.Count > 0)
                     correctSectors = false;

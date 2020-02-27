@@ -179,7 +179,7 @@ namespace Aaru.DiscImages
 
                         if(matchTruripDiscCrc32.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found REM CRC32 at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM CRC32 at line {0}", lineNumber);
                             _discImage.DiscHashes.Add("crc32", matchTruripDiscCrc32.Groups[1].Value.ToLowerInvariant());
 
                             continue;
@@ -187,7 +187,7 @@ namespace Aaru.DiscImages
 
                         if(matchTruripDiscMd5.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found REM MD5 at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM MD5 at line {0}", lineNumber);
                             _discImage.DiscHashes.Add("md5", matchTruripDiscMd5.Groups[1].Value.ToLowerInvariant());
 
                             continue;
@@ -195,7 +195,7 @@ namespace Aaru.DiscImages
 
                         if(matchTruripDiscSha1.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found REM SHA1 at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SHA1 at line {0}", lineNumber);
                             _discImage.DiscHashes.Add("sha1", matchTruripDiscSha1.Groups[1].Value.ToLowerInvariant());
 
                             continue;
@@ -210,7 +210,7 @@ namespace Aaru.DiscImages
 
                         if(matchTruripTrackCrc32.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
                                                       lineNumber,
                                                       matchTruripTrackCrc32.Groups[1].Value == "Trk" ? "track" : "gap",
                                                       matchTruripTrackCrc32.Groups[2].Value);
@@ -220,7 +220,7 @@ namespace Aaru.DiscImages
 
                         if(matchTruripTrackMd5.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
                                                       lineNumber,
                                                       matchTruripTrackMd5.Groups[1].Value == "Trk" ? "track" : "gap",
                                                       matchTruripTrackMd5.Groups[2].Value);
@@ -230,7 +230,7 @@ namespace Aaru.DiscImages
 
                         if(matchTruripTrackSha1.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found CRC32 for {1} {2} at line {0}",
                                                       lineNumber,
                                                       matchTruripTrackSha1.Groups[1].Value == "Trk" ? "track" : "gap",
                                                       matchTruripTrackSha1.Groups[2].Value);
@@ -240,7 +240,7 @@ namespace Aaru.DiscImages
 
                         if(matchTruripTrackUnknownHash.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin",
+                            AaruConsole.DebugWriteLine("CDRWin plugin",
                                                       "Found unknown hash for {1} {2} at line {0}. Please report this disc image.",
                                                       lineNumber,
                                                       matchTruripTrackUnknownHash.Groups[1].Value == "Trk" ? "track"
@@ -258,7 +258,7 @@ namespace Aaru.DiscImages
                        ulong.TryParse(matchDumpExtent.Groups["start"].Value, out ulong extentStart) &&
                        ulong.TryParse(matchDumpExtent.Groups["end"].Value, out ulong extentEnd))
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DUMP EXTENT at line {0}",
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DUMP EXTENT at line {0}",
                                                   lineNumber);
 
                         if(DumpHardware is null)
@@ -314,7 +314,7 @@ namespace Aaru.DiscImages
                     else if(matchDicMediaType.Success &&
                             !inTrack)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DIC MEDIA-TYPE at line {0}",
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DIC MEDIA-TYPE at line {0}",
                                                   lineNumber);
 
                         _discImage.DicMediaType = matchDicMediaType.Groups[1].Value;
@@ -322,43 +322,43 @@ namespace Aaru.DiscImages
                     else if(matchDiskType.Success &&
                             !inTrack)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM ORIGINAL MEDIA TYPE at line {0}",
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM ORIGINAL MEDIA TYPE at line {0}",
                                                   lineNumber);
 
                         _discImage.OriginalMediaType = matchDiskType.Groups[1].Value;
                     }
                     else if(matchSession.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM SESSION at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM SESSION at line {0}", lineNumber);
                         currentSession = byte.Parse(matchSession.Groups[1].Value);
 
                         // What happens between sessions
                     }
                     else if(matchLba.Success)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM MSF at line {0}", lineNumber);
                     else if(matchLeadOut.Success)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM LEAD-OUT at line {0}", lineNumber);
                     else if(matchApplication.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM Ripping Tool at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM Ripping Tool at line {0}", lineNumber);
                         _imageInfo.Application = matchApplication.Groups[1].Value;
                     }
                     else if(matchApplicationVersion.Success &&
                             !inTrack)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM Ripping Tool Version at line {0}",
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM Ripping Tool Version at line {0}",
                                                   lineNumber);
 
                         _imageInfo.ApplicationVersion = matchApplicationVersion.Groups[1].Value;
                     }
                     else if(matchTruripDisc.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM DISC HASHES at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM DISC HASHES at line {0}", lineNumber);
                         inTruripDiscHash = true;
                     }
                     else if(matchTruripTrack.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin",
+                        AaruConsole.DebugWriteLine("CDRWin plugin",
                                                   "Found REM Gap Append Method: {1} [{2}] HASHES at line {0}",
                                                   lineNumber, matchTruripTrack.Groups[1].Value,
                                                   matchTruripTrack.Groups[2].Value);
@@ -368,7 +368,7 @@ namespace Aaru.DiscImages
                     }
                     else if(matchComment.Success)
                     {
-                        DicConsole.DebugWriteLine("CDRWin plugin", "Found REM at line {0}", lineNumber);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM at line {0}", lineNumber);
 
                         if(_discImage.Comment == "")
                             _discImage.Comment = matchComment.Groups[1].Value; // First comment
@@ -398,7 +398,7 @@ namespace Aaru.DiscImages
 
                         if(matchArranger.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found ARRANGER at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found ARRANGER at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Arranger = matchArranger.Groups[1].Value;
@@ -407,7 +407,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchBarCode.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found UPC_EAN at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found UPC_EAN at line {0}", lineNumber);
 
                             if(!inTrack)
                                 _discImage.Barcode = matchBarCode.Groups[1].Value;
@@ -417,7 +417,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchCdText.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CDTEXTFILE at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found CDTEXTFILE at line {0}", lineNumber);
 
                             if(!inTrack)
                                 _discImage.CdTextFile = matchCdText.Groups[1].Value;
@@ -427,7 +427,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchComposer.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found COMPOSER at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found COMPOSER at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Composer = matchComposer.Groups[1].Value;
@@ -436,7 +436,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchDiskId.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found DISC_ID at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found DISC_ID at line {0}", lineNumber);
 
                             if(!inTrack)
                                 _discImage.DiscId = matchDiskId.Groups[1].Value;
@@ -446,7 +446,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchFile.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found FILE at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found FILE at line {0}", lineNumber);
 
                             if(currentTrack.Sequence != 0)
                             {
@@ -543,7 +543,7 @@ namespace Aaru.DiscImages
                                 }
 
                             // File does exist, process it
-                            DicConsole.DebugWriteLine("CDRWin plugin", "File \"{0}\" found",
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "File \"{0}\" found",
                                                       currentFile.DataFilter.GetFilename());
 
                             switch(currentFile.FileType)
@@ -565,7 +565,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchFlags.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found FLAGS at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found FLAGS at line {0}", lineNumber);
 
                             if(!inTrack)
                                 throw new
@@ -578,7 +578,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchGenre.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found GENRE at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found GENRE at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Genre = matchGenre.Groups[1].Value;
@@ -587,7 +587,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchIndex.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found INDEX at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found INDEX at line {0}", lineNumber);
 
                             if(!inTrack)
                                 throw new FeatureUnsupportedImageException($"Found INDEX before a track {lineNumber}");
@@ -612,14 +612,14 @@ namespace Aaru.DiscImages
                                         cueTracks[currentTrack.Sequence - 2].Sectors *
                                         cueTracks[currentTrack.Sequence - 2].Bps;
 
-                                    DicConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
+                                    AaruConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
                                                               currentFile.Offset);
 
-                                    DicConsole.DebugWriteLine("CDRWin plugin",
+                                    AaruConsole.DebugWriteLine("CDRWin plugin",
                                                               "cueTracks[currentTrack.sequence-2].sectors = {0}",
                                                               cueTracks[currentTrack.Sequence - 2].Sectors);
 
-                                    DicConsole.DebugWriteLine("CDRWin plugin",
+                                    AaruConsole.DebugWriteLine("CDRWin plugin",
                                                               "cueTracks[currentTrack.sequence-2].bps = {0}",
                                                               cueTracks[currentTrack.Sequence - 2].Bps);
                                 }
@@ -627,7 +627,7 @@ namespace Aaru.DiscImages
                             if((index == 0 || (index == 1 && !currentTrack.Indexes.ContainsKey(0))) &&
                                currentTrack.Sequence == 1)
                             {
-                                DicConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
+                                AaruConsole.DebugWriteLine("CDRWin plugin", "Sets currentFile.offset to {0}",
                                                           offset * currentTrack.Bps);
 
                                 currentFile.Offset = offset * currentTrack.Bps;
@@ -638,7 +638,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchIsrc.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found ISRC at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found ISRC at line {0}", lineNumber);
 
                             if(!inTrack)
                                 throw new FeatureUnsupportedImageException($"Found ISRC before a track {lineNumber}");
@@ -647,7 +647,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchMcn.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found CATALOG at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found CATALOG at line {0}", lineNumber);
 
                             if(!inTrack)
                                 _discImage.Mcn = matchMcn.Groups[1].Value;
@@ -657,7 +657,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchPerformer.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found PERFORMER at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found PERFORMER at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Performer = matchPerformer.Groups[1].Value;
@@ -666,7 +666,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchPostgap.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found POSTGAP at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found POSTGAP at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Postgap = CdrWinMsfToLba(matchPostgap.Groups[1].Value);
@@ -676,7 +676,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchPregap.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found PREGAP at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found PREGAP at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Pregap = CdrWinMsfToLba(matchPregap.Groups[1].Value);
@@ -686,7 +686,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchSongWriter.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found SONGWRITER at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found SONGWRITER at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Songwriter = matchSongWriter.Groups[1].Value;
@@ -695,7 +695,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchTitle.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found TITLE at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found TITLE at line {0}", lineNumber);
 
                             if(inTrack)
                                 currentTrack.Title = matchTitle.Groups[1].Value;
@@ -704,7 +704,7 @@ namespace Aaru.DiscImages
                         }
                         else if(matchTrack.Success)
                         {
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Found TRACK at line {0}", lineNumber);
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Found TRACK at line {0}", lineNumber);
 
                             if(currentFile.DataFilter == null)
                                 throw new
@@ -727,7 +727,7 @@ namespace Aaru.DiscImages
                                 Sequence = uint.Parse(matchTrack.Groups[1].Value)
                             };
 
-                            DicConsole.DebugWriteLine("CDRWin plugin", "Setting currentTrack.sequence to {0}",
+                            AaruConsole.DebugWriteLine("CDRWin plugin", "Setting currentTrack.sequence to {0}",
                                                       currentTrack.Sequence);
 
                             currentFile.Sequence   = currentTrack.Sequence;
@@ -869,172 +869,172 @@ namespace Aaru.DiscImages
                 }
 
                 // DEBUG information
-                DicConsole.DebugWriteLine("CDRWin plugin", "Disc image parsing results");
-                DicConsole.DebugWriteLine("CDRWin plugin", "Disc CD-TEXT:");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Disc image parsing results");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Disc CD-TEXT:");
 
                 if(_discImage.Arranger == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tArranger is not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tArranger is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tArranger: {0}", _discImage.Arranger);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tArranger: {0}", _discImage.Arranger);
 
                 if(_discImage.Composer == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tComposer is not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tComposer is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tComposer: {0}", _discImage.Composer);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tComposer: {0}", _discImage.Composer);
 
                 if(_discImage.Genre == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tGenre is not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tGenre is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tGenre: {0}", _discImage.Genre);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tGenre: {0}", _discImage.Genre);
 
                 if(_discImage.Performer == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPerformer is not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPerformer is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPerformer: {0}", _discImage.Performer);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPerformer: {0}", _discImage.Performer);
 
                 if(_discImage.Songwriter == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tSongwriter is not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tSongwriter is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tSongwriter: {0}", _discImage.Songwriter);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tSongwriter: {0}", _discImage.Songwriter);
 
                 if(_discImage.Title == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tTitle is not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tTitle is not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tTitle: {0}", _discImage.Title);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tTitle: {0}", _discImage.Title);
 
                 if(_discImage.CdTextFile == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tCD-TEXT binary file not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tCD-TEXT binary file not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tCD-TEXT binary file: {0}", _discImage.CdTextFile);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tCD-TEXT binary file: {0}", _discImage.CdTextFile);
 
-                DicConsole.DebugWriteLine("CDRWin plugin", "Disc information:");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Disc information:");
 
                 if(_discImage.OriginalMediaType == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type: {0}",
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tISOBuster disc type: {0}",
                                               _discImage.OriginalMediaType);
 
-                DicConsole.DebugWriteLine("CDRWin plugin", "\tGuessed disk type: {0}", _discImage.MediaType);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\tGuessed disk type: {0}", _discImage.MediaType);
 
                 if(_discImage.Barcode == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tBarcode not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tBarcode not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tBarcode: {0}", _discImage.Barcode);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tBarcode: {0}", _discImage.Barcode);
 
                 if(_discImage.DiscId == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc ID not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc ID not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc ID: {0}", _discImage.DiscId);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc ID: {0}", _discImage.DiscId);
 
                 if(_discImage.Mcn == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tMCN not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tMCN not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tMCN: {0}", _discImage.Mcn);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tMCN: {0}", _discImage.Mcn);
 
                 if(_discImage.Comment == null)
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tComment not set.");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tComment not set.");
                 else
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tComment: \"{0}\"", _discImage.Comment);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tComment: \"{0}\"", _discImage.Comment);
 
-                DicConsole.DebugWriteLine("CDRWin plugin", "Session information:");
-                DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Session information:");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} sessions", _discImage.Sessions.Count);
 
                 for(int i = 0; i < _discImage.Sessions.Count; i++)
                 {
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tSession {0} information:", i + 1);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tSession {0} information:", i + 1);
 
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting track: {0}",
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting track: {0}",
                                               _discImage.Sessions[i].StartTrack);
 
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting sector: {0}",
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tStarting sector: {0}",
                                               _discImage.Sessions[i].StartSector);
 
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding track: {0}",
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding track: {0}",
                                               _discImage.Sessions[i].EndTrack);
 
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding sector: {0}",
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tEnding sector: {0}",
                                               _discImage.Sessions[i].EndSector);
                 }
 
-                DicConsole.DebugWriteLine("CDRWin plugin", "Track information:");
-                DicConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} tracks", _discImage.Tracks.Count);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Track information:");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "\tDisc contains {0} tracks", _discImage.Tracks.Count);
 
                 for(int i = 0; i < _discImage.Tracks.Count; i++)
                 {
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tTrack {0} information:",
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tTrack {0} information:",
                                               _discImage.Tracks[i].Sequence);
 
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\t{0} bytes per sector", _discImage.Tracks[i].Bps);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tPregap: {0} sectors", _discImage.Tracks[i].Pregap);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tData: {0} sectors", _discImage.Tracks[i].Sectors);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t{0} bytes per sector", _discImage.Tracks[i].Bps);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPregap: {0} sectors", _discImage.Tracks[i].Pregap);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tData: {0} sectors", _discImage.Tracks[i].Sectors);
 
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tPostgap: {0} sectors",
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPostgap: {0} sectors",
                                               _discImage.Tracks[i].Postgap);
 
                     if(_discImage.Tracks[i].Flag4ch)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack is flagged as quadraphonic");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack is flagged as quadraphonic");
 
                     if(_discImage.Tracks[i].FlagDcp)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack allows digital copy");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack allows digital copy");
 
                     if(_discImage.Tracks[i].FlagPre)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has pre-emphasis applied");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has pre-emphasis applied");
 
                     if(_discImage.Tracks[i].FlagScms)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has SCMS");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTrack has SCMS");
 
-                    DicConsole.DebugWriteLine("CDRWin plugin",
+                    AaruConsole.DebugWriteLine("CDRWin plugin",
                                               "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
                                               _discImage.Tracks[i].TrackFile.DataFilter.GetFilename(),
                                               _discImage.Tracks[i].TrackFile.FileType,
                                               _discImage.Tracks[i].TrackFile.Offset);
 
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\t\tIndexes:");
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tIndexes:");
 
                     foreach(KeyValuePair<int, ulong> kvp in _discImage.Tracks[i].Indexes)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\t\tIndex {0} starts at sector {1}", kvp.Key,
                                                   kvp.Value);
 
                     if(_discImage.Tracks[i].Isrc == null)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC is not set.");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC: {0}", _discImage.Tracks[i].Isrc);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tISRC: {0}", _discImage.Tracks[i].Isrc);
 
                     if(_discImage.Tracks[i].Arranger == null)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger is not set.");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger: {0}", _discImage.Tracks[i].Arranger);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tArranger: {0}", _discImage.Tracks[i].Arranger);
 
                     if(_discImage.Tracks[i].Composer == null)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer is not set.");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer: {0}", _discImage.Tracks[i].Composer);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tComposer: {0}", _discImage.Tracks[i].Composer);
 
                     if(_discImage.Tracks[i].Genre == null)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre is not set.");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre: {0}", _discImage.Tracks[i].Genre);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tGenre: {0}", _discImage.Tracks[i].Genre);
 
                     if(_discImage.Tracks[i].Performer == null)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer is not set.");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer: {0}",
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tPerformer: {0}",
                                                   _discImage.Tracks[i].Performer);
 
                     if(_discImage.Tracks[i].Songwriter == null)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter is not set.");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter: {0}",
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tSongwriter: {0}",
                                                   _discImage.Tracks[i].Songwriter);
 
                     if(_discImage.Tracks[i].Title == null)
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle is not set.");
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle is not set.");
                     else
-                        DicConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle: {0}", _discImage.Tracks[i].Title);
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "\t\tTitle: {0}", _discImage.Tracks[i].Title);
                 }
 
-                DicConsole.DebugWriteLine("CDRWin plugin", "Building offset map");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Building offset map");
 
                 Partitions = new List<Partition>();
 
@@ -1086,18 +1086,18 @@ namespace Aaru.DiscImages
                 }
 
                 // Print offset map
-                DicConsole.DebugWriteLine("CDRWin plugin", "printing partition map");
+                AaruConsole.DebugWriteLine("CDRWin plugin", "printing partition map");
 
                 foreach(Partition partition in Partitions)
                 {
-                    DicConsole.DebugWriteLine("CDRWin plugin", "Partition sequence: {0}", partition.Sequence);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition name: {0}", partition.Name);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition description: {0}", partition.Description);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition type: {0}", partition.Type);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition starting sector: {0}", partition.Start);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition sectors: {0}", partition.Length);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition starting offset: {0}", partition.Offset);
-                    DicConsole.DebugWriteLine("CDRWin plugin", "\tPartition size in bytes: {0}", partition.Size);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "Partition sequence: {0}", partition.Sequence);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition name: {0}", partition.Name);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition description: {0}", partition.Description);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition type: {0}", partition.Type);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition starting sector: {0}", partition.Start);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition sectors: {0}", partition.Length);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition starting offset: {0}", partition.Offset);
+                    AaruConsole.DebugWriteLine("CDRWin plugin", "\tPartition size in bytes: {0}", partition.Size);
                 }
 
                 foreach(CdrWinTrack track in _discImage.Tracks)
@@ -1224,18 +1224,18 @@ namespace Aaru.DiscImages
 
                 _imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                DicConsole.VerboseWriteLine("CDRWIN image describes a disc of type {0}", _imageInfo.MediaType);
+                AaruConsole.VerboseWriteLine("CDRWIN image describes a disc of type {0}", _imageInfo.MediaType);
 
                 if(!string.IsNullOrEmpty(_imageInfo.Comments))
-                    DicConsole.VerboseWriteLine("CDRWIN comments: {0}", _imageInfo.Comments);
+                    AaruConsole.VerboseWriteLine("CDRWIN comments: {0}", _imageInfo.Comments);
 
                 return true;
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetFilename());
-                DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetFilename());
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
+                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 
                 return false;
             }

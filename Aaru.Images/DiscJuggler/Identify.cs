@@ -48,7 +48,7 @@ namespace Aaru.DiscImages
             imageStream.Read(dscLenB, 0, 4);
             int dscLen = BitConverter.ToInt32(dscLenB, 0);
 
-            DicConsole.DebugWriteLine("DiscJuggler plugin", "dscLen = {0}", dscLen);
+            AaruConsole.DebugWriteLine("DiscJuggler plugin", "dscLen = {0}", dscLen);
 
             if(dscLen >= imageStream.Length) return false;
 

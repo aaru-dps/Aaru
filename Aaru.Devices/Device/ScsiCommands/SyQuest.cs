@@ -111,7 +111,7 @@ namespace Aaru.Devices
 
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (6) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (6) took {0} ms.", duration);
 
             return sense;
         }
@@ -188,7 +188,7 @@ namespace Aaru.Devices
                                             out sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (10) took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "SYQUEST READ (10) took {0} ms.", duration);
 
             return sense;
         }

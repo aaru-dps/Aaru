@@ -68,7 +68,7 @@ namespace Aaru.Partitions
             {
                 pdsector = imagePlugin.ReadSector(i + sectorOffset);
                 magic    = BitConverter.ToUInt32(pdsector, 4);
-                DicConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
+                AaruConsole.DebugWriteLine("VTOC plugin", "sanity at {0} is 0x{1:X8} (should be 0x{2:X8} or 0x{3:X8})",
                                           i + sectorOffset, magic, PD_MAGIC, PD_CIGAM);
                 if(magic != PD_MAGIC && magic != PD_CIGAM) continue;
 
@@ -93,48 +93,48 @@ namespace Aaru.Partitions
                 pdold = Marshal.ByteArrayToStructureBigEndian<PDInfoOld>(pdsector);
             }
 
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.driveid = {0}", pd.driveid);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.sanity = 0x{0:X8} (should be 0x{1:X8})", pd.sanity,
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.driveid = {0}", pd.driveid);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.sanity = 0x{0:X8} (should be 0x{1:X8})", pd.sanity,
                                       PD_MAGIC);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.version = {0}",    pd.version);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.serial = \"{0}\"", StringHandlers.CToString(pd.serial));
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.cyls = {0}",       pd.cyls);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.tracks = {0}",     pd.tracks);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.sectors = {0}",    pd.sectors);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.bytes = {0}",      pd.bytes);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.logicalst = {0}",  pd.logicalst);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.errlogst = {0}",   pd.errlogst);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.errlogsz = {0}",   pd.errlogsz);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.mfgst = {0}",      pd.mfgst);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.mfgsz = {0}",      pd.mfgsz);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.defectst = {0}",   pd.defectst);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.defectsz = {0}",   pd.defectsz);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.relno = {0}",      pd.relno);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.relst = {0}",      pd.relst);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.relsz = {0}",      pd.relsz);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.relnext = {0}",    pd.relnext);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.allcstrt = {0}",   pdold.allcstrt);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.allcend = {0}",    pdold.allcend);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.vtoc_ptr = {0}",   pd.vtoc_ptr);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.vtoc_len = {0}",   pd.vtoc_len);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.vtoc_pad = {0}",   pd.vtoc_pad);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.alt_ptr = {0}",    pd.alt_ptr);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.alt_len = {0}",    pd.alt_len);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pcyls = {0}",      pd.pcyls);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.ptracks = {0}",    pd.ptracks);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.psectors = {0}",   pd.psectors);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pbytes = {0}",     pd.pbytes);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.secovhd = {0}",    pd.secovhd);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.interleave = {0}", pd.interleave);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.skew = {0}",       pd.skew);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[0] = {0}",     pd.pad[0]);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[1] = {0}",     pd.pad[1]);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[2] = {0}",     pd.pad[2]);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[3] = {0}",     pd.pad[3]);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[4] = {0}",     pd.pad[4]);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[5] = {0}",     pd.pad[5]);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[6] = {0}",     pd.pad[6]);
-            DicConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[7] = {0}",     pd.pad[7]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.version = {0}",    pd.version);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.serial = \"{0}\"", StringHandlers.CToString(pd.serial));
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.cyls = {0}",       pd.cyls);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.tracks = {0}",     pd.tracks);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.sectors = {0}",    pd.sectors);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.bytes = {0}",      pd.bytes);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.logicalst = {0}",  pd.logicalst);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.errlogst = {0}",   pd.errlogst);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.errlogsz = {0}",   pd.errlogsz);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.mfgst = {0}",      pd.mfgst);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.mfgsz = {0}",      pd.mfgsz);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.defectst = {0}",   pd.defectst);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.defectsz = {0}",   pd.defectsz);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.relno = {0}",      pd.relno);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.relst = {0}",      pd.relst);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.relsz = {0}",      pd.relsz);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.relnext = {0}",    pd.relnext);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.allcstrt = {0}",   pdold.allcstrt);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.allcend = {0}",    pdold.allcend);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.vtoc_ptr = {0}",   pd.vtoc_ptr);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.vtoc_len = {0}",   pd.vtoc_len);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.vtoc_pad = {0}",   pd.vtoc_pad);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.alt_ptr = {0}",    pd.alt_ptr);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.alt_len = {0}",    pd.alt_len);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pcyls = {0}",      pd.pcyls);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.ptracks = {0}",    pd.ptracks);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.psectors = {0}",   pd.psectors);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pbytes = {0}",     pd.pbytes);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.secovhd = {0}",    pd.secovhd);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.interleave = {0}", pd.interleave);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.skew = {0}",       pd.skew);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[0] = {0}",     pd.pad[0]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[1] = {0}",     pd.pad[1]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[2] = {0}",     pd.pad[2]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[3] = {0}",     pd.pad[3]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[4] = {0}",     pd.pad[4]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[5] = {0}",     pd.pad[5]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[6] = {0}",     pd.pad[6]);
+            AaruConsole.DebugWriteLine("VTOC plugin", "pdinfo.pad[7] = {0}",     pd.pad[7]);
 
             magicFound = false;
             bool    useOld     = false;
@@ -146,7 +146,7 @@ namespace Aaru.Partitions
             if(magic == VTOC_SANE || magic == VTOC_ENAS)
             {
                 magicFound = true;
-                DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found at {0}", pdloc + sectorOffset + 1);
+                AaruConsole.DebugWriteLine("VTOC plugin", "New VTOC found at {0}", pdloc + sectorOffset + 1);
                 if(magic == VTOC_SANE) vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
                 else
                 {
@@ -170,7 +170,7 @@ namespace Aaru.Partitions
                 {
                     magicFound = true;
                     useOld     = true;
-                    DicConsole.DebugWriteLine("VTOC plugin", "Old VTOC found at {0}", pdloc + sectorOffset + 1);
+                    AaruConsole.DebugWriteLine("VTOC plugin", "Old VTOC found at {0}", pdloc + sectorOffset + 1);
                     if(magic == VTOC_SANE) vtocOld = Marshal.ByteArrayToStructureLittleEndian<vtocold>(vtocsector);
                     else
                     {
@@ -189,17 +189,17 @@ namespace Aaru.Partitions
 
             if(!magicFound)
             {
-                DicConsole.DebugWriteLine("VTOC plugin", "Searching for VTOC on relative byte {0}", pd.vtoc_ptr);
+                AaruConsole.DebugWriteLine("VTOC plugin", "Searching for VTOC on relative byte {0}", pd.vtoc_ptr);
                 ulong relSecPtr = pd.vtoc_ptr               / imagePlugin.Info.SectorSize;
                 uint  relSecOff = pd.vtoc_ptr               % imagePlugin.Info.SectorSize;
                 uint  secCount  = (relSecOff + pd.vtoc_len) / imagePlugin.Info.SectorSize;
                 if((relSecOff + pd.vtoc_len) % imagePlugin.Info.SectorSize > 0) secCount++;
-                DicConsole.DebugWriteLine("VTOC plugin",
+                AaruConsole.DebugWriteLine("VTOC plugin",
                                           "Going to read {0} sectors from sector {1}, getting VTOC from byte {2}",
                                           secCount, relSecPtr + sectorOffset, relSecOff);
                 if(relSecPtr + sectorOffset + secCount >= imagePlugin.Info.Sectors)
                 {
-                    DicConsole.DebugWriteLine("VTOC plugin", "Going to read past device size, aborting...");
+                    AaruConsole.DebugWriteLine("VTOC plugin", "Going to read past device size, aborting...");
                     return false;
                 }
 
@@ -211,7 +211,7 @@ namespace Aaru.Partitions
                 if(magic == VTOC_SANE || magic == VTOC_ENAS)
                 {
                     magicFound = true;
-                    DicConsole.DebugWriteLine("VTOC plugin", "New VTOC found.");
+                    AaruConsole.DebugWriteLine("VTOC plugin", "New VTOC found.");
                     if(magic == VTOC_SANE) vtoc = Marshal.ByteArrayToStructureLittleEndian<vtoc>(vtocsector);
                     else
                     {
@@ -230,52 +230,52 @@ namespace Aaru.Partitions
 
             if(!magicFound)
             {
-                DicConsole.DebugWriteLine("VTOC plugin", "Cannot find VTOC.");
+                AaruConsole.DebugWriteLine("VTOC plugin", "Cannot find VTOC.");
                 return false;
             }
 
             if(useOld)
             {
-                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sanity = 0x{0:X8} (should be 0x{1:X8})",
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sanity = 0x{0:X8} (should be 0x{1:X8})",
                                           vtocOld.v_sanity, VTOC_SANE);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_version = {0}", vtocOld.v_version);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_volume = \"{0}\"",
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_version = {0}", vtocOld.v_version);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_volume = \"{0}\"",
                                           StringHandlers.CToString(vtocOld.v_volume));
-                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sectorsz = {0}", vtocOld.v_sectorsz);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_nparts = {0}",   vtocOld.v_nparts);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_sectorsz = {0}", vtocOld.v_sectorsz);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_nparts = {0}",   vtocOld.v_nparts);
                 for(int i = 0; i < V_NUMPAR; i++)
                 {
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_tag = {1} ({2})", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_tag = {1} ({2})", i,
                                               vtocOld.v_part[i].p_tag, (ushort)vtocOld.v_part[i].p_tag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_flag = {1} ({2})", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_flag = {1} ({2})", i,
                                               vtocOld.v_part[i].p_flag, (ushort)vtocOld.v_part[i].p_flag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_start = {1}", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_start = {1}", i,
                                               vtocOld.v_part[i].p_start);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_size = {1}", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.v_part[{0}].p_size = {1}", i,
                                               vtocOld.v_part[i].p_size);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtocOld.timestamp[{0}] = {1}", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtocOld.timestamp[{0}] = {1}", i,
                                               DateHandlers.UnixToDateTime(vtocOld.timestamp[i]));
                 }
             }
             else
             {
-                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})", vtoc.v_sanity,
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_sanity = 0x{0:X8} (should be 0x{1:X8})", vtoc.v_sanity,
                                           VTOC_SANE);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_version = {0}", vtoc.v_version);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_volume = \"{0}\"",
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_version = {0}", vtoc.v_version);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_volume = \"{0}\"",
                                           StringHandlers.CToString(vtoc.v_volume));
-                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_pad = {0}",    vtoc.v_pad);
-                DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_nparts = {0}", vtoc.v_nparts);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_pad = {0}",    vtoc.v_pad);
+                AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_nparts = {0}", vtoc.v_nparts);
                 for(int i = 0; i < V_NUMPAR; i++)
                 {
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_tag = {1} ({2})", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_tag = {1} ({2})", i,
                                               vtoc.v_part[i].p_tag, (ushort)vtoc.v_part[i].p_tag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_flag = {1} ({2})", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_flag = {1} ({2})", i,
                                               vtoc.v_part[i].p_flag, (ushort)vtoc.v_part[i].p_flag);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_start = {1}", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_start = {1}", i,
                                               vtoc.v_part[i].p_start);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_size = {1}", i, vtoc.v_part[i].p_size);
-                    DicConsole.DebugWriteLine("VTOC plugin", "vtoc.timestamp[{0}] = {1}", i,
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.v_part[{0}].p_size = {1}", i, vtoc.v_part[i].p_size);
+                    AaruConsole.DebugWriteLine("VTOC plugin", "vtoc.timestamp[{0}] = {1}", i,
                                               DateHandlers.UnixToDateTime(vtoc.timestamp[i]));
                 }
             }

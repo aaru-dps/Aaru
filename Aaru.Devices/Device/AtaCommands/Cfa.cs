@@ -58,7 +58,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
 
             return sense;
         }
@@ -83,7 +83,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "CFA TRANSLATE SECTOR took {0} ms.", duration);
 
             return sense;
         }
@@ -102,7 +102,7 @@ namespace Aaru.Devices
 
             errorCode = statusRegisters.Error;
 
-            DicConsole.DebugWriteLine("ATA Device", "CFA REQUEST EXTENDED ERROR CODE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "CFA REQUEST EXTENDED ERROR CODE took {0} ms.", duration);
 
             return sense;
         }

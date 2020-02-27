@@ -72,13 +72,13 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            DicConsole.DebugWriteLine("Update command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Update command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Update command", "--verbose={0}", verbose);
 
             if(clearAll)
             {
@@ -95,7 +95,7 @@ namespace Aaru.Commands
                     if(Debugger.IsAttached)
                         throw;
 
-                    DicConsole.ErrorWriteLine("Could not remove local database.");
+                    AaruConsole.ErrorWriteLine("Could not remove local database.");
 
                     return(int)ErrorNumber.CannotRemoveDatabase;
                 }
@@ -112,7 +112,7 @@ namespace Aaru.Commands
                     if(Debugger.IsAttached)
                         throw;
 
-                    DicConsole.ErrorWriteLine("Could not remove master database.");
+                    AaruConsole.ErrorWriteLine("Could not remove master database.");
 
                     return(int)ErrorNumber.CannotRemoveDatabase;
                 }

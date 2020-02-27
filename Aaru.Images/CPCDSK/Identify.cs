@@ -51,7 +51,7 @@ namespace Aaru.DiscImages
             stream.Read(headerB, 0, 256);
             CpcDiskInfo header = Marshal.ByteArrayToStructureLittleEndian<CpcDiskInfo>(headerB);
 
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                       StringHandlers.CToString(header.magic));
 
             return cpcdskId.SequenceEqual(header.magic.Take(cpcdskId.Length)) || edskId.SequenceEqual(header.magic) ||

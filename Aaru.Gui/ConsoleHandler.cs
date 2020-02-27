@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Receives DicConsole events and stores them for showing in the console
+//     Receives AaruConsole events and stores them for showing in the console
 //     window.
 //
 // --[ License ] --------------------------------------------------------------
@@ -51,8 +51,8 @@ namespace Aaru.Gui
 
                 _debug = value;
 
-                if(_debug) DicConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
-                else DicConsole.DebugWithModuleWriteLineEvent       -= OnDebugWriteHandler;
+                if(_debug) AaruConsole.DebugWithModuleWriteLineEvent += OnDebugWriteHandler;
+                else AaruConsole.DebugWithModuleWriteLineEvent       -= OnDebugWriteHandler;
             }
         }
         public static bool Verbose
@@ -64,8 +64,8 @@ namespace Aaru.Gui
 
                 _verbose = value;
 
-                if(_verbose) DicConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
-                else DicConsole.VerboseWriteLineEvent         -= OnVerboseWriteHandler;
+                if(_verbose) AaruConsole.VerboseWriteLineEvent += OnVerboseWriteHandler;
+                else AaruConsole.VerboseWriteLineEvent         -= OnVerboseWriteHandler;
             }
         }
 
@@ -73,8 +73,8 @@ namespace Aaru.Gui
 
         internal static void Init()
         {
-            DicConsole.WriteLineEvent      += OnWriteHandler;
-            DicConsole.ErrorWriteLineEvent += OnErrorWriteHandler;
+            AaruConsole.WriteLineEvent      += OnWriteHandler;
+            AaruConsole.ErrorWriteLineEvent += OnErrorWriteHandler;
         }
 
         static void OnWriteHandler(string format, params object[] arg)

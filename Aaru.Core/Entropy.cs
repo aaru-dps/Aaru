@@ -66,7 +66,7 @@ namespace Aaru.Core
 
             if(!(inputFormat is IOpticalMediaImage opticalMediaImage))
             {
-                DicConsole.ErrorWriteLine("The selected image does not support tracks.");
+                AaruConsole.ErrorWriteLine("The selected image does not support tracks.");
                 return entropyResultses.ToArray();
             }
 
@@ -88,7 +88,7 @@ namespace Aaru.Core
                     List<string> uniqueSectorsPerTrack = new List<string>();
 
                     trackEntropy.Sectors = currentTrack.TrackEndSector - currentTrack.TrackStartSector + 1;
-                    DicConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence,
+                    AaruConsole.VerboseWriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence,
                                                 trackEntropy.Sectors);
 
                     InitProgress2Event?.Invoke();
@@ -126,8 +126,8 @@ namespace Aaru.Core
             }
             catch(Exception ex)
             {
-                if(debug) DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
-                else DicConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
+                if(debug) AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                else AaruConsole.ErrorWriteLine("Unable to get separate tracks, not calculating their entropy");
             }
 
             return entropyResultses.ToArray();
@@ -141,7 +141,7 @@ namespace Aaru.Core
             List<string>   uniqueSectors = new List<string>();
 
             entropy.Sectors = inputFormat.Info.Sectors;
-            DicConsole.WriteLine("Sectors {0}", entropy.Sectors);
+            AaruConsole.WriteLine("Sectors {0}", entropy.Sectors);
             InitProgressEvent?.Invoke();
             for(ulong i = 0; i < entropy.Sectors; i++)
             {

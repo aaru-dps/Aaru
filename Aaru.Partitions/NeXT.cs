@@ -100,67 +100,67 @@ namespace Aaru.Partitions
             label.dl_dt              = Marshal.ByteArrayToStructureBigEndian<NeXTDiskTab>(disktabB);
             label.dl_dt.d_partitions = new NeXTEntry[8];
 
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_version = 0x{0:X8}", label.dl_version);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_label_blkno = {0}",  label.dl_label_blkno);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_size = {0}",         label.dl_size);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_label = \"{0}\"",
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_version = 0x{0:X8}", label.dl_version);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_label_blkno = {0}",  label.dl_label_blkno);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_size = {0}",         label.dl_size);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_label = \"{0}\"",
                                       StringHandlers.CToString(label.dl_label));
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_flags = {0}",    label.dl_flags);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_tag = 0x{0:X8}", label.dl_tag);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_name = \"{0}\"",
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_flags = {0}",    label.dl_flags);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_tag = 0x{0:X8}", label.dl_tag);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_name = \"{0}\"",
                                       StringHandlers.CToString(label.dl_dt.d_name));
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_type = \"{0}\"",
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_type = \"{0}\"",
                                       StringHandlers.CToString(label.dl_dt.d_type));
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_secsize = {0}",    label.dl_dt.d_secsize);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ntracks = {0}",    label.dl_dt.d_ntracks);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_nsectors = {0}",   label.dl_dt.d_nsectors);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ncylinders = {0}", label.dl_dt.d_ncylinders);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rpm = {0}",        label.dl_dt.d_rpm);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_front = {0}",      label.dl_dt.d_front);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_back = {0}",       label.dl_dt.d_back);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ngroups = {0}",    label.dl_dt.d_ngroups);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_size = {0}",    label.dl_dt.d_ag_size);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_alts = {0}",    label.dl_dt.d_ag_alts);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_off = {0}",     label.dl_dt.d_ag_off);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[0] = {0}",
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_secsize = {0}",    label.dl_dt.d_secsize);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ntracks = {0}",    label.dl_dt.d_ntracks);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_nsectors = {0}",   label.dl_dt.d_nsectors);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ncylinders = {0}", label.dl_dt.d_ncylinders);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rpm = {0}",        label.dl_dt.d_rpm);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_front = {0}",      label.dl_dt.d_front);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_back = {0}",       label.dl_dt.d_back);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ngroups = {0}",    label.dl_dt.d_ngroups);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_size = {0}",    label.dl_dt.d_ag_size);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_alts = {0}",    label.dl_dt.d_ag_alts);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_ag_off = {0}",     label.dl_dt.d_ag_off);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[0] = {0}",
                                       label.dl_dt.d_boot0_blkno[0]);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[1] = {0}",
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_boot0_blkno[1] = {0}",
                                       label.dl_dt.d_boot0_blkno[1]);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_bootfile = \"{0}\"",
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_bootfile = \"{0}\"",
                                       StringHandlers.CToString(label.dl_dt.d_bootfile));
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_hostname = \"{0}\"",
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_hostname = \"{0}\"",
                                       StringHandlers.CToString(label.dl_dt.d_hostname));
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rootpartition = {0}", label.dl_dt.d_rootpartition);
-            DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rwpartition = {0}",   label.dl_dt.d_rwpartition);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rootpartition = {0}", label.dl_dt.d_rootpartition);
+            AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_rwpartition = {0}",   label.dl_dt.d_rwpartition);
 
             for(int i = 0; i < 8; i++)
             {
                 byte[] partB = new byte[44];
                 Array.Copy(labelSector, 44 + 146 + 44 * i, partB, 0, 44);
                 label.dl_dt.d_partitions[i] = Marshal.ByteArrayToStructureBigEndian<NeXTEntry>(partB);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_base = {1}", i,
                                           label.dl_dt.d_partitions[i].p_base);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
                                           label.dl_dt.d_partitions[i].p_size);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_bsize = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_bsize = {1}", i,
                                           label.dl_dt.d_partitions[i].p_bsize);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_fsize = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_fsize = {1}", i,
                                           label.dl_dt.d_partitions[i].p_fsize);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_opt = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_opt = {1}", i,
                                           label.dl_dt.d_partitions[i].p_opt);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_cpg = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_cpg = {1}", i,
                                           label.dl_dt.d_partitions[i].p_cpg);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_density = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_density = {1}", i,
                                           label.dl_dt.d_partitions[i].p_density);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_minfree = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_minfree = {1}", i,
                                           label.dl_dt.d_partitions[i].p_minfree);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_newfs = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_newfs = {1}", i,
                                           label.dl_dt.d_partitions[i].p_newfs);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_mountpt = \"{1}\"", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_mountpt = \"{1}\"", i,
                                           StringHandlers.CToString(label.dl_dt.d_partitions[i].p_mountpt));
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_automnt = {1}", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_automnt = {1}", i,
                                           label.dl_dt.d_partitions[i].p_automnt);
-                DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_type = \"{1}\"", i,
+                AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_type = \"{1}\"", i,
                                           StringHandlers.CToString(label.dl_dt.d_partitions[i].p_type));
 
                 if(label.dl_dt.d_partitions[i].p_size  <= 0 || label.dl_dt.d_partitions[i].p_base < 0 ||
@@ -184,10 +184,10 @@ namespace Aaru.Partitions
 
                 if(part.Start + part.Length > imagePlugin.Info.Sectors)
                 {
-                    DicConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
+                    AaruConsole.DebugWriteLine("NeXT Plugin", "Partition bigger than device, reducing...");
                     part.Length = imagePlugin.Info.Sectors - part.Start;
                     part.Size   = part.Length * sectorSize;
-                    DicConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
+                    AaruConsole.DebugWriteLine("NeXT Plugin", "label.dl_dt.d_partitions[{0}].p_size = {1}", i,
                                               part.Length);
                 }
 

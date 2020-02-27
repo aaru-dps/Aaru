@@ -125,36 +125,36 @@ namespace Aaru.DiscImages
             stream.Read(tmpArray, 0, header.Unknown3);
             header.Unknown4 = tmpArray;
 
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.signature = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.signature = {0}",
                                       StringHandlers.CToString(header.Signature));
 
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown1 = {0}", header.Unknown1);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.timestamp = {0}", header.Timestamp);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdLength = {0}", header.VolumeIdLength);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdentifier = {0}", header.VolumeIdentifier);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.sysIdLength = {0}", header.SysIdLength);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.systemIdentifier = {0}", header.SystemIdentifier);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.commentsLength = {0}", header.CommentsLength);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.comments = {0}", header.Comments);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.trackDescriptors = {0}", header.TrackDescriptors);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFileLength = {0}", header.DataFileLength);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFilter = {0}", header.DataFilter);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFile = {0}", header.DataFile);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown1 = {0}", header.Unknown1);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.timestamp = {0}", header.Timestamp);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdLength = {0}", header.VolumeIdLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.volumeIdentifier = {0}", header.VolumeIdentifier);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.sysIdLength = {0}", header.SysIdLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.systemIdentifier = {0}", header.SystemIdentifier);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.commentsLength = {0}", header.CommentsLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.comments = {0}", header.Comments);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.trackDescriptors = {0}", header.TrackDescriptors);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFileLength = {0}", header.DataFileLength);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFilter = {0}", header.DataFilter);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.dataFile = {0}", header.DataFile);
 
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFileLength = {0}",
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFileLength = {0}",
                                       header.SubchannelFileLength);
 
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFilter = {0}", header.SubchannelFilter);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFile = {0}", header.SubchannelFile);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown2 = {0}", header.Unknown2);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown3 = {0}", header.Unknown3);
-            DicConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown4.Length = {0}", header.Unknown4.Length);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFilter = {0}", header.SubchannelFilter);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.subchannelFile = {0}", header.SubchannelFile);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown2 = {0}", header.Unknown2);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown3 = {0}", header.Unknown3);
+            AaruConsole.DebugWriteLine("BlindWrite4 plugin", "header.unknown4.Length = {0}", header.Unknown4.Length);
 
             bwTracks = new List<Bw4TrackDescriptor>();
 
             for(int i = 0; i < header.TrackDescriptors; i++)
             {
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "stream.Position = {0}", stream.Position);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "stream.Position = {0}", stream.Position);
 
                 var track = new Bw4TrackDescriptor();
 
@@ -317,68 +317,68 @@ namespace Aaru.DiscImages
                 track.isrcBytes = tmpArray;
                 track.isrcUpc   = StringHandlers.CToString(track.isrcBytes, Encoding.Default);
 
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.filenameLen = {0}", track.filenameLen);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.filename = {0}", track.filename);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.offset = {0}", track.offset);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.subchannel = {0}", track.subchannel);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.filenameLen = {0}", track.filenameLen);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.filename = {0}", track.filename);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.offset = {0}", track.offset);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.subchannel = {0}", track.subchannel);
 
                 for(int j = 0; j < track.unknown1.Length; j++)
-                    DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown1[{1}] = 0x{0:X8}", track.unknown1[j],
+                    AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown1[{1}] = 0x{0:X8}", track.unknown1[j],
                                               j);
 
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown2 = {0}", track.unknown2);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown3 = {0}", track.unknown3);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.session = {0}", track.session);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown4 = {0}", track.unknown4);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.adrCtl = {0}", track.adrCtl);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown5 = {0}", track.unknown5);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.trackMode = {0}", track.trackMode);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown6 = {0}", track.unknown6);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.point = {0}", track.point);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown7 = {0}", track.unknown7);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown8 = {0}", track.unknown8);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown9 = {0}", track.unknown9);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown10 = {0}", track.unknown10);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown11 = {0}", track.unknown11);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.lastSector = {0}", track.lastSector);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown12 = {0}", track.unknown12);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.pregap = {0}", track.pregap);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.startSector = {0}", track.startSector);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown2 = {0}", track.unknown2);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown3 = {0}", track.unknown3);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.session = {0}", track.session);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown4 = {0}", track.unknown4);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.adrCtl = {0}", track.adrCtl);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown5 = {0}", track.unknown5);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.trackMode = {0}", track.trackMode);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown6 = {0}", track.unknown6);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.point = {0}", track.point);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown7 = {0}", track.unknown7);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown8 = {0}", track.unknown8);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown9 = {0}", track.unknown9);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown10 = {0}", track.unknown10);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown11 = {0}", track.unknown11);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.lastSector = {0}", track.lastSector);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown12 = {0}", track.unknown12);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.pregap = {0}", track.pregap);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.startSector = {0}", track.startSector);
 
                 for(int j = 0; j < track.unknown13.Length; j++)
-                    DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown13[{1}] = 0x{0:X8}",
+                    AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unknown13[{1}] = 0x{0:X8}",
                                               track.unknown13[j], j);
 
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.titleLen = {0}", track.titleLen);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.title = {0}", track.title);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.performerLen = {0}", track.performerLen);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.performer = {0}", track.performer);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen1 = {0}", track.unkStrLen1);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString1 = {0}", track.unkString1);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen2 = {0}", track.unkStrLen2);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString2 = {0}", track.unkString2);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen3 = {0}", track.unkStrLen3);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString3 = {0}", track.unkString3);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen4 = {0}", track.unkStrLen4);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString4 = {0}", track.unkString4);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.discIdLen = {0}", track.discIdLen);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.discId = {0}", track.discId);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen5 = {0}", track.unkStrLen5);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString5 = {0}", track.unkString5);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen6 = {0}", track.unkStrLen6);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString6 = {0}", track.unkString6);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen7 = {0}", track.unkStrLen7);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString7 = {0}", track.unkString7);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen8 = {0}", track.unkStrLen8);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString8 = {0}", track.unkString8);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen9 = {0}", track.unkStrLen9);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString9 = {0}", track.unkString9);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen10 = {0}", track.unkStrLen10);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString10 = {0}", track.unkString10);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen11 = {0}", track.unkStrLen11);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString11 = {0}", track.unkString11);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.isrcLen = {0}", track.isrcLen);
-                DicConsole.DebugWriteLine("BlindWrite4 plugin", "track.isrcUpc = {0}", track.isrcUpc);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.titleLen = {0}", track.titleLen);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.title = {0}", track.title);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.performerLen = {0}", track.performerLen);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.performer = {0}", track.performer);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen1 = {0}", track.unkStrLen1);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString1 = {0}", track.unkString1);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen2 = {0}", track.unkStrLen2);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString2 = {0}", track.unkString2);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen3 = {0}", track.unkStrLen3);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString3 = {0}", track.unkString3);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen4 = {0}", track.unkStrLen4);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString4 = {0}", track.unkString4);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.discIdLen = {0}", track.discIdLen);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.discId = {0}", track.discId);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen5 = {0}", track.unkStrLen5);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString5 = {0}", track.unkString5);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen6 = {0}", track.unkStrLen6);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString6 = {0}", track.unkString6);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen7 = {0}", track.unkStrLen7);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString7 = {0}", track.unkString7);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen8 = {0}", track.unkStrLen8);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString8 = {0}", track.unkString8);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen9 = {0}", track.unkStrLen9);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString9 = {0}", track.unkString9);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen10 = {0}", track.unkStrLen10);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString10 = {0}", track.unkString10);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkStrLen11 = {0}", track.unkStrLen11);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.unkString11 = {0}", track.unkString11);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.isrcLen = {0}", track.isrcLen);
+                AaruConsole.DebugWriteLine("BlindWrite4 plugin", "track.isrcUpc = {0}", track.isrcUpc);
 
                 bwTracks.Add(track);
             }
@@ -792,10 +792,10 @@ namespace Aaru.DiscImages
 
             imageInfo.Comments = header.Comments;
 
-            DicConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("BlindWrite image describes a disc of type {0}", imageInfo.MediaType);
 
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                DicConsole.VerboseWriteLine("BlindrWrite comments: {0}", imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("BlindrWrite comments: {0}", imageInfo.Comments);
 
             return true;
         }

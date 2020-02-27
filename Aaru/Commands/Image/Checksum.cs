@@ -159,37 +159,37 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("checksum");
 
-            DicConsole.DebugWriteLine("Checksum command", "--adler32={0}", adler32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc16={0}", crc16);
-            DicConsole.DebugWriteLine("Checksum command", "--crc32={0}", crc32);
-            DicConsole.DebugWriteLine("Checksum command", "--crc64={0}", crc64);
-            DicConsole.DebugWriteLine("Checksum command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Checksum command", "--fletcher16={0}", fletcher16);
-            DicConsole.DebugWriteLine("Checksum command", "--fletcher32={0}", fletcher32);
-            DicConsole.DebugWriteLine("Checksum command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("Checksum command", "--md5={0}", md5);
-            DicConsole.DebugWriteLine("Checksum command", "--separated-tracks={0}", separatedTracks);
-            DicConsole.DebugWriteLine("Checksum command", "--sha1={0}", sha1);
-            DicConsole.DebugWriteLine("Checksum command", "--sha256={0}", sha256);
-            DicConsole.DebugWriteLine("Checksum command", "--sha384={0}", sha384);
-            DicConsole.DebugWriteLine("Checksum command", "--sha512={0}", sha512);
-            DicConsole.DebugWriteLine("Checksum command", "--spamsum={0}", spamSum);
-            DicConsole.DebugWriteLine("Checksum command", "--verbose={0}", verbose);
-            DicConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", wholeDisc);
+            AaruConsole.DebugWriteLine("Checksum command", "--adler32={0}", adler32);
+            AaruConsole.DebugWriteLine("Checksum command", "--crc16={0}", crc16);
+            AaruConsole.DebugWriteLine("Checksum command", "--crc32={0}", crc32);
+            AaruConsole.DebugWriteLine("Checksum command", "--crc64={0}", crc64);
+            AaruConsole.DebugWriteLine("Checksum command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Checksum command", "--fletcher16={0}", fletcher16);
+            AaruConsole.DebugWriteLine("Checksum command", "--fletcher32={0}", fletcher32);
+            AaruConsole.DebugWriteLine("Checksum command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Checksum command", "--md5={0}", md5);
+            AaruConsole.DebugWriteLine("Checksum command", "--separated-tracks={0}", separatedTracks);
+            AaruConsole.DebugWriteLine("Checksum command", "--sha1={0}", sha1);
+            AaruConsole.DebugWriteLine("Checksum command", "--sha256={0}", sha256);
+            AaruConsole.DebugWriteLine("Checksum command", "--sha384={0}", sha384);
+            AaruConsole.DebugWriteLine("Checksum command", "--sha512={0}", sha512);
+            AaruConsole.DebugWriteLine("Checksum command", "--spamsum={0}", spamSum);
+            AaruConsole.DebugWriteLine("Checksum command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Checksum command", "--whole-disc={0}", wholeDisc);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -198,7 +198,7 @@ namespace Aaru.Commands.Image
 
             if(inputFormat == null)
             {
-                DicConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
+                AaruConsole.ErrorWriteLine("Unable to recognize image format, not checksumming");
 
                 return(int)ErrorNumber.UnrecognizedFormat;
             }
@@ -266,14 +266,14 @@ namespace Aaru.Commands.Image
                             if(currentTrack.TrackStartSector - previousTrackEnd != 0 && wholeDisc)
                                 for(ulong i = previousTrackEnd + 1; i < currentTrack.TrackStartSector; i++)
                                 {
-                                    DicConsole.Write("\rHashing track-less sector {0}", i);
+                                    AaruConsole.Write("\rHashing track-less sector {0}", i);
 
                                     byte[] hiddenSector = inputFormat.ReadSector(i);
 
                                     mediaChecksum?.Update(hiddenSector);
                                 }
 
-                            DicConsole.DebugWriteLine("Checksum command",
+                            AaruConsole.DebugWriteLine("Checksum command",
                                                       "Track {0} starts at sector {1} and ends at sector {2}",
                                                       currentTrack.TrackSequence, currentTrack.TrackStartSector,
                                                       currentTrack.TrackEndSector);
@@ -283,7 +283,7 @@ namespace Aaru.Commands.Image
 
                             ulong sectors     = (currentTrack.TrackEndSector - currentTrack.TrackStartSector) + 1;
                             ulong doneSectors = 0;
-                            DicConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
+                            AaruConsole.WriteLine("Track {0} has {1} sectors", currentTrack.TrackSequence, sectors);
 
                             while(doneSectors < sectors)
                             {
@@ -294,7 +294,7 @@ namespace Aaru.Commands.Image
                                     sector = opticalInput.ReadSectors(doneSectors, SECTORS_TO_READ,
                                                                       currentTrack.TrackSequence);
 
-                                    DicConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
+                                    AaruConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
                                                      currentTrack.TrackSequence, doneSectors + SECTORS_TO_READ);
 
                                     doneSectors += SECTORS_TO_READ;
@@ -304,7 +304,7 @@ namespace Aaru.Commands.Image
                                     sector = opticalInput.ReadSectors(doneSectors, (uint)(sectors - doneSectors),
                                                                       currentTrack.TrackSequence);
 
-                                    DicConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
+                                    AaruConsole.Write("\rHashing sectors {0} to {2} of track {1}", doneSectors,
                                                      currentTrack.TrackSequence, doneSectors + (sectors - doneSectors));
 
                                     doneSectors += sectors - doneSectors;
@@ -317,12 +317,12 @@ namespace Aaru.Commands.Image
                                     trackChecksum?.Update(sector);
                             }
 
-                            DicConsole.WriteLine();
+                            AaruConsole.WriteLine();
 
                             if(separatedTracks)
                                 if(trackChecksum != null)
                                     foreach(ChecksumType chk in trackChecksum.End())
-                                        DicConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence,
+                                        AaruConsole.WriteLine("Track {0}'s {1}: {2}", currentTrack.TrackSequence,
                                                              chk.type, chk.Value);
 
                             previousTrackEnd = currentTrack.TrackEndSector;
@@ -331,7 +331,7 @@ namespace Aaru.Commands.Image
                         if(opticalInput.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
                             for(ulong i = previousTrackEnd + 1; i < opticalInput.Info.Sectors; i++)
                             {
-                                DicConsole.Write("\rHashing track-less sector {0}", i);
+                                AaruConsole.Write("\rHashing track-less sector {0}", i);
 
                                 byte[] hiddenSector = inputFormat.ReadSector(i);
                                 mediaChecksum?.Update(hiddenSector);
@@ -340,14 +340,14 @@ namespace Aaru.Commands.Image
                         if(wholeDisc)
                             if(mediaChecksum != null)
                                 foreach(ChecksumType chk in mediaChecksum.End())
-                                    DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                                    AaruConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
                     }
                     catch(Exception ex)
                     {
                         if(debug)
-                            DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                            AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
                         else
-                            DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
+                            AaruConsole.WriteLine("Unable to get separate tracks, not checksumming them");
                     }
 
                     break;
@@ -366,14 +366,14 @@ namespace Aaru.Commands.Image
                         if(currentFile.FirstBlock - previousTrackEnd != 0 && wholeDisc)
                             for(ulong i = previousTrackEnd + 1; i < currentFile.FirstBlock; i++)
                             {
-                                DicConsole.Write("\rHashing file-less block {0}", i);
+                                AaruConsole.Write("\rHashing file-less block {0}", i);
 
                                 byte[] hiddenSector = inputFormat.ReadSector(i);
 
                                 mediaChecksum?.Update(hiddenSector);
                             }
 
-                        DicConsole.DebugWriteLine("Checksum command",
+                        AaruConsole.DebugWriteLine("Checksum command",
                                                   "Track {0} starts at sector {1} and ends at block {2}",
                                                   currentFile.File, currentFile.FirstBlock, currentFile.LastBlock);
 
@@ -382,7 +382,7 @@ namespace Aaru.Commands.Image
 
                         ulong sectors     = (currentFile.LastBlock - currentFile.FirstBlock) + 1;
                         ulong doneSectors = 0;
-                        DicConsole.WriteLine("File {0} has {1} sectors", currentFile.File, sectors);
+                        AaruConsole.WriteLine("File {0} has {1} sectors", currentFile.File, sectors);
 
                         while(doneSectors < sectors)
                         {
@@ -392,7 +392,7 @@ namespace Aaru.Commands.Image
                             {
                                 sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock, SECTORS_TO_READ);
 
-                                DicConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
+                                AaruConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
                                                  currentFile.File, doneSectors + SECTORS_TO_READ);
 
                                 doneSectors += SECTORS_TO_READ;
@@ -402,7 +402,7 @@ namespace Aaru.Commands.Image
                                 sector = tapeImage.ReadSectors(doneSectors + currentFile.FirstBlock,
                                                                (uint)(sectors - doneSectors));
 
-                                DicConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
+                                AaruConsole.Write("\rHashing blocks {0} to {2} of file {1}", doneSectors,
                                                  currentFile.File, doneSectors + (sectors - doneSectors));
 
                                 doneSectors += sectors - doneSectors;
@@ -415,12 +415,12 @@ namespace Aaru.Commands.Image
                                 trackChecksum?.Update(sector);
                         }
 
-                        DicConsole.WriteLine();
+                        AaruConsole.WriteLine();
 
                         if(separatedTracks)
                             if(trackChecksum != null)
                                 foreach(ChecksumType chk in trackChecksum.End())
-                                    DicConsole.WriteLine("File {0}'s {1}: {2}", currentFile.File, chk.type, chk.Value);
+                                    AaruConsole.WriteLine("File {0}'s {1}: {2}", currentFile.File, chk.type, chk.Value);
 
                         previousTrackEnd = currentFile.LastBlock;
                     }
@@ -428,7 +428,7 @@ namespace Aaru.Commands.Image
                     if(tapeImage.Info.Sectors - previousTrackEnd != 0 && wholeDisc)
                         for(ulong i = previousTrackEnd + 1; i < tapeImage.Info.Sectors; i++)
                         {
-                            DicConsole.Write("\rHashing file-less sector {0}", i);
+                            AaruConsole.Write("\rHashing file-less sector {0}", i);
 
                             byte[] hiddenSector = inputFormat.ReadSector(i);
                             mediaChecksum?.Update(hiddenSector);
@@ -437,7 +437,7 @@ namespace Aaru.Commands.Image
                     if(wholeDisc)
                         if(mediaChecksum != null)
                             foreach(ChecksumType chk in mediaChecksum.End())
-                                DicConsole.WriteLine("Tape's {0}: {1}", chk.type, chk.Value);
+                                AaruConsole.WriteLine("Tape's {0}: {1}", chk.type, chk.Value);
 
                     break;
                 }
@@ -447,7 +447,7 @@ namespace Aaru.Commands.Image
                     mediaChecksum = new Checksum(enabledChecksums);
 
                     ulong sectors = inputFormat.Info.Sectors;
-                    DicConsole.WriteLine("Sectors {0}", sectors);
+                    AaruConsole.WriteLine("Sectors {0}", sectors);
                     ulong doneSectors = 0;
 
                     while(doneSectors < sectors)
@@ -458,7 +458,7 @@ namespace Aaru.Commands.Image
                         {
                             sector = inputFormat.ReadSectors(doneSectors, SECTORS_TO_READ);
 
-                            DicConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
+                            AaruConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
                                              doneSectors + SECTORS_TO_READ);
 
                             doneSectors += SECTORS_TO_READ;
@@ -467,7 +467,7 @@ namespace Aaru.Commands.Image
                         {
                             sector = inputFormat.ReadSectors(doneSectors, (uint)(sectors - doneSectors));
 
-                            DicConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
+                            AaruConsole.Write("\rHashing sectors {0} to {1}", doneSectors,
                                              doneSectors + (sectors - doneSectors));
 
                             doneSectors += sectors - doneSectors;
@@ -476,10 +476,10 @@ namespace Aaru.Commands.Image
                         mediaChecksum.Update(sector);
                     }
 
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
 
                     foreach(ChecksumType chk in mediaChecksum.End())
-                        DicConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
+                        AaruConsole.WriteLine("Disk's {0}: {1}", chk.type, chk.Value);
 
                     break;
                 }

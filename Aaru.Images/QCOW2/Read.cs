@@ -58,28 +58,28 @@ namespace Aaru.DiscImages
             stream.Read(qHdrB, 0, Marshal.SizeOf<QCow2Header>());
             qHdr = Marshal.SpanToStructureBigEndian<QCow2Header>(qHdrB);
 
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}",            qHdr.magic);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}",               qHdr.version);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.backing_file_offset = {0}",   qHdr.backing_file_offset);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.backing_file_size = {0}",     qHdr.backing_file_size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.cluster_bits = {0}",          qHdr.cluster_bits);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.size = {0}",                  qHdr.size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.crypt_method = {0}",          qHdr.crypt_method);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1_size = {0}",               qHdr.l1_size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1_table_offset = {0}",       qHdr.l1_table_offset);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.refcount_table_offset = {0}", qHdr.refcount_table_offset);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.refcount_table_clusters = {0}",
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}",            qHdr.magic);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}",               qHdr.version);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.backing_file_offset = {0}",   qHdr.backing_file_offset);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.backing_file_size = {0}",     qHdr.backing_file_size);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.cluster_bits = {0}",          qHdr.cluster_bits);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.size = {0}",                  qHdr.size);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.crypt_method = {0}",          qHdr.crypt_method);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.l1_size = {0}",               qHdr.l1_size);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.l1_table_offset = {0}",       qHdr.l1_table_offset);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.refcount_table_offset = {0}", qHdr.refcount_table_offset);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.refcount_table_clusters = {0}",
                                       qHdr.refcount_table_clusters);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.nb_snapshots = {0}",     qHdr.nb_snapshots);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.snapshots_offset = {0}", qHdr.snapshots_offset);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.nb_snapshots = {0}",     qHdr.nb_snapshots);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.snapshots_offset = {0}", qHdr.snapshots_offset);
 
             if(qHdr.version >= QCOW_VERSION3)
             {
-                DicConsole.DebugWriteLine("QCOW plugin", "qHdr.features = {0:X}",           qHdr.features);
-                DicConsole.DebugWriteLine("QCOW plugin", "qHdr.compat_features = {0:X}",    qHdr.compat_features);
-                DicConsole.DebugWriteLine("QCOW plugin", "qHdr.autoclear_features = {0:X}", qHdr.autoclear_features);
-                DicConsole.DebugWriteLine("QCOW plugin", "qHdr.refcount_order = {0}",       qHdr.refcount_order);
-                DicConsole.DebugWriteLine("QCOW plugin", "qHdr.header_length = {0}",        qHdr.header_length);
+                AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.features = {0:X}",           qHdr.features);
+                AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.compat_features = {0:X}",    qHdr.compat_features);
+                AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.autoclear_features = {0:X}", qHdr.autoclear_features);
+                AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.refcount_order = {0}",       qHdr.refcount_order);
+                AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.header_length = {0}",        qHdr.header_length);
 
                 if((qHdr.features & QCOW_FEATURE_MASK) != 0)
                     throw new
@@ -106,17 +106,17 @@ namespace Aaru.DiscImages
             l2Bits         = (int)(qHdr.cluster_bits      - 3);
             l2Size         = 1 << l2Bits;
 
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSize = {0}",    clusterSize);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSectors = {0}", clusterSectors);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.qHdr.l1_size = {0}",   qHdr.l1_size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l2Size = {0}",         l2Size);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.sectors = {0}",        imageInfo.Sectors);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSize = {0}",    clusterSize);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.clusterSectors = {0}", clusterSectors);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.qHdr.l1_size = {0}",   qHdr.l1_size);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.l2Size = {0}",         l2Size);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.sectors = {0}",        imageInfo.Sectors);
 
             byte[] l1TableB = new byte[qHdr.l1_size * 8];
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
             stream.Read(l1TableB, 0, (int)qHdr.l1_size * 8);
             l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
-            DicConsole.DebugWriteLine("QCOW plugin", "Reading L1 table");
+            AaruConsole.DebugWriteLine("QCOW plugin", "Reading L1 table");
             for(long i = 0; i < l1Table.LongLength; i++) l1Table[i] = Swapping.Swap(l1Table[i]);
 
             l1Mask = 0;
@@ -141,10 +141,10 @@ namespace Aaru.DiscImages
             sectorMask = 0;
             for(int i = 0; i < qHdr.cluster_bits; i++) sectorMask = (sectorMask << 1) + 1;
 
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Mask = {0:X}",     l1Mask);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Shift = {0}",      l1Shift);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.l2Mask = {0:X}",     l2Mask);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.sectorMask = {0:X}", sectorMask);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Mask = {0:X}",     l1Mask);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.l1Shift = {0}",      l1Shift);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.l2Mask = {0:X}",     l2Mask);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.sectorMask = {0:X}", sectorMask);
 
             maxL2TableCache = MAX_CACHE_SIZE / (l2Size * 8);
             maxClusterCache = MAX_CACHE_SIZE / clusterSize;
@@ -197,7 +197,7 @@ namespace Aaru.DiscImages
                 imageStream.Seek((long)(l1Table[l1Off] & QCOW_FLAGS_MASK), SeekOrigin.Begin);
                 byte[] l2TableB = new byte[l2Size * 8];
                 imageStream.Read(l2TableB, 0, l2Size * 8);
-                DicConsole.DebugWriteLine("QCOW plugin", "Reading L2 table #{0}", l1Off);
+                AaruConsole.DebugWriteLine("QCOW plugin", "Reading L2 table #{0}", l1Off);
                 l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
                 for(long i = 0; i < l2Table.LongLength; i++) l2Table[i] = Swapping.Swap(l2Table[i]);
 

@@ -70,8 +70,8 @@ namespace Aaru.Filesystems.ISO9660
             Array.Copy(vdSector, 0x001 + xaOff, vdMagic, 0, 5);
             Array.Copy(vdSector, 0x009 + xaOff, hsMagic, 0, 5);
 
-            DicConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", Encoding.ASCII.GetString(vdMagic));
-            DicConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", Encoding.ASCII.GetString(hsMagic));
+            AaruConsole.DebugWriteLine("ISO9660 plugin", "VDMagic = {0}", Encoding.ASCII.GetString(vdMagic));
+            AaruConsole.DebugWriteLine("ISO9660 plugin", "HSMagic = {0}", Encoding.ASCII.GetString(hsMagic));
 
             return Encoding.ASCII.GetString(vdMagic) == ISO_MAGIC         ||
                    Encoding.ASCII.GetString(hsMagic) == HIGH_SIERRA_MAGIC ||
@@ -116,15 +116,15 @@ namespace Aaru.Filesystems.ISO9660
 
             while(true)
             {
-                DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
+                AaruConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
                 // Seek to Volume Descriptor
-                DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
+                AaruConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
                 byte[] vdSectorTmp = imagePlugin.ReadSector(16 + counter + partition.Start);
                 vdSector = new byte[vdSectorTmp.Length - xaOff];
                 Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
                 byte vdType = vdSector[0 + hsOff]; // Volume Descriptor Type, should be 1 or 2.
-                DicConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", vdType);
+                AaruConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", vdType);
 
                 if(vdType == 255) // Supposedly we are in the PVD.
                 {
@@ -190,7 +190,7 @@ namespace Aaru.Filesystems.ISO9660
                                 if(svd.escape_sequences[2] == '@' || svd.escape_sequences[2] == 'C' ||
                                    svd.escape_sequences[2] == 'E') jolietvd = svd;
                                 else
-                                    DicConsole.WriteLine("ISO9660 plugin",
+                                    AaruConsole.WriteLine("ISO9660 plugin",
                                                          "Found unknown supplementary volume descriptor");
                         }
                         else evd = true;
@@ -580,9 +580,9 @@ namespace Aaru.Filesystems.ISO9660
 
                 initialEntry.boot_type = (ElToritoEmulation)((byte)initialEntry.boot_type & 0xF);
 
-                DicConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.load_rba = {0}",
+                AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.load_rba = {0}",
                                           initialEntry.load_rba);
-                DicConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.sector_count = {0}",
+                AaruConsole.DebugWriteLine("DEBUG (ISO9660 plugin)", "initialEntry.sector_count = {0}",
                                           initialEntry.sector_count);
 
                 byte[] bootImage =

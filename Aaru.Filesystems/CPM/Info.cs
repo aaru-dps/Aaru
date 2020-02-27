@@ -277,7 +277,7 @@ namespace Aaru.Filesystems.CPM
                             workingDefinition.skew = 2;
                             workingDefinition.sofs = 0;
 
-                            DicConsole.DebugWriteLine("CP/M Plugin", "Found Amstrad superblock.");
+                            AaruConsole.DebugWriteLine("CP/M Plugin", "Found Amstrad superblock.");
                         }
                     }
                 }
@@ -335,7 +335,7 @@ namespace Aaru.Filesystems.CPM
                             uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / sectorSize);
                             directory = imagePlugin.ReadSectors(firstDirectorySector + partition.Start,
                                                                 directoryLength);
-                            DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
+                            AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 hard disk superblock.");
 
                             // Build a CP/M disk definition
                             workingDefinition = new CpmDefinition
@@ -755,7 +755,7 @@ namespace Aaru.Filesystems.CPM
                     {
                         uint directoryLength = (uint)(((ulong)dpb.drm + 1) * 32 / imagePlugin.Info.SectorSize);
                         directory = imagePlugin.ReadSectors(firstDirectorySector86 + partition.Start, directoryLength);
-                        DicConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
+                        AaruConsole.DebugWriteLine("CP/M Plugin", "Found CP/M-86 floppy identifier.");
                     }
                 }
 
@@ -764,7 +764,7 @@ namespace Aaru.Filesystems.CPM
                 {
                     if(CheckDir(directory))
                     {
-                        DicConsole.DebugWriteLine("CP/M Plugin", "First directory block seems correct.");
+                        AaruConsole.DebugWriteLine("CP/M Plugin", "First directory block seems correct.");
                         return true;
                     }
 
@@ -775,10 +775,10 @@ namespace Aaru.Filesystems.CPM
                 if(!cpmFound)
                 {
                     // Load all definitions
-                    DicConsole.DebugWriteLine("CP/M Plugin", "Trying to load definitions.");
+                    AaruConsole.DebugWriteLine("CP/M Plugin", "Trying to load definitions.");
                     if(LoadDefinitions() && definitions?.definitions != null && definitions.definitions.Count > 0)
                     {
-                        DicConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
+                        AaruConsole.DebugWriteLine("CP/M Plugin", "Trying all known definitions.");
                         foreach(CpmDefinition def in from def in definitions.definitions
                                                      let sectors =
                                                          (ulong)(def.cylinders * def.sides * def.sectorsPerTrack)
@@ -787,7 +787,7 @@ namespace Aaru.Filesystems.CPM
                                                      select def)
                         {
                             // Definition seems to describe current disk, at least, same number of volume sectors and bytes per sector
-                            DicConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
+                            AaruConsole.DebugWriteLine("CP/M Plugin", "Trying definition \"{0}\"", def.comment);
                             ulong offset;
                             if(def.sofs != 0) offset = (ulong)def.sofs;
                             else offset              = (ulong)(def.ofs * def.sectorsPerTrack);
@@ -831,7 +831,7 @@ namespace Aaru.Filesystems.CPM
                                 else if(string.Compare(def.order, "COLUMBIA",
                                                        StringComparison.InvariantCultureIgnoreCase) == 0)
                                 {
-                                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                    AaruConsole.DebugWriteLine("CP/M Plugin",
                                                               "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
                                     continue;
                                 }
@@ -839,13 +839,13 @@ namespace Aaru.Filesystems.CPM
                                 else if(string.Compare(def.order, "EAGLE",
                                                        StringComparison.InvariantCultureIgnoreCase) == 0)
                                 {
-                                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                    AaruConsole.DebugWriteLine("CP/M Plugin",
                                                               "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
                                     continue;
                                 }
                                 else
                                 {
-                                    DicConsole.DebugWriteLine("CP/M Plugin",
+                                    AaruConsole.DebugWriteLine("CP/M Plugin",
                                                               "Unknown order type \"{0}\", not proceeding with this definition.",
                                                               def.order);
                                     continue;
@@ -867,7 +867,7 @@ namespace Aaru.Filesystems.CPM
                             directory = ms.ToArray();
 
                             if(def.evenOdd)
-                                DicConsole.DebugWriteLine("CP/M Plugin",
+                                AaruConsole.DebugWriteLine("CP/M Plugin",
                                                           "Definition contains EVEN-ODD field, with unknown meaning, detection may be wrong.");
 
                             // Complement of the directory bytes if needed
@@ -878,7 +878,7 @@ namespace Aaru.Filesystems.CPM
                             // Check the directory
                             if(CheckDir(directory))
                             {
-                                DicConsole.DebugWriteLine("CP/M Plugin", "Definition \"{0}\" has a correct directory",
+                                AaruConsole.DebugWriteLine("CP/M Plugin", "Definition \"{0}\" has a correct directory",
                                                           def.comment);
 
                                 // Build a Disc Parameter Block

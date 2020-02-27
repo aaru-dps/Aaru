@@ -52,35 +52,35 @@ namespace Aaru.DiscImages
             stream.Read(hdr, 0, 133);
             header = Marshal.ByteArrayToStructureLittleEndian<CopyQmHeader>(hdr);
 
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}",       header.magic);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}",        header.mark);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorSize = {0}",       header.sectorSize);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorPerCluster = {0}", header.sectorPerCluster);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.reservedSectors = {0}",  header.reservedSectors);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.fatCopy = {0}",          header.fatCopy);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.rootEntries = {0}",      header.rootEntries);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectors = {0}",          header.sectors);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.mediaType = 0x{0:X2}",   header.mediaType);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerFat = {0}",    header.sectorsPerFat);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerTrack = {0}",  header.sectorsPerTrack);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.heads = {0}",            header.heads);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.hidden = {0}",           header.hidden);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.sectorsBig = {0}",       header.sectorsBig);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.description = {0}",      header.description);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.blind = {0}",            header.blind);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.density = {0}",          header.density);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.imageCylinders = {0}",   header.imageCylinders);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.totalCylinders = {0}",   header.totalCylinders);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.crc = 0x{0:X8}",         header.crc);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.volumeLabel = {0}",      header.volumeLabel);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.time = 0x{0:X4}",        header.time);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.date = 0x{0:X4}",        header.date);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.commentLength = {0}",    header.commentLength);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.secbs = {0}",            header.secbs);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.unknown = 0x{0:X4}",     header.unknown);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.interleave = {0}",       header.interleave);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}",             header.skew);
-            DicConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}",            header.drive);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.magic = 0x{0:X4}",       header.magic);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.mark = 0x{0:X2}",        header.mark);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorSize = {0}",       header.sectorSize);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorPerCluster = {0}", header.sectorPerCluster);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.reservedSectors = {0}",  header.reservedSectors);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.fatCopy = {0}",          header.fatCopy);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.rootEntries = {0}",      header.rootEntries);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectors = {0}",          header.sectors);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.mediaType = 0x{0:X2}",   header.mediaType);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerFat = {0}",    header.sectorsPerFat);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsPerTrack = {0}",  header.sectorsPerTrack);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.heads = {0}",            header.heads);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.hidden = {0}",           header.hidden);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.sectorsBig = {0}",       header.sectorsBig);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.description = {0}",      header.description);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.blind = {0}",            header.blind);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.density = {0}",          header.density);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.imageCylinders = {0}",   header.imageCylinders);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.totalCylinders = {0}",   header.totalCylinders);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.crc = 0x{0:X8}",         header.crc);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.volumeLabel = {0}",      header.volumeLabel);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.time = 0x{0:X4}",        header.time);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.date = 0x{0:X4}",        header.date);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.commentLength = {0}",    header.commentLength);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.secbs = {0}",            header.secbs);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.unknown = 0x{0:X4}",     header.unknown);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.interleave = {0}",       header.interleave);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.skew = {0}",             header.skew);
+            AaruConsole.DebugWriteLine("CopyQM plugin", "header.drive = {0}",            header.drive);
 
             byte[] cmt = new byte[header.commentLength];
             stream.Read(cmt, 0, header.commentLength);
@@ -137,9 +137,9 @@ namespace Aaru.DiscImages
 
             headerChecksumOk = ((-1 * sum) & 0xFF) == header.headerChecksum;
 
-            DicConsole.DebugWriteLine("CopyQM plugin", "Calculated header checksum = 0x{0:X2}, {1}", (-1 * sum) & 0xFF,
+            AaruConsole.DebugWriteLine("CopyQM plugin", "Calculated header checksum = 0x{0:X2}, {1}", (-1 * sum) & 0xFF,
                                       headerChecksumOk);
-            DicConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
+            AaruConsole.DebugWriteLine("CopyQM plugin", "Calculated data CRC = 0x{0:X8}, {1}", calculatedDataCrc,
                                       calculatedDataCrc == header.crc);
 
             imageInfo.Application          = "CopyQM";
@@ -172,9 +172,9 @@ namespace Aaru.DiscImages
 
             decodedImage.Close();
 
-            DicConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("CopyQM image contains a disk of type {0}", imageInfo.MediaType);
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                DicConsole.VerboseWriteLine("CopyQM comments: {0}", imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("CopyQM comments: {0}", imageInfo.Comments);
 
             imageInfo.Heads           = header.heads;
             imageInfo.Cylinders       = header.totalCylinders;

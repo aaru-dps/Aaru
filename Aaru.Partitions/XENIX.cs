@@ -63,15 +63,15 @@ namespace Aaru.Partitions
 
             Partable xnxtbl = Marshal.ByteArrayToStructureLittleEndian<Partable>(tblsector);
 
-            DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic,
+            AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p_magic = 0x{0:X4} (should be 0x{1:X4})", xnxtbl.p_magic,
                                       PAMAGIC);
 
             if(xnxtbl.p_magic != PAMAGIC) return false;
 
             for(int i = 0; i < MAXPARTS; i++)
             {
-                DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}",  i, xnxtbl.p[i].p_off);
-                DicConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
+                AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_off = {1}",  i, xnxtbl.p[i].p_off);
+                AaruConsole.DebugWriteLine("XENIX plugin", "xnxtbl.p[{0}].p_size = {1}", i, xnxtbl.p[i].p_size);
                 if(xnxtbl.p[i].p_size <= 0) continue;
 
                 CommonTypes.Partition part = new CommonTypes.Partition

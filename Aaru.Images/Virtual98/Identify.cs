@@ -57,17 +57,17 @@ namespace Aaru.DiscImages
 
             if(!v98Hdr.signature.SequenceEqual(signature)) return false;
 
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.signature = \"{0}\"",
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.signature = \"{0}\"",
                                       StringHandlers.CToString(v98Hdr.signature, shiftjis));
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"",
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.comment = \"{0}\"",
                                       StringHandlers.CToString(v98Hdr.comment, shiftjis));
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}",    v98Hdr.padding);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}",     v98Hdr.mbsize);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98Hdr.sectorsize);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}",    v98Hdr.sectors);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}",   v98Hdr.surfaces);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}",  v98Hdr.cylinders);
-            DicConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}",     v98Hdr.totals);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.padding = {0}",    v98Hdr.padding);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.mbsize = {0}",     v98Hdr.mbsize);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectorsize = {0}", v98Hdr.sectorsize);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.sectors = {0}",    v98Hdr.sectors);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.surfaces = {0}",   v98Hdr.surfaces);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.cylinders = {0}",  v98Hdr.cylinders);
+            AaruConsole.DebugWriteLine("Virtual98 plugin", "v98hdr.totals = {0}",     v98Hdr.totals);
 
             return true;
         }

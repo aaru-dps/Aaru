@@ -72,15 +72,15 @@ namespace Aaru.Filesystems.UCSDPascal
             };
             Array.Copy(volBlock, 0x06, volEntry.VolumeName, 0, 8);
 
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.firstBlock = {0}", volEntry.FirstBlock);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBlock = {0}",  volEntry.LastBlock);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.entryType = {0}",  volEntry.EntryType);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.volumeName = {0}", volEntry.VolumeName);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.blocks = {0}",     volEntry.Blocks);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.files = {0}",      volEntry.Files);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.dummy = {0}",      volEntry.Dummy);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBoot = {0}",   volEntry.LastBoot);
-            DicConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.tail = {0}",       volEntry.Tail);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.firstBlock = {0}", volEntry.FirstBlock);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBlock = {0}",  volEntry.LastBlock);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.entryType = {0}",  volEntry.EntryType);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.volumeName = {0}", volEntry.VolumeName);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.blocks = {0}",     volEntry.Blocks);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.files = {0}",      volEntry.Files);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.dummy = {0}",      volEntry.Dummy);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.lastBoot = {0}",   volEntry.LastBoot);
+            AaruConsole.DebugWriteLine("UCSD Pascal Plugin", "volEntry.tail = {0}",       volEntry.Tail);
 
             // First block is always 0 (even is it's sector 2)
             if(volEntry.FirstBlock != 0) return false;

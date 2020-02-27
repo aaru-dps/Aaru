@@ -69,10 +69,10 @@ namespace Aaru.Filesystems
             try { btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector); }
             catch { return false; }
 
-            DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorOff = {0}",                    sbSectorOff);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "sbSectorSize = {0}",                   sbSectorSize);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "partition.PartitionStartSector = {0}", partition.Start);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = 0x{0:X16}",            btrfsSb.magic);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "sbSectorOff = {0}",                    sbSectorOff);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "sbSectorSize = {0}",                   sbSectorSize);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "partition.PartitionStartSector = {0}", partition.Start);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = 0x{0:X16}",            btrfsSb.magic);
 
             return btrfsSb.magic == BTRFS_MAGIC;
         }
@@ -92,54 +92,54 @@ namespace Aaru.Filesystems
 
             SuperBlock btrfsSb = Marshal.ByteArrayToStructureLittleEndian<SuperBlock>(sector);
 
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.checksum = {0}",          btrfsSb.checksum);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.uuid = {0}",              btrfsSb.uuid);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.pba = {0}",               btrfsSb.pba);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.flags = {0}",             btrfsSb.flags);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = {0}",             btrfsSb.magic);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.generation = {0}",        btrfsSb.generation);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_lba = {0}",          btrfsSb.root_lba);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_lba = {0}",         btrfsSb.chunk_lba);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_lba = {0}",           btrfsSb.log_lba);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_root_transid = {0}",  btrfsSb.log_root_transid);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.total_bytes = {0}",       btrfsSb.total_bytes);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.bytes_used = {0}",        btrfsSb.bytes_used);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_dir_objectid = {0}", btrfsSb.root_dir_objectid);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.num_devices = {0}",       btrfsSb.num_devices);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.sectorsize = {0}",        btrfsSb.sectorsize);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.nodesize = {0}",          btrfsSb.nodesize);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.leafsize = {0}",          btrfsSb.leafsize);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.stripesize = {0}",        btrfsSb.stripesize);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.n = {0}",                 btrfsSb.n);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_generation = {0}",
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.checksum = {0}",          btrfsSb.checksum);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.uuid = {0}",              btrfsSb.uuid);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.pba = {0}",               btrfsSb.pba);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.flags = {0}",             btrfsSb.flags);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.magic = {0}",             btrfsSb.magic);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.generation = {0}",        btrfsSb.generation);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_lba = {0}",          btrfsSb.root_lba);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_lba = {0}",         btrfsSb.chunk_lba);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_lba = {0}",           btrfsSb.log_lba);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_root_transid = {0}",  btrfsSb.log_root_transid);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.total_bytes = {0}",       btrfsSb.total_bytes);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.bytes_used = {0}",        btrfsSb.bytes_used);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_dir_objectid = {0}", btrfsSb.root_dir_objectid);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.num_devices = {0}",       btrfsSb.num_devices);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.sectorsize = {0}",        btrfsSb.sectorsize);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.nodesize = {0}",          btrfsSb.nodesize);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.leafsize = {0}",          btrfsSb.leafsize);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.stripesize = {0}",        btrfsSb.stripesize);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.n = {0}",                 btrfsSb.n);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_generation = {0}",
                                       btrfsSb.chunk_root_generation);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_flags = 0x{0:X16}",    btrfsSb.compat_flags);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_ro_flags = 0x{0:X16}", btrfsSb.compat_ro_flags);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.incompat_flags = 0x{0:X16}",  btrfsSb.incompat_flags);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.csum_type = {0}",             btrfsSb.csum_type);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_level = {0}",            btrfsSb.root_level);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_level = {0}",      btrfsSb.chunk_root_level);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_root_level = {0}",        btrfsSb.log_root_level);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.id = 0x{0:X16}",     btrfsSb.dev_item.id);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bytes = {0}",        btrfsSb.dev_item.bytes);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.used = {0}",         btrfsSb.dev_item.used);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_align = {0}",
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_flags = 0x{0:X16}",    btrfsSb.compat_flags);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.compat_ro_flags = 0x{0:X16}", btrfsSb.compat_ro_flags);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.incompat_flags = 0x{0:X16}",  btrfsSb.incompat_flags);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.csum_type = {0}",             btrfsSb.csum_type);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.root_level = {0}",            btrfsSb.root_level);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.chunk_root_level = {0}",      btrfsSb.chunk_root_level);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.log_root_level = {0}",        btrfsSb.log_root_level);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.id = 0x{0:X16}",     btrfsSb.dev_item.id);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bytes = {0}",        btrfsSb.dev_item.bytes);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.used = {0}",         btrfsSb.dev_item.used);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_align = {0}",
                                       btrfsSb.dev_item.optimal_align);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_width = {0}",
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.optimal_width = {0}",
                                       btrfsSb.dev_item.optimal_width);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.minimal_size = {0}",
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.minimal_size = {0}",
                                       btrfsSb.dev_item.minimal_size);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.type = {0}",       btrfsSb.dev_item.type);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.generation = {0}", btrfsSb.dev_item.generation);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.start_offset = {0}",
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.type = {0}",       btrfsSb.dev_item.type);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.generation = {0}", btrfsSb.dev_item.generation);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.start_offset = {0}",
                                       btrfsSb.dev_item.start_offset);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.dev_group = {0}",  btrfsSb.dev_item.dev_group);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.seek_speed = {0}", btrfsSb.dev_item.seek_speed);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bandwitdh = {0}",  btrfsSb.dev_item.bandwitdh);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}",
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.dev_group = {0}",  btrfsSb.dev_item.dev_group);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.seek_speed = {0}", btrfsSb.dev_item.seek_speed);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.bandwitdh = {0}",  btrfsSb.dev_item.bandwitdh);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.device_uuid = {0}",
                                       btrfsSb.dev_item.device_uuid);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
-            DicConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.label = {0}",         btrfsSb.label);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.dev_item.uuid = {0}", btrfsSb.dev_item.uuid);
+            AaruConsole.DebugWriteLine("BTRFS Plugin", "btrfsSb.label = {0}",         btrfsSb.label);
 
             sbInformation.AppendLine("B-tree filesystem");
             sbInformation.AppendFormat("UUID: {0}", btrfsSb.uuid).AppendLine();

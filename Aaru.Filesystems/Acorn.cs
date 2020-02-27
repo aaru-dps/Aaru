@@ -107,8 +107,8 @@ namespace Aaru.Filesystems
                 byte          oldChk1 = AcornMapChecksum(sector, 255);
                 OldMapSector1 oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(sector);
 
-                DicConsole.DebugWriteLine("ADFS Plugin", "oldMap0.checksum = {0}", oldMap0.checksum);
-                DicConsole.DebugWriteLine("ADFS Plugin", "oldChk0 = {0}",          oldChk0);
+                AaruConsole.DebugWriteLine("ADFS Plugin", "oldMap0.checksum = {0}", oldMap0.checksum);
+                AaruConsole.DebugWriteLine("ADFS Plugin", "oldChk0 = {0}",          oldChk0);
 
                 // According to documentation map1 MUST start on sector 1. On ADFS-D it starts at 0x100, not on sector 1 (0x400)
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum != oldChk1 && sector.Length >= 512)
@@ -120,8 +120,8 @@ namespace Aaru.Filesystems
                     oldMap1 = Marshal.ByteArrayToStructureLittleEndian<OldMapSector1>(tmp);
                 }
 
-                DicConsole.DebugWriteLine("ADFS Plugin", "oldMap1.checksum = {0}", oldMap1.checksum);
-                DicConsole.DebugWriteLine("ADFS Plugin", "oldChk1 = {0}",          oldChk1);
+                AaruConsole.DebugWriteLine("ADFS Plugin", "oldMap1.checksum = {0}", oldMap1.checksum);
+                AaruConsole.DebugWriteLine("ADFS Plugin", "oldChk1 = {0}",          oldChk1);
 
                 if(oldMap0.checksum == oldChk0 && oldMap1.checksum == oldChk1 && oldMap0.checksum != 0 &&
                    oldMap1.checksum != 0)
@@ -142,12 +142,12 @@ namespace Aaru.Filesystems
                     OldDirectory oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
                     byte         dirChk  = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
-                    DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x200 = {0}",
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x200 = {0}",
                                               oldRoot.header.magic);
-                    DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.magic at 0x200 = {0}", oldRoot.tail.magic);
-                    DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.checkByte at 0x200 = {0}",
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.magic at 0x200 = {0}", oldRoot.tail.magic);
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.checkByte at 0x200 = {0}",
                                               oldRoot.tail.checkByte);
-                    DicConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x200 = {0}", dirChk);
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x200 = {0}", dirChk);
 
                     if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
                        oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC) return true;
@@ -169,12 +169,12 @@ namespace Aaru.Filesystems
                     oldRoot = Marshal.ByteArrayToStructureLittleEndian<OldDirectory>(sector);
                     dirChk  = AcornDirectoryChecksum(sector, (int)OLD_DIRECTORY_SIZE - 1);
 
-                    DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x400 = {0}",
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "oldRoot.header.magic at 0x400 = {0}",
                                               oldRoot.header.magic);
-                    DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.magic at 0x400 = {0}", oldRoot.tail.magic);
-                    DicConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.checkByte at 0x400 = {0}",
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.magic at 0x400 = {0}", oldRoot.tail.magic);
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "oldRoot.tail.checkByte at 0x400 = {0}",
                                               oldRoot.tail.checkByte);
-                    DicConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x400 = {0}", dirChk);
+                    AaruConsole.DebugWriteLine("ADFS Plugin", "dirChk at 0x400 = {0}", dirChk);
 
                     if(oldRoot.header.magic == OLD_DIR_MAGIC && oldRoot.tail.magic == OLD_DIR_MAGIC ||
                        oldRoot.header.magic == NEW_DIR_MAGIC && oldRoot.tail.magic == NEW_DIR_MAGIC) return true;
@@ -186,8 +186,8 @@ namespace Aaru.Filesystems
 
             sector = imagePlugin.ReadSector(partition.Start);
             byte newChk = NewMapChecksum(sector);
-            DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}",           newChk);
-            DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}",           newChk);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
             sbSector      = BOOT_BLOCK_LOCATION / imagePlugin.Info.SectorSize;
             sectorsToRead = BOOT_BLOCK_SIZE     / imagePlugin.Info.SectorSize;
@@ -201,8 +201,8 @@ namespace Aaru.Filesystems
 
             for(int i = 0; i < 0x1FF; i++) bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];
 
-            DicConsole.DebugWriteLine("ADFS Plugin", "bootChk = {0}",         bootChk);
-            DicConsole.DebugWriteLine("ADFS Plugin", "bBlock.checksum = {0}", bootSector[0x1FF]);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "bootChk = {0}",         bootChk);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "bBlock.checksum = {0}", bootSector[0x1FF]);
 
             if(newChk == sector[0] && newChk != 0)
             {
@@ -216,11 +216,11 @@ namespace Aaru.Filesystems
             }
             else return false;
 
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.log2secsize = {0}",    drSb.log2secsize);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.idlen = {0}",          drSb.idlen);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size = {0}",      drSb.disc_size);
-            DicConsole.DebugWriteLine("ADFS Plugin", "IsNullOrEmpty(drSb.reserved) = {0}",
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.log2secsize = {0}",    drSb.log2secsize);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.idlen = {0}",          drSb.idlen);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size = {0}",      drSb.disc_size);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "IsNullOrEmpty(drSb.reserved) = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(drSb.reserved));
 
             if(drSb.log2secsize < 8 || drSb.log2secsize > 10) return false;
@@ -379,8 +379,8 @@ namespace Aaru.Filesystems
 
             sector = imagePlugin.ReadSector(partition.Start);
             byte newChk = NewMapChecksum(sector);
-            DicConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}",           newChk);
-            DicConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "newChk = {0}",           newChk);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "map.zoneChecksum = {0}", sector[0]);
 
             sbSector      = BOOT_BLOCK_LOCATION / imagePlugin.Info.SectorSize;
             sectorsToRead = BOOT_BLOCK_SIZE     / imagePlugin.Info.SectorSize;
@@ -390,8 +390,8 @@ namespace Aaru.Filesystems
             int    bootChk                         = 0;
             for(int i = 0; i < 0x1FF; i++) bootChk = (bootChk & 0xFF) + (bootChk >> 8) + bootSector[i];
 
-            DicConsole.DebugWriteLine("ADFS Plugin", "bootChk = {0}",         bootChk);
-            DicConsole.DebugWriteLine("ADFS Plugin", "bBlock.checksum = {0}", bootSector[0x1FF]);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "bootChk = {0}",         bootChk);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "bBlock.checksum = {0}", bootSector[0x1FF]);
 
             if(newChk == sector[0] && newChk != 0)
             {
@@ -405,28 +405,28 @@ namespace Aaru.Filesystems
             }
             else return;
 
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.log2secsize = {0}", drSb.log2secsize);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.spt = {0}",         drSb.spt);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.heads = {0}",       drSb.heads);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.density = {0}",     drSb.density);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.idlen = {0}",       drSb.idlen);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.log2bpmb = {0}",    drSb.log2bpmb);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.skew = {0}",        drSb.skew);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.bootoption = {0}",  drSb.bootoption);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.lowsector = {0}",   drSb.lowsector);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.nzones = {0}",      drSb.nzones);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.zone_spare = {0}",  drSb.zone_spare);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.root = {0}",        drSb.root);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size = {0}",   drSb.disc_size);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_id = {0}",     drSb.disc_id);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_name = {0}",
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.log2secsize = {0}", drSb.log2secsize);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.spt = {0}",         drSb.spt);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.heads = {0}",       drSb.heads);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.density = {0}",     drSb.density);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.idlen = {0}",       drSb.idlen);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.log2bpmb = {0}",    drSb.log2bpmb);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.skew = {0}",        drSb.skew);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.bootoption = {0}",  drSb.bootoption);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.lowsector = {0}",   drSb.lowsector);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.nzones = {0}",      drSb.nzones);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.zone_spare = {0}",  drSb.zone_spare);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.root = {0}",        drSb.root);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size = {0}",   drSb.disc_size);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_id = {0}",     drSb.disc_id);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_name = {0}",
                                       StringHandlers.CToString(drSb.disc_name, Encoding));
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_type = {0}",      drSb.disc_type);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.flags = {0}",          drSb.flags);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.nzones_high = {0}",    drSb.nzones_high);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.format_version = {0}", drSb.format_version);
-            DicConsole.DebugWriteLine("ADFS Plugin", "drSb.root_size = {0}",      drSb.root_size);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_type = {0}",      drSb.disc_type);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.disc_size_high = {0}", drSb.disc_size_high);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.flags = {0}",          drSb.flags);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.nzones_high = {0}",    drSb.nzones_high);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.format_version = {0}", drSb.format_version);
+            AaruConsole.DebugWriteLine("ADFS Plugin", "drSb.root_size = {0}",      drSb.root_size);
 
             if(drSb.log2secsize < 8 || drSb.log2secsize > 10) return;
 

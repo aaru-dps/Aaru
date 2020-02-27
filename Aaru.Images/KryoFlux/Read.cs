@@ -89,27 +89,27 @@ namespace Aaru.DiscImages
                     {
                         if(head == 0)
                         {
-                            DicConsole.DebugWriteLine("KryoFlux plugin",
+                            AaruConsole.DebugWriteLine("KryoFlux plugin",
                                                       "Cannot find cyl 0 hd 0, supposing only top head was dumped");
                             topHead = true;
                             heads   = 1;
                             continue;
                         }
 
-                        DicConsole.DebugWriteLine("KryoFlux plugin",
+                        AaruConsole.DebugWriteLine("KryoFlux plugin",
                                                   "Cannot find cyl 0 hd 1, supposing only bottom head was dumped");
                         heads = 1;
                         continue;
                     }
                     else if(cylinder == 1)
                     {
-                        DicConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
+                        AaruConsole.DebugWriteLine("KryoFlux plugin", "Cannot find cyl 1, supposing double stepping");
                         step = 2;
                         continue;
                     }
                     else
                     {
-                        DicConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
+                        AaruConsole.DebugWriteLine("KryoFlux plugin", "Arrived end of disk at cylinder {0}", cylinder);
                         break;
                     }
 
@@ -160,7 +160,7 @@ namespace Aaru.DiscImages
                             {
                                 kvp[0] = kvp[0].Trim();
                                 kvp[1] = kvp[1].Trim();
-                                DicConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
+                                AaruConsole.DebugWriteLine("KryoFlux plugin", "\"{0}\" = \"{1}\"", kvp[0], kvp[1]);
 
                                 switch(kvp[0])
                                 {
@@ -187,7 +187,7 @@ namespace Aaru.DiscImages
                                 DateTime blockTimestamp = new DateTime(blockDate.Year, blockDate.Month, blockDate.Day,
                                                                        blockTime.Hour, blockTime.Minute,
                                                                        blockTime.Second);
-                                DicConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
+                                AaruConsole.DebugWriteLine("KryoFlux plugin", "Found timestamp: {0}", blockTimestamp);
                                 if(blockTimestamp < Info.CreationTime) imageInfo.CreationTime = blockTimestamp;
                                 if(blockTimestamp > Info.LastModificationTime)
                                     imageInfo.LastModificationTime = blockTimestamp;

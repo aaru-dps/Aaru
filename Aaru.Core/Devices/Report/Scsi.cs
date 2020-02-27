@@ -46,7 +46,7 @@ namespace Aaru.Core.Devices.Report
     {
         public Scsi ReportScsiInquiry()
         {
-            DicConsole.WriteLine("Querying SCSI INQUIRY...");
+            AaruConsole.WriteLine("Querying SCSI INQUIRY...");
             bool sense = _dev.ScsiInquiry(out byte[] buffer, out byte[] senseBuffer);
 
             var report = new Scsi();
@@ -74,7 +74,7 @@ namespace Aaru.Core.Devices.Report
 
         public List<ScsiPage> ReportEvpdPages(string vendor)
         {
-            DicConsole.WriteLine("Querying list of SCSI EVPDs...");
+            AaruConsole.WriteLine("Querying list of SCSI EVPDs...");
             bool sense = _dev.ScsiInquiry(out byte[] buffer, out _, 0x00);
 
             if(sense)
@@ -90,7 +90,7 @@ namespace Aaru.Core.Devices.Report
 
             foreach(byte page in evpdPages.Where(page => page != 0x80))
             {
-                DicConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
+                AaruConsole.WriteLine("Querying SCSI EVPD {0:X2}h...", page);
                 sense = _dev.ScsiInquiry(out buffer, out _, page);
 
                 if(sense)
@@ -182,14 +182,14 @@ namespace Aaru.Core.Devices.Report
             byte[]                mode6CurrentBuffer;
             byte[]                mode6ChangeableBuffer;
 
-            DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
+            AaruConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (10)...");
 
             bool sense = _dev.ModeSense10(out byte[] mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default,
                                           0x3F, 0xFF, _dev.Timeout, out _);
 
             if(sense || _dev.Error)
             {
-                DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (10)...");
+                AaruConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (10)...");
 
                 sense = _dev.ModeSense10(out mode10Buffer, out _, false, true, ScsiModeSensePageControl.Default, 0x3F,
                                          0x00, _dev.Timeout, out _);
@@ -241,21 +241,21 @@ namespace Aaru.Core.Devices.Report
                 }
             }
 
-            DicConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
+            AaruConsole.WriteLine("Querying all mode pages and subpages using SCSI MODE SENSE (6)...");
 
             sense = _dev.ModeSense6(out byte[] mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0xFF,
                                     _dev.Timeout, out _);
 
             if(sense || _dev.Error)
             {
-                DicConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (6)...");
+                AaruConsole.WriteLine("Querying all mode pages using SCSI MODE SENSE (6)...");
 
                 sense = _dev.ModeSense6(out mode6Buffer, out _, false, ScsiModeSensePageControl.Default, 0x3F, 0x00,
                                         _dev.Timeout, out _);
 
                 if(sense || _dev.Error)
                 {
-                    DicConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
+                    AaruConsole.WriteLine("Querying SCSI MODE SENSE (6)...");
                     sense = _dev.ModeSense(out mode6Buffer, out _, _dev.Timeout, out _);
                 }
                 else
@@ -352,7 +352,7 @@ namespace Aaru.Core.Devices.Report
         public TestedMedia ReportScsiMedia()
         {
             var mediaTest = new TestedMedia();
-            DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
+            AaruConsole.WriteLine("Querying SCSI READ CAPACITY...");
             bool sense = _dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -365,7 +365,7 @@ namespace Aaru.Core.Devices.Report
                 mediaTest.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
             }
 
-            DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
+            AaruConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
             sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -381,7 +381,7 @@ namespace Aaru.Core.Devices.Report
 
             Modes.DecodedMode? decMode = null;
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
 
             sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                      0x00, _dev.Timeout, out _);
@@ -393,7 +393,7 @@ namespace Aaru.Core.Devices.Report
                 mediaTest.ModeSense10Data = buffer;
             }
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE...");
             sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -414,40 +414,40 @@ namespace Aaru.Core.Devices.Report
                     mediaTest.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
             }
 
-            DicConsole.WriteLine("Trying SCSI READ (6)...");
+            AaruConsole.WriteLine("Trying SCSI READ (6)...");
 
             mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0,
                                                   mediaTest.BlockSize ?? 512, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
             mediaTest.Read6Data = buffer;
 
-            DicConsole.WriteLine("Trying SCSI READ (10)...");
+            AaruConsole.WriteLine("Trying SCSI READ (10)...");
 
             mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
             mediaTest.Read10Data = buffer;
 
-            DicConsole.WriteLine("Trying SCSI READ (12)...");
+            AaruConsole.WriteLine("Trying SCSI READ (12)...");
 
             mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
             mediaTest.Read12Data = buffer;
 
-            DicConsole.WriteLine("Trying SCSI READ (16)...");
+            AaruConsole.WriteLine("Trying SCSI READ (16)...");
 
             mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
                                                     mediaTest.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
             mediaTest.Read16Data = buffer;
 
             mediaTest.LongBlockSize = mediaTest.BlockSize;
-            DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
+            AaruConsole.WriteLine("Trying SCSI READ LONG (10)...");
             sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
 
             if(sense && !_dev.Error)
@@ -552,7 +552,7 @@ namespace Aaru.Core.Devices.Report
                     }
                 }
 
-            DicConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
+            AaruConsole.WriteLine("Trying SCSI READ MEDIA SERIAL NUMBER...");
 
             mediaTest.CanReadMediaSerial =
                 !_dev.ReadMediaSerialNumber(out buffer, out senseBuffer, _dev.Timeout, out _);
@@ -567,7 +567,7 @@ namespace Aaru.Core.Devices.Report
                 MediaIsRecognized = true
             };
 
-            DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
+            AaruConsole.WriteLine("Querying SCSI READ CAPACITY...");
             bool sense = _dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -580,7 +580,7 @@ namespace Aaru.Core.Devices.Report
                 capabilities.BlockSize = (uint)((buffer[4] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
             }
 
-            DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
+            AaruConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
             sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -596,7 +596,7 @@ namespace Aaru.Core.Devices.Report
 
             Modes.DecodedMode? decMode = null;
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
 
             sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                      0x00, _dev.Timeout, out _);
@@ -608,7 +608,7 @@ namespace Aaru.Core.Devices.Report
                 capabilities.ModeSense10Data = buffer;
             }
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE...");
             sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -629,40 +629,40 @@ namespace Aaru.Core.Devices.Report
                     capabilities.Density = (byte)decMode.Value.Header.BlockDescriptors[0].Density;
             }
 
-            DicConsole.WriteLine("Trying SCSI READ (6)...");
+            AaruConsole.WriteLine("Trying SCSI READ (6)...");
 
             capabilities.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 0, capabilities.BlockSize ?? 512,
                                                      _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead6);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead6);
             capabilities.Read6Data = buffer;
 
-            DicConsole.WriteLine("Trying SCSI READ (10)...");
+            AaruConsole.WriteLine("Trying SCSI READ (10)...");
 
             capabilities.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead10);
             capabilities.Read10Data = buffer;
 
-            DicConsole.WriteLine("Trying SCSI READ (12)...");
+            AaruConsole.WriteLine("Trying SCSI READ (12)...");
 
             capabilities.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead12);
             capabilities.Read12Data = buffer;
 
-            DicConsole.WriteLine("Trying SCSI READ (16)...");
+            AaruConsole.WriteLine("Trying SCSI READ (16)...");
 
             capabilities.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 0,
                                                        capabilities.BlockSize ?? 512, 0, 1, false, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !capabilities.SupportsRead16);
             capabilities.Read16Data = buffer;
 
             capabilities.LongBlockSize = capabilities.BlockSize;
-            DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
+            AaruConsole.WriteLine("Trying SCSI READ LONG (10)...");
             sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, 0xFFFF, _dev.Timeout, out _);
 
             if(sense && !_dev.Error)

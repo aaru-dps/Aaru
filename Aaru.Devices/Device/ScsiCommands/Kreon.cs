@@ -59,7 +59,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "KREON DEPRECATED UNLOCK took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "KREON DEPRECATED UNLOCK took {0} ms.", duration);
 
             return sense;
         }
@@ -118,7 +118,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "KREON SET LOCK STATE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "KREON SET LOCK STATE took {0} ms.", duration);
 
             return sense;
         }
@@ -148,7 +148,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "KREON GET FEATURE LIST took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "KREON GET FEATURE LIST took {0} ms.", duration);
 
             if(sense) return true;
 
@@ -231,7 +231,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "KREON EXTRACT SS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "KREON EXTRACT SS took {0} ms.", duration);
 
             return sense;
         }

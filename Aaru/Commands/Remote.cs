@@ -59,16 +59,16 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("remote");
 
-            DicConsole.DebugWriteLine("Remote command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Remote command", "--host={0}", host);
-            DicConsole.DebugWriteLine("Remote command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Remote command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Remote command", "--host={0}", host);
+            AaruConsole.DebugWriteLine("Remote command", "--verbose={0}", verbose);
 
             try
             {
@@ -77,17 +77,17 @@ namespace Aaru.Commands
                 Statistics.AddRemote(remote.ServerApplication, remote.ServerVersion, remote.ServerOperatingSystem,
                                      remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
 
-                DicConsole.WriteLine("Server application: {0} {1}", remote.ServerApplication, remote.ServerVersion);
+                AaruConsole.WriteLine("Server application: {0} {1}", remote.ServerApplication, remote.ServerVersion);
 
-                DicConsole.WriteLine("Server operating system: {0} {1} ({2})", remote.ServerOperatingSystem,
+                AaruConsole.WriteLine("Server operating system: {0} {1} ({2})", remote.ServerOperatingSystem,
                                      remote.ServerOperatingSystemVersion, remote.ServerArchitecture);
 
-                DicConsole.WriteLine("Server maximum protocol: {0}", remote.ServerProtocolVersion);
+                AaruConsole.WriteLine("Server maximum protocol: {0}", remote.ServerProtocolVersion);
                 remote.Disconnect();
             }
             catch(Exception)
             {
-                DicConsole.ErrorWriteLine("Error connecting to host.");
+                AaruConsole.ErrorWriteLine("Error connecting to host.");
 
                 return(int)ErrorNumber.CannotOpenDevice;
             }

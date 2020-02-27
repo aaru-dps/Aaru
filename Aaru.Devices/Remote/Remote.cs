@@ -27,7 +27,7 @@ namespace Aaru.Devices.Remote
 
             if (ipAddress is null)
             {
-                DicConsole.ErrorWriteLine("Host not found");
+                AaruConsole.ErrorWriteLine("Host not found");
                 throw new SocketException(11001);
             }
 
@@ -36,7 +36,7 @@ namespace Aaru.Devices.Remote
 
             _socket.Connect(ipEndPoint);
 
-            DicConsole.WriteLine("Connected to {0}", host);
+            AaruConsole.WriteLine("Connected to {0}", host);
 
             var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
@@ -44,7 +44,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 throw new IOException();
             }
 
@@ -52,7 +52,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 throw new ArgumentException();
             }
 
@@ -62,7 +62,7 @@ namespace Aaru.Devices.Remote
             {
                 if (hdr.packetType != AaruPacketType.Nop)
                 {
-                    DicConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}...", hdr.packetType);
+                    AaruConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}...", hdr.packetType);
                     throw new ArgumentException();
                 }
 
@@ -71,19 +71,19 @@ namespace Aaru.Devices.Remote
 
                 if (len < buf.Length)
                 {
-                    DicConsole.ErrorWriteLine("Could not read from the network...");
+                    AaruConsole.ErrorWriteLine("Could not read from the network...");
                     throw new IOException();
                 }
 
                 var nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
-                DicConsole.ErrorWriteLine($"{nop.reason}");
+                AaruConsole.ErrorWriteLine($"{nop.reason}");
                 throw new ArgumentException();
             }
 
             if (hdr.version != Consts.PacketVersion)
             {
-                DicConsole.ErrorWriteLine("Unrecognized packet version...");
+                AaruConsole.ErrorWriteLine("Unrecognized packet version...");
                 throw new ArgumentException();
             }
 
@@ -92,7 +92,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 throw new IOException();
             }
 
@@ -129,7 +129,7 @@ namespace Aaru.Devices.Remote
 
             if (len >= buf.Length) return;
 
-            DicConsole.ErrorWriteLine("Could not write to the network...");
+            AaruConsole.ErrorWriteLine("Could not write to the network...");
             throw new IOException();
         }
 
@@ -161,7 +161,7 @@ namespace Aaru.Devices.Remote
 
                 if (len != buf.Length)
                 {
-                    DicConsole.ErrorWriteLine("Could not write to the network...");
+                    AaruConsole.ErrorWriteLine("Could not write to the network...");
                     return false;
                 }
 
@@ -171,7 +171,7 @@ namespace Aaru.Devices.Remote
 
                 if (len < hdrBuf.Length)
                 {
-                    DicConsole.ErrorWriteLine("Could not read from the network...");
+                    AaruConsole.ErrorWriteLine("Could not read from the network...");
                     return false;
                 }
 
@@ -179,13 +179,13 @@ namespace Aaru.Devices.Remote
 
                 if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
                 {
-                    DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                    AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                     return false;
                 }
 
                 if (hdr.packetType != AaruPacketType.ResponseAmIRoot)
                 {
-                    DicConsole.ErrorWriteLine("Expected Am I Root? Response Packet, got packet type {0}...",
+                    AaruConsole.ErrorWriteLine("Expected Am I Root? Response Packet, got packet type {0}...",
                         hdr.packetType);
                     return false;
                 }
@@ -195,7 +195,7 @@ namespace Aaru.Devices.Remote
 
                 if (len < buf.Length)
                 {
-                    DicConsole.ErrorWriteLine("Could not read from the network...");
+                    AaruConsole.ErrorWriteLine("Could not read from the network...");
                     return false;
                 }
 
@@ -235,7 +235,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
 
                 return new DeviceInfo[0];
             }
@@ -246,7 +246,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return new DeviceInfo[0];
             }
 
@@ -254,7 +254,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return new DeviceInfo[0];
             }
 
@@ -262,7 +262,7 @@ namespace Aaru.Devices.Remote
             {
                 if (hdr.packetType != AaruPacketType.Nop)
                 {
-                    DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
+                    AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
                         hdr.packetType);
                     return new DeviceInfo[0];
                 }
@@ -272,19 +272,19 @@ namespace Aaru.Devices.Remote
 
                 if (len < buf.Length)
                 {
-                    DicConsole.ErrorWriteLine("Could not read from the network...");
+                    AaruConsole.ErrorWriteLine("Could not read from the network...");
                     return new DeviceInfo[0];
                 }
 
                 var nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
-                DicConsole.ErrorWriteLine($"{nop.reason}");
+                AaruConsole.ErrorWriteLine($"{nop.reason}");
                 return new DeviceInfo[0];
             }
 
             if (hdr.version != Consts.PacketVersion)
             {
-                DicConsole.ErrorWriteLine("Unrecognized packet version...");
+                AaruConsole.ErrorWriteLine("Unrecognized packet version...");
                 return new DeviceInfo[0];
             }
 
@@ -293,7 +293,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return new DeviceInfo[0];
             }
 
@@ -335,7 +335,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 lastError = -1;
                 return false;
             }
@@ -346,7 +346,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 lastError = -1;
                 return false;
             }
@@ -355,14 +355,14 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 lastError = -1;
                 return false;
             }
 
             if (hdr.packetType != AaruPacketType.Nop)
             {
-                DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
                     hdr.packetType);
                 lastError = -1;
                 return false;
@@ -373,7 +373,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 lastError = -1;
                 return false;
             }
@@ -388,7 +388,7 @@ namespace Aaru.Devices.Remote
                     throw new NotImplementedException($"{nop.reason}");
             }
 
-            DicConsole.ErrorWriteLine($"{nop.reason}");
+            AaruConsole.ErrorWriteLine($"{nop.reason}");
             lastError = nop.errno;
             return false;
         }
@@ -433,7 +433,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return -1;
             }
 
@@ -443,7 +443,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -451,13 +451,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseScsi)
             {
-                DicConsole.ErrorWriteLine("Expected SCSI Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected SCSI Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return -1;
             }
@@ -467,7 +467,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -525,7 +525,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return -1;
             }
 
@@ -535,7 +535,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -543,13 +543,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseAtaChs)
             {
-                DicConsole.ErrorWriteLine("Expected ATA CHS Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected ATA CHS Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return -1;
             }
@@ -559,7 +559,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -616,7 +616,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return -1;
             }
 
@@ -626,7 +626,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -634,13 +634,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseAtaLba28)
             {
-                DicConsole.ErrorWriteLine("Expected ATA LBA28 Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected ATA LBA28 Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return -1;
             }
@@ -650,7 +650,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -707,7 +707,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return -1;
             }
 
@@ -717,7 +717,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -725,13 +725,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseAtaLba48)
             {
-                DicConsole.ErrorWriteLine("Expected ATA LBA48 Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected ATA LBA48 Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return -1;
             }
@@ -741,7 +741,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -800,7 +800,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return -1;
             }
 
@@ -810,7 +810,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -818,13 +818,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return -1;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseSdhci)
             {
-                DicConsole.ErrorWriteLine("Expected SDHCI Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected SDHCI Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return -1;
             }
@@ -834,7 +834,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return -1;
             }
 
@@ -872,7 +872,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return DeviceType.Unknown;
             }
 
@@ -882,7 +882,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return DeviceType.Unknown;
             }
 
@@ -890,13 +890,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return DeviceType.Unknown;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseGetType)
             {
-                DicConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return DeviceType.Unknown;
             }
@@ -906,7 +906,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return DeviceType.Unknown;
             }
 
@@ -939,7 +939,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return false;
             }
 
@@ -949,7 +949,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 
@@ -957,13 +957,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseGetSdhciRegisters)
             {
-                DicConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return false;
             }
@@ -973,7 +973,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 
@@ -1049,7 +1049,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return false;
             }
 
@@ -1059,7 +1059,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 
@@ -1067,13 +1067,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseGetUsbData)
             {
-                DicConsole.ErrorWriteLine("Expected USB Data Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected USB Data Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return false;
             }
@@ -1083,7 +1083,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 
@@ -1129,7 +1129,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return false;
             }
 
@@ -1139,7 +1139,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 
@@ -1147,13 +1147,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseGetFireWireData)
             {
-                DicConsole.ErrorWriteLine("Expected FireWire Data Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected FireWire Data Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return false;
             }
@@ -1163,7 +1163,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 
@@ -1202,7 +1202,7 @@ namespace Aaru.Devices.Remote
 
             if (len != buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not write to the network...");
+                AaruConsole.ErrorWriteLine("Could not write to the network...");
                 return false;
             }
 
@@ -1212,7 +1212,7 @@ namespace Aaru.Devices.Remote
 
             if (len < hdrBuf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 
@@ -1220,13 +1220,13 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                DicConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
                 return false;
             }
 
             if (hdr.packetType != AaruPacketType.ResponseGetPcmciaData)
             {
-                DicConsole.ErrorWriteLine("Expected PCMCIA Data Response Packet, got packet type {0}...",
+                AaruConsole.ErrorWriteLine("Expected PCMCIA Data Response Packet, got packet type {0}...",
                     hdr.packetType);
                 return false;
             }
@@ -1236,7 +1236,7 @@ namespace Aaru.Devices.Remote
 
             if (len < buf.Length)
             {
-                DicConsole.ErrorWriteLine("Could not read from the network...");
+                AaruConsole.ErrorWriteLine("Could not read from the network...");
                 return false;
             }
 

@@ -74,38 +74,38 @@ namespace Aaru.DiscImages
 
                 if(footer.signature != UDIF_SIGNATURE) throw new Exception("Unable to find UDIF signature.");
 
-                DicConsole.VerboseWriteLine("Found obsolete UDIF format.");
+                AaruConsole.VerboseWriteLine("Found obsolete UDIF format.");
             }
 
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.signature = 0x{0:X8}",     footer.signature);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.version = {0}",            footer.version);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.headerSize = {0}",         footer.headerSize);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.flags = {0}",              footer.flags);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.runningDataForkOff = {0}", footer.runningDataForkOff);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkOff = {0}",        footer.dataForkOff);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}",        footer.dataForkLen);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkOff = {0}",        footer.rsrcForkOff);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkLen = {0}",        footer.rsrcForkLen);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.segmentNumber = {0}",      footer.segmentNumber);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.segmentCount = {0}",       footer.segmentCount);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.segmentId = {0}",          footer.segmentId);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChkType = {0}",    footer.dataForkChkType);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}",        footer.dataForkLen);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChk = 0x{0:X8}",   footer.dataForkChk);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.plistOff = {0}",           footer.plistOff);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.plistLen = {0}",           footer.plistLen);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.masterChkType = {0}",      footer.masterChkType);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.masterChkLen = {0}",       footer.masterChkLen);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.masterChk = 0x{0:X8}",     footer.masterChk);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.imageVariant = {0}",       footer.imageVariant);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.sectorCount = {0}",        footer.sectorCount);
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.reserved1 is empty? = {0}",
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.signature = 0x{0:X8}",     footer.signature);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.version = {0}",            footer.version);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.headerSize = {0}",         footer.headerSize);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.flags = {0}",              footer.flags);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.runningDataForkOff = {0}", footer.runningDataForkOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkOff = {0}",        footer.dataForkOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}",        footer.dataForkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkOff = {0}",        footer.rsrcForkOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.rsrcForkLen = {0}",        footer.rsrcForkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentNumber = {0}",      footer.segmentNumber);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentCount = {0}",       footer.segmentCount);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.segmentId = {0}",          footer.segmentId);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChkType = {0}",    footer.dataForkChkType);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkLen = {0}",        footer.dataForkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.dataForkChk = 0x{0:X8}",   footer.dataForkChk);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.plistOff = {0}",           footer.plistOff);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.plistLen = {0}",           footer.plistLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChkType = {0}",      footer.masterChkType);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChkLen = {0}",       footer.masterChkLen);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.masterChk = 0x{0:X8}",     footer.masterChk);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.imageVariant = {0}",       footer.imageVariant);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.sectorCount = {0}",        footer.sectorCount);
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved1 is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved1));
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.reserved2 is empty? = {0}",
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved2 is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved2));
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.reserved3 is empty? = {0}",
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved3 is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved3));
-            DicConsole.DebugWriteLine("UDIF plugin", "footer.reserved4 is empty? = {0}",
+            AaruConsole.DebugWriteLine("UDIF plugin", "footer.reserved4 is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(footer.reserved4));
 
             // Block chunks and headers
@@ -118,7 +118,7 @@ namespace Aaru.DiscImages
 
             if(footer.plistLen == 0 && footer.rsrcForkLen != 0)
             {
-                DicConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
+                AaruConsole.DebugWriteLine("UDIF plugin", "Reading resource fork.");
                 byte[] rsrcB = new byte[footer.rsrcForkLen];
                 stream.Seek((long)footer.rsrcForkOff, SeekOrigin.Begin);
                 stream.Read(rsrcB, 0, rsrcB.Length);
@@ -147,12 +147,12 @@ namespace Aaru.DiscImages
             }
             else if(footer.plistLen != 0)
             {
-                DicConsole.DebugWriteLine("UDIF plugin", "Reading property list.");
+                AaruConsole.DebugWriteLine("UDIF plugin", "Reading property list.");
                 byte[] plistB = new byte[footer.plistLen];
                 stream.Seek((long)footer.plistOff, SeekOrigin.Begin);
                 stream.Read(plistB, 0, plistB.Length);
 
-                DicConsole.DebugWriteLine("UDIF plugin", "Parsing property list.");
+                AaruConsole.DebugWriteLine("UDIF plugin", "Parsing property list.");
                 NSDictionary plist = (NSDictionary)XmlPropertyListParser.Parse(plistB);
                 if(plist == null) throw new Exception("Could not parse property list.");
 
@@ -236,7 +236,7 @@ namespace Aaru.DiscImages
             }
             else imageInfo.Application = "DiskCopy";
 
-            DicConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", imageInfo.Application,
+            AaruConsole.DebugWriteLine("UDIF plugin", "Image application = {0} version {1}", imageInfo.Application,
                                       imageInfo.ApplicationVersion);
 
             imageInfo.Sectors = 0;
@@ -255,24 +255,24 @@ namespace Aaru.DiscImages
                     Array.Copy(blkxBytes, 0, bHdrB, 0, Marshal.SizeOf<BlockHeader>());
                     bHdr = Marshal.ByteArrayToStructureBigEndian<BlockHeader>(bHdrB);
 
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}",  bHdr.signature);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}",         bHdr.version);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorStart = {0}",     bHdr.sectorStart);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorCount = {0}",     bHdr.sectorCount);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.dataOffset = {0}",      bHdr.dataOffset);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.buffers = {0}",         bHdr.buffers);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.descriptor = 0x{0:X8}", bHdr.descriptor);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved1 = {0}",       bHdr.reserved1);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved2 = {0}",       bHdr.reserved2);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved3 = {0}",       bHdr.reserved3);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved4 = {0}",       bHdr.reserved4);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved5 = {0}",       bHdr.reserved5);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved6 = {0}",       bHdr.reserved6);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumType = {0}",    bHdr.checksumType);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumLen = {0}",     bHdr.checksumLen);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.checksum = 0x{0:X8}",   bHdr.checksum);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunks = {0}",          bHdr.chunks);
-                    DicConsole.DebugWriteLine("UDIF plugin", "bHdr.reservedChk is empty? = {0}",
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.signature = 0x{0:X8}",  bHdr.signature);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.version = {0}",         bHdr.version);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorStart = {0}",     bHdr.sectorStart);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.sectorCount = {0}",     bHdr.sectorCount);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.dataOffset = {0}",      bHdr.dataOffset);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.buffers = {0}",         bHdr.buffers);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.descriptor = 0x{0:X8}", bHdr.descriptor);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved1 = {0}",       bHdr.reserved1);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved2 = {0}",       bHdr.reserved2);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved3 = {0}",       bHdr.reserved3);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved4 = {0}",       bHdr.reserved4);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved5 = {0}",       bHdr.reserved5);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reserved6 = {0}",       bHdr.reserved6);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumType = {0}",    bHdr.checksumType);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksumLen = {0}",     bHdr.checksumLen);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.checksum = 0x{0:X8}",   bHdr.checksum);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunks = {0}",          bHdr.chunks);
+                    AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.reservedChk is empty? = {0}",
                                               ArrayHelpers.ArrayIsNullOrEmpty(bHdr.reservedChk));
 
                     if(bHdr.buffers > buffersize) buffersize = bHdr.buffers * SECTOR_SIZE;
@@ -285,12 +285,12 @@ namespace Aaru.DiscImages
                                    0, Marshal.SizeOf<BlockChunk>());
                         bChnk = Marshal.ByteArrayToStructureBigEndian<BlockChunk>(bChnkB);
 
-                        DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
-                        DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}",   i, bChnk.comment);
-                        DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sector = {1}",    i, bChnk.sector);
-                        DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sectors = {1}",   i, bChnk.sectors);
-                        DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
-                        DicConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
+                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].type = 0x{1:X8}", i, bChnk.type);
+                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].comment = {1}",   i, bChnk.comment);
+                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sector = {1}",    i, bChnk.sector);
+                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].sectors = {1}",   i, bChnk.sectors);
+                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].offset = {1}",    i, bChnk.offset);
+                        AaruConsole.DebugWriteLine("UDIF plugin", "bHdr.chunk[{0}].length = {1}",    i, bChnk.length);
 
                         if(bChnk.type == CHUNK_TYPE_END) break;
 
@@ -448,7 +448,7 @@ namespace Aaru.DiscImages
                     }
                     catch(ZlibException)
                     {
-                        DicConsole.WriteLine("zlib exception on chunk starting at sector {0}", readChunk.sector);
+                        AaruConsole.WriteLine("zlib exception on chunk starting at sector {0}", readChunk.sector);
                         throw;
                     }
                     #endif

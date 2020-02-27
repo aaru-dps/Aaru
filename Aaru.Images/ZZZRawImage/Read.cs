@@ -321,7 +321,7 @@ namespace Aaru.DiscImages
                        !filter.IsOpened())
                         continue;
 
-                    DicConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
+                    AaruConsole.DebugWriteLine("ZZZRawImage Plugin", "Found media tag {0}", sidecar.tag);
                     byte[] data = new byte[filter.GetDataForkLength()];
                     filter.GetDataForkStream().Read(data, 0, data.Length);
                     mediaTags.Add(sidecar.tag, data);
@@ -1071,7 +1071,7 @@ namespace Aaru.DiscImages
                 imageInfo.HasPartitions = true;
             }
 
-            DicConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("Raw disk image contains a disk of type {0}", imageInfo.MediaType);
 
             var sidecarXs = new XmlSerializer(typeof(CICMMetadataType));
 

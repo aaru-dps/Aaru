@@ -78,10 +78,10 @@ namespace Aaru.Filesystems.FAT
 
             ulong expectedClusters = humanBpb.bpc > 0 ? partition.Size / humanBpb.bpc : 0;
 
-            DicConsole.DebugWriteLine("FAT plugin", "Human bpc = {0}",               humanBpb.bpc);
-            DicConsole.DebugWriteLine("FAT plugin", "Human clusters = {0}",          humanBpb.clusters);
-            DicConsole.DebugWriteLine("FAT plugin", "Human big_clusters = {0}",      humanBpb.big_clusters);
-            DicConsole.DebugWriteLine("FAT plugin", "Human expected clusters = {0}", expectedClusters);
+            AaruConsole.DebugWriteLine("FAT plugin", "Human bpc = {0}",               humanBpb.bpc);
+            AaruConsole.DebugWriteLine("FAT plugin", "Human clusters = {0}",          humanBpb.clusters);
+            AaruConsole.DebugWriteLine("FAT plugin", "Human big_clusters = {0}",      humanBpb.big_clusters);
+            AaruConsole.DebugWriteLine("FAT plugin", "Human expected clusters = {0}", expectedClusters);
 
             // Check clusters for Human68k are correct
             bool humanClustersCorrect = humanBpb.clusters           == 0
@@ -99,9 +99,9 @@ namespace Aaru.Filesystems.FAT
             // Check correct branch for Human68k
             bool humanBranchCorrect = bpbSector[0] == 0x60 && bpbSector[1] >= 0x20 && bpbSector[1] < 0xFE;
 
-            DicConsole.DebugWriteLine("FAT plugin", "humanClustersCorrect = {0}", humanClustersCorrect);
-            DicConsole.DebugWriteLine("FAT plugin", "humanOemCorrect = {0}",      humanOemCorrect);
-            DicConsole.DebugWriteLine("FAT plugin", "humanBranchCorrect = {0}",   humanBranchCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "humanClustersCorrect = {0}", humanClustersCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "humanOemCorrect = {0}",      humanOemCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "humanBranchCorrect = {0}",   humanBranchCorrect);
 
             // If all Human68k checks are correct, it is a Human68k FAT16
             if(humanClustersCorrect && humanOemCorrect && humanBranchCorrect && expectedClusters > 0) return true;
@@ -136,25 +136,25 @@ namespace Aaru.Filesystems.FAT
             string atariString = Encoding.ASCII.GetString(atariOem);
             string oemString   = Encoding.ASCII.GetString(dosOem);
 
-            DicConsole.DebugWriteLine("FAT plugin", "atari_oem_correct = {0}",     atariOemCorrect);
-            DicConsole.DebugWriteLine("FAT plugin", "dos_oem_correct = {0}",       dosOemCorrect);
-            DicConsole.DebugWriteLine("FAT plugin", "bps = {0}",                   bps);
-            DicConsole.DebugWriteLine("FAT plugin", "bits in bps = {0}",           bitsInBps);
-            DicConsole.DebugWriteLine("FAT plugin", "spc = {0}",                   spc);
-            DicConsole.DebugWriteLine("FAT plugin", "correct_spc = {0}",           correctSpc);
-            DicConsole.DebugWriteLine("FAT plugin", "reserved_secs = {0}",         reservedSecs);
-            DicConsole.DebugWriteLine("FAT plugin", "fats_no = {0}",               numberOfFats);
-            DicConsole.DebugWriteLine("FAT plugin", "root_entries = {0}",          rootEntries);
-            DicConsole.DebugWriteLine("FAT plugin", "sectors = {0}",               sectors);
-            DicConsole.DebugWriteLine("FAT plugin", "media_descriptor = 0x{0:X2}", mediaDescriptor);
-            DicConsole.DebugWriteLine("FAT plugin", "fat_sectors = {0}",           fatSectors);
-            DicConsole.DebugWriteLine("FAT plugin", "msx_id = \"{0}\"",            msxString);
-            DicConsole.DebugWriteLine("FAT plugin", "big_sectors = {0}",           bigSectors);
-            DicConsole.DebugWriteLine("FAT plugin", "bpb_signature = 0x{0:X2}",    bpbSignature);
-            DicConsole.DebugWriteLine("FAT plugin", "fat32_signature = 0x{0:X2}",  fat32Signature);
-            DicConsole.DebugWriteLine("FAT plugin", "fat32_id = \"{0}\"",          fat32String);
-            DicConsole.DebugWriteLine("FAT plugin", "huge_sectors = {0}",          hugeSectors);
-            DicConsole.DebugWriteLine("FAT plugin", "fat_id = 0x{0:X2}",           fatId);
+            AaruConsole.DebugWriteLine("FAT plugin", "atari_oem_correct = {0}",     atariOemCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "dos_oem_correct = {0}",       dosOemCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "bps = {0}",                   bps);
+            AaruConsole.DebugWriteLine("FAT plugin", "bits in bps = {0}",           bitsInBps);
+            AaruConsole.DebugWriteLine("FAT plugin", "spc = {0}",                   spc);
+            AaruConsole.DebugWriteLine("FAT plugin", "correct_spc = {0}",           correctSpc);
+            AaruConsole.DebugWriteLine("FAT plugin", "reserved_secs = {0}",         reservedSecs);
+            AaruConsole.DebugWriteLine("FAT plugin", "fats_no = {0}",               numberOfFats);
+            AaruConsole.DebugWriteLine("FAT plugin", "root_entries = {0}",          rootEntries);
+            AaruConsole.DebugWriteLine("FAT plugin", "sectors = {0}",               sectors);
+            AaruConsole.DebugWriteLine("FAT plugin", "media_descriptor = 0x{0:X2}", mediaDescriptor);
+            AaruConsole.DebugWriteLine("FAT plugin", "fat_sectors = {0}",           fatSectors);
+            AaruConsole.DebugWriteLine("FAT plugin", "msx_id = \"{0}\"",            msxString);
+            AaruConsole.DebugWriteLine("FAT plugin", "big_sectors = {0}",           bigSectors);
+            AaruConsole.DebugWriteLine("FAT plugin", "bpb_signature = 0x{0:X2}",    bpbSignature);
+            AaruConsole.DebugWriteLine("FAT plugin", "fat32_signature = 0x{0:X2}",  fat32Signature);
+            AaruConsole.DebugWriteLine("FAT plugin", "fat32_id = \"{0}\"",          fat32String);
+            AaruConsole.DebugWriteLine("FAT plugin", "huge_sectors = {0}",          hugeSectors);
+            AaruConsole.DebugWriteLine("FAT plugin", "fat_id = 0x{0:X2}",           fatId);
 
             ushort apricotBps             = BitConverter.ToUInt16(bpbSector, 0x50);
             byte   apricotSpc             = bpbSector[0x52];
@@ -169,15 +169,15 @@ namespace Aaru.Filesystems.FAT
             int  bitsInApricotBps  = CountBits.Count(apricotBps);
             byte apricotPartitions = bpbSector[0x0C];
 
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_bps = {0}",                   apricotBps);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_spc = {0}",                   apricotSpc);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_correct_spc = {0}",           apricotCorrectSpc);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_reserved_secs = {0}",         apricotReservedSecs);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_fats_no = {0}",               apricotFatsNo);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_root_entries = {0}",          apricotRootEntries);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_sectors = {0}",               apricotSectors);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_media_descriptor = 0x{0:X2}", apricotMediaDescriptor);
-            DicConsole.DebugWriteLine("FAT plugin", "apricot_fat_sectors = {0}",           apricotFatSectors);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_bps = {0}",                   apricotBps);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_spc = {0}",                   apricotSpc);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_correct_spc = {0}",           apricotCorrectSpc);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_reserved_secs = {0}",         apricotReservedSecs);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_fats_no = {0}",               apricotFatsNo);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_root_entries = {0}",          apricotRootEntries);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_sectors = {0}",               apricotSectors);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_media_descriptor = 0x{0:X2}", apricotMediaDescriptor);
+            AaruConsole.DebugWriteLine("FAT plugin", "apricot_fat_sectors = {0}",           apricotFatSectors);
 
             // This is to support FAT partitions on hybrid ISO/USB images
             if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
@@ -289,7 +289,7 @@ namespace Aaru.Filesystems.FAT
             byte   fat3          = fatSector[2];
             ushort fat2ndCluster = (ushort)(((fat2 << 8) + fat3) & 0xFFF);
 
-            DicConsole.DebugWriteLine("FAT plugin", "1st fat cluster 1 = {0:X3}", fat2ndCluster);
+            AaruConsole.DebugWriteLine("FAT plugin", "1st fat cluster 1 = {0:X3}", fat2ndCluster);
             if(fat2ndCluster < 0xFF0) return false;
 
             ulong fat2SectorNo = 0;
@@ -323,7 +323,7 @@ namespace Aaru.Filesystems.FAT
 
             if(fat2SectorNo > partition.End) return false;
 
-            DicConsole.DebugWriteLine("FAT plugin", "2nd fat starts at = {0}", fat2SectorNo);
+            AaruConsole.DebugWriteLine("FAT plugin", "2nd fat starts at = {0}", fat2SectorNo);
 
             byte[] fat2Sector = imagePlugin.ReadSector(fat2SectorNo);
 

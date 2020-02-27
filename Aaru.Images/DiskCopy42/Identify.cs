@@ -65,15 +65,15 @@ namespace Aaru.DiscImages
             tmpHeader.Valid        = buffer[0x52];
             tmpHeader.Reserved     = buffer[0x53];
 
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.diskName = \"{0}\"",      tmpHeader.DiskName);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataSize = {0} bytes",    tmpHeader.DataSize);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagSize = {0} bytes",     tmpHeader.TagSize);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataChecksum = 0x{0:X8}", tmpHeader.DataChecksum);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagChecksum = 0x{0:X8}",  tmpHeader.TagChecksum);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.format = 0x{0:X2}",       tmpHeader.Format);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.fmtByte = 0x{0:X2}",      tmpHeader.FmtByte);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.valid = {0}",             tmpHeader.Valid);
-            DicConsole.DebugWriteLine("DC42 plugin", "tmp_header.reserved = {0}",          tmpHeader.Reserved);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.diskName = \"{0}\"",      tmpHeader.DiskName);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataSize = {0} bytes",    tmpHeader.DataSize);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagSize = {0} bytes",     tmpHeader.TagSize);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.dataChecksum = 0x{0:X8}", tmpHeader.DataChecksum);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.tagChecksum = 0x{0:X8}",  tmpHeader.TagChecksum);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.format = 0x{0:X2}",       tmpHeader.Format);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.fmtByte = 0x{0:X2}",      tmpHeader.FmtByte);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.valid = {0}",             tmpHeader.Valid);
+            AaruConsole.DebugWriteLine("DC42 plugin", "tmp_header.reserved = {0}",          tmpHeader.Reserved);
 
             if(tmpHeader.Valid != 1 || tmpHeader.Reserved != 0) return false;
 
@@ -95,7 +95,7 @@ namespace Aaru.DiscImages
                tmpHeader.Format != kSonyFormat1680K && tmpHeader.Format != kSigmaFormatTwiggy &&
                tmpHeader.Format != kNotStandardFormat)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value",
+                AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.format = 0x{0:X2} value",
                                           tmpHeader.Format);
 
                 return false;
@@ -106,7 +106,7 @@ namespace Aaru.DiscImages
                tmpHeader.FmtByte != kInvalidFmtByte           && tmpHeader.FmtByte != kSigmaFmtByteTwiggy &&
                tmpHeader.FmtByte != kFmtNotStandard           && tmpHeader.FmtByte != kMacOSXFmtByte)
             {
-                DicConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value",
+                AaruConsole.DebugWriteLine("DC42 plugin", "Unknown tmp_header.fmtByte = 0x{0:X2} value",
                                           tmpHeader.FmtByte);
 
                 return false;
@@ -114,7 +114,7 @@ namespace Aaru.DiscImages
 
             if(tmpHeader.FmtByte != kInvalidFmtByte) return true;
 
-            DicConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
+            AaruConsole.DebugWriteLine("DC42 plugin", "Image says it's unformatted");
 
             return false;
         }

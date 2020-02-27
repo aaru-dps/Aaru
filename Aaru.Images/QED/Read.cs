@@ -55,17 +55,17 @@ namespace Aaru.DiscImages
             stream.Read(qHdrB, 0, 68);
             qHdr = Marshal.SpanToStructureLittleEndian<QedHeader>(qHdrB);
 
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}",          qHdr.magic);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.cluster_size = {0}",        qHdr.cluster_size);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.table_size = {0}",          qHdr.table_size);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.header_size = {0}",         qHdr.header_size);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.features = {0}",            qHdr.features);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.compat_features = {0}",     qHdr.compat_features);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.autoclear_features = {0}",  qHdr.autoclear_features);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.l1_table_offset = {0}",     qHdr.l1_table_offset);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.image_size = {0}",          qHdr.image_size);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_offset = {0}", qHdr.backing_file_offset);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_size = {0}",   qHdr.backing_file_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.magic = 0x{0:X8}",          qHdr.magic);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.cluster_size = {0}",        qHdr.cluster_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.table_size = {0}",          qHdr.table_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.header_size = {0}",         qHdr.header_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.features = {0}",            qHdr.features);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.compat_features = {0}",     qHdr.compat_features);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.autoclear_features = {0}",  qHdr.autoclear_features);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1_table_offset = {0}",     qHdr.l1_table_offset);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.image_size = {0}",          qHdr.image_size);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_offset = {0}", qHdr.backing_file_offset);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.backing_file_size = {0}",   qHdr.backing_file_size);
 
             if(qHdr.image_size <= 1)
                 throw new ArgumentOutOfRangeException(nameof(qHdr.image_size), "Image size is too small");
@@ -94,13 +94,13 @@ namespace Aaru.DiscImages
             clusterSectors = qHdr.cluster_size                   / 512;
             tableSize      = qHdr.cluster_size * qHdr.table_size / 8;
 
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", clusterSectors);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}",      tableSize);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterSectors = {0}", clusterSectors);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.tableSize = {0}",      tableSize);
 
             byte[] l1TableB = new byte[tableSize * 8];
             stream.Seek((long)qHdr.l1_table_offset, SeekOrigin.Begin);
             stream.Read(l1TableB, 0, (int)tableSize * 8);
-            DicConsole.DebugWriteLine("QED plugin", "Reading L1 table");
+            AaruConsole.DebugWriteLine("QED plugin", "Reading L1 table");
             l1Table = MemoryMarshal.Cast<byte, ulong>(l1TableB).ToArray();
 
             l1Mask = 0;
@@ -122,11 +122,11 @@ namespace Aaru.DiscImages
             sectorMask = 0;
             for(int i = 0; i < clusterBits; i++) sectorMask = (sectorMask << 1) + 1;
 
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.clusterBits = {0}",  clusterBits);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.l1Mask = {0:X}",     l1Mask);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.l1Shift = {0}",      l1Shift);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}",     l2Mask);
-            DicConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", sectorMask);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.clusterBits = {0}",  clusterBits);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1Mask = {0:X}",     l1Mask);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l1Shift = {0}",      l1Shift);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.l2Mask = {0:X}",     l2Mask);
+            AaruConsole.DebugWriteLine("QED plugin", "qHdr.sectorMask = {0:X}", sectorMask);
 
             maxL2TableCache = MAX_CACHE_SIZE / tableSize;
             maxClusterCache = MAX_CACHE_SIZE / qHdr.cluster_size;
@@ -178,7 +178,7 @@ namespace Aaru.DiscImages
                 imageStream.Seek((long)l1Table[l1Off], SeekOrigin.Begin);
                 byte[] l2TableB = new byte[tableSize * 8];
                 imageStream.Read(l2TableB, 0, (int)tableSize * 8);
-                DicConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
+                AaruConsole.DebugWriteLine("QED plugin", "Reading L2 table #{0}", l1Off);
                 l2Table = MemoryMarshal.Cast<byte, ulong>(l2TableB).ToArray();
 
                 if(l2TableCache.Count >= maxL2TableCache) l2TableCache.Clear();

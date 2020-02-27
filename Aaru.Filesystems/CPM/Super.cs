@@ -97,14 +97,14 @@ namespace Aaru.Filesystems.CPM
                             workingDefinition.side2.sectorIds.Length;
 
                     // TODO: Implement CYLINDERS ordering
-                    DicConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
+                    AaruConsole.DebugWriteLine("CP/M Plugin", "CYLINDERS ordering not yet implemented.");
                     return Errno.NotImplemented;
                 }
                 // TODO: Implement COLUMBIA ordering
                 else if(string.Compare(workingDefinition.order, "COLUMBIA",
                                        StringComparison.InvariantCultureIgnoreCase) == 0)
                 {
-                    DicConsole.DebugWriteLine("CP/M Plugin",
+                    AaruConsole.DebugWriteLine("CP/M Plugin",
                                               "Don't know how to handle COLUMBIA ordering, not proceeding with this definition.");
                     return Errno.NotImplemented;
                 }
@@ -112,13 +112,13 @@ namespace Aaru.Filesystems.CPM
                 else if(string.Compare(workingDefinition.order, "EAGLE", StringComparison.InvariantCultureIgnoreCase) ==
                         0)
                 {
-                    DicConsole.DebugWriteLine("CP/M Plugin",
+                    AaruConsole.DebugWriteLine("CP/M Plugin",
                                               "Don't know how to handle EAGLE ordering, not proceeding with this definition.");
                     return Errno.NotImplemented;
                 }
                 else
                 {
-                    DicConsole.DebugWriteLine("CP/M Plugin",
+                    AaruConsole.DebugWriteLine("CP/M Plugin",
                                               "Unknown order type \"{0}\", not proceeding with this definition.",
                                               workingDefinition.order);
                     return Errno.NotSupported;
@@ -130,7 +130,7 @@ namespace Aaru.Filesystems.CPM
             if(workingDefinition.sides                                                                       == 1 ||
                string.Compare(workingDefinition.order, "SIDES", StringComparison.InvariantCultureIgnoreCase) == 0)
             {
-                DicConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
+                AaruConsole.DebugWriteLine("CP/M Plugin", "Deinterleaving whole volume.");
 
                 for(int p = 0; p <= (int)(partition.End - partition.Start); p++)
                 {
@@ -151,7 +151,7 @@ namespace Aaru.Filesystems.CPM
             int                       sectorsPerBlock  = 0;
             Dictionary<ulong, byte[]> allocationBlocks = new Dictionary<ulong, byte[]>();
 
-            DicConsole.DebugWriteLine("CP/M Plugin", "Creating allocation blocks.");
+            AaruConsole.DebugWriteLine("CP/M Plugin", "Creating allocation blocks.");
 
             // For each volume sector
             for(ulong a = 0; a < (ulong)deinterleavedSectors.Count; a++)
@@ -182,7 +182,7 @@ namespace Aaru.Filesystems.CPM
                 else allocationBlocks.Add(blockNo++, sector);
             }
 
-            DicConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
+            AaruConsole.DebugWriteLine("CP/M Plugin", "Reading directory.");
 
             int dirOff;
             int dirSectors = (dpb.drm + 1) * 32 / workingDefinition.bytesPerSector;
@@ -215,7 +215,7 @@ namespace Aaru.Filesystems.CPM
             labelUpdateDate   = null;
             passwordCache     = new Dictionary<string, byte[]>();
 
-            DicConsole.DebugWriteLine("CP/M Plugin", "Traversing directory.");
+            AaruConsole.DebugWriteLine("CP/M Plugin", "Traversing directory.");
 
             // For each directory entry
             for(int dOff = 0; dOff < directory.Length; dOff += 32)
@@ -592,7 +592,7 @@ namespace Aaru.Filesystems.CPM
 
             // Cache all files. As CP/M maximum volume size is 8 Mib
             // this should not be a problem
-            DicConsole.DebugWriteLine("CP/M Plugin", "Reading files.");
+            AaruConsole.DebugWriteLine("CP/M Plugin", "Reading files.");
             long usedBlocks = 0;
             fileCache = new Dictionary<string, byte[]>();
             foreach(string filename in dirList)

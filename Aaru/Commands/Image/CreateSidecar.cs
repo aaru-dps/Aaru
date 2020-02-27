@@ -91,19 +91,19 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("create-sidecar");
 
-            DicConsole.DebugWriteLine("Create sidecar command", "--block-size={0}", blockSize);
-            DicConsole.DebugWriteLine("Create sidecar command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Create sidecar command", "--encoding={0}", encodingName);
-            DicConsole.DebugWriteLine("Create sidecar command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("Create sidecar command", "--tape={0}", tape);
-            DicConsole.DebugWriteLine("Create sidecar command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Create sidecar command", "--block-size={0}", blockSize);
+            AaruConsole.DebugWriteLine("Create sidecar command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Create sidecar command", "--encoding={0}", encodingName);
+            AaruConsole.DebugWriteLine("Create sidecar command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Create sidecar command", "--tape={0}", tape);
+            AaruConsole.DebugWriteLine("Create sidecar command", "--verbose={0}", verbose);
 
             Encoding encodingClass = null;
 
@@ -113,11 +113,11 @@ namespace Aaru.Commands.Image
                     encodingClass = Claunia.Encoding.Encoding.GetEncoding(encodingName);
 
                     if(verbose)
-                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                        AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
                 }
                 catch(ArgumentException)
                 {
-                    DicConsole.ErrorWriteLine("Specified encoding is not supported.");
+                    AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
                     return(int)ErrorNumber.EncodingUnknown;
                 }
@@ -126,7 +126,7 @@ namespace Aaru.Commands.Image
             {
                 if(tape)
                 {
-                    DicConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
+                    AaruConsole.ErrorWriteLine("You cannot use --tape option when input is a file.");
 
                     return(int)ErrorNumber.ExpectedDirectory;
                 }
@@ -136,7 +136,7 @@ namespace Aaru.Commands.Image
 
                 if(inputFilter == null)
                 {
-                    DicConsole.ErrorWriteLine("Cannot open specified file.");
+                    AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                     return(int)ErrorNumber.CannotOpenFile;
                 }
@@ -147,33 +147,33 @@ namespace Aaru.Commands.Image
 
                     if(imageFormat == null)
                     {
-                        DicConsole.WriteLine("Image format not identified, not proceeding with analysis.");
+                        AaruConsole.WriteLine("Image format not identified, not proceeding with analysis.");
 
                         return(int)ErrorNumber.UnrecognizedFormat;
                     }
 
                     if(verbose)
-                        DicConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
+                        AaruConsole.VerboseWriteLine("Image format identified by {0} ({1}).", imageFormat.Name,
                                                     imageFormat.Id);
                     else
-                        DicConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
+                        AaruConsole.WriteLine("Image format identified by {0}.", imageFormat.Name);
 
                     try
                     {
                         if(!imageFormat.Open(inputFilter))
                         {
-                            DicConsole.WriteLine("Unable to open image format");
-                            DicConsole.WriteLine("No error given");
+                            AaruConsole.WriteLine("Unable to open image format");
+                            AaruConsole.WriteLine("No error given");
 
                             return(int)ErrorNumber.CannotOpenFormat;
                         }
 
-                        DicConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
+                        AaruConsole.DebugWriteLine("Analyze command", "Correctly opened image file.");
                     }
                     catch(Exception ex)
                     {
-                        DicConsole.ErrorWriteLine("Unable to open image format");
-                        DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                        AaruConsole.ErrorWriteLine("Unable to open image format");
+                        AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
 
                         return(int)ErrorNumber.CannotOpenFormat;
                     }
@@ -198,7 +198,7 @@ namespace Aaru.Commands.Image
 
                     CICMMetadataType sidecar = sidecarClass.Create();
 
-                    DicConsole.WriteLine("Writing metadata sidecar");
+                    AaruConsole.WriteLine("Writing metadata sidecar");
 
                     var xmlFs =
                         new
@@ -211,8 +211,8 @@ namespace Aaru.Commands.Image
                 }
                 catch(Exception ex)
                 {
-                    DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                    DicConsole.DebugWriteLine("Analyze command", ex.StackTrace);
+                    AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+                    AaruConsole.DebugWriteLine("Analyze command", ex.StackTrace);
 
                     return(int)ErrorNumber.UnexpectedException;
                 }
@@ -221,7 +221,7 @@ namespace Aaru.Commands.Image
             {
                 if(!tape)
                 {
-                    DicConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
+                    AaruConsole.ErrorWriteLine("Cannot create a sidecar from a directory.");
 
                     return(int)ErrorNumber.ExpectedFile;
                 }
@@ -241,7 +241,7 @@ namespace Aaru.Commands.Image
                 sidecarClass.UpdateStatusEvent    += Progress.UpdateStatus;
                 CICMMetadataType sidecar = sidecarClass.BlockTape(Path.GetFileName(imagePath), files, blockSize);
 
-                DicConsole.WriteLine("Writing metadata sidecar");
+                AaruConsole.WriteLine("Writing metadata sidecar");
 
                 var xmlFs =
                     new
@@ -253,7 +253,7 @@ namespace Aaru.Commands.Image
                 xmlFs.Close();
             }
             else
-                DicConsole.ErrorWriteLine("The specified input file cannot be found.");
+                AaruConsole.ErrorWriteLine("The specified input file cannot be found.");
 
             return(int)ErrorNumber.NoError;
         }

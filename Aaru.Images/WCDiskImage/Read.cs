@@ -56,7 +56,7 @@ namespace Aaru.DiscImages
 
             WCDiskImageFileHeader fheader = Marshal.ByteArrayToStructureLittleEndian<WCDiskImageFileHeader>(header);
 
-            DicConsole.DebugWriteLine("d2f plugin",
+            AaruConsole.DebugWriteLine("d2f plugin",
                                       "Detected WC DISK IMAGE with {0} heads, {1} tracks and {2} sectors per track.",
                                       fheader.heads, fheader.cylinders, fheader.sectorsPerTrack);
 
@@ -87,25 +87,25 @@ namespace Aaru.DiscImages
             /* if there are extra tracks, read them as well */
             if(fheader.extraTracks[0] == 1)
             {
-                DicConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 0) present, reading");
+                AaruConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 0) present, reading");
                 ReadTrack(stream, (int)imageInfo.Cylinders, 0);
             }
 
             if(fheader.extraTracks[1] == 1)
             {
-                DicConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 1) present, reading");
+                AaruConsole.DebugWriteLine("d2f plugin", "Extra track 1 (head 1) present, reading");
                 ReadTrack(stream, (int)imageInfo.Cylinders, 1);
             }
 
             if(fheader.extraTracks[2] == 1)
             {
-                DicConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 0) present, reading");
+                AaruConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 0) present, reading");
                 ReadTrack(stream, (int)imageInfo.Cylinders + 1, 0);
             }
 
             if(fheader.extraTracks[3] == 1)
             {
-                DicConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 1) present, reading");
+                AaruConsole.DebugWriteLine("d2f plugin", "Extra track 2 (head 1) present, reading");
                 ReadTrack(stream, (int)imageInfo.Cylinders + 1, 1);
             }
 
@@ -121,7 +121,7 @@ namespace Aaru.DiscImages
             /* read the comment and directory data if present */
             if(fheader.extraFlags.HasFlag(ExtraFlag.Comment))
             {
-                DicConsole.DebugWriteLine("d2f plugin", "Comment present, reading");
+                AaruConsole.DebugWriteLine("d2f plugin", "Comment present, reading");
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
@@ -139,7 +139,7 @@ namespace Aaru.DiscImages
 
             if(fheader.extraFlags.HasFlag(ExtraFlag.Directory))
             {
-                DicConsole.DebugWriteLine("d2f plugin", "Directory listing present, reading");
+                AaruConsole.DebugWriteLine("d2f plugin", "Directory listing present, reading");
                 byte[] sheaderBuffer = new byte[6];
                 stream.Read(sheaderBuffer, 0, 6);
 
@@ -174,7 +174,7 @@ namespace Aaru.DiscImages
 
             if(badSectors[(cylinderNumber, headNumber, sectorNumber)])
             {
-                DicConsole.DebugWriteLine("d2f plugin", "reading bad sector {0} ({1},{2},{3})", sectorAddress,
+                AaruConsole.DebugWriteLine("d2f plugin", "reading bad sector {0} ({1},{2},{3})", sectorAddress,
                                           cylinderNumber, headNumber, sectorNumber);
 
                 /* if we have sector data, return that */
@@ -241,20 +241,20 @@ namespace Aaru.DiscImages
                         CRC16IBMContext.Data(sectorData, 512, out crc);
                         calculatedCRC = (short)((256 * crc[0]) | crc[1]);
                         /*
-                        DicConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
+                        AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Regular sector, stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
                             cyl, head, sect, sheader.crc, 256 * crc[0] + crc[1]);
                          */
                         badSectors[(cyl, head, sect)] = sheader.crc != calculatedCRC;
 
                         if(calculatedCRC != sheader.crc)
-                            DicConsole.DebugWriteLine("d2f plugin",
+                            AaruConsole.DebugWriteLine("d2f plugin",
                                                       "CHS {0},{1},{2}: CRC mismatch: stored CRC=0x{3:x4}, calculated CRC=0x{4:x4}",
                                                       cyl, head, sect, sheader.crc, calculatedCRC);
 
                         break;
                     case SectorFlag.BadSector:
                         /*
-                        DicConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Bad sector",
+                        AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: Bad sector",
                             cyl, head, sect);
                          */
                         badSectors[(cyl, head, sect)] = true;
@@ -262,7 +262,7 @@ namespace Aaru.DiscImages
                         break;
                     case SectorFlag.RepeatByte:
                         /*
-                        DicConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: RepeatByte sector, fill byte 0x{0:x2}",
+                        AaruConsole.DebugWriteLine("d2f plugin", "CHS {0},{1},{2}: RepeatByte sector, fill byte 0x{0:x2}",
                             cyl, head, sect, sheader.crc & 0xff);
                          */
                         for(int i = 0; i < 512; i++)

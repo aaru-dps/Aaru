@@ -76,7 +76,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC TRANSLATE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC TRANSLATE took {0} ms.", duration);
 
             return sense;
         }
@@ -118,7 +118,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC SET ERROR THRESHOLD took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC SET ERROR THRESHOLD took {0} ms.", duration);
 
             return sense;
         }
@@ -157,7 +157,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ/RESET USAGE COUNTER took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ/RESET USAGE COUNTER took {0} ms.", duration);
 
             return sense;
         }
@@ -183,7 +183,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC WRITE DATA BUFFER took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC WRITE DATA BUFFER took {0} ms.", duration);
 
             return sense;
         }
@@ -207,7 +207,7 @@ namespace Aaru.Devices
                                         out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ DATA BUFFER took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SCSI Device", "ADAPTEC READ DATA BUFFER took {0} ms.", duration);
 
             return sense;
         }

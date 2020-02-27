@@ -50,8 +50,8 @@ namespace Aaru.DiscImages
             stream.Read(qHdrB, 0, Marshal.SizeOf<QCow2Header>());
             qHdr = Marshal.SpanToStructureBigEndian<QCow2Header>(qHdrB);
 
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", qHdr.magic);
-            DicConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}",    qHdr.version);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.magic = 0x{0:X8}", qHdr.magic);
+            AaruConsole.DebugWriteLine("QCOW plugin", "qHdr.version = {0}",    qHdr.version);
 
             return qHdr.magic == QCOW_MAGIC && (qHdr.version == QCOW_VERSION2 || qHdr.version == QCOW_VERSION3);
         }

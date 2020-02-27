@@ -85,8 +85,8 @@ namespace Aaru.Filesystems
             sector[4] = sector[5] = sector[6] = sector[7] = 0;
             uint bsum             = AmigaBootChecksum(sector);
 
-            DicConsole.DebugWriteLine("AmigaDOS plugin", "bblk.checksum = 0x{0:X8}", bblk.checksum);
-            DicConsole.DebugWriteLine("AmigaDOS plugin", "bsum = 0x{0:X8}",          bsum);
+            AaruConsole.DebugWriteLine("AmigaDOS plugin", "bblk.checksum = 0x{0:X8}", bblk.checksum);
+            AaruConsole.DebugWriteLine("AmigaDOS plugin", "bsum = 0x{0:X8}",          bsum);
 
             ulong bRootPtr = 0;
 
@@ -94,7 +94,7 @@ namespace Aaru.Filesystems
             if(bsum == bblk.checksum)
             {
                 bRootPtr = bblk.root_ptr + partition.Start;
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
             }
 
             ulong[] rootPtrs =
@@ -111,23 +111,23 @@ namespace Aaru.Filesystems
             // So to handle even number of sectors
             foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start))
             {
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
                 sector = imagePlugin.ReadSector(rootPtr);
 
                 rblk.type = BigEndianBitConverter.ToUInt32(sector, 0x00);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.type = {0}", rblk.type);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rblk.type = {0}", rblk.type);
                 if(rblk.type != TYPE_HEADER) continue;
 
                 rblk.hashTableSize = BigEndianBitConverter.ToUInt32(sector, 0x0C);
 
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.hashTableSize = {0}", rblk.hashTableSize);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rblk.hashTableSize = {0}", rblk.hashTableSize);
 
                 uint blockSize       = (rblk.hashTableSize + 56) * 4;
                 uint sectorsPerBlock = (uint)(blockSize / sector.Length);
 
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}",       blockSize);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}",       blockSize);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
 
                 if(blockSize % sector.Length > 0) sectorsPerBlock++;
 
@@ -140,11 +140,11 @@ namespace Aaru.Filesystems
                 sector[20]    = sector[21] = sector[22] = sector[23] = 0;
                 uint rsum                  = AmigaChecksum(sector);
 
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.checksum = 0x{0:X8}", rblk.checksum);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rsum = 0x{0:X8}",          rsum);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rblk.checksum = 0x{0:X8}", rblk.checksum);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rsum = 0x{0:X8}",          rsum);
 
                 rblk.sec_type = BigEndianBitConverter.ToUInt32(sector, sector.Length - 4);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rblk.sec_type = {0}", rblk.sec_type);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rblk.sec_type = {0}", rblk.sec_type);
 
                 if(rblk.sec_type == SUBTYPE_ROOT && rblk.checksum == rsum) return true;
             }
@@ -173,7 +173,7 @@ namespace Aaru.Filesystems
             if(bsum == bootBlk.checksum)
             {
                 bRootPtr = bootBlk.root_ptr + partition.Start;
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "Bootblock points to {0} as Rootblock", bRootPtr);
             }
 
             ulong[] rootPtrs =
@@ -194,23 +194,23 @@ namespace Aaru.Filesystems
             // So to handle even number of sectors
             foreach(ulong rootPtr in rootPtrs.Where(rootPtr => rootPtr < partition.End && rootPtr >= partition.Start))
             {
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "Searching for Rootblock in sector {0}", rootPtr);
 
                 rootBlockSector = imagePlugin.ReadSector(rootPtr);
 
                 rootBlk.type = BigEndianBitConverter.ToUInt32(rootBlockSector, 0x00);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.type = {0}", rootBlk.type);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.type = {0}", rootBlk.type);
                 if(rootBlk.type != TYPE_HEADER) continue;
 
                 rootBlk.hashTableSize = BigEndianBitConverter.ToUInt32(rootBlockSector, 0x0C);
 
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.hashTableSize = {0}", rootBlk.hashTableSize);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.hashTableSize = {0}", rootBlk.hashTableSize);
 
                 blockSize = (rootBlk.hashTableSize + 56) * 4;
                 uint sectorsPerBlock = (uint)(blockSize / rootBlockSector.Length);
 
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}",       blockSize);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "blockSize = {0}",       blockSize);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "sectorsPerBlock = {0}", sectorsPerBlock);
 
                 if(blockSize % rootBlockSector.Length > 0) sectorsPerBlock++;
 
@@ -223,11 +223,11 @@ namespace Aaru.Filesystems
                 rootBlockSector[20] = rootBlockSector[21] = rootBlockSector[22] = rootBlockSector[23] = 0;
                 uint rsum                                 = AmigaChecksum(rootBlockSector);
 
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.checksum = 0x{0:X8}", rootBlk.checksum);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rsum = 0x{0:X8}",             rsum);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.checksum = 0x{0:X8}", rootBlk.checksum);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rsum = 0x{0:X8}",             rsum);
 
                 rootBlk.sec_type = BigEndianBitConverter.ToUInt32(rootBlockSector, rootBlockSector.Length - 4);
-                DicConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.sec_type = {0}", rootBlk.sec_type);
+                AaruConsole.DebugWriteLine("AmigaDOS plugin", "rootBlk.sec_type = {0}", rootBlk.sec_type);
 
                 if(rootBlk.sec_type != SUBTYPE_ROOT || rootBlk.checksum != rsum) continue;
 

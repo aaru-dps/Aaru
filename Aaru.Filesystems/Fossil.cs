@@ -63,7 +63,7 @@ namespace Aaru.Filesystems
             byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
-            DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
+            AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);
 
             return hdr.magic == FOSSIL_HDR_MAGIC;
@@ -82,7 +82,7 @@ namespace Aaru.Filesystems
             byte[]       sector = imagePlugin.ReadSector(partition.Start + hdrSector);
             FossilHeader hdr    = Marshal.ByteArrayToStructureBigEndian<FossilHeader>(sector);
 
-            DicConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
+            AaruConsole.DebugWriteLine("Fossil plugin", "magic at 0x{0:X8} (expected 0x{1:X8})", hdr.magic,
                                       FOSSIL_HDR_MAGIC);
 
             StringBuilder sb = new StringBuilder();
@@ -107,7 +107,7 @@ namespace Aaru.Filesystems
                 sector = imagePlugin.ReadSector(sbLocation);
                 FossilSuperBlock fsb = Marshal.ByteArrayToStructureBigEndian<FossilSuperBlock>(sector);
 
-                DicConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
+                AaruConsole.DebugWriteLine("Fossil plugin", "magic 0x{0:X8} (expected 0x{1:X8})", fsb.magic,
                                           FOSSIL_SB_MAGIC);
 
                 if(fsb.magic == FOSSIL_SB_MAGIC)

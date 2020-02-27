@@ -145,9 +145,9 @@ namespace Aaru.Core
                                     encoding);
                     else
                     {
-                        DicConsole
+                        AaruConsole
                            .ErrorWriteLine("The specified image says it contains an optical media but at the same time says it does not support them.");
-                        DicConsole.ErrorWriteLine("Please open an issue at Github.");
+                        AaruConsole.ErrorWriteLine("Please open an issue at Github.");
                     }
 
                     break;

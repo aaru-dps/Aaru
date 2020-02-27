@@ -59,23 +59,23 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("image-info");
 
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Analyze command", "--input={0}", imagePath);
+            AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
 
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
@@ -86,20 +86,20 @@ namespace Aaru.Commands.Image
 
                 if(imageFormat == null)
                 {
-                    DicConsole.WriteLine("Image format not identified.");
+                    AaruConsole.WriteLine("Image format not identified.");
 
                     return(int)ErrorNumber.UnrecognizedFormat;
                 }
 
-                DicConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine("Image format identified by {0} ({1}).", imageFormat.Name, imageFormat.Id);
+                AaruConsole.WriteLine();
 
                 try
                 {
                     if(!imageFormat.Open(inputFilter))
                     {
-                        DicConsole.WriteLine("Unable to open image format");
-                        DicConsole.WriteLine("No error given");
+                        AaruConsole.WriteLine("Unable to open image format");
+                        AaruConsole.WriteLine("No error given");
 
                         return(int)ErrorNumber.CannotOpenFormat;
                     }
@@ -112,17 +112,17 @@ namespace Aaru.Commands.Image
                 }
                 catch(Exception ex)
                 {
-                    DicConsole.ErrorWriteLine("Unable to open image format");
-                    DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                    DicConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
+                    AaruConsole.ErrorWriteLine("Unable to open image format");
+                    AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                    AaruConsole.DebugWriteLine("Image-info command", "Stack trace: {0}", ex.StackTrace);
 
                     return(int)ErrorNumber.CannotOpenFormat;
                 }
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
-                DicConsole.DebugWriteLine("Image-info command", ex.StackTrace);
+                AaruConsole.ErrorWriteLine($"Error reading file: {ex.Message}");
+                AaruConsole.DebugWriteLine("Image-info command", ex.StackTrace);
 
                 return(int)ErrorNumber.UnexpectedException;
             }

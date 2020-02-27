@@ -126,29 +126,29 @@ namespace Aaru.Filesystems
             }
 
             ushort prePointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0);
-            DicConsole.DebugWriteLine("ProDOS plugin", "prePointer = {0}", prePointer);
+            AaruConsole.DebugWriteLine("ProDOS plugin", "prePointer = {0}", prePointer);
             if(prePointer != 0) return false;
 
             byte storageType = (byte)((rootDirectoryKeyBlock[0x04] & STORAGE_TYPE_MASK) >> 4);
-            DicConsole.DebugWriteLine("ProDOS plugin", "storage_type = {0}", storageType);
+            AaruConsole.DebugWriteLine("ProDOS plugin", "storage_type = {0}", storageType);
             if(storageType != ROOT_DIRECTORY_TYPE) return false;
 
             byte entryLength = rootDirectoryKeyBlock[0x23];
-            DicConsole.DebugWriteLine("ProDOS plugin", "entry_length = {0}", entryLength);
+            AaruConsole.DebugWriteLine("ProDOS plugin", "entry_length = {0}", entryLength);
             if(entryLength != ENTRY_LENGTH) return false;
 
             byte entriesPerBlock = rootDirectoryKeyBlock[0x24];
-            DicConsole.DebugWriteLine("ProDOS plugin", "entries_per_block = {0}", entriesPerBlock);
+            AaruConsole.DebugWriteLine("ProDOS plugin", "entries_per_block = {0}", entriesPerBlock);
             if(entriesPerBlock != ENTRIES_PER_BLOCK) return false;
 
             ushort bitMapPointer = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x27);
-            DicConsole.DebugWriteLine("ProDOS plugin", "bit_map_pointer = {0}", bitMapPointer);
+            AaruConsole.DebugWriteLine("ProDOS plugin", "bit_map_pointer = {0}", bitMapPointer);
             if(bitMapPointer > partition.End) return false;
 
             ushort totalBlocks             = BitConverter.ToUInt16(rootDirectoryKeyBlock, 0x29);
             if(apmFromHddOnCd) totalBlocks /= 4;
 
-            DicConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
+            AaruConsole.DebugWriteLine("ProDOS plugin", "{0} <= ({1} - {2} + 1)? {3}", totalBlocks, partition.End,
                                       partition.Start, totalBlocks <= partition.End - partition.Start + 1);
             return totalBlocks <= partition.End - partition.Start + 1;
         }
@@ -221,10 +221,10 @@ namespace Aaru.Filesystems
                 year += 1900;
                 if(year < 1940) year += 100;
 
-                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}",  tempTimestampLeft);
-                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_right = 0x{0:X4}", tempTimestampRight);
-                DicConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}",       tempTimestamp);
-                DicConsole.DebugWriteLine("ProDOS plugin",
+                AaruConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_left = 0x{0:X4}",  tempTimestampLeft);
+                AaruConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp_right = 0x{0:X4}", tempTimestampRight);
+                AaruConsole.DebugWriteLine("ProDOS plugin", "temp_timestamp = 0x{0:X8}",       tempTimestamp);
+                AaruConsole.DebugWriteLine("ProDOS plugin",
                                           "Datetime field year {0}, month {1}, day {2}, hour {3}, minute {4}.", year,
                                           month, day, hour, minute);
 
@@ -293,7 +293,7 @@ namespace Aaru.Filesystems
                 sbInformation.AppendLine("Volume must be backed up");
 
             if((rootDirectoryKeyBlock.header.access & RESERVED_ATTRIBUTE_MASK) != 0)
-                DicConsole.DebugWriteLine("ProDOS plugin", "Reserved attributes are set: {0:X2}",
+                AaruConsole.DebugWriteLine("ProDOS plugin", "Reserved attributes are set: {0:X2}",
                                           rootDirectoryKeyBlock.header.access);
 
             information = sbInformation.ToString();

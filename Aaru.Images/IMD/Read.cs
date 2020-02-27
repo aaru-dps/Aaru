@@ -178,9 +178,9 @@ namespace Aaru.DiscImages
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            DicConsole.VerboseWriteLine("IMD image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("IMD image contains a disk of type {0}", imageInfo.MediaType);
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                DicConsole.VerboseWriteLine("IMD comments: {0}", imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("IMD comments: {0}", imageInfo.Comments);
 
             return true;
         }

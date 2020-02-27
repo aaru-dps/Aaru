@@ -53,13 +53,13 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            DicConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("List-Namespaces command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("List-Namespaces command", "--verbose={0}", verbose);
             Statistics.AddCommand("list-namespaces");
 
             PluginBase plugins = GetPluginBase.Instance;
@@ -69,13 +69,13 @@ namespace Aaru.Commands
                 if(kvp.Value.Namespaces is null)
                     continue;
 
-                DicConsole.WriteLine("\tNamespaces for {0}:", kvp.Value.Name);
-                DicConsole.WriteLine("\t\t{0,-16} {1,-16}", "Namespace", "Description");
+                AaruConsole.WriteLine("\tNamespaces for {0}:", kvp.Value.Name);
+                AaruConsole.WriteLine("\t\t{0,-16} {1,-16}", "Namespace", "Description");
 
                 foreach(KeyValuePair<string, string> @namespace in kvp.Value.Namespaces.OrderBy(t => t.Key))
-                    DicConsole.WriteLine("\t\t{0,-16} {1,-16}", @namespace.Key, @namespace.Value);
+                    AaruConsole.WriteLine("\t\t{0,-16} {1,-16}", @namespace.Key, @namespace.Value);
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             return(int)ErrorNumber.NoError;

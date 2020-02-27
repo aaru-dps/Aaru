@@ -307,7 +307,7 @@ namespace Aaru.DiscImages
             }
             else batEntries = (long)(dataBlocks + (dataBlocks - 1) / (ulong)chunkRatio);
 
-            DicConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
+            AaruConsole.DebugWriteLine("VHDX plugin", "Reading BAT");
 
             long readChunks = 0;
             blockAllocationTable = new ulong[dataBlocks];
@@ -333,7 +333,7 @@ namespace Aaru.DiscImages
 
             if(hasParent)
             {
-                DicConsole.DebugWriteLine("VHDX plugin", "Reading Sector Bitmap");
+                AaruConsole.DebugWriteLine("VHDX plugin", "Reading Sector Bitmap");
 
                 MemoryStream sectorBmpMs = new MemoryStream();
                 foreach(ulong pt in sectorBitmapPointers)

@@ -57,15 +57,15 @@ namespace Aaru.Commands.Device
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("list-devices");
 
-            DicConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
 
             DeviceInfo[] devices = Aaru.Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
                                                                    out string serverVersion,
@@ -82,7 +82,7 @@ namespace Aaru.Commands.Device
             if(devices        == null ||
                devices.Length == 0)
             {
-                DicConsole.WriteLine("No known devices attached.");
+                AaruConsole.WriteLine("No known devices attached.");
             }
             else
             {
@@ -90,29 +90,29 @@ namespace Aaru.Commands.Device
 
                 if(dicRemoteHost is null)
                 {
-                    DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
+                    AaruConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
                                          "Serial", "Bus", "Supported?");
 
-                    DicConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
+                    AaruConsole.WriteLine("{0,-22}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}", "----------------------",
                                          "----------------", "------------------------", "------------------------",
                                          "----------", "----------");
 
                     foreach(DeviceInfo dev in devices)
-                        DicConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
+                        AaruConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
                                              dev.Model, dev.Serial, dev.Bus, dev.Supported);
                 }
                 else
                 {
-                    DicConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
+                    AaruConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
                                          "Serial", "Bus", "Supported?");
 
-                    DicConsole.WriteLine("{0,-48}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
+                    AaruConsole.WriteLine("{0,-48}+{1,-16}+{2,-24}+{3,-24}+{4,-10}+{5,-10}",
                                          "------------------------------------------------", "----------------",
                                          "------------------------", "------------------------", "----------",
                                          "----------");
 
                     foreach(DeviceInfo dev in devices)
-                        DicConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
+                        AaruConsole.WriteLine("{0,-48}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", dev.Path, dev.Vendor,
                                              dev.Model, dev.Serial, dev.Bus, dev.Supported);
                 }
             }

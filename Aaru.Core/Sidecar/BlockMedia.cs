@@ -607,7 +607,7 @@ namespace Aaru.Core
                         catch
                             #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                         {
-                            //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                            //AaruConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                         }
 
                     if(lstFs.Count > 0)
@@ -660,7 +660,7 @@ namespace Aaru.Core
                     catch
                         #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
                     {
-                        //DicConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
+                        //AaruConsole.DebugWriteLine("Create-sidecar command", "Plugin {0} crashed", _plugin.Name);
                     }
 
                 if(lstFs.Count > 0)
@@ -915,11 +915,11 @@ namespace Aaru.Core
                                 scpBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
-                            DicConsole.
+                            AaruConsole.
                                 ErrorWriteLine("SuperCardPro image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                scpImage.Header.end + 1, image.Info.Cylinders);
                     else
-                        DicConsole.
+                        AaruConsole.
                             ErrorWriteLine("SuperCardPro image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                            2, image.Info.Heads);
                 }
@@ -1019,11 +1019,11 @@ namespace Aaru.Core
                                 kfBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                         }
                         else
-                            DicConsole.
+                            AaruConsole.
                                 ErrorWriteLine("KryoFlux image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                                kfImage.Info.Cylinders, image.Info.Cylinders);
                     else
-                        DicConsole.
+                        AaruConsole.
                             ErrorWriteLine("KryoFluximage do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                            kfImage.Info.Heads, image.Info.Heads);
                 }
@@ -1104,11 +1104,11 @@ namespace Aaru.Core
                         dfiBlockTrackTypes.OrderBy(t => t.Cylinder).ThenBy(t => t.Head).ToArray();
                 }
                 else
-                    DicConsole.
+                    AaruConsole.
                         ErrorWriteLine("DiscFerret image do not contain same number of tracks ({0}) than disk image ({1}), ignoring...",
                                        dfiImage.Info.Cylinders, image.Info.Cylinders);
             else
-                DicConsole.
+                AaruConsole.
                     ErrorWriteLine("DiscFerret image do not contain same number of heads ({0}) than disk image ({1}), ignoring...",
                                    dfiImage.Info.Heads, image.Info.Heads);
             #endregion

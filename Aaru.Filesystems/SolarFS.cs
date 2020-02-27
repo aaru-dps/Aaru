@@ -101,26 +101,26 @@ namespace Aaru.Filesystems
             Array.Copy(bpbSector, 0x1B, bpb.unk3, 0, 10);
             bpb.unk4 = BitConverter.ToUInt32(bpbSector, 0x26);
 
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0],
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.x86_jump: 0x{0:X2}{1:X2}{2:X2}", bpb.x86_jump[0],
                                       bpb.x86_jump[1], bpb.x86_jump[2]);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", bpb.OEMName);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}",         bpb.bps);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}",   bpb.unk1);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}",   bpb.unk2);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}",    bpb.root_ent);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}",     bpb.sectors);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}",  bpb.media);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}",       bpb.spfat);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}",       bpb.sptrk);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}",       bpb.heads);
-            DicConsole.DebugWriteLine("SolarFS plugin",
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.OEMName: \"{0}\"", bpb.OEMName);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.bps: {0}",         bpb.bps);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk1: 0x{0:X2}",   bpb.unk1);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk2: 0x{0:X4}",   bpb.unk2);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.root_ent: {0}",    bpb.root_ent);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sectors: {0}",     bpb.sectors);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.media: 0x{0:X2}",  bpb.media);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.spfat: {0}",       bpb.spfat);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.sptrk: {0}",       bpb.sptrk);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.heads: {0}",       bpb.heads);
+            AaruConsole.DebugWriteLine("SolarFS plugin",
                                       "BPB.unk3: 0x{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}{6:X2}{7:X2}{8:X2}{9:X2}",
                                       bpb.unk3[0], bpb.unk3[1], bpb.unk3[2], bpb.unk3[3], bpb.unk3[4], bpb.unk3[5],
                                       bpb.unk3[6], bpb.unk3[7], bpb.unk3[8], bpb.unk3[9]);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", bpb.signature);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}",      bpb.unk4);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"",   bpb.vol_name);
-            DicConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"",    bpb.fs_type);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.signature: 0x{0:X2}", bpb.signature);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.unk4: 0x{0:X8}",      bpb.unk4);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.vol_name: \"{0}\"",   bpb.vol_name);
+            AaruConsole.DebugWriteLine("SolarFS plugin", "BPB.fs_type: \"{0}\"",    bpb.fs_type);
 
             sb.AppendLine("Solar_OS filesystem");
             sb.AppendFormat("Media descriptor: 0x{0:X2}", bpb.media).AppendLine();

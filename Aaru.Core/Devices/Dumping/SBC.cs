@@ -722,7 +722,7 @@ namespace Aaru.Core.Devices.Dumping
                         UpdateStatus?.
                             Invoke("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
 
-                        DicConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
+                        AaruConsole.DebugWriteLine("Error: {0}", Sense.PrettifySense(senseBuf));
 
                         _dumpLog.
                             WriteLine("Drive did not accept MODE SELECT command for persistent error reading, try another drive.");
@@ -814,7 +814,7 @@ namespace Aaru.Core.Devices.Dumping
                     {
                         if(tag.Value is null)
                         {
-                            DicConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                            AaruConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
 
                             continue;
                         }

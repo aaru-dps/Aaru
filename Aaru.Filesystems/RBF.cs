@@ -75,7 +75,7 @@ namespace Aaru.Filesystems
                 RBF_IdSector    rbfSb     = Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
                 RBF_NewIdSector rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
-                DicConsole.DebugWriteLine("RBF plugin",
+                AaruConsole.DebugWriteLine("RBF plugin",
                                           "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
                                           location, rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 
@@ -108,7 +108,7 @@ namespace Aaru.Filesystems
                 rbfSb     = Marshal.ByteArrayToStructureBigEndian<RBF_IdSector>(sector);
                 rbf9000Sb = Marshal.ByteArrayToStructureBigEndian<RBF_NewIdSector>(sector);
 
-                DicConsole.DebugWriteLine("RBF plugin",
+                AaruConsole.DebugWriteLine("RBF plugin",
                                           "magic at {0} = 0x{1:X8} or 0x{2:X8} (expected 0x{3:X8} or 0x{4:X8})",
                                           location, rbfSb.dd_sync, rbf9000Sb.rid_sync, RBF_SYNC, RBF_CNYS);
 

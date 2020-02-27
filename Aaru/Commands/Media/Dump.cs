@@ -186,41 +186,41 @@ namespace Aaru.Commands.Media
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("dump-media");
 
-            DicConsole.DebugWriteLine("Dump-Media command", "--cicm-xml={0}", cicmXml);
-            DicConsole.DebugWriteLine("Dump-Media command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Dump-Media command", "--device={0}", devicePath);
-            DicConsole.DebugWriteLine("Dump-Media command", "--encoding={0}", encoding);
-            DicConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}", firstPregap);
-            DicConsole.DebugWriteLine("Dump-Media command", "--fix-offset={0}", fixOffset);
-            DicConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
-            DicConsole.DebugWriteLine("Dump-Media command", "--format={0}", format);
-            DicConsole.DebugWriteLine("Dump-Media command", "--metadata={0}", metadata);
-            DicConsole.DebugWriteLine("Dump-Media command", "--options={0}", options);
-            DicConsole.DebugWriteLine("Dump-Media command", "--output={0}", outputPath);
-            DicConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", persistent);
-            DicConsole.DebugWriteLine("Dump-Media command", "--resume={0}", resume);
-            DicConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}", retryPasses);
-            DicConsole.DebugWriteLine("Dump-Media command", "--skip={0}", skip);
-            DicConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}", stopOnError);
-            DicConsole.DebugWriteLine("Dump-Media command", "--trim={0}", trim);
-            DicConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", verbose);
-            DicConsole.DebugWriteLine("Dump-Media command", "--subchannel={0}", subchannel);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--cicm-xml={0}", cicmXml);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--device={0}", devicePath);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--encoding={0}", encoding);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--first-pregap={0}", firstPregap);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--fix-offset={0}", fixOffset);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--force={0}", force);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--format={0}", format);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--metadata={0}", metadata);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--options={0}", options);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--output={0}", outputPath);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--persistent={0}", persistent);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--resume={0}", resume);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--retry-passes={0}", retryPasses);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--skip={0}", skip);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--stop-on-error={0}", stopOnError);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--trim={0}", trim);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Dump-Media command", "--subchannel={0}", subchannel);
 
             // TODO: Disabled temporarily
-            //DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
+            //AaruConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
 
             Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(options);
-            DicConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
+            AaruConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-                DicConsole.DebugWriteLine("Dump-Media command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+                AaruConsole.DebugWriteLine("Dump-Media command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
             Encoding encodingClass = null;
 
@@ -230,11 +230,11 @@ namespace Aaru.Commands.Media
                     encodingClass = Claunia.Encoding.Encoding.GetEncoding(encoding);
 
                     if(verbose)
-                        DicConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
+                        AaruConsole.VerboseWriteLine("Using encoding for {0}.", encodingClass.EncodingName);
                 }
                 catch(ArgumentException)
                 {
-                    DicConsole.ErrorWriteLine("Specified encoding is not supported.");
+                    AaruConsole.ErrorWriteLine("Specified encoding is not supported.");
 
                     return(int)ErrorNumber.EncodingUnknown;
                 }
@@ -265,7 +265,7 @@ namespace Aaru.Commands.Media
 
                     break;
                 default:
-                    DicConsole.WriteLine("Incorrect subchannel type \"{0}\" requested.", subchannel);
+                    AaruConsole.WriteLine("Incorrect subchannel type \"{0}\" requested.", subchannel);
 
                     break;
             }
@@ -288,14 +288,14 @@ namespace Aaru.Commands.Media
 
                 if(dev.Error)
                 {
-                    DicConsole.ErrorWriteLine(Error.Print(dev.LastError));
+                    AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
                     return(int)ErrorNumber.CannotOpenDevice;
                 }
             }
             catch(DeviceException e)
             {
-                DicConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
 
                 return(int)ErrorNumber.CannotOpenDevice;
             }
@@ -317,7 +317,7 @@ namespace Aaru.Commands.Media
                 }
                 catch
                 {
-                    DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
+                    AaruConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
 
                     return(int)ErrorNumber.InvalidResume;
                 }
@@ -327,7 +327,7 @@ namespace Aaru.Commands.Media
                resumeClass.BadBlocks.Count == 0                    &&
                !resumeClass.Tape)
             {
-                DicConsole.WriteLine("Media already dumped correctly, not continuing...");
+                AaruConsole.WriteLine("Media already dumped correctly, not continuing...");
 
                 return(int)ErrorNumber.AlreadyDumped;
             }
@@ -346,14 +346,14 @@ namespace Aaru.Commands.Media
                     }
                     catch
                     {
-                        DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
+                        AaruConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
 
                         return(int)ErrorNumber.InvalidSidecar;
                     }
                 }
                 else
                 {
-                    DicConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
+                    AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
 
                     return(int)ErrorNumber.FileNotFound;
                 }
@@ -379,14 +379,14 @@ namespace Aaru.Commands.Media
 
             if(candidates.Count == 0)
             {
-                DicConsole.WriteLine("No plugin supports requested extension.");
+                AaruConsole.WriteLine("No plugin supports requested extension.");
 
                 return(int)ErrorNumber.FormatNotFound;
             }
 
             if(candidates.Count > 1)
             {
-                DicConsole.WriteLine("More than one plugin supports requested extension.");
+                AaruConsole.WriteLine("More than one plugin supports requested extension.");
 
                 return(int)ErrorNumber.TooManyFormats;
             }
@@ -398,12 +398,12 @@ namespace Aaru.Commands.Media
             if(verbose)
             {
                 dumpLog.WriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
-                DicConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
+                AaruConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
             }
             else
             {
                 dumpLog.WriteLine("Output image format: {0}.", outputFormat.Name);
-                DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
+                AaruConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
             }
 
             var dumper = new Dump(resume, dev, devicePath, outputFormat, retryPasses, force, false, persistent,

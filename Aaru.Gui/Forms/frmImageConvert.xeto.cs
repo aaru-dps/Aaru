@@ -288,7 +288,7 @@ namespace Aaru.Gui.Forms
                              MessageBoxType.Error);
                 });
 
-                DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
+                AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
                 return;
             }
 
@@ -323,7 +323,7 @@ namespace Aaru.Gui.Forms
             if(!cancel)
                 if(!outputFormat.SetMetadata(metadata))
                 {
-                    DicConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
+                    AaruConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
                     if(chkForce.Checked != true)
                     {
                         Application.Instance.Invoke(() =>
@@ -333,12 +333,12 @@ namespace Aaru.Gui.Forms
                                      MessageBoxType.Error);
                         });
 
-                        DicConsole.ErrorWriteLine("not continuing...");
+                        AaruConsole.ErrorWriteLine("not continuing...");
                         return;
                     }
 
                     warning = true;
-                    DicConsole.ErrorWriteLine("continuing...");
+                    AaruConsole.ErrorWriteLine("continuing...");
                 }
 
             if(tracks != null && !cancel && outputOptical != null)
@@ -360,7 +360,7 @@ namespace Aaru.Gui.Forms
                                  MessageBoxType.Error);
                     });
 
-                    DicConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
+                    AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
                                               outputFormat.ErrorMessage);
                     return;
                 }
@@ -386,7 +386,7 @@ namespace Aaru.Gui.Forms
                 if(chkForce.Checked == true)
                 {
                     warning = true;
-                    DicConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
+                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
                 }
                 else
                 {
@@ -397,7 +397,7 @@ namespace Aaru.Gui.Forms
                                  MessageBoxType.Error);
                     });
 
-                    DicConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
+                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                               outputFormat.ErrorMessage);
                     return;
                 }
@@ -420,7 +420,7 @@ namespace Aaru.Gui.Forms
                                              inputFormat.Info.SectorsPerTrack))
                 {
                     warning = true;
-                    DicConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
+                    AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
                                               outputFormat.ErrorMessage);
                 }
 
@@ -483,7 +483,7 @@ namespace Aaru.Gui.Forms
                         if(chkForce.Checked == true)
                         {
                             warning = true;
-                            DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                       outputFormat.ErrorMessage, doneSectors);
                         }
                         else
@@ -495,7 +495,7 @@ namespace Aaru.Gui.Forms
                                          MessageBoxType.Error);
                             });
 
-                            DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                       outputFormat.ErrorMessage, doneSectors);
                             return;
                         }
@@ -576,7 +576,7 @@ namespace Aaru.Gui.Forms
                             if(chkForce.Checked == true)
                             {
                                 warning = true;
-                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
                             }
                             else
@@ -588,7 +588,7 @@ namespace Aaru.Gui.Forms
                                              MessageBoxType.Error);
                                 });
 
-                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
                                 return;
                             }
@@ -674,7 +674,7 @@ namespace Aaru.Gui.Forms
                             if(chkForce.Checked == true)
                             {
                                 warning = true;
-                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
                             }
                             else
@@ -749,7 +749,7 @@ namespace Aaru.Gui.Forms
                                     if(chkForce.Checked == true)
                                     {
                                         warning = true;
-                                        DicConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
+                                        AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
                                                                   outputFormat.ErrorMessage);
                                     }
                                     else
@@ -802,7 +802,7 @@ namespace Aaru.Gui.Forms
                                 if(chkForce.Checked == true)
                                 {
                                     warning = true;
-                                    DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
+                                    AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
                                 }
                                 else
@@ -840,7 +840,7 @@ namespace Aaru.Gui.Forms
 
                 ret = outputFormat.SetDumpHardware(dumpHardware);
                 if(!ret)
-                    DicConsole.WriteLine("Error {0} writing dump hardware list to output image.",
+                    AaruConsole.WriteLine("Error {0} writing dump hardware list to output image.",
                                          outputFormat.ErrorMessage);
             }
 
@@ -855,7 +855,7 @@ namespace Aaru.Gui.Forms
 
                 outputFormat.SetCicmMetadata(cicmMetadata);
                 if(!ret)
-                    DicConsole.WriteLine("Error {0} writing CICM XML metadata to output image.",
+                    AaruConsole.WriteLine("Error {0} writing CICM XML metadata to output image.",
                                          outputFormat.ErrorMessage);
             }
 

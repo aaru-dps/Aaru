@@ -66,17 +66,17 @@ namespace Aaru.DiscImages
             Array.Copy(headerBytes, headerBytesForCrc, 10);
             ushort calculatedHeaderCrc = TeleDiskCrc(0x0000, headerBytesForCrc);
 
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}",      header.Signature);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}",       header.Sequence);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}",        header.DiskSet);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}",        header.Version);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}",       header.DataRate);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}",      header.DriveType);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}",       header.Stepping);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}",  header.DosAllocation);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}",          header.Sides);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}",            header.Crc);
-            DicConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCrc);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.signature = 0x{0:X4}",      header.Signature);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sequence = 0x{0:X2}",       header.Sequence);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.diskSet = 0x{0:X2}",        header.DiskSet);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.version = 0x{0:X2}",        header.Version);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dataRate = 0x{0:X2}",       header.DataRate);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.driveType = 0x{0:X2}",      header.DriveType);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.stepping = 0x{0:X2}",       header.Stepping);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.dosAllocation = 0x{0:X2}",  header.DosAllocation);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.sides = 0x{0:X2}",          header.Sides);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "header.crc = 0x{0:X4}",            header.Crc);
+            AaruConsole.DebugWriteLine("TeleDisk plugin", "calculated header crc = 0x{0:X4}", calculatedHeaderCrc);
 
             // We need more checks as the magic is too simply.
             // This may deny legal images

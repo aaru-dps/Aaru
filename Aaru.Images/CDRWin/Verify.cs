@@ -78,8 +78,8 @@ namespace Aaru.DiscImages
                 }
 
                 string verifySha1 = ctx.End();
-                DicConsole.DebugWriteLine("CDRWin plugin", "Calculated SHA1: {0}", verifySha1);
-                DicConsole.DebugWriteLine("CDRWin plugin", "Expected SHA1: {0}", sha1);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Calculated SHA1: {0}", verifySha1);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Expected SHA1: {0}", sha1);
 
                 return verifySha1 == sha1;
             }
@@ -107,8 +107,8 @@ namespace Aaru.DiscImages
                 }
 
                 string verifyMd5 = ctx.End();
-                DicConsole.DebugWriteLine("CDRWin plugin", "Calculated MD5: {0}", verifyMd5);
-                DicConsole.DebugWriteLine("CDRWin plugin", "Expected MD5: {0}", md5);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Calculated MD5: {0}", verifyMd5);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Expected MD5: {0}", md5);
 
                 return verifyMd5 == md5;
             }
@@ -136,14 +136,14 @@ namespace Aaru.DiscImages
                 }
 
                 string verifyCrc = ctx.End();
-                DicConsole.DebugWriteLine("CDRWin plugin", "Calculated CRC32: {0}", verifyCrc);
-                DicConsole.DebugWriteLine("CDRWin plugin", "Expected CRC32: {0}", crc32);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Calculated CRC32: {0}", verifyCrc);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Expected CRC32: {0}", crc32);
 
                 return verifyCrc == crc32;
             }
 
             foreach(string hash in _discImage.DiscHashes.Keys)
-                DicConsole.DebugWriteLine("CDRWin plugin", "Found unsupported hash {0}", hash);
+                AaruConsole.DebugWriteLine("CDRWin plugin", "Found unsupported hash {0}", hash);
 
             return null;
         }

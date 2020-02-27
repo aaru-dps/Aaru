@@ -55,9 +55,9 @@ namespace Aaru.DiscImages
             byte[] buffer = new byte[stream.Length];
             stream.Read(buffer, 0, buffer.Length);
 
-            DicConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
+            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Decoding whole image");
             List<Apple2.RawTrack> tracks = Apple2.MarshalDisk(buffer);
-            DicConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} tracks", tracks.Count);
+            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} tracks", tracks.Count);
 
             Dictionary<ulong, Apple2.RawSector> rawSectors = new Dictionary<ulong, Apple2.RawSector>();
 
@@ -87,7 +87,7 @@ namespace Aaru.DiscImages
 
                     if(isDos) skewing = dosSkewing;
 
-                    DicConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing",
+                    AaruConsole.DebugWriteLine("Apple NIB Plugin", "Using {0}DOS skewing",
                                               skewing.SequenceEqual(dosSkewing) ? "" : "Pro");
                 }
 
@@ -97,7 +97,7 @@ namespace Aaru.DiscImages
                     {
                         ulong sectorNo = (ulong)((((sector.addressField.sector[0] & 0x55) << 1) |
                                                   (sector.addressField.sector[1] & 0x55)) & 0xFF);
-                        DicConsole.DebugWriteLine("Apple NIB Plugin",
+                        AaruConsole.DebugWriteLine("Apple NIB Plugin",
                                                   "Hardware sector {0} of track {1} goes to logical sector {2}",
                                                   sectorNo, i, skewing[sectorNo] + (ulong)(i * spt));
                         rawSectors.Add(skewing[sectorNo] + (ulong)(i * spt), sector);
@@ -109,9 +109,9 @@ namespace Aaru.DiscImages
                         imageInfo.Sectors++;
                     }
 
-            DicConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", imageInfo.Sectors);
+            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Got {0} sectors", imageInfo.Sectors);
 
-            DicConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
+            AaruConsole.DebugWriteLine("Apple NIB Plugin", "Cooking sectors");
 
             longSectors   = new Dictionary<ulong, byte[]>();
             cookedSectors = new Dictionary<ulong, byte[]>();

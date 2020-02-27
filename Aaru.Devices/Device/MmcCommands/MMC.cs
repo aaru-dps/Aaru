@@ -48,7 +48,7 @@ namespace Aaru.Devices
                                        out duration,                                                      out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("MMC Device", "SEND_CSD took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("MMC Device", "SEND_CSD took {0} ms.", duration);
 
             return sense;
         }
@@ -65,7 +65,7 @@ namespace Aaru.Devices
                                        out duration,                                                      out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("MMC Device", "SEND_CID took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("MMC Device", "SEND_CID took {0} ms.", duration);
 
             return sense;
         }
@@ -82,7 +82,7 @@ namespace Aaru.Devices
                                        out duration,                                                       out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SecureDigital Device", "SEND_OP_COND took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_OP_COND took {0} ms.", duration);
 
             return sense;
         }
@@ -99,7 +99,7 @@ namespace Aaru.Devices
                                        out response, out duration, out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("MMC Device", "SEND_EXT_CSD took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("MMC Device", "SEND_EXT_CSD took {0} ms.", duration);
 
             return sense;
         }
@@ -116,7 +116,7 @@ namespace Aaru.Devices
                                        out duration,                                                      out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("MMC Device", "SET_BLOCKLEN took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("MMC Device", "SET_BLOCKLEN took {0} ms.", duration);
 
             return sense;
         }
@@ -150,9 +150,9 @@ namespace Aaru.Devices
                                out _,
                                out double stopDuration, out bool _, timeout);
                 duration += stopDuration;
-                DicConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
+                AaruConsole.DebugWriteLine("MMC Device", "READ_MULTIPLE_BLOCK took {0} ms.", duration);
             }
-            else DicConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
+            else AaruConsole.DebugWriteLine("MMC Device", "READ_SINGLE_BLOCK took {0} ms.", duration);
 
             return sense;
         }
@@ -169,7 +169,7 @@ namespace Aaru.Devices
                                        out duration,                                                      out bool sense, timeout);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("SecureDigital Device", "SEND_STATUS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("SecureDigital Device", "SEND_STATUS took {0} ms.", duration);
 
             return sense;
         }

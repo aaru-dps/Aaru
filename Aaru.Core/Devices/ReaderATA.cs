@@ -174,25 +174,25 @@ namespace Aaru.Core.Devices
             }
 
             if(ataReadDmaLba48)
-                DicConsole.WriteLine("Using ATA READ DMA EXT command.");
+                AaruConsole.WriteLine("Using ATA READ DMA EXT command.");
             else if(ataReadLba48)
-                DicConsole.WriteLine("Using ATA READ EXT command.");
+                AaruConsole.WriteLine("Using ATA READ EXT command.");
             else if(ataReadDmaRetryLba)
-                DicConsole.WriteLine("Using ATA READ DMA command with retries (LBA).");
+                AaruConsole.WriteLine("Using ATA READ DMA command with retries (LBA).");
             else if(ataReadDmaLba)
-                DicConsole.WriteLine("Using ATA READ DMA command (LBA).");
+                AaruConsole.WriteLine("Using ATA READ DMA command (LBA).");
             else if(ataReadRetryLba)
-                DicConsole.WriteLine("Using ATA READ command with retries (LBA).");
+                AaruConsole.WriteLine("Using ATA READ command with retries (LBA).");
             else if(ataReadLba)
-                DicConsole.WriteLine("Using ATA READ command (LBA).");
+                AaruConsole.WriteLine("Using ATA READ command (LBA).");
             else if(ataReadDmaRetry)
-                DicConsole.WriteLine("Using ATA READ DMA command with retries (CHS).");
+                AaruConsole.WriteLine("Using ATA READ DMA command with retries (CHS).");
             else if(ataReadDma)
-                DicConsole.WriteLine("Using ATA READ DMA command (CHS).");
+                AaruConsole.WriteLine("Using ATA READ DMA command (CHS).");
             else if(ataReadRetry)
-                DicConsole.WriteLine("Using ATA READ command with retries (CHS).");
+                AaruConsole.WriteLine("Using ATA READ command with retries (CHS).");
             else if(ataRead)
-                DicConsole.WriteLine("Using ATA READ command (CHS).");
+                AaruConsole.WriteLine("Using ATA READ command (CHS).");
             else
             {
                 ErrorMessage = "Could not get a working read command!";
@@ -365,7 +365,7 @@ namespace Aaru.Core.Devices
             }
 
             if(error)
-                DicConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+                AaruConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
 
             return error;
         }
@@ -413,7 +413,7 @@ namespace Aaru.Core.Devices
             }
 
             if(error)
-                DicConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
+                AaruConsole.DebugWriteLine("ATA Reader", "ATA ERROR: {0} STATUS: {1}", errorByte, status);
 
             return error;
         }

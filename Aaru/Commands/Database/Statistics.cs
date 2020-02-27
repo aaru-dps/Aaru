@@ -50,10 +50,10 @@ namespace Aaru.Commands
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
@@ -65,7 +65,7 @@ namespace Aaru.Commands
                !ctx.Partitions.Any()   &&
                !ctx.SeenDevices.Any())
             {
-                DicConsole.WriteLine("There are no statistics.");
+                AaruConsole.WriteLine("There are no statistics.");
 
                 return(int)ErrorNumber.NothingFound;
             }
@@ -74,8 +74,8 @@ namespace Aaru.Commands
 
             if(ctx.Commands.Any())
             {
-                DicConsole.WriteLine("Commands statistics");
-                DicConsole.WriteLine("===================");
+                AaruConsole.WriteLine("Commands statistics");
+                AaruConsole.WriteLine("===================");
 
                 foreach(string command in ctx.Commands.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -87,17 +87,17 @@ namespace Aaru.Commands
                     if(count == 0)
                         continue;
 
-                    DicConsole.WriteLine("You have called the {0} command {1} times.", command, count);
+                    AaruConsole.WriteLine("You have called the {0} command {1} times.", command, count);
                     thereAreStats = true;
                 }
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             if(ctx.Filters.Any())
             {
-                DicConsole.WriteLine("Filters statistics");
-                DicConsole.WriteLine("==================");
+                AaruConsole.WriteLine("Filters statistics");
+                AaruConsole.WriteLine("==================");
 
                 foreach(string filter in ctx.Filters.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -109,17 +109,17 @@ namespace Aaru.Commands
                     if(count == 0)
                         continue;
 
-                    DicConsole.WriteLine("Filter {0} has been found {1} times.", filter, count);
+                    AaruConsole.WriteLine("Filter {0} has been found {1} times.", filter, count);
                     thereAreStats = true;
                 }
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             if(ctx.MediaFormats.Any())
             {
-                DicConsole.WriteLine("Media image statistics");
-                DicConsole.WriteLine("======================");
+                AaruConsole.WriteLine("Media image statistics");
+                AaruConsole.WriteLine("======================");
 
                 foreach(string format in ctx.MediaFormats.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -131,17 +131,17 @@ namespace Aaru.Commands
                     if(count == 0)
                         continue;
 
-                    DicConsole.WriteLine("Format {0} has been found {1} times.", format, count);
+                    AaruConsole.WriteLine("Format {0} has been found {1} times.", format, count);
                     thereAreStats = true;
                 }
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             if(ctx.Partitions.Any())
             {
-                DicConsole.WriteLine("Partition statistics");
-                DicConsole.WriteLine("====================");
+                AaruConsole.WriteLine("Partition statistics");
+                AaruConsole.WriteLine("====================");
 
                 foreach(string partition in ctx.Partitions.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -153,17 +153,17 @@ namespace Aaru.Commands
                     if(count == 0)
                         continue;
 
-                    DicConsole.WriteLine("Partitioning scheme {0} has been found {1} times.", partition, count);
+                    AaruConsole.WriteLine("Partitioning scheme {0} has been found {1} times.", partition, count);
                     thereAreStats = true;
                 }
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             if(ctx.Filesystems.Any())
             {
-                DicConsole.WriteLine("Filesystem statistics");
-                DicConsole.WriteLine("=====================");
+                AaruConsole.WriteLine("Filesystem statistics");
+                AaruConsole.WriteLine("=====================");
 
                 foreach(string filesystem in ctx.Filesystems.OrderBy(c => c.Name).Select(c => c.Name).Distinct())
                 {
@@ -175,32 +175,32 @@ namespace Aaru.Commands
                     if(count == 0)
                         continue;
 
-                    DicConsole.WriteLine("Filesystem {0} has been found {1} times.", filesystem, count);
+                    AaruConsole.WriteLine("Filesystem {0} has been found {1} times.", filesystem, count);
                     thereAreStats = true;
                 }
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             if(ctx.SeenDevices.Any())
             {
-                DicConsole.WriteLine("Device statistics");
-                DicConsole.WriteLine("=================");
+                AaruConsole.WriteLine("Device statistics");
+                AaruConsole.WriteLine("=================");
 
                 foreach(DeviceStat ds in ctx.SeenDevices.OrderBy(ds => ds.Manufacturer).ThenBy(ds => ds.Model).
                                              ThenBy(ds => ds.Revision).ThenBy(ds => ds.Bus))
-                    DicConsole.
+                    AaruConsole.
                         WriteLine("Device model {0}, manufactured by {1}, with revision {2} and attached via {3}.",
                                   ds.Model, ds.Manufacturer, ds.Revision, ds.Bus);
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
                 thereAreStats = true;
             }
 
             if(ctx.Medias.Any())
             {
-                DicConsole.WriteLine("Media statistics");
-                DicConsole.WriteLine("================");
+                AaruConsole.WriteLine("Media statistics");
+                AaruConsole.WriteLine("================");
 
                 foreach(string media in ctx.Medias.OrderBy(ms => ms.Type).Select(ms => ms.Type).Distinct())
                 {
@@ -211,7 +211,7 @@ namespace Aaru.Commands
 
                     if(count > 0)
                     {
-                        DicConsole.WriteLine("Media type {0} has been found {1} times in a real device.", media, count);
+                        AaruConsole.WriteLine("Media type {0} has been found {1} times in a real device.", media, count);
                         thereAreStats = true;
                     }
 
@@ -223,15 +223,15 @@ namespace Aaru.Commands
                     if(count == 0)
                         continue;
 
-                    DicConsole.WriteLine("Media type {0} has been found {1} times in a media image.", media, count);
+                    AaruConsole.WriteLine("Media type {0} has been found {1} times in a media image.", media, count);
                     thereAreStats = true;
                 }
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             if(!thereAreStats)
-                DicConsole.WriteLine("There are no statistics.");
+                AaruConsole.WriteLine("There are no statistics.");
 
             return(int)ErrorNumber.NoError;
         }

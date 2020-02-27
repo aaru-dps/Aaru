@@ -835,7 +835,7 @@ namespace Aaru.Core.Media.Detection
 
                         string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
 
-                        DicConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
+                        AaruConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
                                                   ps2BootSectorsHash);
 
                         if(ps2BootSectorsHash == PS2_PAL_HASH  ||
@@ -941,7 +941,7 @@ namespace Aaru.Core.Media.Detection
 
                         string ps2BootSectorsHash = Sha256Context.Data(ps2BootSectors, out _);
 
-                        DicConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
+                        AaruConsole.DebugWriteLine("Media-info Command", "PlayStation 2 boot sectors SHA256: {0}",
                                                   ps2BootSectorsHash);
 
                         if(ps2BootSectorsHash == PS2_PAL_HASH  ||

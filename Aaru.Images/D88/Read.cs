@@ -59,14 +59,14 @@ namespace Aaru.DiscImages
             stream.Read(hdrB, 0, hdrB.Length);
             D88Header d88Hdr = Marshal.ByteArrayToStructureLittleEndian<D88Header>(hdrB);
 
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.name = \"{0}\"",
                                       StringHandlers.CToString(d88Hdr.name, shiftjis));
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.reserved is empty? = {0}",
                                       d88Hdr.reserved.SequenceEqual(reservedEmpty));
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88Hdr.disk_type,
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.write_protect = 0x{0:X2}", d88Hdr.write_protect);
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_type = {0} ({1})", d88Hdr.disk_type,
                                       (byte)d88Hdr.disk_type);
-            DicConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88Hdr.disk_size);
+            AaruConsole.DebugWriteLine("D88 plugin", "d88hdr.disk_size = {0}", d88Hdr.disk_size);
 
             if(d88Hdr.disk_size != stream.Length) return false;
 
@@ -83,7 +83,7 @@ namespace Aaru.DiscImages
                 if(t < 0 || t > stream.Length) return false;
             }
 
-            DicConsole.DebugWriteLine("D88 plugin", "{0} tracks", trkCounter);
+            AaruConsole.DebugWriteLine("D88 plugin", "{0} tracks", trkCounter);
 
             if(trkCounter == 0) return false;
 
@@ -93,15 +93,15 @@ namespace Aaru.DiscImages
 
             SectorHeader sechdr = Marshal.ByteArrayToStructureLittleEndian<SectorHeader>(hdrB);
 
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}",            sechdr.c);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}",            sechdr.h);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.r = {0}",            sechdr.r);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.n = {0}",            sechdr.n);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.spt = {0}",          sechdr.spt);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.density = {0}",      sechdr.density);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.deleted_mark = {0}", sechdr.deleted_mark);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.status = {0}",       sechdr.status);
-            DicConsole.DebugWriteLine("D88 plugin", "sechdr.size_of_data = {0}", sechdr.size_of_data);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.c = {0}",            sechdr.c);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.h = {0}",            sechdr.h);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.r = {0}",            sechdr.r);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.n = {0}",            sechdr.n);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.spt = {0}",          sechdr.spt);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.density = {0}",      sechdr.density);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.deleted_mark = {0}", sechdr.deleted_mark);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.status = {0}",       sechdr.status);
+            AaruConsole.DebugWriteLine("D88 plugin", "sechdr.size_of_data = {0}", sechdr.size_of_data);
 
             short             spt      = sechdr.spt;
             IBMSectorSizeCode bps      = sechdr.n;
@@ -118,7 +118,7 @@ namespace Aaru.DiscImages
 
                 if(sechdr.spt != spt || sechdr.n != bps)
                 {
-                    DicConsole.DebugWriteLine("D88 plugin",
+                    AaruConsole.DebugWriteLine("D88 plugin",
                                               "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
                                               sechdr.spt, spt, sechdr.n, bps, i, 0);
                     allEqual = false;
@@ -137,7 +137,7 @@ namespace Aaru.DiscImages
 
                     if(sechdr.spt == spt && sechdr.n == bps) continue;
 
-                    DicConsole.DebugWriteLine("D88 plugin",
+                    AaruConsole.DebugWriteLine("D88 plugin",
                                               "Disk tracks are not same size. spt = {0} (expected {1}), bps = {2} (expected {3}) at track {4} sector {5}",
                                               sechdr.spt, spt, sechdr.n, bps, i, j, sechdr.deleted_mark);
                     allEqual = false;
@@ -150,7 +150,7 @@ namespace Aaru.DiscImages
                 foreach(KeyValuePair<byte, byte[]> kvp in sectors) sectorsData.Add(kvp.Value);
             }
 
-            DicConsole.DebugWriteLine("D88 plugin", "{0} sectors", sectorsData.Count);
+            AaruConsole.DebugWriteLine("D88 plugin", "{0} sectors", sectorsData.Count);
 
             imageInfo.MediaType = MediaType.Unknown;
             if(allEqual)
@@ -227,7 +227,7 @@ namespace Aaru.DiscImages
                             break;
                     }
 
-            DicConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", imageInfo.MediaType);
+            AaruConsole.DebugWriteLine("D88 plugin", "MediaType: {0}", imageInfo.MediaType);
 
             imageInfo.ImageSize            = (ulong)d88Hdr.disk_size;
             imageInfo.CreationTime         = imageFilter.GetCreationTime();

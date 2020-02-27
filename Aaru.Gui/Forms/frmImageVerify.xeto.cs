@@ -157,7 +157,7 @@ namespace Aaru.Gui.Forms
                     });
 
                     correctDisc = discCheckStatus;
-                    DicConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds",
+                    AaruConsole.VerboseWriteLine("Checking disc image checksums took {0} seconds",
                                                 checkTime.TotalSeconds);
                 }
             }
@@ -305,7 +305,7 @@ namespace Aaru.Gui.Forms
 
                 TimeSpan checkTime = endCheck - startCheck;
 
-                DicConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
+                AaruConsole.VerboseWriteLine("Checking sector checksums took {0} seconds", checkTime.TotalSeconds);
 
                 Application.Instance.Invoke(() =>
                 {

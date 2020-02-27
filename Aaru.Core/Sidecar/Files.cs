@@ -26,7 +26,7 @@ namespace Aaru.Core
 
                 if(ret != Errno.NoError)
                 {
-                    DicConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
+                    AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
                     continue;
                 }
 
@@ -123,7 +123,7 @@ namespace Aaru.Core
 
                 if(ret != Errno.NoError)
                 {
-                    DicConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
+                    AaruConsole.DebugWriteLine("Create-Sidecar command", "Cannot stat {0}", dirent);
                     continue;
                 }
 

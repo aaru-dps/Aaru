@@ -68,7 +68,7 @@ namespace Aaru.Core
                     #if DEBUG
                     System.Console.WriteLine("Uploading device report");
                     #else
-                    Aaru.Console.DicConsole.DebugWriteLine("Submit stats", "Uploading device report");
+                    Aaru.Console.AaruConsole.DebugWriteLine("Submit stats", "Uploading device report");
                     #endif
 
                     string json = JsonConvert.SerializeObject(report, Formatting.Indented,
@@ -140,12 +140,12 @@ namespace Aaru.Core
                 if(lastUpdate == 0)
                 {
                     create = true;
-                    DicConsole.WriteLine("Creating master database");
+                    AaruConsole.WriteLine("Creating master database");
                 }
                 else
                 {
-                    DicConsole.WriteLine("Updating master database");
-                    DicConsole.WriteLine("Last update: {0}", latest);
+                    AaruConsole.WriteLine("Updating master database");
+                    AaruConsole.WriteLine("Last update: {0}", latest);
                 }
 
                 DateTime updateStart = DateTime.UtcNow;
@@ -159,7 +159,7 @@ namespace Aaru.Core
 
                 if(((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
                 {
-                    DicConsole.ErrorWriteLine("Error {0} when trying to get updated entities.",
+                    AaruConsole.ErrorWriteLine("Error {0} when trying to get updated entities.",
                                               ((HttpWebResponse)response).StatusCode);
                     return;
                 }
@@ -170,28 +170,28 @@ namespace Aaru.Core
 
                 if(create)
                 {
-                    DicConsole.WriteLine("Adding USB vendors");
+                    AaruConsole.WriteLine("Adding USB vendors");
                     foreach(UsbVendorDto vendor in sync.UsbVendors)
                         mctx.UsbVendors.Add(new UsbVendor(vendor.VendorId, vendor.Vendor));
 
-                    DicConsole.WriteLine("Added {0} usb vendors", sync.UsbVendors.Count);
+                    AaruConsole.WriteLine("Added {0} usb vendors", sync.UsbVendors.Count);
 
-                    DicConsole.WriteLine("Adding USB products");
+                    AaruConsole.WriteLine("Adding USB products");
                     foreach(UsbProductDto product in sync.UsbProducts)
                         mctx.UsbProducts.Add(new UsbProduct(product.VendorId, product.ProductId, product.Product));
 
-                    DicConsole.WriteLine("Added {0} usb products", sync.UsbProducts.Count);
+                    AaruConsole.WriteLine("Added {0} usb products", sync.UsbProducts.Count);
 
-                    DicConsole.WriteLine("Adding CompactDisc read offsets");
+                    AaruConsole.WriteLine("Adding CompactDisc read offsets");
                     foreach(CdOffsetDto offset in sync.Offsets)
                         mctx.CdOffsets.Add(new CdOffset(offset) {Id = offset.Id});
 
-                    DicConsole.WriteLine("Added {0} CompactDisc read offsets", sync.Offsets.Count);
+                    AaruConsole.WriteLine("Added {0} CompactDisc read offsets", sync.Offsets.Count);
 
-                    DicConsole.WriteLine("Adding known devices");
+                    AaruConsole.WriteLine("Adding known devices");
                     foreach(DeviceDto device in sync.Devices) mctx.Devices.Add(new Device(device) {Id = device.Id});
 
-                    DicConsole.WriteLine("Added {0} known devices", sync.Devices.Count);
+                    AaruConsole.WriteLine("Added {0} known devices", sync.Devices.Count);
                 }
                 else
                 {
@@ -204,7 +204,7 @@ namespace Aaru.Core
                     long modifiedOffsets  = 0;
                     long modifiedDevices  = 0;
 
-                    DicConsole.WriteLine("Updating USB vendors");
+                    AaruConsole.WriteLine("Updating USB vendors");
                     foreach(UsbVendorDto vendor in sync.UsbVendors)
                     {
                         UsbVendor existing = mctx.UsbVendors.FirstOrDefault(v => v.Id == vendor.VendorId);
@@ -223,10 +223,10 @@ namespace Aaru.Core
                         }
                     }
 
-                    DicConsole.WriteLine("Added {0} USB vendors",    addedVendors);
-                    DicConsole.WriteLine("Modified {0} USB vendors", modifiedVendors);
+                    AaruConsole.WriteLine("Added {0} USB vendors",    addedVendors);
+                    AaruConsole.WriteLine("Modified {0} USB vendors", modifiedVendors);
 
-                    DicConsole.WriteLine("Updating USB products");
+                    AaruConsole.WriteLine("Updating USB products");
                     foreach(UsbProductDto product in sync.UsbProducts)
                     {
                         UsbProduct existing =
@@ -247,10 +247,10 @@ namespace Aaru.Core
                         }
                     }
 
-                    DicConsole.WriteLine("Added {0} USB products",    addedProducts);
-                    DicConsole.WriteLine("Modified {0} USB products", modifiedProducts);
+                    AaruConsole.WriteLine("Added {0} USB products",    addedProducts);
+                    AaruConsole.WriteLine("Modified {0} USB products", modifiedProducts);
 
-                    DicConsole.WriteLine("Updating CompactDisc read offsets");
+                    AaruConsole.WriteLine("Updating CompactDisc read offsets");
                     foreach(CdOffsetDto offset in sync.Offsets)
                     {
                         CdOffset existing = mctx.CdOffsets.FirstOrDefault(o => o.Id == offset.Id);
@@ -273,10 +273,10 @@ namespace Aaru.Core
                         }
                     }
 
-                    DicConsole.WriteLine("Added {0} CompactDisc read offsets",    addedOffsets);
-                    DicConsole.WriteLine("Modified {0} CompactDisc read offsets", modifiedOffsets);
+                    AaruConsole.WriteLine("Added {0} CompactDisc read offsets",    addedOffsets);
+                    AaruConsole.WriteLine("Modified {0} CompactDisc read offsets", modifiedOffsets);
 
-                    DicConsole.WriteLine("Updating known devices");
+                    AaruConsole.WriteLine("Updating known devices");
                     foreach(DeviceDto device in sync.Devices)
                     {
                         Device existing = mctx.Devices.FirstOrDefault(d => d.Id == device.Id);
@@ -305,14 +305,14 @@ namespace Aaru.Core
                         }
                     }
 
-                    DicConsole.WriteLine("Added {0} known devices",    addedDevices);
-                    DicConsole.WriteLine("Modified {0} known devices", modifiedDevices);
+                    AaruConsole.WriteLine("Added {0} known devices",    addedDevices);
+                    AaruConsole.WriteLine("Modified {0} known devices", modifiedDevices);
                 }
             }
-            catch(Exception ex) { DicConsole.ErrorWriteLine("Exception {0} when updating database.", ex); }
+            catch(Exception ex) { AaruConsole.ErrorWriteLine("Exception {0} when updating database.", ex); }
             finally
             {
-                DicConsole.WriteLine("Saving changes...");
+                AaruConsole.WriteLine("Saving changes...");
                 mctx.SaveChanges();
             }
         }

@@ -1017,7 +1017,7 @@ namespace Aaru.Core.Devices.Dumping
                 {
                     if(tag.Value is null)
                     {
-                        DicConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
+                        AaruConsole.ErrorWriteLine("Error: Tag type {0} is null, skipping...", tag.Key);
 
                         continue;
                     }

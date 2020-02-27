@@ -44,14 +44,14 @@ namespace Aaru.Core.Devices.Report
         public TestedMedia ReportAtaMedia()
         {
             var mediaTest = new TestedMedia();
-            DicConsole.Write("Please write a description of the media type and press enter: ");
+            AaruConsole.Write("Please write a description of the media type and press enter: ");
             mediaTest.MediumTypeName = System.Console.ReadLine();
-            DicConsole.Write("Please write the media model and press enter: ");
+            AaruConsole.Write("Please write the media model and press enter: ");
             mediaTest.Model = System.Console.ReadLine();
 
             mediaTest.MediaIsRecognized = true;
 
-            DicConsole.WriteLine("Querying ATA IDENTIFY...");
+            AaruConsole.WriteLine("Querying ATA IDENTIFY...");
             _dev.AtaIdentify(out byte[] buffer, out _, _dev.Timeout, out _);
 
             mediaTest.IdentifyData   = ClearIdentify(buffer);
@@ -174,7 +174,7 @@ namespace Aaru.Core.Devices.Report
                 ulong checkCorrectRead = BitConverter.ToUInt64(buffer, 0);
                 bool  sense;
 
-                DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
+                AaruConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
 
                 sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1,
                                   _dev.Timeout, out _);
@@ -182,129 +182,129 @@ namespace Aaru.Core.Devices.Report
                 mediaTest.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                 readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadSectorsData = readBuf;
 
-                DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
+                AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
                 sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                               readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadSectorsRetryData = readBuf;
 
-                DicConsole.WriteLine("Trying READ DMA in CHS mode...");
+                AaruConsole.WriteLine("Trying READ DMA in CHS mode...");
                 sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadDma = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                             readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaData = readBuf;
 
-                DicConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
+                AaruConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
                 sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                  readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaRetryData = readBuf;
 
-                DicConsole.WriteLine("Trying SEEK in CHS mode...");
+                AaruConsole.WriteLine("Trying SEEK in CHS mode...");
                 sense                  = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
                 mediaTest.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
-                DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
+                AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                           errorChs.Status, errorChs.Error);
 
-                DicConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
+                AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
                 sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 errorLba, false, 0, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                             readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLbaData = readBuf;
 
-                DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
+                AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
                 sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                  readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadRetryLbaData = readBuf;
 
-                DicConsole.WriteLine("Trying READ DMA in LBA mode...");
+                AaruConsole.WriteLine("Trying READ DMA in LBA mode...");
                 sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaLbaData = readBuf;
 
-                DicConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
+                AaruConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
                 sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadDmaRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                     readBuf.Length                     > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadDmaRetryLbaData = readBuf;
 
-                DicConsole.WriteLine("Trying SEEK in LBA mode...");
+                AaruConsole.WriteLine("Trying SEEK in LBA mode...");
                 sense                     = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
                 mediaTest.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
-                DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
+                AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                           errorChs.Status, errorChs.Error);
 
-                DicConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
+                AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
                 sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
                                               readBuf.Length                       > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLba48Data = readBuf;
 
-                DicConsole.WriteLine("Trying READ DMA in LBA48 mode...");
+                AaruConsole.WriteLine("Trying READ DMA in LBA48 mode...");
                 sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
 
                 mediaTest.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 &&
                                                  errorLba48.Error                     == 0    && readBuf.Length > 0;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
@@ -330,7 +330,7 @@ namespace Aaru.Core.Devices.Report
                         mediaTest.LongBlockSize = ataId.UnformattedBPS;
                 }
 
-                DicConsole.WriteLine("Trying READ LONG in CHS mode...");
+                AaruConsole.WriteLine("Trying READ LONG in CHS mode...");
 
                 sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
                                       _dev.Timeout, out _);
@@ -339,13 +339,13 @@ namespace Aaru.Core.Devices.Report
                                              readBuf.Length                     > 0     &&
                                              BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLongData = readBuf;
 
-                DicConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
+                AaruConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
 
                 sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, mediaTest.LongBlockSize ?? 0,
                                       _dev.Timeout, out _);
@@ -355,13 +355,13 @@ namespace Aaru.Core.Devices.Report
                                                   BitConverter.ToUInt64(readBuf, 0) !=
                                                   checkCorrectRead;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLongRetryData = readBuf;
 
-                DicConsole.WriteLine("Trying READ LONG in LBA mode...");
+                AaruConsole.WriteLine("Trying READ LONG in LBA mode...");
 
                 sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
                                       out _);
@@ -370,13 +370,13 @@ namespace Aaru.Core.Devices.Report
                                                 readBuf.Length                     > 0     &&
                                                 BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
                 mediaTest.ReadLongLbaData = readBuf;
 
-                DicConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
+                AaruConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
 
                 sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, mediaTest.LongBlockSize ?? 0, _dev.Timeout,
                                       out _);
@@ -385,7 +385,7 @@ namespace Aaru.Core.Devices.Report
                                                      errorLba.Error                     == 0    && readBuf.Length > 0 &&
                                                      BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
-                DicConsole.DebugWriteLine("ATA Report",
+                AaruConsole.DebugWriteLine("ATA Report",
                                           "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}", sense,
                                           errorChs.Status, errorChs.Error, readBuf.Length);
 
@@ -514,7 +514,7 @@ namespace Aaru.Core.Devices.Report
             ulong checkCorrectRead = 0;
             bool  sense;
 
-            DicConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
+            AaruConsole.WriteLine("Trying READ SECTOR(S) in CHS mode...");
 
             sense = _dev.Read(out byte[] readBuf, out AtaErrorRegistersChs errorChs, false, 0, 0, 1, 1, _dev.Timeout,
                               out _);
@@ -522,120 +522,120 @@ namespace Aaru.Core.Devices.Report
             capabilities.SupportsReadSectors = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                readBuf.Length                     > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadSectorsData = readBuf;
 
-            DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
+            AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in CHS mode...");
             sense = _dev.Read(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadRetry =
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadSectorsRetryData = readBuf;
 
-            DicConsole.WriteLine("Trying READ DMA in CHS mode...");
+            AaruConsole.WriteLine("Trying READ DMA in CHS mode...");
             sense = _dev.ReadDma(out readBuf, out errorChs, false, 0, 0, 1, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadDma =
                 !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 && readBuf.Length > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadDmaData = readBuf;
 
-            DicConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
+            AaruConsole.WriteLine("Trying READ DMA RETRY in CHS mode...");
             sense = _dev.ReadDma(out readBuf, out errorChs, true, 0, 0, 1, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadDmaRetry = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0 &&
                                                 readBuf.Length                     > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadDmaRetryData = readBuf;
 
-            DicConsole.WriteLine("Trying SEEK in CHS mode...");
+            AaruConsole.WriteLine("Trying SEEK in CHS mode...");
             sense                     = _dev.Seek(out errorChs, 0, 0, 1, _dev.Timeout, out _);
             capabilities.SupportsSeek = !sense && (errorChs.Status & 0x01) != 0x01 && errorChs.Error == 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                       errorChs.Status, errorChs.Error);
 
-            DicConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
+            AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA mode...");
             sense = _dev.Read(out readBuf, out AtaErrorRegistersLba28 errorLba, false, 0, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadLba =
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadLbaData = readBuf;
 
-            DicConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
+            AaruConsole.WriteLine("Trying READ SECTOR(S) RETRY in LBA mode...");
             sense = _dev.Read(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadRetryLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                                 readBuf.Length                     > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadRetryLbaData = readBuf;
 
-            DicConsole.WriteLine("Trying READ DMA in LBA mode...");
+            AaruConsole.WriteLine("Trying READ DMA in LBA mode...");
             sense = _dev.ReadDma(out readBuf, out errorLba, false, 0, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadDmaLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 &&
                                               readBuf.Length                     > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadDmaLbaData = readBuf;
 
-            DicConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
+            AaruConsole.WriteLine("Trying READ DMA RETRY in LBA mode...");
             sense = _dev.ReadDma(out readBuf, out errorLba, true, 0, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadDmaRetryLba =
                 !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0 && readBuf.Length > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadDmaRetryLbaData = readBuf;
 
-            DicConsole.WriteLine("Trying SEEK in LBA mode...");
+            AaruConsole.WriteLine("Trying SEEK in LBA mode...");
             sense                        = _dev.Seek(out errorLba, 0, _dev.Timeout, out _);
             capabilities.SupportsSeekLba = !sense && (errorLba.Status & 0x01) != 0x01 && errorLba.Error == 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}", sense,
                                       errorLba.Status, errorLba.Error);
 
-            DicConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
+            AaruConsole.WriteLine("Trying READ SECTOR(S) in LBA48 mode...");
             sense = _dev.Read(out readBuf, out AtaErrorRegistersLba48 errorLba48, 0, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
                                              readBuf.Length                       > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
 
             capabilities.ReadLba48Data = readBuf;
 
-            DicConsole.WriteLine("Trying READ DMA in LBA48 mode...");
+            AaruConsole.WriteLine("Trying READ DMA in LBA48 mode...");
             sense = _dev.ReadDma(out readBuf, out errorLba48, 0, 1, _dev.Timeout, out _);
 
             capabilities.SupportsReadDmaLba48 = !sense && (errorLba48.Status & 0x01) != 0x01 && errorLba48.Error == 0 &&
                                                 readBuf.Length                       > 0;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba48.Status, errorLba48.Error, readBuf.Length);
 
             capabilities.ReadDmaLba48Data = readBuf;
@@ -660,7 +660,7 @@ namespace Aaru.Core.Devices.Report
                     capabilities.LongBlockSize = ataId.UnformattedBPS;
             }
 
-            DicConsole.WriteLine("Trying READ LONG in CHS mode...");
+            AaruConsole.WriteLine("Trying READ LONG in CHS mode...");
 
             sense = _dev.ReadLong(out readBuf, out errorChs, false, 0, 0, 1, capabilities.LongBlockSize ?? 0,
                                   _dev.Timeout, out _);
@@ -670,12 +670,12 @@ namespace Aaru.Core.Devices.Report
                                             readBuf.Length                     > 0     &&
                                             BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadLongData = readBuf;
 
-            DicConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
+            AaruConsole.WriteLine("Trying READ LONG RETRY in CHS mode...");
 
             sense = _dev.ReadLong(out readBuf, out errorChs, true, 0, 0, 1, capabilities.LongBlockSize ?? 0,
                                   _dev.Timeout, out _);
@@ -685,12 +685,12 @@ namespace Aaru.Core.Devices.Report
                                                  BitConverter.ToUInt64(readBuf, 0) !=
                                                  checkCorrectRead;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorChs.Status, errorChs.Error, readBuf.Length);
 
             capabilities.ReadLongRetryData = readBuf;
 
-            DicConsole.WriteLine("Trying READ LONG in LBA mode...");
+            AaruConsole.WriteLine("Trying READ LONG in LBA mode...");
 
             sense = _dev.ReadLong(out readBuf, out errorLba, false, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
                                   out _);
@@ -699,12 +699,12 @@ namespace Aaru.Core.Devices.Report
                                                readBuf.Length                     > 0     &&
                                                BitConverter.ToUInt64(readBuf, 0)  != checkCorrectRead;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadLongLbaData = readBuf;
 
-            DicConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
+            AaruConsole.WriteLine("Trying READ LONG RETRY in LBA mode...");
 
             sense = _dev.ReadLong(out readBuf, out errorLba, true, 0, capabilities.LongBlockSize ?? 0, _dev.Timeout,
                                   out _);
@@ -714,7 +714,7 @@ namespace Aaru.Core.Devices.Report
                                                     BitConverter.ToUInt64(readBuf, 0) !=
                                                     checkCorrectRead;
 
-            DicConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
+            AaruConsole.DebugWriteLine("ATA Report", "Sense = {0}, Status = 0x{1:X2}, Error = 0x{2:X2}, Length = {3}",
                                       sense, errorLba.Status, errorLba.Error, readBuf.Length);
 
             capabilities.ReadLongRetryLbaData = readBuf;

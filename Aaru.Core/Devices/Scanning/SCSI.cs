@@ -375,7 +375,7 @@ namespace Aaru.Core.Devices.Scanning
                     }
                     else
                     {
-                        DicConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}", Sense.PrettifySense(senseBuf));
+                        AaruConsole.DebugWriteLine("Media-Scan", "READ CD error:\n{0}", Sense.PrettifySense(senseBuf));
 
                         FixedSense? senseDecoded = Sense.DecodeFixed(senseBuf);
 

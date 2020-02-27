@@ -103,9 +103,9 @@ namespace Aaru.DiscImages
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrwinFilter);
-                DicConsole.ErrorWriteLine("Exception: {0}", ex.Message);
-                DicConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", _cdrwinFilter);
+                AaruConsole.ErrorWriteLine("Exception: {0}", ex.Message);
+                AaruConsole.ErrorWriteLine("Stack trace: {0}", ex.StackTrace);
 
                 return false;
             }

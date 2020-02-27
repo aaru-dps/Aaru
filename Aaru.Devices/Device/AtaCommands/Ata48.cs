@@ -59,7 +59,7 @@ namespace Aaru.Devices
                 lba += statusRegisters.LbaLow;
             }
 
-            DicConsole.DebugWriteLine("ATA Device", "GET NATIVE MAX ADDRESS EXT took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "GET NATIVE MAX ADDRESS EXT took {0} ms.", duration);
 
             return sense;
         }
@@ -84,7 +84,7 @@ namespace Aaru.Devices
                                        ref buffer, timeout, true, out duration, out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ DMA EXT took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ DMA EXT took {0} ms.", duration);
 
             return sense;
         }
@@ -110,7 +110,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ LOG EXT took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ LOG EXT took {0} ms.", duration);
 
             return sense;
         }
@@ -135,7 +135,7 @@ namespace Aaru.Devices
                                        ref buffer, timeout, true, out duration, out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ LOG DMA EXT took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ LOG DMA EXT took {0} ms.", duration);
 
             return sense;
         }
@@ -162,7 +162,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ MULTIPLE EXT took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ MULTIPLE EXT took {0} ms.", duration);
 
             return sense;
         }
@@ -190,7 +190,7 @@ namespace Aaru.Devices
                 lba += statusRegisters.LbaLow;
             }
 
-            DicConsole.DebugWriteLine("ATA Device", "READ NATIVE MAX ADDRESS EXT took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ NATIVE MAX ADDRESS EXT took {0} ms.", duration);
 
             return sense;
         }
@@ -216,7 +216,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ SECTORS EXT took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ SECTORS EXT took {0} ms.", duration);
 
             return sense;
         }

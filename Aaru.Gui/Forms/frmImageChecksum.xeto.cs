@@ -165,7 +165,7 @@ namespace Aaru.Gui.Forms
                                 mediaChecksum?.Update(hiddenSector);
                             }
 
-                        DicConsole.DebugWriteLine("Checksum command",
+                        AaruConsole.DebugWriteLine("Checksum command",
                                                   "Track {0} starts at sector {1} and ends at sector {2}",
                                                   currentTrack.TrackSequence, currentTrack.TrackStartSector,
                                                   currentTrack.TrackEndSector);
@@ -261,8 +261,8 @@ namespace Aaru.Gui.Forms
                 }
                 catch(Exception ex)
                 {
-                    DicConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
-                    DicConsole.WriteLine("Unable to get separate tracks, not checksumming them");
+                    AaruConsole.DebugWriteLine("Could not get tracks because {0}", ex.Message);
+                    AaruConsole.WriteLine("Unable to get separate tracks, not checksumming them");
                 }
             else
             {

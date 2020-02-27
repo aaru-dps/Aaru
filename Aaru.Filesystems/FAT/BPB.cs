@@ -77,15 +77,15 @@ namespace Aaru.Filesystems.FAT
             // Check correct branch for Human68k
             bool humanBranchCorrect = bpbSector[0] == 0x60 && bpbSector[1] >= 0x1C && bpbSector[1] < 0xFE;
 
-            DicConsole.DebugWriteLine("FAT plugin", "humanClustersCorrect = {0}", humanClustersCorrect);
-            DicConsole.DebugWriteLine("FAT plugin", "humanOemCorrect = {0}",      humanOemCorrect);
-            DicConsole.DebugWriteLine("FAT plugin", "humanBranchCorrect = {0}",   humanBranchCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "humanClustersCorrect = {0}", humanClustersCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "humanOemCorrect = {0}",      humanOemCorrect);
+            AaruConsole.DebugWriteLine("FAT plugin", "humanBranchCorrect = {0}",   humanBranchCorrect);
 
             // If all Human68k checks are correct, it is a Human68k FAT16
             bool useHumanBpb = humanClustersCorrect && humanOemCorrect && humanBranchCorrect && expectedClusters > 0;
             if(useHumanBpb)
             {
-                DicConsole.DebugWriteLine("FAT plugin", "Using Human68k BPB");
+                AaruConsole.DebugWriteLine("FAT plugin", "Using Human68k BPB");
 
                 fakeBpb.jump        = humanBpb.jump;
                 fakeBpb.oem_name    = humanBpb.oem_name;
@@ -198,7 +198,7 @@ namespace Aaru.Filesystems.FAT
                    fat32Bpb.spfat                             == 0 && fat32Bpb.signature == 0x29 &&
                    Encoding.ASCII.GetString(fat32Bpb.fs_type) == "FAT32   ")
                 {
-                    DicConsole.DebugWriteLine("FAT plugin", "Using FAT32 BPB");
+                    AaruConsole.DebugWriteLine("FAT plugin", "Using FAT32 BPB");
                     useLongFat32    = true;
                     minBootNearJump = 0x58;
                     return BpbKind.LongFat32;
@@ -208,7 +208,7 @@ namespace Aaru.Filesystems.FAT
                    shortFat32Bpb.sectors   == 0 && shortFat32Bpb.spfat                           == 0 &&
                    shortFat32Bpb.signature == 0x28)
                 {
-                    DicConsole.DebugWriteLine("FAT plugin", "Using short FAT32 BPB");
+                    AaruConsole.DebugWriteLine("FAT plugin", "Using short FAT32 BPB");
                     useShortFat32 = shortFat32Bpb.big_sectors        == 0
                                         ? shortFat32Bpb.huge_sectors <= partition.End - partition.Start + 1
                                         : shortFat32Bpb.big_sectors  <= partition.End - partition.Start + 1;
@@ -222,7 +222,7 @@ namespace Aaru.Filesystems.FAT
                    msxBpb.spfat                            > 0                                    &&
                    Encoding.ASCII.GetString(msxBpb.vol_id) == "VOL_ID")
                 {
-                    DicConsole.DebugWriteLine("FAT plugin", "Using MSX BPB");
+                    AaruConsole.DebugWriteLine("FAT plugin", "Using MSX BPB");
                     useMsxBpb = true;
                 }
                 else if(bitsInBpsApricot            == 1                                   && correctSpcApricot &&
@@ -232,7 +232,7 @@ namespace Aaru.Filesystems.FAT
                         apricotBpb.mainBPB.spfat    > 0                                    &&
                         apricotBpb.partitionCount   == 0)
                 {
-                    DicConsole.DebugWriteLine("FAT plugin", "Using Apricot BPB");
+                    AaruConsole.DebugWriteLine("FAT plugin", "Using Apricot BPB");
                     useApricotBpb = true;
                 }
                 else if(bitsInBpsDos40 == 1 && correctSpcDos40 && ebpb.fats_no <= 2 && ebpb.root_ent > 0 &&
@@ -243,13 +243,13 @@ namespace Aaru.Filesystems.FAT
                         if(ebpb.big_sectors <= partition.End - partition.Start + 1)
                             if(ebpb.signature == 0x29 || andosOemCorrect)
                             {
-                                DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
                                 useExtendedBpb  = true;
                                 minBootNearJump = 0x3C;
                             }
                             else
                             {
-                                DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
                                 userShortExtendedBpb = true;
                                 minBootNearJump      = 0x29;
                             }
@@ -257,13 +257,13 @@ namespace Aaru.Filesystems.FAT
                     else if(ebpb.sectors <= partition.End - partition.Start + 1)
                         if(ebpb.signature == 0x29 || andosOemCorrect)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 4.0 BPB");
                             useExtendedBpb  = true;
                             minBootNearJump = 0x3C;
                         }
                         else
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 3.4 BPB");
                             userShortExtendedBpb = true;
                             minBootNearJump      = 0x29;
                         }
@@ -275,7 +275,7 @@ namespace Aaru.Filesystems.FAT
                     if(dos33Bpb.sectors     == 0 && dos33Bpb.hsectors <= partition.Start && dos33Bpb.big_sectors > 0 &&
                        dos33Bpb.big_sectors <= partition.End - partition.Start + 1)
                     {
-                        DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
+                        AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
                         useDos33Bpb     = true;
                         minBootNearJump = 0x22;
                     }
@@ -284,12 +284,12 @@ namespace Aaru.Filesystems.FAT
                         if(atariBpb.jump[0] == 0x60 || atariBpb.jump[0] == 0xE9 && atariBpb.jump[1] == 0x00 &&
                            Encoding.ASCII.GetString(dos33Bpb.oem_name)  != "NEXT    ")
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                             useAtariBpb = true;
                         }
                         else
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 3.3 BPB");
                             useDos33Bpb     = true;
                             minBootNearJump = 0x22;
                         }
@@ -298,7 +298,7 @@ namespace Aaru.Filesystems.FAT
                         if(dos32Bpb.hsectors                    <= partition.Start &&
                            dos32Bpb.hsectors + dos32Bpb.sectors == dos32Bpb.total_sectors)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.2 BPB");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 3.2 BPB");
                             useDos32Bpb     = true;
                             minBootNearJump = 0x1E;
                         }
@@ -306,12 +306,12 @@ namespace Aaru.Filesystems.FAT
                             if(atariBpb.jump[0] == 0x60 || atariBpb.jump[0] == 0xE9 && atariBpb.jump[1] == 0x00 &&
                                Encoding.ASCII.GetString(dos33Bpb.oem_name)  != "NEXT    ")
                             {
-                                DicConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                                 useAtariBpb = true;
                             }
                             else
                             {
-                                DicConsole.DebugWriteLine("FAT plugin", "Using DOS 3.0 BPB");
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 3.0 BPB");
                                 useDos3Bpb      = true;
                                 minBootNearJump = 0x1C;
                             }
@@ -320,12 +320,12 @@ namespace Aaru.Filesystems.FAT
                             if(atariBpb.jump[0] == 0x60 || atariBpb.jump[0] == 0xE9 && atariBpb.jump[1] == 0x00 &&
                                Encoding.ASCII.GetString(dos33Bpb.oem_name)  != "NEXT    ")
                             {
-                                DicConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using Atari BPB");
                                 useAtariBpb = true;
                             }
                             else
                             {
-                                DicConsole.DebugWriteLine("FAT plugin", "Using DOS 2.0 BPB");
+                                AaruConsole.DebugWriteLine("FAT plugin", "Using DOS 2.0 BPB");
                                 useDos2Bpb      = true;
                                 minBootNearJump = 0x16;
                             }
@@ -373,7 +373,7 @@ namespace Aaru.Filesystems.FAT
                    validRootDir)
                 {
                     useDecRainbowBpb = true;
-                    DicConsole.DebugWriteLine("FAT plugin", "Using DEC Rainbow hardcoded BPB.");
+                    AaruConsole.DebugWriteLine("FAT plugin", "Using DEC Rainbow hardcoded BPB.");
                     fakeBpb.bps       = 512;
                     fakeBpb.spc       = 1;
                     fakeBpb.rsectors  = 20;
@@ -402,7 +402,7 @@ namespace Aaru.Filesystems.FAT
                     case 0xE5:
                         if(imagePlugin.Info.Sectors == 2002 && imagePlugin.Info.SectorSize == 128)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBpb.bps      = 128;
                             fakeBpb.spc      = 4;
                             fakeBpb.rsectors = 1;
@@ -420,7 +420,7 @@ namespace Aaru.Filesystems.FAT
                     case 0xFD:
                         if(imagePlugin.Info.Sectors == 4004 && imagePlugin.Info.SectorSize == 128)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBpb.bps      = 128;
                             fakeBpb.spc      = 4;
                             fakeBpb.rsectors = 4;
@@ -435,7 +435,7 @@ namespace Aaru.Filesystems.FAT
                         }
                         else if(imagePlugin.Info.Sectors == 2002 && imagePlugin.Info.SectorSize == 128)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBpb.bps      = 128;
                             fakeBpb.spc      = 4;
                             fakeBpb.rsectors = 4;
@@ -453,7 +453,7 @@ namespace Aaru.Filesystems.FAT
                     case 0xFE:
                         if(imagePlugin.Info.Sectors == 320 && imagePlugin.Info.SectorSize == 512)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" SSDD.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" SSDD.");
                             fakeBpb.bps      = 512;
                             fakeBpb.spc      = 1;
                             fakeBpb.rsectors = 1;
@@ -468,7 +468,7 @@ namespace Aaru.Filesystems.FAT
                         }
                         else if(imagePlugin.Info.Sectors == 2002 && imagePlugin.Info.SectorSize == 128)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBpb.bps      = 128;
                             fakeBpb.spc      = 4;
                             fakeBpb.rsectors = 1;
@@ -483,7 +483,7 @@ namespace Aaru.Filesystems.FAT
                         }
                         else if(imagePlugin.Info.Sectors == 1232 && imagePlugin.Info.SectorSize == 1024)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBpb.bps      = 1024;
                             fakeBpb.spc      = 1;
                             fakeBpb.rsectors = 1;
@@ -498,7 +498,7 @@ namespace Aaru.Filesystems.FAT
                         }
                         else if(imagePlugin.Info.Sectors == 616 && imagePlugin.Info.SectorSize == 1024)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBpb.bps      = 1024;
                             fakeBpb.spc      = 1;
                             fakeBpb.rsectors = 1;
@@ -512,7 +512,7 @@ namespace Aaru.Filesystems.FAT
                         }
                         else if(imagePlugin.Info.Sectors == 720 && imagePlugin.Info.SectorSize == 128)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB.");
                             fakeBpb.bps      = 128;
                             fakeBpb.spc      = 2;
                             fakeBpb.rsectors = 54;
@@ -527,7 +527,7 @@ namespace Aaru.Filesystems.FAT
                         }
                         else if(imagePlugin.Info.Sectors == 640 && imagePlugin.Info.SectorSize == 512)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
                             fakeBpb.bps      = 512;
                             fakeBpb.spc      = 2;
                             fakeBpb.rsectors = 1;
@@ -545,7 +545,7 @@ namespace Aaru.Filesystems.FAT
                     case 0xFF:
                         if(imagePlugin.Info.Sectors == 640 && imagePlugin.Info.SectorSize == 512)
                         {
-                            DicConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
+                            AaruConsole.DebugWriteLine("FAT plugin", "Using hardcoded BPB for 5.25\" DSDD.");
                             fakeBpb.bps      = 512;
                             fakeBpb.spc      = 2;
                             fakeBpb.rsectors = 1;

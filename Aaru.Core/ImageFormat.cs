@@ -61,7 +61,7 @@ namespace Aaru.Core
                 )
                     try
                     {
-                        DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
+                        AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
                         if(!imageplugin.Identify(imageFilter)) continue;
 
                         imageFormat = imageplugin;
@@ -83,7 +83,7 @@ namespace Aaru.Core
                 )
                     try
                     {
-                        DicConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
+                        AaruConsole.DebugWriteLine("Format detection", "Trying plugin {0}", imageplugin.Name);
                         if(!imageplugin.Identify(imageFilter)) continue;
 
                         imageFormat = imageplugin;

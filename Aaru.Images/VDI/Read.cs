@@ -56,42 +56,42 @@ namespace Aaru.DiscImages
             stream.Read(vHdrB, 0, Marshal.SizeOf<VdiHeader>());
             vHdr = Marshal.ByteArrayToStructureLittleEndian<VdiHeader>(vHdrB);
 
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", vHdr.creator);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}",   vHdr.magic);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.version = {0}.{1}", vHdr.majorVersion,
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.creator = {0}", vHdr.creator);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.magic = {0}",   vHdr.magic);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.version = {0}.{1}", vHdr.majorVersion,
                                       vHdr.minorVersion);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}",      vHdr.headerSize);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}",       vHdr.imageType);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}",      vHdr.imageFlags);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}",     vHdr.comments);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}",    vHdr.offsetBlocks);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}",      vHdr.offsetData);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}",       vHdr.cylinders);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.heads = {0}",           vHdr.heads);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.spt = {0}",             vHdr.spt);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.sectorSize = {0}",      vHdr.sectorSize);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.size = {0}",            vHdr.size);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockSize = {0}",       vHdr.blockSize);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockExtraData = {0}",  vHdr.blockExtraData);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blocks = {0}",          vHdr.blocks);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.allocatedBlocks = {0}", vHdr.allocatedBlocks);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.uuid = {0}",            vHdr.uuid);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}",    vHdr.snapshotUuid);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}",        vHdr.linkUuid);
-            DicConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}",      vHdr.parentUuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.headerSize = {0}",      vHdr.headerSize);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageType = {0}",       vHdr.imageType);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.imageFlags = {0}",      vHdr.imageFlags);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.description = {0}",     vHdr.comments);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetBlocks = {0}",    vHdr.offsetBlocks);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.offsetData = {0}",      vHdr.offsetData);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.cylinders = {0}",       vHdr.cylinders);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.heads = {0}",           vHdr.heads);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.spt = {0}",             vHdr.spt);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.sectorSize = {0}",      vHdr.sectorSize);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.size = {0}",            vHdr.size);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockSize = {0}",       vHdr.blockSize);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blockExtraData = {0}",  vHdr.blockExtraData);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.blocks = {0}",          vHdr.blocks);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.allocatedBlocks = {0}", vHdr.allocatedBlocks);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.uuid = {0}",            vHdr.uuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.snapshotUuid = {0}",    vHdr.snapshotUuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.linkUuid = {0}",        vHdr.linkUuid);
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "vHdr.parentUuid = {0}",      vHdr.parentUuid);
 
             if(vHdr.imageType != VdiImageType.Normal)
                 throw new
                     FeatureSupportedButNotImplementedImageException($"Support for image type {vHdr.imageType} not yet implemented");
 
             DateTime start = DateTime.UtcNow;
-            DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map");
             stream.Seek(vHdr.offsetBlocks, SeekOrigin.Begin);
             byte[] ibmB = new byte[vHdr.blocks * 4];
             stream.Read(ibmB, 0, ibmB.Length);
             ibm = MemoryMarshal.Cast<byte, uint>(ibmB).ToArray();
             DateTime end = DateTime.UtcNow;
-            DicConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map took {0} ms",
+            AaruConsole.DebugWriteLine("VirtualBox plugin", "Reading Image Block Map took {0} ms",
                                       (end - start).TotalMilliseconds);
 
             sectorCache = new Dictionary<ulong, byte[]>();

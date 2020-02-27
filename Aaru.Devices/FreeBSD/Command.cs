@@ -119,7 +119,7 @@ namespace Aaru.Devices.FreeBSD
                (csio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
-                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", csio.ccb_h.status, error);
+                AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", csio.ccb_h.status, error);
                 sense = true;
             }
 
@@ -229,7 +229,7 @@ namespace Aaru.Devices.FreeBSD
                (csio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
-                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", csio.ccb_h.status, error);
+                AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", csio.ccb_h.status, error);
                 sense = true;
             }
 
@@ -360,7 +360,7 @@ namespace Aaru.Devices.FreeBSD
                (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
-                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
+                AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
                 sense = true;
             }
 
@@ -459,7 +459,7 @@ namespace Aaru.Devices.FreeBSD
                (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
-                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
+                AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
                 sense = true;
             }
 
@@ -567,7 +567,7 @@ namespace Aaru.Devices.FreeBSD
                (ataio.ccb_h.status & CamStatus.CamStatusMask) != CamStatus.CamScsiStatusError)
             {
                 error = Marshal.GetLastWin32Error();
-                DicConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
+                AaruConsole.DebugWriteLine("FreeBSD devices", "CAM status {0} error {1}", ataio.ccb_h.status, error);
                 sense = true;
             }
 

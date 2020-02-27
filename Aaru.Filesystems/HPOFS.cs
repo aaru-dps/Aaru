@@ -90,70 +90,70 @@ namespace Aaru.Filesystems
             MediaInformationBlock  mib = Marshal.ByteArrayToStructureBigEndian<MediaInformationBlock>(medInfoSector);
             VolumeInformationBlock vib = Marshal.ByteArrayToStructureBigEndian<VolumeInformationBlock>(volInfoSector);
 
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.oem_name = \"{0}\"",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.oem_name = \"{0}\"",
                                       StringHandlers.CToString(bpb.oem_name));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.bps = {0}",            bpb.bps);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.spc = {0}",            bpb.spc);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.rsectors = {0}",       bpb.rsectors);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.fats_no = {0}",        bpb.fats_no);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.root_ent = {0}",       bpb.root_ent);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.sectors = {0}",        bpb.sectors);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.media = 0x{0:X2}",     bpb.media);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.spfat = {0}",          bpb.spfat);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.sptrk = {0}",          bpb.sptrk);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.heads = {0}",          bpb.heads);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.hsectors = {0}",       bpb.hsectors);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.big_sectors = {0}",    bpb.big_sectors);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.drive_no = 0x{0:X2}",  bpb.drive_no);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.nt_flags = {0}",       bpb.nt_flags);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.signature = 0x{0:X2}", bpb.signature);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.serial_no = 0x{0:X8}", bpb.serial_no);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.volume_label = \"{0}\"",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.bps = {0}",            bpb.bps);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.spc = {0}",            bpb.spc);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.rsectors = {0}",       bpb.rsectors);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.fats_no = {0}",        bpb.fats_no);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.root_ent = {0}",       bpb.root_ent);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.sectors = {0}",        bpb.sectors);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.media = 0x{0:X2}",     bpb.media);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.spfat = {0}",          bpb.spfat);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.sptrk = {0}",          bpb.sptrk);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.heads = {0}",          bpb.heads);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.hsectors = {0}",       bpb.hsectors);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.big_sectors = {0}",    bpb.big_sectors);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.drive_no = 0x{0:X2}",  bpb.drive_no);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.nt_flags = {0}",       bpb.nt_flags);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.signature = 0x{0:X2}", bpb.signature);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.serial_no = 0x{0:X8}", bpb.serial_no);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.volume_label = \"{0}\"",
                                       StringHandlers.SpacePaddedToString(bpb.volume_label));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.fs_type = \"{0}\"", StringHandlers.CToString(bpb.fs_type));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.boot_code is empty? = {0}",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.fs_type = \"{0}\"", StringHandlers.CToString(bpb.fs_type));
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.boot_code is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(bpb.boot_code));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.unknown = {0}",     bpb.unknown);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.unknown2 = {0}",    bpb.unknown2);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "bpb.signature2 = {0}",  bpb.signature2);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.blockId = \"{0}\"", StringHandlers.CToString(mib.blockId));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.volumeLabel = \"{0}\"",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.unknown = {0}",     bpb.unknown);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.unknown2 = {0}",    bpb.unknown2);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "bpb.signature2 = {0}",  bpb.signature2);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.blockId = \"{0}\"", StringHandlers.CToString(mib.blockId));
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.volumeLabel = \"{0}\"",
                                       StringHandlers.SpacePaddedToString(mib.volumeLabel));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.comment = \"{0}\"",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.comment = \"{0}\"",
                                       StringHandlers.SpacePaddedToString(mib.comment));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.serial = 0x{0:X8}", mib.serial);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.creationTimestamp = {0}",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.serial = 0x{0:X8}", mib.serial);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.creationTimestamp = {0}",
                                       DateHandlers.DosToDateTime(mib.creationDate, mib.creationTime));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.codepageType = {0}", mib.codepageType);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.codepage = {0}",     mib.codepage);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.rps = {0}",          mib.rps);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.bps = {0}",          mib.bps);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.bpc = {0}",          mib.bpc);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown2 = {0}",     mib.unknown2);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.sectors = {0}",      mib.sectors);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown3 = {0}",     mib.unknown3);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown4 = {0}",     mib.unknown4);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.major = {0}",        mib.major);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.minor = {0}",        mib.minor);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown5 = {0}",     mib.unknown5);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown6 = {0}",     mib.unknown6);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "mib.filler is empty? = {0}",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.codepageType = {0}", mib.codepageType);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.codepage = {0}",     mib.codepage);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.rps = {0}",          mib.rps);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.bps = {0}",          mib.bps);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.bpc = {0}",          mib.bpc);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown2 = {0}",     mib.unknown2);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.sectors = {0}",      mib.sectors);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown3 = {0}",     mib.unknown3);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown4 = {0}",     mib.unknown4);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.major = {0}",        mib.major);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.minor = {0}",        mib.minor);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown5 = {0}",     mib.unknown5);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.unknown6 = {0}",     mib.unknown6);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "mib.filler is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(mib.filler));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.blockId = \"{0}\"", StringHandlers.CToString(vib.blockId));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown = {0}",     vib.unknown);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown2 = {0}",    vib.unknown2);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown3 is empty? = {0}",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.blockId = \"{0}\"", StringHandlers.CToString(vib.blockId));
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown = {0}",     vib.unknown);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown2 = {0}",    vib.unknown2);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown3 is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(vib.unknown3));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown4 = \"{0}\"",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown4 = \"{0}\"",
                                       StringHandlers.SpacePaddedToString(vib.unknown4));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.owner = \"{0}\"",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.owner = \"{0}\"",
                                       StringHandlers.SpacePaddedToString(vib.owner));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown5 = \"{0}\"",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown5 = \"{0}\"",
                                       StringHandlers.SpacePaddedToString(vib.unknown5));
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown6 = {0}",    vib.unknown6);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.percentFull = {0}", vib.percentFull);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown7 = {0}",    vib.unknown7);
-            DicConsole.DebugWriteLine("HPOFS Plugin", "vib.filler is empty? = {0}",
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown6 = {0}",    vib.unknown6);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.percentFull = {0}", vib.percentFull);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.unknown7 = {0}",    vib.unknown7);
+            AaruConsole.DebugWriteLine("HPOFS Plugin", "vib.filler is empty? = {0}",
                                       ArrayHelpers.ArrayIsNullOrEmpty(vib.filler));
 
             sb.AppendLine("High Performance Optical File System");

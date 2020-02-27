@@ -86,7 +86,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "IDENTIFY DEVICE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "IDENTIFY DEVICE took {0} ms.", duration);
 
             return sense;
         }
@@ -117,7 +117,7 @@ namespace Aaru.Devices
                                        ref buffer, timeout, true, out duration, out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ DMA took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ DMA took {0} ms.", duration);
 
             return sense;
         }
@@ -143,7 +143,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ MULTIPLE took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ MULTIPLE took {0} ms.", duration);
 
             return sense;
         }
@@ -174,7 +174,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ SECTORS took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ SECTORS took {0} ms.", duration);
 
             return sense;
         }
@@ -207,7 +207,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "READ LONG took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "READ LONG took {0} ms.", duration);
 
             return sense;
         }
@@ -230,7 +230,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SEEK took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SEEK took {0} ms.", duration);
 
             return sense;
         }
@@ -260,7 +260,7 @@ namespace Aaru.Devices
                                        out bool sense);
             Error = LastError != 0;
 
-            DicConsole.DebugWriteLine("ATA Device", "SET FEATURES took {0} ms.", duration);
+            AaruConsole.DebugWriteLine("ATA Device", "SET FEATURES took {0} ms.", duration);
 
             return sense;
         }

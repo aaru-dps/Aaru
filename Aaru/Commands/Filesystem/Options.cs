@@ -54,18 +54,18 @@ namespace Aaru.Commands.Filesystem
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            DicConsole.DebugWriteLine("List-Options command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("List-Options command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("List-Options command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("List-Options command", "--verbose={0}", verbose);
             Statistics.AddCommand("list-options");
 
             PluginBase plugins = GetPluginBase.Instance;
 
-            DicConsole.WriteLine("Read-only filesystems options:");
+            AaruConsole.WriteLine("Read-only filesystems options:");
 
             foreach(KeyValuePair<string, IReadOnlyFilesystem> kvp in plugins.ReadOnlyFilesystems)
             {
@@ -74,14 +74,14 @@ namespace Aaru.Commands.Filesystem
                 if(options.Count == 0)
                     continue;
 
-                DicConsole.WriteLine("\tOptions for {0}:", kvp.Value.Name);
-                DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", "Name", "Type", "Description");
+                AaruConsole.WriteLine("\tOptions for {0}:", kvp.Value.Name);
+                AaruConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", "Name", "Type", "Description");
 
                 foreach((string name, Type type, string description) option in options.OrderBy(t => t.name))
-                    DicConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, TypeToString(option.type),
+                    AaruConsole.WriteLine("\t\t{0,-16} {1,-16} {2,-8}", option.name, TypeToString(option.type),
                                          option.description);
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
             }
 
             return(int)ErrorNumber.NoError;

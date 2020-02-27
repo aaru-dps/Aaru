@@ -171,64 +171,64 @@ namespace Aaru.Filesystems
                 fields.FourthPartitions = new NintendoPartition[0];
             }
 
-            DicConsole.DebugWriteLine("Nintendo plugin", "discType = {0}",         fields.DiscType);
-            DicConsole.DebugWriteLine("Nintendo plugin", "gameCode = {0}",         fields.GameCode);
-            DicConsole.DebugWriteLine("Nintendo plugin", "regionCode = {0}",       fields.RegionCode);
-            DicConsole.DebugWriteLine("Nintendo plugin", "publisherCode = {0}",    fields.PublisherCode);
-            DicConsole.DebugWriteLine("Nintendo plugin", "discID = {0}",           fields.DiscId);
-            DicConsole.DebugWriteLine("Nintendo plugin", "discNumber = {0}",       fields.DiscNumber);
-            DicConsole.DebugWriteLine("Nintendo plugin", "discVersion = {0}",      fields.DiscVersion);
-            DicConsole.DebugWriteLine("Nintendo plugin", "streaming = {0}",        fields.Streaming);
-            DicConsole.DebugWriteLine("Nintendo plugin", "streamBufferSize = {0}", fields.StreamBufferSize);
-            DicConsole.DebugWriteLine("Nintendo plugin", "title = \"{0}\"",        fields.Title);
-            DicConsole.DebugWriteLine("Nintendo plugin", "debugOff = 0x{0:X8}",    fields.DebugOff);
-            DicConsole.DebugWriteLine("Nintendo plugin", "debugAddr = 0x{0:X8}",   fields.DebugAddr);
-            DicConsole.DebugWriteLine("Nintendo plugin", "dolOff = 0x{0:X8}",      fields.DolOff);
-            DicConsole.DebugWriteLine("Nintendo plugin", "fstOff = 0x{0:X8}",      fields.FstOff);
-            DicConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}",          fields.FstSize);
-            DicConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}",           fields.FstMax);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discType = {0}",         fields.DiscType);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "gameCode = {0}",         fields.GameCode);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "regionCode = {0}",       fields.RegionCode);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "publisherCode = {0}",    fields.PublisherCode);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discID = {0}",           fields.DiscId);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discNumber = {0}",       fields.DiscNumber);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "discVersion = {0}",      fields.DiscVersion);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "streaming = {0}",        fields.Streaming);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "streamBufferSize = {0}", fields.StreamBufferSize);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "title = \"{0}\"",        fields.Title);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "debugOff = 0x{0:X8}",    fields.DebugOff);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "debugAddr = 0x{0:X8}",   fields.DebugAddr);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "dolOff = 0x{0:X8}",      fields.DolOff);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "fstOff = 0x{0:X8}",      fields.FstOff);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "fstSize = {0}",          fields.FstSize);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "fstMax = {0}",           fields.FstMax);
             for(int i = 0; i < fields.FirstPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].offset = {0}",
                                           fields.FirstPartitions[i].Offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].type = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "firstPartitions[{1}].type = {0}",
                                           fields.FirstPartitions[i].Type, i);
             }
 
             for(int i = 0; i < fields.SecondPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].offset = {0}",
                                           fields.SecondPartitions[i].Offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].type = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "secondPartitions[{1}].type = {0}",
                                           fields.SecondPartitions[i].Type, i);
             }
 
             for(int i = 0; i < fields.ThirdPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].offset = {0}",
                                           fields.ThirdPartitions[i].Offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].type = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "thirdPartitions[{1}].type = {0}",
                                           fields.ThirdPartitions[i].Type, i);
             }
 
             for(int i = 0; i < fields.FourthPartitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].offset = {0}",
                                           fields.FourthPartitions[i].Offset, i);
-                DicConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].type = {0}",
+                AaruConsole.DebugWriteLine("Nintendo plugin", "fourthPartitions[{1}].type = {0}",
                                           fields.FourthPartitions[i].Type, i);
             }
 
-            DicConsole.DebugWriteLine("Nintendo plugin", "region = {0}",       fields.Region);
-            DicConsole.DebugWriteLine("Nintendo plugin", "japanAge = {0}",     fields.JapanAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "usaAge = {0}",       fields.UsaAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "germanAge = {0}",    fields.GermanAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "pegiAge = {0}",      fields.PegiAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "finlandAge = {0}",   fields.FinlandAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "portugalAge = {0}",  fields.PortugalAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "ukAge = {0}",        fields.UkAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "australiaAge = {0}", fields.AustraliaAge);
-            DicConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}",     fields.KoreaAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "region = {0}",       fields.Region);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "japanAge = {0}",     fields.JapanAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "usaAge = {0}",       fields.UsaAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "germanAge = {0}",    fields.GermanAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "pegiAge = {0}",      fields.PegiAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "finlandAge = {0}",   fields.FinlandAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "portugalAge = {0}",  fields.PortugalAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "ukAge = {0}",        fields.UkAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "australiaAge = {0}", fields.AustraliaAge);
+            AaruConsole.DebugWriteLine("Nintendo plugin", "koreaAge = {0}",     fields.KoreaAge);
 
             sbInformation.AppendLine("Nintendo optical filesystem");
             sbInformation.AppendLine(wii ? "Nintendo Wii Optical Disc" : "Nintendo GameCube Optical Disc");

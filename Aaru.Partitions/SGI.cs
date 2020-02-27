@@ -67,55 +67,55 @@ namespace Aaru.Partitions
             for(int i = 0; i < dvh.partitions.Length; i++)
                 dvh.partitions[i] = (SGIPartition)Marshal.SwapStructureMembersEndian(dvh.partitions[i]);
 
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic,
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.magic = 0x{0:X8} (should be 0x{1:X8})", dvh.magic,
                                       SGI_MAGIC);
 
             if(dvh.magic != SGI_MAGIC) return false;
 
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.root_part_num = {0}", dvh.root_part_num);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.swap_part_num = {0}", dvh.swap_part_num);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.boot_file = \"{0}\"",
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.root_part_num = {0}", dvh.root_part_num);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.swap_part_num = {0}", dvh.swap_part_num);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.boot_file = \"{0}\"",
                                       StringHandlers.CToString(dvh.boot_file));
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_skew = {0}", dvh.device_params.dp_skew);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_gap1 = {0}", dvh.device_params.dp_gap1);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_gap2 = {0}", dvh.device_params.dp_gap2);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_spares_cyl = {0}",
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_skew = {0}", dvh.device_params.dp_skew);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_gap1 = {0}", dvh.device_params.dp_gap1);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_gap2 = {0}", dvh.device_params.dp_gap2);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_spares_cyl = {0}",
                                       dvh.device_params.dp_spares_cyl);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cyls = {0}",  dvh.device_params.dp_cyls);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_shd0 = {0}",  dvh.device_params.dp_shd0);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_trks0 = {0}", dvh.device_params.dp_trks0);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_ctq_depth = {0}",
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cyls = {0}",  dvh.device_params.dp_cyls);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_shd0 = {0}",  dvh.device_params.dp_shd0);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_trks0 = {0}", dvh.device_params.dp_trks0);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_ctq_depth = {0}",
                                       dvh.device_params.dp_ctq_depth);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cylshi = {0}", dvh.device_params.dp_cylshi);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secs = {0}",   dvh.device_params.dp_secs);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secbytes = {0}",
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_cylshi = {0}", dvh.device_params.dp_cylshi);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secs = {0}",   dvh.device_params.dp_secs);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_secbytes = {0}",
                                       dvh.device_params.dp_secbytes);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_interleave = {0}",
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_interleave = {0}",
                                       dvh.device_params.dp_interleave);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_flags = {0}", dvh.device_params.dp_flags);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_datarate = {0}",
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_flags = {0}", dvh.device_params.dp_flags);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_datarate = {0}",
                                       dvh.device_params.dp_datarate);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_nretries = {0}",
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_nretries = {0}",
                                       dvh.device_params.dp_nretries);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_mspw = {0}",   dvh.device_params.dp_mspw);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xgap1 = {0}",  dvh.device_params.dp_xgap1);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xsync = {0}",  dvh.device_params.dp_xsync);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xrdly = {0}",  dvh.device_params.dp_xrdly);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xgap2 = {0}",  dvh.device_params.dp_xgap2);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xrgate = {0}", dvh.device_params.dp_xrgate);
-            DicConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xwcont = {0}", dvh.device_params.dp_xwcont);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_mspw = {0}",   dvh.device_params.dp_mspw);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xgap1 = {0}",  dvh.device_params.dp_xgap1);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xsync = {0}",  dvh.device_params.dp_xsync);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xrdly = {0}",  dvh.device_params.dp_xrdly);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xgap2 = {0}",  dvh.device_params.dp_xgap2);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xrgate = {0}", dvh.device_params.dp_xrgate);
+            AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.device_params.dp_xwcont = {0}", dvh.device_params.dp_xwcont);
 
             ulong counter = 0;
 
             for(int i = 0; i < dvh.partitions.Length; i++)
             {
-                DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].num_blocks = {1}", i,
+                AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].num_blocks = {1}", i,
                                           dvh.partitions[i].num_blocks);
-                DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].first_block = {1}", i,
+                AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].first_block = {1}", i,
                                           dvh.partitions[i].first_block);
                 // TODO: Solve big endian marshal with enumerations
                 dvh.partitions[i].type = (SGIType)Swapping.Swap((uint)dvh.partitions[i].type);
-                DicConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].type = {1}", i, dvh.partitions[i].type);
+                AaruConsole.DebugWriteLine("SGIVH plugin", "dvh.partitions[{0}].type = {1}", i, dvh.partitions[i].type);
 
                 Partition part = new Partition
                 {

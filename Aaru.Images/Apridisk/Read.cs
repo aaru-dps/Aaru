@@ -68,24 +68,24 @@ namespace Aaru.DiscImages
                 {
                     // Deleted record, just skip it
                     case RecordType.Deleted:
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Found deleted record at {0}", stream.Position);
+                        AaruConsole.DebugWriteLine("Apridisk plugin", "Found deleted record at {0}", stream.Position);
                         stream.Seek(record.headerSize - recordSize + record.dataSize, SeekOrigin.Current);
                         break;
                     case RecordType.Comment:
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Found comment record at {0}", stream.Position);
+                        AaruConsole.DebugWriteLine("Apridisk plugin", "Found comment record at {0}", stream.Position);
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                         byte[] commentB = new byte[record.dataSize];
                         stream.Read(commentB, 0, commentB.Length);
                         imageInfo.Comments = StringHandlers.CToString(commentB);
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", imageInfo.Comments);
+                        AaruConsole.DebugWriteLine("Apridisk plugin", "Comment: \"{0}\"", imageInfo.Comments);
                         break;
                     case RecordType.Creator:
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
+                        AaruConsole.DebugWriteLine("Apridisk plugin", "Found creator record at {0}", stream.Position);
                         stream.Seek(record.headerSize - recordSize, SeekOrigin.Current);
                         byte[] creatorB = new byte[record.dataSize];
                         stream.Read(creatorB, 0, creatorB.Length);
                         imageInfo.Creator = StringHandlers.CToString(creatorB);
-                        DicConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", imageInfo.Creator);
+                        AaruConsole.DebugWriteLine("Apridisk plugin", "Creator: \"{0}\"", imageInfo.Creator);
                         break;
                     case RecordType.Sector:
                         if(record.compression != CompressType.Compressed &&
@@ -93,7 +93,7 @@ namespace Aaru.DiscImages
                             throw new
                                 ImageNotSupportedException($"Found record with unknown compression type 0x{(ushort)record.compression:X4} at {stream.Position}");
 
-                        DicConsole.DebugWriteLine("Apridisk plugin",
+                        AaruConsole.DebugWriteLine("Apridisk plugin",
                                                   "Found {4} sector record at {0} for cylinder {1} head {2} sector {3}",
                                                   stream.Position, record.cylinder, record.head, record.sector,
                                                   record.compression == CompressType.Compressed
@@ -125,7 +125,7 @@ namespace Aaru.DiscImages
             imageInfo.Cylinders = (ushort)totalCylinders;
             imageInfo.Heads     = (byte)totalHeads;
 
-            DicConsole.DebugWriteLine("Apridisk plugin",
+            AaruConsole.DebugWriteLine("Apridisk plugin",
                                       "Found {0} cylinders and {1} heads with a maximum sector number of {2}",
                                       totalCylinders, totalHeads, maxSector);
 
@@ -182,7 +182,7 @@ namespace Aaru.DiscImages
                 }
             }
 
-            DicConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} bytes per sector",
+            AaruConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} bytes per sector",
                                       imageInfo.SectorSize);
 
             // Count sectors per track
@@ -196,7 +196,7 @@ namespace Aaru.DiscImages
 
             imageInfo.SectorsPerTrack = spt;
 
-            DicConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} sectors per track",
+            AaruConsole.DebugWriteLine("Apridisk plugin", "Found a minimum of {0} sectors per track",
                                       imageInfo.SectorsPerTrack);
 
             imageInfo.MediaType = Geometry.GetMediaType(((ushort)imageInfo.Cylinders, (byte)imageInfo.Heads,

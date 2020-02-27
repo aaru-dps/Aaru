@@ -86,7 +86,7 @@ namespace Aaru.DiscImages
                         if(!trackMatch.Success)
                             throw new ImageNotSupportedException($"Unknown line \"{line}\" at line {lineNumber}");
 
-                        DicConsole.DebugWriteLine("GDI plugin",
+                        AaruConsole.DebugWriteLine("GDI plugin",
                                                   "Found track {0} starts at {1} flags {2} type {3} file {4} offset {5} at line {6}",
                                                   trackMatch.Groups["track"].Value, trackMatch.Groups["start"].Value,
                                                   trackMatch.Groups["flags"].Value, trackMatch.Groups["type"].Value,
@@ -182,45 +182,45 @@ namespace Aaru.DiscImages
                 discimage.Disktype = MediaType.GDROM;
 
                 // DEBUG information
-                DicConsole.DebugWriteLine("GDI plugin", "Disc image parsing results");
+                AaruConsole.DebugWriteLine("GDI plugin", "Disc image parsing results");
 
-                DicConsole.DebugWriteLine("GDI plugin", "Session information:");
-                DicConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} sessions", discimage.Sessions.Count);
+                AaruConsole.DebugWriteLine("GDI plugin", "Session information:");
+                AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} sessions", discimage.Sessions.Count);
                 for(int i = 0; i < discimage.Sessions.Count; i++)
                 {
-                    DicConsole.DebugWriteLine("GDI plugin", "\tSession {0} information:", i + 1);
-                    DicConsole.DebugWriteLine("GDI plugin", "\t\tStarting track: {0}",
+                    AaruConsole.DebugWriteLine("GDI plugin", "\tSession {0} information:", i + 1);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting track: {0}",
                                               discimage.Sessions[i].StartTrack);
-                    DicConsole.DebugWriteLine("GDI plugin", "\t\tStarting sector: {0}",
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tStarting sector: {0}",
                                               discimage.Sessions[i].StartSector);
-                    DicConsole.DebugWriteLine("GDI plugin", "\t\tEnding track: {0}",  discimage.Sessions[i].EndTrack);
-                    DicConsole.DebugWriteLine("GDI plugin", "\t\tEnding sector: {0}", discimage.Sessions[i].EndSector);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding track: {0}",  discimage.Sessions[i].EndTrack);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tEnding sector: {0}", discimage.Sessions[i].EndSector);
                 }
 
-                DicConsole.DebugWriteLine("GDI plugin", "Track information:");
-                DicConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} tracks", discimage.Tracks.Count);
+                AaruConsole.DebugWriteLine("GDI plugin", "Track information:");
+                AaruConsole.DebugWriteLine("GDI plugin", "\tDisc contains {0} tracks", discimage.Tracks.Count);
                 for(int i = 0; i < discimage.Tracks.Count; i++)
                 {
-                    DicConsole.DebugWriteLine("GDI plugin", "\tTrack {0} information:", discimage.Tracks[i].Sequence);
-                    DicConsole.DebugWriteLine("GDI plugin", "\t\t{0} bytes per sector", discimage.Tracks[i].Bps);
-                    DicConsole.DebugWriteLine("GDI plugin", "\t\tPregap: {0} sectors",  discimage.Tracks[i].Pregap);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\tTrack {0} information:", discimage.Tracks[i].Sequence);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\t{0} bytes per sector", discimage.Tracks[i].Bps);
+                    AaruConsole.DebugWriteLine("GDI plugin", "\t\tPregap: {0} sectors",  discimage.Tracks[i].Pregap);
 
                     if((discimage.Tracks[i].Flags & 0x8) == 0x8)
-                        DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack is flagged as quadraphonic");
+                        AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is flagged as quadraphonic");
                     if((discimage.Tracks[i].Flags & 0x4) == 0x4)
-                        DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack is data");
+                        AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack is data");
                     if((discimage.Tracks[i].Flags & 0x2) == 0x2)
-                        DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack allows digital copy");
+                        AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack allows digital copy");
                     if((discimage.Tracks[i].Flags & 0x1) == 0x1)
-                        DicConsole.DebugWriteLine("GDI plugin", "\t\tTrack has pre-emphasis applied");
+                        AaruConsole.DebugWriteLine("GDI plugin", "\t\tTrack has pre-emphasis applied");
 
-                    DicConsole.DebugWriteLine("GDI plugin",
+                    AaruConsole.DebugWriteLine("GDI plugin",
                                               "\t\tTrack resides in file {0}, type defined as {1}, starting at byte {2}",
                                               discimage.Tracks[i].Trackfilter, discimage.Tracks[i].Tracktype,
                                               discimage.Tracks[i].Offset);
                 }
 
-                DicConsole.DebugWriteLine("GDI plugin", "Building offset map");
+                AaruConsole.DebugWriteLine("GDI plugin", "Building offset map");
 
                 Partitions = new List<Partition>();
                 ulong byteOffset = 0;
@@ -276,15 +276,15 @@ namespace Aaru.DiscImages
 
                 imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                DicConsole.VerboseWriteLine("GDI image describes a disc of type {0}", imageInfo.MediaType);
+                AaruConsole.VerboseWriteLine("GDI image describes a disc of type {0}", imageInfo.MediaType);
 
                 return true;
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetBasePath());
-                DicConsole.ErrorWriteLine("Exception: {0}",                              ex.Message);
-                DicConsole.ErrorWriteLine("Stack trace: {0}",                            ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Exception trying to identify image file {0}", imageFilter.GetBasePath());
+                AaruConsole.ErrorWriteLine("Exception: {0}",                              ex.Message);
+                AaruConsole.ErrorWriteLine("Stack trace: {0}",                            ex.StackTrace);
                 return false;
             }
         }

@@ -67,20 +67,20 @@ namespace Aaru.Partitions
 
             foreach(PC98Partition entry in table.entries)
             {
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}",      entry.dp_mid);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}",      entry.dp_sid);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}",     entry.dp_dum1);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}",     entry.dp_dum2);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}",  entry.dp_ipl_sct);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}",  entry.dp_ipl_cyl);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}",    entry.dp_ssect);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}",      entry.dp_shd);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}",     entry.dp_scyl);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}",    entry.dp_esect);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}",      entry.dp_ehd);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}",     entry.dp_ecyl);
-                DicConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"",
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_mid = {0}",      entry.dp_mid);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_sid = {0}",      entry.dp_sid);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum1 = {0}",     entry.dp_dum1);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_dum2 = {0}",     entry.dp_dum2);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_sct = {0}",  entry.dp_ipl_sct);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_head = {0}", entry.dp_ipl_head);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ipl_cyl = {0}",  entry.dp_ipl_cyl);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ssect = {0}",    entry.dp_ssect);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_shd = {0}",      entry.dp_shd);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_scyl = {0}",     entry.dp_scyl);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_esect = {0}",    entry.dp_esect);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ehd = {0}",      entry.dp_ehd);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_ecyl = {0}",     entry.dp_ecyl);
+                AaruConsole.DebugWriteLine("PC98 plugin", "entry.dp_name = \"{0}\"",
                                           StringHandlers.CToString(entry.dp_name, Encoding.GetEncoding(932)));
 
                 if(entry.dp_scyl  == entry.dp_ecyl             || entry.dp_ecyl <= 0 ||
@@ -103,13 +103,13 @@ namespace Aaru.Partitions
                                         imagePlugin.Info.SectorsPerTrack) - part.Start;
                 part.Size = part.Length * imagePlugin.Info.SectorSize;
 
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}",    part.Start);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}",     part.Type);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}",     part.Name);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}",   part.Offset);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}",   part.Length);
-                DicConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}",     part.Size);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Start = {0}",    part.Start);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Type = {0}",     part.Type);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Name = {0}",     part.Name);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Sequence = {0}", part.Sequence);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Offset = {0}",   part.Offset);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Length = {0}",   part.Length);
+                AaruConsole.DebugWriteLine("PC98 plugin", "part.Size = {0}",     part.Size);
 
                 if((entry.dp_mid & 0x20) != 0x20 && (entry.dp_mid & 0x44) != 0x44 ||
                    part.Start >= imagePlugin.Info.Sectors                         ||

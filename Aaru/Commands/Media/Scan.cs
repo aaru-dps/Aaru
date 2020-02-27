@@ -73,18 +73,18 @@ namespace Aaru.Commands.Media
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("media-scan");
 
-            DicConsole.DebugWriteLine("Media-Scan command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Media-Scan command", "--device={0}", devicePath);
-            DicConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", ibgLog);
-            DicConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLog);
-            DicConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Media-Scan command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Media-Scan command", "--device={0}", devicePath);
+            AaruConsole.DebugWriteLine("Media-Scan command", "--ibg-log={0}", ibgLog);
+            AaruConsole.DebugWriteLine("Media-Scan command", "--mhdd-log={0}", mhddLog);
+            AaruConsole.DebugWriteLine("Media-Scan command", "--verbose={0}", verbose);
 
             if(devicePath.Length == 2   &&
                devicePath[1]     == ':' &&
@@ -104,14 +104,14 @@ namespace Aaru.Commands.Media
 
                 if(dev.Error)
                 {
-                    DicConsole.ErrorWriteLine(Error.Print(dev.LastError));
+                    AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
                     return(int)ErrorNumber.CannotOpenDevice;
                 }
             }
             catch(DeviceException e)
             {
-                DicConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
 
                 return(int)ErrorNumber.CannotOpenDevice;
             }
@@ -134,26 +134,26 @@ namespace Aaru.Commands.Media
 
             ScanResults results = scanner.Scan();
 
-            DicConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
+            AaruConsole.WriteLine("Took a total of {0} seconds ({1} processing commands).", results.TotalTime,
                                  results.ProcessingTime);
 
-            DicConsole.WriteLine("Average speed: {0:F3} MiB/sec.", results.AvgSpeed);
-            DicConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
-            DicConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
-            DicConsole.WriteLine("Summary:");
-            DicConsole.WriteLine("{0} sectors took less than 3 ms.", results.A);
-            DicConsole.WriteLine("{0} sectors took less than 10 ms but more than 3 ms.", results.B);
-            DicConsole.WriteLine("{0} sectors took less than 50 ms but more than 10 ms.", results.C);
-            DicConsole.WriteLine("{0} sectors took less than 150 ms but more than 50 ms.", results.D);
-            DicConsole.WriteLine("{0} sectors took less than 500 ms but more than 150 ms.", results.E);
-            DicConsole.WriteLine("{0} sectors took more than 500 ms.", results.F);
-            DicConsole.WriteLine("{0} sectors could not be read.", results.UnreadableSectors.Count);
+            AaruConsole.WriteLine("Average speed: {0:F3} MiB/sec.", results.AvgSpeed);
+            AaruConsole.WriteLine("Fastest speed burst: {0:F3} MiB/sec.", results.MaxSpeed);
+            AaruConsole.WriteLine("Slowest speed burst: {0:F3} MiB/sec.", results.MinSpeed);
+            AaruConsole.WriteLine("Summary:");
+            AaruConsole.WriteLine("{0} sectors took less than 3 ms.", results.A);
+            AaruConsole.WriteLine("{0} sectors took less than 10 ms but more than 3 ms.", results.B);
+            AaruConsole.WriteLine("{0} sectors took less than 50 ms but more than 10 ms.", results.C);
+            AaruConsole.WriteLine("{0} sectors took less than 150 ms but more than 50 ms.", results.D);
+            AaruConsole.WriteLine("{0} sectors took less than 500 ms but more than 150 ms.", results.E);
+            AaruConsole.WriteLine("{0} sectors took more than 500 ms.", results.F);
+            AaruConsole.WriteLine("{0} sectors could not be read.", results.UnreadableSectors.Count);
 
             if(results.UnreadableSectors.Count > 0)
                 foreach(ulong bad in results.UnreadableSectors)
-                    DicConsole.WriteLine("Sector {0} could not be read", bad);
+                    AaruConsole.WriteLine("Sector {0} could not be read", bad);
 
-            DicConsole.WriteLine();
+            AaruConsole.WriteLine();
 
             #pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
 
@@ -164,7 +164,7 @@ namespace Aaru.Commands.Media
 
                 // ReSharper restore CompareOfFloatsByEqualityOperator
                 #pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
-                DicConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
+                AaruConsole.WriteLine("Testing {0} seeks, longest seek took {1:F3} ms, fastest one took {2:F3} ms. ({3:F3} ms average)",
                                      results.SeekTimes, results.SeekMax, results.SeekMin, results.SeekTotal / 1000);
 
             dev.Close();

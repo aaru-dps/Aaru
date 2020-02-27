@@ -65,27 +65,27 @@ namespace Aaru.DiscImages
                 return false;
 
             extended = edskId.SequenceEqual(header.magic);
-            DicConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", extended);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "Extended = {0}", extended);
 
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic = \"{0}\"",
                                       StringHandlers.CToString(header.magic));
 
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.magic2 = \"{0}\"",
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.magic2 = \"{0}\"",
                                       StringHandlers.CToString(header.magic2));
 
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.creator = \"{0}\"",
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.creator = \"{0}\"",
                                       StringHandlers.CToString(header.creator));
 
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.tracks = {0}", header.tracks);
-            DicConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}", header.sides);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.tracks = {0}", header.tracks);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "header.sides = {0}", header.sides);
 
             if(!extended)
-                DicConsole.DebugWriteLine("CPCDSK plugin", "header.tracksize = {0}", header.tracksize);
+                AaruConsole.DebugWriteLine("CPCDSK plugin", "header.tracksize = {0}", header.tracksize);
             else
                 for(int i = 0; i < header.tracks; i++)
                 {
                     for(int j = 0; j < header.sides; j++)
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "Track {0} Side {1} size = {2}", i, j,
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "Track {0} Side {1} size = {2}", i, j,
                                                   header.tracksizeTable[(i * header.sides) + j] * 256);
                 }
 
@@ -115,37 +115,37 @@ namespace Aaru.DiscImages
 
                     if(!trackId.SequenceEqual(trackInfo.magic))
                     {
-                        DicConsole.ErrorWriteLine("Not the expected track info.");
+                        AaruConsole.ErrorWriteLine("Not the expected track info.");
 
                         return false;
                     }
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].magic = \"{0}\"",
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].magic = \"{0}\"",
                                               StringHandlers.CToString(trackInfo.magic), i, j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].bps = {0}",
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].bps = {0}",
                                               SizeCodeToBytes(trackInfo.bps), i, j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate,
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].dataRate = {0}", trackInfo.dataRate,
                                               i, j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].filler = 0x{0:X2}", trackInfo.filler,
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].filler = 0x{0:X2}", trackInfo.filler,
                                               i, j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].gap3 = 0x{0:X2}", trackInfo.gap3, i,
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].gap3 = 0x{0:X2}", trackInfo.gap3, i,
                                               j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i,
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].padding = {0}", trackInfo.padding, i,
                                               j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].recordingMode = {0}",
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].recordingMode = {0}",
                                               trackInfo.recordingMode, i, j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i,
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sectors = {0}", trackInfo.sectors, i,
                                               j);
 
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
-                    DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].side = {0}", trackInfo.side, i, j);
+                    AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].track = {0}", trackInfo.track, i, j);
 
                     if(trackInfo.sectors != sectorsPerTrack)
                         if(sectorsPerTrack == 0)
@@ -158,25 +158,25 @@ namespace Aaru.DiscImages
 
                     for(int k = 1; k <= trackInfo.sectors; k++)
                     {
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].id = 0x{0:X2}",
                                                   trackInfo.sectorsInfo[k - 1].id, i, j, k);
 
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].len = {0}",
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].len = {0}",
                                                   trackInfo.sectorsInfo[k - 1].len, i, j, k);
 
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].side = {0}",
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].side = {0}",
                                                   trackInfo.sectorsInfo[k - 1].side, i, j, k);
 
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].size = {0}",
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].size = {0}",
                                                   SizeCodeToBytes(trackInfo.sectorsInfo[k - 1].size), i, j, k);
 
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st1 = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st1 = 0x{0:X2}",
                                                   trackInfo.sectorsInfo[k - 1].st1, i, j, k);
 
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st2 = 0x{0:X2}",
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].st2 = 0x{0:X2}",
                                                   trackInfo.sectorsInfo[k - 1].st2, i, j, k);
 
-                        DicConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].track = {0}",
+                        AaruConsole.DebugWriteLine("CPCDSK plugin", "trackInfo[{1}:{2}].sector[{3}].track = {0}",
                                                   trackInfo.sectorsInfo[k - 1].track, i, j, k);
 
                         int sectLen = extended ? trackInfo.sectorsInfo[k - 1].len
@@ -246,9 +246,9 @@ namespace Aaru.DiscImages
                 }
             }
 
-            DicConsole.DebugWriteLine("CPCDSK plugin", "Read {0} sectors", sectors.Count);
-            DicConsole.DebugWriteLine("CPCDSK plugin", "Read {0} tracks", readtracks);
-            DicConsole.DebugWriteLine("CPCDSK plugin", "All tracks are same size? {0}", allTracksSameSize);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "Read {0} sectors", sectors.Count);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "Read {0} tracks", readtracks);
+            AaruConsole.DebugWriteLine("CPCDSK plugin", "All tracks are same size? {0}", allTracksSameSize);
 
             imageInfo.Application          = StringHandlers.CToString(header.creator);
             imageInfo.CreationTime         = imageFilter.GetCreationTime();

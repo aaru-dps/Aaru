@@ -75,7 +75,7 @@ namespace Aaru.Filesystems
 
             UNICOS_Superblock unicosSb = Marshal.ByteArrayToStructureBigEndian<UNICOS_Superblock>(sector);
 
-            DicConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
+            AaruConsole.DebugWriteLine("UNICOS plugin", "magic = 0x{0:X16} (expected 0x{1:X16})", unicosSb.s_magic,
                                       UNICOS_MAGIC);
 
             return unicosSb.s_magic == UNICOS_MAGIC;

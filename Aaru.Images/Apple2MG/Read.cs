@@ -64,30 +64,30 @@ namespace Aaru.DiscImages
             if(imageHeader.DataSize == 0x00800C00)
             {
                 imageHeader.DataSize = 0x000C8000;
-                DicConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
+                AaruConsole.DebugWriteLine("2MG plugin", "Detected incorrect endian on data size field, correcting.");
             }
 
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"",
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.magic = \"{0}\"",
                                       Encoding.ASCII.GetString(magic));
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"",
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creator = \"{0}\"",
                                       Encoding.ASCII.GetString(creator));
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}",         imageHeader.HeaderSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}",            imageHeader.Version);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}",        imageHeader.ImageFormat);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}",         imageHeader.Flags);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}",             imageHeader.Blocks);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}",    imageHeader.DataOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}",           imageHeader.DataSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", imageHeader.CommentOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}",        imageHeader.CommentSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.headerSize = {0}",         imageHeader.HeaderSize);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.version = {0}",            imageHeader.Version);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.imageFormat = {0}",        imageHeader.ImageFormat);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.flags = 0x{0:X8}",         imageHeader.Flags);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.blocks = {0}",             imageHeader.Blocks);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataOffset = 0x{0:X8}",    imageHeader.DataOffset);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.dataSize = {0}",           imageHeader.DataSize);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentOffset = 0x{0:X8}", imageHeader.CommentOffset);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.commentSize = {0}",        imageHeader.CommentSize);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificOffset = 0x{0:X8}",
                                       imageHeader.CreatorSpecificOffset);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}",
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.creatorSpecificSize = {0}",
                                       imageHeader.CreatorSpecificSize);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", imageHeader.Reserved1);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", imageHeader.Reserved2);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", imageHeader.Reserved3);
-            DicConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", imageHeader.Reserved4);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved1 = 0x{0:X8}", imageHeader.Reserved1);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved2 = 0x{0:X8}", imageHeader.Reserved2);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved3 = 0x{0:X8}", imageHeader.Reserved3);
+            AaruConsole.DebugWriteLine("2MG plugin", "ImageHeader.reserved4 = 0x{0:X8}", imageHeader.Reserved4);
 
             if(imageHeader.DataSize    == 0 && imageHeader.Blocks == 0 &&
                imageHeader.ImageFormat != SectorOrder.ProDos) return false;
@@ -211,9 +211,9 @@ namespace Aaru.DiscImages
 
             imageInfo.XmlMediaType = XmlMediaType.BlockMedia;
 
-            DicConsole.VerboseWriteLine("2MG image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("2MG image contains a disk of type {0}", imageInfo.MediaType);
             if(!string.IsNullOrEmpty(imageInfo.Comments))
-                DicConsole.VerboseWriteLine("2MG comments: {0}", imageInfo.Comments);
+                AaruConsole.VerboseWriteLine("2MG comments: {0}", imageInfo.Comments);
 
             switch(imageInfo.MediaType)
             {

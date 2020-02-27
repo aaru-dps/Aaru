@@ -136,7 +136,7 @@ namespace Aaru.Gui.Forms
                 PlatformID platId  = DetectOS.GetRealPlatformID();
                 string     platVer = DetectOS.GetVersion();
                 AssemblyInformationalVersionAttribute assemblyVersion =
-                    Attribute.GetCustomAttribute(typeof(DicConsole).Assembly,
+                    Attribute.GetCustomAttribute(typeof(AaruConsole).Assembly,
                                                  typeof(AssemblyInformationalVersionAttribute)) as
                         AssemblyInformationalVersionAttribute;
 
@@ -172,8 +172,8 @@ namespace Aaru.Gui.Forms
             {
                 MessageBox.Show("Exception {0} trying to save logfile, details has been sent to console.",
                                 exception.Message);
-                DicConsole.ErrorWriteLine("Console", exception.Message);
-                DicConsole.ErrorWriteLine("Console", exception.StackTrace);
+                AaruConsole.ErrorWriteLine("Console", exception.Message);
+                AaruConsole.ErrorWriteLine("Console", exception.StackTrace);
             }
         }
 

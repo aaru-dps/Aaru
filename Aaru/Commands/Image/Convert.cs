@@ -201,47 +201,47 @@ namespace Aaru.Commands.Image
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("convert-image");
 
-            DicConsole.DebugWriteLine("Analyze command", "--cicm-xml={0}", cicmXml);
-            DicConsole.DebugWriteLine("Analyze command", "--comments={0}", comments);
-            DicConsole.DebugWriteLine("Analyze command", "--count={0}", count);
-            DicConsole.DebugWriteLine("Analyze command", "--creator={0}", creator);
-            DicConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-manufacturer={0}", driveManufacturer);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-model={0}", driveModel);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-revision={0}", driveFirmwareRevision);
-            DicConsole.DebugWriteLine("Analyze command", "--drive-serial={0}", driveSerialNumber);
-            DicConsole.DebugWriteLine("Analyze command", "--force={0}", force);
-            DicConsole.DebugWriteLine("Analyze command", "--format={0}", format);
-            DicConsole.DebugWriteLine("Analyze command", "--input={0}", inputPath);
-            DicConsole.DebugWriteLine("Analyze command", "--media-barcode={0}", mediaBarcode);
-            DicConsole.DebugWriteLine("Analyze command", "--media-lastsequence={0}", lastMediaSequence);
-            DicConsole.DebugWriteLine("Analyze command", "--media-manufacturer={0}", mediaManufacturer);
-            DicConsole.DebugWriteLine("Analyze command", "--media-model={0}", mediaModel);
-            DicConsole.DebugWriteLine("Analyze command", "--media-partnumber={0}", mediaPartNumber);
-            DicConsole.DebugWriteLine("Analyze command", "--media-sequence={0}", mediaSequence);
-            DicConsole.DebugWriteLine("Analyze command", "--media-serial={0}", mediaSerialNumber);
-            DicConsole.DebugWriteLine("Analyze command", "--media-title={0}", mediaTitle);
-            DicConsole.DebugWriteLine("Analyze command", "--options={0}", outputOptions);
-            DicConsole.DebugWriteLine("Analyze command", "--output={0}", outputPath);
-            DicConsole.DebugWriteLine("Analyze command", "--resume-file={0}", resumeFile);
-            DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Analyze command", "--cicm-xml={0}", cicmXml);
+            AaruConsole.DebugWriteLine("Analyze command", "--comments={0}", comments);
+            AaruConsole.DebugWriteLine("Analyze command", "--count={0}", count);
+            AaruConsole.DebugWriteLine("Analyze command", "--creator={0}", creator);
+            AaruConsole.DebugWriteLine("Analyze command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Analyze command", "--drive-manufacturer={0}", driveManufacturer);
+            AaruConsole.DebugWriteLine("Analyze command", "--drive-model={0}", driveModel);
+            AaruConsole.DebugWriteLine("Analyze command", "--drive-revision={0}", driveFirmwareRevision);
+            AaruConsole.DebugWriteLine("Analyze command", "--drive-serial={0}", driveSerialNumber);
+            AaruConsole.DebugWriteLine("Analyze command", "--force={0}", force);
+            AaruConsole.DebugWriteLine("Analyze command", "--format={0}", format);
+            AaruConsole.DebugWriteLine("Analyze command", "--input={0}", inputPath);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-barcode={0}", mediaBarcode);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-lastsequence={0}", lastMediaSequence);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-manufacturer={0}", mediaManufacturer);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-model={0}", mediaModel);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-partnumber={0}", mediaPartNumber);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-sequence={0}", mediaSequence);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-serial={0}", mediaSerialNumber);
+            AaruConsole.DebugWriteLine("Analyze command", "--media-title={0}", mediaTitle);
+            AaruConsole.DebugWriteLine("Analyze command", "--options={0}", outputOptions);
+            AaruConsole.DebugWriteLine("Analyze command", "--output={0}", outputPath);
+            AaruConsole.DebugWriteLine("Analyze command", "--resume-file={0}", resumeFile);
+            AaruConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
 
             Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(outputOptions);
-            DicConsole.DebugWriteLine("Analyze command", "Parsed options:");
+            AaruConsole.DebugWriteLine("Analyze command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
-                DicConsole.DebugWriteLine("Analyze command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
+                AaruConsole.DebugWriteLine("Analyze command", "{0} = {1}", parsedOption.Key, parsedOption.Value);
 
             if(count == 0)
             {
-                DicConsole.ErrorWriteLine("Need to specify more than 0 sectors to copy at once");
+                AaruConsole.ErrorWriteLine("Need to specify more than 0 sectors to copy at once");
 
                 return(int)ErrorNumber.InvalidArgument;
             }
@@ -262,14 +262,14 @@ namespace Aaru.Commands.Image
                     }
                     catch(Exception ex)
                     {
-                        DicConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
-                        DicConsole.DebugWriteLine("Image conversion", $"{ex}");
+                        AaruConsole.ErrorWriteLine("Incorrect metadata sidecar file, not continuing...");
+                        AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
 
                         return(int)ErrorNumber.InvalidSidecar;
                     }
                 else
                 {
-                    DicConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
+                    AaruConsole.ErrorWriteLine("Could not find metadata sidecar, not continuing...");
 
                     return(int)ErrorNumber.FileNotFound;
                 }
@@ -286,14 +286,14 @@ namespace Aaru.Commands.Image
                     }
                     catch(Exception ex)
                     {
-                        DicConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
-                        DicConsole.DebugWriteLine("Image conversion", $"{ex}");
+                        AaruConsole.ErrorWriteLine("Incorrect resume file, not continuing...");
+                        AaruConsole.DebugWriteLine("Image conversion", $"{ex}");
 
                         return(int)ErrorNumber.InvalidResume;
                     }
                 else
                 {
-                    DicConsole.ErrorWriteLine("Could not find resume file, not continuing...");
+                    AaruConsole.ErrorWriteLine("Could not find resume file, not continuing...");
 
                     return(int)ErrorNumber.FileNotFound;
                 }
@@ -303,14 +303,14 @@ namespace Aaru.Commands.Image
 
             if(inputFilter == null)
             {
-                DicConsole.ErrorWriteLine("Cannot open specified file.");
+                AaruConsole.ErrorWriteLine("Cannot open specified file.");
 
                 return(int)ErrorNumber.CannotOpenFile;
             }
 
             if(File.Exists(outputPath))
             {
-                DicConsole.ErrorWriteLine("Output file already exists, not continuing.");
+                AaruConsole.ErrorWriteLine("Output file already exists, not continuing.");
 
                 return(int)ErrorNumber.DestinationExists;
             }
@@ -320,23 +320,23 @@ namespace Aaru.Commands.Image
 
             if(inputFormat == null)
             {
-                DicConsole.WriteLine("Input image format not identified, not proceeding with conversion.");
+                AaruConsole.WriteLine("Input image format not identified, not proceeding with conversion.");
 
                 return(int)ErrorNumber.UnrecognizedFormat;
             }
 
             if(verbose)
-                DicConsole.VerboseWriteLine("Input image format identified by {0} ({1}).", inputFormat.Name,
+                AaruConsole.VerboseWriteLine("Input image format identified by {0} ({1}).", inputFormat.Name,
                                             inputFormat.Id);
             else
-                DicConsole.WriteLine("Input image format identified by {0}.", inputFormat.Name);
+                AaruConsole.WriteLine("Input image format identified by {0}.", inputFormat.Name);
 
             try
             {
                 if(!inputFormat.Open(inputFilter))
                 {
-                    DicConsole.WriteLine("Unable to open image format");
-                    DicConsole.WriteLine("No error given");
+                    AaruConsole.WriteLine("Unable to open image format");
+                    AaruConsole.WriteLine("No error given");
 
                     return(int)ErrorNumber.CannotOpenFormat;
                 }
@@ -362,14 +362,14 @@ namespace Aaru.Commands.Image
                 }
                 #pragma warning restore 612
 
-                DicConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
+                AaruConsole.DebugWriteLine("Convert-image command", "Correctly opened image file.");
 
-                DicConsole.DebugWriteLine("Convert-image command", "Image without headers is {0} bytes.",
+                AaruConsole.DebugWriteLine("Convert-image command", "Image without headers is {0} bytes.",
                                           inputFormat.Info.ImageSize);
 
-                DicConsole.DebugWriteLine("Convert-image command", "Image has {0} sectors.", inputFormat.Info.Sectors);
+                AaruConsole.DebugWriteLine("Convert-image command", "Image has {0} sectors.", inputFormat.Info.Sectors);
 
-                DicConsole.DebugWriteLine("Convert-image command", "Image identifies media type as {0}.", mediaType);
+                AaruConsole.DebugWriteLine("Convert-image command", "Image identifies media type as {0}.", mediaType);
 
                 Statistics.AddMediaFormat(inputFormat.Format);
                 Statistics.AddMedia(mediaType, false);
@@ -377,9 +377,9 @@ namespace Aaru.Commands.Image
             }
             catch(Exception ex)
             {
-                DicConsole.ErrorWriteLine("Unable to open image format");
-                DicConsole.ErrorWriteLine("Error: {0}", ex.Message);
-                DicConsole.DebugWriteLine("Convert-image command", "Stack trace: {0}", ex.StackTrace);
+                AaruConsole.ErrorWriteLine("Unable to open image format");
+                AaruConsole.ErrorWriteLine("Error: {0}", ex.Message);
+                AaruConsole.DebugWriteLine("Convert-image command", "Stack trace: {0}", ex.StackTrace);
 
                 return(int)ErrorNumber.CannotOpenFormat;
             }
@@ -404,14 +404,14 @@ namespace Aaru.Commands.Image
 
             if(candidates.Count == 0)
             {
-                DicConsole.WriteLine("No plugin supports requested extension.");
+                AaruConsole.WriteLine("No plugin supports requested extension.");
 
                 return(int)ErrorNumber.FormatNotFound;
             }
 
             if(candidates.Count > 1)
             {
-                DicConsole.WriteLine("More than one plugin supports requested extension.");
+                AaruConsole.WriteLine("More than one plugin supports requested extension.");
 
                 return(int)ErrorNumber.TooManyFormats;
             }
@@ -419,13 +419,13 @@ namespace Aaru.Commands.Image
             IWritableImage outputFormat = candidates[0];
 
             if(verbose)
-                DicConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
+                AaruConsole.VerboseWriteLine("Output image format: {0} ({1}).", outputFormat.Name, outputFormat.Id);
             else
-                DicConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
+                AaruConsole.WriteLine("Output image format: {0}.", outputFormat.Name);
 
             if(!outputFormat.SupportedMediaTypes.Contains(mediaType))
             {
-                DicConsole.ErrorWriteLine("Output format does not support media type, cannot continue...");
+                AaruConsole.ErrorWriteLine("Output format does not support media type, cannot continue...");
 
                 return(int)ErrorNumber.UnsupportedMedia;
             }
@@ -435,8 +435,8 @@ namespace Aaru.Commands.Image
                 if(outputFormat.SupportedMediaTags.Contains(mediaTag) || force)
                     continue;
 
-                DicConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...", mediaTag);
-                DicConsole.ErrorWriteLine("If you don't care, use force option.");
+                AaruConsole.ErrorWriteLine("Converting image will lose media tag {0}, not continuing...", mediaTag);
+                AaruConsole.ErrorWriteLine("If you don't care, use force option.");
 
                 return(int)ErrorNumber.DataWillBeLost;
             }
@@ -458,9 +458,9 @@ namespace Aaru.Commands.Image
                     continue;
                 }
 
-                DicConsole.ErrorWriteLine("Converting image will lose sector tag {0}, not continuing...", sectorTag);
+                AaruConsole.ErrorWriteLine("Converting image will lose sector tag {0}, not continuing...", sectorTag);
 
-                DicConsole.
+                AaruConsole.
                     ErrorWriteLine("If you don't care, use force option. This will skip all sector tags converting only user data.");
 
                 return(int)ErrorNumber.DataWillBeLost;
@@ -469,7 +469,7 @@ namespace Aaru.Commands.Image
             if(!outputFormat.Create(outputPath, mediaType, parsedOptions, inputFormat.Info.Sectors,
                                     inputFormat.Info.SectorSize))
             {
-                DicConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
+                AaruConsole.ErrorWriteLine("Error {0} creating output image.", outputFormat.ErrorMessage);
 
                 return(int)ErrorNumber.CannotCreateFormat;
             }
@@ -496,16 +496,16 @@ namespace Aaru.Commands.Image
 
             if(!outputFormat.SetMetadata(metadata))
             {
-                DicConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
+                AaruConsole.ErrorWrite("Error {0} setting metadata, ", outputFormat.ErrorMessage);
 
                 if(!force)
                 {
-                    DicConsole.ErrorWriteLine("not continuing...");
+                    AaruConsole.ErrorWriteLine("not continuing...");
 
                     return(int)ErrorNumber.WriteError;
                 }
 
-                DicConsole.ErrorWriteLine("continuing...");
+                AaruConsole.ErrorWriteLine("continuing...");
             }
 
             CICMMetadataType       cicmMetadata = inputFormat.CicmMetadata;
@@ -516,24 +516,24 @@ namespace Aaru.Commands.Image
                 if(force && !outputFormat.SupportedMediaTags.Contains(mediaTag))
                     continue;
 
-                DicConsole.WriteLine("Converting media tag {0}", mediaTag);
+                AaruConsole.WriteLine("Converting media tag {0}", mediaTag);
                 byte[] tag = inputFormat.ReadDiskTag(mediaTag);
 
                 if(outputFormat.WriteMediaTag(tag, mediaTag))
                     continue;
 
                 if(force)
-                    DicConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
+                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, continuing...", outputFormat.ErrorMessage);
                 else
                 {
-                    DicConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
+                    AaruConsole.ErrorWriteLine("Error {0} writing media tag, not continuing...",
                                               outputFormat.ErrorMessage);
 
                     return(int)ErrorNumber.WriteError;
                 }
             }
 
-            DicConsole.WriteLine("{0} sectors to convert", inputFormat.Info.Sectors);
+            AaruConsole.WriteLine("{0} sectors to convert", inputFormat.Info.Sectors);
             ulong doneSectors = 0;
 
             if(inputFormat is IOpticalMediaImage inputOptical      &&
@@ -542,7 +542,7 @@ namespace Aaru.Commands.Image
             {
                 if(!outputOptical.SetTracks(inputOptical.Tracks))
                 {
-                    DicConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
+                    AaruConsole.ErrorWriteLine("Error {0} sending tracks list to output image.",
                                               outputFormat.ErrorMessage);
 
                     return(int)ErrorNumber.WriteError;
@@ -564,7 +564,7 @@ namespace Aaru.Commands.Image
                         else
                             sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                        DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
+                        AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)",
                                          doneSectors               + track.TrackStartSector,
                                          doneSectors + sectorsToDo + track.TrackStartSector,
                                          (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
@@ -603,11 +603,11 @@ namespace Aaru.Commands.Image
 
                         if(!result)
                             if(force)
-                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
                             else
                             {
-                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
 
                                 return(int)ErrorNumber.WriteError;
@@ -617,10 +617,10 @@ namespace Aaru.Commands.Image
                     }
                 }
 
-                DicConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", inputFormat.Info.Sectors,
+                AaruConsole.Write("\rConverting sectors {0} to {1} in track {3} ({2:P2} done)", inputFormat.Info.Sectors,
                                  inputFormat.Info.Sectors, 1.0, inputOptical.Tracks.Count);
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags.OrderBy(t => t))
                 {
@@ -655,7 +655,7 @@ namespace Aaru.Commands.Image
                         {
                             case SectorTagType.CdTrackFlags:
                             case SectorTagType.CdTrackIsrc:
-                                DicConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
+                                AaruConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
                                                  track.TrackSequence,
                                                  track.TrackSequence / (double)inputOptical.Tracks.Count);
 
@@ -664,11 +664,11 @@ namespace Aaru.Commands.Image
 
                                 if(!result)
                                     if(force)
-                                        DicConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
+                                        AaruConsole.ErrorWriteLine("Error {0} writing tag, continuing...",
                                                                   outputFormat.ErrorMessage);
                                     else
                                     {
-                                        DicConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
+                                        AaruConsole.ErrorWriteLine("Error {0} writing tag, not continuing...",
                                                                   outputFormat.ErrorMessage);
 
                                         return(int)ErrorNumber.WriteError;
@@ -686,7 +686,7 @@ namespace Aaru.Commands.Image
                             else
                                 sectorsToDo = (uint)(trackSectors - doneSectors);
 
-                            DicConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
+                            AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
                                              doneSectors               + track.TrackStartSector,
                                              doneSectors + sectorsToDo + track.TrackStartSector,
                                              (doneSectors + track.TrackStartSector) / (double)inputFormat.Info.Sectors,
@@ -708,11 +708,11 @@ namespace Aaru.Commands.Image
 
                             if(!result)
                                 if(force)
-                                    DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
+                                    AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
                                 else
                                 {
-                                    DicConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
+                                    AaruConsole.ErrorWriteLine("Error {0} writing tag for sector {1}, not continuing...",
                                                               outputFormat.ErrorMessage, doneSectors);
 
                                     return(int)ErrorNumber.WriteError;
@@ -726,30 +726,30 @@ namespace Aaru.Commands.Image
                     {
                         case SectorTagType.CdTrackFlags:
                         case SectorTagType.CdTrackIsrc:
-                            DicConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
+                            AaruConsole.Write("\rConverting tag {0} in track {1} ({2:P2} done).", tag,
                                              inputOptical.Tracks.Count, 1.0);
 
                             break;
                         default:
-                            DicConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
+                            AaruConsole.Write("\rConverting tag {4} for sectors {0} to {1} in track {3} ({2:P2} done)",
                                              inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0,
                                              inputOptical.Tracks.Count, tag);
 
                             break;
                     }
 
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
             }
             else
             {
-                DicConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
+                AaruConsole.WriteLine("Setting geometry to {0} cylinders, {1} heads and {2} sectors per track",
                                      inputFormat.Info.Cylinders, inputFormat.Info.Heads,
                                      inputFormat.Info.SectorsPerTrack);
 
                 if(!outputFormat.SetGeometry(inputFormat.Info.Cylinders, inputFormat.Info.Heads,
                                              inputFormat.Info.SectorsPerTrack))
-                    DicConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
+                    AaruConsole.ErrorWriteLine("Error {0} setting geometry, image may be incorrect, continuing...",
                                               outputFormat.ErrorMessage);
 
                 while(doneSectors < inputFormat.Info.Sectors)
@@ -763,7 +763,7 @@ namespace Aaru.Commands.Image
                     else
                         sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
 
-                    DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", doneSectors,
+                    AaruConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", doneSectors,
                                      doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors);
 
                     bool result;
@@ -795,11 +795,11 @@ namespace Aaru.Commands.Image
 
                     if(!result)
                         if(force)
-                            DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                       outputFormat.ErrorMessage, doneSectors);
                         else
                         {
-                            DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                            AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                       outputFormat.ErrorMessage, doneSectors);
 
                             return(int)ErrorNumber.WriteError;
@@ -808,10 +808,10 @@ namespace Aaru.Commands.Image
                     doneSectors += sectorsToDo;
                 }
 
-                DicConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
+                AaruConsole.Write("\rConverting sectors {0} to {1} ({2:P2} done)", inputFormat.Info.Sectors,
                                  inputFormat.Info.Sectors, 1.0);
 
-                DicConsole.WriteLine();
+                AaruConsole.WriteLine();
 
                 foreach(SectorTagType tag in inputFormat.Info.ReadableSectorTags)
                 {
@@ -848,7 +848,7 @@ namespace Aaru.Commands.Image
                         else
                             sectorsToDo = (uint)(inputFormat.Info.Sectors - doneSectors);
 
-                        DicConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)", doneSectors,
+                        AaruConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)", doneSectors,
                                          doneSectors + sectorsToDo, doneSectors / (double)inputFormat.Info.Sectors,
                                          tag);
 
@@ -867,11 +867,11 @@ namespace Aaru.Commands.Image
 
                         if(!result)
                             if(force)
-                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
+                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
                             else
                             {
-                                DicConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
+                                AaruConsole.ErrorWriteLine("Error {0} writing sector {1}, not continuing...",
                                                           outputFormat.ErrorMessage, doneSectors);
 
                                 return(int)ErrorNumber.WriteError;
@@ -880,10 +880,10 @@ namespace Aaru.Commands.Image
                         doneSectors += sectorsToDo;
                     }
 
-                    DicConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)",
+                    AaruConsole.Write("\rConverting tag {2} for sectors {0} to {1} ({2:P2} done)",
                                      inputFormat.Info.Sectors, inputFormat.Info.Sectors, 1.0, tag);
 
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
             }
 
@@ -898,7 +898,7 @@ namespace Aaru.Commands.Image
                     ret = outputFormat.SetDumpHardware(dumpHardware);
 
                 if(ret)
-                    DicConsole.WriteLine("Written dump hardware list to output image.");
+                    AaruConsole.WriteLine("Written dump hardware list to output image.");
             }
 
             ret = false;
@@ -912,17 +912,17 @@ namespace Aaru.Commands.Image
                     ret = outputFormat.SetCicmMetadata(cicmMetadata);
 
                 if(ret)
-                    DicConsole.WriteLine("Written CICM XML metadata to output image.");
+                    AaruConsole.WriteLine("Written CICM XML metadata to output image.");
             }
 
-            DicConsole.WriteLine("Closing output image.");
+            AaruConsole.WriteLine("Closing output image.");
 
             if(!outputFormat.Close())
-                DicConsole.ErrorWriteLine("Error {0} closing output image... Contents are not correct.",
+                AaruConsole.ErrorWriteLine("Error {0} closing output image... Contents are not correct.",
                                           outputFormat.ErrorMessage);
 
-            DicConsole.WriteLine();
-            DicConsole.WriteLine("Conversion done.");
+            AaruConsole.WriteLine();
+            AaruConsole.WriteLine("Conversion done.");
 
             return(int)ErrorNumber.NoError;
         }

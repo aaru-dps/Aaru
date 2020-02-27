@@ -133,7 +133,7 @@ namespace Aaru.Gui.Tabs
 
                     cisList.Add(new TreeGridItem {Values = new object[] {tupleCode, tupleDescription}});
                 }
-            else DicConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
+            else AaruConsole.DebugWriteLine("Device-Info command", "PCMCIA CIS returned no tuples");
         }
 
         protected void OnTreePcmciaSelectedItemChanged(object sender, EventArgs e)

@@ -72,7 +72,7 @@ namespace Aaru.Core.Devices.Report
 
         public MmcFeatures ReportMmcFeatures()
         {
-            DicConsole.WriteLine("Querying MMC GET CONFIGURATION...");
+            AaruConsole.WriteLine("Querying MMC GET CONFIGURATION...");
             bool sense = _dev.GetConfiguration(out byte[] buffer, out _, _dev.Timeout, out _);
 
             if(sense)
@@ -576,7 +576,7 @@ namespace Aaru.Core.Devices.Report
         {
             var mediaTest = new TestedMedia();
 
-            DicConsole.WriteLine("Querying SCSI READ CAPACITY...");
+            AaruConsole.WriteLine("Querying SCSI READ CAPACITY...");
             bool sense = _dev.ReadCapacity(out byte[] buffer, out byte[] senseBuffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -589,7 +589,7 @@ namespace Aaru.Core.Devices.Report
                 mediaTest.BlockSize = (uint)((buffer[5] << 24) + (buffer[5] << 16) + (buffer[6] << 8) + buffer[7]);
             }
 
-            DicConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
+            AaruConsole.WriteLine("Querying SCSI READ CAPACITY (16)...");
             sense = _dev.ReadCapacity16(out buffer, out buffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -605,7 +605,7 @@ namespace Aaru.Core.Devices.Report
 
             Modes.DecodedMode? decMode = null;
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE (10)...");
 
             sense = _dev.ModeSense10(out buffer, out senseBuffer, false, true, ScsiModeSensePageControl.Current, 0x3F,
                                      0x00, _dev.Timeout, out _);
@@ -618,7 +618,7 @@ namespace Aaru.Core.Devices.Report
                 mediaTest.ModeSense10Data = buffer;
             }
 
-            DicConsole.WriteLine("Querying SCSI MODE SENSE...");
+            AaruConsole.WriteLine("Querying SCSI MODE SENSE...");
             sense = _dev.ModeSense(out buffer, out senseBuffer, _dev.Timeout, out _);
 
             if(!sense &&
@@ -643,18 +643,18 @@ namespace Aaru.Core.Devices.Report
                mediaType.StartsWith("DDCD-", StringComparison.Ordinal) ||
                mediaType == "Audio CD")
             {
-                DicConsole.WriteLine("Querying CD TOC...");
+                AaruConsole.WriteLine("Querying CD TOC...");
 
                 mediaTest.CanReadTOC =
                     !_dev.ReadTocPmaAtip(out buffer, out senseBuffer, false, 0, 0, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadTOC);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadTOC);
 
                 mediaTest.TocData = buffer;
 
-                DicConsole.WriteLine("Querying CD Full TOC...");
+                AaruConsole.WriteLine("Querying CD Full TOC...");
                 mediaTest.CanReadFullTOC = !_dev.ReadRawToc(out buffer, out senseBuffer, 1, _dev.Timeout, out _);
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadFullTOC);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadFullTOC);
 
                 mediaTest.FullTocData = buffer;
             }
@@ -662,15 +662,15 @@ namespace Aaru.Core.Devices.Report
             if(mediaType.StartsWith("CD-R", StringComparison.Ordinal) ||
                mediaType.StartsWith("DDCD-R", StringComparison.Ordinal))
             {
-                DicConsole.WriteLine("Querying CD ATIP...");
+                AaruConsole.WriteLine("Querying CD ATIP...");
                 mediaTest.CanReadATIP = !_dev.ReadAtip(out buffer, out senseBuffer, _dev.Timeout, out _);
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadATIP);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadATIP);
 
                 mediaTest.AtipData = buffer;
 
-                DicConsole.WriteLine("Querying CD PMA...");
+                AaruConsole.WriteLine("Querying CD PMA...");
                 mediaTest.CanReadPMA = !_dev.ReadPma(out buffer, out senseBuffer, _dev.Timeout, out _);
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPMA);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPMA);
 
                 mediaTest.PmaData = buffer;
             }
@@ -679,39 +679,39 @@ namespace Aaru.Core.Devices.Report
                mediaType.StartsWith("HD DVD-", StringComparison.Ordinal) ||
                mediaType.StartsWith("PD-", StringComparison.Ordinal))
             {
-                DicConsole.WriteLine("Querying DVD PFI...");
+                AaruConsole.WriteLine("Querying DVD PFI...");
 
                 mediaTest.CanReadPFI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                MmcDiscStructureFormat.PhysicalInformation, 0,
                                                                _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPFI);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPFI);
 
                 mediaTest.PfiData = buffer;
 
-                DicConsole.WriteLine("Querying DVD DMI...");
+                AaruConsole.WriteLine("Querying DVD DMI...");
 
                 mediaTest.CanReadDMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                MmcDiscStructureFormat.DiscManufacturingInformation, 0,
                                                                _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDMI);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDMI);
 
                 mediaTest.DmiData = buffer;
             }
 
             if(mediaType == "DVD-ROM")
             {
-                DicConsole.WriteLine("Querying DVD CMI...");
+                AaruConsole.WriteLine("Querying DVD CMI...");
 
                 mediaTest.CanReadCMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                MmcDiscStructureFormat.CopyrightInformation, 0,
                                                                _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCMI);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCMI);
 
                 mediaTest.CmiData = buffer;
             }
@@ -720,39 +720,39 @@ namespace Aaru.Core.Devices.Report
             {
                 case"DVD-ROM":
                 case"HD DVD-ROM":
-                    DicConsole.WriteLine("Querying DVD BCA...");
+                    AaruConsole.WriteLine("Querying DVD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                    MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                    MmcDiscStructureFormat.BurstCuttingArea, 0,
                                                                    _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
 
                     mediaTest.DvdBcaData = buffer;
 
-                    DicConsole.WriteLine("Querying DVD AACS...");
+                    AaruConsole.WriteLine("Querying DVD AACS...");
 
                     mediaTest.CanReadAACS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                     MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                     MmcDiscStructureFormat.DvdAacs, 0, _dev.Timeout,
                                                                     out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadAACS);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadAACS);
 
                     mediaTest.DvdAacsData = buffer;
 
                     break;
                 case"Nintendo GameCube game":
                 case"Nintendo Wii game":
-                    DicConsole.WriteLine("Querying DVD BCA...");
+                    AaruConsole.WriteLine("Querying DVD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                    MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                    MmcDiscStructureFormat.BurstCuttingArea, 0,
                                                                    _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
 
                     mediaTest.DvdBcaData = buffer;
 
@@ -763,14 +763,14 @@ namespace Aaru.Core.Devices.Report
                 case"PlayStation 4 game":
                 case"Xbox One game":
                 case"Nintendo Wii U game":
-                    DicConsole.WriteLine("Querying BD BCA...");
+                    AaruConsole.WriteLine("Querying BD BCA...");
 
                     mediaTest.CanReadBCA = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                    MmcDiscStructureMediaType.Bd, 0, 0,
                                                                    MmcDiscStructureFormat.BdBurstCuttingArea, 0,
                                                                    _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadBCA);
 
                     mediaTest.BluBcaData = buffer;
 
@@ -784,7 +784,7 @@ namespace Aaru.Core.Devices.Report
                                                                    MmcDiscStructureFormat.DvdramDds, 0, _dev.Timeout,
                                                                    out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
 
                     mediaTest.DvdDdsData = buffer;
 
@@ -793,7 +793,7 @@ namespace Aaru.Core.Devices.Report
                                                 MmcDiscStructureFormat.DvdramSpareAreaInformation, 0, _dev.Timeout,
                                                 out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadSpareAreaInformation);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadSpareAreaInformation);
 
                     mediaTest.DvdSaiData = buffer;
 
@@ -803,23 +803,23 @@ namespace Aaru.Core.Devices.Report
             if(mediaType.StartsWith("BD-R", StringComparison.Ordinal) &&
                mediaType != "BD-ROM")
             {
-                DicConsole.WriteLine("Querying BD DDS...");
+                AaruConsole.WriteLine("Querying BD DDS...");
 
                 mediaTest.CanReadDDS = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Bd, 0, 0,
                                                                MmcDiscStructureFormat.BdDds, 0, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDDS);
 
                 mediaTest.BluDdsData = buffer;
 
-                DicConsole.WriteLine("Querying BD SAI...");
+                AaruConsole.WriteLine("Querying BD SAI...");
 
                 mediaTest.CanReadSpareAreaInformation =
                     !_dev.ReadDiscStructure(out buffer, out senseBuffer, MmcDiscStructureMediaType.Bd, 0, 0,
                                             MmcDiscStructureFormat.BdSpareAreaInformation, 0, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadSpareAreaInformation);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadSpareAreaInformation);
 
                 mediaTest.BluSaiData = buffer;
             }
@@ -827,14 +827,14 @@ namespace Aaru.Core.Devices.Report
             if(mediaType == "DVD-R" ||
                mediaType == "DVD-RW")
             {
-                DicConsole.WriteLine("Querying DVD PRI...");
+                AaruConsole.WriteLine("Querying DVD PRI...");
 
                 mediaTest.CanReadPRI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                MmcDiscStructureFormat.PreRecordedInfo, 0, _dev.Timeout,
                                                                out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPRI);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPRI);
 
                 mediaTest.PriData = buffer;
             }
@@ -843,22 +843,22 @@ namespace Aaru.Core.Devices.Report
                mediaType == "DVD-RW" ||
                mediaType == "HD DVD-R")
             {
-                DicConsole.WriteLine("Querying DVD Media ID...");
+                AaruConsole.WriteLine("Querying DVD Media ID...");
 
                 mediaTest.CanReadMediaID = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                    MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                    MmcDiscStructureFormat.DvdrMediaIdentifier, 0,
                                                                    _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadMediaID);
-                DicConsole.WriteLine("Querying DVD Embossed PFI...");
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadMediaID);
+                AaruConsole.WriteLine("Querying DVD Embossed PFI...");
 
                 mediaTest.CanReadRecordablePFI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                          MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                          MmcDiscStructureFormat.DvdrPhysicalInformation,
                                                                          0, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRecordablePFI);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRecordablePFI);
 
                 mediaTest.EmbossedPfiData = buffer;
             }
@@ -866,51 +866,51 @@ namespace Aaru.Core.Devices.Report
             if(mediaType.StartsWith("DVD+R", StringComparison.Ordinal) ||
                mediaType == "DVD+MRW")
             {
-                DicConsole.WriteLine("Querying DVD ADIP...");
+                AaruConsole.WriteLine("Querying DVD ADIP...");
 
                 mediaTest.CanReadADIP = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                 MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                 MmcDiscStructureFormat.Adip, 0, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadADIP);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadADIP);
 
                 mediaTest.AdipData = buffer;
 
-                DicConsole.WriteLine("Querying DVD DCB...");
+                AaruConsole.WriteLine("Querying DVD DCB...");
 
                 mediaTest.CanReadDCB = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                MmcDiscStructureFormat.Dcb, 0, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDCB);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDCB);
 
                 mediaTest.DcbData = buffer;
             }
 
             if(mediaType == "HD DVD-ROM")
             {
-                DicConsole.WriteLine("Querying HD DVD CMI...");
+                AaruConsole.WriteLine("Querying HD DVD CMI...");
 
                 mediaTest.CanReadHDCMI = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                  MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                  MmcDiscStructureFormat.HddvdCopyrightInformation, 0,
                                                                  _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadHDCMI);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadHDCMI);
 
                 mediaTest.HdCmiData = buffer;
             }
 
             if(mediaType.EndsWith(" DL", StringComparison.Ordinal))
             {
-                DicConsole.WriteLine("Querying DVD Layer Capacity...");
+                AaruConsole.WriteLine("Querying DVD Layer Capacity...");
 
                 mediaTest.CanReadLayerCapacity = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                          MmcDiscStructureMediaType.Dvd, 0, 0,
                                                                          MmcDiscStructureFormat.DvdrLayerCapacity, 0,
                                                                          _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLayerCapacity);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLayerCapacity);
 
                 mediaTest.DvdLayerData = buffer;
             }
@@ -922,31 +922,31 @@ namespace Aaru.Core.Devices.Report
                mediaType == "Xbox One game"                           ||
                mediaType == "Nintendo Wii game")
             {
-                DicConsole.WriteLine("Querying BD Disc Information...");
+                AaruConsole.WriteLine("Querying BD Disc Information...");
 
                 mediaTest.CanReadDiscInformation = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                            MmcDiscStructureMediaType.Bd, 0, 0,
                                                                            MmcDiscStructureFormat.DiscInformation, 0,
                                                                            _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDiscInformation);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadDiscInformation);
 
                 mediaTest.BluDiData = buffer;
 
-                DicConsole.WriteLine("Querying BD PAC...");
+                AaruConsole.WriteLine("Querying BD PAC...");
 
                 mediaTest.CanReadPAC = !_dev.ReadDiscStructure(out buffer, out senseBuffer,
                                                                MmcDiscStructureMediaType.Bd, 0, 0,
                                                                MmcDiscStructureFormat.Pac, 0, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPAC);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPAC);
 
                 mediaTest.BluPacData = buffer;
             }
 
             if(mediaType.StartsWith("CD-", StringComparison.Ordinal))
             {
-                DicConsole.WriteLine("Trying SCSI READ CD scrambled...");
+                AaruConsole.WriteLine("Trying SCSI READ CD scrambled...");
 
                 mediaTest.CanReadCdScrambled = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2352, 1,
                                                             MmcSectorTypes.Cdda, false, false, false,
@@ -958,71 +958,71 @@ namespace Aaru.Core.Devices.Report
 
             if(mediaType.StartsWith("PD-", StringComparison.Ordinal))
             {
-                DicConsole.WriteLine("Trying SCSI READ (6)...");
+                AaruConsole.WriteLine("Trying SCSI READ (6)...");
                 mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 16, 512, _dev.Timeout, out _);
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
 
                 mediaTest.Read6Data = buffer;
 
-                DicConsole.WriteLine("Trying SCSI READ (10)...");
+                AaruConsole.WriteLine("Trying SCSI READ (10)...");
 
                 mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
                                                         512, 0, 1, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
 
                 mediaTest.Read10Data = buffer;
 
-                DicConsole.WriteLine("Trying SCSI READ (12)...");
+                AaruConsole.WriteLine("Trying SCSI READ (12)...");
 
                 mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
                                                         512, 0, 1, false, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
 
                 mediaTest.Read12Data = buffer;
 
-                DicConsole.WriteLine("Trying SCSI READ (16)...");
+                AaruConsole.WriteLine("Trying SCSI READ (16)...");
 
                 mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 512, 0,
                                                         1, false, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
 
                 mediaTest.Read16Data = buffer;
             }
             else
             {
-                DicConsole.WriteLine("Trying SCSI READ (6)...");
+                AaruConsole.WriteLine("Trying SCSI READ (6)...");
                 mediaTest.SupportsRead6 = !_dev.Read6(out buffer, out senseBuffer, 16, 2048, _dev.Timeout, out _);
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead6);
 
                 mediaTest.Read6Data = buffer;
 
-                DicConsole.WriteLine("Trying SCSI READ (10)...");
+                AaruConsole.WriteLine("Trying SCSI READ (10)...");
 
                 mediaTest.SupportsRead10 = !_dev.Read10(out buffer, out senseBuffer, 0, false, true, false, false, 16,
                                                         2048, 0, 1, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead10);
 
                 mediaTest.Read10Data = buffer;
 
-                DicConsole.WriteLine("Trying SCSI READ (12)...");
+                AaruConsole.WriteLine("Trying SCSI READ (12)...");
 
                 mediaTest.SupportsRead12 = !_dev.Read12(out buffer, out senseBuffer, 0, false, true, false, false, 16,
                                                         2048, 0, 1, false, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead12);
 
                 mediaTest.Read12Data = buffer;
 
-                DicConsole.WriteLine("Trying SCSI READ (16)...");
+                AaruConsole.WriteLine("Trying SCSI READ (16)...");
 
                 mediaTest.SupportsRead16 = !_dev.Read16(out buffer, out senseBuffer, 0, false, true, false, 16, 2048, 0,
                                                         1, false, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsRead16);
 
                 mediaTest.Read16Data = buffer;
             }
@@ -1033,53 +1033,53 @@ namespace Aaru.Core.Devices.Report
             {
                 if(mediaType == "Audio CD")
                 {
-                    DicConsole.WriteLine("Trying SCSI READ CD...");
+                    AaruConsole.WriteLine("Trying SCSI READ CD...");
 
                     mediaTest.SupportsReadCd = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2352, 1,
                                                             MmcSectorTypes.Cdda, false, false, false,
                                                             MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                             MmcSubchannel.None, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCd);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCd);
 
                     mediaTest.ReadCdFullData = buffer;
 
-                    DicConsole.WriteLine("Trying SCSI READ CD MSF...");
+                    AaruConsole.WriteLine("Trying SCSI READ CD MSF...");
 
                     mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211,
                                                                   2352, MmcSectorTypes.Cdda, false, false,
                                                                   MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                   MmcSubchannel.None, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
 
                     mediaTest.ReadCdMsfFullData = buffer;
                 }
                 else
                 {
-                    DicConsole.WriteLine("Trying SCSI READ CD...");
+                    AaruConsole.WriteLine("Trying SCSI READ CD...");
 
                     mediaTest.SupportsReadCd = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2048, 1,
                                                             MmcSectorTypes.AllTypes, false, false, false,
                                                             MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                             MmcSubchannel.None, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCd);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCd);
 
                     mediaTest.ReadCdData = buffer;
 
-                    DicConsole.WriteLine("Trying SCSI READ CD MSF...");
+                    AaruConsole.WriteLine("Trying SCSI READ CD MSF...");
 
                     mediaTest.SupportsReadCdMsf = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211,
                                                                   2048, MmcSectorTypes.AllTypes, false, false,
                                                                   MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                   MmcSubchannel.None, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsf);
 
                     mediaTest.ReadCdMsfData = buffer;
 
-                    DicConsole.WriteLine("Trying SCSI READ CD full sector...");
+                    AaruConsole.WriteLine("Trying SCSI READ CD full sector...");
 
                     mediaTest.SupportsReadCdRaw = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2352, 1,
                                                                MmcSectorTypes.AllTypes, false, false, true,
@@ -1087,11 +1087,11 @@ namespace Aaru.Core.Devices.Report
                                                                MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
                                                                out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdRaw);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdRaw);
 
                     mediaTest.ReadCdFullData = buffer;
 
-                    DicConsole.WriteLine("Trying SCSI READ CD MSF full sector...");
+                    AaruConsole.WriteLine("Trying SCSI READ CD MSF full sector...");
 
                     mediaTest.SupportsReadCdMsfRaw = !_dev.ReadCdMsf(out buffer, out senseBuffer, 0x00000210,
                                                                      0x00000211, 2352, MmcSectorTypes.AllTypes, false,
@@ -1099,7 +1099,7 @@ namespace Aaru.Core.Devices.Report
                                                                      MmcErrorField.None, MmcSubchannel.None,
                                                                      _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsfRaw);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsReadCdMsfRaw);
 
                     mediaTest.ReadCdMsfFullData = buffer;
                 }
@@ -1107,7 +1107,7 @@ namespace Aaru.Core.Devices.Report
                 if(mediaTest.SupportsReadCdRaw == true ||
                    mediaType                   == "Audio CD")
                 {
-                    DicConsole.WriteLine("Trying to read CD Track 1 pre-gap...");
+                    AaruConsole.WriteLine("Trying to read CD Track 1 pre-gap...");
 
                     for(int i = -150; i < 0; i++)
                     {
@@ -1120,7 +1120,7 @@ namespace Aaru.Core.Devices.Report
                                                 false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
-                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
 
                         mediaTest.Track1PregapData = buffer;
 
@@ -1132,7 +1132,7 @@ namespace Aaru.Core.Devices.Report
                         break;
                     }
 
-                    DicConsole.WriteLine("Trying to read CD Lead-In...");
+                    AaruConsole.WriteLine("Trying to read CD Lead-In...");
 
                     foreach(int i in new[]
                     {
@@ -1148,7 +1148,7 @@ namespace Aaru.Core.Devices.Report
                                                 false, false, true, MmcHeaderCodes.AllHeaders, true, true,
                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout, out _);
 
-                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", sense);
 
                         mediaTest.LeadInData = buffer;
 
@@ -1160,7 +1160,7 @@ namespace Aaru.Core.Devices.Report
                         break;
                     }
 
-                    DicConsole.WriteLine("Trying to read CD Lead-Out...");
+                    AaruConsole.WriteLine("Trying to read CD Lead-Out...");
 
                     if(mediaType == "Audio CD")
                         mediaTest.CanReadLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
@@ -1176,14 +1176,14 @@ namespace Aaru.Core.Devices.Report
                                                                 MmcErrorField.None, MmcSubchannel.None, _dev.Timeout,
                                                                 out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLeadOut);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadLeadOut);
 
                     mediaTest.LeadOutData = buffer;
                 }
 
                 if(mediaType == "Audio CD")
                 {
-                    DicConsole.WriteLine("Trying to read C2 Pointers...");
+                    AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
                     mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2646, 1,
                                                                MmcSectorTypes.Cdda, false, false, false,
@@ -1198,18 +1198,18 @@ namespace Aaru.Core.Devices.Report
                                                                    MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
                                                                    _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
 
                     mediaTest.C2PointersData = buffer;
 
-                    DicConsole.WriteLine("Trying to read subchannels...");
+                    AaruConsole.WriteLine("Trying to read subchannels...");
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2368, 1,
                                                                  MmcSectorTypes.Cdda, false, false, false,
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
                     mediaTest.PQSubchannelData = buffer;
 
@@ -1218,7 +1218,7 @@ namespace Aaru.Core.Devices.Report
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
                     mediaTest.RWSubchannelData = buffer;
 
@@ -1228,11 +1228,11 @@ namespace Aaru.Core.Devices.Report
                                                                         MmcErrorField.None, MmcSubchannel.Rw,
                                                                         _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
 
                     mediaTest.CorrectedSubchannelData = buffer;
 
-                    DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
+                    AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
                     mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 0, 2662, 1,
                                                                        MmcSectorTypes.Cdda, false, false, false,
@@ -1247,7 +1247,7 @@ namespace Aaru.Core.Devices.Report
                                                                            MmcErrorField.C2PointersAndBlock,
                                                                            MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
                     mediaTest.PQSubchannelWithC2Data = buffer;
 
@@ -1264,7 +1264,7 @@ namespace Aaru.Core.Devices.Report
                                                                            MmcErrorField.C2PointersAndBlock,
                                                                            MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
                     mediaTest.RWSubchannelWithC2Data = buffer;
 
@@ -1283,14 +1283,14 @@ namespace Aaru.Core.Devices.Report
                                                                                   MmcSubchannel.Rw, _dev.Timeout,
                                                                                   out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                     mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
                 else if(mediaTest.SupportsReadCdRaw == true)
                 {
-                    DicConsole.WriteLine("Trying to read C2 Pointers...");
+                    AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
                     mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2646, 1,
                                                                MmcSectorTypes.AllTypes, false, false, true,
@@ -1305,11 +1305,11 @@ namespace Aaru.Core.Devices.Report
                                                                    MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
                                                                    _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
 
                     mediaTest.C2PointersData = buffer;
 
-                    DicConsole.WriteLine("Trying to read subchannels...");
+                    AaruConsole.WriteLine("Trying to read subchannels...");
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2368, 1,
                                                                  MmcSectorTypes.AllTypes, false, false, true,
@@ -1317,7 +1317,7 @@ namespace Aaru.Core.Devices.Report
                                                                  MmcErrorField.None, MmcSubchannel.Q16, _dev.Timeout,
                                                                  out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
                     mediaTest.PQSubchannelData = buffer;
 
@@ -1327,7 +1327,7 @@ namespace Aaru.Core.Devices.Report
                                                                  MmcErrorField.None, MmcSubchannel.Raw, _dev.Timeout,
                                                                  out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
                     mediaTest.RWSubchannelData = buffer;
 
@@ -1337,11 +1337,11 @@ namespace Aaru.Core.Devices.Report
                                                                         MmcErrorField.None, MmcSubchannel.Rw,
                                                                         _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
 
                     mediaTest.CorrectedSubchannelData = buffer;
 
-                    DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
+                    AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
                     mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2662, 1,
                                                                        MmcSectorTypes.AllTypes, false, false, true,
@@ -1356,7 +1356,7 @@ namespace Aaru.Core.Devices.Report
                                                                            MmcErrorField.C2PointersAndBlock,
                                                                            MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
                     mediaTest.PQSubchannelWithC2Data = buffer;
 
@@ -1373,7 +1373,7 @@ namespace Aaru.Core.Devices.Report
                                                                            MmcErrorField.C2PointersAndBlock,
                                                                            MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
                     mediaTest.RWSubchannelWithC2Data = buffer;
 
@@ -1392,14 +1392,14 @@ namespace Aaru.Core.Devices.Report
                                                                                   MmcSubchannel.Rw, _dev.Timeout,
                                                                                   out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                     mediaTest.CorrectedSubchannelWithC2Data = buffer;
                 }
                 else
                 {
-                    DicConsole.WriteLine("Trying to read C2 Pointers...");
+                    AaruConsole.WriteLine("Trying to read C2 Pointers...");
 
                     mediaTest.CanReadC2Pointers = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2342, 1,
                                                                MmcSectorTypes.AllTypes, false, false, false,
@@ -1414,18 +1414,18 @@ namespace Aaru.Core.Devices.Report
                                                                    MmcErrorField.C2PointersAndBlock, MmcSubchannel.None,
                                                                    _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadC2Pointers);
 
                     mediaTest.C2PointersData = buffer;
 
-                    DicConsole.WriteLine("Trying to read subchannels...");
+                    AaruConsole.WriteLine("Trying to read subchannels...");
 
                     mediaTest.CanReadPQSubchannel = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2064, 1,
                                                                  MmcSectorTypes.AllTypes, false, false, false,
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannel);
 
                     mediaTest.PQSubchannelData = buffer;
 
@@ -1434,7 +1434,7 @@ namespace Aaru.Core.Devices.Report
                                                                  MmcHeaderCodes.None, true, false, MmcErrorField.None,
                                                                  MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannel);
 
                     mediaTest.RWSubchannelData = buffer;
 
@@ -1444,11 +1444,11 @@ namespace Aaru.Core.Devices.Report
                                                                         MmcErrorField.None, MmcSubchannel.Rw,
                                                                         _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadCorrectedSubchannel);
 
                     mediaTest.CorrectedSubchannelData = buffer;
 
-                    DicConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
+                    AaruConsole.WriteLine("Trying to read subchannels with C2 Pointers...");
 
                     mediaTest.CanReadPQSubchannelWithC2 = !_dev.ReadCd(out buffer, out senseBuffer, 16, 2358, 1,
                                                                        MmcSectorTypes.AllTypes, false, false, false,
@@ -1463,7 +1463,7 @@ namespace Aaru.Core.Devices.Report
                                                                            MmcErrorField.C2PointersAndBlock,
                                                                            MmcSubchannel.Q16, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadPQSubchannelWithC2);
 
                     mediaTest.PQSubchannelWithC2Data = buffer;
 
@@ -1480,7 +1480,7 @@ namespace Aaru.Core.Devices.Report
                                                                            MmcErrorField.C2PointersAndBlock,
                                                                            MmcSubchannel.Raw, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadRWSubchannelWithC2);
 
                     mediaTest.RWSubchannelWithC2Data = buffer;
 
@@ -1499,7 +1499,7 @@ namespace Aaru.Core.Devices.Report
                                                                                   MmcSubchannel.Rw, _dev.Timeout,
                                                                                   out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                               !mediaTest.CanReadCorrectedSubchannelWithC2);
 
                     mediaTest.CorrectedSubchannelWithC2Data = buffer;
@@ -1507,55 +1507,55 @@ namespace Aaru.Core.Devices.Report
 
                 if(tryPlextor)
                 {
-                    DicConsole.WriteLine("Trying Plextor READ CD-DA...");
+                    AaruConsole.WriteLine("Trying Plextor READ CD-DA...");
 
                     mediaTest.SupportsPlextorReadCDDA =
                         !_dev.PlextorReadCdDa(out buffer, out senseBuffer, 16, 2352, 1, PlextorSubchannel.None,
                                               _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPlextorReadCDDA);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPlextorReadCDDA);
 
                     mediaTest.PlextorReadCddaData = buffer;
                 }
 
                 if(tryPioneer)
                 {
-                    DicConsole.WriteLine("Trying Pioneer READ CD-DA...");
+                    AaruConsole.WriteLine("Trying Pioneer READ CD-DA...");
 
                     mediaTest.SupportsPioneerReadCDDA =
                         !_dev.PioneerReadCdDa(out buffer, out senseBuffer, 16, 2352, 1, PioneerSubchannel.None,
                                               _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPioneerReadCDDA);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPioneerReadCDDA);
 
                     mediaTest.PioneerReadCddaData = buffer;
 
-                    DicConsole.WriteLine("Trying Pioneer READ CD-DA MSF...");
+                    AaruConsole.WriteLine("Trying Pioneer READ CD-DA MSF...");
 
                     mediaTest.SupportsPioneerReadCDDAMSF =
                         !_dev.PioneerReadCdDaMsf(out buffer, out senseBuffer, 0x00000210, 0x00000211, 2352,
                                                  PioneerSubchannel.None, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPioneerReadCDDAMSF);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPioneerReadCDDAMSF);
 
                     mediaTest.PioneerReadCddaMsfData = buffer;
                 }
 
                 if(tryNec)
                 {
-                    DicConsole.WriteLine("Trying NEC READ CD-DA...");
+                    AaruConsole.WriteLine("Trying NEC READ CD-DA...");
 
                     mediaTest.SupportsNECReadCDDA =
                         !_dev.NecReadCdDa(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
 
-                    DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsNECReadCDDA);
+                    AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsNECReadCDDA);
 
                     mediaTest.NecReadCddaData = buffer;
                 }
             }
 
             mediaTest.LongBlockSize = mediaTest.BlockSize;
-            DicConsole.WriteLine("Trying SCSI READ LONG (10)...");
+            AaruConsole.WriteLine("Trying SCSI READ LONG (10)...");
             sense = _dev.ReadLong10(out buffer, out senseBuffer, false, false, 16, 0xFFFF, _dev.Timeout, out _);
 
             if(sense && !_dev.Error)
@@ -1592,12 +1592,12 @@ namespace Aaru.Core.Devices.Report
 
             if(tryPlextor)
             {
-                DicConsole.WriteLine("Trying Plextor trick to raw read DVDs...");
+                AaruConsole.WriteLine("Trying Plextor trick to raw read DVDs...");
 
                 mediaTest.SupportsPlextorReadRawDVD =
                     !_dev.PlextorReadRawDvd(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
 
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPlextorReadRawDVD);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsPlextorReadRawDVD);
 
                 if(mediaTest.SupportsPlextorReadRawDVD == true)
                     mediaTest.SupportsPlextorReadRawDVD = !ArrayHelpers.ArrayIsNullOrEmpty(buffer);
@@ -1609,12 +1609,12 @@ namespace Aaru.Core.Devices.Report
             if(!tryHldtst)
                 return mediaTest;
 
-            DicConsole.WriteLine("Trying HL-DT-ST (aka LG) trick to raw read DVDs...");
+            AaruConsole.WriteLine("Trying HL-DT-ST (aka LG) trick to raw read DVDs...");
 
             mediaTest.SupportsHLDTSTReadRawDVD =
                 !_dev.HlDtStReadRawDvd(out buffer, out senseBuffer, 16, 1, _dev.Timeout, out _);
 
-            DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsHLDTSTReadRawDVD);
+            AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.SupportsHLDTSTReadRawDVD);
 
             if(mediaTest.SupportsHLDTSTReadRawDVD == true)
                 mediaTest.SupportsHLDTSTReadRawDVD = !ArrayHelpers.ArrayIsNullOrEmpty(buffer);
@@ -1625,9 +1625,9 @@ namespace Aaru.Core.Devices.Report
             // This is for checking multi-session support, and inter-session lead-in/out reading, as Enhanced CD are
             if(mediaType == "Enhanced CD (aka E-CD, CD-Plus or CD+)")
             {
-                DicConsole.WriteLine("Querying CD Full TOC...");
+                AaruConsole.WriteLine("Querying CD Full TOC...");
                 mediaTest.CanReadFullTOC = !_dev.ReadRawToc(out buffer, out senseBuffer, 1, _dev.Timeout, out _);
-                DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadFullTOC);
+                AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}", !mediaTest.CanReadFullTOC);
 
                 mediaTest.FullTocData = buffer;
 
@@ -1643,7 +1643,7 @@ namespace Aaru.Core.Devices.Report
 
                         if(!decodedToc.TrackDescriptors.Any(t => t.SessionNumber > 1))
                         {
-                            DicConsole.
+                            AaruConsole.
                                 ErrorWriteLine("Could not find second session. Have you inserted the correct type of disc?");
 
                             return null;
@@ -1658,18 +1658,18 @@ namespace Aaru.Core.Devices.Report
                         if(firstSessionLeadOutTrack.SessionNumber == 0 ||
                            secondSessionFirstTrack.SessionNumber  == 0)
                         {
-                            DicConsole.
+                            AaruConsole.
                                 ErrorWriteLine("Could not find second session. Have you inserted the correct type of disc?");
 
                             return null;
                         }
 
-                        DicConsole.DebugWriteLine("SCSI Report",
+                        AaruConsole.DebugWriteLine("SCSI Report",
                                                   "First session Lead-Out starts at {0:D2}:{1:D2}:{2:D2}",
                                                   firstSessionLeadOutTrack.PMIN, firstSessionLeadOutTrack.PSEC,
                                                   firstSessionLeadOutTrack.PFRAME);
 
-                        DicConsole.DebugWriteLine("SCSI Report", "Second session starts at {0:D2}:{1:D2}:{2:D2}",
+                        AaruConsole.DebugWriteLine("SCSI Report", "Second session starts at {0:D2}:{1:D2}:{2:D2}",
                                                   secondSessionFirstTrack.PMIN, secondSessionFirstTrack.PSEC,
                                                   secondSessionFirstTrack.PFRAME);
 
@@ -1683,7 +1683,7 @@ namespace Aaru.Core.Devices.Report
                                                               (secondSessionFirstTrack.PSEC      * 75) +
                                                               secondSessionFirstTrack.PFRAME) - 300);
 
-                        DicConsole.WriteLine("Trying SCSI READ CD in first session Lead-Out...");
+                        AaruConsole.WriteLine("Trying SCSI READ CD in first session Lead-Out...");
 
                         mediaTest.CanReadingIntersessionLeadOut = !_dev.ReadCd(out buffer, out senseBuffer,
                                                                                firstSessionLeadOutLba, 2448, 1,
@@ -1714,12 +1714,12 @@ namespace Aaru.Core.Devices.Report
                                                                                        out _);
                         }
 
-                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                   !mediaTest.CanReadingIntersessionLeadOut);
 
                         mediaTest.IntersessionLeadOutData = buffer;
 
-                        DicConsole.WriteLine("Trying SCSI READ CD in second session Lead-In...");
+                        AaruConsole.WriteLine("Trying SCSI READ CD in second session Lead-In...");
 
                         mediaTest.CanReadingIntersessionLeadIn = !_dev.ReadCd(out buffer, out senseBuffer,
                                                                               secondSessionLeadInLba, 2448, 1,
@@ -1749,7 +1749,7 @@ namespace Aaru.Core.Devices.Report
                                                                                       out _);
                         }
 
-                        DicConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
+                        AaruConsole.DebugWriteLine("SCSI Report", "Sense = {0}",
                                                   !mediaTest.CanReadingIntersessionLeadIn);
 
                         mediaTest.IntersessionLeadInData = buffer;

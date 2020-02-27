@@ -63,17 +63,17 @@ namespace Aaru.Partitions
             ulong signature  = BitConverter.ToUInt64(hdrBytes, 0);
             bool  misaligned = false;
 
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.signature = 0x{0:X16}", signature);
 
             if(signature != GPT_MAGIC)
                 if(imagePlugin.Info.XmlMediaType == XmlMediaType.OpticalDisc)
                 {
                     hdrBytes  = imagePlugin.ReadSector(sectorOffset);
                     signature = BitConverter.ToUInt64(hdrBytes, 512);
-                    DicConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
+                    AaruConsole.DebugWriteLine("GPT Plugin", "hdr.signature @ 0x200 = 0x{0:X16}", signature);
                     if(signature == GPT_MAGIC)
                     {
-                        DicConsole.DebugWriteLine("GPT Plugin", "Found unaligned signature", signature);
+                        AaruConsole.DebugWriteLine("GPT Plugin", "Found unaligned signature", signature);
                         byte[] real = new byte[512];
                         Array.Copy(hdrBytes, 512, real, 0, 512);
                         hdrBytes   = real;
@@ -87,19 +87,19 @@ namespace Aaru.Partitions
             try { hdr = Marshal.ByteArrayToStructureLittleEndian<GptHeader>(hdrBytes); }
             catch { return false; }
 
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}",   hdr.revision);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}",      hdr.headerSize);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}",  hdr.headerCrc);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.reserved = 0x{0:X8}",   hdr.reserved);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.myLBA = {0}",           hdr.myLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.alternateLBA = {0}",    hdr.alternateLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.firstUsableLBA = {0}",  hdr.firstUsableLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.lastUsableLBA = {0}",   hdr.lastUsableLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.diskGuid = {0}",        hdr.diskGuid);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entryLBA = {0}",        hdr.entryLBA);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entries = {0}",         hdr.entries);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}",     hdr.entriesSize);
-            DicConsole.DebugWriteLine("GPT Plugin", "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.revision = 0x{0:X8}",   hdr.revision);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerSize = {0}",      hdr.headerSize);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.headerCrc = 0x{0:X8}",  hdr.headerCrc);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.reserved = 0x{0:X8}",   hdr.reserved);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.myLBA = {0}",           hdr.myLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.alternateLBA = {0}",    hdr.alternateLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.firstUsableLBA = {0}",  hdr.firstUsableLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.lastUsableLBA = {0}",   hdr.lastUsableLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.diskGuid = {0}",        hdr.diskGuid);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entryLBA = {0}",        hdr.entryLBA);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entries = {0}",         hdr.entries);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entriesSize = {0}",     hdr.entriesSize);
+            AaruConsole.DebugWriteLine("GPT Plugin", "hdr.entriesCrc = 0x{0:X8}", hdr.entriesCrc);
 
             if(hdr.signature != GPT_MAGIC) return false;
 
@@ -151,12 +151,12 @@ namespace Aaru.Partitions
             foreach(GptEntry entry in entries.Where(entry => entry.partitionType != Guid.Empty &&
                                                              entry.partitionId   != Guid.Empty))
             {
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}",    entry.partitionType);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}",      entry.partitionId);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}",         entry.startLBA);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}",           entry.endLBA);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
-                DicConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}",             entry.name);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionType = {0}",    entry.partitionType);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.partitionId = {0}",      entry.partitionId);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.startLBA = {0}",         entry.startLBA);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.endLBA = {0}",           entry.endLBA);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.attributes = 0x{0:X16}", entry.attributes);
+                AaruConsole.DebugWriteLine("GPT Plugin", "entry.name = {0}",             entry.name);
 
                 if(entry.startLBA / divisor > imagePlugin.Info.Sectors ||
                    entry.endLBA   / divisor > imagePlugin.Info.Sectors) return false;
@@ -173,7 +173,7 @@ namespace Aaru.Partitions
                     Type        = GetGuidTypeName(entry.partitionType),
                     Scheme      = Name
                 };
-                DicConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
+                AaruConsole.DebugWriteLine("GPT Plugin", "part.PartitionType = {0}", part.Type);
                 partitions.Add(part);
             }
 

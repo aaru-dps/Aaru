@@ -56,11 +56,11 @@ namespace Aaru.DiscImages
             imageHeader.DeviceBlocks  = BigEndianBitConverter.ToUInt32(header, 0x11) & 0x00FFFFFF;
             imageHeader.BytesPerBlock = BigEndianBitConverter.ToUInt16(header, 0x15);
 
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"",
+            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceName = \"{0}\"",
                                       StringHandlers.CToString(imageHeader.DeviceName));
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}",    imageHeader.DeviceType);
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}",   imageHeader.DeviceBlocks);
-            DicConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", imageHeader.BytesPerBlock);
+            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceType = {0}",    imageHeader.DeviceType);
+            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.deviceBlock = {0}",   imageHeader.DeviceBlocks);
+            AaruConsole.DebugWriteLine("BLU plugin", "ImageHeader.bytesPerBlock = {0}", imageHeader.BytesPerBlock);
 
             for(int i = 0; i < 0xD; i++)
                 if(imageHeader.DeviceName[i] < 0x20)
@@ -131,7 +131,7 @@ namespace Aaru.DiscImages
 
             if(bptag > 0) imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
 
-            DicConsole.VerboseWriteLine("BLU image contains a disk of type {0}", imageInfo.MediaType);
+            AaruConsole.VerboseWriteLine("BLU image contains a disk of type {0}", imageInfo.MediaType);
 
             return true;
         }

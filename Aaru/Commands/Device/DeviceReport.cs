@@ -71,16 +71,16 @@ namespace Aaru.Commands.Device
             MainClass.PrintCopyright();
 
             if(debug)
-                DicConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
+                AaruConsole.DebugWriteLineEvent += System.Console.Error.WriteLine;
 
             if(verbose)
-                DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
+                AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
             Statistics.AddCommand("device-report");
 
-            DicConsole.DebugWriteLine("Device-Report command", "--debug={0}", debug);
-            DicConsole.DebugWriteLine("Device-Report command", "--device={0}", devicePath);
-            DicConsole.DebugWriteLine("Device-Report command", "--verbose={0}", verbose);
+            AaruConsole.DebugWriteLine("Device-Report command", "--debug={0}", debug);
+            AaruConsole.DebugWriteLine("Device-Report command", "--device={0}", devicePath);
+            AaruConsole.DebugWriteLine("Device-Report command", "--verbose={0}", verbose);
 
             if(devicePath.Length == 2   &&
                devicePath[1]     == ':' &&
@@ -100,14 +100,14 @@ namespace Aaru.Commands.Device
 
                 if(dev.Error)
                 {
-                    DicConsole.ErrorWriteLine(Error.Print(dev.LastError));
+                    AaruConsole.ErrorWriteLine(Error.Print(dev.LastError));
 
                     return(int)ErrorNumber.CannotOpenDevice;
                 }
             }
             catch(DeviceException e)
             {
-                DicConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
+                AaruConsole.ErrorWriteLine(e.Message ?? Error.Print(e.LastError));
 
                 return(int)ErrorNumber.CannotOpenDevice;
             }
@@ -120,10 +120,10 @@ namespace Aaru.Commands.Device
 
             if(!isAdmin)
             {
-                DicConsole.
+                AaruConsole.
                     ErrorWriteLine("Because of the commands sent to a device, device report must be run with administrative privileges.");
 
-                DicConsole.ErrorWriteLine("Not continuing.");
+                AaruConsole.ErrorWriteLine("Not continuing.");
 
                 return(int)ErrorNumber.NotEnoughPermissions;
             }
@@ -159,9 +159,9 @@ namespace Aaru.Commands.Device
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
+                    AaruConsole.Write("Is the device natively USB (in case of doubt, press Y)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 if(pressedKey.Key == ConsoleKey.Y)
@@ -173,9 +173,9 @@ namespace Aaru.Commands.Device
                     while(pressedKey.Key != ConsoleKey.Y &&
                           pressedKey.Key != ConsoleKey.N)
                     {
-                        DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                        AaruConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
-                        DicConsole.WriteLine();
+                        AaruConsole.WriteLine();
                     }
 
                     report.USB.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
@@ -190,9 +190,9 @@ namespace Aaru.Commands.Device
                 while(pressedKey.Key != ConsoleKey.Y &&
                       pressedKey.Key != ConsoleKey.N)
                 {
-                    DicConsole.Write("Is the device natively FireWire (in case of doubt, press Y)? (Y/N): ");
+                    AaruConsole.Write("Is the device natively FireWire (in case of doubt, press Y)? (Y/N): ");
                     pressedKey = System.Console.ReadKey();
-                    DicConsole.WriteLine();
+                    AaruConsole.WriteLine();
                 }
 
                 if(pressedKey.Key != ConsoleKey.Y)
@@ -204,9 +204,9 @@ namespace Aaru.Commands.Device
                     while(pressedKey.Key != ConsoleKey.Y &&
                           pressedKey.Key != ConsoleKey.N)
                     {
-                        DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                        AaruConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                         pressedKey = System.Console.ReadKey();
-                        DicConsole.WriteLine();
+                        AaruConsole.WriteLine();
                     }
 
                     report.FireWire.RemovableMedia = pressedKey.Key == ConsoleKey.Y;
@@ -225,7 +225,7 @@ namespace Aaru.Commands.Device
             {
                 case DeviceType.ATA:
                 {
-                    DicConsole.WriteLine("Querying ATA IDENTIFY...");
+                    AaruConsole.WriteLine("Querying ATA IDENTIFY...");
 
                     dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
 
@@ -254,9 +254,9 @@ namespace Aaru.Commands.Device
                         while(pressedKey.Key != ConsoleKey.Y &&
                               pressedKey.Key != ConsoleKey.N)
                         {
-                            DicConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
+                            AaruConsole.Write("Is the media removable from the reading/writing elements? (Y/N): ");
                             pressedKey = System.Console.ReadKey();
-                            DicConsole.WriteLine();
+                            AaruConsole.WriteLine();
                         }
 
                         removable = pressedKey.Key == ConsoleKey.Y;
@@ -264,11 +264,11 @@ namespace Aaru.Commands.Device
 
                     if(removable)
                     {
-                        DicConsole.
+                        AaruConsole.
                             WriteLine("Please remove any media from the device and press any key when it is out.");
 
                         System.Console.ReadKey(true);
-                        DicConsole.WriteLine("Querying ATA IDENTIFY...");
+                        AaruConsole.WriteLine("Querying ATA IDENTIFY...");
                         dev.AtaIdentify(out buffer, out _, dev.Timeout, out _);
                         report.ATA.Identify = DeviceReport.ClearIdentify(buffer);
                         List<TestedMedia> mediaTests = new List<TestedMedia>();
@@ -282,20 +282,20 @@ namespace Aaru.Commands.Device
                             while(pressedKey.Key != ConsoleKey.Y &&
                                   pressedKey.Key != ConsoleKey.N)
                             {
-                                DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
+                                AaruConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
                                 pressedKey = System.Console.ReadKey();
-                                DicConsole.WriteLine();
+                                AaruConsole.WriteLine();
                             }
 
                             if(pressedKey.Key != ConsoleKey.Y)
                                 continue;
 
-                            DicConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
+                            AaruConsole.WriteLine("Please insert it in the drive and press any key when it is ready.");
                             System.Console.ReadKey(true);
 
-                            DicConsole.Write("Please write a description of the media type and press enter: ");
+                            AaruConsole.Write("Please write a description of the media type and press enter: ");
                             mediumTypeName = System.Console.ReadLine();
-                            DicConsole.Write("Please write the media model and press enter: ");
+                            AaruConsole.Write("Please write the media model and press enter: ");
                             mediumModel = System.Console.ReadLine();
 
                             TestedMedia mediaTest = reporter.ReportAtaMedia();
@@ -325,7 +325,7 @@ namespace Aaru.Commands.Device
                     break;
                 case DeviceType.NVMe: throw new NotImplementedException("NVMe devices not yet supported.");
                 case DeviceType.ATAPI:
-                    DicConsole.WriteLine("Querying ATAPI IDENTIFY...");
+                    AaruConsole.WriteLine("Querying ATAPI IDENTIFY...");
 
                     dev.AtapiIdentify(out buffer, out _, dev.Timeout, out _);
 
@@ -346,11 +346,11 @@ namespace Aaru.Commands.Device
                         while(pressedKey.Key != ConsoleKey.Y &&
                               pressedKey.Key != ConsoleKey.N)
                         {
-                            DicConsole.
+                            AaruConsole.
                                 Write("Is the media removable from the reading/writing elements (flash memories ARE NOT removable)? (Y/N): ");
 
                             pressedKey = System.Console.ReadKey();
-                            DicConsole.WriteLine();
+                            AaruConsole.WriteLine();
                         }
 
                         removable = pressedKey.Key == ConsoleKey.Y;
@@ -367,13 +367,13 @@ namespace Aaru.Commands.Device
                                 break;
                             case PeripheralDeviceTypes.SequentialAccess:
                                 dev.SpcAllowMediumRemoval(out buffer, dev.Timeout, out _);
-                                DicConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
+                                AaruConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
                                 dev.Unload(out buffer, dev.Timeout, out _);
 
                                 break;
                         }
 
-                        DicConsole.
+                        AaruConsole.
                             WriteLine("Please remove any media from the device and press any key when it is out.");
 
                         System.Console.ReadKey(true);
@@ -635,11 +635,11 @@ namespace Aaru.Commands.Device
                                     while(pressedKey.Key != ConsoleKey.Y &&
                                           pressedKey.Key != ConsoleKey.N)
                                     {
-                                        DicConsole.
+                                        AaruConsole.
                                             Write("Do you have want to try Plextor vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
 
                                         pressedKey = System.Console.ReadKey();
-                                        DicConsole.WriteLine();
+                                        AaruConsole.WriteLine();
                                     }
 
                                     tryPlextor |= pressedKey.Key == ConsoleKey.Y;
@@ -652,11 +652,11 @@ namespace Aaru.Commands.Device
                                     while(pressedKey.Key != ConsoleKey.Y &&
                                           pressedKey.Key != ConsoleKey.N)
                                     {
-                                        DicConsole.
+                                        AaruConsole.
                                             Write("Do you have want to try NEC vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
 
                                         pressedKey = System.Console.ReadKey();
-                                        DicConsole.WriteLine();
+                                        AaruConsole.WriteLine();
                                     }
 
                                     tryNec |= pressedKey.Key == ConsoleKey.Y;
@@ -669,11 +669,11 @@ namespace Aaru.Commands.Device
                                     while(pressedKey.Key != ConsoleKey.Y &&
                                           pressedKey.Key != ConsoleKey.N)
                                     {
-                                        DicConsole.
+                                        AaruConsole.
                                             Write("Do you have want to try Pioneer vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
 
                                         pressedKey = System.Console.ReadKey();
-                                        DicConsole.WriteLine();
+                                        AaruConsole.WriteLine();
                                     }
 
                                     tryPioneer |= pressedKey.Key == ConsoleKey.Y;
@@ -686,11 +686,11 @@ namespace Aaru.Commands.Device
                                     while(pressedKey.Key != ConsoleKey.Y &&
                                           pressedKey.Key != ConsoleKey.N)
                                     {
-                                        DicConsole.
+                                        AaruConsole.
                                             Write("Do you have want to try HL-DT-ST (aka LG) vendor commands? THIS IS DANGEROUS AND CAN IRREVERSIBLY DESTROY YOUR DRIVE (IF IN DOUBT PRESS 'N') (Y/N): ");
 
                                         pressedKey = System.Console.ReadKey();
-                                        DicConsole.WriteLine();
+                                        AaruConsole.WriteLine();
                                     }
 
                                     tryHldtst |= pressedKey.Key == ConsoleKey.Y;
@@ -709,17 +709,17 @@ namespace Aaru.Commands.Device
                                 while(pressedKey.Key != ConsoleKey.Y &&
                                       pressedKey.Key != ConsoleKey.N)
                                 {
-                                    DicConsole.Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
+                                    AaruConsole.Write("Do you have a {0} disc that you can insert in the drive? (Y/N): ",
                                                      mediaType);
 
                                     pressedKey = System.Console.ReadKey();
-                                    DicConsole.WriteLine();
+                                    AaruConsole.WriteLine();
                                 }
 
                                 if(pressedKey.Key != ConsoleKey.Y)
                                     continue;
 
-                                DicConsole.
+                                AaruConsole.
                                     WriteLine("Please insert it in the drive and press any key when it is ready.");
 
                                 System.Console.ReadKey(true);
@@ -740,7 +740,7 @@ namespace Aaru.Commands.Device
 
                                             while(leftRetries > 0)
                                             {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
                                                 Thread.Sleep(2000);
                                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -759,7 +759,7 @@ namespace Aaru.Commands.Device
 
                                             while(leftRetries > 0)
                                             {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
                                                 Thread.Sleep(2000);
                                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -779,7 +779,7 @@ namespace Aaru.Commands.Device
 
                                             while(leftRetries > 0)
                                             {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
                                                 Thread.Sleep(2000);
                                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -793,7 +793,7 @@ namespace Aaru.Commands.Device
                                         }
                                         else
                                         {
-                                            DicConsole.DebugWriteLine("Device-Report command",
+                                            AaruConsole.DebugWriteLine("Device-Report command",
                                                                       "Device not ready. Sense {0}h ASC {1:X2}h ASCQ {2:X2}h",
                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
                                                                       decSense.Value.ASCQ);
@@ -803,7 +803,7 @@ namespace Aaru.Commands.Device
                                     }
                                     else
                                     {
-                                        DicConsole.DebugWriteLine("Device-Report command",
+                                        AaruConsole.DebugWriteLine("Device-Report command",
                                                                   "Got sense status but no sense buffer");
 
                                         mediaIsRecognized = false;
@@ -828,18 +828,18 @@ namespace Aaru.Commands.Device
                                         while(pressedKey.Key != ConsoleKey.Y &&
                                               pressedKey.Key != ConsoleKey.N)
                                         {
-                                            DicConsole.
+                                            AaruConsole.
                                                 Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
 
                                             pressedKey = System.Console.ReadKey();
-                                            DicConsole.WriteLine();
+                                            AaruConsole.WriteLine();
                                         }
 
                                         if(pressedKey.Key == ConsoleKey.Y)
                                         {
                                             for(ushort i = (ushort)mediaTest.BlockSize;; i++)
                                             {
-                                                DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
+                                                AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...",
                                                                  i);
 
                                                 sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
@@ -857,7 +857,7 @@ namespace Aaru.Commands.Device
                                                     break;
                                             }
 
-                                            DicConsole.WriteLine();
+                                            AaruConsole.WriteLine();
                                         }
                                     }
 
@@ -901,30 +901,30 @@ namespace Aaru.Commands.Device
                                 while(pressedKey.Key != ConsoleKey.Y &&
                                       pressedKey.Key != ConsoleKey.N)
                                 {
-                                    DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
+                                    AaruConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
                                     pressedKey = System.Console.ReadKey();
-                                    DicConsole.WriteLine();
+                                    AaruConsole.WriteLine();
                                 }
 
                                 if(pressedKey.Key != ConsoleKey.Y)
                                     continue;
 
-                                DicConsole.
+                                AaruConsole.
                                     WriteLine("Please insert it in the drive and press any key when it is ready.");
 
                                 System.Console.ReadKey(true);
 
-                                DicConsole.Write("Please write a description of the media type and press enter: ");
+                                AaruConsole.Write("Please write a description of the media type and press enter: ");
                                 mediumTypeName = System.Console.ReadLine();
-                                DicConsole.Write("Please write the media manufacturer and press enter: ");
+                                AaruConsole.Write("Please write the media manufacturer and press enter: ");
                                 mediumManufacturer = System.Console.ReadLine();
-                                DicConsole.Write("Please write the media model and press enter: ");
+                                AaruConsole.Write("Please write the media model and press enter: ");
                                 mediumModel = System.Console.ReadLine();
 
                                 bool mediaIsRecognized = true;
 
                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
-                                DicConsole.DebugWriteLine("Device reporting", "sense = {0}", sense);
+                                AaruConsole.DebugWriteLine("Device reporting", "sense = {0}", sense);
 
                                 if(sense)
                                 {
@@ -938,7 +938,7 @@ namespace Aaru.Commands.Device
 
                                             while(leftRetries > 0)
                                             {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
                                                 Thread.Sleep(2000);
                                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -957,7 +957,7 @@ namespace Aaru.Commands.Device
 
                                             while(leftRetries > 0)
                                             {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
                                                 Thread.Sleep(2000);
                                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -977,7 +977,7 @@ namespace Aaru.Commands.Device
 
                                             while(leftRetries > 0)
                                             {
-                                                DicConsole.Write("\rWaiting for drive to become ready");
+                                                AaruConsole.Write("\rWaiting for drive to become ready");
                                                 Thread.Sleep(2000);
                                                 sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -991,7 +991,7 @@ namespace Aaru.Commands.Device
                                         }
                                         else
                                         {
-                                            DicConsole.DebugWriteLine("Device-Report command",
+                                            AaruConsole.DebugWriteLine("Device-Report command",
                                                                       "Device not ready. Sense {0} ASC {1:X2}h ASCQ {2:X2}h",
                                                                       decSense.Value.SenseKey, decSense.Value.ASC,
                                                                       decSense.Value.ASCQ);
@@ -1001,7 +1001,7 @@ namespace Aaru.Commands.Device
                                     }
                                     else
                                     {
-                                        DicConsole.DebugWriteLine("Device-Report command",
+                                        AaruConsole.DebugWriteLine("Device-Report command",
                                                                   "Got sense status but no sense buffer");
 
                                         mediaIsRecognized = false;
@@ -1021,7 +1021,7 @@ namespace Aaru.Commands.Device
                                 seqTests.Add(seqTest);
 
                                 dev.SpcAllowMediumRemoval(out buffer, dev.Timeout, out _);
-                                DicConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
+                                AaruConsole.WriteLine("Asking drive to unload tape (can take a few minutes)...");
                                 dev.Unload(out buffer, dev.Timeout, out _);
                             }
 
@@ -1044,24 +1044,24 @@ namespace Aaru.Commands.Device
                                     while(pressedKey.Key != ConsoleKey.Y &&
                                           pressedKey.Key != ConsoleKey.N)
                                     {
-                                        DicConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
+                                        AaruConsole.Write("Do you have media that you can insert in the drive? (Y/N): ");
                                         pressedKey = System.Console.ReadKey();
-                                        DicConsole.WriteLine();
+                                        AaruConsole.WriteLine();
                                     }
 
                                     if(pressedKey.Key != ConsoleKey.Y)
                                         continue;
 
-                                    DicConsole.
+                                    AaruConsole.
                                         WriteLine("Please insert it in the drive and press any key when it is ready.");
 
                                     System.Console.ReadKey(true);
 
-                                    DicConsole.Write("Please write a description of the media type and press enter: ");
+                                    AaruConsole.Write("Please write a description of the media type and press enter: ");
                                     mediumTypeName = System.Console.ReadLine();
-                                    DicConsole.Write("Please write the media manufacturer and press enter: ");
+                                    AaruConsole.Write("Please write the media manufacturer and press enter: ");
                                     mediumManufacturer = System.Console.ReadLine();
-                                    DicConsole.Write("Please write the media model and press enter: ");
+                                    AaruConsole.Write("Please write the media model and press enter: ");
                                     mediumModel = System.Console.ReadLine();
 
                                     bool mediaIsRecognized = true;
@@ -1079,7 +1079,7 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    DicConsole.Write("\rWaiting for drive to become ready");
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -1098,7 +1098,7 @@ namespace Aaru.Commands.Device
 
                                                 while(leftRetries > 0)
                                                 {
-                                                    DicConsole.Write("\rWaiting for drive to become ready");
+                                                    AaruConsole.Write("\rWaiting for drive to become ready");
                                                     Thread.Sleep(2000);
                                                     sense = dev.ScsiTestUnitReady(out senseBuffer, dev.Timeout, out _);
 
@@ -1132,18 +1132,18 @@ namespace Aaru.Commands.Device
                                             while(pressedKey.Key != ConsoleKey.Y &&
                                                   pressedKey.Key != ConsoleKey.N)
                                             {
-                                                DicConsole.
+                                                AaruConsole.
                                                     Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
 
                                                 pressedKey = System.Console.ReadKey();
-                                                DicConsole.WriteLine();
+                                                AaruConsole.WriteLine();
                                             }
 
                                             if(pressedKey.Key == ConsoleKey.Y)
                                             {
                                                 for(ushort i = (ushort)mediaTest.BlockSize;; i++)
                                                 {
-                                                    DicConsole.
+                                                    AaruConsole.
                                                         Write("\rTrying to READ LONG with a size of {0} bytes...", i);
 
                                                     sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0,
@@ -1160,7 +1160,7 @@ namespace Aaru.Commands.Device
                                                         break;
                                                 }
 
-                                                DicConsole.WriteLine();
+                                                AaruConsole.WriteLine();
                                             }
                                         }
 
@@ -1201,18 +1201,18 @@ namespace Aaru.Commands.Device
                                     while(pressedKey.Key != ConsoleKey.Y &&
                                           pressedKey.Key != ConsoleKey.N)
                                     {
-                                        DicConsole.
+                                        AaruConsole.
                                             Write("Drive supports SCSI READ LONG but I cannot find the correct size. Do you want me to try? (This can take hours) (Y/N): ");
 
                                         pressedKey = System.Console.ReadKey();
-                                        DicConsole.WriteLine();
+                                        AaruConsole.WriteLine();
                                     }
 
                                     if(pressedKey.Key == ConsoleKey.Y)
                                     {
                                         for(ushort i = (ushort)report.SCSI.ReadCapabilities.BlockSize;; i++)
                                         {
-                                            DicConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
+                                            AaruConsole.Write("\rTrying to READ LONG with a size of {0} bytes...", i);
 
                                             sense = dev.ReadLong10(out buffer, out senseBuffer, false, false, 0, i,
                                                                    dev.Timeout, out _);
@@ -1229,7 +1229,7 @@ namespace Aaru.Commands.Device
                                                 break;
                                         }
 
-                                        DicConsole.WriteLine();
+                                        AaruConsole.WriteLine();
                                     }
                                 }
 

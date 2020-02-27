@@ -131,16 +131,16 @@ namespace Aaru.Filesystems.ISO9660
 
             while(true)
             {
-                DicConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
+                AaruConsole.DebugWriteLine("ISO9660 plugin", "Processing VD loop no. {0}", counter);
 
                 // Seek to Volume Descriptor
-                DicConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
+                AaruConsole.DebugWriteLine("ISO9660 plugin", "Reading sector {0}", 16 + counter + partition.Start);
                 byte[] vdSectorTmp = imagePlugin.ReadSector(16 + counter + partition.Start);
                 vdSector = new byte[vdSectorTmp.Length - xaOff];
                 Array.Copy(vdSectorTmp, xaOff, vdSector, 0, vdSector.Length);
 
                 byte vdType = vdSector[0 + hsOff]; // Volume Descriptor Type, should be 1 or 2.
-                DicConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", vdType);
+                AaruConsole.DebugWriteLine("ISO9660 plugin", "VDType = {0}", vdType);
 
                 if(vdType == 255) // Supposedly we are in the PVD.
                 {
@@ -208,7 +208,7 @@ namespace Aaru.Filesystems.ISO9660
                                    svd.escape_sequences[2] == 'E')
                                     jolietvd = svd;
                                 else
-                                    DicConsole.WriteLine("ISO9660 plugin",
+                                    AaruConsole.WriteLine("ISO9660 plugin",
                                                          "Found unknown supplementary volume descriptor");
 
                             if(debug)
@@ -252,7 +252,7 @@ namespace Aaru.Filesystems.ISO9660
                hsvd == null &&
                fsvd == null)
             {
-                DicConsole.ErrorWriteLine("ERROR: Could not find primary volume descriptor");
+                AaruConsole.ErrorWriteLine("ERROR: Could not find primary volume descriptor");
 
                 return Errno.InvalidArgument;
             }

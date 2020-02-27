@@ -151,7 +151,7 @@ namespace Aaru.DiscImages
                             Type     = "SPARSE"
                         };
 
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
+                        AaruConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
                                                   newExtent.Sectors, newExtent.Type, newExtent.Filename,
                                                   newExtent.Offset);
 
@@ -198,22 +198,22 @@ namespace Aaru.DiscImages
                     if(matchVersion.Success)
                     {
                         uint.TryParse(matchVersion.Groups["version"].Value, out version);
-                        DicConsole.DebugWriteLine("VMware plugin", "version = {0}", version);
+                        AaruConsole.DebugWriteLine("VMware plugin", "version = {0}", version);
                     }
                     else if(matchCid.Success)
                     {
                         cid = Convert.ToUInt32(matchCid.Groups["cid"].Value, 16);
-                        DicConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", cid);
+                        AaruConsole.DebugWriteLine("VMware plugin", "cid = {0:x8}", cid);
                     }
                     else if(matchParentCid.Success)
                     {
                         parentCid = Convert.ToUInt32(matchParentCid.Groups["cid"].Value, 16);
-                        DicConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", parentCid);
+                        AaruConsole.DebugWriteLine("VMware plugin", "parentCID = {0:x8}", parentCid);
                     }
                     else if(matchType.Success)
                     {
                         imageType = matchType.Groups["type"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", imageType);
+                        AaruConsole.DebugWriteLine("VMware plugin", "createType = \"{0}\"", imageType);
                     }
                     else if(matchExtent.Success)
                     {
@@ -227,7 +227,7 @@ namespace Aaru.DiscImages
                         uint.TryParse(matchExtent.Groups["offset"].Value,  out newExtent.Offset);
                         uint.TryParse(matchExtent.Groups["sectors"].Value, out newExtent.Sectors);
                         newExtent.Type = matchExtent.Groups["type"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
+                        AaruConsole.DebugWriteLine("VMware plugin", "{0} {1} {2} \"{3}\" {4}", newExtent.Access,
                                                   newExtent.Sectors, newExtent.Type, newExtent.Filename,
                                                   newExtent.Offset);
 
@@ -237,7 +237,7 @@ namespace Aaru.DiscImages
                     else if(matchParent.Success)
                     {
                         parentName = matchParent.Groups["filename"].Value;
-                        DicConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", parentName);
+                        AaruConsole.DebugWriteLine("VMware plugin", "parentFileNameHint = \"{0}\"", parentName);
                         hasParent = true;
                     }
                     else if(matchCylinders.Success)
@@ -338,26 +338,26 @@ namespace Aaru.DiscImages
 
             if(oneNoFlat && !cowD)
             {
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.magic = 0x{0:X8}",       vmEHdr.magic);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.version = {0}",          vmEHdr.version);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.flags = 0x{0:X8}",       vmEHdr.flags);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.capacity = {0}",         vmEHdr.capacity);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.grainSize = {0}",        vmEHdr.grainSize);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorOffset = {0}", vmEHdr.descriptorOffset);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorSize = {0}",   vmEHdr.descriptorSize);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.GTEsPerGT = {0}",        vmEHdr.GTEsPerGT);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.rgdOffset = {0}",        vmEHdr.rgdOffset);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.gdOffset = {0}",         vmEHdr.gdOffset);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.overhead = {0}",         vmEHdr.overhead);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.uncleanShutdown = {0}",  vmEHdr.uncleanShutdown);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.singleEndLineChar = 0x{0:X2}",
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.magic = 0x{0:X8}",       vmEHdr.magic);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.version = {0}",          vmEHdr.version);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.flags = 0x{0:X8}",       vmEHdr.flags);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.capacity = {0}",         vmEHdr.capacity);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.grainSize = {0}",        vmEHdr.grainSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorOffset = {0}", vmEHdr.descriptorOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.descriptorSize = {0}",   vmEHdr.descriptorSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.GTEsPerGT = {0}",        vmEHdr.GTEsPerGT);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.rgdOffset = {0}",        vmEHdr.rgdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.gdOffset = {0}",         vmEHdr.gdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.overhead = {0}",         vmEHdr.overhead);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.uncleanShutdown = {0}",  vmEHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.singleEndLineChar = 0x{0:X2}",
                                           vmEHdr.singleEndLineChar);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.nonEndLineChar = 0x{0:X2}", vmEHdr.nonEndLineChar);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.nonEndLineChar = 0x{0:X2}", vmEHdr.nonEndLineChar);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar1 = 0x{0:X2}",
                                           vmEHdr.doubleEndLineChar1);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.doubleEndLineChar2 = 0x{0:X2}",
                                           vmEHdr.doubleEndLineChar2);
-                DicConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", vmEHdr.compression);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmEHdr.compression = 0x{0:X4}", vmEHdr.compression);
 
                 grainSize = vmEHdr.grainSize;
                 grains    = (uint)(imageInfo.Sectors / vmEHdr.grainSize) + 1;
@@ -370,24 +370,24 @@ namespace Aaru.DiscImages
             }
             else if(oneNoFlat && cowD)
             {
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.magic = 0x{0:X8}",   vmCHdr.magic);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.version = {0}",      vmCHdr.version);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.flags = 0x{0:X8}",   vmCHdr.flags);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.sectors = {0}",      vmCHdr.sectors);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.grainSize = {0}",    vmCHdr.grainSize);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.gdOffset = {0}",     vmCHdr.gdOffset);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.numGDEntries = {0}", vmCHdr.numGDEntries);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.freeSector = {0}",   vmCHdr.freeSector);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.cylinders = {0}",    vmCHdr.cylinders);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.heads = {0}",        vmCHdr.heads);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.spt = {0}",          vmCHdr.spt);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.generation = {0}",   vmCHdr.generation);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.name = {0}",
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.magic = 0x{0:X8}",   vmCHdr.magic);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.version = {0}",      vmCHdr.version);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.flags = 0x{0:X8}",   vmCHdr.flags);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.sectors = {0}",      vmCHdr.sectors);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.grainSize = {0}",    vmCHdr.grainSize);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.gdOffset = {0}",     vmCHdr.gdOffset);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.numGDEntries = {0}", vmCHdr.numGDEntries);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.freeSector = {0}",   vmCHdr.freeSector);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.cylinders = {0}",    vmCHdr.cylinders);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.heads = {0}",        vmCHdr.heads);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.spt = {0}",          vmCHdr.spt);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.generation = {0}",   vmCHdr.generation);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.name = {0}",
                                           StringHandlers.CToString(vmCHdr.name));
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.description = {0}",
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.description = {0}",
                                           StringHandlers.CToString(vmCHdr.description));
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.savedGeneration = {0}", vmCHdr.savedGeneration);
-                DicConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", vmCHdr.uncleanShutdown);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.savedGeneration = {0}", vmCHdr.savedGeneration);
+                AaruConsole.DebugWriteLine("VMware plugin", "vmCHdr.uncleanShutdown = {0}", vmCHdr.uncleanShutdown);
 
                 grainSize            = vmCHdr.grainSize;
                 grains               = (uint)(imageInfo.Sectors / vmCHdr.grainSize) + 1;
@@ -403,19 +403,19 @@ namespace Aaru.DiscImages
             {
                 if(grains == 0 || gdEntries == 0) throw new Exception("Some error ocurred setting GD sizes");
 
-                DicConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", imageInfo.Sectors,
+                AaruConsole.DebugWriteLine("VMware plugin", "{0} sectors in {1} grains in {2} tables", imageInfo.Sectors,
                                           grains, gdEntries);
 
                 Stream gdStream = gdFilter.GetDataForkStream();
 
                 gdStream.Seek(gdOffset * SECTOR_SIZE, SeekOrigin.Begin);
 
-                DicConsole.DebugWriteLine("VMware plugin", "Reading grain directory");
+                AaruConsole.DebugWriteLine("VMware plugin", "Reading grain directory");
                 byte[] gdBytes = new byte[gdEntries * 4];
                 gdStream.Read(gdBytes, 0, gdBytes.Length);
                 Span<uint> gd = MemoryMarshal.Cast<byte, uint>(gdBytes);
 
-                DicConsole.DebugWriteLine("VMware plugin", "Reading grain tables");
+                AaruConsole.DebugWriteLine("VMware plugin", "Reading grain tables");
                 uint currentGrain = 0;
                 gTable = new uint[grains];
                 foreach(uint gtOff in gd)
