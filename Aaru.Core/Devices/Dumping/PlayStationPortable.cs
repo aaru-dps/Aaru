@@ -622,7 +622,7 @@ namespace Aaru.Core.Devices.Dumping
 
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application     = "DiscImageChef", ApplicationVersion = Version.GetVersion(),
+                Application     = "Aaru", ApplicationVersion = Version.GetVersion(),
                 MediaPartNumber = mediaPartNumber
             };
 
@@ -1095,7 +1095,7 @@ namespace Aaru.Core.Devices.Dumping
 
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+                Application = "Aaru", ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))

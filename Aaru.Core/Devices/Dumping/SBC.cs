@@ -984,7 +984,7 @@ namespace Aaru.Core.Devices.Dumping
             // TODO: Non-removable drive information
             var metadata = new CommonTypes.Structs.ImageInfo
             {
-                Application = "DiscImageChef", ApplicationVersion = Version.GetVersion()
+                Application = "Aaru", ApplicationVersion = Version.GetVersion()
             };
 
             if(!_outputPlugin.SetMetadata(metadata))

@@ -108,7 +108,7 @@ namespace Aaru.Core.Devices.Dumping
                     if(oldTry.Software == null)
                         throw new InvalidOperationException("Found corrupt resume file, cannot continue...");
 
-                    if(oldTry.Software.Name            != "DiscImageChef"     ||
+                    if(oldTry.Software.Name            != "Aaru"     ||
                        oldTry.Software.OperatingSystem != platform.ToString() ||
                        oldTry.Software.Version         != Version.GetVersion())
                         continue;

@@ -117,7 +117,7 @@ namespace Aaru.Core.Devices
                         decSense = Decoders.SCSI.Sense.DecodeFixed(senseBuf);
                         if (decSense.HasValue)
                         {
-                            if (decSense.Value.SenseKey == DiscImageChef.Decoders.SCSI.SenseKeys.IllegalRequest &&
+                            if (decSense.Value.SenseKey == Aaru.Decoders.SCSI.SenseKeys.IllegalRequest &&
                                 decSense.Value.ASC == 0x24 && decSense.Value.ASCQ == 0x00)
                             {
                                 readRaw = true;

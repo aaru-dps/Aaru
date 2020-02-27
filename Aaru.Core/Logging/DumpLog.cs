@@ -80,7 +80,7 @@ namespace Aaru.Core.Logging
             logSw.WriteLine();
 
             logSw.WriteLine("################# Program information ################");
-            logSw.WriteLine("DiscImageChef {0}", assemblyVersion?.InformationalVersion);
+            logSw.WriteLine("Aaru {0}", assemblyVersion?.InformationalVersion);
             logSw.WriteLine("Running in {0}-bit", Environment.Is64BitProcess ? 64 : 32);
         #if DEBUG
             logSw.WriteLine("DEBUG version");
