@@ -44,7 +44,7 @@ namespace Aaru.Commands
 {
     internal class RemoteCommand : Command
     {
-        public RemoteCommand() : base("remote", "Tests connection to a DiscImageChef Remote Server.")
+        public RemoteCommand() : base("remote", "Tests connection to a Aaru Remote Server.")
         {
             AddArgument(new Argument<string>
             {
