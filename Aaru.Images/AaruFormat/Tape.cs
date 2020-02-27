@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Manages DiscImageChef format tape images.
+//     Manages Aaru Format tape images.
 //
 // --[ License ] --------------------------------------------------------------
 //

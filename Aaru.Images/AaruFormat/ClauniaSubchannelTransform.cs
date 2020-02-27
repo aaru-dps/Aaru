@@ -155,11 +155,11 @@ namespace Aaru.DiscImages
             end = DateTime.UtcNow;
             TimeSpan sequentialize = end - start;
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Took {0}ms to deinterleave subchannel.",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to deinterleave subchannel.",
                                       deinterleave.TotalMilliseconds);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Took {0}ms to sequentialize subchannel.",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to sequentialize subchannel.",
                                       sequentialize.TotalMilliseconds);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Took {0}ms to transform subchannel.",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to transform subchannel.",
                                       deinterleave.TotalMilliseconds + sequentialize.TotalMilliseconds);
 
             return sequential;
@@ -283,11 +283,11 @@ namespace Aaru.DiscImages
             end = DateTime.UtcNow;
             TimeSpan interleave = end - start;
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Took {0}ms to de-sequentialize subchannel.",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to de-sequentialize subchannel.",
                                       desequentialize.TotalMilliseconds);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Took {0}ms to interleave subchannel.",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to interleave subchannel.",
                                       interleave.TotalMilliseconds);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Took {0}ms to untransform subchannel.",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Took {0}ms to untransform subchannel.",
                                       interleave.TotalMilliseconds + desequentialize.TotalMilliseconds);
 
             return interleaved;

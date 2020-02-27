@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains constants for DiscImageChef format disk images.
+//     Contains constants for Aaru Format disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

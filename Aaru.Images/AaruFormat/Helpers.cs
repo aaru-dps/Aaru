@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains helpers for DiscImageChef format disk images.
+//     Contains helpers for Aaru Format disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

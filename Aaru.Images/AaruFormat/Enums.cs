@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains enumerations for DiscImageChef format disk images.
+//     Contains enumerations for Aaru Format disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

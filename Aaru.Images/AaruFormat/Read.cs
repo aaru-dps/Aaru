@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Reads DiscImageChef format disk images.
+//     Reads Aaru Format disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
     {
         public bool Open(IFilter imageFilter)
         {
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             imageStream = imageFilter.GetDataForkStream();
@@ -79,7 +79,7 @@ namespace Aaru.DiscImages
             imageInfo.Version            = $"{header.imageMajorVersion}.{header.imageMinorVersion}";
             imageInfo.MediaType          = header.mediaType;
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             // Read the index header
@@ -91,10 +91,10 @@ namespace Aaru.DiscImages
             if(idxHeader.identifier != BlockType.Index)
                 throw new FeatureUnsupportedImageException("Index not found!");
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Index at {0} contains {1} entries",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Index at {0} contains {1} entries",
                                       header.indexOffset, idxHeader.entries);
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             // Fill in-memory index
@@ -106,14 +106,14 @@ namespace Aaru.DiscImages
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
                 IndexEntry entry = Marshal.SpanToStructureLittleEndian<IndexEntry>(structureBytes);
 
-                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                DicConsole.DebugWriteLine("Aaru Format plugin",
                                           "Block type {0} with data type {1} is indexed to be at {2}", entry.blockType,
                                           entry.dataType, entry.offset);
 
                 index.Add(entry);
             }
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             imageInfo.ImageSize = 0;
@@ -150,7 +150,7 @@ namespace Aaru.DiscImages
 
                         if(blockHeader.identifier != entry.blockType)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Incorrect identifier for data block at position {0}",
                                                       entry.offset);
 
@@ -159,7 +159,7 @@ namespace Aaru.DiscImages
 
                         if(blockHeader.type != entry.dataType)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Expected block with data type {0} at position {1} but found data type {2}",
                                                       entry.dataType, entry.offset, blockHeader.type);
 
@@ -168,11 +168,11 @@ namespace Aaru.DiscImages
 
                         byte[] data;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                        DicConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Found data block type {0} at position {1}", entry.dataType,
                                                   entry.offset);
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
 
                         // Decompress media tag
@@ -182,7 +182,7 @@ namespace Aaru.DiscImages
                             if(blockHeader.compression == CompressionType.LzmaClauniaSubchannelTransform &&
                                entry.dataType          != DataType.CdSectorSubchannel)
                             {
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                DicConsole.DebugWriteLine("Aaru Format plugin",
                                                           "Invalid compression type {0} for block with data type {1}, continuing...",
                                                           blockHeader.compression, entry.dataType);
 
@@ -206,11 +206,11 @@ namespace Aaru.DiscImages
 
                             DateTime endDecompress = DateTime.Now;
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Took {0} seconds to decompress block",
                                                       (endDecompress - startDecompress).TotalSeconds);
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                       GC.GetTotalMemory(false));
                         }
                         else if(blockHeader.compression == CompressionType.None)
@@ -218,12 +218,12 @@ namespace Aaru.DiscImages
                             data = new byte[blockHeader.length];
                             imageStream.Read(data, 0, (int)blockHeader.length);
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                       GC.GetTotalMemory(false));
                         }
                         else
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Found unknown compression type {0}, continuing...",
                                                       (ushort)blockHeader.compression);
 
@@ -235,7 +235,7 @@ namespace Aaru.DiscImages
 
                         if(BitConverter.ToUInt64(blockCrc, 0) != blockHeader.crc64)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
                                                       BitConverter.ToUInt64(blockCrc, 0), blockHeader.crc64);
 
@@ -261,7 +261,7 @@ namespace Aaru.DiscImages
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorHeader))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorHeader);
 
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                           GC.GetTotalMemory(false));
 
                                 break;
@@ -290,7 +290,7 @@ namespace Aaru.DiscImages
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorEdc))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorEdc);
 
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                           GC.GetTotalMemory(false));
 
                                 break;
@@ -300,7 +300,7 @@ namespace Aaru.DiscImages
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                           GC.GetTotalMemory(false));
 
                                 break;
@@ -312,14 +312,14 @@ namespace Aaru.DiscImages
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.AppleSectorTag))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.AppleSectorTag);
 
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                           GC.GetTotalMemory(false));
 
                                 break;
                             case DataType.CompactDiscMode2Subheader:
                                 mode2Subheaders = data;
 
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                           GC.GetTotalMemory(false));
 
                                 break;
@@ -328,7 +328,7 @@ namespace Aaru.DiscImages
 
                                 if(mediaTags.ContainsKey(mediaTagType))
                                 {
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                    DicConsole.DebugWriteLine("Aaru Format plugin",
                                                               "Media tag type {0} duplicated, removing previous entry...",
                                                               mediaTagType);
 
@@ -337,7 +337,7 @@ namespace Aaru.DiscImages
 
                                 mediaTags.Add(mediaTagType, data);
 
-                                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                           GC.GetTotalMemory(false));
 
                                 break;
@@ -358,14 +358,14 @@ namespace Aaru.DiscImages
                             imageInfo.Sectors = ddtHeader.entries;
                             shift             = ddtHeader.shift;
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                       GC.GetTotalMemory(false));
 
                             // Check for DDT compression
                             switch(ddtHeader.compression)
                             {
                                 case CompressionType.Lzma:
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
+                                    DicConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
                                     DateTime ddtStart       = DateTime.UtcNow;
                                     byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                                     byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
@@ -381,11 +381,11 @@ namespace Aaru.DiscImages
                                     DateTime ddtEnd = DateTime.UtcNow;
                                     inMemoryDdt = true;
 
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                    DicConsole.DebugWriteLine("Aaru Format plugin",
                                                               "Took {0} seconds to decompress DDT",
                                                               (ddtEnd - ddtStart).TotalSeconds);
 
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                    DicConsole.DebugWriteLine("Aaru Format plugin",
                                                               "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
                                     break;
@@ -393,7 +393,7 @@ namespace Aaru.DiscImages
                                     inMemoryDdt          = false;
                                     outMemoryDdtPosition = (long)entry.offset;
 
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                    DicConsole.DebugWriteLine("Aaru Format plugin",
                                                               "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
                                     break;
@@ -410,14 +410,14 @@ namespace Aaru.DiscImages
                             uint[] cdDdt           = new uint[ddtHeader.entries];
                             byte[] decompressedDdt = new byte[ddtHeader.length];
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                       GC.GetTotalMemory(false));
 
                             // Check for DDT compression
                             switch(ddtHeader.compression)
                             {
                                 case CompressionType.Lzma:
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Decompressing DDT...");
+                                    DicConsole.DebugWriteLine("Aaru Format plugin", "Decompressing DDT...");
                                     DateTime ddtStart       = DateTime.UtcNow;
                                     byte[]   compressedDdt  = new byte[ddtHeader.cmpLength - LZMA_PROPERTIES_LENGTH];
                                     byte[]   lzmaProperties = new byte[LZMA_PROPERTIES_LENGTH];
@@ -430,18 +430,18 @@ namespace Aaru.DiscImages
                                     compressedDdtMs.Close();
                                     DateTime ddtEnd = DateTime.UtcNow;
 
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                    DicConsole.DebugWriteLine("Aaru Format plugin",
                                                               "Took {0} seconds to decompress DDT",
                                                               (ddtEnd - ddtStart).TotalSeconds);
 
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                    DicConsole.DebugWriteLine("Aaru Format plugin",
                                                               "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
                                     break;
                                 case CompressionType.None:
                                     imageStream.Read(decompressedDdt, 0, decompressedDdt.Length);
 
-                                    DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                                    DicConsole.DebugWriteLine("Aaru Format plugin",
                                                               "Memory snapshot: {0} bytes", GC.GetTotalMemory(false));
 
                                     break;
@@ -457,7 +457,7 @@ namespace Aaru.DiscImages
                             else if(entry.dataType == DataType.CdSectorSuffixCorrected)
                                 sectorSuffixDdt = cdDdt;
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                       GC.GetTotalMemory(false));
                         }
 
@@ -471,7 +471,7 @@ namespace Aaru.DiscImages
 
                         if(geometryBlock.identifier == BlockType.GeometryBlock)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Geometry set to {0} cylinders {1} heads {2} sectors per track",
                                                       geometryBlock.cylinders, geometryBlock.heads,
                                                       geometryBlock.sectorsPerTrack);
@@ -480,7 +480,7 @@ namespace Aaru.DiscImages
                             imageInfo.Heads           = geometryBlock.heads;
                             imageInfo.SectorsPerTrack = geometryBlock.sectorsPerTrack;
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                       GC.GetTotalMemory(false));
                         }
 
@@ -496,14 +496,14 @@ namespace Aaru.DiscImages
 
                         if(metadataBlock.identifier != entry.blockType)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Incorrect identifier for data block at position {0}",
                                                       entry.offset);
 
                             break;
                         }
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Found metadata block at position {0}",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Found metadata block at position {0}",
                                                   entry.offset);
 
                         byte[] metadata = new byte[metadataBlock.blockSize];
@@ -516,7 +516,7 @@ namespace Aaru.DiscImages
                             imageInfo.MediaSequence     = metadataBlock.mediaSequence;
                             imageInfo.LastMediaSequence = metadataBlock.lastMediaSequence;
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Setting media sequence as {0} of {1}", imageInfo.MediaSequence,
                                                       imageInfo.LastMediaSequence);
                         }
@@ -527,7 +527,7 @@ namespace Aaru.DiscImages
                             imageInfo.Creator = Encoding.Unicode.GetString(metadata, (int)metadataBlock.creatorOffset,
                                                                            (int)(metadataBlock.creatorLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting creator: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting creator: {0}",
                                                       imageInfo.Creator);
                         }
 
@@ -538,7 +538,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.commentsOffset,
                                                            (int)(metadataBlock.commentsLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting comments: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting comments: {0}",
                                                       imageInfo.Comments);
                         }
 
@@ -549,7 +549,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaTitleOffset,
                                                            (int)(metadataBlock.mediaTitleLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media title: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting media title: {0}",
                                                       imageInfo.MediaTitle);
                         }
 
@@ -561,7 +561,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaManufacturerOffset,
                                                            (int)(metadataBlock.mediaManufacturerLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media manufacturer: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting media manufacturer: {0}",
                                                       imageInfo.MediaManufacturer);
                         }
 
@@ -572,7 +572,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaModelOffset,
                                                            (int)(metadataBlock.mediaModelLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media model: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting media model: {0}",
                                                       imageInfo.MediaModel);
                         }
 
@@ -584,7 +584,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaSerialNumberOffset,
                                                            (int)(metadataBlock.mediaSerialNumberLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media serial number: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting media serial number: {0}",
                                                       imageInfo.MediaSerialNumber);
                         }
 
@@ -595,7 +595,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaBarcodeOffset,
                                                            (int)(metadataBlock.mediaBarcodeLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media barcode: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting media barcode: {0}",
                                                       imageInfo.MediaBarcode);
                         }
 
@@ -606,7 +606,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.mediaPartNumberOffset,
                                                            (int)(metadataBlock.mediaPartNumberLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting media part number: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting media part number: {0}",
                                                       imageInfo.MediaPartNumber);
                         }
 
@@ -618,7 +618,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveManufacturerOffset,
                                                            (int)(metadataBlock.driveManufacturerLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting drive manufacturer: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting drive manufacturer: {0}",
                                                       imageInfo.DriveManufacturer);
                         }
 
@@ -629,7 +629,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveModelOffset,
                                                            (int)(metadataBlock.driveModelLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting drive model: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting drive model: {0}",
                                                       imageInfo.DriveModel);
                         }
 
@@ -641,7 +641,7 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveSerialNumberOffset,
                                                            (int)(metadataBlock.driveSerialNumberLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Setting drive serial number: {0}",
+                            DicConsole.DebugWriteLine("Aaru Format plugin", "Setting drive serial number: {0}",
                                                       imageInfo.DriveSerialNumber);
                         }
 
@@ -653,12 +653,12 @@ namespace Aaru.DiscImages
                                 Encoding.Unicode.GetString(metadata, (int)metadataBlock.driveFirmwareRevisionOffset,
                                                            (int)(metadataBlock.driveFirmwareRevisionLength - 2));
 
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Setting drive firmware revision: {0}",
                                                       imageInfo.DriveFirmwareRevision);
                         }
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
 
                         break;
@@ -671,7 +671,7 @@ namespace Aaru.DiscImages
 
                         if(tracksHeader.identifier != BlockType.TracksBlock)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Incorrect identifier for tracks block at position {0}",
                                                       entry.offset);
 
@@ -684,7 +684,7 @@ namespace Aaru.DiscImages
 
                         if(BitConverter.ToUInt64(trksCrc, 0) != tracksHeader.crc64)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
                                                       BitConverter.ToUInt64(trksCrc, 0), tracksHeader.crc64);
 
@@ -697,7 +697,7 @@ namespace Aaru.DiscImages
                         trackFlags = new Dictionary<byte, byte>();
                         trackIsrcs = new Dictionary<byte, string>();
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Found {0} tracks at position {0}",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Found {0} tracks at position {0}",
                                                   tracksHeader.entries, entry.offset);
 
                         for(ushort i = 0; i < tracksHeader.entries; i++)
@@ -724,7 +724,7 @@ namespace Aaru.DiscImages
                         imageInfo.HasPartitions = true;
                         imageInfo.HasSessions   = true;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
 
                         break;
@@ -740,10 +740,10 @@ namespace Aaru.DiscImages
                         if(cicmBlock.identifier != BlockType.CicmBlock)
                             break;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                        DicConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Found CICM XML metadata block at position {0}", entry.offset);
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
 
                         byte[] cicmBytes = new byte[cicmBlock.length];
@@ -759,13 +759,13 @@ namespace Aaru.DiscImages
                         }
                         catch(XmlException ex)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Exception {0} processing CICM XML metadata block", ex.Message);
 
                             CicmMetadata = null;
                         }
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
 
                         break;
@@ -781,10 +781,10 @@ namespace Aaru.DiscImages
                         if(dumpBlock.identifier != BlockType.DumpHardwareBlock)
                             break;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                        DicConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Found dump hardware block at position {0}", entry.offset);
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
 
                         structureBytes = new byte[dumpBlock.length];
@@ -793,7 +793,7 @@ namespace Aaru.DiscImages
 
                         if(BitConverter.ToUInt64(dumpCrc, 0) != dumpBlock.crc64)
                         {
-                            DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                            DicConsole.DebugWriteLine("Aaru Format plugin",
                                                       "Incorrect CRC found: 0x{0:X16} found, expected 0x{1:X16}, continuing...",
                                                       BitConverter.ToUInt64(dumpCrc, 0), dumpBlock.crc64);
 
@@ -904,7 +904,7 @@ namespace Aaru.DiscImages
                         if(DumpHardware.Count == 0)
                             DumpHardware = null;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                        DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                                   GC.GetTotalMemory(false));
 
                         break;
@@ -920,7 +920,7 @@ namespace Aaru.DiscImages
                         if(partitionHeader.identifier != BlockType.TapePartitionBlock)
                             break;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                        DicConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Found tape partition block at position {0}", entry.offset);
 
                         byte[] tapePartitionBytes = new byte[partitionHeader.length];
@@ -951,7 +951,7 @@ namespace Aaru.DiscImages
                         if(fileHeader.identifier != BlockType.TapeFileBlock)
                             break;
 
-                        DicConsole.DebugWriteLine("DiscImageChef format plugin",
+                        DicConsole.DebugWriteLine("Aaru Format plugin",
                                                   "Found tape file block at position {0}", entry.offset);
 
                         byte[] tapeFileBytes = new byte[fileHeader.length];
@@ -976,10 +976,10 @@ namespace Aaru.DiscImages
                 throw new ImageNotSupportedException("Could not find user data deduplication table.");
 
             imageInfo.CreationTime = DateTime.FromFileTimeUtc(header.creationTime);
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image created on {0}", imageInfo.CreationTime);
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Image created on {0}", imageInfo.CreationTime);
             imageInfo.LastModificationTime = DateTime.FromFileTimeUtc(header.lastWrittenTime);
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Image last written on {0}",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Image last written on {0}",
                                       imageInfo.LastModificationTime);
 
             imageInfo.XmlMediaType = GetXmlMediaType(header.mediaType);
@@ -994,7 +994,7 @@ namespace Aaru.DiscImages
 
             imageInfo.ReadableMediaTags.AddRange(mediaTags.Keys);
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             // Initialize caches
@@ -1005,13 +1005,13 @@ namespace Aaru.DiscImages
             if(!inMemoryDdt)
                 ddtEntryCache = new Dictionary<ulong, ulong>();
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             // Initialize tracks, sessions and partitions
             if(imageInfo.XmlMediaType == XmlMediaType.OpticalDisc)
             {
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                           GC.GetTotalMemory(false));
 
                 if(Tracks       == null ||
@@ -1042,7 +1042,7 @@ namespace Aaru.DiscImages
                     trackIsrcs = new Dictionary<byte, string>();
                 }
 
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                           GC.GetTotalMemory(false));
 
                 Sessions = new List<Session>();
@@ -1057,7 +1057,7 @@ namespace Aaru.DiscImages
                         EndSector       = Tracks.Where(t => t.TrackSession == i).Max(t => t.TrackEndSector)
                     });
 
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                           GC.GetTotalMemory(false));
 
                 ulong currentTrackOffset = 0;
@@ -1080,7 +1080,7 @@ namespace Aaru.DiscImages
                                           (ulong)track.TrackBytesPerSector;
                 }
 
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                           GC.GetTotalMemory(false));
 
                 Track[] tracks = Tracks.ToArray();
@@ -1102,12 +1102,12 @@ namespace Aaru.DiscImages
                     tracks[i].TrackSubchannelType   = TrackSubchannelType.Raw;
                 }
 
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                           GC.GetTotalMemory(false));
 
                 Tracks = tracks.ToList();
 
-                DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                           GC.GetTotalMemory(false));
             }
             else
@@ -1122,7 +1122,7 @@ namespace Aaru.DiscImages
             if(sectorSuffixDdt != null)
                 EccInit();
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             return true;
@@ -1170,7 +1170,7 @@ namespace Aaru.DiscImages
             blockHeader = Marshal.SpanToStructureLittleEndian<BlockHeader>(structureBytes);
 
             // Decompress block
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             switch(blockHeader.compression)
@@ -1179,7 +1179,7 @@ namespace Aaru.DiscImages
                     block = new byte[blockHeader.length];
                     imageStream.Read(block, 0, (int)blockHeader.length);
 
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                    DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                               GC.GetTotalMemory(false));
 
                     break;
@@ -1195,7 +1195,7 @@ namespace Aaru.DiscImages
                     lzmaBlock.Close();
                     compressedBlockMs.Close();
 
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                    DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                               GC.GetTotalMemory(false));
 
                     break;
@@ -1211,7 +1211,7 @@ namespace Aaru.DiscImages
                     flakeReader.Close();
                     flacMs.Close();
 
-                    DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+                    DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                               GC.GetTotalMemory(false));
 
                     break;
@@ -1236,7 +1236,7 @@ namespace Aaru.DiscImages
             sector = new byte[blockHeader.sectorSize];
             Array.Copy(block, (long)(offset * blockHeader.sectorSize), sector, 0, blockHeader.sectorSize);
 
-            DicConsole.DebugWriteLine("DiscImageChef format plugin", "Memory snapshot: {0} bytes",
+            DicConsole.DebugWriteLine("Aaru Format plugin", "Memory snapshot: {0} bytes",
                                       GC.GetTotalMemory(false));
 
             return sector;

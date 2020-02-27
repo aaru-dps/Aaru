@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Manages DiscImageChef format disk images.
+//     Manages Aaru Format disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

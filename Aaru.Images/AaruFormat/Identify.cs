@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Identifies DiscImageChef format disk images.
+//     Identifies Aaru Format disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //

@@ -9,7 +9,7 @@
 //
 // --[ Description ] ----------------------------------------------------------
 //
-//     Contains properties for DiscImageChef format disk images.
+//     Contains properties for Aaru Format disk images.
 //
 // --[ License ] --------------------------------------------------------------
 //
@@ -43,7 +43,7 @@ namespace Aaru.DiscImages
     public partial class AaruFormat
     {
         public ImageInfo              Info         => imageInfo;
-        public string                 Name         => "DiscImageChef format";
+        public string                 Name         => "Aaru Format";
         public Guid                   Id           => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
         public string                 Format       => "DiscImageChef";
         public string                 Author       => "Natalia Portillo";
