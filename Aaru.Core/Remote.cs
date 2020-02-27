@@ -78,7 +78,7 @@ namespace Aaru.Core
                                                               });
                     byte[]     jsonBytes = Encoding.UTF8.GetBytes(json);
                     WebRequest request   = WebRequest.Create("https://www.discimagechef.app/api/uploadreportv2");
-                    ((HttpWebRequest)request).UserAgent = $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
+                    ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
                     request.Method                      = "POST";
                     request.ContentLength               = jsonBytes.Length;
                     request.ContentType                 = "application/json";
@@ -152,7 +152,7 @@ namespace Aaru.Core
 
                 WebRequest request =
                     WebRequest.Create($"https://www.discimagechef.app/api/update?timestamp={lastUpdate}");
-                ((HttpWebRequest)request).UserAgent = $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
+                ((HttpWebRequest)request).UserAgent = $"Aaru {typeof(Version).Assembly.GetName().Version}";
                 request.Method                      = "GET";
                 request.ContentType                 = "application/json";
                 WebResponse response = request.GetResponse();

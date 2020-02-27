@@ -747,7 +747,7 @@ namespace Aaru.Core
                         var    request   = WebRequest.Create("https://www.discimagechef.app/api/uploadstatsv2");
 
                         ((HttpWebRequest)request).UserAgent =
-                            $"DiscImageChef {typeof(Version).Assembly.GetName().Version}";
+                            $"Aaru {typeof(Version).Assembly.GetName().Version}";
 
                         request.Method        = "POST";
                         request.ContentLength = jsonBytes.Length;
@@ -1099,7 +1099,7 @@ namespace Aaru.Core
                         var request = WebRequest.Create("https://www.discimagechef.app/api/uploadstats");
 
                         ((HttpWebRequest)request).UserAgent =
-                            $"DiscImageChef {typeof(CommonTypes.Interop.Version).Assembly.GetName().Version}";
+                            $"Aaru {typeof(CommonTypes.Interop.Version).Assembly.GetName().Version}";
 
                         request.Method        = "POST";
                         request.ContentLength = fs.Length;
