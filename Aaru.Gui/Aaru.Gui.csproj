@@ -7,8 +7,8 @@
         <Version>4.5.99.1693</Version>
         <Company>Claunia.com</Company>
         <Copyright>Copyright © 2011-2020 Natalia Portillo</Copyright>
-        <Product>Aaru Media Preservation Suite</Product>
-        <Title>Aaru Media Preservation Suite</Title>
+        <Product>Aaru Data Preservation Suite</Product>
+        <Title>Aaru Data Preservation Suite</Title>
         <ApplicationVersion>$(Version)</ApplicationVersion>
         <TargetFrameworks>net461;netstandard2.0;netcoreapp2.0</TargetFrameworks>
         <NoWarn>CS0649,CS0169</NoWarn>

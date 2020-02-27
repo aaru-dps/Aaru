@@ -15,7 +15,7 @@
     <Version>4.5.99.1693</Version>
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
-    <Product>Aaru Media Preservation Suite</Product>
+    <Product>Aaru Data Preservation Suite</Product>
     <Title>Aaru.Tests</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
