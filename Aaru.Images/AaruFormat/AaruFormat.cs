@@ -2,7 +2,7 @@
 // Aaru Data Preservation Suite
 // ----------------------------------------------------------------------------
 //
-// Filename       : DiscImageChef.cs
+// Filename       : AaruFormat.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
 // Component      : Disk image plugins.

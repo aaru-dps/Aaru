@@ -5,7 +5,7 @@
 // Filename       : Settings.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef settings.
+// Component      : Aaru settings.
 //
 // --[ Description ] ----------------------------------------------------------
 //
@@ -159,7 +159,7 @@ namespace Aaru.Settings
 
                         break;
 
-                    // In case of Windows statistics and reports will be saved in %APPDATA%\Claunia.com\DiscImageChef
+                    // In case of Windows statistics and reports will be saved in %APPDATA%\Claunia.com\Aaru
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
                     case PlatformID.Win32Windows:
@@ -194,7 +194,7 @@ namespace Aaru.Settings
 
                         break;
 
-                    // Otherwise, statistics and reports will be saved in ~/.claunia.com/DiscImageChef
+                    // Otherwise, statistics and reports will be saved in ~/.claunia.com/Aaru
                     default:
                     {
                         string xdgDataPath =
@@ -321,7 +321,7 @@ namespace Aaru.Settings
                         break;
                 #if !NETSTANDARD2_0
 
-                    // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/DiscImageChef
+                    // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
                     case PlatformID.Win32Windows:
@@ -373,7 +373,7 @@ namespace Aaru.Settings
                         break;
                 #endif
 
-                    // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
+                    // Otherwise, settings will be saved in ~/.config/Aaru.xml
                     default:
                     {
                         string oldConfigPath =
@@ -500,7 +500,7 @@ namespace Aaru.Settings
                         break;
                 #if !NETSTANDARD2_0
 
-                    // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/DiscImageChef
+                    // In case of Windows settings will be saved in the registry: HKLM/SOFTWARE/Claunia.com/Aaru
                     case PlatformID.Win32NT:
                     case PlatformID.Win32S:
                     case PlatformID.Win32Windows:
@@ -551,7 +551,7 @@ namespace Aaru.Settings
                         break;
                 #endif
 
-                    // Otherwise, settings will be saved in ~/.config/DiscImageChef.xml
+                    // Otherwise, settings will be saved in ~/.config/Aaru.xml
                     default:
                     {
                         string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

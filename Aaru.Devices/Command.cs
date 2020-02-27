@@ -232,7 +232,7 @@ namespace Aaru.Devices
                         Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                         throw new InvalidOperationException("Windows XP or earlier is not supported.");
 
-                    // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
+                    // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But Aaru cannot run there (or can it?)
                     if (Environment.OSVersion.Version.Major <= 4)
                         throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
 
@@ -317,7 +317,7 @@ namespace Aaru.Devices
                         Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor == 0)
                         throw new InvalidOperationException("Windows XP or earlier is not supported.");
 
-                    // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But DiscImageChef cannot run there (or can it?)
+                    // Windows NT 4 or earlier, requires special ATA pass thru SCSI. But Aaru cannot run there (or can it?)
                     if (Environment.OSVersion.Version.Major <= 4)
                         throw new InvalidOperationException("Windows NT 4.0 or earlier is not supported.");
 

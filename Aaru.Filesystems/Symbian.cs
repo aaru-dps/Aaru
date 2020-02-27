@@ -34,7 +34,7 @@
 // TODO: Implement support for disc images
 /*
 
-namespace DiscImageChef.Plugins
+namespace Aaru.Plugins
 {
 	class SymbianIS : Plugin
 	{

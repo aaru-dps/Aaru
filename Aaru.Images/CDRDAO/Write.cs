@@ -154,7 +154,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            // cdrdao audio tracks are endian swapped corresponding to Aaru
             if(track.TrackType == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];
@@ -218,7 +218,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            // cdrdao audio tracks are endian swapped corresponding to Aaru
             if(track.TrackType == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];
@@ -292,7 +292,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            // cdrdao audio tracks are endian swapped corresponding to Aaru
             if(track.TrackType == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];
@@ -352,7 +352,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            // cdrdao audio tracks are endian swapped corresponding to Aaru
             if(track.TrackType == TrackType.Audio)
             {
                 byte[] swapped = new byte[data.Length];

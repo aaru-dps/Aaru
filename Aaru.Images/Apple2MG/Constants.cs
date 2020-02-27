@@ -67,7 +67,7 @@ namespace Aaru.DiscImages
         /// </summary>
         const uint CREATOR_CIDER = 0x50726443;
         /// <summary>
-        ///     Disk image created by DiscImageChef, "dic "
+        ///     Disk image created by Aaru, "dic "
         /// </summary>
         const uint CREATOR_DIC = 0x20636964;
 

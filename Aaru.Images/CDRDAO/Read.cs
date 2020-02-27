@@ -1039,7 +1039,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            // cdrdao audio tracks are endian swapped corresponding to Aaru
             if(dicTrack.Tracktype != CDRDAO_TRACK_TYPE_AUDIO)
                 return buffer;
 
@@ -1357,7 +1357,7 @@ namespace Aaru.DiscImages
                     Array.Copy(sector, 0, buffer, i * sectorSize, sectorSize);
                 }
 
-            // cdrdao audio tracks are endian swapped corresponding to DiscImageChef
+            // cdrdao audio tracks are endian swapped corresponding to Aaru
             if(dicTrack.Tracktype != CDRDAO_TRACK_TYPE_AUDIO)
                 return buffer;
 

@@ -5,7 +5,7 @@
 // Filename       : ConsoleHandler.cs
 // Author(s)      : Natalia Portillo <claunia@claunia.com>
 //
-// Component      : DiscImageChef GUI.
+// Component      : Aaru GUI.
 //
 // --[ Description ] ----------------------------------------------------------
 //
