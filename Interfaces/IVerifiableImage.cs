@@ -37,7 +37,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     public interface IVerifiableImage
     {

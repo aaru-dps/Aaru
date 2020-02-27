@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.Console;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.Console;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.CommonTypes.Structs.Devices.ATA
+namespace Aaru.CommonTypes.Structs.Devices.ATA
 {
     /// <summary>
     ///     Information from following standards: T10-791D rev. 4c (ATA) T10-948D rev. 4c (ATA-2) T13-1153D rev. 18

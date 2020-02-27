@@ -36,10 +36,10 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Interop;
+using Aaru.CommonTypes.Interop;
 using Schemas;
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     public static class Version
     {

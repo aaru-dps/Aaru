@@ -42,7 +42,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 
-namespace DiscImageChef.CommonTypes.Interop
+namespace Aaru.CommonTypes.Interop
 {
     public static class DetectOS
     {

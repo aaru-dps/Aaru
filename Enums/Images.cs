@@ -38,7 +38,7 @@
 
 using System;
 
-namespace DiscImageChef.CommonTypes.Enums
+namespace Aaru.CommonTypes.Enums
 {
     /// <summary>Track (as partitioning element) types.</summary>
     public enum TrackType : byte

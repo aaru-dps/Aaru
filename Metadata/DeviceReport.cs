@@ -39,15 +39,15 @@
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI.Modes;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     [Serializable, XmlRoot("DicDeviceReport", Namespace = "", IsNullable = false)]
     public class DeviceReport

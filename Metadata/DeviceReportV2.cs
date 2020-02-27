@@ -42,10 +42,10 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI.Modes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
 using Newtonsoft.Json;
 
 // ReSharper disable VirtualMemberNeverOverridden.Global
@@ -54,7 +54,7 @@ using Newtonsoft.Json;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     public class DeviceReportV2
     {

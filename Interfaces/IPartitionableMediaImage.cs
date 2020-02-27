@@ -39,7 +39,7 @@
 
 using System.Collections.Generic;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     public interface IPartitionableMediaImage
     {

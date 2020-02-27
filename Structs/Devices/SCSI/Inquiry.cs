@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.CommonTypes.Structs.Devices.SCSI
+namespace Aaru.CommonTypes.Structs.Devices.SCSI
 {
     /// <summary>
     ///     Information from the following standards: T9/375-D revision 10l T10/995-D revision 10 T10/1236-D revision 20

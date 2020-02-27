@@ -39,7 +39,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace DiscImageChef.CommonTypes.Exceptions
+namespace Aaru.CommonTypes.Exceptions
 {
     /// <summary>Feature is supported by image but not implemented yet.</summary>
     [Serializable]

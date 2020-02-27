@@ -35,7 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     [Flags]
     public enum ArchiveSupportedFeature : uint

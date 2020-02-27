@@ -38,7 +38,7 @@
 
 using System;
 
-namespace DiscImageChef.CommonTypes
+namespace Aaru.CommonTypes
 {
     /// <summary>Partition structure.</summary>
     public struct Partition : IEquatable<Partition>, IComparable<Partition>

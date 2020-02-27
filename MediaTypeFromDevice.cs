@@ -38,7 +38,7 @@
 
 using System;
 
-namespace DiscImageChef.CommonTypes
+namespace Aaru.CommonTypes
 {
     #pragma warning disable RECS0063 // Warns when a culture-aware 'StartsWith' call is used by default.
     public static class MediaTypeFromDevice

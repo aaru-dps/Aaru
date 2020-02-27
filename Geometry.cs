@@ -38,7 +38,7 @@
 
 using System.Linq;
 
-namespace DiscImageChef.CommonTypes
+namespace Aaru.CommonTypes
 {
     public static class Geometry
     {

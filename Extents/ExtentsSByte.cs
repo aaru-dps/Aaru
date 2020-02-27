@@ -40,7 +40,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DiscImageChef.CommonTypes.Extents
+namespace Aaru.CommonTypes.Extents
 {
     /// <summary>Implements extents for <see cref="sbyte" /></summary>
     public class ExtentsSByte

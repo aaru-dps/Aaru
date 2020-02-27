@@ -37,9 +37,9 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     public interface IWritableOpticalImage : IWritableImage, IOpticalMediaImage
     {

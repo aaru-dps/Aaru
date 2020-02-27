@@ -39,10 +39,10 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     /// <summary>Abstract class to implement partitioning schemes interpreting plugins.</summary>
     public interface IPartition

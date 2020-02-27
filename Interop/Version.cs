@@ -40,7 +40,7 @@ using System;
 using System.Reflection;
 using System.Runtime;
 
-namespace DiscImageChef.CommonTypes.Interop
+namespace Aaru.CommonTypes.Interop
 {
     public static class Version
     {

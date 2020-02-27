@@ -36,7 +36,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     public static class MediaType
     {

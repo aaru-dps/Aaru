@@ -41,7 +41,7 @@
 
 using System;
 
-namespace DiscImageChef.CommonTypes
+namespace Aaru.CommonTypes
 {
     public enum MediaEncoding
     {

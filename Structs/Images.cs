@@ -38,10 +38,10 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.CommonTypes.Structs
+namespace Aaru.CommonTypes.Structs
 {
     /// <summary>Contains information about a dump image and its contents</summary>
     public struct ImageInfo

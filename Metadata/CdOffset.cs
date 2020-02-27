@@ -38,7 +38,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     public class CdOffset
     {

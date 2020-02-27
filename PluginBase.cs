@@ -39,10 +39,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Partitions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Partitions;
 
-namespace DiscImageChef.CommonTypes
+namespace Aaru.CommonTypes
 {
     /// <summary>Contain all plugins (filesystem, partition and image)</summary>
     public class PluginBase

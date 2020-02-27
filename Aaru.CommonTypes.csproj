@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F2B84194-26EB-4227-B1C5-6602517E85AE}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.CommonTypes</RootNamespace>
+    <RootNamespace>Aaru.CommonTypes</RootNamespace>
     <AssemblyName>Aaru.CommonTypes</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

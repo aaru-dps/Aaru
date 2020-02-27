@@ -32,7 +32,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.CommonTypes.Structs.Devices.SCSI
+namespace Aaru.CommonTypes.Structs.Devices.SCSI
 {
     public enum PeripheralQualifiers : byte
     {

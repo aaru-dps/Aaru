@@ -36,7 +36,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.CommonTypes.Structs
+namespace Aaru.CommonTypes.Structs
 {
     public struct TapePartition
     {

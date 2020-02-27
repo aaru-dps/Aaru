@@ -36,7 +36,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.CommonTypes.Enums
+namespace Aaru.CommonTypes.Enums
 {
     public enum DeviceType
     {

@@ -40,9 +40,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     /// <summary>Interface to implement filesystem plugins.</summary>
     public interface IReadOnlyFilesystem : IFilesystem

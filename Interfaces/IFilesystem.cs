@@ -40,7 +40,7 @@ using System;
 using System.Text;
 using Schemas;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     /// <summary>Interface to implement filesystem plugins.</summary>
     public interface IFilesystem

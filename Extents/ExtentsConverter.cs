@@ -41,7 +41,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Schemas;
 
-namespace DiscImageChef.CommonTypes.Extents
+namespace Aaru.CommonTypes.Extents
 {
     public static class ExtentsConverter
     {

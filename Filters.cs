@@ -41,10 +41,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 
-namespace DiscImageChef.CommonTypes
+namespace Aaru.CommonTypes
 {
     public class FiltersList
     {

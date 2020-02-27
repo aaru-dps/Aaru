@@ -39,7 +39,7 @@
 using System;
 using System.IO;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     public interface IFilter
     {

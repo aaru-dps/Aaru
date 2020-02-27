@@ -40,7 +40,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.CommonTypes.Structs
+namespace Aaru.CommonTypes.Structs
 {
     /// <summary>File attributes.</summary>
     [Flags]

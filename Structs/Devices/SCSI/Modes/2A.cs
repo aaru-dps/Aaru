@@ -35,7 +35,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 
-namespace DiscImageChef.CommonTypes.Structs.Devices.SCSI.Modes
+namespace Aaru.CommonTypes.Structs.Devices.SCSI.Modes
 {
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "MemberCanBeInternal"),
      SuppressMessage("ReSharper", "MemberCanBePrivate.Global"), SuppressMessage("ReSharper", "NotAccessedField.Global")]

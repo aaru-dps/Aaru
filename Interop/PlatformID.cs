@@ -36,7 +36,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.CommonTypes.Interop
+namespace Aaru.CommonTypes.Interop
 {
     /// <summary>Contains an arbitrary list of OSes, even if .NET does not run on them</summary>
     public enum PlatformID

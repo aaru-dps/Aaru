@@ -36,10 +36,10 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     /// <summary>
     ///     Abstract class to implement disk image reading plugins that can contain floppy images. This interface is

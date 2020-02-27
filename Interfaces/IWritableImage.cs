@@ -38,11 +38,11 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.CommonTypes.Interfaces
+namespace Aaru.CommonTypes.Interfaces
 {
     /// <summary>
     ///     Abstract class to implement disk image writing plugins. TODO: This interface is subject to change until

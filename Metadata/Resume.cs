@@ -41,7 +41,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Schemas;
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     [Serializable, XmlRoot("DicResume", Namespace = "", IsNullable = false)]
     public class Resume

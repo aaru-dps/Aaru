@@ -39,7 +39,7 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     [XmlRoot("DicStats", Namespace = "", IsNullable = false)]
     public class Stats

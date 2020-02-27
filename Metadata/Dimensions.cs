@@ -38,7 +38,7 @@
 
 using Schemas;
 
-namespace DiscImageChef.CommonTypes.Metadata
+namespace Aaru.CommonTypes.Metadata
 {
     public static class Dimensions
     {
