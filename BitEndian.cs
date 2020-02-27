@@ -36,7 +36,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Helpers
+namespace Aaru.Helpers
 {
     /// <summary>Describes the endianness of bits on a data structure</summary>
     public enum BitEndian

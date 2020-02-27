@@ -35,7 +35,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Helpers
+namespace Aaru.Helpers
 {
     /// <summary>Provides methods to marshal binary data into C# structs</summary>
     public static class Marshal

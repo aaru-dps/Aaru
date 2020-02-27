@@ -32,7 +32,7 @@
 
 using System.Linq;
 
-namespace DiscImageChef
+namespace Aaru
 {
     public static partial class ArrayHelpers
     {

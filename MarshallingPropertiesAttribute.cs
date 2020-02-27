@@ -38,7 +38,7 @@
 
 using System;
 
-namespace DiscImageChef.Helpers
+namespace Aaru.Helpers
 {
     /// <summary>Defines properties to help marshalling structs from binary data</summary>
     [AttributeUsage(AttributeTargets.Struct)]

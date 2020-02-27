@@ -27,7 +27,7 @@
 using System;
 using System.Text;
 
-namespace DiscImageChef
+namespace Aaru
 {
     public static partial class ArrayHelpers
     {

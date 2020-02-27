@@ -32,9 +32,9 @@
 
 using System;
 using System.Text;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef
+namespace Aaru
 {
     public static class DateHandlers
     {

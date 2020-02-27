@@ -32,7 +32,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace DiscImageChef
+namespace Aaru
 {
     public static class Swapping
     {

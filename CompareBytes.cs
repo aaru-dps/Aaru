@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef
+namespace Aaru
 {
     public static partial class ArrayHelpers
     {

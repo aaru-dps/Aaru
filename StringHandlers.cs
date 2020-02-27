@@ -33,7 +33,7 @@
 using System;
 using System.Text;
 
-namespace DiscImageChef
+namespace Aaru
 {
     public static class StringHandlers
     {
