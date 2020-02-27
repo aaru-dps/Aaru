@@ -159,7 +159,7 @@ namespace Aaru.DiscImages
 
             dataOffset      = 0x54;
             tagOffset       = header.TagSize != 0 ? 0x54 + header.DataSize : 0;
-            header.DiskName = "-DiscImageChef converted image-";
+            header.DiskName = "-Aaru converted image-";
             header.Valid    = 1;
             header.DataSize = (uint)(sectors * 512);
             if(tags) header.TagSize = (uint)(sectors * 12);
@@ -359,7 +359,7 @@ namespace Aaru.DiscImages
 
         public bool SetMetadata(ImageInfo metadata)
         {
-            header.DiskName = metadata.MediaTitle ?? "-DiscImageChef converted image-";
+            header.DiskName = metadata.MediaTitle ?? "-Aaru converted image-";
 
             return true;
         }
