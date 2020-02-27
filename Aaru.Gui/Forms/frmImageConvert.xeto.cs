@@ -302,7 +302,7 @@ namespace Aaru.Gui.Forms
 
             ImageInfo metadata = new ImageInfo
             {
-                Application           = "DiscImageChef",
+                Application           = "Aaru",
                 ApplicationVersion    = Version.GetVersion(),
                 Comments              = txtComments.Text,
                 Creator               = txtCreator.Text,

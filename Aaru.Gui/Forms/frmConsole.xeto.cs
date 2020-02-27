@@ -150,7 +150,7 @@ namespace Aaru.Gui.Forms
                 logSw.WriteLine();
 
                 logSw.WriteLine("################# Program information ################");
-                logSw.WriteLine("DiscImageChef {0}",          assemblyVersion?.InformationalVersion);
+                logSw.WriteLine("Aaru {0}",          assemblyVersion?.InformationalVersion);
                 logSw.WriteLine("Running in {0}-bit",         Environment.Is64BitProcess ? 64 : 32);
                 logSw.WriteLine("Running GUI mode using {0}", Application.Instance.Platform.ID);
                 #if DEBUG
