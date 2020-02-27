@@ -461,15 +461,15 @@ namespace Aaru.Checksums
 
                 if(count != noEras)
                 {
-                    DicConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
+                    AaruConsole.DebugWriteLine("Reed Solomon", "\n lambda(x) is WRONG\n");
                     return -1;
                 }
 
-                DicConsole.DebugWriteLine("Reed Solomon",
+                AaruConsole.DebugWriteLine("Reed Solomon",
                                           "\n Erasure positions as determined by roots of Eras Loc Poly:\n");
-                for(i = 0; i < count; i++) DicConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+                for(i = 0; i < count; i++) AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
 
-                DicConsole.DebugWriteLine("Reed Solomon", "\n");
+                AaruConsole.DebugWriteLine("Reed Solomon", "\n");
                 #endif
             }
 
@@ -563,10 +563,10 @@ namespace Aaru.Checksums
             }
 
             #if DEBUG
-            DicConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
-            for(i = 0; i < count; i++) DicConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
+            AaruConsole.DebugWriteLine("Reed Solomon", "\n Final error positions:\t");
+            for(i = 0; i < count; i++) AaruConsole.DebugWriteLine("Reed Solomon", "{0} ", loc[i]);
 
-            DicConsole.DebugWriteLine("Reed Solomon", "\n");
+            AaruConsole.DebugWriteLine("Reed Solomon", "\n");
             #endif
 
             if(degLambda != count) return -1;
@@ -611,7 +611,7 @@ namespace Aaru.Checksums
 
                 if(den == 0)
                 {
-                    DicConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
+                    AaruConsole.DebugWriteLine("Reed Solomon", "\n ERROR: denominator = 0\n");
                     return -1;
                 }
 

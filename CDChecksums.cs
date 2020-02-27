@@ -158,17 +158,17 @@ namespace Aaru.Checksums
                channel[0x00B] != 0x00)
                 return null;
 
-            //DicConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
+            //AaruConsole.DebugWriteLine("CD checksums", "Data sector, address {0:X2}:{1:X2}:{2:X2}", channel[0x00C],
             //                          channel[0x00D], channel[0x00E]);
 
             if(channel[0x00F] == 0x00) // mode (1 byte)
             {
-                //DicConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //AaruConsole.DebugWriteLine("CD checksums", "Mode 0 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
                 for(int i = 0x010; i < 0x930; i++)
                     if(channel[i] != 0x00)
                     {
-                        DicConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine("CD checksums",
                                                   "Mode 0 sector with error at address: {0:X2}:{1:X2}:{2:X2}",
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -180,7 +180,7 @@ namespace Aaru.Checksums
 
             if(channel[0x00F] == 0x01) // mode (1 byte)
             {
-                //DicConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //AaruConsole.DebugWriteLine("CD checksums", "Mode 1 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 if(channel[0x814] != 0x00 || // reserved (8 bytes)
@@ -192,7 +192,7 @@ namespace Aaru.Checksums
                    channel[0x81A] != 0x00 ||
                    channel[0x81B] != 0x00)
                 {
-                    DicConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine("CD checksums",
                                               "Mode 1 sector with data in reserved bytes at address: {0:X2}:{1:X2}:{2:X2}",
                                               channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -215,12 +215,12 @@ namespace Aaru.Checksums
                 bool failedEccQ = !CheckEcc(address, data2, 52, 43, 86, 88, eccQ);
 
                 if(failedEccP)
-                    DicConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine("CD checksums",
                                               "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
                                               channel[0x00C], channel[0x00D], channel[0x00E]);
 
                 if(failedEccQ)
-                    DicConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine("CD checksums",
                                               "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                               channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -230,7 +230,7 @@ namespace Aaru.Checksums
                 if(calculatedEdc == storedEdc)
                     return!failedEccP && !failedEccQ;
 
-                DicConsole.DebugWriteLine("CD checksums",
+                AaruConsole.DebugWriteLine("CD checksums",
                                           "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                           channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
 
@@ -239,7 +239,7 @@ namespace Aaru.Checksums
 
             if(channel[0x00F] == 0x02) // mode (1 byte)
             {
-                //DicConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
+                //AaruConsole.DebugWriteLine("CD checksums", "Mode 2 sector at address {0:X2}:{1:X2}:{2:X2}",
                 //                          channel[0x00C], channel[0x00D], channel[0x00E]);
                 byte[] mode2Sector = new byte[channel.Length - 0x10];
                 Array.Copy(channel, 0x10, mode2Sector, 0, mode2Sector.Length);
@@ -250,7 +250,7 @@ namespace Aaru.Checksums
                        channel[0x011] != channel[0x015] ||
                        channel[0x012] != channel[0x016] ||
                        channel[0x013] != channel[0x017])
-                        DicConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine("CD checksums",
                                                   "Subheader copies differ in mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -266,7 +266,7 @@ namespace Aaru.Checksums
                        storedEdc     == 0x00000000)
                         return true;
 
-                    DicConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine("CD checksums",
                                               "Mode 2 form 2 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                               channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
 
@@ -278,7 +278,7 @@ namespace Aaru.Checksums
                        channel[0x011] != channel[0x015] ||
                        channel[0x012] != channel[0x016] ||
                        channel[0x013] != channel[0x017])
-                        DicConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine("CD checksums",
                                                   "Subheader copies differ in mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}",
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -293,12 +293,12 @@ namespace Aaru.Checksums
                     bool failedEccQ = !CheckEcc(address, mode2Sector, 52, 43, 86, 88, eccQ);
 
                     if(failedEccP)
-                        DicConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine("CD checksums",
                                                   "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC P check",
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
                     if(failedEccQ)
-                        DicConsole.DebugWriteLine("CD checksums",
+                        AaruConsole.DebugWriteLine("CD checksums",
                                                   "Mode 2 form 1 sector at address: {0:X2}:{1:X2}:{2:X2}, fails ECC Q check",
                                                   channel[0x00C], channel[0x00D], channel[0x00E]);
 
@@ -308,7 +308,7 @@ namespace Aaru.Checksums
                     if(calculatedEdc == storedEdc)
                         return!failedEccP && !failedEccQ;
 
-                    DicConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine("CD checksums",
                                               "Mode 1 sector at address: {0:X2}:{1:X2}:{2:X2}, got CRC 0x{3:X8} expected 0x{4:X8}",
                                               channel[0x00C], channel[0x00D], channel[0x00E], calculatedEdc, storedEdc);
 
@@ -316,7 +316,7 @@ namespace Aaru.Checksums
                 }
             }
 
-            DicConsole.DebugWriteLine("CD checksums", "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
+            AaruConsole.DebugWriteLine("CD checksums", "Unknown mode {0} sector at address: {1:X2}:{2:X2}:{3:X2}",
                                       channel[0x00F], channel[0x00C], channel[0x00D], channel[0x00E]);
 
             return null;
@@ -481,35 +481,35 @@ namespace Aaru.Checksums
             switch(cdSubRwPack1[0])
             {
                 case 0x00:
-                    DicConsole.DebugWriteLine("CD checksums", "Detected Zero Pack in subchannel");
+                    AaruConsole.DebugWriteLine("CD checksums", "Detected Zero Pack in subchannel");
 
                     break;
                 case 0x08:
-                    DicConsole.DebugWriteLine("CD checksums", "Detected Line Graphics Pack in subchannel");
+                    AaruConsole.DebugWriteLine("CD checksums", "Detected Line Graphics Pack in subchannel");
 
                     break;
                 case 0x09:
-                    DicConsole.DebugWriteLine("CD checksums", "Detected CD+G Pack in subchannel");
+                    AaruConsole.DebugWriteLine("CD checksums", "Detected CD+G Pack in subchannel");
 
                     break;
                 case 0x0A:
-                    DicConsole.DebugWriteLine("CD checksums", "Detected CD+EG Pack in subchannel");
+                    AaruConsole.DebugWriteLine("CD checksums", "Detected CD+EG Pack in subchannel");
 
                     break;
                 case 0x14:
-                    DicConsole.DebugWriteLine("CD checksums", "Detected CD-TEXT Pack in subchannel");
+                    AaruConsole.DebugWriteLine("CD checksums", "Detected CD-TEXT Pack in subchannel");
 
                     break;
                 case 0x18:
-                    DicConsole.DebugWriteLine("CD checksums", "Detected CD+MIDI Pack in subchannel");
+                    AaruConsole.DebugWriteLine("CD checksums", "Detected CD+MIDI Pack in subchannel");
 
                     break;
                 case 0x38:
-                    DicConsole.DebugWriteLine("CD checksums", "Detected User Pack in subchannel");
+                    AaruConsole.DebugWriteLine("CD checksums", "Detected User Pack in subchannel");
 
                     break;
                 default:
-                    DicConsole.DebugWriteLine("CD checksums",
+                    AaruConsole.DebugWriteLine("CD checksums",
                                               "Detected unknown Pack type in subchannel: mode {0}, item {1}",
                                               Convert.ToString(cdSubRwPack1[0] & 0x38, 2),
                                               Convert.ToString(cdSubRwPack1[0] & 0x07, 2));
@@ -524,7 +524,7 @@ namespace Aaru.Checksums
 
             if(qSubChannelCrc != calculatedQcrc)
             {
-                DicConsole.DebugWriteLine("CD checksums", "Q subchannel CRC 0x{0:X4}, expected 0x{1:X4}",
+                AaruConsole.DebugWriteLine("CD checksums", "Q subchannel CRC 0x{0:X4}, expected 0x{1:X4}",
                                           calculatedQcrc, qSubChannelCrc);
 
                 status = false;
@@ -540,7 +540,7 @@ namespace Aaru.Checksums
                 if(cdTextPack1Crc != calculatedCdtp1Crc &&
                    cdTextPack1Crc != 0)
                 {
-                    DicConsole.DebugWriteLine("CD checksums", "CD-Text Pack 1 CRC 0x{0:X4}, expected 0x{1:X4}",
+                    AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 1 CRC 0x{0:X4}, expected 0x{1:X4}",
                                               cdTextPack1Crc, calculatedCdtp1Crc);
 
                     status = false;
@@ -554,13 +554,13 @@ namespace Aaru.Checksums
                 Array.Copy(cdTextPack2, 0, cdTextPack2ForCrc, 0, 16);
                 ushort calculatedCdtp2Crc = CRC16CCITTContext.Calculate(cdTextPack2ForCrc);
 
-                DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP2 0x{0:X4}, Calc CDTP2 0x{1:X4}", cdTextPack2Crc,
+                AaruConsole.DebugWriteLine("CD checksums", "Cyclic CDTP2 0x{0:X4}, Calc CDTP2 0x{1:X4}", cdTextPack2Crc,
                                           calculatedCdtp2Crc);
 
                 if(cdTextPack2Crc != calculatedCdtp2Crc &&
                    cdTextPack2Crc != 0)
                 {
-                    DicConsole.DebugWriteLine("CD checksums", "CD-Text Pack 2 CRC 0x{0:X4}, expected 0x{1:X4}",
+                    AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 2 CRC 0x{0:X4}, expected 0x{1:X4}",
                                               cdTextPack2Crc, calculatedCdtp2Crc);
 
                     status = false;
@@ -574,13 +574,13 @@ namespace Aaru.Checksums
                 Array.Copy(cdTextPack3, 0, cdTextPack3ForCrc, 0, 16);
                 ushort calculatedCdtp3Crc = CRC16CCITTContext.Calculate(cdTextPack3ForCrc);
 
-                DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP3 0x{0:X4}, Calc CDTP3 0x{1:X4}", cdTextPack3Crc,
+                AaruConsole.DebugWriteLine("CD checksums", "Cyclic CDTP3 0x{0:X4}, Calc CDTP3 0x{1:X4}", cdTextPack3Crc,
                                           calculatedCdtp3Crc);
 
                 if(cdTextPack3Crc != calculatedCdtp3Crc &&
                    cdTextPack3Crc != 0)
                 {
-                    DicConsole.DebugWriteLine("CD checksums", "CD-Text Pack 3 CRC 0x{0:X4}, expected 0x{1:X4}",
+                    AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 3 CRC 0x{0:X4}, expected 0x{1:X4}",
                                               cdTextPack3Crc, calculatedCdtp3Crc);
 
                     status = false;
@@ -595,14 +595,14 @@ namespace Aaru.Checksums
             Array.Copy(cdTextPack4, 0, cdTextPack4ForCrc, 0, 16);
             ushort calculatedCdtp4Crc = CRC16CCITTContext.Calculate(cdTextPack4ForCrc);
 
-            DicConsole.DebugWriteLine("CD checksums", "Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}", cdTextPack4Crc,
+            AaruConsole.DebugWriteLine("CD checksums", "Cyclic CDTP4 0x{0:X4}, Calc CDTP4 0x{1:X4}", cdTextPack4Crc,
                                       calculatedCdtp4Crc);
 
             if(cdTextPack4Crc == calculatedCdtp4Crc ||
                cdTextPack4Crc == 0)
                 return status;
 
-            DicConsole.DebugWriteLine("CD checksums", "CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}", cdTextPack4Crc,
+            AaruConsole.DebugWriteLine("CD checksums", "CD-Text Pack 4 CRC 0x{0:X4}, expected 0x{1:X4}", cdTextPack4Crc,
                                       calculatedCdtp4Crc);
 
             return false;
