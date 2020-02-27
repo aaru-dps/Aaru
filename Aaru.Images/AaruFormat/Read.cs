@@ -71,7 +71,7 @@ namespace Aaru.DiscImages
             imageStream.Read(structureBytes, 0, structureBytes.Length);
             header = Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
 
-            if(header.imageMajorVersion > DICF_VERSION)
+            if(header.imageMajorVersion > AARUFMT_VERSION)
                 throw new FeatureUnsupportedImageException($"Image version {header.imageMajorVersion} not recognized.");
 
             imageInfo.Application        = header.application;

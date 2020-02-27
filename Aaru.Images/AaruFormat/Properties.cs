@@ -76,7 +76,7 @@ namespace Aaru.DiscImages
                 ("nocompress", typeof(bool),
                  "Don't compress user data blocks. Other blocks will still be compressed", (object)false)
             };
-        public IEnumerable<string> KnownExtensions => new[] {".dicf"};
+        public IEnumerable<string> KnownExtensions => new[] {".dicf",".aaru",".aaruformat",".aaruf"};
         public bool                IsWriting       { get; private set; }
         public string              ErrorMessage    { get; private set; }
     }

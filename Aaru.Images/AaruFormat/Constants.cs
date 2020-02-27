@@ -34,13 +34,15 @@ namespace Aaru.DiscImages
 {
     public partial class AaruFormat
     {
-        /// <summary>Magic identidier = "DICMFMT".</summary>
+        /// <summary>Old magic identidier = "DICMFRMT".</summary>
         const ulong DIC_MAGIC = 0x544D52464D434944;
+        /// <summary>Magic identidier = "AARUFRMT".</summary>
+        const ulong AARU_MAGIC = 0x544D524655524141;
         /// <summary>
         ///     Image format version. A change in this number indicates an incompatible change to the format that
         ///     prevents older implementations from reading it correctly, if at all.
         /// </summary>
-        const byte DICF_VERSION = 1;
+        const byte AARUFMT_VERSION = 1;
         /// <summary>Maximum read cache size, 256MiB.</summary>
         const uint MAX_CACHE_SIZE = 256 * 1024 * 1024;
         /// <summary>Size in bytes of LZMA properties.</summary>

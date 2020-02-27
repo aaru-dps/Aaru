@@ -49,7 +49,7 @@ namespace Aaru.DiscImages
             imageStream.Read(structureBytes, 0, structureBytes.Length);
             header = Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
 
-            return header.identifier == DIC_MAGIC && header.imageMajorVersion <= DICF_VERSION;
+            return (header.identifier == DIC_MAGIC || header.identifier == AARU_MAGIC) && header.imageMajorVersion <= AARUFMT_VERSION;
         }
     }
 }

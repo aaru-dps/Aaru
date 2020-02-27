@@ -236,14 +236,14 @@ namespace Aaru.DiscImages
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
                 header = Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
 
-                if(header.identifier != DIC_MAGIC)
+                if(header.identifier != DIC_MAGIC && header.identifier != AARU_MAGIC &&)
                 {
                     ErrorMessage = "Cannot append to a non Aaru Format image";
 
                     return false;
                 }
 
-                if(header.imageMajorVersion > DICF_VERSION)
+                if(header.imageMajorVersion > AARUFMT_VERSION)
                 {
                     ErrorMessage = $"Cannot append to an unknown image version {header.imageMajorVersion}";
 
@@ -262,14 +262,14 @@ namespace Aaru.DiscImages
             {
                 header = new DicHeader
                 {
-                    identifier = DIC_MAGIC, mediaType = mediaType, creationTime = DateTime.UtcNow.ToFileTimeUtc()
+                    identifier = AARU_MAGIC, mediaType = mediaType, creationTime = DateTime.UtcNow.ToFileTimeUtc()
                 };
 
                 imageStream.Write(new byte[Marshal.SizeOf<DicHeader>()], 0, Marshal.SizeOf<DicHeader>());
             }
 
             header.application             = "Aaru";
-            header.imageMajorVersion       = DICF_VERSION;
+            header.imageMajorVersion       = AARUFMT_VERSION;
             header.imageMinorVersion       = 0;
             header.applicationMajorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Major;
             header.applicationMinorVersion = (byte)typeof(AaruFormat).Assembly.GetName().Version.Minor;
