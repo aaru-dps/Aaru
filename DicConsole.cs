@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Console
+namespace Aaru.Console
 {
     public delegate void WriteLineHandler(string format, params object[] arg);
 
