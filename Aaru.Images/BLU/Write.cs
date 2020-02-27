@@ -314,7 +314,7 @@ namespace Aaru.DiscImages
                 return false;
             }
 
-            byte[] markerTag = Encoding.UTF8.GetBytes("DiscImageChef " + Version.GetVersion());
+            byte[] markerTag = Encoding.UTF8.GetBytes("Aaru " + Version.GetVersion());
             byte[] driveName;
             byte[] driveType      = new byte[3];
             byte[] driveBlocks    = BigEndianBitConverter.GetBytes((uint)imageInfo.Sectors);
