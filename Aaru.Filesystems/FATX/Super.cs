@@ -35,14 +35,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Schemas;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Filesystems.FATX
+namespace Aaru.Filesystems.FATX
 {
     public partial class XboxFatPlugin
     {

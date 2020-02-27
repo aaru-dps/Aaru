@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Checksums
+namespace Aaru.Tests.Checksums
 {
     [TestFixture]
     public class SpamSum

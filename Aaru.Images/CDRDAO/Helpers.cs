@@ -30,10 +30,10 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Cdrdao
     {

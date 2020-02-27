@@ -28,13 +28,13 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filters;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.DiscImages;
+using Aaru.Filters;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Partitions
+namespace Aaru.Tests.Partitions
 {
     [TestFixture]
     public class Sgi

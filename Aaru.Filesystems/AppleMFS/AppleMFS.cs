@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace DiscImageChef.Filesystems.AppleMFS
+namespace Aaru.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS : IReadOnlyFilesystem

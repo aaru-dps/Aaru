@@ -38,7 +38,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DiscImageChef.Devices.Windows
+namespace Aaru.Devices.Windows
 {
     // TODO: Even after cleaning, refactoring and xml-documenting, this code needs some love
     /// <summary>

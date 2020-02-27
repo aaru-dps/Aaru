@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Filters
+namespace Aaru.Tests.Filters
 {
     [TestFixture]
     public class AppleSingle
@@ -56,14 +56,14 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckFilterId()
         {
-            IFilter filter = new DiscImageChef.Filters.AppleSingle();
+            IFilter filter = new Aaru.Filters.AppleSingle();
             Assert.AreEqual(true, filter.Identify(location));
         }
 
         [Test]
         public void Test()
         {
-            IFilter filter = new DiscImageChef.Filters.AppleSingle();
+            IFilter filter = new Aaru.Filters.AppleSingle();
             filter.Open(location);
             Assert.AreEqual(true,   filter.IsOpened());
             Assert.AreEqual(737280, filter.GetDataForkLength());
@@ -77,7 +77,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckContents()
         {
-            IFilter filter = new DiscImageChef.Filters.AppleSingle();
+            IFilter filter = new Aaru.Filters.AppleSingle();
             filter.Open(location);
             Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[737280];
@@ -92,7 +92,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckResource()
         {
-            IFilter filter = new DiscImageChef.Filters.AppleSingle();
+            IFilter filter = new Aaru.Filters.AppleSingle();
             filter.Open(location);
             Stream str  = filter.GetResourceForkStream();
             byte[] data = new byte[286];

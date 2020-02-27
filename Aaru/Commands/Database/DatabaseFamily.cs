@@ -32,7 +32,7 @@
 
 using System.CommandLine;
 
-namespace DiscImageChef.Commands.Filesystem
+namespace Aaru.Commands.Filesystem
 {
     public class DatabaseFamily : Command
     {

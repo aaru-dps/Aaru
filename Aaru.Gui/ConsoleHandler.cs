@@ -33,9 +33,9 @@
 
 using System;
 using System.Collections.ObjectModel;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Gui
+namespace Aaru.Gui
 {
     static class ConsoleHandler
     {

@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using Schemas;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public partial class Sidecar
     {

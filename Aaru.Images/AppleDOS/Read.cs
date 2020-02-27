@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class AppleDos
     {

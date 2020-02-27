@@ -35,20 +35,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
 using Schemas;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Session = DiscImageChef.CommonTypes.Structs.Session;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using MediaType = Aaru.CommonTypes.MediaType;
+using Session = Aaru.CommonTypes.Structs.Session;
 using TrackType = Schemas.TrackType;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public partial class Sidecar
     {

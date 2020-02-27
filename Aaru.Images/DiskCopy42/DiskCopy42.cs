@@ -33,11 +33,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     // Checked using several images and strings inside Apple's DiskImages.framework
     [SuppressMessage("ReSharper", "InconsistentNaming")]

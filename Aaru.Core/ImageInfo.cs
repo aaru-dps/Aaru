@@ -33,26 +33,26 @@
 using System;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.Bluray;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.PCMCIA;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.Xbox;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using Aaru.Decoders.Bluray;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.PCMCIA;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.Xbox;
 using Schemas;
-using DDS = DiscImageChef.Decoders.DVD.DDS;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
-using Session = DiscImageChef.CommonTypes.Structs.Session;
-using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
+using DDS = Aaru.Decoders.DVD.DDS;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using Inquiry = Aaru.Decoders.SCSI.Inquiry;
+using Session = Aaru.CommonTypes.Structs.Session;
+using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public static class ImageInfo
     {
@@ -390,7 +390,7 @@ namespace DiscImageChef.Core
                 byte[] dds = imageFormat.ReadDiskTag(MediaTagType.BD_DDS);
 
                 DicConsole.WriteLine("Bluray Disc Definition Structure contained in image:");
-                DicConsole.Write("{0}", Decoders.Bluray.DDS.Prettify(dds));
+                DicConsole.Write("{0}", Aaru.Decoders.Bluray.DDS.Prettify(dds));
                 DicConsole.WriteLine();
             }
 
@@ -475,7 +475,7 @@ namespace DiscImageChef.Core
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.SD_CID);
 
                 DicConsole.WriteLine("SecureDigital CID contained in image:");
-                DicConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(cid));
+                DicConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCID(cid));
                 DicConsole.WriteLine();
             }
 
@@ -485,7 +485,7 @@ namespace DiscImageChef.Core
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.SD_CSD);
 
                 DicConsole.WriteLine("SecureDigital CSD contained in image:");
-                DicConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(csd));
+                DicConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCSD(csd));
                 DicConsole.WriteLine();
             }
 
@@ -495,7 +495,7 @@ namespace DiscImageChef.Core
                 byte[] scr = imageFormat.ReadDiskTag(MediaTagType.SD_SCR);
 
                 DicConsole.WriteLine("SecureDigital SCR contained in image:");
-                DicConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(scr));
+                DicConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifySCR(scr));
                 DicConsole.WriteLine();
             }
 
@@ -505,7 +505,7 @@ namespace DiscImageChef.Core
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.SD_OCR);
 
                 DicConsole.WriteLine("SecureDigital OCR contained in image:");
-                DicConsole.Write("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(ocr));
+                DicConsole.Write("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyOCR(ocr));
                 DicConsole.WriteLine();
             }
 
@@ -515,7 +515,7 @@ namespace DiscImageChef.Core
                 byte[] cid = imageFormat.ReadDiskTag(MediaTagType.MMC_CID);
 
                 DicConsole.WriteLine("MultiMediaCard CID contained in image:");
-                DicConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCID(cid));
+                DicConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyCID(cid));
                 DicConsole.WriteLine();
             }
 
@@ -525,7 +525,7 @@ namespace DiscImageChef.Core
                 byte[] csd = imageFormat.ReadDiskTag(MediaTagType.MMC_CSD);
 
                 DicConsole.WriteLine("MultiMediaCard CSD contained in image:");
-                DicConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyCSD(csd));
+                DicConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyCSD(csd));
                 DicConsole.WriteLine();
             }
 
@@ -535,7 +535,7 @@ namespace DiscImageChef.Core
                 byte[] ecsd = imageFormat.ReadDiskTag(MediaTagType.MMC_ExtendedCSD);
 
                 DicConsole.WriteLine("MultiMediaCard ExtendedCSD contained in image:");
-                DicConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(ecsd));
+                DicConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyExtendedCSD(ecsd));
                 DicConsole.WriteLine();
             }
 
@@ -545,7 +545,7 @@ namespace DiscImageChef.Core
                 byte[] ocr = imageFormat.ReadDiskTag(MediaTagType.MMC_OCR);
 
                 DicConsole.WriteLine("MultiMediaCard OCR contained in image:");
-                DicConsole.Write("{0}", Decoders.MMC.Decoders.PrettifyOCR(ocr));
+                DicConsole.Write("{0}", Aaru.Decoders.MMC.Decoders.PrettifyOCR(ocr));
                 DicConsole.WriteLine();
             }
 

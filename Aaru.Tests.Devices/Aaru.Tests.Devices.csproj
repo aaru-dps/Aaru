@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{A40662EB-D202-46A4-AB41-9C32ADE6D6B5}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DiscImageChef.Tests.Devices</RootNamespace>
+    <RootNamespace>Aaru.Tests.Devices</RootNamespace>
     <AssemblyName>DiscImageChef.Tests.Devices</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

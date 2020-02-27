@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public partial class OperaFS
     {

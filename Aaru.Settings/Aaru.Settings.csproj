@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5C4C7BAA-CF60-4233-84ED-39CB2312AF38}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Settings</RootNamespace>
+    <RootNamespace>Aaru.Settings</RootNamespace>
     <AssemblyName>Aaru.Settings</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

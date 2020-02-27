@@ -4,7 +4,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace DiscImageChef.Database.Migrations
+namespace Aaru.Database.Migrations
 {
     [DbContext(typeof(DicContext))]
     internal class DicContextModelSnapshot : ModelSnapshot

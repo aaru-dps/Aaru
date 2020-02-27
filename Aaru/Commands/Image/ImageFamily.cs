@@ -32,7 +32,7 @@
 
 using System.CommandLine;
 
-namespace DiscImageChef.Commands.Image
+namespace Aaru.Commands.Image
 {
     public class ImageFamily : Command
     {

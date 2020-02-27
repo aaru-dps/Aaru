@@ -34,10 +34,10 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Interfaces;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.CommonTypes.Interfaces;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     Decodes AppleSingle files

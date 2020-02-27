@@ -38,17 +38,17 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
-using DiscImageChef.Database;
-using DiscImageChef.Database.Models;
-using DiscImageChef.Dto;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Console;
+using Aaru.Database;
+using Aaru.Database.Models;
+using Aaru.Dto;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using CdOffset = DiscImageChef.Database.Models.CdOffset;
-using Version = DiscImageChef.CommonTypes.Metadata.Version;
+using CdOffset = Aaru.Database.Models.CdOffset;
+using Version = Aaru.CommonTypes.Metadata.Version;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     /// <summary>
     ///     Handles connections to DiscImageChef.Server
@@ -113,7 +113,7 @@ namespace DiscImageChef.Core
 
         public static void UpdateMasterDatabase(bool create)
         {
-            DicContext mctx = DicContext.Create(Settings.Settings.MasterDbPath);
+            DicContext mctx = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
             mctx.Database.Migrate();
             mctx.SaveChanges();
 

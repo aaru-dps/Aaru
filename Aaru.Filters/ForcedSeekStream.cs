@@ -33,7 +33,7 @@
 using System;
 using System.IO;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     ForcedSeekStream allows to seek a forward-readable stream (like System.IO.Compression streams)
@@ -48,7 +48,7 @@ namespace DiscImageChef.Filters
         long       streamLength;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1" /> class.
+        ///     Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.
         /// </summary>
         /// <param name="length">The real (uncompressed) length of the stream.</param>
         /// <param name="args">Parameters that are used to create the base stream.</param>
@@ -62,7 +62,7 @@ namespace DiscImageChef.Filters
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="T:DiscImageChef.Filters.ForcedSeekStream`1" /> class.
+        ///     Initializes a new instance of the <see cref="T:Aaru.Filters.ForcedSeekStream`1" /> class.
         /// </summary>
         /// <param name="args">Parameters that are used to create the base stream.</param>
         public ForcedSeekStream(params object[] args)

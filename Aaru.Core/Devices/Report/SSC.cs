@@ -31,13 +31,13 @@
 // ****************************************************************************/
 
 using System.Linq;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.SSC;
+using Aaru.Devices;
 
-namespace DiscImageChef.Core.Devices.Report
+namespace Aaru.Core.Devices.Report
 {
     public partial class DeviceReport
     {

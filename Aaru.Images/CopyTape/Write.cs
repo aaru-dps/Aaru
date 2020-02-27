@@ -34,12 +34,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.DiscImages.CopyTape
+namespace Aaru.DiscImages.CopyTape
 {
     public partial class CopyTape
     {

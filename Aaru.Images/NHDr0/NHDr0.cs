@@ -32,11 +32,11 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     // Info from http://www.geocities.jp/t98next/nhdr0.txt
     public partial class Nhdr0 : IWritableImage

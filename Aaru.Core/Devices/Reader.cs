@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.Devices;
 
-namespace DiscImageChef.Core.Devices
+namespace Aaru.Core.Devices
 {
     /// <summary>Reduces common code used for scanning and dumping</summary>
     internal partial class Reader

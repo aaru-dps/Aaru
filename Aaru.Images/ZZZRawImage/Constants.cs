@@ -30,9 +30,9 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Enums;
+using Aaru.CommonTypes.Enums;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class ZZZRawImage
     {

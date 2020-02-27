@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Schemas;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public partial class Sidecar
     {

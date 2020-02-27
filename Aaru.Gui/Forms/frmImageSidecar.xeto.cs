@@ -35,14 +35,14 @@ using System.IO;
 using System.Threading;
 using System.Xml.Serialization;
 using Claunia.Encoding;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Core;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmImageSidecar : Form
     {

@@ -34,7 +34,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Devices.FreeBSD
+namespace Aaru.Devices.FreeBSD
 {
     static class Extern
     {

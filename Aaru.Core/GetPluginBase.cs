@@ -30,11 +30,11 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public static class GetPluginBase
     {
@@ -45,10 +45,10 @@ namespace DiscImageChef.Core
                 PluginBase instance = new PluginBase();
 
                 IPluginRegister checksumRegister    = new Register();
-                IPluginRegister imagesRegister      = new DiscImages.Register();
-                IPluginRegister filesystemsRegister = new DiscImageChef.Filesystems.Register();
-                IPluginRegister filtersRegister     = new Filters.Register();
-                IPluginRegister partitionsRegister  = new DiscImageChef.Partitions.Register();
+                IPluginRegister imagesRegister      = new Aaru.DiscImages.Register();
+                IPluginRegister filesystemsRegister = new Aaru.Filesystems.Register();
+                IPluginRegister filtersRegister     = new Aaru.Filters.Register();
+                IPluginRegister partitionsRegister  = new Aaru.Partitions.Register();
 
                 instance.AddPlugins(checksumRegister);
                 instance.AddPlugins(imagesRegister);

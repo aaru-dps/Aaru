@@ -32,10 +32,10 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class T98
     {

@@ -30,10 +30,10 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Decoders.PCMCIA;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Decoders.PCMCIA;
 
-namespace DiscImageChef.Core.Devices.Report
+namespace Aaru.Core.Devices.Report
 {
     /// <summary>Implements creating a report for a PCMCIA device</summary>
     public partial class DeviceReport

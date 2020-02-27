@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
+using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace DiscImageChef.Filesystems.AppleDOS
+namespace Aaru.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {

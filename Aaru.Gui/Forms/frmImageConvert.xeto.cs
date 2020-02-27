@@ -38,20 +38,20 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Core;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
-using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmImageConvert : Form
     {

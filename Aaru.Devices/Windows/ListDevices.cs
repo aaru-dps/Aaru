@@ -38,7 +38,7 @@ using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DiscImageChef.Devices.Windows
+namespace Aaru.Devices.Windows
 {
     internal static class ListDevices
     {

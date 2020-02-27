@@ -32,13 +32,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Partitions;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Partitions;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     /// <summary>
     ///     Implements methods for handling partitions

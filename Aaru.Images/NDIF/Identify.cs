@@ -32,9 +32,9 @@
 
 using System;
 using Claunia.RsrcFork;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Ndif
     {

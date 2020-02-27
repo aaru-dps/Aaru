@@ -33,7 +33,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DiscImageChef.Database.Models
+namespace Aaru.Database.Models
 {
     public class CdOffset : CommonTypes.Metadata.CdOffset
     {

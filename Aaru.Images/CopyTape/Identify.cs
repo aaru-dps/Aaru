@@ -33,9 +33,9 @@
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.DiscImages.CopyTape
+namespace Aaru.DiscImages.CopyTape
 {
     public partial class CopyTape
     {

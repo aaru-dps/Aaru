@@ -26,10 +26,10 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Console;
-using DiscImageChef.Devices;
+using Aaru.Console;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices.SecureDigital
+namespace Aaru.Tests.Devices.SecureDigital
 {
     static class MultiMediaCard
     {

@@ -33,15 +33,15 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
 #pragma warning disable 414
 #pragma warning disable 169
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "NotAccessedField.Local")]
     [SuppressMessage("ReSharper", "CollectionNeverQueried.Local")]

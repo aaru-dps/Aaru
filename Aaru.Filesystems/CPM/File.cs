@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.Filesystems.CPM
+namespace Aaru.Filesystems.CPM
 {
     partial class CPM
     {

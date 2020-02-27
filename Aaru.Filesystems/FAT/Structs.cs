@@ -32,7 +32,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Filesystems.FAT
+namespace Aaru.Filesystems.FAT
 {
     public partial class FAT
     {

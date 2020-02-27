@@ -31,13 +31,13 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Devices;
-using Identify = DiscImageChef.CommonTypes.Structs.Devices.ATA.Identify;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using Aaru.Devices;
+using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 
-namespace DiscImageChef.Core.Devices.Report
+namespace Aaru.Core.Devices.Report
 {
     public partial class DeviceReport
     {

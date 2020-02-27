@@ -32,12 +32,12 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace DiscImageChef.Filesystems.AppleMFS
+namespace Aaru.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS

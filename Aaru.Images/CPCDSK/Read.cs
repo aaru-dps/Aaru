@@ -34,16 +34,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.Floppy;
-using DiscImageChef.Helpers;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Decoders.Floppy;
+using Aaru.Helpers;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Cpcdsk
     {

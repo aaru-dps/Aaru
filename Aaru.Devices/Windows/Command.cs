@@ -34,10 +34,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using DiscImageChef.Decoders.ATA;
+using Aaru.Decoders.ATA;
 using Microsoft.Win32.SafeHandles;
 
-namespace DiscImageChef.Devices.Windows
+namespace Aaru.Devices.Windows
 {
     [SuppressMessage("ReSharper", "UnusedParameter.Global")]
     internal static class Command

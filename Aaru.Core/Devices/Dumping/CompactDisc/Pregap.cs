@@ -34,18 +34,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Devices;
+using Aaru.Core.Logging;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Devices;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {
@@ -124,7 +124,7 @@ namespace DiscImageChef.Core.Devices.Dumping
 
         public static void SolveTrackPregaps(Device dev, DumpLog dumpLog, UpdateStatusHandler updateStatus,
                                              Track[] tracks, bool supportsPqSubchannel, bool supportsRwSubchannel,
-                                             Database.Models.Device dbDev, out bool inexactPositioning)
+                                             Aaru.Database.Models.Device dbDev, out bool inexactPositioning)
         {
             bool                  sense  = true; // Sense indicator
             byte[]                subBuf = null;
@@ -546,7 +546,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             }
         }
 
-        static bool GetSectorForPregapRaw(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
+        static bool GetSectorForPregapRaw(Device dev, uint lba, Aaru.Database.Models.Device dbDev, out byte[] subBuf)
         {
             byte[] cmdBuf;
             bool   sense;
@@ -601,7 +601,7 @@ namespace DiscImageChef.Core.Devices.Dumping
             return sense;
         }
 
-        static bool GetSectorForPregapQ16(Device dev, uint lba, Database.Models.Device dbDev, out byte[] subBuf)
+        static bool GetSectorForPregapQ16(Device dev, uint lba, Aaru.Database.Models.Device dbDev, out byte[] subBuf)
         {
             byte[] cmdBuf;
             bool   sense;

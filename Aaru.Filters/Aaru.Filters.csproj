@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Filters</RootNamespace>
+    <RootNamespace>Aaru.Filters</RootNamespace>
     <AssemblyName>Aaru.Filters</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

@@ -1,6 +1,6 @@
-using DiscImageChef.Helpers;
+using Aaru.Helpers;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public partial class OperaFS
     {

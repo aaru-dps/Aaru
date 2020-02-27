@@ -36,22 +36,22 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI.Modes;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Helpers;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Session = DiscImageChef.CommonTypes.Structs.Session;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI.Modes;
+using Aaru.Console;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Helpers;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class BlindWrite5
     {

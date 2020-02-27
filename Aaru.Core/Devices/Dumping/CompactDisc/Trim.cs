@@ -31,16 +31,16 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Extents;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Extents;
+using Aaru.Devices;
 using Schemas;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {

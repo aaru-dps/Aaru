@@ -32,7 +32,7 @@
 
 using System;
 
-namespace DiscImageChef.Filesystems.LisaFS
+namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {

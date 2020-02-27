@@ -32,12 +32,12 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.Decoders.DVD;
+using Aaru.CommonTypes;
+using Aaru.Decoders.DVD;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabDvdInfo : TabPage
     {

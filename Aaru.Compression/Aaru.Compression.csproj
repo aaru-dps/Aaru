@@ -6,7 +6,7 @@
     <ProjectGuid>{858398D1-7321-4763-8BAB-56BBFEC74E29}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DiscImageChef.Compression</RootNamespace>
+    <RootNamespace>Aaru.Compression</RootNamespace>
     <AssemblyName>Aaru.Compression</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ReleaseVersion>$(Version)</ReleaseVersion>

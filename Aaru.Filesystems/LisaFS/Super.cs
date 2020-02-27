@@ -33,16 +33,16 @@
 using System;
 using System.Collections.Generic;
 using Claunia.Encoding;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Decoders;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace DiscImageChef.Filesystems.LisaFS
+namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {

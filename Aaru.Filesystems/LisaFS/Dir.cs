@@ -33,11 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Decoders;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using Aaru.Decoders;
 
-namespace DiscImageChef.Filesystems.LisaFS
+namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {

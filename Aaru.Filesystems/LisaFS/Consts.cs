@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Filesystems.LisaFS
+namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {

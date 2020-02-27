@@ -36,13 +36,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Claunia.PropertyList;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Udif
     {

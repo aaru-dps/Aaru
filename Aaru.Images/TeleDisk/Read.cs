@@ -33,13 +33,13 @@
 using System;
 using System.IO;
 using System.Text;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Compression;
-using DiscImageChef.Console;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Compression;
+using Aaru.Console;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class TeleDisk
     {

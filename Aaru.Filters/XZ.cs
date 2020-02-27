@@ -32,10 +32,10 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 using SharpCompress.Compressors.Xz;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     Decompress xz files while reading

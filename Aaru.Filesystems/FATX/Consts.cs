@@ -32,7 +32,7 @@
 
 using System;
 
-namespace DiscImageChef.Filesystems.FATX
+namespace Aaru.Filesystems.FATX
 {
     public partial class XboxFatPlugin
     {

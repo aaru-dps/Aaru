@@ -35,7 +35,7 @@ using System.IO;
 using Eto.Drawing;
 using Eto.Forms;
 
-namespace DiscImageChef.Gui.Controls
+namespace Aaru.Gui.Controls
 {
     public class SvgImageView : ImageView
     {

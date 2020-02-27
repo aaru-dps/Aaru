@@ -73,13 +73,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using CUETools.Codecs.FLAKE;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using SharpCompress.Compressors.LZMA;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class DiscImageChef : IWritableOpticalImage, IVerifiableImage, IWritableTapeImage
     {

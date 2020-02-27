@@ -35,15 +35,15 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.Console;
+using Aaru.CommonTypes.Interop;
+using Aaru.Console;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmConsole : Form
     {

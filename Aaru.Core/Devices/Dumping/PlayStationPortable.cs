@@ -4,23 +4,23 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Extents;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
+using Aaru.Devices;
 using Schemas;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
-using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using MediaType = Aaru.CommonTypes.MediaType;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     public partial class Dump
     {

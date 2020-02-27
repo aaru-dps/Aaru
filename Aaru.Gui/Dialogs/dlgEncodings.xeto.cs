@@ -38,7 +38,7 @@ using System.Text;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Dialogs
+namespace Aaru.Gui.Dialogs
 {
     public class dlgEncodings : Dialog
     {

@@ -38,14 +38,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Core;
 using Schemas;
 
-namespace DiscImageChef.Commands.Image
+namespace Aaru.Commands.Image
 {
     internal class CreateSidecarCommand : Command
     {

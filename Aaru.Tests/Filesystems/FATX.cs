@@ -29,18 +29,18 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filesystems.FATX;
-using DiscImageChef.Filters;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.DiscImages;
+using Aaru.Filesystems.FATX;
+using Aaru.Filters;
 using NUnit.Framework;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
-using FileSystemInfo = DiscImageChef.CommonTypes.Structs.FileSystemInfo;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
-namespace DiscImageChef.Tests.Filesystems
+namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
     public class XboxFat

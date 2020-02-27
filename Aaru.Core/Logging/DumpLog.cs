@@ -34,12 +34,12 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.Devices;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using Aaru.CommonTypes.Interop;
+using Aaru.Devices;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Core.Logging
+namespace Aaru.Core.Logging
 {
     /// <summary>Creates a dump log</summary>
     public class DumpLog

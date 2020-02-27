@@ -35,15 +35,15 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Core;
+using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
 
-namespace DiscImageChef.Commands.Image
+namespace Aaru.Commands.Image
 {
     internal class CompareCommand : Command
     {

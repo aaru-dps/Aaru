@@ -34,9 +34,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Schemas;
 // UNICOS is ILP64 so let's think everything is 64-bit
 using blkno_t = System.Int64;
@@ -44,10 +44,10 @@ using daddr_t = System.Int64;
 using dev_t = System.Int64;
 using extent_t = System.Int64;
 using ino_t = System.Int64;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 using time_t = System.Int64;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public class UNICOS : IFilesystem
     {

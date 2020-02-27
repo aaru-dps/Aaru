@@ -32,10 +32,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using DiscImageChef.Console;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using Aaru.Console;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class Device

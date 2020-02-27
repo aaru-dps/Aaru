@@ -30,11 +30,11 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Decoders.SCSI.MMC;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.Decoders.SCSI.MMC;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class BlindWrite5
     {

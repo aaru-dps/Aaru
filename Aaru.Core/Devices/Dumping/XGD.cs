@@ -33,25 +33,25 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Extents;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.Xbox;
-using DiscImageChef.Devices;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interop;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.Xbox;
+using Aaru.Devices;
 using Schemas;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements dumping an Xbox Game Disc using a Kreon drive</summary>
     partial class Dump

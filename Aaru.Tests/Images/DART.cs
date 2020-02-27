@@ -27,13 +27,13 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Filters;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Filters;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Images
+namespace Aaru.Tests.Images
 {
     [TestFixture]
     public class Dart

@@ -35,7 +35,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DiscImageChef.Filesystems.ISO9660
+namespace Aaru.Filesystems.ISO9660
 {
     public partial class ISO9660
     {

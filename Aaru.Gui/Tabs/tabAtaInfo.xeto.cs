@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Decoders.ATA;
+using Aaru.Decoders.ATA;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabAtaInfo : TabPage
     {

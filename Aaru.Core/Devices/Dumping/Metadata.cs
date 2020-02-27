@@ -35,14 +35,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
 using Schemas;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
+using MediaType = Aaru.CommonTypes.MediaType;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {

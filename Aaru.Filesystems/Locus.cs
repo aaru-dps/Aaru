@@ -34,9 +34,9 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Schemas;
 // Commit count
 using commitcnt_t = System.Int32;
@@ -48,13 +48,13 @@ using fstore_t = System.Int32;
 using gfs_t = System.Int32;
 // Inode number
 using ino_t = System.Int32;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 // Filesystem pack number
 using pckno_t = System.Int16;
 // Timestamp
 using time_t = System.Int32;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public class Locus : IFilesystem
     {

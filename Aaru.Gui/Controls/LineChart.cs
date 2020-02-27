@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using Eto.Drawing;
 using Eto.Forms;
 
-namespace DiscImageChef.Gui.Controls
+namespace Aaru.Gui.Controls
 {
     /// <summary>
     ///     Draws a line chart

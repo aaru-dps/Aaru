@@ -33,7 +33,7 @@
 
 using System.IO;
 
-namespace DiscImageChef.Compression
+namespace Aaru.Compression
 {
     public class AppleRle
     {

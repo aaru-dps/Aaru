@@ -26,10 +26,10 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Console;
-using DiscImageChef.Devices;
+using Aaru.Console;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices
+namespace Aaru.Tests.Devices
 {
     static partial class MainClass
     {
@@ -50,7 +50,7 @@ namespace DiscImageChef.Tests.Devices
                 DicConsole.WriteLine("dev.Type = {0}",              dev.Type);
                 DicConsole.WriteLine("dev.Manufacturer = \"{0}\"",  dev.Manufacturer);
                 DicConsole.WriteLine("dev.Model = \"{0}\"",         dev.Model);
-                DicConsole.WriteLine("dev.Revision = \"{0}\"",      dev.Revision);
+                DicConsole.WriteLine("dev.Revision = \"{0}\"",      dev.FirmwareRevision);
                 DicConsole.WriteLine("dev.Serial = \"{0}\"",        dev.Serial);
                 DicConsole.WriteLine("dev.SCSIType = {0}",          dev.ScsiType);
                 DicConsole.WriteLine("dev.IsRemovable = {0}",       dev.IsRemovable);

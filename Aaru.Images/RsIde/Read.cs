@@ -33,14 +33,14 @@
 using System;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.Helpers;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class RsIde
     {
@@ -73,7 +73,7 @@ namespace DiscImageChef.DiscImages
             {
                 identify = new byte[512];
                 Array.Copy(hdr.identify, 0, identify, 0, hdr.identify.Length);
-                Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identify);
+                Identify.IdentifyDevice? ataId = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.Decode(identify);
 
                 if(ataId.HasValue)
                 {

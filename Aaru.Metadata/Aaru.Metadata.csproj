@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9F213318-5CB8-4066-A757-074489C9F818}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Metadata</RootNamespace>
+    <RootNamespace>Aaru.Metadata</RootNamespace>
     <AssemblyName>DiscImageChef.Metadata</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

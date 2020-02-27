@@ -33,11 +33,11 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Settings;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Settings;
 
-namespace DiscImageChef.Commands
+namespace Aaru.Commands
 {
     internal class ConfigureCommand : Command
     {
@@ -107,7 +107,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine();
             }
 
-            Settings.Settings.Current.SaveReportsGlobally = pressedKey.Key == ConsoleKey.Y;
+            Aaru.Settings.Settings.Current.SaveReportsGlobally = pressedKey.Key == ConsoleKey.Y;
 
             pressedKey = new ConsoleKeyInfo();
             DicConsole.WriteLine();
@@ -126,7 +126,7 @@ namespace DiscImageChef.Commands
                 DicConsole.WriteLine();
             }
 
-            Settings.Settings.Current.ShareReports = pressedKey.Key == ConsoleKey.Y;
+            Aaru.Settings.Settings.Current.ShareReports = pressedKey.Key == ConsoleKey.Y;
             #endregion Device reports
 
             #region Statistics
@@ -149,7 +149,7 @@ namespace DiscImageChef.Commands
 
             if(pressedKey.Key == ConsoleKey.Y)
             {
-                Settings.Settings.Current.Stats = new StatsSettings();
+                Aaru.Settings.Settings.Current.Stats = new StatsSettings();
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -161,7 +161,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.ShareStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -173,7 +173,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.CommandStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -185,7 +185,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.DeviceStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -197,7 +197,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.FilesystemStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -209,7 +209,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.FilterStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -221,7 +221,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.MediaImageStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -233,7 +233,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.MediaScanStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -245,7 +245,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.PartitionStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -257,7 +257,7 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.MediaStats = pressedKey.Key == ConsoleKey.Y;
 
                 pressedKey = new ConsoleKeyInfo();
 
@@ -269,14 +269,14 @@ namespace DiscImageChef.Commands
                     DicConsole.WriteLine();
                 }
 
-                Settings.Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;
+                Aaru.Settings.Settings.Current.Stats.VerifyStats = pressedKey.Key == ConsoleKey.Y;
             }
             else
-                Settings.Settings.Current.Stats = null;
+                Aaru.Settings.Settings.Current.Stats = null;
             #endregion Statistics
 
-            Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
-            Settings.Settings.SaveSettings();
+            Aaru.Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
+            Aaru.Settings.Settings.SaveSettings();
 
             return(int)ErrorNumber.NoError;
         }

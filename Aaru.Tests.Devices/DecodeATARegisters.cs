@@ -28,9 +28,9 @@
 
 using System;
 using System.Text;
-using DiscImageChef.Decoders.ATA;
+using Aaru.Decoders.ATA;
 
-namespace DiscImageChef.Tests.Devices
+namespace Aaru.Tests.Devices
 {
     static partial class MainClass
     {

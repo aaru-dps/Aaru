@@ -6,7 +6,7 @@
     <ProjectGuid>{9E4ACE1A-BA5A-4901-9DC0-71336EFA40DF}</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DiscImageChef.Gui.XamMac</RootNamespace>
+    <RootNamespace>Aaru.Gui.XamMac</RootNamespace>
     <AssemblyName>DiscImageChef.Gui.XamMac</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>

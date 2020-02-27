@@ -30,11 +30,11 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Console;
 
-namespace DiscImageChef.Core.Devices.Report
+namespace Aaru.Core.Devices.Report
 {
     /// <summary>Implements creating a device report for a SecureDigital or MultiMediaCard flash card</summary>
     public partial class DeviceReport

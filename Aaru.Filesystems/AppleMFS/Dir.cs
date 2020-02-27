@@ -33,11 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Helpers;
 
-namespace DiscImageChef.Filesystems.AppleMFS
+namespace Aaru.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
     public partial class AppleMFS

@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Decoders.Bluray;
+using Aaru.Decoders.Bluray;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabBlurayInfo : TabPage
     {

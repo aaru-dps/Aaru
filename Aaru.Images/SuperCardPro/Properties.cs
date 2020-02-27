@@ -32,10 +32,10 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class SuperCardPro
     {

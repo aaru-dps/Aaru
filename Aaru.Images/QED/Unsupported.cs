@@ -30,10 +30,10 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Qed
     {

@@ -33,11 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     // TODO: Find better documentation, this is working for XENIX 2 but not for SCO OpenServer...
     public class XENIX : IPartition

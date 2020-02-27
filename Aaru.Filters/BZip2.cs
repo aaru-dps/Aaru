@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.BZip2;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     Decompress bz2 files while reading

@@ -36,15 +36,15 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Core;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace DiscImageChef.Commands.Filesystem
+namespace Aaru.Commands.Filesystem
 {
     internal class ExtractFilesCommand : Command
     {
@@ -121,7 +121,7 @@ namespace DiscImageChef.Commands.Filesystem
             var     filtersList = new FiltersList();
             IFilter inputFilter = filtersList.GetFilter(imagePath);
 
-            Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
+            Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(options);
             DicConsole.DebugWriteLine("Extract-Files command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
@@ -222,8 +222,8 @@ namespace DiscImageChef.Commands.Filesystem
                     return(int)ErrorNumber.CannotOpenFormat;
                 }
 
-                List<Partition> partitions = Core.Partitions.GetAll(imageFormat);
-                Core.Partitions.AddSchemesToStats(partitions);
+                List<Partition> partitions = Aaru.Core.Partitions.GetAll(imageFormat);
+                Aaru.Core.Partitions.AddSchemesToStats(partitions);
 
                 List<string>        idPlugins;
                 IReadOnlyFilesystem plugin;
@@ -242,7 +242,7 @@ namespace DiscImageChef.Commands.Filesystem
 
                         DicConsole.WriteLine("Identifying filesystem on partition");
 
-                        Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
+                        Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partitions[i]);
 
                         if(idPlugins.Count == 0)
                             DicConsole.WriteLine("Filesystem not identified");
@@ -310,7 +310,7 @@ namespace DiscImageChef.Commands.Filesystem
                     Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                 };
 
-                Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                 if(idPlugins.Count == 0)
                     DicConsole.WriteLine("Filesystem not identified");

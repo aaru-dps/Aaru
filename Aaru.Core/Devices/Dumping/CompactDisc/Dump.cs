@@ -34,27 +34,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Extents;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Core.Media.Detection;
-using DiscImageChef.Database.Models;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Devices;
+using Aaru.Core.Logging;
+using Aaru.Core.Media.Detection;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Database.Models;
+using Aaru.Decoders.CD;
+using Aaru.Devices;
 using Schemas;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
+using Version = Aaru.CommonTypes.Interop.Version;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implement dumping Compact Discs</summary>
 

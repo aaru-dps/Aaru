@@ -1,6 +1,6 @@
 using System;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     /// <summary>
     ///     Exception to be returned by the device constructor

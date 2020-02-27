@@ -35,7 +35,7 @@ using System.Diagnostics.CodeAnalysis;
 
 #pragma warning disable 169
 
-namespace DiscImageChef.Filesystems.AppleMFS
+namespace Aaru.Filesystems.AppleMFS
 {
     // Information from Inside Macintosh Volume II
     [SuppressMessage("ReSharper", "InconsistentNaming"), SuppressMessage("ReSharper", "NotAccessedField.Local")]

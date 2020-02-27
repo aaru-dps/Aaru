@@ -45,7 +45,7 @@
 using System;
 using System.IO;
 
-namespace DiscImageChef.Compression
+namespace Aaru.Compression
 {
     /*
      * Based on Japanese version 29-NOV-1988

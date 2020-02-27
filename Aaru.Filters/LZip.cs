@@ -32,11 +32,11 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.LZMA;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     Decompress lzip files while reading

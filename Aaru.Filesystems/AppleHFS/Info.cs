@@ -32,12 +32,12 @@
 
 using System;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 using Schemas;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf

@@ -32,15 +32,15 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
-using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using Aaru.Decoders.SCSI;
+using Aaru.Devices;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace DiscImageChef.Core.Devices.Info
+namespace Aaru.Core.Devices.Info
 {
     public partial class DeviceInfo
     {
@@ -518,7 +518,7 @@ namespace DiscImageChef.Core.Devices.Info
                             else
                             {
                                 DensitySupport       = seqBuf;
-                                DensitySupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
+                                DensitySupportHeader = Aaru.Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
                             }
 
                             sense = dev.ReportDensitySupport(out seqBuf, out senseBuf, true, false, dev.Timeout, out _);
@@ -529,7 +529,7 @@ namespace DiscImageChef.Core.Devices.Info
                             else
                             {
                                 MediumDensitySupport   = seqBuf;
-                                MediaTypeSupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
+                                MediaTypeSupportHeader = Aaru.Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
                             }
 
                             break;

@@ -33,13 +33,13 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Core;
-using DiscImageChef.Partitions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Core;
+using Aaru.Partitions;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Dialogs
+namespace Aaru.Gui.Dialogs
 {
     public class dlgPlugins : Dialog
     {

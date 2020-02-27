@@ -32,9 +32,9 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Enums;
+using Aaru.CommonTypes.Enums;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class DiscImageChef
     {

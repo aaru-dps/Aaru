@@ -33,7 +33,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class HdCopy
     {

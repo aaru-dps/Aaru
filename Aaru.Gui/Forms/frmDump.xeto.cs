@@ -39,24 +39,24 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Core;
-using DiscImageChef.Core.Devices.Dumping;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Core;
+using Aaru.Core.Devices.Dumping;
+using Aaru.Core.Logging;
+using Aaru.Core.Media.Info;
+using Aaru.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
-using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
+using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+using MediaType = Aaru.CommonTypes.MediaType;
 
 // ReSharper disable UnusedMember.Local
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmDump : Form
     {

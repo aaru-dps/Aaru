@@ -35,18 +35,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Extents;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.PCMCIA;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.Decoders.PCMCIA;
 using Schemas;
-using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using Tuple = Aaru.Decoders.PCMCIA.Tuple;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements dumping ATA devices</summary>
     public partial class Dump

@@ -34,7 +34,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Devices.Linux
+namespace Aaru.Devices.Linux
 {
     static class Extern
     {

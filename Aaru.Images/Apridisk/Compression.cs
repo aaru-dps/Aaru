@@ -33,7 +33,7 @@
 using System;
 using System.IO;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Apridisk
     {

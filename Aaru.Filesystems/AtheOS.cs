@@ -33,12 +33,12 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public class AtheOS : IFilesystem
     {

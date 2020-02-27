@@ -32,20 +32,20 @@
 
 using System;
 using System.Linq;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Extents;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
+using Aaru.Devices;
 using Schemas;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {

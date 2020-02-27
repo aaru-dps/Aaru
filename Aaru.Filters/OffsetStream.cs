@@ -38,7 +38,7 @@ using Microsoft.Win32.SafeHandles;
 using System.Security.AccessControl;
 #endif
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     Creates a stream that is a subset of another stream.

@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System.Diagnostics.CodeAnalysis;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class Device

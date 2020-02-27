@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9183F2E0-A879-4F23-9EE3-C6908F1332B2}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Interop</RootNamespace>
+    <RootNamespace>Aaru.Interop</RootNamespace>
     <AssemblyName>DiscImageChef.Interop</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

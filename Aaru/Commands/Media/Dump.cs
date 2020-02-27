@@ -38,18 +38,18 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Core.Devices.Dumping;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Core.Devices.Dumping;
+using Aaru.Core.Logging;
+using Aaru.Devices;
 using Schemas;
 
-namespace DiscImageChef.Commands.Media
+namespace Aaru.Commands.Media
 {
     // TODO: Add raw dumping
     internal class DumpMediaCommand : Command
@@ -216,7 +216,7 @@ namespace DiscImageChef.Commands.Media
             // TODO: Disabled temporarily
             //DicConsole.DebugWriteLine("Dump-Media command", "--raw={0}",           raw);
 
-            Dictionary<string, string> parsedOptions = Core.Options.Parse(options);
+            Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(options);
             DicConsole.DebugWriteLine("Dump-Media command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)
@@ -276,11 +276,11 @@ namespace DiscImageChef.Commands.Media
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev;
+            Aaru.Devices.Device dev;
 
             try
             {
-                dev = new Devices.Device(devicePath);
+                dev = new Aaru.Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

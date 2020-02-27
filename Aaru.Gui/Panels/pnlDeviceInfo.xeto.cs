@@ -32,14 +32,14 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Devices;
-using DiscImageChef.Gui.Tabs;
+using Aaru.Gui.Tabs;
+using Aaru.Decoders.SCSI.SSC;
+using Aaru.Devices;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
+using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
-namespace DiscImageChef.Gui.Panels
+namespace Aaru.Gui.Panels
 {
     public class pnlDeviceInfo : Panel
     {

@@ -34,11 +34,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using static DiscImageChef.Devices.FreeBSD.Extern;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using static Aaru.Devices.FreeBSD.Extern;
 
-namespace DiscImageChef.Devices.FreeBSD
+namespace Aaru.Devices.FreeBSD
 {
     [SuppressMessage("ReSharper", "BitwiseOperatorOnEnumWithoutFlags")]
     static class Command

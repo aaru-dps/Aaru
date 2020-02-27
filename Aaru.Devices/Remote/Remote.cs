@@ -5,14 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using Marshal = DiscImageChef.Helpers.Marshal;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interop;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using Marshal = Aaru.Helpers.Marshal;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Devices.Remote
+namespace Aaru.Devices.Remote
 {
     public class Remote : IDisposable
     {

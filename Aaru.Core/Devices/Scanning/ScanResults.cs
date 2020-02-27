@@ -32,7 +32,7 @@
 
 using System.Collections.Generic;
 
-namespace DiscImageChef.Core.Devices.Scanning
+namespace Aaru.Core.Devices.Scanning
 {
     /// <summary>
     ///     Contains the results of a media scan

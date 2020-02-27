@@ -26,11 +26,11 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Console;
-using DiscImageChef.Devices;
-using DiscImageChef.Tests.Devices.SCSI;
+using Aaru.Tests.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices
+namespace Aaru.Tests.Devices
 {
     static partial class MainClass
     {

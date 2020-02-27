@@ -32,7 +32,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Filesystems.CPM
+namespace Aaru.Filesystems.CPM
 {
     partial class CPM
     {

@@ -37,19 +37,19 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Core;
 using Schemas;
-using ImageInfo = DiscImageChef.CommonTypes.Structs.ImageInfo;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using ImageInfo = Aaru.CommonTypes.Structs.ImageInfo;
+using MediaType = Aaru.CommonTypes.MediaType;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Commands.Image
+namespace Aaru.Commands.Image
 {
     internal class ConvertImageCommand : Command
     {
@@ -233,7 +233,7 @@ namespace DiscImageChef.Commands.Image
             DicConsole.DebugWriteLine("Analyze command", "--resume-file={0}", resumeFile);
             DicConsole.DebugWriteLine("Analyze command", "--verbose={0}", verbose);
 
-            Dictionary<string, string> parsedOptions = Core.Options.Parse(outputOptions);
+            Dictionary<string, string> parsedOptions = Aaru.Core.Options.Parse(outputOptions);
             DicConsole.DebugWriteLine("Analyze command", "Parsed options:");
 
             foreach(KeyValuePair<string, string> parsedOption in parsedOptions)

@@ -34,10 +34,10 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.CommonTypes.Interfaces;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     // TODO: Interpret fdScript
     /// <summary>

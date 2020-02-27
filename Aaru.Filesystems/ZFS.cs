@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     /*
      * The ZFS on-disk structure is quite undocumented, so this has been checked using several test images and reading the comments and headers (but not the code)

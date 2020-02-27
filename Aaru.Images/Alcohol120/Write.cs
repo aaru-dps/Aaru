@@ -35,15 +35,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using Aaru.Decoders.CD;
+using Aaru.Helpers;
 using Schemas;
-using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Alcohol120
     {

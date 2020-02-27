@@ -35,7 +35,7 @@ using System;
 // ReSharper disable MemberCanBeInternal
 // ReSharper disable InconsistentNaming
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     #region ATA Commands
     /// <summary>All known ATA commands</summary>

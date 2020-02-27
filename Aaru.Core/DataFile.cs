@@ -32,9 +32,9 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     /// <summary>
     ///     Abstracts a datafile with a block based interface

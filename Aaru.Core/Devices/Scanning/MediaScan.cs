@@ -1,8 +1,8 @@
 using System;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes.Enums;
+using Aaru.Devices;
 
-namespace DiscImageChef.Core.Devices.Scanning
+namespace Aaru.Core.Devices.Scanning
 {
     public partial class MediaScan
     {

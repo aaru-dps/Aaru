@@ -32,9 +32,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class DiscImageChef
     {

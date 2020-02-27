@@ -32,11 +32,11 @@
 
 using System;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public class PCEnginePlugin : IFilesystem
     {

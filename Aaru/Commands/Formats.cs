@@ -34,14 +34,14 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Partitions;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Partitions;
 
-namespace DiscImageChef.Commands
+namespace Aaru.Commands
 {
     internal class FormatsCommand : Command
     {

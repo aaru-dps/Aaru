@@ -32,13 +32,13 @@
 
 using System.CommandLine.Invocation;
 using System.Linq;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Database;
-using DiscImageChef.Database.Models;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Database;
+using Aaru.Database.Models;
 using Command = System.CommandLine.Command;
 
-namespace DiscImageChef.Commands
+namespace Aaru.Commands
 {
     internal class StatisticsCommand : Command
     {
@@ -55,7 +55,7 @@ namespace DiscImageChef.Commands
             if(verbose)
                 DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             if(!ctx.Commands.Any()     &&
                !ctx.Filesystems.Any()  &&

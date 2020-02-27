@@ -27,12 +27,12 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Devices;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.SSC;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices.SCSI
+namespace Aaru.Tests.Devices.SCSI
 {
     static class Ssc
     {

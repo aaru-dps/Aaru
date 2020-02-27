@@ -6,8 +6,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B2ABC1F2-C365-4515-9F23-A5725050CC48}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>DiscImageChef.Tests</RootNamespace>
-    <AssemblyName>DiscImageChef.Tests</AssemblyName>
+    <RootNamespace>Aaru.Tests</RootNamespace>
+    <AssemblyName>Aaru.Tests</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <TargetFramework>net461</TargetFramework>
@@ -16,7 +16,7 @@
     <Company>Claunia.com</Company>
     <Copyright>Copyright © 2011-2019 Natalia Portillo</Copyright>
     <Product>The Disc Image Chef</Product>
-    <Title>DiscImageChef.Tests</Title>
+    <Title>Aaru.Tests</Title>
     <ApplicationVersion>$(Version)</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup>
@@ -151,31 +151,31 @@
   <ItemGroup>
     <ProjectReference Include="..\Aaru.Checksums\Aaru.Checksums.csproj">
       <Project>{CC48B324-A532-4A45-87A6-6F91F7141E8D}</Project>
-      <Name>DiscImageChef.Checksums</Name>
+      <Name>Aaru.Checksums</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Filters\Aaru.Filters.csproj">
       <Project>{D571B8EF-903D-4353-BDD5-B834F9F029EF}</Project>
-      <Name>DiscImageChef.Filters</Name>
+      <Name>Aaru.Filters</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Images\Aaru.Images.csproj">
       <Project>{74032CBC-339B-42F3-AF6F-E96C261F3E6A}</Project>
-      <Name>DiscImageChef.DiscImages</Name>
+      <Name>Aaru.DiscImages</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Filesystems\Aaru.Filesystems.csproj">
       <Project>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</Project>
-      <Name>DiscImageChef.Filesystems</Name>
+      <Name>Aaru.Filesystems</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.CommonTypes\Aaru.CommonTypes.csproj">
       <Project>{F2B84194-26EB-4227-B1C5-6602517E85AE}</Project>
-      <Name>DiscImageChef.CommonTypes</Name>
+      <Name>Aaru.CommonTypes</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Partitions\Aaru.Partitions.csproj">
       <Project>{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}</Project>
-      <Name>DiscImageChef.Partitions</Name>
+      <Name>Aaru.Partitions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Aaru.Core\Aaru.Core.csproj">
       <Project>{679659B8-25D0-4279-B632-56EF8F94ADC0}</Project>
-      <Name>DiscImageChef.Core</Name>
+      <Name>Aaru.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -34,12 +34,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     public class AmigaRigidDiskBlock : IPartition
     {

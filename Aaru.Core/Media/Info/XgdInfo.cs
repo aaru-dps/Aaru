@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Core.Media.Info
+namespace Aaru.Core.Media.Info
 {
     public class XgdInfo
     {

@@ -32,12 +32,12 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Decoders.Xbox;
+using Aaru.Core.Media.Info;
+using Aaru.Decoders.Xbox;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabXboxInfo : TabPage
     {

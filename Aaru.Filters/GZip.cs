@@ -33,9 +33,9 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     Decompress gzip files while reading

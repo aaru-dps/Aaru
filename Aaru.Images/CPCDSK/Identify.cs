@@ -32,11 +32,11 @@
 
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Helpers;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Cpcdsk
     {

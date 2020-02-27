@@ -33,14 +33,14 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Helpers;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Helpers;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     // TODO: Support AAP extensions
     public class MBR : IPartition

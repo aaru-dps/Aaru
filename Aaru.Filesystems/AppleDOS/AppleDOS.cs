@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace DiscImageChef.Filesystems.AppleDOS
+namespace Aaru.Filesystems.AppleDOS
 {
     public partial class AppleDOS : IReadOnlyFilesystem
     {

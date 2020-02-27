@@ -34,15 +34,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
+using Inquiry = Aaru.Decoders.SCSI.Inquiry;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabScsiInfo : TabPage
     {

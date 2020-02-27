@@ -2,14 +2,14 @@
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using DiscImageChef.Core;
-using DiscImageChef.Database;
-using DiscImageChef.Gui.Forms;
+using Aaru.Core;
+using Aaru.Database;
+using Aaru.Gui.Forms;
 using Eto;
 using Eto.Forms;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscImageChef.Gtk
+namespace Aaru.Gtk
 {
     class Program
     {

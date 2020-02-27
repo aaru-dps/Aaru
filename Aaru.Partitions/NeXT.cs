@@ -35,13 +35,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Marshal = Aaru.Helpers.Marshal;
 
 // Information learnt from XNU source and testing against real disks
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     public class NeXTDisklabel : IPartition
     {

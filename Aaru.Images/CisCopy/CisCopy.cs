@@ -32,11 +32,11 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     /* This is a very simple format created by a German application called CisCopy, aka CCOPY.EXE, with extension .DCF.
      * First byte indicates the floppy type, limited to standard formats.

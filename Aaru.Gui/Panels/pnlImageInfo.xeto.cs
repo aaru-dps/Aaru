@@ -34,25 +34,25 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.Xbox;
-using DiscImageChef.Gui.Controls;
-using DiscImageChef.Gui.Forms;
-using DiscImageChef.Gui.Tabs;
+using Aaru.Gui.Controls;
+using Aaru.Gui.Forms;
+using Aaru.Gui.Tabs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.Xbox;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
-using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
-using Session = DiscImageChef.CommonTypes.Structs.Session;
+using Inquiry = Aaru.Decoders.SCSI.Inquiry;
+using Session = Aaru.CommonTypes.Structs.Session;
 
-namespace DiscImageChef.Gui.Panels
+namespace Aaru.Gui.Panels
 {
     public class pnlImageInfo : Panel
     {

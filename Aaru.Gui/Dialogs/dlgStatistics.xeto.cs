@@ -32,12 +32,12 @@
 
 using System;
 using System.Linq;
-using DiscImageChef.Database;
-using DiscImageChef.Database.Models;
+using Aaru.Database;
+using Aaru.Database.Models;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Dialogs
+namespace Aaru.Gui.Dialogs
 {
     public class dlgStatistics : Dialog
     {
@@ -45,7 +45,7 @@ namespace DiscImageChef.Gui.Dialogs
         {
             XamlReader.Load(this);
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             if(ctx.Commands.Any())
             {

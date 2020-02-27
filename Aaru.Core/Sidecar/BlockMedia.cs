@@ -35,21 +35,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.PCMCIA;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filters;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using Aaru.Decoders.PCMCIA;
+using Aaru.DiscImages;
+using Aaru.Filters;
+using Aaru.CommonTypes.Structs.Devices.ATA;
 using Schemas;
-using MediaType = DiscImageChef.CommonTypes.Metadata.MediaType;
-using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
+using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
+using MediaType = Aaru.CommonTypes.Metadata.MediaType;
+using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public partial class Sidecar
     {
@@ -681,7 +683,7 @@ namespace DiscImageChef.Core
 
             if(image.Info.ReadableMediaTags.Contains(MediaTagType.ATA_IDENTIFY))
             {
-                CommonTypes.Structs.Devices.ATA.Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
+                Identify.IdentifyDevice? ataId = Identify.Decode(image.ReadDiskTag(MediaTagType.ATA_IDENTIFY));
 
                 if(ataId.HasValue)
                     if(ataId.Value.CurrentCylinders       > 0 &&

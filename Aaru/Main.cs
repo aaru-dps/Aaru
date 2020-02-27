@@ -38,18 +38,18 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using DiscImageChef.Commands;
-using DiscImageChef.Commands.Device;
-using DiscImageChef.Commands.Filesystem;
-using DiscImageChef.Commands.Image;
-using DiscImageChef.Commands.Media;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Database;
-using DiscImageChef.Settings;
+using Aaru.Commands;
+using Aaru.Commands.Device;
+using Aaru.Commands.Filesystem;
+using Aaru.Commands.Image;
+using Aaru.Commands.Media;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Database;
+using Aaru.Settings;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscImageChef
+namespace Aaru
 {
     internal class MainClass
     {
@@ -74,21 +74,21 @@ namespace DiscImageChef
             DicConsole.WriteEvent          += System.Console.Write;
             DicConsole.ErrorWriteLineEvent += System.Console.Error.WriteLine;
 
-            Settings.Settings.LoadSettings();
+            Aaru.Settings.Settings.LoadSettings();
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
             ctx.Database.Migrate();
             ctx.SaveChanges();
 
             bool masterDbUpdate = false;
 
-            if(!File.Exists(Settings.Settings.MasterDbPath))
+            if(!File.Exists(Aaru.Settings.Settings.MasterDbPath))
             {
                 masterDbUpdate = true;
                 UpdateCommand.DoUpdate(true);
             }
 
-            var masterContext = DicContext.Create(Settings.Settings.MasterDbPath);
+            var masterContext = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
 
             if(masterContext.Database.GetPendingMigrations().Any())
             {
@@ -96,25 +96,25 @@ namespace DiscImageChef
 
                 try
                 {
-                    File.Delete(Settings.Settings.MasterDbPath);
+                    File.Delete(Aaru.Settings.Settings.MasterDbPath);
                 }
                 catch(Exception)
                 {
                     DicConsole.ErrorWriteLine("Exception trying to remove old database version, cannot continue...");
-                    DicConsole.ErrorWriteLine("Please manually remove file at {0}", Settings.Settings.MasterDbPath);
+                    DicConsole.ErrorWriteLine("Please manually remove file at {0}", Aaru.Settings.Settings.MasterDbPath);
                 }
 
                 UpdateCommand.DoUpdate(true);
             }
 
             if((args.Length < 1 || args[0].ToLowerInvariant() != "gui") &&
-               Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+               Aaru.Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
                 new ConfigureCommand(true, true).Invoke(args);
 
             Statistics.LoadStats();
 
-            if(Settings.Settings.Current.Stats != null &&
-               Settings.Settings.Current.Stats.ShareStats)
+            if(Aaru.Settings.Settings.Current.Stats != null &&
+               Aaru.Settings.Settings.Current.Stats.ShareStats)
                 Task.Run(Statistics.SubmitStats);
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);

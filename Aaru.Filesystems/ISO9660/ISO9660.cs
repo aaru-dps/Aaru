@@ -34,11 +34,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.Filesystems.ISO9660
+namespace Aaru.Filesystems.ISO9660
 {
     // This is coded following ECMA-119.
     public partial class ISO9660 : IReadOnlyFilesystem

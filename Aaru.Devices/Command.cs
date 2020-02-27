@@ -31,14 +31,14 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Devices.FreeBSD;
-using DiscImageChef.Devices.Windows;
+using Aaru.Devices.FreeBSD;
+using Aaru.Devices.Windows;
+using Aaru.CommonTypes.Interop;
+using Aaru.Decoders.ATA;
 using Microsoft.Win32.SafeHandles;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     internal static class Command
     {

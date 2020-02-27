@@ -32,10 +32,10 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Cdrdao
     {

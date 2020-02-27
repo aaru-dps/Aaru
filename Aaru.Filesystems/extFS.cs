@@ -33,11 +33,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     // Information from the Linux kernel
     public class extFS : IFilesystem

@@ -35,13 +35,13 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.IO;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Database;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscImageChef.Commands
+namespace Aaru.Commands
 {
     internal class UpdateCommand : Command
     {
@@ -84,9 +84,9 @@ namespace DiscImageChef.Commands
             {
                 try
                 {
-                    File.Delete(Settings.Settings.LocalDbPath);
+                    File.Delete(Aaru.Settings.Settings.LocalDbPath);
 
-                    var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+                    var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
                     ctx.Database.Migrate();
                     ctx.SaveChanges();
                 }
@@ -105,7 +105,7 @@ namespace DiscImageChef.Commands
             {
                 try
                 {
-                    File.Delete(Settings.Settings.MasterDbPath);
+                    File.Delete(Aaru.Settings.Settings.MasterDbPath);
                 }
                 catch(Exception e)
                 {

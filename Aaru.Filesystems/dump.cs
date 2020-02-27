@@ -34,14 +34,14 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Schemas;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 using ufs_daddr_t = System.Int32;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class dump : IFilesystem

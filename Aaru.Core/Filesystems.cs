@@ -32,10 +32,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public static class Filesystems
     {

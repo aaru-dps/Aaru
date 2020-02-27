@@ -30,9 +30,9 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Metadata;
+using Aaru.CommonTypes.Metadata;
 
-namespace DiscImageChef.Core.Devices.Report
+namespace Aaru.Core.Devices.Report
 {
     /// <summary>Implements creating a report for a USB device</summary>
     public partial class DeviceReport

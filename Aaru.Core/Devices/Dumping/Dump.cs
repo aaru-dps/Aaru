@@ -4,15 +4,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Database;
-using DiscImageChef.Devices;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Database;
+using Aaru.Devices;
 using Schemas;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     public enum DumpSubchannel
     {
@@ -43,7 +43,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         readonly bool                       _trim;
         bool                                _aborted;
         DicContext                          _ctx;   // Master database context
-        Database.Models.Device              _dbDev; // Device database entry
+        Aaru.Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
         uint                                _maximumReadable; // Maximum number of sectors drive can read at once
@@ -113,7 +113,7 @@ namespace DiscImageChef.Core.Devices.Dumping
         public void Start()
         {
             // Open master database
-            _ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+            _ctx = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
 
             // Search for device in master database
             _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&

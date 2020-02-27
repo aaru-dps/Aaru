@@ -34,7 +34,7 @@ using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
 
-namespace DiscImageChef.Gui.Panels
+namespace Aaru.Gui.Panels
 {
     public class pnlFilesystem : Panel
     {

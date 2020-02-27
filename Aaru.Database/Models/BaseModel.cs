@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace DiscImageChef.Database.Models
+namespace Aaru.Database.Models
 {
     public abstract class BaseModel<T>
     {

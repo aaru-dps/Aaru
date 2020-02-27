@@ -30,11 +30,11 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes;
+using Aaru.CommonTypes;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Panels
+namespace Aaru.Gui.Panels
 {
     public class pnlPartition : Panel
     {

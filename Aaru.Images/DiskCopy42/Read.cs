@@ -35,14 +35,14 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Claunia.Encoding;
 using Claunia.RsrcFork;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Version = Resources.Version;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class DiskCopy42
     {

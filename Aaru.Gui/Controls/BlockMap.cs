@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace DiscImageChef.Gui.Controls
+namespace Aaru.Gui.Controls
 {
     public class BlockMap : ColoredGrid
     {

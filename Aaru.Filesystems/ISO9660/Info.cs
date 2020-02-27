@@ -34,15 +34,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.Sega;
-using DiscImageChef.Helpers;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Decoders.Sega;
+using Aaru.Helpers;
 using Schemas;
 
-namespace DiscImageChef.Filesystems.ISO9660
+namespace Aaru.Filesystems.ISO9660
 {
     public partial class ISO9660
     {

@@ -33,12 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.Filesystems.CPM
+namespace Aaru.Filesystems.CPM
 {
     partial class CPM : IReadOnlyFilesystem
     {

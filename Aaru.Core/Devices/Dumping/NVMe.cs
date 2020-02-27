@@ -34,7 +34,7 @@
 
 // ReSharper disable InconsistentNaming
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     public partial class Dump
     {

@@ -32,13 +32,13 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Extents;
-using DiscImageChef.CommonTypes.Metadata;
+using Aaru.CommonTypes.Extents;
+using Aaru.CommonTypes.Metadata;
 using Schemas;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using Version = DiscImageChef.CommonTypes.Interop.Version;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+using Version = Aaru.CommonTypes.Interop.Version;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements resume support</summary>
     internal static class ResumeSupport

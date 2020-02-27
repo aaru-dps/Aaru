@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Database.Models
+namespace Aaru.Database.Models
 {
     public class Filesystem : NameCountModel<int> { }
 }

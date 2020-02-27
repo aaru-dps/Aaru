@@ -34,13 +34,13 @@ using System;
 using System.Linq;
 using System.Text;
 using Claunia.Encoding;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     // Information from Apple ProDOS 8 Technical Reference
     public class ProDOSPlugin : IFilesystem

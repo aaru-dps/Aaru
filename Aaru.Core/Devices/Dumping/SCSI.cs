@@ -31,12 +31,12 @@
 // ****************************************************************************/
 
 using System.Threading;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Decoders.SCSI;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.SCSI;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implements dumping SCSI and ATAPI devices</summary>
     public partial class Dump

@@ -32,13 +32,13 @@
 
 using System;
 using System.Threading;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Core;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmImageEntropy : Form
     {

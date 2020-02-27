@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Core.Devices.Scanning
+namespace Aaru.Core.Devices.Scanning
 {
     public partial class MediaScan
     {

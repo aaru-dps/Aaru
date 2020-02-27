@@ -30,10 +30,10 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Database.Models;
+using Aaru.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscImageChef.Database
+namespace Aaru.Database
 {
     public sealed class DicContext : DbContext
     {

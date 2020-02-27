@@ -26,11 +26,11 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Devices;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices.ATA
+namespace Aaru.Tests.Devices.ATA
 {
     static class Smart
     {

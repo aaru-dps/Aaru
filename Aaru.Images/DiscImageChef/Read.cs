@@ -40,19 +40,19 @@ using System.Xml;
 using System.Xml.Serialization;
 using CUETools.Codecs;
 using CUETools.Codecs.FLAKE;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Schemas;
 using SharpCompress.Compressors.LZMA;
-using Marshal = DiscImageChef.Helpers.Marshal;
-using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
+using Marshal = Aaru.Helpers.Marshal;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class DiscImageChef
     {

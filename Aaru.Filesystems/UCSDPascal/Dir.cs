@@ -33,9 +33,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.Filesystems.UCSDPascal
+namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin

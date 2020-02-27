@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class CisCopy
     {

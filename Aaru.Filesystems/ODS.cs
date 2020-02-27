@@ -33,14 +33,14 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Schemas;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     // Information from VMS File System Internals by Kirby McCoy
     // ISBN: 1-55558-056-4

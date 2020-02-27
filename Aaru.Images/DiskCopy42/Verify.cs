@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class DiskCopy42
     {

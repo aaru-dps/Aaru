@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Interfaces;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Filters
+namespace Aaru.Tests.Filters
 {
     [TestFixture]
     public class LZip
@@ -61,14 +61,14 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckFilterId()
         {
-            IFilter filter = new DiscImageChef.Filters.LZip();
+            IFilter filter = new Aaru.Filters.LZip();
             Assert.AreEqual(true, filter.Identify(location));
         }
 
         [Test]
         public void Test()
         {
-            IFilter filter = new DiscImageChef.Filters.LZip();
+            IFilter filter = new Aaru.Filters.LZip();
             filter.Open(location);
             Assert.AreEqual(true,    filter.IsOpened());
             Assert.AreEqual(1048576, filter.GetDataForkLength());
@@ -82,7 +82,7 @@ namespace DiscImageChef.Tests.Filters
         [Test]
         public void CheckContents()
         {
-            IFilter filter = new DiscImageChef.Filters.LZip();
+            IFilter filter = new Aaru.Filters.LZip();
             filter.Open(location);
             Stream str  = filter.GetDataForkStream();
             byte[] data = new byte[1048576];

@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Decoders.SCSI.MMC;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Decoders.SCSI.MMC;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class BlindWrite5
     {

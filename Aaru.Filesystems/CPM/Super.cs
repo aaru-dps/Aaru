@@ -37,16 +37,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Helpers;
 using Schemas;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
-using FileSystemInfo = DiscImageChef.CommonTypes.Structs.FileSystemInfo;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
 
-namespace DiscImageChef.Filesystems.CPM
+namespace Aaru.Filesystems.CPM
 {
     partial class CPM
     {

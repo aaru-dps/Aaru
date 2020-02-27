@@ -30,9 +30,9 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Decoders.Floppy;
+using Aaru.Decoders.Floppy;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Cpcdsk
     {

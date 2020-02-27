@@ -33,7 +33,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Vhdx
     {

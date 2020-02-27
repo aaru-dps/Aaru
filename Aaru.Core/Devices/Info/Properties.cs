@@ -31,15 +31,15 @@
 // ****************************************************************************/
 
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Devices;
-using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.ATA;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.SSC;
+using Aaru.Devices;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace DiscImageChef.Core.Devices.Info
+namespace Aaru.Core.Devices.Info
 {
     public partial class DeviceInfo
     {

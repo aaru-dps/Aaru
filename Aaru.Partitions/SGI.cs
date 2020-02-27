@@ -34,15 +34,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Marshal = Aaru.Helpers.Marshal;
 
 #pragma warning disable 169
 #pragma warning disable 649
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class SGI : IPartition

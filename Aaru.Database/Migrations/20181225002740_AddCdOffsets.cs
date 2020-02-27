@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace DiscImageChef.Database.Migrations
+namespace Aaru.Database.Migrations
 {
     public partial class AddCdOffsets : Migration
     {

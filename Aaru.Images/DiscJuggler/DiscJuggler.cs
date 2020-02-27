@@ -32,11 +32,11 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     // Support separate data files? Never seen a DiscJuggler image using them anyways...
     // TODO: Too many unknowns to make this writable

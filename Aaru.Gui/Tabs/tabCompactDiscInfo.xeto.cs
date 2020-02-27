@@ -33,12 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.SCSI.MMC;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.SCSI.MMC;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabCompactDiscInfo : TabPage
     {

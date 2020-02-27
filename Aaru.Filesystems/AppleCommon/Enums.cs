@@ -32,7 +32,7 @@
 
 using System;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     // Information from Inside Macintosh
     // https://developer.apple.com/legacy/library/documentation/mac/pdf/Files/File_Manager.pdf

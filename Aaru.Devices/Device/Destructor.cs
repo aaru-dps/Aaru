@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Devices.Linux;
+using Aaru.Devices.Linux;
 using Microsoft.Win32.SafeHandles;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     public partial class Device
     {

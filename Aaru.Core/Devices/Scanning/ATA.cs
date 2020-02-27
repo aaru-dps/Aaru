@@ -32,10 +32,10 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.Core.Logging;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes.Structs.Devices.ATA;
 
-namespace DiscImageChef.Core.Devices.Scanning
+namespace Aaru.Core.Devices.Scanning
 {
     /// <summary>Implements scanning the media from an ATA device</summary>
     public partial class MediaScan

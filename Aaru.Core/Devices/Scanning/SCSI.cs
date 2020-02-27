@@ -33,15 +33,15 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Devices;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Devices;
 
-namespace DiscImageChef.Core.Devices.Scanning
+namespace Aaru.Core.Devices.Scanning
 {
     /// <summary>Implements scanning the media from an SCSI device</summary>
     public partial class MediaScan

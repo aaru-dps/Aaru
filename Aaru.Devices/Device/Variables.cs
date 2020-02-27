@@ -30,11 +30,11 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interop;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     public partial class Device
     {

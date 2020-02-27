@@ -35,27 +35,27 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Decoders.SecureDigital;
-using DiscImageChef.Devices.FreeBSD;
-using DiscImageChef.Devices.Windows;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interop;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Decoders.SecureDigital;
+using Aaru.Devices.FreeBSD;
+using Aaru.Devices.Windows;
 using Microsoft.Win32.SafeHandles;
-using Extern = DiscImageChef.Devices.Windows.Extern;
-using FileAccess = DiscImageChef.Devices.Windows.FileAccess;
-using FileAttributes = DiscImageChef.Devices.Windows.FileAttributes;
-using FileFlags = DiscImageChef.Devices.Linux.FileFlags;
-using FileMode = DiscImageChef.Devices.Windows.FileMode;
-using FileShare = DiscImageChef.Devices.Windows.FileShare;
-using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
-using VendorString = DiscImageChef.Decoders.SecureDigital.VendorString;
+using Extern = Aaru.Devices.Windows.Extern;
+using FileAccess = Aaru.Devices.Windows.FileAccess;
+using FileAttributes = Aaru.Devices.Windows.FileAttributes;
+using FileFlags = Aaru.Devices.Linux.FileFlags;
+using FileMode = Aaru.Devices.Windows.FileMode;
+using FileShare = Aaru.Devices.Windows.FileShare;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
+using VendorString = Aaru.Decoders.SecureDigital.VendorString;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     public partial class Device
     {
@@ -86,10 +86,10 @@ namespace DiscImageChef.Devices
                 {
                     case PlatformID.Win32NT:
                     {
-                        FileHandle = Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
-                                                       FileShare.Read                     | FileShare.Write,
-                                                       IntPtr.Zero,
-                                                       FileMode.OpenExisting, FileAttributes.Normal, IntPtr.Zero);
+                        FileHandle = Windows.Extern.CreateFile(devicePath, FileAccess.GenericRead | FileAccess.GenericWrite,
+                                                               FileShare.Read                     | FileShare.Write,
+                                                               IntPtr.Zero,
+                                                               FileMode.OpenExisting, FileAttributes.Normal, IntPtr.Zero);
 
                         if(((SafeFileHandle)FileHandle).IsInvalid)
                         {
@@ -184,10 +184,10 @@ namespace DiscImageChef.Devices
                         int  error    = 0;
 
                         bool hasError = !Extern.DeviceIoControlStorageQuery((SafeFileHandle)FileHandle,
-                                                                            WindowsIoctl.IoctlStorageQueryProperty,
-                                                                            ref query, (uint)Marshal.SizeOf(query),
-                                                                            descriptorPtr, 1000, ref returned,
-                                                                            IntPtr.Zero);
+                                                                                    WindowsIoctl.IoctlStorageQueryProperty,
+                                                                                    ref query, (uint)Marshal.SizeOf(query),
+                                                                                    descriptorPtr, 1000, ref returned,
+                                                                                    IntPtr.Zero);
 
                         if(hasError)
                             error = Marshal.GetLastWin32Error();
@@ -440,7 +440,7 @@ namespace DiscImageChef.Devices
                 if(cachedScr != null)
                 {
                     Type = DeviceType.SecureDigital;
-                    CID decoded = Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
+                    CID decoded = Aaru.Decoders.SecureDigital.Decoders.DecodeCID(cachedCid);
                     Manufacturer = VendorString.Prettify(decoded.Manufacturer);
                     Model        = decoded.ProductName;
 

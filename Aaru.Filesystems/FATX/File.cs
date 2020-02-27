@@ -34,10 +34,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
+using Aaru.CommonTypes.Structs;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace DiscImageChef.Filesystems.FATX
+namespace Aaru.Filesystems.FATX
 {
     public partial class XboxFatPlugin
     {

@@ -27,11 +27,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices.SCSI
+namespace Aaru.Tests.Devices.SCSI
 {
     static class Kreon
     {

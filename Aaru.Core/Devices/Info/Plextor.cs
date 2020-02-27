@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Core.Devices.Info
+namespace Aaru.Core.Devices.Info
 {
     public class Plextor
     {

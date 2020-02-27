@@ -30,9 +30,9 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef
+namespace Aaru
 {
     static class Progress
     {

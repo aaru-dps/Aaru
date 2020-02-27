@@ -27,13 +27,13 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filters;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.DiscImages;
+using Aaru.Filters;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Filesystems
+namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
     public class Locus
@@ -69,7 +69,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(mediatypes[i], image.Info.MediaType,  testfiles[i]);
                 Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
-                IFilesystem fs = new DiscImageChef.Filesystems.Locus();
+                IFilesystem fs = new Aaru.Filesystems.Locus();
                 Partition wholePart = new Partition
                 {
                     Name   = "Whole device",

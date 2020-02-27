@@ -32,7 +32,7 @@
 
 using System.CommandLine;
 
-namespace DiscImageChef.Commands.Media
+namespace Aaru.Commands.Media
 {
     public class MediaFamily : Command
     {

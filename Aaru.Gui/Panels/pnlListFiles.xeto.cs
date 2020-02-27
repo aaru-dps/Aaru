@@ -35,14 +35,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Core;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interop;
+using Aaru.CommonTypes.Structs;
+using Aaru.Core;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Panels
+namespace Aaru.Gui.Panels
 {
     // TODO: Resize columns
     // TODO: File icons?

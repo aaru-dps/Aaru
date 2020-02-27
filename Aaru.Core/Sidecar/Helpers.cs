@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public partial class Sidecar
     {

@@ -32,9 +32,9 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.Filesystems.AppleDOS
+namespace Aaru.Filesystems.AppleDOS
 {
     public partial class AppleDOS
     {

@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public partial class AppleHFS
     {

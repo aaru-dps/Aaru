@@ -26,7 +26,7 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.Tests
+namespace Aaru.Tests
 {
     static class Consts
     {

@@ -32,9 +32,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using DiscImageChef.Decoders.ATA;
+using Aaru.Decoders.ATA;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class Device

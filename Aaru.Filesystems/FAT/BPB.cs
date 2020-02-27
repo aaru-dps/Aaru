@@ -34,13 +34,13 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Helpers;
 
-namespace DiscImageChef.Filesystems.FAT
+namespace Aaru.Filesystems.FAT
 {
     public partial class FAT
     {

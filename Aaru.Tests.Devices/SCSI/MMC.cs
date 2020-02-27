@@ -27,13 +27,13 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Devices;
+using Aaru.Console;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices.SCSI
+namespace Aaru.Tests.Devices.SCSI
 {
     static class Mmc
     {

@@ -32,7 +32,7 @@
 
 using System.CommandLine;
 
-namespace DiscImageChef.Commands.Device
+namespace Aaru.Commands.Device
 {
     public class DeviceFamily : Command
     {

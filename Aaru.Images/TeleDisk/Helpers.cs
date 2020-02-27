@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.Console;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class TeleDisk
     {

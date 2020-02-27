@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public static class Options
     {

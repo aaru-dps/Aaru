@@ -40,9 +40,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public class Register : IPluginRegister
     {

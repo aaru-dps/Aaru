@@ -31,12 +31,12 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Decoders;
 
-namespace DiscImageChef.Filesystems.LisaFS
+namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {

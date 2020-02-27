@@ -30,7 +30,7 @@
 // Copyright © 2011-2019 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.EntityFramework
+namespace Aaru.EntityFramework
 {
     class Program
     {

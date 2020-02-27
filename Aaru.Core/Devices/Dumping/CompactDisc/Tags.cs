@@ -32,17 +32,17 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Devices;
 
 // ReSharper disable JoinDeclarationAndInitializer
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable TooWideLocalVariableScope
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     partial class Dump
     {

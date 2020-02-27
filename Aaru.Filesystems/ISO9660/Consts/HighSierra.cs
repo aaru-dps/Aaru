@@ -31,9 +31,9 @@
 // In the loving memory of Facunda "Tata" Suárez Domínguez, R.I.P. 2019/07/24
 // ****************************************************************************/
 
-using DiscImageChef.Helpers;
+using Aaru.Helpers;
 
-namespace DiscImageChef.Filesystems.ISO9660
+namespace Aaru.Filesystems.ISO9660
 {
     public partial class ISO9660
     {

@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Helpers;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Vdi
     {

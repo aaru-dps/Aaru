@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Exceptions;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Exceptions;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Chd
     {

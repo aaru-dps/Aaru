@@ -32,19 +32,19 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Decoders.Bluray;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.Bluray;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Devices;
 using Schemas;
-using DDS = DiscImageChef.Decoders.DVD.DDS;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Spare = DiscImageChef.Decoders.DVD.Spare;
+using DDS = Aaru.Decoders.DVD.DDS;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using Spare = Aaru.Decoders.DVD.Spare;
 
-namespace DiscImageChef.Core.Devices.Dumping
+namespace Aaru.Core.Devices.Dumping
 {
     /// <summary>Implement dumping optical discs from MultiMedia devices</summary>
     partial class Dump

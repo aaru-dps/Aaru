@@ -32,13 +32,13 @@
 
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Core;
 
-namespace DiscImageChef.Commands.Image
+namespace Aaru.Commands.Image
 {
     internal class EntropyCommand : Command
     {

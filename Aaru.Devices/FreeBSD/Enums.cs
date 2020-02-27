@@ -33,7 +33,7 @@
 
 using System;
 
-namespace DiscImageChef.Devices.FreeBSD
+namespace Aaru.Devices.FreeBSD
 {
     [Flags]
     enum FileFlags

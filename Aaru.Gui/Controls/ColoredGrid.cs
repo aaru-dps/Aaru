@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using Eto.Drawing;
 using Eto.Forms;
 
-namespace DiscImageChef.Gui.Controls
+namespace Aaru.Gui.Controls
 {
     /// <summary>
     ///     Draws a grid of colored blocks

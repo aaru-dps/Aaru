@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace DiscImageChef.Database.Migrations
+namespace Aaru.Database.Migrations
 {
     // TODO: Find how to permanently create indexes
     public partial class StoreMmcGetConfigurationResponse : Migration

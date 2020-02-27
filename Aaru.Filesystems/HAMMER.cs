@@ -34,17 +34,17 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 using hammer_crc_t = System.UInt32;
 using hammer_off_t = System.UInt64;
 using hammer_tid_t = System.UInt64;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 
 #pragma warning disable 169
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public class HAMMER : IFilesystem
     {

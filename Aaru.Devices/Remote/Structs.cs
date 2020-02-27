@@ -1,8 +1,8 @@
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Decoders.ATA;
+using Aaru.CommonTypes.Enums;
+using Aaru.Decoders.ATA;
 
-namespace DiscImageChef.Devices.Remote
+namespace Aaru.Devices.Remote
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DicPacketHeader

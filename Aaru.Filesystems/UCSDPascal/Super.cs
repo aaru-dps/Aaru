@@ -33,13 +33,13 @@
 using System;
 using System.Collections.Generic;
 using Claunia.Encoding;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 using Encoding = System.Text.Encoding;
 
-namespace DiscImageChef.Filesystems.UCSDPascal
+namespace Aaru.Filesystems.UCSDPascal
 {
     // Information from Call-A.P.P.L.E. Pascal Disk Directory Structure
     public partial class PascalPlugin

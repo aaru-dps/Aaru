@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     // These partitions are hardwired in kernel sources for some UNIX versions predating System V.
     // They depend on exact device, indeed the kernel chooses what to use depending on the disk driver, so that's what we do.

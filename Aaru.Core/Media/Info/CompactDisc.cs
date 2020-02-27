@@ -1,17 +1,17 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Core.Media.Detection;
-using DiscImageChef.Database.Models;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Devices;
-using Device = DiscImageChef.Database.Models.Device;
+using Aaru.Core.Logging;
+using Aaru.Core.Media.Detection;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using Aaru.Database.Models;
+using Aaru.Decoders.CD;
+using Aaru.Devices;
+using Device = Aaru.Database.Models.Device;
 
-namespace DiscImageChef.Core.Media.Info
+namespace Aaru.Core.Media.Info
 {
     public static class CompactDisc
     {
@@ -28,7 +28,7 @@ namespace DiscImageChef.Core.Media.Info
         /// <param name="combinedOffset">Combined offset</param>
         /// <returns><c>true</c> if offset could be found, <c>false</c> otherwise</returns>
         [SuppressMessage("ReSharper", "TooWideLocalVariableScope")]
-        public static void GetOffset(CdOffset cdOffset, Device dbDev, bool debug, DiscImageChef.Devices.Device dev,
+        public static void GetOffset(CdOffset cdOffset, Device dbDev, bool debug, Aaru.Devices.Device dev,
                                      MediaType dskType, DumpLog dumpLog, Track[] tracks,
                                      UpdateStatusHandler updateStatus, out int? driveOffset, out int? combinedOffset)
         {

@@ -36,17 +36,17 @@ using System.IO;
 using System.Linq;
 using Claunia.Encoding;
 using Claunia.RsrcFork;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Compression;
-using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Compression;
+using Aaru.Console;
+using Aaru.Helpers;
 using SharpCompress.Compressors.ADC;
 using Version = Resources.Version;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Ndif
     {

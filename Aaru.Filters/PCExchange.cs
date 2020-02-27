@@ -36,9 +36,9 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     Decodes PCExchange files
@@ -118,7 +118,7 @@ namespace DiscImageChef.Filters
                 PCExchangeEntry datEntry   = new PCExchangeEntry();
                 byte[]          datEntry_b = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
-                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
+                datEntry = Aaru.Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
                 // TODO: Add support for encoding on filters
                 string macName =
                     StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
@@ -175,7 +175,7 @@ namespace DiscImageChef.Filters
                 PCExchangeEntry datEntry   = new PCExchangeEntry();
                 byte[]          datEntry_b = new byte[Marshal.SizeOf(datEntry)];
                 finderDatStream.Read(datEntry_b, 0, Marshal.SizeOf(datEntry));
-                datEntry = Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
+                datEntry = Aaru.Helpers.Marshal.ByteArrayToStructureBigEndian<PCExchangeEntry>(datEntry_b);
                 string macName =
                     StringHandlers.PascalToString(datEntry.macName, Encoding.GetEncoding("macintosh"));
                 byte[] tmpDosName_b = new byte[8];

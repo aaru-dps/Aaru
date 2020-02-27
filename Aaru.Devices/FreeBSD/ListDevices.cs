@@ -35,11 +35,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using static DiscImageChef.Devices.FreeBSD.Extern;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using static Aaru.Devices.FreeBSD.Extern;
 
-namespace DiscImageChef.Devices.FreeBSD
+namespace Aaru.Devices.FreeBSD
 {
     internal static class ListDevices
     {

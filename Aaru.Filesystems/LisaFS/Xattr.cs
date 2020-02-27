@@ -34,10 +34,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Decoders;
+using Aaru.CommonTypes.Structs;
+using Aaru.Decoders;
 
-namespace DiscImageChef.Filesystems.LisaFS
+namespace Aaru.Filesystems.LisaFS
 {
     public partial class LisaFS
     {

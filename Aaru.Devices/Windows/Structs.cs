@@ -35,7 +35,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Devices.Windows
+namespace Aaru.Devices.Windows
 {
     [StructLayout(LayoutKind.Sequential)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

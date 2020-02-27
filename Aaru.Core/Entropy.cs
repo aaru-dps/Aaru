@@ -33,12 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public class Entropy
     {

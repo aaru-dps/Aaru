@@ -30,10 +30,10 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     public partial class Device
     {

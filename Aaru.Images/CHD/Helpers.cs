@@ -34,13 +34,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 using SharpCompress.Compressors;
 using SharpCompress.Compressors.Deflate;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Chd
     {

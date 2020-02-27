@@ -34,7 +34,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class SuperCardPro
     {

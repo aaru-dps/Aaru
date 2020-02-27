@@ -30,7 +30,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class CloneCd
     {

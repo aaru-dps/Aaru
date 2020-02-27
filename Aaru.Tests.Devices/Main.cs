@@ -27,10 +27,10 @@
 // ****************************************************************************/
 
 using System.Linq;
-using DiscImageChef.Console;
-using DiscImageChef.Devices;
+using Aaru.Console;
+using Aaru.Devices;
 
-namespace DiscImageChef.Tests.Devices
+namespace Aaru.Tests.Devices
 {
     static partial class MainClass
     {
@@ -42,7 +42,7 @@ namespace DiscImageChef.Tests.Devices
             DicConsole.DebugWriteLineEvent   += System.Console.Error.WriteLine;
             DicConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            DeviceInfo[] devices = DiscImageChef.Devices.Device.ListDevices();
+            DeviceInfo[] devices = Aaru.Devices.Device.ListDevices();
 
             if(devices == null || devices.Length == 0)
             {

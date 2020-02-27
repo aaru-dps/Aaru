@@ -35,24 +35,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Exceptions;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Exceptions;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
 using Schemas;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
-using Session = DiscImageChef.CommonTypes.Structs.Session;
-using TrackType = DiscImageChef.CommonTypes.Enums.TrackType;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using Session = Aaru.CommonTypes.Structs.Session;
+using TrackType = Aaru.CommonTypes.Enums.TrackType;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class ZZZRawImage
     {
@@ -1001,7 +1001,7 @@ namespace DiscImageChef.DiscImages
             // It's ATA, check tags
             if(mediaTags.TryGetValue(MediaTagType.ATA_IDENTIFY, out byte[] identifyBuf))
             {
-                Identify.IdentifyDevice? ataId = CommonTypes.Structs.Devices.ATA.Identify.Decode(identifyBuf);
+                Identify.IdentifyDevice? ataId = global::Aaru.CommonTypes.Structs.Devices.ATA.Identify.Decode(identifyBuf);
 
                 if(ataId.HasValue)
                 {

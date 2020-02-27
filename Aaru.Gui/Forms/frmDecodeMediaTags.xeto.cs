@@ -33,26 +33,26 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Text;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.Bluray;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Decoders.Xbox;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Decoders.ATA;
+using Aaru.Decoders.Bluray;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Decoders.Xbox;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using BCA = DiscImageChef.Decoders.Bluray.BCA;
-using Cartridge = DiscImageChef.Decoders.Bluray.Cartridge;
-using DDS = DiscImageChef.Decoders.DVD.DDS;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
-using Spare = DiscImageChef.Decoders.DVD.Spare;
+using BCA = Aaru.Decoders.Bluray.BCA;
+using Cartridge = Aaru.Decoders.Bluray.Cartridge;
+using DDS = Aaru.Decoders.DVD.DDS;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using Inquiry = Aaru.Decoders.SCSI.Inquiry;
+using Spare = Aaru.Decoders.DVD.Spare;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     // TODO: Decode long sector components
     // TODO: Panel with string representation of contents

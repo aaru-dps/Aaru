@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace DiscImageChef.Database
+namespace Aaru.Database
 {
     public class DicContextFactory : IDesignTimeDbContextFactory<DicContext>
     {

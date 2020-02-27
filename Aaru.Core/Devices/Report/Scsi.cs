@@ -33,14 +33,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
-using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
+using Aaru.Devices;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace DiscImageChef.Core.Devices.Report
+namespace Aaru.Core.Devices.Report
 {
     public partial class DeviceReport
     {

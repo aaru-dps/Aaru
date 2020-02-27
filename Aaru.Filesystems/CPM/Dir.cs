@@ -33,10 +33,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 
-namespace DiscImageChef.Filesystems.CPM
+namespace Aaru.Filesystems.CPM
 {
     partial class CPM
     {

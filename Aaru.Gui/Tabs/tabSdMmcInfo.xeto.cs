@@ -30,11 +30,12 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 
-using DiscImageChef.CommonTypes.Enums;
+using Aaru.CommonTypes.Enums;
+using Aaru.Decoders.MMC;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabSdMmcInfo : TabPage
     {
@@ -54,25 +55,25 @@ namespace DiscImageChef.Gui.Tabs
                     if(cid != null)
                     {
                         tabCid.Visible = true;
-                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCID(cid);
+                        txtCid.Text    = Aaru.Decoders.MMC.Decoders.PrettifyCID(cid);
                     }
 
                     if(csd != null)
                     {
                         tabCsd.Visible = true;
-                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyCSD(csd);
+                        txtCid.Text    = Aaru.Decoders.MMC.Decoders.PrettifyCSD(csd);
                     }
 
                     if(ocr != null)
                     {
                         tabOcr.Visible = true;
-                        txtCid.Text    = Decoders.MMC.Decoders.PrettifyOCR(ocr);
+                        txtCid.Text    = Aaru.Decoders.MMC.Decoders.PrettifyOCR(ocr);
                     }
 
                     if(extendedCsd != null)
                     {
                         tabExtendedCsd.Visible = true;
-                        txtCid.Text            = Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
+                        txtCid.Text            = Aaru.Decoders.MMC.Decoders.PrettifyExtendedCSD(extendedCsd);
                     }
                 }
                     break;

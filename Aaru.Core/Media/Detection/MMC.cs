@@ -33,16 +33,16 @@
 using System;
 using System.IO;
 using System.Linq;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.Sega;
-using DiscImageChef.Devices;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.Console;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.Sega;
+using Aaru.Devices;
 
 // ReSharper disable JoinDeclarationAndInitializer
 
-namespace DiscImageChef.Core.Media.Detection
+namespace Aaru.Core.Media.Detection
 {
     public static class MMC
     {

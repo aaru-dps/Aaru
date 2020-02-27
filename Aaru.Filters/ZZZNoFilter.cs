@@ -32,9 +32,9 @@
 
 using System;
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Filters
+namespace Aaru.Filters
 {
     /// <summary>
     ///     No filter for reading files not recognized by any filter

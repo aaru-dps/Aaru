@@ -36,7 +36,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace DiscImageChef.Filesystems.CPM
+namespace Aaru.Filesystems.CPM
 {
     partial class CPM
     {

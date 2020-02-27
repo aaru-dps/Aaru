@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.SCSI;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.SCSI;
 
-namespace DiscImageChef.Core.Devices
+namespace Aaru.Core.Devices
 {
     internal partial class Reader
     {

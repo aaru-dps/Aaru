@@ -32,11 +32,11 @@
 
 using System;
 using System.Runtime.InteropServices;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.Console;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using Aaru.CommonTypes.Interop;
+using Aaru.Console;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
     public struct DeviceInfo

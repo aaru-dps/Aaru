@@ -33,7 +33,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Nero
     {

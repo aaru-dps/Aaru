@@ -35,7 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Devices.Windows
+namespace Aaru.Devices.Windows
 {
     //
     // A place for "higher level" related functions

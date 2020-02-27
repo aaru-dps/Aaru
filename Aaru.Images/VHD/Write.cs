@@ -34,15 +34,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interop;
+using Aaru.CommonTypes.Structs;
 using Schemas;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 using Version = System.Version;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class Vhd
     {

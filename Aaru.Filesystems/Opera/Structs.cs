@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public partial class OperaFS
     {

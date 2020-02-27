@@ -27,12 +27,12 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Filters;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Filters;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Filters
+namespace Aaru.Tests.Filters
 {
     [TestFixture]
     public class AppleDoubleNetatalk

@@ -32,13 +32,13 @@
 
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Core.Devices.Scanning;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Core.Devices.Scanning;
+using Aaru.Devices;
 
-namespace DiscImageChef.Commands.Media
+namespace Aaru.Commands.Media
 {
     internal class MediaScanCommand : Command
     {
@@ -92,11 +92,11 @@ namespace DiscImageChef.Commands.Media
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev;
+            Aaru.Devices.Device dev;
 
             try
             {
-                dev = new Devices.Device(devicePath);
+                dev = new Aaru.Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,

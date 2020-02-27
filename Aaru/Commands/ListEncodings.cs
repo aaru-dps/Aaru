@@ -35,11 +35,11 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
 using System.Text;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Core;
 
-namespace DiscImageChef.Commands
+namespace Aaru.Commands
 {
     internal class ListEncodingsCommand : Command
     {

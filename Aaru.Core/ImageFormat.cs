@@ -32,11 +32,11 @@
 
 using System;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public static class ImageFormat
     {

@@ -32,9 +32,9 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.Checksums;
+using Aaru.Checksums;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class BlindWrite5
     {

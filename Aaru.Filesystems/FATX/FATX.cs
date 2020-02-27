@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.Filesystems.FATX
+namespace Aaru.Filesystems.FATX
 {
     public partial class XboxFatPlugin : IReadOnlyFilesystem
     {

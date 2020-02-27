@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 using Schemas;
 
-namespace DiscImageChef.Filesystems.FAT
+namespace Aaru.Filesystems.FAT
 {
     // TODO: Differentiate between Atari and X68k FAT, as this one uses a standard BPB.
     // X68K uses cdate/adate from direntry for extending filename

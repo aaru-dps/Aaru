@@ -40,9 +40,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Interfaces;
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     public class Register : IPluginRegister
     {

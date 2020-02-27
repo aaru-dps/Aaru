@@ -33,12 +33,12 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Devices;
 
-namespace DiscImageChef.Commands.Device
+namespace Aaru.Commands.Device
 {
     internal class ListDevicesCommand : Command
     {
@@ -67,11 +67,11 @@ namespace DiscImageChef.Commands.Device
             DicConsole.DebugWriteLine("List-Devices command", "--debug={0}", debug);
             DicConsole.DebugWriteLine("List-Devices command", "--verbose={0}", verbose);
 
-            DeviceInfo[] devices = Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
-                                                              out string serverVersion,
-                                                              out string serverOperatingSystem,
-                                                              out string serverOperatingSystemVersion,
-                                                              out string serverArchitecture, dicRemoteHost);
+            DeviceInfo[] devices = Aaru.Devices.Device.ListDevices(out bool isRemote, out string serverApplication,
+                                                                   out string serverVersion,
+                                                                   out string serverOperatingSystem,
+                                                                   out string serverOperatingSystemVersion,
+                                                                   out string serverArchitecture, dicRemoteHost);
 
             if(isRemote)
             {

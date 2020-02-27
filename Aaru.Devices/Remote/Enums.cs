@@ -1,4 +1,4 @@
-namespace DiscImageChef.Devices.Remote
+namespace Aaru.Devices.Remote
 {
     public enum DicPacketType : sbyte
     {

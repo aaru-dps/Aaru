@@ -35,27 +35,27 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Database;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
-using DiscImageChef.Gui.Dialogs;
-using DiscImageChef.Gui.Panels;
-using DiscImageChef.Settings;
+using Aaru.Gui.Dialogs;
+using Aaru.Gui.Panels;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Core.Media.Info;
+using Aaru.Database;
+using Aaru.Decoders.SCSI;
+using Aaru.Devices;
+using Aaru.Settings;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
-using ImageFormat = DiscImageChef.Core.ImageFormat;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
+using ImageFormat = Aaru.Core.ImageFormat;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmMain : Form
     {
@@ -305,7 +305,7 @@ namespace DiscImageChef.Gui.Forms
         {
             base.OnLoad(e);
 
-            if(Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
+            if(Aaru.Settings.Settings.Current.GdprCompliance < DicSettings.GdprLevel)
                 new dlgSettings(true).ShowModal(this);
         }
 
@@ -425,7 +425,7 @@ namespace DiscImageChef.Gui.Forms
 
                                 DicConsole.WriteLine("Identifying filesystem on partition");
 
-                                Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
+                                Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, partition);
 
                                 if(idPlugins.Count == 0)
                                     DicConsole.WriteLine("Filesystem not identified");
@@ -487,7 +487,7 @@ namespace DiscImageChef.Gui.Forms
                             Size = imageFormat.Info.Sectors * imageFormat.Info.SectorSize
                         };
 
-                        Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
+                        Aaru.Core.Filesystems.Identify(imageFormat, out idPlugins, wholePart);
 
                         if(idPlugins.Count == 0)
                             DicConsole.WriteLine("Filesystem not identified");
@@ -696,7 +696,7 @@ namespace DiscImageChef.Gui.Forms
 
         protected void OnMenuStatistics(object sender, EventArgs e)
         {
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             if(!ctx.Commands.Any()     &&
                !ctx.Filesystems.Any()  &&

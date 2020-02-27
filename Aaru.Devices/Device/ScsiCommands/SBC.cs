@@ -31,9 +31,9 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Console;
+using Aaru.Console;
 
-namespace DiscImageChef.Devices
+namespace Aaru.Devices
 {
     public partial class Device
     {

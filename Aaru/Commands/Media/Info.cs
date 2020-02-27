@@ -35,31 +35,31 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Core.Devices.Dumping;
-using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Database;
-using DiscImageChef.Database.Models;
-using DiscImageChef.Decoders.Bluray;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Decoders.Xbox;
-using DiscImageChef.Devices;
-using BCA = DiscImageChef.Decoders.Bluray.BCA;
-using Cartridge = DiscImageChef.Decoders.DVD.Cartridge;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Core.Devices.Dumping;
+using Aaru.Core.Media.Info;
+using Aaru.Database;
+using Aaru.Database.Models;
+using Aaru.Decoders.Bluray;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Decoders.SCSI.SSC;
+using Aaru.Decoders.Xbox;
+using Aaru.Devices;
+using BCA = Aaru.Decoders.Bluray.BCA;
+using Cartridge = Aaru.Decoders.DVD.Cartridge;
 using Command = System.CommandLine.Command;
-using DDS = DiscImageChef.Decoders.DVD.DDS;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Session = DiscImageChef.Decoders.CD.Session;
-using Spare = DiscImageChef.Decoders.DVD.Spare;
+using DDS = Aaru.Decoders.DVD.DDS;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using Session = Aaru.Decoders.CD.Session;
+using Spare = Aaru.Decoders.DVD.Spare;
 
-namespace DiscImageChef.Commands.Media
+namespace Aaru.Commands.Media
 {
     internal class MediaInfoCommand : Command
     {
@@ -104,11 +104,11 @@ namespace DiscImageChef.Commands.Media
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev;
+            Aaru.Devices.Device dev;
 
             try
             {
-                dev = new Devices.Device(devicePath);
+                dev = new Aaru.Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -158,12 +158,12 @@ namespace DiscImageChef.Commands.Media
 
         static void DoAtaMediaInfo() => DicConsole.ErrorWriteLine("Please use device-info command for ATA devices.");
 
-        static void DoNvmeMediaInfo(string outputPrefix, Devices.Device dev) =>
+        static void DoNvmeMediaInfo(string outputPrefix, Aaru.Devices.Device dev) =>
             throw new NotImplementedException("NVMe devices not yet supported.");
 
         static void DoSdMediaInfo() => DicConsole.ErrorWriteLine("Please use device-info command for MMC/SD devices.");
 
-        static void DoScsiMediaInfo(bool debug, bool verbose, string outputPrefix, Devices.Device dev)
+        static void DoScsiMediaInfo(bool debug, bool verbose, string outputPrefix, Aaru.Devices.Device dev)
         {
             var scsiInfo = new ScsiInfo(dev);
 
@@ -388,7 +388,7 @@ namespace DiscImageChef.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BlurayDds);
 
                     DicConsole.WriteLine("Blu-ray Disc Definition Structure:\n{0}",
-                                         Decoders.Bluray.DDS.Prettify(scsiInfo.BlurayDds));
+                                         Aaru.Decoders.Bluray.DDS.Prettify(scsiInfo.BlurayDds));
                 }
 
                 if(scsiInfo.BlurayCartridgeStatus != null)
@@ -397,7 +397,7 @@ namespace DiscImageChef.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BlurayCartridgeStatus);
 
                     DicConsole.WriteLine("Blu-ray Cartridge Status:\n{0}",
-                                         Decoders.Bluray.Cartridge.Prettify(scsiInfo.BlurayCartridgeStatus));
+                                         Aaru.Decoders.Bluray.Cartridge.Prettify(scsiInfo.BlurayCartridgeStatus));
                 }
 
                 if(scsiInfo.BluraySpareAreaInformation != null)
@@ -406,7 +406,7 @@ namespace DiscImageChef.Commands.Media
                                      "SCSI READ DISC STRUCTURE", scsiInfo.BluraySpareAreaInformation);
 
                     DicConsole.WriteLine("Blu-ray Spare Area Information:\n{0}",
-                                         Decoders.Bluray.Spare.Prettify(scsiInfo.BluraySpareAreaInformation));
+                                         Aaru.Decoders.Bluray.Spare.Prettify(scsiInfo.BluraySpareAreaInformation));
                 }
 
                 if(scsiInfo.BlurayRawDfl != null)
@@ -552,10 +552,10 @@ namespace DiscImageChef.Commands.Media
                     bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null);
 
                     // Open master database
-                    var ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+                    var ctx = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
 
                     // Search for device in master database
-                    Database.Models.Device dbDev =
+                    Aaru.Database.Models.Device dbDev =
                         ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
                                                         d.Revision     == dev.FirmwareRevision);
 

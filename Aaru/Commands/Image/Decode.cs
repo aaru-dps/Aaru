@@ -32,16 +32,16 @@
 
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Decoders.ATA;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.SCSI;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Decoders.ATA;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.SCSI;
 
-namespace DiscImageChef.Commands.Image
+namespace Aaru.Commands.Image
 {
     internal class DecodeCommand : Command
     {

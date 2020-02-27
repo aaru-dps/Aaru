@@ -28,13 +28,13 @@
 
 using System.Collections.Generic;
 using System.IO;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.DiscImages;
-using DiscImageChef.Filters;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.DiscImages;
+using Aaru.Filters;
 using NUnit.Framework;
 
-namespace DiscImageChef.Tests.Filesystems
+namespace Aaru.Tests.Filesystems
 {
     [TestFixture]
     public class Reiser4
@@ -66,7 +66,7 @@ namespace DiscImageChef.Tests.Filesystems
                 Assert.AreEqual(sectors[i],    image.Info.Sectors,    testfiles[i]);
                 Assert.AreEqual(sectorsize[i], image.Info.SectorSize, testfiles[i]);
                 List<Partition> partitions = Core.Partitions.GetAll(image);
-                IFilesystem     fs         = new DiscImageChef.Filesystems.Reiser4();
+                IFilesystem     fs         = new Aaru.Filesystems.Reiser4();
                 int             part       = -1;
                 for(int j = 0; j < partitions.Count; j++)
                     if(partitions[j].Type == "0x83")

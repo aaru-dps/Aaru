@@ -34,7 +34,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace DiscImageChef.Devices.Windows
+namespace Aaru.Devices.Windows
 {
     [Flags]
     internal enum FileAttributes : uint

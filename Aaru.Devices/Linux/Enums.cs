@@ -33,7 +33,7 @@
 
 using System;
 
-namespace DiscImageChef.Devices.Linux
+namespace Aaru.Devices.Linux
 {
     [Flags]
     enum FileFlags

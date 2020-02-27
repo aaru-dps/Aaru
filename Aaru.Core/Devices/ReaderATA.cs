@@ -31,12 +31,12 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.ATA;
-using Identify = DiscImageChef.CommonTypes.Structs.Devices.ATA.Identify;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Decoders.ATA;
+using Identify = Aaru.CommonTypes.Structs.Devices.ATA.Identify;
 
-namespace DiscImageChef.Core.Devices
+namespace Aaru.Core.Devices
 {
     internal partial class Reader
     {

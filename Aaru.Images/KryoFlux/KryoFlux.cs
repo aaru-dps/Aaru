@@ -32,11 +32,11 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public partial class KryoFlux : IMediaImage, IVerifiableSectorsImage

@@ -35,25 +35,25 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Linq;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Database;
-using DiscImageChef.Database.Models;
-using DiscImageChef.Decoders.PCMCIA;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Database;
+using Aaru.Database.Models;
+using Aaru.Decoders.PCMCIA;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Decoders.SCSI.SSC;
+using Aaru.Devices;
 using Command = System.CommandLine.Command;
-using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
-using Inquiry = DiscImageChef.Decoders.SCSI.Inquiry;
-using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
+using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+using Inquiry = Aaru.Decoders.SCSI.Inquiry;
+using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
-namespace DiscImageChef.Commands.Device
+namespace Aaru.Commands.Device
 {
     internal class DeviceInfoCommand : Command
     {
@@ -98,11 +98,11 @@ namespace DiscImageChef.Commands.Device
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev;
+            Aaru.Devices.Device dev;
 
             try
             {
-                dev = new Devices.Device(devicePath);
+                dev = new Aaru.Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -231,7 +231,7 @@ namespace DiscImageChef.Commands.Device
                                  devInfo.AtaIdentify);
 
                 Identify.IdentifyDevice? decodedIdentify = Identify.Decode(devInfo.AtaIdentify);
-                DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(decodedIdentify));
+                DicConsole.WriteLine(Aaru.Decoders.ATA.Identify.Prettify(decodedIdentify));
 
                 if(devInfo.AtaMcptError.HasValue)
                 {
@@ -336,7 +336,7 @@ namespace DiscImageChef.Commands.Device
                 DataFile.WriteTo("Device-Info command", outputPrefix, "_atapi_identify.bin", "ATAPI IDENTIFY",
                                  devInfo.AtapiIdentify);
 
-                DicConsole.WriteLine(Decoders.ATA.Identify.Prettify(devInfo.AtapiIdentify));
+                DicConsole.WriteLine(Aaru.Decoders.ATA.Identify.Prettify(devInfo.AtapiIdentify));
             }
 
             if(devInfo.ScsiInquiry != null)
@@ -1045,21 +1045,21 @@ namespace DiscImageChef.Commands.Device
                     {
                         noInfo = false;
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_cid.bin", "MMC CID", devInfo.CID);
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCID(devInfo.CID));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.MMC.Decoders.PrettifyCID(devInfo.CID));
                     }
 
                     if(devInfo.CSD != null)
                     {
                         noInfo = false;
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_csd.bin", "MMC CSD", devInfo.CSD);
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.MMC.Decoders.PrettifyCSD(devInfo.CSD));
                     }
 
                     if(devInfo.OCR != null)
                     {
                         noInfo = false;
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_ocr.bin", "MMC OCR", devInfo.OCR);
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.MMC.Decoders.PrettifyOCR(devInfo.OCR));
                     }
 
                     if(devInfo.ExtendedCSD != null)
@@ -1069,7 +1069,7 @@ namespace DiscImageChef.Commands.Device
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_mmc_ecsd.bin", "MMC Extended CSD",
                                          devInfo.ExtendedCSD);
 
-                        DicConsole.WriteLine("{0}", Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.MMC.Decoders.PrettifyExtendedCSD(devInfo.ExtendedCSD));
                     }
 
                     if(noInfo)
@@ -1088,7 +1088,7 @@ namespace DiscImageChef.Commands.Device
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_cid.bin", "SecureDigital CID",
                                          devInfo.CID);
 
-                        DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCID(devInfo.CID));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCID(devInfo.CID));
                     }
 
                     if(devInfo.CSD != null)
@@ -1098,7 +1098,7 @@ namespace DiscImageChef.Commands.Device
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_csd.bin", "SecureDigital CSD",
                                          devInfo.CSD);
 
-                        DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyCSD(devInfo.CSD));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyCSD(devInfo.CSD));
                     }
 
                     if(devInfo.OCR != null)
@@ -1108,7 +1108,7 @@ namespace DiscImageChef.Commands.Device
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_ocr.bin", "SecureDigital OCR",
                                          devInfo.OCR);
 
-                        DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifyOCR(devInfo.OCR));
                     }
 
                     if(devInfo.SCR != null)
@@ -1118,7 +1118,7 @@ namespace DiscImageChef.Commands.Device
                         DataFile.WriteTo("Device-Info command", outputPrefix, "_sd_scr.bin", "SecureDigital SCR",
                                          devInfo.SCR);
 
-                        DicConsole.WriteLine("{0}", Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR));
+                        DicConsole.WriteLine("{0}", Aaru.Decoders.SecureDigital.Decoders.PrettifySCR(devInfo.SCR));
                     }
 
                     if(noInfo)
@@ -1133,10 +1133,10 @@ namespace DiscImageChef.Commands.Device
             DicConsole.WriteLine();
 
             // Open master database
-            var ctx = DicContext.Create(Settings.Settings.MasterDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
 
             // Search for device in master database
-            Database.Models.Device dbDev =
+            Aaru.Database.Models.Device dbDev =
                 ctx.Devices.FirstOrDefault(d => d.Manufacturer == dev.Manufacturer && d.Model == dev.Model &&
                                                 d.Revision     == dev.FirmwareRevision);
 

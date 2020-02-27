@@ -32,17 +32,17 @@
 
 using System;
 using System.Threading;
-using DiscImageChef.Core;
-using DiscImageChef.Core.Devices.Scanning;
-using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Devices;
-using DiscImageChef.Gui.Controls;
+using Aaru.Gui.Controls;
+using Aaru.Core;
+using Aaru.Core.Devices.Scanning;
+using Aaru.Core.Media.Info;
+using Aaru.Devices;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
+using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmMediaScan : Form
     {

@@ -37,16 +37,16 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
 using Schemas;
-using FileSystemInfo = DiscImageChef.CommonTypes.Structs.FileSystemInfo;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using FileSystemInfo = Aaru.CommonTypes.Structs.FileSystemInfo;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Filesystems.FAT
+namespace Aaru.Filesystems.FAT
 {
     public partial class FAT
     {

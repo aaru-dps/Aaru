@@ -1,4 +1,4 @@
-namespace DiscImageChef.Database.Models
+namespace Aaru.Database.Models
 {
     public class RemoteApplication : BaseOperatingSystem { }
 }

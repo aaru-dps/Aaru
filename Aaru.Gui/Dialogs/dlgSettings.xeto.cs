@@ -31,11 +31,11 @@
 // ****************************************************************************/
 
 using System;
-using DiscImageChef.Settings;
+using Aaru.Settings;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Dialogs
+namespace Aaru.Gui.Dialogs
 {
     public class dlgSettings : Dialog
     {
@@ -73,7 +73,7 @@ namespace DiscImageChef.Gui.Dialogs
             chkSaveReportsGlobally.Text =
                 "Do you want to save device reports in shared folder of your computer? (Y/N): ";
 
-            chkSaveReportsGlobally.Checked = Settings.Settings.Current.SaveReportsGlobally;
+            chkSaveReportsGlobally.Checked = Aaru.Settings.Settings.Current.SaveReportsGlobally;
 
             lblShareReports.Text =
                 "Sharing a report with us will send it to our server, that's in the european union territory, where it\n"      +
@@ -83,7 +83,7 @@ namespace DiscImageChef.Gui.Dialogs
                 "devices to other open-source projects. In any case, no information linking the report to you will be stored.";
 
             chkShareReports.Text    = "Do you want to share your device reports with us? (Y/N): ";
-            chkShareReports.Checked = Settings.Settings.Current.ShareReports;
+            chkShareReports.Checked = Aaru.Settings.Settings.Current.ShareReports;
             #endregion Device reports
 
             #region Statistics
@@ -95,44 +95,44 @@ namespace DiscImageChef.Gui.Dialogs
 
             chkSaveStats.Text = "Do you want to save stats about your DiscImageChef usage? (Y/N): ";
 
-            if(Settings.Settings.Current.Stats != null)
+            if(Aaru.Settings.Settings.Current.Stats != null)
             {
                 chkSaveStats.Checked  = true;
                 stkStatistics.Visible = true;
 
                 chkShareStats.Text    = "Do you want to share your stats anonymously? (Y/N): ";
-                chkShareStats.Checked = Settings.Settings.Current.Stats.ShareStats;
+                chkShareStats.Checked = Aaru.Settings.Settings.Current.Stats.ShareStats;
 
                 chkCommandStats.Text    = "Do you want to gather statistics about command usage? (Y/N): ";
-                chkCommandStats.Checked = Settings.Settings.Current.Stats.CommandStats;
+                chkCommandStats.Checked = Aaru.Settings.Settings.Current.Stats.CommandStats;
 
                 chkDeviceStats.Text    = "Do you want to gather statistics about found devices? (Y/N): ";
-                chkDeviceStats.Checked = Settings.Settings.Current.Stats.DeviceStats;
+                chkDeviceStats.Checked = Aaru.Settings.Settings.Current.Stats.DeviceStats;
 
                 chkFilesystemStats.Text    = "Do you want to gather statistics about found filesystems? (Y/N): ";
-                chkFilesystemStats.Checked = Settings.Settings.Current.Stats.FilesystemStats;
+                chkFilesystemStats.Checked = Aaru.Settings.Settings.Current.Stats.FilesystemStats;
 
                 chkFilterStats.Text    = "Do you want to gather statistics about found file filters? (Y/N): ";
-                chkFilterStats.Checked = Settings.Settings.Current.Stats.FilterStats;
+                chkFilterStats.Checked = Aaru.Settings.Settings.Current.Stats.FilterStats;
 
                 chkMediaImageStats.Text =
                     "Do you want to gather statistics about found media image formats? (Y/N): ";
 
-                chkMediaImageStats.Checked = Settings.Settings.Current.Stats.MediaImageStats;
+                chkMediaImageStats.Checked = Aaru.Settings.Settings.Current.Stats.MediaImageStats;
 
                 chkMediaScanStats.Text    = "Do you want to gather statistics about scanned media? (Y/N): ";
-                chkMediaScanStats.Checked = Settings.Settings.Current.Stats.MediaScanStats;
+                chkMediaScanStats.Checked = Aaru.Settings.Settings.Current.Stats.MediaScanStats;
 
                 chkPartitionStats.Text =
                     "Do you want to gather statistics about found partitioning schemes? (Y/N): ";
 
-                chkPartitionStats.Checked = Settings.Settings.Current.Stats.PartitionStats;
+                chkPartitionStats.Checked = Aaru.Settings.Settings.Current.Stats.PartitionStats;
 
                 chkMediaStats.Text    = "Do you want to gather statistics about media types? (Y/N): ";
-                chkMediaStats.Checked = Settings.Settings.Current.Stats.MediaStats;
+                chkMediaStats.Checked = Aaru.Settings.Settings.Current.Stats.MediaStats;
 
                 chkVerifyStats.Text    = "Do you want to gather statistics about media image verifications? (Y/N): ";
-                chkVerifyStats.Checked = Settings.Settings.Current.Stats.VerifyStats;
+                chkVerifyStats.Checked = Aaru.Settings.Settings.Current.Stats.VerifyStats;
             }
             else
             {
@@ -146,11 +146,11 @@ namespace DiscImageChef.Gui.Dialogs
 
         protected void OnBtnSave(object sender, EventArgs e)
         {
-            Settings.Settings.Current.SaveReportsGlobally = chkSaveReportsGlobally.Checked == true;
-            Settings.Settings.Current.ShareReports        = chkShareReports.Checked        == true;
+            Aaru.Settings.Settings.Current.SaveReportsGlobally = chkSaveReportsGlobally.Checked == true;
+            Aaru.Settings.Settings.Current.ShareReports        = chkShareReports.Checked        == true;
 
             if(chkSaveStats.Checked == true)
-                Settings.Settings.Current.Stats = new StatsSettings
+                Aaru.Settings.Settings.Current.Stats = new StatsSettings
                 {
                     ShareStats      = chkShareStats.Checked      == true,
                     CommandStats    = chkCommandStats.Checked    == true,
@@ -163,10 +163,10 @@ namespace DiscImageChef.Gui.Dialogs
                     VerifyStats     = chkVerifyStats.Checked     == true
                 };
             else
-                Settings.Settings.Current.Stats = null;
+                Aaru.Settings.Settings.Current.Stats = null;
 
-            Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
-            Settings.Settings.SaveSettings();
+            Aaru.Settings.Settings.Current.GdprCompliance = DicSettings.GdprLevel;
+            Aaru.Settings.Settings.SaveSettings();
             Close();
         }
 

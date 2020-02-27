@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DA7AB65D-B5BA-4003-8893-A51BB071BA2F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Partitions</RootNamespace>
+    <RootNamespace>Aaru.Partitions</RootNamespace>
     <AssemblyName>Aaru.Partitions</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

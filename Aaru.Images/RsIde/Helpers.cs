@@ -33,7 +33,7 @@
 using System;
 using System.Text;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class RsIde
     {

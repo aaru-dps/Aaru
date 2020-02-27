@@ -33,11 +33,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Interfaces;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Interfaces;
 using Schemas;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     [Flags]
     public enum EnableChecksum

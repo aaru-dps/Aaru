@@ -34,7 +34,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace DiscImageChef.Devices.Linux
+namespace Aaru.Devices.Linux
 {
     static class ListDevices
     {

@@ -1,8 +1,8 @@
 using System;
-using DiscImageChef.CommonTypes.Interop;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using Aaru.CommonTypes.Interop;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     public static class Error
     {

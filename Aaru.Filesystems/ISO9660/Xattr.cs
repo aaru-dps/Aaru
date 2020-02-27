@@ -33,10 +33,10 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
+using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
 
-namespace DiscImageChef.Filesystems.ISO9660
+namespace Aaru.Filesystems.ISO9660
 {
     public partial class ISO9660
     {

@@ -1,14 +1,14 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using DiscImageChef.Core;
-using DiscImageChef.Database;
-using DiscImageChef.Gui.Forms;
+using Aaru.Core;
+using Aaru.Database;
+using Aaru.Gui.Forms;
 using Eto;
 using Eto.Forms;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiscImageChef.Wpf
+namespace Aaru.Wpf
 {
     class Program
     {

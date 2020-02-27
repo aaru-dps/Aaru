@@ -32,12 +32,12 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Helpers;
+using Aaru.Checksums;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Helpers;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class DiscImageChef
     {

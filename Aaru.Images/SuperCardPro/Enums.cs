@@ -32,7 +32,7 @@
 
 using System;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class SuperCardPro
     {

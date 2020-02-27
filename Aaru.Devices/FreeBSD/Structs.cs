@@ -43,7 +43,7 @@ using target_id_t = System.UInt32;
 #pragma warning disable 649
 #pragma warning disable 169
 
-namespace DiscImageChef.Devices.FreeBSD
+namespace Aaru.Devices.FreeBSD
 {
     [StructLayout(LayoutKind.Sequential)]
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]

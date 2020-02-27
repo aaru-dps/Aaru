@@ -36,11 +36,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Helpers;
-using FileAttributes = DiscImageChef.CommonTypes.Structs.FileAttributes;
+using Aaru.CommonTypes.Structs;
+using Aaru.Helpers;
+using FileAttributes = Aaru.CommonTypes.Structs.FileAttributes;
 
-namespace DiscImageChef.Filesystems.ISO9660
+namespace Aaru.Filesystems.ISO9660
 {
     public partial class ISO9660
     {

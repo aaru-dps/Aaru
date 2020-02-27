@@ -32,15 +32,15 @@
 
 using System;
 using System.Threading;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.CommonTypes.Structs;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.CommonTypes.Structs;
+using Aaru.Console;
+using Aaru.Core;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 using Schemas;
 
-namespace DiscImageChef.Gui.Forms
+namespace Aaru.Gui.Forms
 {
     public class frmImageChecksum : Form
     {

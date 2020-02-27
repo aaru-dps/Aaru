@@ -35,12 +35,12 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using Remote = DiscImageChef.Devices.Remote.Remote;
+using Aaru.CommonTypes.Enums;
+using Aaru.Console;
+using Aaru.Core;
+using Remote = Aaru.Devices.Remote.Remote;
 
-namespace DiscImageChef.Commands
+namespace Aaru.Commands
 {
     internal class RemoteCommand : Command
     {

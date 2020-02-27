@@ -34,9 +34,9 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using DiscImageChef.Devices;
+using Aaru.Devices;
 
-namespace DiscImageChef.Core.Logging
+namespace Aaru.Core.Logging
 {
     /// <summary>Implements a log in the format used by IMGBurn</summary>
     internal class IbgLog

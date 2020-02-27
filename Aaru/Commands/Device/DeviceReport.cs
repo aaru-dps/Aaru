@@ -36,22 +36,22 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.CommonTypes.Structs.Devices.ATA;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core;
-using DiscImageChef.Database;
-using DiscImageChef.Database.Models;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Devices;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Interop;
+using Aaru.CommonTypes.Metadata;
+using Aaru.CommonTypes.Structs.Devices.ATA;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Core;
+using Aaru.Database;
+using Aaru.Database.Models;
+using Aaru.Decoders.SCSI;
+using Aaru.Devices;
 using Newtonsoft.Json;
 using Command = System.CommandLine.Command;
-using DeviceReport = DiscImageChef.Core.Devices.Report.DeviceReport;
+using DeviceReport = Aaru.Core.Devices.Report.DeviceReport;
 
-namespace DiscImageChef.Commands.Device
+namespace Aaru.Commands.Device
 {
     internal class DeviceReportCommand : Command
     {
@@ -88,11 +88,11 @@ namespace DiscImageChef.Commands.Device
                char.IsLetter(devicePath[0]))
                 devicePath = "\\\\.\\" + char.ToUpper(devicePath[0]) + ':';
 
-            Devices.Device dev;
+            Aaru.Devices.Device dev;
 
             try
             {
-                dev = new Devices.Device(devicePath);
+                dev = new Aaru.Devices.Device(devicePath);
 
                 if(dev.IsRemote)
                     Statistics.AddRemote(dev.RemoteApplication, dev.RemoteVersion, dev.RemoteOperatingSystem,
@@ -1265,14 +1265,14 @@ namespace DiscImageChef.Commands.Device
             jsonSw.Close();
             jsonFs.Close();
 
-            using(var ctx = DicContext.Create(Settings.Settings.LocalDbPath))
+            using(var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath))
             {
                 ctx.Reports.Add(new Report(report));
                 ctx.SaveChanges();
             }
 
             // TODO:
-            if(Settings.Settings.Current.ShareReports)
+            if(Aaru.Settings.Settings.Current.ShareReports)
                 Remote.SubmitReport(report);
 
             return(int)ErrorNumber.NoError;

@@ -39,18 +39,18 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
-using DiscImageChef.CommonTypes.Interop;
-using DiscImageChef.CommonTypes.Metadata;
-using DiscImageChef.Database;
-using DiscImageChef.Database.Models;
+using Aaru.CommonTypes.Interop;
+using Aaru.CommonTypes.Metadata;
+using Aaru.Database;
+using Aaru.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using Device = DiscImageChef.Devices.Device;
-using MediaType = DiscImageChef.CommonTypes.MediaType;
-using OperatingSystem = DiscImageChef.Database.Models.OperatingSystem;
-using Version = DiscImageChef.Database.Models.Version;
+using Device = Aaru.Devices.Device;
+using MediaType = Aaru.CommonTypes.MediaType;
+using OperatingSystem = Aaru.Database.Models.OperatingSystem;
+using Version = Aaru.Database.Models.Version;
 
-namespace DiscImageChef.Core
+namespace Aaru.Core
 {
     /// <summary>Handles anonymous usage statistics</summary>
     public static class Statistics
@@ -61,14 +61,14 @@ namespace DiscImageChef.Core
         /// <summary>Loads saved statistics from disk</summary>
         public static void LoadStats()
         {
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
-            if(File.Exists(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml")))
+            if(File.Exists(Path.Combine(Aaru.Settings.Settings.StatsPath, "Statistics.xml")))
                 try
                 {
                     var allStats = new Stats();
                     var xs       = new XmlSerializer(allStats.GetType());
-                    var sr       = new StreamReader(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
+                    var sr       = new StreamReader(Path.Combine(Aaru.Settings.Settings.StatsPath, "Statistics.xml"));
                     allStats = (Stats)xs.Deserialize(sr);
                     sr.Close();
 
@@ -467,9 +467,9 @@ namespace DiscImageChef.Core
                             if(string.IsNullOrWhiteSpace(media.type))
                                 continue;
 
-                            Database.Models.Media existing =
+                            Aaru.Database.Models.Media existing =
                                 ctx.Medias.FirstOrDefault(c => c.Type == media.type && c.Real == media.real &&
-                                                               c.Synchronized) ?? new Database.Models.Media
+                                                               c.Synchronized) ?? new Aaru.Database.Models.Media
                                 {
                                     Type = media.type, Real = media.real, Synchronized = true
                                 };
@@ -479,14 +479,14 @@ namespace DiscImageChef.Core
                         }
 
                     ctx.SaveChanges();
-                    File.Delete(Path.Combine(Settings.Settings.StatsPath, "Statistics.xml"));
+                    File.Delete(Path.Combine(Aaru.Settings.Settings.StatsPath, "Statistics.xml"));
                 }
                 catch
                 {
                     // Do not care about it
                 }
 
-            if(Settings.Settings.Current.Stats == null)
+            if(Aaru.Settings.Settings.Current.Stats == null)
                 return;
 
             ctx.OperatingSystems.Add(new OperatingSystem
@@ -506,11 +506,11 @@ namespace DiscImageChef.Core
         /// <summary>Saves statistics to disk</summary>
         public static void SaveStats()
         {
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
             ctx.SaveChanges();
 
-            if(Settings.Settings.Current.Stats != null &&
-               Settings.Settings.Current.Stats.ShareStats)
+            if(Aaru.Settings.Settings.Current.Stats != null &&
+               Aaru.Settings.Settings.Current.Stats.ShareStats)
                 SubmitStats();
         }
 
@@ -519,7 +519,7 @@ namespace DiscImageChef.Core
         {
             var submitThread = new Thread(() =>
             {
-                var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+                var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
                 try
                 {
@@ -880,9 +880,9 @@ namespace DiscImageChef.Core
                             {
                                 if(ctx.Medias.Any(c => !c.Synchronized && c.Type == media && c.Real))
                                 {
-                                    Database.Models.Media existing =
+                                    Aaru.Database.Models.Media existing =
                                         ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && c.Real) ??
-                                        new Database.Models.Media
+                                        new Aaru.Database.Models.Media
                                         {
                                             Synchronized = true, Type = media, Real = true
                                         };
@@ -900,9 +900,9 @@ namespace DiscImageChef.Core
                                     continue;
 
                                 {
-                                    Database.Models.Media existing =
+                                    Aaru.Database.Models.Media existing =
                                         ctx.Medias.FirstOrDefault(c => c.Synchronized && c.Type == media && !c.Real) ??
-                                        new Database.Models.Media
+                                        new Aaru.Database.Models.Media
                                         {
                                             Synchronized = true, Type = media, Real = false
                                         };
@@ -1073,7 +1073,7 @@ namespace DiscImageChef.Core
                 }
 
                 IEnumerable<string> statsFiles =
-                    Directory.EnumerateFiles(Settings.Settings.StatsPath, "PartialStats_*.xml",
+                    Directory.EnumerateFiles(Aaru.Settings.Settings.StatsPath, "PartialStats_*.xml",
                                              SearchOption.TopDirectoryOnly);
 
                 foreach(string statsFile in statsFiles)
@@ -1153,11 +1153,11 @@ namespace DiscImageChef.Core
             if(string.IsNullOrWhiteSpace(command))
                 return;
 
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.DeviceStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.DeviceStats)
                 return;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Commands.Add(new Command
             {
@@ -1174,11 +1174,11 @@ namespace DiscImageChef.Core
             if(string.IsNullOrWhiteSpace(filesystem))
                 return;
 
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.FilesystemStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.FilesystemStats)
                 return;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Filesystems.Add(new Filesystem
             {
@@ -1195,11 +1195,11 @@ namespace DiscImageChef.Core
             if(string.IsNullOrWhiteSpace(partition))
                 return;
 
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.PartitionStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.PartitionStats)
                 return;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Partitions.Add(new Partition
             {
@@ -1216,11 +1216,11 @@ namespace DiscImageChef.Core
             if(string.IsNullOrWhiteSpace(filter))
                 return;
 
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.FilterStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.FilterStats)
                 return;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Filters.Add(new Filter
             {
@@ -1237,11 +1237,11 @@ namespace DiscImageChef.Core
             if(string.IsNullOrWhiteSpace(format))
                 return;
 
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.MediaImageStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.MediaImageStats)
                 return;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.MediaFormats.Add(new MediaFormat
             {
@@ -1255,8 +1255,8 @@ namespace DiscImageChef.Core
         /// <param name="dev">Device</param>
         public static void AddDevice(Device dev)
         {
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.DeviceStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.DeviceStats)
                 return;
 
             string deviceBus;
@@ -1268,7 +1268,7 @@ namespace DiscImageChef.Core
             else
                 deviceBus = dev.Type.ToString();
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.SeenDevices.Add(new DeviceStat
             {
@@ -1285,13 +1285,13 @@ namespace DiscImageChef.Core
         /// <param name="real">Set if media was found on a real device, otherwise found on a media image</param>
         public static void AddMedia(MediaType type, bool real)
         {
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.MediaStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.MediaStats)
                 return;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
-            ctx.Medias.Add(new Database.Models.Media
+            ctx.Medias.Add(new Aaru.Database.Models.Media
             {
                 Real = real, Synchronized = false, Type = type.ToString(), Count = 1
             });
@@ -1303,11 +1303,11 @@ namespace DiscImageChef.Core
         public static void AddRemote(string serverApplication, string serverVersion, string serverOperatingSystem,
                                      string serverOperatingSystemVersion, string serverArchitecture)
         {
-            if(Settings.Settings.Current.Stats == null ||
-               !Settings.Settings.Current.Stats.MediaStats)
+            if(Aaru.Settings.Settings.Current.Stats == null ||
+               !Aaru.Settings.Settings.Current.Stats.MediaStats)
                 return;
 
-            var ctx = DicContext.Create(Settings.Settings.LocalDbPath);
+            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.RemoteApplications.Add(new RemoteApplication
             {

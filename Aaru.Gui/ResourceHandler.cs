@@ -33,7 +33,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace DiscImageChef.Gui
+namespace Aaru.Gui
 {
     static class ResourceHandler
     {

@@ -34,11 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Partitions
+namespace Aaru.Partitions
 {
     public class Acorn : IPartition
     {

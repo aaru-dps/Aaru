@@ -34,23 +34,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.CommonTypes.Structs.Devices.SCSI;
-using DiscImageChef.Console;
-using DiscImageChef.Core.Media.Detection;
-using DiscImageChef.Decoders.CD;
-using DiscImageChef.Decoders.DVD;
-using DiscImageChef.Decoders.SCSI;
-using DiscImageChef.Decoders.SCSI.MMC;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Decoders.Xbox;
-using DiscImageChef.Devices;
-using DeviceInfo = DiscImageChef.Core.Devices.Info.DeviceInfo;
-using DMI = DiscImageChef.Decoders.Xbox.DMI;
-using Inquiry = DiscImageChef.CommonTypes.Structs.Devices.SCSI.Inquiry;
+using Aaru.Core.Media.Detection;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Enums;
+using Aaru.CommonTypes.Structs.Devices.SCSI;
+using Aaru.Console;
+using Aaru.Decoders.CD;
+using Aaru.Decoders.DVD;
+using Aaru.Decoders.SCSI;
+using Aaru.Decoders.SCSI.MMC;
+using Aaru.Decoders.SCSI.SSC;
+using Aaru.Decoders.Xbox;
+using Aaru.Devices;
+using DeviceInfo = Aaru.Core.Devices.Info.DeviceInfo;
+using DMI = Aaru.Decoders.Xbox.DMI;
+using Inquiry = Aaru.CommonTypes.Structs.Devices.SCSI.Inquiry;
 
-namespace DiscImageChef.Core.Media.Info
+namespace Aaru.Core.Media.Info
 {
     public class ScsiInfo
     {
@@ -157,7 +157,7 @@ namespace DiscImageChef.Core.Media.Info
 
             MediaInserted = true;
 
-            DeviceInfo = new DeviceInfo(dev);
+            DeviceInfo = new Devices.Info.DeviceInfo(dev);
 
             byte scsiMediumType  = 0;
             byte scsiDensityCode = 0;
@@ -240,7 +240,7 @@ namespace DiscImageChef.Core.Media.Info
                            !seqBuf.SequenceEqual(medBuf))
                         {
                             DensitySupport       = seqBuf;
-                            DensitySupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
+                            DensitySupportHeader = Aaru.Decoders.SCSI.SSC.DensitySupport.DecodeDensity(seqBuf);
                         }
                     }
 
@@ -254,7 +254,7 @@ namespace DiscImageChef.Core.Media.Info
                            !seqBuf.SequenceEqual(medBuf))
                         {
                             MediaTypeSupport       = medBuf;
-                            MediaTypeSupportHeader = Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
+                            MediaTypeSupportHeader = Aaru.Decoders.SCSI.SSC.DensitySupport.DecodeMediumType(seqBuf);
                         }
                     }
 
@@ -1126,7 +1126,7 @@ namespace DiscImageChef.Core.Media.Info
                             else
                             {
                                 Session        = cmdBuf;
-                                DecodedSession = Decoders.CD.Session.Decode(cmdBuf);
+                                DecodedSession = Aaru.Decoders.CD.Session.Decode(cmdBuf);
 
                                 if(DecodedSession.HasValue)
                                 {
@@ -1505,7 +1505,7 @@ namespace DiscImageChef.Core.Media.Info
         public Dictionary<byte, string>                 Isrcs                         { get; }
         public bool                                     MediaInserted                 { get; }
         public MediaType                                MediaType                     { get; }
-        public DeviceInfo                               DeviceInfo                    { get; }
+        public Devices.Info.DeviceInfo                               DeviceInfo                    { get; }
         public byte[]                                   ReadCapacity                  { get; }
         public ulong                                    Blocks                        { get; }
         public uint                                     BlockSize                     { get; }

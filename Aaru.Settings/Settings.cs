@@ -34,11 +34,11 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 using Claunia.PropertyList;
-using DiscImageChef.CommonTypes.Interop;
+using Aaru.CommonTypes.Interop;
 using Microsoft.Win32;
-using PlatformID = DiscImageChef.CommonTypes.Interop.PlatformID;
+using PlatformID = Aaru.CommonTypes.Interop.PlatformID;
 
-namespace DiscImageChef.Settings
+namespace Aaru.Settings
 {
     /// <summary>Settings</summary>
     public class DicSettings

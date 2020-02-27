@@ -34,14 +34,14 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using DiscImageChef.Checksums;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Console;
+using Aaru.Checksums;
+using Aaru.CommonTypes;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Console;
 using Schemas;
-using Marshal = DiscImageChef.Helpers.Marshal;
+using Marshal = Aaru.Helpers.Marshal;
 
-namespace DiscImageChef.Filesystems
+namespace Aaru.Filesystems
 {
     public class AmigaDOSPlugin : IFilesystem
     {

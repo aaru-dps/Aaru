@@ -31,10 +31,10 @@
 // ****************************************************************************/
 
 using System.IO;
-using DiscImageChef.CommonTypes.Interfaces;
-using DiscImageChef.Decoders.Floppy;
+using Aaru.CommonTypes.Interfaces;
+using Aaru.Decoders.Floppy;
 
-namespace DiscImageChef.DiscImages
+namespace Aaru.DiscImages
 {
     public partial class AppleNib
     {

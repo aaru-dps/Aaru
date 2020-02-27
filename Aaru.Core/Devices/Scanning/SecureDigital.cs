@@ -32,11 +32,11 @@
 
 using System;
 using System.Collections.Generic;
-using DiscImageChef.CommonTypes.Enums;
-using DiscImageChef.Core.Logging;
-using DiscImageChef.Decoders.MMC;
+using Aaru.Core.Logging;
+using Aaru.CommonTypes.Enums;
+using Aaru.Decoders.MMC;
 
-namespace DiscImageChef.Core.Devices.Scanning
+namespace Aaru.Core.Devices.Scanning
 {
     /// <summary>
     ///     Implements scanning a SecureDigital or MultiMediaCard flash card
@@ -63,7 +63,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     sense = dev.ReadExtendedCsd(out cmdBuf, out _, TIMEOUT, out _);
                     if(!sense)
                     {
-                        ExtendedCSD ecsd = Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
+                        ExtendedCSD ecsd = Aaru.Decoders.MMC.Decoders.DecodeExtendedCSD(cmdBuf);
                         blocksToRead   = ecsd.OptimalReadSize;
                         results.Blocks = ecsd.SectorCount;
                         blockSize      = (uint)(ecsd.SectorSize == 1 ? 4096 : 512);
@@ -76,7 +76,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                         sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
                         if(!sense)
                         {
-                            CSD csd = Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
+                            CSD csd = Aaru.Decoders.MMC.Decoders.DecodeCSD(cmdBuf);
                             results.Blocks = (ulong)((csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2));
                             blockSize      = (uint)Math.Pow(2, csd.ReadBlockLength);
                         }
@@ -90,7 +90,7 @@ namespace DiscImageChef.Core.Devices.Scanning
                     sense = dev.ReadCsd(out cmdBuf, out _, TIMEOUT, out _);
                     if(!sense)
                     {
-                        Decoders.SecureDigital.CSD csd = Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
+                        Aaru.Decoders.SecureDigital.CSD csd = Aaru.Decoders.SecureDigital.Decoders.DecodeCSD(cmdBuf);
                         results.Blocks = (ulong)(csd.Structure == 0
                                                      ? (csd.Size + 1) * Math.Pow(2, csd.SizeMultiplier + 2)
                                                      : (csd.Size + 1) * 1024);

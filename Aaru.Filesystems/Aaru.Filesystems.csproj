@@ -6,7 +6,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D7016DF2-5A5E-4524-B40D-BA2D59576688}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DiscImageChef.Filesystems</RootNamespace>
+    <RootNamespace>Aaru.Filesystems</RootNamespace>
     <AssemblyName>Aaru.Filesystems</AssemblyName>
     <ReleaseVersion>$(Version)</ReleaseVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

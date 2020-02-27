@@ -32,13 +32,13 @@
 
 using System;
 using System.IO;
-using DiscImageChef.Console;
-using DiscImageChef.Decoders.PCMCIA;
+using Aaru.Console;
+using Aaru.Decoders.PCMCIA;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
-using Tuple = DiscImageChef.Decoders.PCMCIA.Tuple;
+using Tuple = Aaru.Decoders.PCMCIA.Tuple;
 
-namespace DiscImageChef.Gui.Tabs
+namespace Aaru.Gui.Tabs
 {
     public class tabPcmciaInfo : TabPage
     {

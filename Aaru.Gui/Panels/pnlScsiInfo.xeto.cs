@@ -33,17 +33,17 @@
 using System;
 using System.IO;
 using System.Text;
-using DiscImageChef.CommonTypes;
-using DiscImageChef.Core.Media.Info;
-using DiscImageChef.Decoders.SCSI.SSC;
-using DiscImageChef.Gui.Controls;
-using DiscImageChef.Gui.Forms;
-using DiscImageChef.Gui.Tabs;
+using Aaru.Gui.Controls;
+using Aaru.Gui.Forms;
+using Aaru.Gui.Tabs;
+using Aaru.CommonTypes;
+using Aaru.Core.Media.Info;
+using Aaru.Decoders.SCSI.SSC;
 using Eto.Drawing;
 using Eto.Forms;
 using Eto.Serialization.Xaml;
 
-namespace DiscImageChef.Gui.Panels
+namespace Aaru.Gui.Panels
 {
     public class pnlScsiInfo : Panel
     {
