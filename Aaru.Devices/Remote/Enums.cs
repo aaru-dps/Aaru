@@ -1,6 +1,6 @@
 namespace Aaru.Devices.Remote
 {
-    public enum DicPacketType : sbyte
+    public enum AaruPacketType : sbyte
     {
         Nop = -1,
         Hello = 1,
@@ -32,7 +32,7 @@ namespace Aaru.Devices.Remote
         ResponseAmIRoot = 27
     }
 
-    public enum DicNopReason : byte
+    public enum AaruNopReason : byte
     {
         OutOfOrder = 0,
         NotImplemented = 1,

@@ -38,7 +38,7 @@ namespace Aaru.Devices.Remote
 
             DicConsole.WriteLine("Connected to {0}", host);
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             var len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -48,7 +48,7 @@ namespace Aaru.Devices.Remote
                 throw new IOException();
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -58,9 +58,9 @@ namespace Aaru.Devices.Remote
 
             byte[] buf;
 
-            if (hdr.packetType != DicPacketType.Hello)
+            if (hdr.packetType != AaruPacketType.Hello)
             {
-                if (hdr.packetType != DicPacketType.Nop)
+                if (hdr.packetType != AaruPacketType.Nop)
                 {
                     DicConsole.ErrorWriteLine("Expected Hello Packet, got packet type {0}...", hdr.packetType);
                     throw new ArgumentException();
@@ -75,7 +75,7 @@ namespace Aaru.Devices.Remote
                     throw new IOException();
                 }
 
-                var nop = Marshal.ByteArrayToStructureLittleEndian<DicPacketNop>(buf);
+                var nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
                 DicConsole.ErrorWriteLine($"{nop.reason}");
                 throw new ArgumentException();
@@ -96,7 +96,7 @@ namespace Aaru.Devices.Remote
                 throw new IOException();
             }
 
-            var serverHello = Marshal.ByteArrayToStructureLittleEndian<DicPacketHello>(buf);
+            var serverHello = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHello>(buf);
 
             ServerApplication = serverHello.application;
             ServerVersion = serverHello.version;
@@ -105,7 +105,7 @@ namespace Aaru.Devices.Remote
             ServerArchitecture = serverHello.machine;
             ServerProtocolVersion = serverHello.maxProtocol;
 
-            var clientHello = new DicPacketHello
+            var clientHello = new AaruPacketHello
             {
                 application = "Aaru",
                 version = Version.GetVersion(),
@@ -114,12 +114,12 @@ namespace Aaru.Devices.Remote
                     DetectOS.GetRealPlatformID(), DetectOS.GetVersion()),
                 release = DetectOS.GetVersion(),
                 machine = RuntimeInformation.ProcessArchitecture.ToString(),
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketHello>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketHello>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.Hello
+                    packetType = AaruPacketType.Hello
                 }
             };
 
@@ -144,14 +144,14 @@ namespace Aaru.Devices.Remote
         {
             get
             {
-                var cmdPkt = new DicPacketCmdAmIRoot
+                var cmdPkt = new AaruPacketCmdAmIRoot
                 {
-                    hdr = new DicPacketHeader
+                    hdr = new AaruPacketHeader
                     {
                         remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                        len = (uint) Marshal.SizeOf<DicPacketCmdAmIRoot>(),
+                        len = (uint) Marshal.SizeOf<AaruPacketCmdAmIRoot>(),
                         version = Consts.PacketVersion,
-                        packetType = DicPacketType.CommandAmIRoot
+                        packetType = AaruPacketType.CommandAmIRoot
                     }
                 };
 
@@ -165,7 +165,7 @@ namespace Aaru.Devices.Remote
                     return false;
                 }
 
-                var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+                var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
                 len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -175,7 +175,7 @@ namespace Aaru.Devices.Remote
                     return false;
                 }
 
-                var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+                var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
                 if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
                 {
@@ -183,7 +183,7 @@ namespace Aaru.Devices.Remote
                     return false;
                 }
 
-                if (hdr.packetType != DicPacketType.ResponseAmIRoot)
+                if (hdr.packetType != AaruPacketType.ResponseAmIRoot)
                 {
                     DicConsole.ErrorWriteLine("Expected Am I Root? Response Packet, got packet type {0}...",
                         hdr.packetType);
@@ -199,7 +199,7 @@ namespace Aaru.Devices.Remote
                     return false;
                 }
 
-                var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAmIRoot>(buf);
+                var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResAmIRoot>(buf);
 
                 return res.am_i_root != 0;
             }
@@ -218,14 +218,14 @@ namespace Aaru.Devices.Remote
 
         public DeviceInfo[] ListDevices()
         {
-            var cmdPkt = new DicPacketCommandListDevices
+            var cmdPkt = new AaruPacketCommandListDevices
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCommandListDevices>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCommandListDevices>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandListDevices
+                    packetType = AaruPacketType.CommandListDevices
                 }
             };
 
@@ -240,7 +240,7 @@ namespace Aaru.Devices.Remote
                 return new DeviceInfo[0];
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -250,7 +250,7 @@ namespace Aaru.Devices.Remote
                 return new DeviceInfo[0];
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -258,9 +258,9 @@ namespace Aaru.Devices.Remote
                 return new DeviceInfo[0];
             }
 
-            if (hdr.packetType != DicPacketType.ResponseListDevices)
+            if (hdr.packetType != AaruPacketType.ResponseListDevices)
             {
-                if (hdr.packetType != DicPacketType.Nop)
+                if (hdr.packetType != AaruPacketType.Nop)
                 {
                     DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
                         hdr.packetType);
@@ -276,7 +276,7 @@ namespace Aaru.Devices.Remote
                     return new DeviceInfo[0];
                 }
 
-                var nop = Marshal.ByteArrayToStructureLittleEndian<DicPacketNop>(buf);
+                var nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
                 DicConsole.ErrorWriteLine($"{nop.reason}");
                 return new DeviceInfo[0];
@@ -297,9 +297,9 @@ namespace Aaru.Devices.Remote
                 return new DeviceInfo[0];
             }
 
-            var response = Marshal.ByteArrayToStructureLittleEndian<DicPacketResponseListDevices>(buf);
+            var response = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResponseListDevices>(buf);
             var devices = new List<DeviceInfo>();
-            var offset = Marshal.SizeOf<DicPacketResponseListDevices>();
+            var offset = Marshal.SizeOf<AaruPacketResponseListDevices>();
             var devInfoLen = Marshal.SizeOf<DeviceInfo>();
 
             for (ushort i = 0; i < response.devices; i++)
@@ -317,14 +317,14 @@ namespace Aaru.Devices.Remote
         {
             lastError = 0;
 
-            var cmdPkt = new DicPacketCommandOpenDevice
+            var cmdPkt = new AaruPacketCommandOpenDevice
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCommandOpenDevice>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCommandOpenDevice>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandOpen
+                    packetType = AaruPacketType.CommandOpen
                 },
                 device_path = devicePath
             };
@@ -340,7 +340,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -351,7 +351,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -360,7 +360,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            if (hdr.packetType != DicPacketType.Nop)
+            if (hdr.packetType != AaruPacketType.Nop)
             {
                 DicConsole.ErrorWriteLine("Expected List Devices Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -378,13 +378,13 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var nop = Marshal.ByteArrayToStructureLittleEndian<DicPacketNop>(buf);
+            var nop = Marshal.ByteArrayToStructureLittleEndian<AaruPacketNop>(buf);
 
             switch (nop.reasonCode)
             {
-                case DicNopReason.OpenOk:
+                case AaruNopReason.OpenOk:
                     return true;
-                case DicNopReason.NotImplemented:
+                case AaruNopReason.NotImplemented:
                     throw new NotImplementedException($"{nop.reason}");
             }
 
@@ -400,13 +400,13 @@ namespace Aaru.Devices.Remote
             duration = 0;
             sense = true;
 
-            var cmdPkt = new DicPacketCmdScsi
+            var cmdPkt = new AaruPacketCmdScsi
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandScsi
+                    packetType = AaruPacketType.CommandScsi
                 },
                 direction = (int) direction,
                 timeout = timeout * 1000
@@ -417,17 +417,17 @@ namespace Aaru.Devices.Remote
             if (buffer != null)
                 cmdPkt.buf_len = (uint) buffer.Length;
 
-            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdScsi>() + cmdPkt.cdb_len + cmdPkt.buf_len);
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len + cmdPkt.buf_len);
 
             var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
             var buf = new byte[cmdPkt.hdr.len];
 
-            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdScsi>());
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdScsi>());
 
             if (cdb != null)
-                Array.Copy(cdb, 0, buf, Marshal.SizeOf<DicPacketCmdScsi>(), cmdPkt.cdb_len);
+                Array.Copy(cdb, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>(), cmdPkt.cdb_len);
             if (buffer != null)
-                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdScsi>() + cmdPkt.cdb_len, cmdPkt.buf_len);
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdScsi>() + cmdPkt.cdb_len, cmdPkt.buf_len);
 
             var len = _socket.Send(buf, SocketFlags.None);
 
@@ -437,7 +437,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -447,7 +447,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -455,7 +455,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseScsi)
+            if (hdr.packetType != AaruPacketType.ResponseScsi)
             {
                 DicConsole.ErrorWriteLine("Expected SCSI Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -471,12 +471,12 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResScsi>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResScsi>(buf);
 
             senseBuffer = new byte[res.sense_len];
-            Array.Copy(buf, Marshal.SizeOf<DicPacketResScsi>(), senseBuffer, 0, res.sense_len);
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResScsi>(), senseBuffer, 0, res.sense_len);
             buffer = new byte[res.buf_len];
-            Array.Copy(buf, Marshal.SizeOf<DicPacketResScsi>() + res.sense_len, buffer, 0, res.buf_len);
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResScsi>() + res.sense_len, buffer, 0, res.buf_len);
             duration = res.duration;
             sense = res.sense != 0;
 
@@ -493,13 +493,13 @@ namespace Aaru.Devices.Remote
             sense = true;
             errorRegisters = new AtaErrorRegistersChs();
 
-            var cmdPkt = new DicPacketCmdAtaChs
+            var cmdPkt = new AaruPacketCmdAtaChs
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandAtaChs
+                    packetType = AaruPacketType.CommandAtaChs
                 },
                 registers = registers,
                 protocol = (byte) protocol,
@@ -511,15 +511,15 @@ namespace Aaru.Devices.Remote
             if (buffer != null)
                 cmdPkt.buf_len = (uint) buffer.Length;
 
-            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdAtaChs>() + cmdPkt.buf_len);
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<AaruPacketCmdAtaChs>() + cmdPkt.buf_len);
 
             var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
             var buf = new byte[cmdPkt.hdr.len];
 
-            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdAtaChs>());
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaChs>());
 
             if (buffer != null)
-                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdAtaChs>(), cmdPkt.buf_len);
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaChs>(), cmdPkt.buf_len);
 
             var len = _socket.Send(buf, SocketFlags.None);
 
@@ -529,7 +529,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -539,7 +539,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -547,7 +547,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseAtaChs)
+            if (hdr.packetType != AaruPacketType.ResponseAtaChs)
             {
                 DicConsole.ErrorWriteLine("Expected ATA CHS Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -563,10 +563,10 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAtaChs>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResAtaChs>(buf);
 
             buffer = new byte[res.buf_len];
-            Array.Copy(buf, Marshal.SizeOf<DicPacketResAtaChs>(), buffer, 0, res.buf_len);
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResAtaChs>(), buffer, 0, res.buf_len);
             duration = res.duration;
             sense = res.sense != 0;
             errorRegisters = res.registers;
@@ -584,13 +584,13 @@ namespace Aaru.Devices.Remote
             sense = true;
             errorRegisters = new AtaErrorRegistersLba28();
 
-            var cmdPkt = new DicPacketCmdAtaLba28
+            var cmdPkt = new AaruPacketCmdAtaLba28
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandAtaLba28
+                    packetType = AaruPacketType.CommandAtaLba28
                 },
                 registers = registers,
                 protocol = (byte) protocol,
@@ -602,15 +602,15 @@ namespace Aaru.Devices.Remote
             if (buffer != null)
                 cmdPkt.buf_len = (uint) buffer.Length;
 
-            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdAtaLba28>() + cmdPkt.buf_len);
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<AaruPacketCmdAtaLba28>() + cmdPkt.buf_len);
 
             var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
             var buf = new byte[cmdPkt.hdr.len];
 
-            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdAtaLba28>());
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba28>());
 
             if (buffer != null)
-                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdAtaLba28>(), cmdPkt.buf_len);
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba28>(), cmdPkt.buf_len);
 
             var len = _socket.Send(buf, SocketFlags.None);
 
@@ -620,7 +620,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -630,7 +630,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -638,7 +638,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseAtaLba28)
+            if (hdr.packetType != AaruPacketType.ResponseAtaLba28)
             {
                 DicConsole.ErrorWriteLine("Expected ATA LBA28 Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -654,10 +654,10 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAtaLba28>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResAtaLba28>(buf);
 
             buffer = new byte[res.buf_len];
-            Array.Copy(buf, Marshal.SizeOf<DicPacketResAtaLba28>(), buffer, 0, res.buf_len);
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResAtaLba28>(), buffer, 0, res.buf_len);
             duration = res.duration;
             sense = res.sense != 0;
             errorRegisters = res.registers;
@@ -675,13 +675,13 @@ namespace Aaru.Devices.Remote
             sense = true;
             errorRegisters = new AtaErrorRegistersLba48();
 
-            var cmdPkt = new DicPacketCmdAtaLba48
+            var cmdPkt = new AaruPacketCmdAtaLba48
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandAtaLba48
+                    packetType = AaruPacketType.CommandAtaLba48
                 },
                 registers = registers,
                 protocol = (byte) protocol,
@@ -693,15 +693,15 @@ namespace Aaru.Devices.Remote
             if (buffer != null)
                 cmdPkt.buf_len = (uint) buffer.Length;
 
-            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdAtaLba48>() + cmdPkt.buf_len);
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<AaruPacketCmdAtaLba48>() + cmdPkt.buf_len);
 
             var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
             var buf = new byte[cmdPkt.hdr.len];
 
-            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdAtaLba48>());
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdAtaLba48>());
 
             if (buffer != null)
-                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdAtaLba48>(), cmdPkt.buf_len);
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdAtaLba48>(), cmdPkt.buf_len);
 
             var len = _socket.Send(buf, SocketFlags.None);
 
@@ -711,7 +711,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -721,7 +721,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -729,7 +729,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseAtaLba48)
+            if (hdr.packetType != AaruPacketType.ResponseAtaLba48)
             {
                 DicConsole.ErrorWriteLine("Expected ATA LBA48 Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -745,10 +745,10 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResAtaLba48>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResAtaLba48>(buf);
 
             buffer = new byte[res.buf_len];
-            Array.Copy(buf, Marshal.SizeOf<DicPacketResAtaLba48>(), buffer, 0, res.buf_len);
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResAtaLba48>(), buffer, 0, res.buf_len);
             duration = res.duration;
             sense = res.sense != 0;
             errorRegisters = res.registers;
@@ -765,13 +765,13 @@ namespace Aaru.Devices.Remote
             sense = true;
             response = null;
 
-            var cmdPkt = new DicPacketCmdSdhci
+            var cmdPkt = new AaruPacketCmdSdhci
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandAtaLba48
+                    packetType = AaruPacketType.CommandAtaLba48
                 },
                 command = command,
                 write = write,
@@ -786,15 +786,15 @@ namespace Aaru.Devices.Remote
             if (buffer != null)
                 cmdPkt.buf_len = (uint) buffer.Length;
 
-            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<DicPacketCmdSdhci>() + cmdPkt.buf_len);
+            cmdPkt.hdr.len = (uint) (Marshal.SizeOf<AaruPacketCmdSdhci>() + cmdPkt.buf_len);
 
             var pktBuf = Marshal.StructureToByteArrayLittleEndian(cmdPkt);
             var buf = new byte[cmdPkt.hdr.len];
 
-            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<DicPacketCmdSdhci>());
+            Array.Copy(pktBuf, 0, buf, 0, Marshal.SizeOf<AaruPacketCmdSdhci>());
 
             if (buffer != null)
-                Array.Copy(buffer, 0, buf, Marshal.SizeOf<DicPacketCmdSdhci>(), cmdPkt.buf_len);
+                Array.Copy(buffer, 0, buf, Marshal.SizeOf<AaruPacketCmdSdhci>(), cmdPkt.buf_len);
 
             var len = _socket.Send(buf, SocketFlags.None);
 
@@ -804,7 +804,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -814,7 +814,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -822,7 +822,7 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseSdhci)
+            if (hdr.packetType != AaruPacketType.ResponseSdhci)
             {
                 DicConsole.ErrorWriteLine("Expected SDHCI Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -838,10 +838,10 @@ namespace Aaru.Devices.Remote
                 return -1;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResSdhci>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResSdhci>(buf);
 
             buffer = new byte[res.buf_len];
-            Array.Copy(buf, Marshal.SizeOf<DicPacketResSdhci>(), buffer, 0, res.buf_len);
+            Array.Copy(buf, Marshal.SizeOf<AaruPacketResSdhci>(), buffer, 0, res.buf_len);
             duration = res.duration;
             sense = res.sense != 0;
             response = new uint[4];
@@ -855,14 +855,14 @@ namespace Aaru.Devices.Remote
 
         public DeviceType GetDeviceType()
         {
-            var cmdPkt = new DicPacketCmdGetDeviceType
+            var cmdPkt = new AaruPacketCmdGetDeviceType
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCmdGetDeviceType>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCmdGetDeviceType>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandGetType
+                    packetType = AaruPacketType.CommandGetType
                 }
             };
 
@@ -876,7 +876,7 @@ namespace Aaru.Devices.Remote
                 return DeviceType.Unknown;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -886,7 +886,7 @@ namespace Aaru.Devices.Remote
                 return DeviceType.Unknown;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -894,7 +894,7 @@ namespace Aaru.Devices.Remote
                 return DeviceType.Unknown;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseGetType)
+            if (hdr.packetType != AaruPacketType.ResponseGetType)
             {
                 DicConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -910,7 +910,7 @@ namespace Aaru.Devices.Remote
                 return DeviceType.Unknown;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetDeviceType>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetDeviceType>(buf);
 
             return res.device_type;
         }
@@ -922,14 +922,14 @@ namespace Aaru.Devices.Remote
             ocr = null;
             scr = null;
 
-            var cmdPkt = new DicPacketCmdGetSdhciRegisters
+            var cmdPkt = new AaruPacketCmdGetSdhciRegisters
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCmdGetSdhciRegisters>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCmdGetSdhciRegisters>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandGetSdhciRegisters
+                    packetType = AaruPacketType.CommandGetSdhciRegisters
                 }
             };
 
@@ -943,7 +943,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -953,7 +953,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -961,7 +961,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseGetSdhciRegisters)
+            if (hdr.packetType != AaruPacketType.ResponseGetSdhciRegisters)
             {
                 DicConsole.ErrorWriteLine("Expected Device Type Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -977,7 +977,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetSdhciRegisters>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetSdhciRegisters>(buf);
 
             if (res.csd_len > 0)
             {
@@ -1032,14 +1032,14 @@ namespace Aaru.Devices.Remote
             product = null;
             serial = null;
 
-            var cmdPkt = new DicPacketCmdGetUsbData
+            var cmdPkt = new AaruPacketCmdGetUsbData
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCmdGetUsbData>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCmdGetUsbData>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandGetUsbData
+                    packetType = AaruPacketType.CommandGetUsbData
                 }
             };
 
@@ -1053,7 +1053,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1063,7 +1063,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -1071,7 +1071,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseGetUsbData)
+            if (hdr.packetType != AaruPacketType.ResponseGetUsbData)
             {
                 DicConsole.ErrorWriteLine("Expected USB Data Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -1087,7 +1087,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetUsbData>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetUsbData>(buf);
 
             if (!res.isUsb)
                 return false;
@@ -1112,14 +1112,14 @@ namespace Aaru.Devices.Remote
             vendor = null;
             model = null;
 
-            var cmdPkt = new DicPacketCmdGetFireWireData
+            var cmdPkt = new AaruPacketCmdGetFireWireData
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCmdGetFireWireData>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCmdGetFireWireData>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandGetFireWireData
+                    packetType = AaruPacketType.CommandGetFireWireData
                 }
             };
 
@@ -1133,7 +1133,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1143,7 +1143,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -1151,7 +1151,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseGetFireWireData)
+            if (hdr.packetType != AaruPacketType.ResponseGetFireWireData)
             {
                 DicConsole.ErrorWriteLine("Expected FireWire Data Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -1167,7 +1167,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetFireWireData>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetFireWireData>(buf);
 
             if (!res.isFireWire)
                 return false;
@@ -1185,14 +1185,14 @@ namespace Aaru.Devices.Remote
         {
             cis = null;
 
-            var cmdPkt = new DicPacketCmdGetPcmciaData
+            var cmdPkt = new AaruPacketCmdGetPcmciaData
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCmdGetPcmciaData>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCmdGetPcmciaData>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandGetPcmciaData
+                    packetType = AaruPacketType.CommandGetPcmciaData
                 }
             };
 
@@ -1206,7 +1206,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdrBuf = new byte[Marshal.SizeOf<DicPacketHeader>()];
+            var hdrBuf = new byte[Marshal.SizeOf<AaruPacketHeader>()];
 
             len = Receive(_socket, hdrBuf, hdrBuf.Length, SocketFlags.Peek);
 
@@ -1216,7 +1216,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var hdr = Marshal.ByteArrayToStructureLittleEndian<DicPacketHeader>(hdrBuf);
+            var hdr = Marshal.ByteArrayToStructureLittleEndian<AaruPacketHeader>(hdrBuf);
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
@@ -1224,7 +1224,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            if (hdr.packetType != DicPacketType.ResponseGetPcmciaData)
+            if (hdr.packetType != AaruPacketType.ResponseGetPcmciaData)
             {
                 DicConsole.ErrorWriteLine("Expected PCMCIA Data Response Packet, got packet type {0}...",
                     hdr.packetType);
@@ -1240,7 +1240,7 @@ namespace Aaru.Devices.Remote
                 return false;
             }
 
-            var res = Marshal.ByteArrayToStructureLittleEndian<DicPacketResGetPcmciaData>(buf);
+            var res = Marshal.ByteArrayToStructureLittleEndian<AaruPacketResGetPcmciaData>(buf);
 
             if (!res.isPcmcia)
                 return false;
@@ -1270,14 +1270,14 @@ namespace Aaru.Devices.Remote
 
         public void Close()
         {
-            var cmdPkt = new DicPacketCmdClose
+            var cmdPkt = new AaruPacketCmdClose
             {
-                hdr = new DicPacketHeader
+                hdr = new AaruPacketHeader
                 {
                     remote_id = Consts.RemoteId, packet_id = Consts.PacketId,
-                    len = (uint) Marshal.SizeOf<DicPacketCmdClose>(),
+                    len = (uint) Marshal.SizeOf<AaruPacketCmdClose>(),
                     version = Consts.PacketVersion,
-                    packetType = DicPacketType.CommandCloseDevice
+                    packetType = AaruPacketType.CommandCloseDevice
                 }
             };
 

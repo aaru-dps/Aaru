@@ -5,23 +5,23 @@ using Aaru.Decoders.ATA;
 namespace Aaru.Devices.Remote
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketHeader
+    public struct AaruPacketHeader
     {
         public uint remote_id;
         public uint packet_id;
 
         public uint len;
         public byte version;
-        public DicPacketType packetType;
+        public AaruPacketType packetType;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         public readonly byte[] spare;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketHello
+    public struct AaruPacketHello
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
         public string application;
@@ -45,23 +45,23 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCommandListDevices
+    public struct AaruPacketCommandListDevices
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResponseListDevices
+    public struct AaruPacketResponseListDevices
     {
-        public readonly DicPacketHeader hdr;
+        public readonly AaruPacketHeader hdr;
         public readonly ushort devices;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketNop
+    public struct AaruPacketNop
     {
-        public DicPacketHeader hdr;
-        public DicNopReason reasonCode;
+        public AaruPacketHeader hdr;
+        public AaruNopReason reasonCode;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         public readonly byte[] spare;
@@ -73,18 +73,18 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCommandOpenDevice
+    public struct AaruPacketCommandOpenDevice
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
         public string device_path;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdScsi
+    public struct AaruPacketCmdScsi
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint cdb_len;
         public uint buf_len;
         public int direction;
@@ -92,9 +92,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResScsi
+    public struct AaruPacketResScsi
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint sense_len;
         public uint buf_len;
         public uint duration;
@@ -103,9 +103,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdAtaChs
+    public struct AaruPacketCmdAtaChs
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint buf_len;
         public AtaRegistersChs registers;
         public byte protocol;
@@ -116,9 +116,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResAtaChs
+    public struct AaruPacketResAtaChs
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint buf_len;
         public AtaErrorRegistersChs registers;
         public uint duration;
@@ -128,9 +128,9 @@ namespace Aaru.Devices.Remote
 
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdAtaLba28
+    public struct AaruPacketCmdAtaLba28
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint buf_len;
         public AtaRegistersLba28 registers;
         public byte protocol;
@@ -141,9 +141,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResAtaLba28
+    public struct AaruPacketResAtaLba28
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint buf_len;
         public AtaErrorRegistersLba28 registers;
         public uint duration;
@@ -152,9 +152,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdAtaLba48
+    public struct AaruPacketCmdAtaLba48
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint buf_len;
         public AtaRegistersLba48 registers;
         public byte protocol;
@@ -165,9 +165,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResAtaLba48
+    public struct AaruPacketResAtaLba48
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint buf_len;
         public AtaErrorRegistersLba48 registers;
         public uint duration;
@@ -176,9 +176,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdSdhci
+    public struct AaruPacketCmdSdhci
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public MmcCommands command;
         [MarshalAs(UnmanagedType.U1)] public bool write;
         [MarshalAs(UnmanagedType.U1)] public bool application;
@@ -191,9 +191,9 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResSdhci
+    public struct AaruPacketResSdhci
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint buf_len;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -205,28 +205,28 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdGetDeviceType
+    public struct AaruPacketCmdGetDeviceType
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResGetDeviceType
+    public struct AaruPacketResGetDeviceType
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public DeviceType device_type;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdGetSdhciRegisters
+    public struct AaruPacketCmdGetSdhciRegisters
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResGetSdhciRegisters
+    public struct AaruPacketResGetSdhciRegisters
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         [MarshalAs(UnmanagedType.U1)] public bool isSdhci;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
@@ -248,15 +248,15 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdGetUsbData
+    public struct AaruPacketCmdGetUsbData
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResGetUsbData
+    public struct AaruPacketResGetUsbData
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         [MarshalAs(UnmanagedType.U1)] public bool isUsb;
         public ushort descLen;
 
@@ -277,15 +277,15 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdGetFireWireData
+    public struct AaruPacketCmdGetFireWireData
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResGetFireWireData
+    public struct AaruPacketResGetFireWireData
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         [MarshalAs(UnmanagedType.U1)] public bool isFireWire;
         public uint idModel;
         public uint idVendor;
@@ -299,15 +299,15 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdGetPcmciaData
+    public struct AaruPacketCmdGetPcmciaData
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResGetPcmciaData
+    public struct AaruPacketResGetPcmciaData
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         [MarshalAs(UnmanagedType.U1)] public bool isPcmcia;
         public ushort cis_len;
 
@@ -316,21 +316,21 @@ namespace Aaru.Devices.Remote
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdClose
+    public struct AaruPacketCmdClose
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketCmdAmIRoot
+    public struct AaruPacketCmdAmIRoot
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
-    public struct DicPacketResAmIRoot
+    public struct AaruPacketResAmIRoot
     {
-        public DicPacketHeader hdr;
+        public AaruPacketHeader hdr;
         public uint am_i_root;
     }
 }

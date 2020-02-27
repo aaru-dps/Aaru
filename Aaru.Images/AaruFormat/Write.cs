@@ -236,7 +236,7 @@ namespace Aaru.DiscImages
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
                 header = Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
 
-                if(header.identifier != DIC_MAGIC && header.identifier != AARU_MAGIC &&)
+                if(header.identifier != DIC_MAGIC && header.identifier != AARU_MAGIC)
                 {
                     ErrorMessage = "Cannot append to a non Aaru Format image";
 
