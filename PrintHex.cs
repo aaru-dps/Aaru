@@ -41,7 +41,7 @@ namespace Aaru
         /// <param name="array">Array</param>
         /// <param name="width">Width of line</param>
         public static void PrintHexArray(byte[] array, int width = 16) =>
-            DicConsole.WriteLine(ByteArrayToHexArrayString(array, width));
+            AaruConsole.WriteLine(ByteArrayToHexArrayString(array, width));
 
         /// <summary>Prints a byte array as hexadecimal values to a string</summary>
         /// <param name="array">Array</param>

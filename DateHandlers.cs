@@ -107,7 +107,7 @@ namespace Aaru
             fourcharvalue[2] = vdDateTime[2];
             fourcharvalue[3] = vdDateTime[3];
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "year = \"{0}\"",
                                       StringHandlers.CToString(fourcharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(fourcharvalue, Encoding.ASCII), out int year))
@@ -116,7 +116,7 @@ namespace Aaru
             twocharvalue[0] = vdDateTime[4];
             twocharvalue[1] = vdDateTime[5];
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "month = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int month))
@@ -125,7 +125,7 @@ namespace Aaru
             twocharvalue[0] = vdDateTime[6];
             twocharvalue[1] = vdDateTime[7];
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "day = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int day))
@@ -134,7 +134,7 @@ namespace Aaru
             twocharvalue[0] = vdDateTime[8];
             twocharvalue[1] = vdDateTime[9];
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hour = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hour))
@@ -143,7 +143,7 @@ namespace Aaru
             twocharvalue[0] = vdDateTime[10];
             twocharvalue[1] = vdDateTime[11];
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "minute = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int minute))
@@ -152,7 +152,7 @@ namespace Aaru
             twocharvalue[0] = vdDateTime[12];
             twocharvalue[1] = vdDateTime[13];
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "second = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int second))
@@ -161,13 +161,13 @@ namespace Aaru
             twocharvalue[0] = vdDateTime[14];
             twocharvalue[1] = vdDateTime[15];
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler", "hundredths = \"{0}\"",
                                       StringHandlers.CToString(twocharvalue, Encoding.ASCII));
 
             if(!int.TryParse(StringHandlers.CToString(twocharvalue, Encoding.ASCII), out int hundredths))
                 hundredths = 0;
 
-            DicConsole.DebugWriteLine("ISO9600ToDateTime handler",
+            AaruConsole.DebugWriteLine("ISO9600ToDateTime handler",
                                       "decodedDT = new DateTime({0}, {1}, {2}, {3}, {4}, {5}, {6}, DateTimeKind.Unspecified);",
                                       year, month, day, hour, minute, second, hundredths * 10);
 
@@ -210,7 +210,7 @@ namespace Aaru
             int day   = (dateRecord & 0x01F0) >> 4;
             int month = dateRecord & 0x000F;
 
-            DicConsole.DebugWriteLine("UCSDPascalToDateTime handler",
+            AaruConsole.DebugWriteLine("UCSDPascalToDateTime handler",
                                       "dateRecord = 0x{0:X4}, year = {1}, month = {2}, day = {3}", dateRecord, year,
                                       month, day);
 
@@ -230,10 +230,10 @@ namespace Aaru
             int minute = (time & 0x7E0)  >> 5;
             int second = (time & 0x1F) * 2;
 
-            DicConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
+            AaruConsole.DebugWriteLine("DOSToDateTime handler", "date = 0x{0:X4}, year = {1}, month = {2}, day = {3}",
                                       date, year, month, day);
 
-            DicConsole.DebugWriteLine("DOSToDateTime handler",
+            AaruConsole.DebugWriteLine("DOSToDateTime handler",
                                       "time = 0x{0:X4}, hour = {1}, minute = {2}, second = {3}", time, hour, minute,
                                       second);
 
