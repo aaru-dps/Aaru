@@ -67,9 +67,13 @@ namespace Aaru.DiscImages
         /// </summary>
         const uint CREATOR_CIDER = 0x50726443;
         /// <summary>
-        ///     Disk image created by Aaru, "dic "
+        ///     Disk image created by DiscImageChef, "dic "
         /// </summary>
         const uint CREATOR_DIC = 0x20636964;
+        /// <summary>
+        ///     Disk image created by Aaru, "aaru"
+        /// </summary>
+        const uint CREATOR_AARU = 0x75726161;
 
         const    uint  LOCKED_DISK         = 0x80000000;
         const    uint  VALID_VOLUME_NUMBER = 0x00000100;

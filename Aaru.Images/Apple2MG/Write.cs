@@ -170,7 +170,7 @@ namespace Aaru.DiscImages
             imageHeader = new A2ImgHeader
             {
                 Blocks     = (uint)(imageInfo.Sectors * imageInfo.SectorSize) / 512,
-                Creator    = CREATOR_DIC,
+                Creator    = CREATOR_AARU,
                 DataOffset = 0x40,
                 DataSize   = (uint)(imageInfo.Sectors * imageInfo.SectorSize),
                 Flags =

@@ -183,6 +183,9 @@ namespace Aaru.DiscImages
                 case CREATOR_DIC:
                     imageInfo.Application = "DiscImageChef";
                     break;
+                case CREATOR_AARU:
+                    imageInfo.Application = "Aaru";
+                    break;
                 default:
                     imageInfo.Application = $"Unknown creator code \"{Encoding.ASCII.GetString(creator)}\"";
                     break;
