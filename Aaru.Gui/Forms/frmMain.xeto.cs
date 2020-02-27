@@ -104,39 +104,39 @@ namespace Aaru.Gui.Forms
             // TODO: SVG
             imagesIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.inode-directory.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.inode-directory.png"));
 
             devicesIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.computer.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.computer.png"));
 
             hardDiskIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-harddisk.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-harddisk.png"));
 
             opticalIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-optical.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-optical.png"));
 
             usbIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-removable-media-usb.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-removable-media-usb.png"));
 
             removableIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.drive-removable-media.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.drive-removable-media.png"));
 
             sdIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.media-flash-sd-mmc.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-flash-sd-mmc.png"));
 
             tapeIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.media-tape.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-tape.png"));
 
             ejectIcon =
                 new Bitmap(ResourceHandler.
-                               GetResourceStream("DiscImageChef.Gui.Assets.Icons.oxygen._32x32.media-eject.png"));
+                               GetResourceStream("Aaru.Gui.Assets.Icons.oxygen._32x32.media-eject.png"));
 
             imagesRoot = new TreeGridItem
             {
@@ -369,7 +369,7 @@ namespace Aaru.Gui.Forms
                     // TODO: SVG
                     Stream logo =
                         ResourceHandler.
-                            GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
+                            GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
 
                     var imageGridItem = new TreeGridItem
                     {
@@ -886,7 +886,7 @@ namespace Aaru.Gui.Forms
                         // TODO: SVG
                         Stream logo =
                             ResourceHandler.
-                                GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
+                                GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{scsiInfo.MediaType}.png");
 
                         deviceItem.Children.Add(new TreeGridItem
                         {

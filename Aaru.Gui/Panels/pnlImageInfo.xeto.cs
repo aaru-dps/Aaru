@@ -76,7 +76,7 @@ namespace Aaru.Gui.Panels
 
             Stream logo =
                 ResourceHandler
-                   .GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.svg");
+                   .GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.svg");
             /*            if(logo != null)
                         {
                             svgMediaLogo.SvgStream = logo;
@@ -86,7 +86,7 @@ namespace Aaru.Gui.Panels
                         {*/
             logo =
                 ResourceHandler
-                   .GetResourceStream($"DiscImageChef.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
+                   .GetResourceStream($"Aaru.Gui.Assets.Logos.Media.{imageFormat.Info.MediaType}.png");
             if(logo != null)
             {
                 imgMediaLogo.Image   = new Bitmap(logo);
