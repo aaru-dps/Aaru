@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Aaru.Database.Migrations
 {
-    [DbContext(typeof(DicContext))]
-    internal class DicContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AaruContext))]
+    internal class AaruContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

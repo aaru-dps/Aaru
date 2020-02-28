@@ -42,7 +42,7 @@ namespace Aaru.Core.Devices.Dumping
         readonly DumpSubchannel             _subchannel;
         readonly bool                       _trim;
         bool                                _aborted;
-        DicContext                          _ctx;   // Master database context
+        AaruContext                          _ctx;   // Master database context
         Aaru.Database.Models.Device              _dbDev; // Device database entry
         bool                                _dumpFirstTrackPregap;
         bool                                _fixOffset;
@@ -113,7 +113,7 @@ namespace Aaru.Core.Devices.Dumping
         public void Start()
         {
             // Open master database
-            _ctx = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
+            _ctx = AaruContext.Create(Aaru.Settings.Settings.MasterDbPath);
 
             // Search for device in master database
             _dbDev = _ctx.Devices.FirstOrDefault(d => d.Manufacturer == _dev.Manufacturer && d.Model == _dev.Model &&

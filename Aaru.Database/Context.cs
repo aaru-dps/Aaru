@@ -35,9 +35,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Aaru.Database
 {
-    public sealed class DicContext : DbContext
+    public sealed class AaruContext : DbContext
     {
-        public DicContext(DbContextOptions options) : base(options) { }
+        public AaruContext(DbContextOptions options) : base(options) { }
 
         public DbSet<Device>                Devices                { get; set; }
         public DbSet<Report>                Reports                { get; set; }
@@ -59,12 +59,12 @@ namespace Aaru.Database
 
         // Note: If table does not appear check that last migration has been REALLY added to the project
 
-        public static DicContext Create(string dbPath)
+        public static AaruContext Create(string dbPath)
         {
             var optionsBuilder = new DbContextOptionsBuilder();
             optionsBuilder.UseLazyLoadingProxies().UseSqlite($"Data Source={dbPath}");
 
-            return new DicContext(optionsBuilder.Options);
+            return new AaruContext(optionsBuilder.Options);
         }
     }
 }

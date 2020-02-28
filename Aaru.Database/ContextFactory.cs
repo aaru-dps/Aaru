@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Aaru.Database
 {
-    public class DicContextFactory : IDesignTimeDbContextFactory<DicContext>
+    public class AaruContextFactory : IDesignTimeDbContextFactory<AaruContext>
     {
-        public DicContext CreateDbContext(string[] args) => DicContext.Create("discimagechef.db");
+        public AaruContext CreateDbContext(string[] args) => AaruContext.Create("aaru.db");
     }
 }

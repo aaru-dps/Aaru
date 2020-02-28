@@ -86,7 +86,7 @@ namespace Aaru.Commands
                 {
                     File.Delete(Aaru.Settings.Settings.LocalDbPath);
 
-                    var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+                    var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
                     ctx.Database.Migrate();
                     ctx.SaveChanges();
                 }

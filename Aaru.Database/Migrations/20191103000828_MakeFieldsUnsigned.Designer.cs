@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Aaru.Database.Migrations
 {
-    [DbContext(typeof(DicContext))]
+    [DbContext(typeof(AaruContext))]
     [Migration("20191103000828_MakeFieldsUnsigned")]
     partial class MakeFieldsUnsigned
     {

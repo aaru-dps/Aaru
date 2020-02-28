@@ -113,7 +113,7 @@ namespace Aaru.Core
 
         public static void UpdateMasterDatabase(bool create)
         {
-            DicContext mctx = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
+            AaruContext mctx = AaruContext.Create(Aaru.Settings.Settings.MasterDbPath);
             mctx.Database.Migrate();
             mctx.SaveChanges();
 

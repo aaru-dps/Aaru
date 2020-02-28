@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Aaru.Database.Migrations
 {
-    [DbContext(typeof(DicContext))]
+    [DbContext(typeof(AaruContext))]
     [Migration("20181127013131_CorrectReportsDbSet")]
     partial class CorrectReportsDbSet
     {

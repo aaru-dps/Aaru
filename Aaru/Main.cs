@@ -76,7 +76,7 @@ namespace Aaru
 
             Aaru.Settings.Settings.LoadSettings();
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
             ctx.Database.Migrate();
             ctx.SaveChanges();
 
@@ -88,7 +88,7 @@ namespace Aaru
                 UpdateCommand.DoUpdate(true);
             }
 
-            var masterContext = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
+            var masterContext = AaruContext.Create(Aaru.Settings.Settings.MasterDbPath);
 
             if(masterContext.Database.GetPendingMigrations().Any())
             {

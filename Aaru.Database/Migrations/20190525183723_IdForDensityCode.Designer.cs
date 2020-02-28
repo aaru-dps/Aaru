@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Aaru.Database.Migrations
 {
-    [DbContext(typeof(DicContext))]
+    [DbContext(typeof(AaruContext))]
     [Migration("20190525183723_IdForDensityCode")]
     partial class IdForDensityCode
     {

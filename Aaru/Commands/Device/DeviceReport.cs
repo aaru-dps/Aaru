@@ -1265,7 +1265,7 @@ namespace Aaru.Commands.Device
             jsonSw.Close();
             jsonFs.Close();
 
-            using(var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath))
+            using(var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath))
             {
                 ctx.Reports.Add(new Report(report));
                 ctx.SaveChanges();

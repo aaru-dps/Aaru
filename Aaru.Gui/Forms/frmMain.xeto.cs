@@ -696,7 +696,7 @@ namespace Aaru.Gui.Forms
 
         protected void OnMenuStatistics(object sender, EventArgs e)
         {
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             if(!ctx.Commands.Any()     &&
                !ctx.Filesystems.Any()  &&

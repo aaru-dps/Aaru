@@ -55,7 +55,7 @@ namespace Aaru.Commands
             if(verbose)
                 AaruConsole.VerboseWriteLineEvent += System.Console.WriteLine;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             if(!ctx.Commands.Any()     &&
                !ctx.Filesystems.Any()  &&

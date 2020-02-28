@@ -552,7 +552,7 @@ namespace Aaru.Commands.Media
                     bool supportsRwSubchannel = Dump.SupportsRwSubchannel(dev, null, null);
 
                     // Open master database
-                    var ctx = DicContext.Create(Aaru.Settings.Settings.MasterDbPath);
+                    var ctx = AaruContext.Create(Aaru.Settings.Settings.MasterDbPath);
 
                     // Search for device in master database
                     Aaru.Database.Models.Device dbDev =

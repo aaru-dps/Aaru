@@ -45,7 +45,7 @@ namespace Aaru.Gui.Dialogs
         {
             XamlReader.Load(this);
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             if(ctx.Commands.Any())
             {

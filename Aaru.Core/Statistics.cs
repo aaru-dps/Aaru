@@ -61,7 +61,7 @@ namespace Aaru.Core
         /// <summary>Loads saved statistics from disk</summary>
         public static void LoadStats()
         {
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             if(File.Exists(Path.Combine(Aaru.Settings.Settings.StatsPath, "Statistics.xml")))
                 try
@@ -506,7 +506,7 @@ namespace Aaru.Core
         /// <summary>Saves statistics to disk</summary>
         public static void SaveStats()
         {
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
             ctx.SaveChanges();
 
             if(Aaru.Settings.Settings.Current.Stats != null &&
@@ -519,7 +519,7 @@ namespace Aaru.Core
         {
             var submitThread = new Thread(() =>
             {
-                var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+                var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
                 try
                 {
@@ -1157,7 +1157,7 @@ namespace Aaru.Core
                !Aaru.Settings.Settings.Current.Stats.DeviceStats)
                 return;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Commands.Add(new Command
             {
@@ -1178,7 +1178,7 @@ namespace Aaru.Core
                !Aaru.Settings.Settings.Current.Stats.FilesystemStats)
                 return;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Filesystems.Add(new Filesystem
             {
@@ -1199,7 +1199,7 @@ namespace Aaru.Core
                !Aaru.Settings.Settings.Current.Stats.PartitionStats)
                 return;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Partitions.Add(new Partition
             {
@@ -1220,7 +1220,7 @@ namespace Aaru.Core
                !Aaru.Settings.Settings.Current.Stats.FilterStats)
                 return;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Filters.Add(new Filter
             {
@@ -1241,7 +1241,7 @@ namespace Aaru.Core
                !Aaru.Settings.Settings.Current.Stats.MediaImageStats)
                 return;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.MediaFormats.Add(new MediaFormat
             {
@@ -1268,7 +1268,7 @@ namespace Aaru.Core
             else
                 deviceBus = dev.Type.ToString();
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.SeenDevices.Add(new DeviceStat
             {
@@ -1289,7 +1289,7 @@ namespace Aaru.Core
                !Aaru.Settings.Settings.Current.Stats.MediaStats)
                 return;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.Medias.Add(new Aaru.Database.Models.Media
             {
@@ -1307,7 +1307,7 @@ namespace Aaru.Core
                !Aaru.Settings.Settings.Current.Stats.MediaStats)
                 return;
 
-            var ctx = DicContext.Create(Aaru.Settings.Settings.LocalDbPath);
+            var ctx = AaruContext.Create(Aaru.Settings.Settings.LocalDbPath);
 
             ctx.RemoteApplications.Add(new RemoteApplication
             {

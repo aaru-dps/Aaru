@@ -416,7 +416,7 @@
           <e p="20191207183522_AddNameCountModel.cs" t="Include" />
           <e p="20191207184342_AddRemoteStats.Designer.cs" t="Include" />
           <e p="20191207184342_AddRemoteStats.cs" t="Include" />
-          <e p="DicContextModelSnapshot.cs" t="Include" />
+          <e p="AaruContextModelSnapshot.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
           <e p="BaseModel.cs" t="Include" />
