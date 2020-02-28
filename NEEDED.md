@@ -1,5 +1,5 @@
 This is a list of hardware, software, and general information needed to expand and better support various unique hardware and
-software configurations for DiscImageChef. We accept donation of this hardware, or loans: paying for shipping is greatly appreciated,
+software configurations for Aaru. We accept donation of this hardware, or loans: paying for shipping is greatly appreciated,
 but can make other arrangements depending on cost. For media, we do accept loans, but please be aware that due to it’s age, there is
 no guarantee it will still be working after it is returned and thus donations are preferred. 
 

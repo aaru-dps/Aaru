@@ -1,8 +1,8 @@
-# Contributing to DiscImageChef
+# Contributing to Aaru
 
 :+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
 
-The following is a set of guidelines for contributing to DiscImageChef and its modules.
+The following is a set of guidelines for contributing to Aaru and its modules.
 These are mostly guidelines, not rules. Use your best judgment, and feel free to propose
 changes to this document in a pull request.
 
@@ -13,7 +13,7 @@ changes to this document in a pull request.
 [I don't want to read this whole thing, I just have a question!!!](#i-dont-want-to-read-this-whole-thing-i-just-have-a-question)
 
 [What should I know before I get started?](#what-should-i-know-before-i-get-started)
-  * [DiscImageChef and modules](#discimagechef-and-modules)
+  * [Aaru and modules](#aaru-and-modules)
 
 [How Can I Contribute?](#how-can-i-contribute)
   * [Reporting Devices](#reporting-devices)
@@ -32,7 +32,7 @@ changes to this document in a pull request.
 ## Code of Conduct
 
 This project and everyone participating in it is governed by the
-[DiscImageChef Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating, you are expected
+[Aaru Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating, you are expected
 to uphold this code. Please report unacceptable behavior to [claunia@claunia.com](mailto:claunia@claunia.com).
 
 ## I don't want to read this whole thing I just have a question!!!
@@ -40,15 +40,15 @@ to uphold this code. Please report unacceptable behavior to [claunia@claunia.com
 > **Note:** Please don't file an issue to ask a question. You'll get faster results by
 using the resources below.
 
-You can join our IRC channel on chat.freenode.net at channel #DiscImageChef
+You can join our IRC channel on chat.freenode.net at channel #Aaru
 
 ## What should I know before I get started?
 
-### DiscImageChef and modules
+### Aaru and modules
 
-DiscImageChef is a large open source project &mdash; it's made up of 18 modules. When you initially consider contributing to DiscImageChef, you might be unsure about which of those modules implements the functionality you want to change or report a bug for. This section should help you with that.
+Aaru is a large open source project &mdash; it's made up of 18 modules. When you initially consider contributing to Aaru, you might be unsure about which of those modules implements the functionality you want to change or report a bug for. This section should help you with that.
 
-DiscImageChef is intentionally very modular. Here's a list of them:
+Aaru is intentionally very modular. Here's a list of them:
 
 * [Claunia.RsrcFork](https://github.com/claunia/Claunia.RsrcFork) - 
 This library includes code for handling Mac OS resource forks, and decoding them, so any
@@ -61,52 +61,52 @@ This library includes code for handling Apple property lists.
 * [SharpCompress](https://github.com/adamhathcock/sharpcompress) -
 This library includes code for handling compression algorithms and compressed archives. Any
 need you have of compression or decompression should be handled with this library, and any new algorithm should be added here.
-* [DiscImageChef](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef) -
+* [Aaru](https://github.com/claunia/Aaru/tree/master/Aaru) -
 This module contains the command line interface. In the future a GUI will be added.
-* [DiscImageChef.Checksums](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Checksums) -
+* [Aaru.Checksums](https://github.com/claunia/Aaru/tree/master/Aaru.Checksums) -
 This module contains the checksum, hashing and error correction algorithms.
-* [DiscImageChef.CommonTypes](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.CommonTypes) -
+* [Aaru.CommonTypes](https://github.com/claunia/Aaru/tree/master/Aaru.CommonTypes) -
 This module contains interfaces, structures and enumerations needed by more than one of the other modules.
-* [DiscImageChef.Console](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Console) -
+* [Aaru.Console](https://github.com/claunia/Aaru/tree/master/Aaru.Console) -
 This module abstracts consoles used by other modules to output information, so they can be
 redirected to a CLI or to a GUI output.
-* [DiscImageChef.Core](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Core) -
+* [Aaru.Core](https://github.com/claunia/Aaru/tree/master/Aaru.Core) -
 This module contains the implementation of the functions and commands that are called by the
 user interface itself.
-* [DiscImageChef.Decoders](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Decoders) -
+* [Aaru.Decoders](https://github.com/claunia/Aaru/tree/master/Aaru.Decoders) -
 This module contains internal disk, drive and protocol structures as well as code to marshal,
 decode and print them.
-* [DiscImageChef.Devices](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Devices) -
+* [Aaru.Devices](https://github.com/claunia/Aaru/tree/master/Aaru.Devices) -
 This module contains code to talk with hardware devices in different platforms. Each platform
 has lowlevel calls in its own folder, and each device protocol has highlevel calls in its own
 folder. Device commands are separated by protocol standard, or vendor name.
-* [DiscImageChef.Device.Report](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Device.Report) -
+* [Aaru.Device.Report](https://github.com/claunia/Aaru/tree/master/Aaru.Device.Report) -
 This is a separate application in C89 designed to create device reports on enviroments where
 you can't run .NET or Mono but can run Linux.
-* [DiscImageChef.DiscImages](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.DiscImages) -
+* [Aaru.DiscImages](https://github.com/claunia/Aaru/tree/master/Aaru.DiscImages) -
 This module provides reading capabilities for the disk/disc images, one per file.
-* [DiscImageChef.Filesystems](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Filesystems) -
+* [Aaru.Filesystems](https://github.com/claunia/Aaru/tree/master/Aaru.Filesystems) -
 This module provides the filesystem support. If only identification is implemented a single
 file should be used. For full read-only support, a folder should be used.
-* [DiscImageChef.Filters](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Filters) -
+* [Aaru.Filters](https://github.com/claunia/Aaru/tree/master/Aaru.Filters) -
 A filter is a modification of the data before it can be passed to the disk image module
 (compression, fork union, etc), and this module provides support for them. If a image is
 compressed, say in gzip, or encoded, say in AppleDouble, a filter is the responsible of
 decompressing or decoding it on-the-fly. 
-* [DiscImageChef.Helpers](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Helpers) -
+* [Aaru.Helpers](https://github.com/claunia/Aaru/tree/master/Aaru.Helpers) -
 This module contains a collection of helpers for array manipulation, big-endian marshalling,
 datetime conversion, hexadecimal printing, string manipulation and byte swapping.
-* [DiscImageChef.Partitions](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Partitions) -
+* [Aaru.Partitions](https://github.com/claunia/Aaru/tree/master/Aaru.Partitions) -
 This module contains code for reading partition schemes.
-* [DiscImageChef.Server](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Server) -
-This module contains the server-side code that's running at https://www.discimagechef.app
-* [DiscImageChef.Settings](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Settings) -
-This module contains code for handling DiscImageChef settings.
-* [DiscImageChef.Tests](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Tests) -
+* [Aaru.Server](https://github.com/claunia/Aaru/tree/master/Aaru.Server) -
+This module contains the server-side code that's running at https://www.aaru.app
+* [Aaru.Settings](https://github.com/claunia/Aaru/tree/master/Aaru.Settings) -
+This module contains code for handling Aaru settings.
+* [Aaru.Tests](https://github.com/claunia/Aaru/tree/master/Aaru.Tests) -
 This module contains the unit tests for the rest of the modules. You should add new unit
 tests here but cannot run all of them because the test images they require amount to more
 than 100GiB.
-* [DiscImageChef.Tests.Devices](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Tests.Devices) -
+* [Aaru.Tests.Devices](https://github.com/claunia/Aaru/tree/master/Aaru.Tests.Devices) -
 This module presents a menu driven interface to send commands to devices, as a way to test
 the Core module, as those tests cannot be automated. It can be used to debug drive responses.
 
@@ -114,24 +114,24 @@ the Core module, as those tests cannot be automated. It can be used to debug dri
 
 ### Reporting Devices
 
-DiscImageChef tries to be as universal as possible. However some devices do not behave in
+Aaru tries to be as universal as possible. However some devices do not behave in
 the expected ways, some media is unknown and needs to be known prior to enabling dumping of it,
 etc.
 
-For that reason, DiscImageChef includes the [device-report command](https://github.com/claunia/DiscImageChef/wiki/Reporting-physical-device-capabilities).
+For that reason, Aaru includes the [device-report command](https://github.com/claunia/Aaru/wiki/Reporting-physical-device-capabilities).
 Using this command will guide you thru a series of questions about the device, and if it
 contains removable media, for you to insert the different media you have, and create a report
 of its abilities. The report will automatically be sent to our server and saved on your computer.
 Please note that we do not store any personal information and when possible remove the drive
 serial numbers from the report.
 
-If you have a drive attached to a computer that you cannot run the full DiscImageChef on it
-but can compile a C89 application, you can use [DiscImageChef.Device.Report](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Device.Report).
+If you have a drive attached to a computer that you cannot run the full Aaru on it
+but can compile a C89 application, you can use [Aaru.Device.Report](https://github.com/claunia/Aaru/tree/master/Aaru.Device.Report).
 In this case the report will only be created locally and you should attach it to a bug report.
 
 ### Reporting Bugs
 
-This section guides you through submitting a bug report for DiscImageChef. Following these guidelines
+This section guides you through submitting a bug report for Aaru. Following these guidelines
 helps maintainers and the community understand your report :pencil:, reproduce the
 behavior :computer: :computer:, and find related reports :mag_right:.
 
@@ -147,9 +147,9 @@ new one.
 
 #### Before Submitting A Bug Report
 
-* **Check the [wiki](https://github.com/claunia/DiscImageChef/wiki)** for a list of common
+* **Check the [wiki](https://github.com/claunia/Aaru/wiki)** for a list of common
 questions and problems.
-* **Determine [which module the problem should be reported in](#discimagechef-and-modules)**.
+* **Determine [which module the problem should be reported in](#aaru-and-modules)**.
 * **Perform a [cursory search](https://github.com/search?q=+is%3Aissue+user%3Aclaunia)**
 to see if the problem has already been reported. If it has **and the issue is still open**,
 add a comment to the existing issue instead of opening a new one.
@@ -157,7 +157,7 @@ add a comment to the existing issue instead of opening a new one.
 #### How Do I Submit A (Good) Bug Report?
 
 Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/). After
-you've determined [which module](#discimagechef-and-modules) your bug is related to,
+you've determined [which module](#aaru-and-modules) your bug is related to,
 create an issue on that repository and provide the following information by filling in
 [the template](.github/ISSUE_TEMPLATE.md).
 
@@ -165,17 +165,17 @@ Explain the problem and include additional details to help maintainers reproduce
 
 * **Use a clear and descriptive title** for the issue to identify the problem.
 * **Describe the exact steps which reproduce the problem** in as many details as possible.
-For example, start by explaining how you started DiscImageChef, e.g. which command exactly
+For example, start by explaining how you started Aaru, e.g. which command exactly
 you used in the terminal. Also note that some device commands requires you to have
 administrative privileges, be in a specific group, or be the root user, so try it again with
 escalated privileges.
 * **Provide specific examples to demonstrate the steps**. Include links to media images, 
-reports of the devices, or the output of using [DiscImageChef.Tests.Devices](https://github.com/claunia/DiscImageChef/tree/master/DiscImageChef.Tests.Devices).
+reports of the devices, or the output of using [Aaru.Tests.Devices](https://github.com/claunia/Aaru/tree/master/Aaru.Tests.Devices).
 * **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that behavior.
 * **Explain which behavior you expected to see instead and why.**
 * **Include a copy of the output in the terminal** enabling both verbose, using the `-v`
 command line parameter, and debug, using the `-d` command line parameter, outputs.
-* **If you're reporting that DiscImageChef crashed**, try doing the same with the debug
+* **If you're reporting that Aaru crashed**, try doing the same with the debug
 version and include a crash report with a stack trace. Include the crash report in the issue
 in a [code block](https://help.github.com/articles/markdown-basics/#multiple-lines), a
 [file attachment](https://help.github.com/articles/file-attachments-on-issues-and-pull-requests/),
@@ -185,16 +185,16 @@ before the problem happened and share more information using the guidelines belo
 
 Include details about your configuration and environment:
 
-* **Which version of DiscImageChef are you using?**
+* **Which version of Aaru are you using?**
 * **What's the name and version of the OS you're using**?
-* **Are you running DiscImageChef in a virtual machine?** If so, which VM software are you
+* **Are you running Aaru in a virtual machine?** If so, which VM software are you
 using and which operating systems and versions are used for the host and the guest?
 * **Are you trying to execute a device command?** If so, who manufactured the device, which
 model is it, and how is it connected to the computer?
 
 ### Suggesting Enhancements
 
-This section guides you through submitting an enhancement suggestion for DiscImageChef, including
+This section guides you through submitting an enhancement suggestion for Aaru, including
 completely new features and minor improvements to existing functionality. Following these
 guidelines helps maintainers and the community understand your suggestion :pencil: and find
 related suggestions :mag_right:.
@@ -206,7 +206,7 @@ take if the feature you're requesting existed.
 #### How Do I Submit A (Good) Enhancement Suggestion?
 
 Enhancement suggestions are tracked as [GitHub issues](https://guides.github.com/features/issues/).
-After you've determined [which module](#discimagechef-and-modules) your enhancement suggestion
+After you've determined [which module](#aaru-and-modules) your enhancement suggestion
 is related to, create an issue on that repository and provide the following information:
 
 * **Use a clear and descriptive title** for the issue to identify the suggestion.
@@ -217,12 +217,12 @@ filesystem, partitioning scheme, or filter, please include as many test files as
 and if applicable which software created them.
 * **Describe the current behavior** and **explain which behavior you expected to see instead** and why.
 * **List some other applications where this enhancement exists.**
-* **Specify which version of DiscImageChef you're using.**
+* **Specify which version of Aaru you're using.**
 * **Specify the name and version of the OS you're using.**
 
 ### Your First Code Contribution
 
-Unsure where to begin contributing to DiscImageChef? You can start by looking through these `beginner` and `help-wanted` issues:
+Unsure where to begin contributing to Aaru? You can start by looking through these `beginner` and `help-wanted` issues:
 
 * [Beginner issues][beginner] - issues which should only require a few lines of code, and a test or two.
 * [Help wanted issues][help-wanted] - issues which should be a bit more involved than `beginner` issues.
@@ -230,12 +230,12 @@ Unsure where to begin contributing to DiscImageChef? You can start by looking th
 Both issue lists are sorted by total number of comments. While not perfect, number of
 comments is a reasonable proxy for impact a given change will have.
 
-If you want to read about using DiscImageChef, the [wiki](https://github.com/claunia/DiscImageChef/wiki) is available.
+If you want to read about using Aaru, the [wiki](https://github.com/claunia/Aaru/wiki) is available.
 
 Do not modify the interfaces. If you need or want to, comment in an issue how and why you
 want to change it and we'll discuss it. Same applies for creating new interfaces.
 
-DiscImageChef uses C# 7 language features (inline declaration, Tuples, etc.) so it can only
+Aaru uses C# 7 language features (inline declaration, Tuples, etc.) so it can only
 be compiled with [VisualStudio](http://www.visualstudio.com) 2017 or higher, [Xamarin Studio](https://www.xamarin.com/download)
 7 or higher, [MonoDevelop](http://www.monodevelop.com) 7 or higher, or [JetBrains Rider](https://www.jetbrains.com/rider/) 2017.2 or higher.
 
@@ -255,9 +255,9 @@ if possible.
 talk with a USB devices your pull request must implement calls both to `WinUsb` and `libusb`.
 
 ### Patronizing
-If you want to donate money you can become a patron at https://www.patreon.com/DiscImageChef
+If you want to donate money you can become a patron at https://www.patreon.com/Aaru
 
-This money will be used to get more hardware on which to test DiscImageChef.
+This money will be used to get more hardware on which to test Aaru.
 
 ### Donating
 You may donate us one of the [devices we need](NEEDED.md).
@@ -319,5 +319,5 @@ bodies.
 - Use struct implicit constructor.
 - Use UNIX (`\n`) endline character.
 
-> Note: DiscImageChef is quite low-level so unneeded object-oriented abstractions
+> Note: Aaru is quite low-level so unneeded object-oriented abstractions
 (e.g. using classes when a struct suffices) will be rejected. LINQ is accepted.

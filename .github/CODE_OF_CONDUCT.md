@@ -1,4 +1,4 @@
-# Contributor Covenant Code of Conduct for DiscImageChef
+# Contributor Covenant Code of Conduct for Aaru
 
 ## Our Pledge
 

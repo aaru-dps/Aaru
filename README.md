@@ -1,20 +1,20 @@
-DiscImageChef v4.5.99.1693
+Aaru Data Preservation Suite v4.5.99.1693
 
-Disc Image Chef (because "swiss-army-knife" is used too much)
+Aaru
 
 Copyright © 2011-2020 Natalia Portillo <claunia@claunia.com>
 
-[![Build status](https://dev.azure.com/DiscImageChef/DiscImageChef/_apis/build/status/DiscImageChef-.NET%20Desktop-CI)](https://dev.azure.com/DiscImageChef/DiscImageChef/_build/latest?definitionId=4)
-[![Build Status](https://travis-ci.org/discimagechef/DiscImageChef.svg?branch=master)](https://travis-ci.org/discimagechef/DiscImageChef)
-[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/discimagechef)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_shield)
+[![Build status](https://dev.azure.com/Aaru/Aaru/_apis/build/status/Aaru-.NET%20Desktop-CI)](https://dev.azure.com/Aaru/Aaru/_build/latest?definitionId=4)
+[![Build Status](https://travis-ci.org/aaru/Aaru.svg?branch=master)](https://travis-ci.org/aaru/Aaru)
+[![Build status](https://ci.appveyor.com/api/projects/status/vim4c8h028pn5oys?svg=true)](https://ci.appveyor.com/project/claunia/aaru)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FAaru.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FAaru?ref=badge_shield)
 
-You can see statistics and device reports [here](https://www.discimagechef.app/Stats)
+You can see statistics and device reports [here](https://www.aaru.app/Stats)
 
-DiscImageChef is a fully featured media dump management solution. You usually know media dumps
+Aaru is a fully featured media dump management solution. You usually know media dumps
 as disc images, disk images, tape images, etc.
 
-With DiscImageChef you can analyze a media dump, extract files from it (for supported
+With Aaru you can analyze a media dump, extract files from it (for supported
 filesystems), compare two of them, create them from real media using the appropriate drive,
 create a sidecar metadata with information about the media dump, and a lot of other features
 that commonly would require you to use separate applications.
@@ -24,13 +24,13 @@ To see list of pending things to do, check the [TODO list](TODO.md).
 
 If you want to contribute in any way please read the [contributing guide](CONTRIBUTING.md).
 
-Stable releases in [Github](https://github.com/discimagechef/DiscImageChef/releases).
+Stable releases in [Github](https://github.com/aaru/Aaru/releases).
 CI beta builds [here](https://goo.gl/6dZPMq).  
 
 
 System requirements
 ===================
-DiscImageChef should work under any operating system where there is [Mono](http://www.mono-project.com/)
+Aaru should work under any operating system where there is [Mono](http://www.mono-project.com/)
 or [.NET Framework](https://www.microsoft.com/net/download).
 It has been tested using Mono 5.0 and .NET Framework 4.6.1. However recommended versions are
 Mono 5.8 and .NET Framework 4.7.1. .NET Core is unsupported.
@@ -38,11 +38,11 @@ Mono 5.8 and .NET Framework 4.7.1. .NET Core is unsupported.
 Usage
 =====
 
-DiscImageChef.exe 
+Aaru.exe 
 
 And read help.
 
-Or read the [wiki](https://github.com/claunia/DiscImageChef/wiki).
+Or read the [wiki](https://github.com/claunia/Aaru/wiki).
 
 Features
 ========
@@ -65,7 +65,7 @@ Features
 
 Feature requests
 ================
-[![Feature Requests](http://feathub.com/discimagechef/DiscImageChef?format=svg)](http://feathub.com/discimagechef/DiscImageChef)
+[![Feature Requests](http://feathub.com/aaru/Aaru?format=svg)](http://feathub.com/aaru/Aaru)
 
 Supported disk image formats (read-only)
 ========================================
@@ -107,7 +107,7 @@ Supported disk image formats (read and write)
 * CopyTape
 * DataPackRat's d2f/f2d disk image format ("WC DISK IMAGE")
 * Digital Research DiskCopy
-* DiscImageChef format
+* Aaru Format
 * IBM SaveDskF
 * MAXI Disk disk images (HDK)
 * Most known sector by sector copies of floppies with 128, 256, 319 and 1024 bytes/sector.
@@ -269,4 +269,4 @@ These disk image formats cannot be read, but their contents can be checksummed o
 
 License
 =======
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FDiscImageChef?ref=badge_large)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fclaunia%2FAaru.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fclaunia%2FAaru?ref=badge_large)
