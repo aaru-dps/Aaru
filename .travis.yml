@@ -1,11 +1,11 @@
 language: csharp
-solution: DiscImageChef.sln
+solution: Aaru.sln
 mono:
  - latest
 notifications:
   irc:
     channels:
-      - "chat.freenode.net#DiscImageChef"
+      - "chat.freenode.net#Aaru"
     skip_join: true
     template:
       - "Commit %{commit} by %{author} in %{branch} %{result} after %{duration}."
@@ -14,4 +14,4 @@ notifications:
 before_install:
   - mkdir -p .nuget
   - wget -O .nuget/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-  - mono .nuget/nuget.exe restore DiscImageChef.sln
+  - mono .nuget/nuget.exe restore Aaru.sln

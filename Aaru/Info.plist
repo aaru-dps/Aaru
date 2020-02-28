@@ -11,9 +11,9 @@
 	<key>CFBundleIconFile</key>
 	<string>MacIcon.icns</string>
 	<key>CFBundleName</key>
-	<string>DiscImageChef</string>
+	<string>Aaru</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.claunia.com.DiscImageChef</string>
+	<string>com.claunia.com.Aaru</string>
 	<key>CFBundleShortVersionString</key>
 	<string>4.99.0</string>
 </dict>

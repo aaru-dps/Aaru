@@ -45,7 +45,7 @@ namespace Aaru.DiscImages
         public ImageInfo              Info         => imageInfo;
         public string                 Name         => "Aaru Format";
         public Guid                   Id           => new Guid("49360069-1784-4A2F-B723-0C844D610B0A");
-        public string                 Format       => "DiscImageChef";
+        public string                 Format       => "Aaru";
         public string                 Author       => "Natalia Portillo";
         public List<Partition>        Partitions   { get; private set; }
         public List<Track>            Tracks       { get; private set; }
