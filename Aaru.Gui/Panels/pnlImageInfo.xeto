@@ -31,7 +31,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 -->
-<Panel xmlns:local="clr-namespace:DiscImageChef.Gui.Controls;assembly=DiscImageChef.Gui"
+<Panel xmlns:local="clr-namespace:Aaru.Gui.Controls;assembly=Aaru.Gui"
        xmlns="http://schema.picoe.ca/eto.forms">
     <StackLayout Orientation="Vertical">
         <StackLayoutItem HorizontalAlignment="Center" VerticalAlignment="Top">

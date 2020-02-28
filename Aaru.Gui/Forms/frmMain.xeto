@@ -31,7 +31,7 @@
 // Copyright © 2011-2020 Natalia Portillo
 // ****************************************************************************/
 -->
-<Form xmlns="http://schema.picoe.ca/eto.forms" Title="DiscImageChef" ClientSize="600, 450" Padding="10">
+<Form xmlns="http://schema.picoe.ca/eto.forms" Title="Aaru" ClientSize="600, 450" Padding="10">
     <Splitter Orientation="Horizontal" Panel1MinimumSize="200" FixedPanel="Panel1" ID="splMain">
         <Splitter.Panel1>
             <TreeGridView ID="treeImages" SelectedItemChanged="OnTreeImagesSelectedItemChanged"
