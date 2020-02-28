@@ -230,11 +230,11 @@ namespace Aaru.DiscImages
             }
 
             // Check if appending to an existing image
-            if(imageStream.Length > Marshal.SizeOf<DicHeader>())
+            if(imageStream.Length > Marshal.SizeOf<AaruHeader>())
             {
-                structureBytes = new byte[Marshal.SizeOf<DicHeader>()];
+                structureBytes = new byte[Marshal.SizeOf<AaruHeader>()];
                 imageStream.Read(structureBytes, 0, structureBytes.Length);
-                header = Marshal.ByteArrayToStructureLittleEndian<DicHeader>(structureBytes);
+                header = Marshal.ByteArrayToStructureLittleEndian<AaruHeader>(structureBytes);
 
                 if(header.identifier != DIC_MAGIC && header.identifier != AARU_MAGIC)
                 {
@@ -260,12 +260,12 @@ namespace Aaru.DiscImages
             }
             else
             {
-                header = new DicHeader
+                header = new AaruHeader
                 {
                     identifier = AARU_MAGIC, mediaType = mediaType, creationTime = DateTime.UtcNow.ToFileTimeUtc()
                 };
 
-                imageStream.Write(new byte[Marshal.SizeOf<DicHeader>()], 0, Marshal.SizeOf<DicHeader>());
+                imageStream.Write(new byte[Marshal.SizeOf<AaruHeader>()], 0, Marshal.SizeOf<AaruHeader>());
             }
 
             header.application             = "Aaru";
@@ -3380,8 +3380,8 @@ namespace Aaru.DiscImages
             AaruConsole.DebugWriteLine("Aaru Format plugin", "Writing header");
             header.lastWrittenTime = DateTime.UtcNow.ToFileTimeUtc();
             imageStream.Position   = 0;
-            structurePointer       = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<DicHeader>());
-            structureBytes         = new byte[Marshal.SizeOf<DicHeader>()];
+            structurePointer       = System.Runtime.InteropServices.Marshal.AllocHGlobal(Marshal.SizeOf<AaruHeader>());
+            structureBytes         = new byte[Marshal.SizeOf<AaruHeader>()];
             System.Runtime.InteropServices.Marshal.StructureToPtr(header, structurePointer, true);
             System.Runtime.InteropServices.Marshal.Copy(structurePointer, structureBytes, 0, structureBytes.Length);
             System.Runtime.InteropServices.Marshal.FreeHGlobal(structurePointer);

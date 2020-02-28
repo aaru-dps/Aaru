@@ -40,9 +40,9 @@ namespace Aaru.DiscImages
     {
         /// <summary>Header, at start of file</summary>
         [StructLayout(LayoutKind.Sequential, Pack = 1, CharSet = CharSet.Unicode)]
-        struct DicHeader
+        struct AaruHeader
         {
-            /// <summary>Header identifier, <see cref="DIC_MAGIC" /></summary>
+            /// <summary>Header identifier, <see cref="AARU_MAGIC" /></summary>
             public ulong identifier;
             /// <summary>UTF-16LE name of the application that created the image</summary>
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]

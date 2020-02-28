@@ -113,7 +113,7 @@ namespace Aaru.DiscImages
         /// <summary>Block with logical geometry.</summary>
         GeometryBlock geometryBlock;
         /// <summary>Image header.</summary>
-        DicHeader header;
+        AaruHeader header;
         /// <summary>Image information.</summary>
         ImageInfo imageInfo;
         /// <summary>Image data stream.</summary>
