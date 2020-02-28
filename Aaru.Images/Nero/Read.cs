@@ -1089,19 +1089,19 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            if(!neroTracks.TryGetValue(track, out NeroTrack dicTrack))
+            if(!neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
-            if(length > dicTrack.Sectors)
+            if(length > aaruTrack.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length}) than present in track ({dicTrack.Sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length}) than present in track ({aaruTrack.Sectors}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
             bool mode2 = false;
 
-            switch((DaoMode)dicTrack.Mode)
+            switch((DaoMode)aaruTrack.Mode)
             {
                 case DaoMode.Data:
                 case DaoMode.DataM2F1:
@@ -1188,7 +1188,7 @@ namespace Aaru.DiscImages
             imageStream = neroFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+            br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                                SeekOrigin.Begin);
 
             if(mode2)
@@ -1224,12 +1224,12 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            if(!neroTracks.TryGetValue(track, out NeroTrack dicTrack))
+            if(!neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
-            if(length > dicTrack.Sectors)
+            if(length > aaruTrack.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length}) than present in track ({dicTrack.Sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length}) than present in track ({aaruTrack.Sectors}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
@@ -1250,20 +1250,20 @@ namespace Aaru.DiscImages
                     byte[] flags = new byte[1];
                     flags[0] = 0x00;
 
-                    if((DaoMode)dicTrack.Mode != DaoMode.Audio &&
-                       (DaoMode)dicTrack.Mode != DaoMode.AudioSub)
+                    if((DaoMode)aaruTrack.Mode != DaoMode.Audio &&
+                       (DaoMode)aaruTrack.Mode != DaoMode.AudioSub)
                         flags[0] += 0x4;
 
                     return flags;
                 }
 
-                case SectorTagType.CdTrackIsrc: return dicTrack.Isrc;
+                case SectorTagType.CdTrackIsrc: return aaruTrack.Isrc;
                 case SectorTagType.CdTrackText:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
-            switch((DaoMode)dicTrack.Mode)
+            switch((DaoMode)aaruTrack.Mode)
             {
                 case DaoMode.Data:
                 case DaoMode.DataM2F1: throw new ArgumentException("No tags in image for requested track", nameof(tag));
@@ -1468,7 +1468,7 @@ namespace Aaru.DiscImages
             imageStream = neroFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+            br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                                SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -1503,18 +1503,18 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            if(!neroTracks.TryGetValue(track, out NeroTrack dicTrack))
+            if(!neroTracks.TryGetValue(track, out NeroTrack aaruTrack))
                 throw new ArgumentOutOfRangeException(nameof(track), "Track not found");
 
-            if(length > dicTrack.Sectors)
+            if(length > aaruTrack.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length}) than present in track ({dicTrack.Sectors}), won't cross tracks");
+                                                      $"Requested more sectors ({length}) than present in track ({aaruTrack.Sectors}), won't cross tracks");
 
             uint sectorOffset;
             uint sectorSize;
             uint sectorSkip;
 
-            switch((DaoMode)dicTrack.Mode)
+            switch((DaoMode)aaruTrack.Mode)
             {
                 case DaoMode.Data:
                 case DaoMode.DataM2F1:
@@ -1565,7 +1565,7 @@ namespace Aaru.DiscImages
             imageStream = neroFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
-            br.BaseStream.Seek((long)dicTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+            br.BaseStream.Seek((long)aaruTrack.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                                SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&

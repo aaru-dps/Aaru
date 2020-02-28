@@ -504,51 +504,51 @@ namespace Aaru.DiscImages
                                     extraFrames = BigEndianBitConverter.ToUInt32(meta, (int)(4 + (i * 24) + 20))
                                 };
 
-                                var dicTrack = new Track();
+                                var aaruTrack = new Track();
 
                                 switch((ChdOldTrackType)chdTrack.type)
                                 {
                                     case ChdOldTrackType.Audio:
-                                        dicTrack.TrackBytesPerSector    = 2352;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.Audio;
+                                        aaruTrack.TrackBytesPerSector    = 2352;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.Audio;
 
                                         break;
                                     case ChdOldTrackType.Mode1:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case ChdOldTrackType.Mode1Raw:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case ChdOldTrackType.Mode2:
                                     case ChdOldTrackType.Mode2FormMix:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2336;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2336;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     case ChdOldTrackType.Mode2Form1:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form1;
 
                                         break;
                                     case ChdOldTrackType.Mode2Form2:
-                                        dicTrack.TrackBytesPerSector    = 2324;
-                                        dicTrack.TrackRawBytesPerSector = 2324;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form2;
+                                        aaruTrack.TrackBytesPerSector    = 2324;
+                                        aaruTrack.TrackRawBytesPerSector = 2324;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form2;
 
                                         break;
                                     case ChdOldTrackType.Mode2Raw:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     default:
@@ -558,19 +558,19 @@ namespace Aaru.DiscImages
                                 switch((ChdOldSubType)chdTrack.subType)
                                 {
                                     case ChdOldSubType.Cooked:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     case ChdOldSubType.None:
-                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                                         break;
                                     case ChdOldSubType.Raw:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     default:
@@ -578,17 +578,17 @@ namespace Aaru.DiscImages
                                             ImageNotSupportedException($"Unsupported subchannel type {chdTrack.type}");
                                 }
 
-                                dicTrack.Indexes          =  new Dictionary<int, ulong>();
-                                dicTrack.TrackDescription =  $"Track {i     + 1}";
-                                dicTrack.TrackEndSector   =  (currentSector + chdTrack.frames) - 1;
-                                dicTrack.TrackFile        =  imageFilter.GetFilename();
-                                dicTrack.TrackFileType    =  "BINARY";
-                                dicTrack.TrackFilter      =  imageFilter;
-                                dicTrack.TrackStartSector =  currentSector;
-                                dicTrack.TrackSequence    =  i + 1;
-                                dicTrack.TrackSession     =  1;
+                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
+                                aaruTrack.TrackDescription =  $"Track {i     + 1}";
+                                aaruTrack.TrackEndSector   =  (currentSector + chdTrack.frames) - 1;
+                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    =  "BINARY";
+                                aaruTrack.TrackFilter      =  imageFilter;
+                                aaruTrack.TrackStartSector =  currentSector;
+                                aaruTrack.TrackSequence    =  i + 1;
+                                aaruTrack.TrackSession     =  1;
                                 currentSector             += chdTrack.frames + chdTrack.extraFrames;
-                                tracks.Add(dicTrack.TrackSequence, dicTrack);
+                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
                             isCdrom = true;
@@ -621,57 +621,57 @@ namespace Aaru.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                var dicTrack = new Track();
+                                var aaruTrack = new Track();
 
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
-                                        dicTrack.TrackBytesPerSector    = 2352;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.Audio;
+                                        aaruTrack.TrackBytesPerSector    = 2352;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.Audio;
 
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
                                     case TRACK_TYPE_MODE2_FM:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2336;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2336;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form1;
 
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
-                                        dicTrack.TrackBytesPerSector    = 2324;
-                                        dicTrack.TrackRawBytesPerSector = 2324;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form2;
+                                        aaruTrack.TrackBytesPerSector    = 2324;
+                                        aaruTrack.TrackRawBytesPerSector = 2324;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form2;
 
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     default:
@@ -681,37 +681,37 @@ namespace Aaru.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     case SUB_TYPE_NONE:
-                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                                         break;
                                     case SUB_TYPE_RAW:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                dicTrack.Indexes          =  new Dictionary<int, ulong>();
-                                dicTrack.TrackDescription =  $"Track {trackNo}";
-                                dicTrack.TrackEndSector   =  (currentSector + frames) - 1;
-                                dicTrack.TrackFile        =  imageFilter.GetFilename();
-                                dicTrack.TrackFileType    =  "BINARY";
-                                dicTrack.TrackFilter      =  imageFilter;
-                                dicTrack.TrackStartSector =  currentSector;
-                                dicTrack.TrackSequence    =  trackNo;
-                                dicTrack.TrackSession     =  1;
+                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
+                                aaruTrack.TrackDescription =  $"Track {trackNo}";
+                                aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
+                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    =  "BINARY";
+                                aaruTrack.TrackFilter      =  imageFilter;
+                                aaruTrack.TrackStartSector =  currentSector;
+                                aaruTrack.TrackSequence    =  trackNo;
+                                aaruTrack.TrackSession     =  1;
                                 currentSector             += frames;
                                 currentTrack++;
-                                tracks.Add(dicTrack.TrackSequence, dicTrack);
+                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
                             break;
@@ -748,57 +748,57 @@ namespace Aaru.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                var dicTrack = new Track();
+                                var aaruTrack = new Track();
 
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
-                                        dicTrack.TrackBytesPerSector    = 2352;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.Audio;
+                                        aaruTrack.TrackBytesPerSector    = 2352;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.Audio;
 
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
                                     case TRACK_TYPE_MODE2_FM:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2336;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2336;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form1;
 
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
-                                        dicTrack.TrackBytesPerSector    = 2324;
-                                        dicTrack.TrackRawBytesPerSector = 2324;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form2;
+                                        aaruTrack.TrackBytesPerSector    = 2324;
+                                        aaruTrack.TrackRawBytesPerSector = 2324;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form2;
 
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     default:
@@ -808,37 +808,37 @@ namespace Aaru.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     case SUB_TYPE_NONE:
-                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                                         break;
                                     case SUB_TYPE_RAW:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                dicTrack.Indexes          =  new Dictionary<int, ulong>();
-                                dicTrack.TrackDescription =  $"Track {trackNo}";
-                                dicTrack.TrackEndSector   =  (currentSector + frames) - 1;
-                                dicTrack.TrackFile        =  imageFilter.GetFilename();
-                                dicTrack.TrackFileType    =  "BINARY";
-                                dicTrack.TrackFilter      =  imageFilter;
-                                dicTrack.TrackStartSector =  currentSector;
-                                dicTrack.TrackSequence    =  trackNo;
-                                dicTrack.TrackSession     =  1;
+                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
+                                aaruTrack.TrackDescription =  $"Track {trackNo}";
+                                aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
+                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    =  "BINARY";
+                                aaruTrack.TrackFilter      =  imageFilter;
+                                aaruTrack.TrackStartSector =  currentSector;
+                                aaruTrack.TrackSequence    =  trackNo;
+                                aaruTrack.TrackSession     =  1;
                                 currentSector             += frames;
                                 currentTrack++;
-                                tracks.Add(dicTrack.TrackSequence, dicTrack);
+                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
                             break;
@@ -881,57 +881,57 @@ namespace Aaru.DiscImages
                                 if(trackNo != currentTrack)
                                     throw new ImageNotSupportedException("Unsorted tracks, cannot proceed.");
 
-                                var dicTrack = new Track();
+                                var aaruTrack = new Track();
 
                                 switch(tracktype)
                                 {
                                     case TRACK_TYPE_AUDIO:
-                                        dicTrack.TrackBytesPerSector    = 2352;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.Audio;
+                                        aaruTrack.TrackBytesPerSector    = 2352;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.Audio;
 
                                         break;
                                     case TRACK_TYPE_MODE1:
                                     case TRACK_TYPE_MODE1_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case TRACK_TYPE_MODE1_RAW:
                                     case TRACK_TYPE_MODE1_RAW_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode1;
 
                                         break;
                                     case TRACK_TYPE_MODE2:
                                     case TRACK_TYPE_MODE2_2K:
                                     case TRACK_TYPE_MODE2_FM:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2336;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2336;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     case TRACK_TYPE_MODE2_F1:
                                     case TRACK_TYPE_MODE2_F1_2K:
-                                        dicTrack.TrackBytesPerSector    = 2048;
-                                        dicTrack.TrackRawBytesPerSector = 2048;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form1;
+                                        aaruTrack.TrackBytesPerSector    = 2048;
+                                        aaruTrack.TrackRawBytesPerSector = 2048;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form1;
 
                                         break;
                                     case TRACK_TYPE_MODE2_F2:
                                     case TRACK_TYPE_MODE2_F2_2K:
-                                        dicTrack.TrackBytesPerSector    = 2324;
-                                        dicTrack.TrackRawBytesPerSector = 2324;
-                                        dicTrack.TrackType              = TrackType.CdMode2Form2;
+                                        aaruTrack.TrackBytesPerSector    = 2324;
+                                        aaruTrack.TrackRawBytesPerSector = 2324;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Form2;
 
                                         break;
                                     case TRACK_TYPE_MODE2_RAW:
                                     case TRACK_TYPE_MODE2_RAW_2K:
-                                        dicTrack.TrackBytesPerSector    = 2336;
-                                        dicTrack.TrackRawBytesPerSector = 2352;
-                                        dicTrack.TrackType              = TrackType.CdMode2Formless;
+                                        aaruTrack.TrackBytesPerSector    = 2336;
+                                        aaruTrack.TrackRawBytesPerSector = 2352;
+                                        aaruTrack.TrackType              = TrackType.CdMode2Formless;
 
                                         break;
                                     default:
@@ -941,37 +941,37 @@ namespace Aaru.DiscImages
                                 switch(subtype)
                                 {
                                     case SUB_TYPE_COOKED:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.PackedInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     case SUB_TYPE_NONE:
-                                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                                         break;
                                     case SUB_TYPE_RAW:
-                                        dicTrack.TrackSubchannelFile   = imageFilter.GetFilename();
-                                        dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
-                                        dicTrack.TrackSubchannelFilter = imageFilter;
+                                        aaruTrack.TrackSubchannelFile   = imageFilter.GetFilename();
+                                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                                        aaruTrack.TrackSubchannelFilter = imageFilter;
 
                                         break;
                                     default:
                                         throw new ImageNotSupportedException($"Unsupported subchannel type {subtype}");
                                 }
 
-                                dicTrack.Indexes          =  new Dictionary<int, ulong>();
-                                dicTrack.TrackDescription =  $"Track {trackNo}";
-                                dicTrack.TrackEndSector   =  (currentSector + frames) - 1;
-                                dicTrack.TrackFile        =  imageFilter.GetFilename();
-                                dicTrack.TrackFileType    =  "BINARY";
-                                dicTrack.TrackFilter      =  imageFilter;
-                                dicTrack.TrackStartSector =  currentSector;
-                                dicTrack.TrackSequence    =  trackNo;
-                                dicTrack.TrackSession     =  (ushort)(trackNo > 2 ? 2 : 1);
+                                aaruTrack.Indexes          =  new Dictionary<int, ulong>();
+                                aaruTrack.TrackDescription =  $"Track {trackNo}";
+                                aaruTrack.TrackEndSector   =  (currentSector + frames) - 1;
+                                aaruTrack.TrackFile        =  imageFilter.GetFilename();
+                                aaruTrack.TrackFileType    =  "BINARY";
+                                aaruTrack.TrackFilter      =  imageFilter;
+                                aaruTrack.TrackStartSector =  currentSector;
+                                aaruTrack.TrackSequence    =  trackNo;
+                                aaruTrack.TrackSession     =  (ushort)(trackNo > 2 ? 2 : 1);
                                 currentSector             += frames;
                                 currentTrack++;
-                                tracks.Add(dicTrack.TrackSequence, dicTrack);
+                                tracks.Add(aaruTrack.TrackSequence, aaruTrack);
                             }
 
                             break;
@@ -1036,8 +1036,8 @@ namespace Aaru.DiscImages
                     imageInfo.MediaType    = MediaType.CDROM;
                     imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                    foreach(Track dicTrack in tracks.Values)
-                        imageInfo.Sectors += (dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1;
+                    foreach(Track aaruTrack in tracks.Values)
+                        imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
                 }
                 else if(isGdrom)
                 {
@@ -1046,8 +1046,8 @@ namespace Aaru.DiscImages
                     imageInfo.MediaType    = MediaType.GDROM;
                     imageInfo.XmlMediaType = XmlMediaType.OpticalDisc;
 
-                    foreach(Track dicTrack in tracks.Values)
-                        imageInfo.Sectors += (dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1;
+                    foreach(Track aaruTrack in tracks.Values)
+                        imageInfo.Sectors += (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1;
                 }
                 else
                     throw new ImageNotSupportedException("Image does not represent a known media, aborting");
@@ -1059,30 +1059,30 @@ namespace Aaru.DiscImages
                 partitions = new List<Partition>();
                 ulong partPos = 0;
 
-                foreach(Track dicTrack in tracks.Values)
+                foreach(Track aaruTrack in tracks.Values)
                 {
                     var partition = new Partition
                     {
-                        Description = dicTrack.TrackDescription,
-                        Size = ((dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1) *
-                               (ulong)dicTrack.TrackRawBytesPerSector,
-                        Length   = (dicTrack.TrackEndSector - dicTrack.TrackStartSector) + 1,
-                        Sequence = dicTrack.TrackSequence, Offset = partPos, Start = dicTrack.TrackStartSector,
-                        Type     = dicTrack.TrackType.ToString()
+                        Description = aaruTrack.TrackDescription,
+                        Size = ((aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1) *
+                               (ulong)aaruTrack.TrackRawBytesPerSector,
+                        Length   = (aaruTrack.TrackEndSector - aaruTrack.TrackStartSector) + 1,
+                        Sequence = aaruTrack.TrackSequence, Offset = partPos, Start = aaruTrack.TrackStartSector,
+                        Type     = aaruTrack.TrackType.ToString()
                     };
 
                     partPos += partition.Length;
-                    offsetmap.Add(dicTrack.TrackStartSector, dicTrack.TrackSequence);
+                    offsetmap.Add(aaruTrack.TrackStartSector, aaruTrack.TrackSequence);
 
-                    if(dicTrack.TrackSubchannelType != TrackSubchannelType.None)
+                    if(aaruTrack.TrackSubchannelType != TrackSubchannelType.None)
                         if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSubchannel))
                             imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSubchannel);
 
-                    switch(dicTrack.TrackType)
+                    switch(aaruTrack.TrackType)
                     {
                         case TrackType.CdMode1:
                         case TrackType.CdMode2Form1:
-                            if(dicTrack.TrackRawBytesPerSector == 2352)
+                            if(aaruTrack.TrackRawBytesPerSector == 2352)
                             {
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -1108,7 +1108,7 @@ namespace Aaru.DiscImages
 
                             break;
                         case TrackType.CdMode2Form2:
-                            if(dicTrack.TrackRawBytesPerSector == 2352)
+                            if(aaruTrack.TrackRawBytesPerSector == 2352)
                             {
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -1125,7 +1125,7 @@ namespace Aaru.DiscImages
 
                             break;
                         case TrackType.CdMode2Formless:
-                            if(dicTrack.TrackRawBytesPerSector == 2352)
+                            if(aaruTrack.TrackRawBytesPerSector == 2352)
                             {
                                 if(!imageInfo.ReadableSectorTags.Contains(SectorTagType.CdSectorSync))
                                     imageInfo.ReadableSectorTags.Add(SectorTagType.CdSectorSync);
@@ -1137,8 +1137,8 @@ namespace Aaru.DiscImages
                             break;
                     }
 
-                    if(dicTrack.TrackBytesPerSector > imageInfo.SectorSize)
-                        imageInfo.SectorSize = (uint)dicTrack.TrackBytesPerSector;
+                    if(aaruTrack.TrackBytesPerSector > imageInfo.SectorSize)
+                        imageInfo.SectorSize = (uint)aaruTrack.TrackBytesPerSector;
 
                     partitions.Add(partition);
                 }

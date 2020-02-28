@@ -847,26 +847,26 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            var dicTrack = new Track
+            var aaruTrack = new Track
             {
                 TrackSequence = 0
             };
 
             foreach(Track linqTrack in Tracks.Where(linqTrack => linqTrack.TrackSequence == track))
             {
-                dicTrack = linqTrack;
+                aaruTrack = linqTrack;
 
                 break;
             }
 
-            if(dicTrack.TrackSequence == 0)
+            if(aaruTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > dicTrack.TrackEndSector)
+            if((length + sectorAddress) - 1 > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       string.
                                                           Format("Requested more sectors ({0} {2}) than present in track ({1}), won't cross tracks",
-                                                                 length + sectorAddress, dicTrack.TrackEndSector,
+                                                                 length + sectorAddress, aaruTrack.TrackEndSector,
                                                                  sectorAddress));
 
             uint sectorOffset;
@@ -874,7 +874,7 @@ namespace Aaru.DiscImages
             uint sectorSkip;
             bool mode2 = false;
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.Audio:
                 {
@@ -908,7 +908,7 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            dataStream.Seek((long)(dicTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+            dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
 
             if(mode2)
             {
@@ -944,26 +944,26 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            var dicTrack = new Track
+            var aaruTrack = new Track
             {
                 TrackSequence = 0
             };
 
             foreach(Track linqTrack in Tracks.Where(linqTrack => linqTrack.TrackSequence == track))
             {
-                dicTrack = linqTrack;
+                aaruTrack = linqTrack;
 
                 break;
             }
 
-            if(dicTrack.TrackSequence == 0)
+            if(aaruTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > dicTrack.TrackEndSector)
+            if((length + sectorAddress) - 1 > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
-            if(dicTrack.TrackType == TrackType.Data)
+            if(aaruTrack.TrackType == TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             byte[] buffer;
@@ -978,13 +978,13 @@ namespace Aaru.DiscImages
                 case SectorTagType.CdSectorSubHeader:
                 case SectorTagType.CdSectorSync: break;
                 case SectorTagType.CdTrackFlags:
-                    return!trackFlags.TryGetValue((byte)dicTrack.TrackSequence, out byte flags) ? new[]
+                    return!trackFlags.TryGetValue((byte)aaruTrack.TrackSequence, out byte flags) ? new[]
                     {
                         flags
                     } : new byte[1];
                 case SectorTagType.CdSectorSubchannel:
                     buffer = new byte[96 * length];
-                    subStream.Seek((long)(dicTrack.TrackSubchannelOffset + (sectorAddress * 96)), SeekOrigin.Begin);
+                    subStream.Seek((long)(aaruTrack.TrackSubchannelOffset + (sectorAddress * 96)), SeekOrigin.Begin);
                     subStream.Read(buffer, 0, buffer.Length);
 
                     return buffer;
@@ -995,7 +995,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.CdMode1:
                     switch(tag)
@@ -1196,7 +1196,7 @@ namespace Aaru.DiscImages
 
             buffer = new byte[sectorSize * length];
 
-            dataStream.Seek((long)(dicTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+            dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
                sectorSkip   == 0)
@@ -1232,28 +1232,28 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            var dicTrack = new Track
+            var aaruTrack = new Track
             {
                 TrackSequence = 0
             };
 
             foreach(Track linqTrack in Tracks.Where(linqTrack => linqTrack.TrackSequence == track))
             {
-                dicTrack = linqTrack;
+                aaruTrack = linqTrack;
 
                 break;
             }
 
-            if(dicTrack.TrackSequence == 0)
+            if(aaruTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if((length + sectorAddress) - 1 > dicTrack.TrackEndSector)
+            if((length + sectorAddress) - 1 > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
             byte[] buffer = new byte[2352 * length];
 
-            dataStream.Seek((long)(dicTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
+            dataStream.Seek((long)(aaruTrack.TrackFileOffset + (sectorAddress * 2352)), SeekOrigin.Begin);
             dataStream.Read(buffer, 0, buffer.Length);
 
             return buffer;

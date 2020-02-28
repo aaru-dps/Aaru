@@ -1386,7 +1386,7 @@ namespace Aaru.DiscImages
                    session != sessionNo)
                     continue;
 
-                var dicTrack = new Track
+                var aaruTrack = new Track
                 {
                     Indexes = new Dictionary<int, ulong>
                     {
@@ -1408,19 +1408,19 @@ namespace Aaru.DiscImages
                 switch(alcTrack.subMode)
                 {
                     case AlcoholSubchannelMode.Interleaved:
-                        dicTrack.TrackSubchannelFilter = alcImage;
-                        dicTrack.TrackSubchannelFile   = alcImage.GetFilename();
-                        dicTrack.TrackSubchannelOffset = alcTrack.startOffset;
-                        dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                        aaruTrack.TrackSubchannelFilter = alcImage;
+                        aaruTrack.TrackSubchannelFile   = alcImage.GetFilename();
+                        aaruTrack.TrackSubchannelOffset = alcTrack.startOffset;
+                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
 
                         break;
                     case AlcoholSubchannelMode.None:
-                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
                         break;
                 }
 
-                tracks.Add(dicTrack);
+                tracks.Add(aaruTrack);
             }
 
             return tracks;

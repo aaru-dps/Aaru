@@ -137,7 +137,7 @@ namespace Aaru.DiscImages
                 imageInfo.DriveSerialNumber = identify.SerialNumber;
         }
 
-        // Get the CICM XML media type from DIC media type
+        // Get the CICM XML media type from Aaru media type
         static XmlMediaType GetXmlMediaType(MediaType type)
         {
             switch(type)
@@ -282,7 +282,7 @@ namespace Aaru.DiscImages
             imageStream.Position = oldPosition;
         }
 
-        // Converts between image data type and dic media tag type
+        // Converts between image data type and Aaru media tag type
         static MediaTagType GetMediaTagTypeForDataType(DataType type)
         {
             switch(type)
@@ -360,7 +360,7 @@ namespace Aaru.DiscImages
             }
         }
 
-        // Converts between dic media tag type and image data type
+        // Converts between Aaru media tag type and image data type
         static DataType GetDataTypeForMediaTag(MediaTagType tag)
         {
             switch(tag)

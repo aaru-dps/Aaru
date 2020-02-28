@@ -70,7 +70,7 @@ namespace Aaru.Devices
         public static DeviceInfo[] ListDevices(out bool isRemote, out string serverApplication,
                                                out string serverVersion, out string serverOperatingSystem,
                                                out string serverOperatingSystemVersion, out string serverArchitecture,
-                                               string dicRemote = null)
+                                               string aaruRemote = null)
         {
             isRemote                     = false;
             serverApplication            = null;
@@ -79,7 +79,7 @@ namespace Aaru.Devices
             serverOperatingSystemVersion = null;
             serverArchitecture           = null;
 
-            if(dicRemote is null)
+            if(aaruRemote is null)
                 switch(DetectOS.GetRealPlatformID())
                 {
                     case PlatformID.Win32NT: return Windows.ListDevices.GetList();
@@ -92,7 +92,7 @@ namespace Aaru.Devices
 
             try
             {
-                using(var remote = new Remote.Remote(dicRemote))
+                using(var remote = new Remote.Remote(aaruRemote))
                 {
                     isRemote                     = true;
                     serverApplication            = remote.ServerApplication;

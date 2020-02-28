@@ -1239,24 +1239,24 @@ namespace Aaru.DiscImages
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
             // TODO: Cross data files
-            var dicTrack = new Track();
+            var aaruTrack = new Track();
             var chars    = new DataFileCharacteristics();
 
-            dicTrack.TrackSequence = 0;
+            aaruTrack.TrackSequence = 0;
 
             foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
-                dicTrack = bwTrack;
+                aaruTrack = bwTrack;
 
                 break;
             }
 
-            if(dicTrack.TrackSequence == 0)
+            if(aaruTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > dicTrack.TrackEndSector)
+            if(length + sectorAddress > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
             foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
                                                                                    (long)sectorAddress >=
@@ -1278,7 +1278,7 @@ namespace Aaru.DiscImages
             uint sectorSkip;
             bool mode2 = false;
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.CdMode1:
                 {
@@ -1341,7 +1341,7 @@ namespace Aaru.DiscImages
             var br = new BinaryReader(imageStream);
 
             br.BaseStream.
-               Seek((long)dicTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(mode2)
@@ -1378,24 +1378,24 @@ namespace Aaru.DiscImages
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
             // TODO: Cross data files
-            var dicTrack = new Track();
+            var aaruTrack = new Track();
             var chars    = new DataFileCharacteristics();
 
-            dicTrack.TrackSequence = 0;
+            aaruTrack.TrackSequence = 0;
 
             foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
-                dicTrack = bwTrack;
+                aaruTrack = bwTrack;
 
                 break;
             }
 
-            if(dicTrack.TrackSequence == 0)
+            if(aaruTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > dicTrack.TrackEndSector)
+            if(length + sectorAddress > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
             foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
                                                                                    (long)sectorAddress >=
@@ -1412,7 +1412,7 @@ namespace Aaru.DiscImages
                chars.FileFilter == null)
                 throw new ArgumentOutOfRangeException(nameof(chars.FileFilter), "Track does not exist in disc image");
 
-            if(dicTrack.TrackType == TrackType.Data)
+            if(aaruTrack.TrackType == TrackType.Data)
                 throw new ArgumentException("Unsupported tag requested", nameof(tag));
 
             switch(tag)
@@ -1440,7 +1440,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.CdMode1:
                     switch(tag)
@@ -1671,11 +1671,11 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = dicTrack.TrackFilter.GetDataForkStream();
+            imageStream = aaruTrack.TrackFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
             br.BaseStream.
-               Seek((long)dicTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -1711,24 +1711,24 @@ namespace Aaru.DiscImages
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
             // TODO: Cross data files
-            var dicTrack = new Track();
+            var aaruTrack = new Track();
             var chars    = new DataFileCharacteristics();
 
-            dicTrack.TrackSequence = 0;
+            aaruTrack.TrackSequence = 0;
 
             foreach(Track bwTrack in Tracks.Where(bwTrack => bwTrack.TrackSequence == track))
             {
-                dicTrack = bwTrack;
+                aaruTrack = bwTrack;
 
                 break;
             }
 
-            if(dicTrack.TrackSequence == 0)
+            if(aaruTrack.TrackSequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length + sectorAddress > dicTrack.TrackEndSector)
+            if(length + sectorAddress > aaruTrack.TrackEndSector)
                 throw new ArgumentOutOfRangeException(nameof(length),
-                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({dicTrack.TrackEndSector}), won't cross tracks");
+                                                      $"Requested more sectors ({length + sectorAddress}) than present in track ({aaruTrack.TrackEndSector}), won't cross tracks");
 
             foreach(DataFileCharacteristics characteristics in filePaths.Where(characteristics =>
                                                                                    (long)sectorAddress >=
@@ -1749,7 +1749,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case TrackType.CdMode1:
                 case TrackType.CdMode2Formless:
@@ -1793,11 +1793,11 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            imageStream = dicTrack.TrackFilter.GetDataForkStream();
+            imageStream = aaruTrack.TrackFilter.GetDataForkStream();
             var br = new BinaryReader(imageStream);
 
             br.BaseStream.
-               Seek((long)dicTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.TrackFileOffset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -1824,6 +1824,6 @@ namespace Aaru.DiscImages
         }
 
         public List<Track> GetSessionTracks(ushort session) =>
-            Tracks.Where(dicTrack => dicTrack.TrackSession == session).ToList();
+            Tracks.Where(aaruTrack => aaruTrack.TrackSession == session).ToList();
     }
 }

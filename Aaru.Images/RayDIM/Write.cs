@@ -191,7 +191,7 @@ namespace Aaru.DiscImages
             }
 
             string headerSignature =
-                $"Disk IMage VER 1.0 Copyright (C) {DateTime.Now.Year:D4} Ray Arachelian, All Rights Reserved.  DIC ";
+                $"Disk IMage VER 1.0 Copyright (C) {DateTime.Now.Year:D4} Ray Arachelian, All Rights Reserved. Aaru ";
             RayHdr header = new RayHdr
             {
                 signature       = Encoding.ASCII.GetBytes(headerSignature),

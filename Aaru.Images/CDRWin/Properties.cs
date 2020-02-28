@@ -58,7 +58,7 @@ namespace Aaru.DiscImages
 
                 foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
                 {
-                    var dicTrack = new Track
+                    var aaruTrack = new Track
                     {
                         Indexes             = cdrTrack.Indexes, TrackDescription = cdrTrack.Title,
                         TrackStartSector    = previousStartSector, TrackPregap   = cdrTrack.Pregap,
@@ -71,22 +71,22 @@ namespace Aaru.DiscImages
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
 
-                    dicTrack.TrackEndSector = (dicTrack.TrackStartSector + cdrTrack.Sectors) - 1;
+                    aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
 
-                    /*if(!cdrTrack.Indexes.TryGetValue(0, out dicTrack.TrackStartSector))
-                        cdrTrack.Indexes.TryGetValue(1, out dicTrack.TrackStartSector);*/
+                    /*if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
+                        cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector);*/
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
-                        dicTrack.TrackSubchannelFilter = cdrTrack.TrackFile.DataFilter;
-                        dicTrack.TrackSubchannelFile   = cdrTrack.TrackFile.DataFilter.GetFilename();
-                        dicTrack.TrackSubchannelOffset = cdrTrack.TrackFile.Offset;
-                        dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                        aaruTrack.TrackSubchannelFilter = cdrTrack.TrackFile.DataFilter;
+                        aaruTrack.TrackSubchannelFile   = cdrTrack.TrackFile.DataFilter.GetFilename();
+                        aaruTrack.TrackSubchannelOffset = cdrTrack.TrackFile.Offset;
+                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
                     }
                     else
-                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
-                    tracks.Add(dicTrack);
-                    previousStartSector = dicTrack.TrackEndSector + 1;
+                    tracks.Add(aaruTrack);
+                    previousStartSector = aaruTrack.TrackEndSector + 1;
                 }
 
                 return tracks;

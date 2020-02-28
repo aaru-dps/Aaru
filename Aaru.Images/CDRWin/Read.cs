@@ -1309,22 +1309,22 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectors(ulong sectorAddress, uint length, uint track)
         {
-            var dicTrack = new CdrWinTrack
+            var aaruTrack = new CdrWinTrack
             {
                 Sequence = 0
             };
 
             foreach(CdrWinTrack cdrwinTrack in _discImage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
             {
-                dicTrack = cdrwinTrack;
+                aaruTrack = cdrwinTrack;
 
                 break;
             }
 
-            if(dicTrack.Sequence == 0)
+            if(aaruTrack.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length > dicTrack.Sectors)
+            if(length > aaruTrack.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       "Requested more sectors than present in track, won't cross tracks");
 
@@ -1333,7 +1333,7 @@ namespace Aaru.DiscImages
             uint sectorSkip;
             bool mode2 = false;
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case CDRWIN_TRACK_TYPE_MODE1:
                 case CDRWIN_TRACK_TYPE_MODE2_FORM1:
@@ -1401,11 +1401,11 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            _imageStream = dicTrack.TrackFile.DataFilter.GetDataForkStream();
+            _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
-               Seek((long)dicTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(mode2)
@@ -1441,22 +1441,22 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsTag(ulong sectorAddress, uint length, uint track, SectorTagType tag)
         {
-            var dicTrack = new CdrWinTrack
+            var aaruTrack = new CdrWinTrack
             {
                 Sequence = 0
             };
 
             foreach(CdrWinTrack cdrwinTrack in _discImage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
             {
-                dicTrack = cdrwinTrack;
+                aaruTrack = cdrwinTrack;
 
                 break;
             }
 
-            if(dicTrack.Sequence == 0)
+            if(aaruTrack.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length > dicTrack.Sectors)
+            if(length > aaruTrack.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       "Requested more sectors than present in track, won't cross tracks");
 
@@ -1478,17 +1478,17 @@ namespace Aaru.DiscImages
                 {
                     CdFlags flags = 0;
 
-                    if(dicTrack.TrackType != CDRWIN_TRACK_TYPE_AUDIO &&
-                       dicTrack.TrackType != CDRWIN_TRACK_TYPE_CDG)
+                    if(aaruTrack.TrackType != CDRWIN_TRACK_TYPE_AUDIO &&
+                       aaruTrack.TrackType != CDRWIN_TRACK_TYPE_CDG)
                         flags |= CdFlags.DataTrack;
 
-                    if(dicTrack.FlagDcp)
+                    if(aaruTrack.FlagDcp)
                         flags |= CdFlags.CopyPermitted;
 
-                    if(dicTrack.FlagPre)
+                    if(aaruTrack.FlagPre)
                         flags |= CdFlags.PreEmphasis;
 
-                    if(dicTrack.Flag4ch)
+                    if(aaruTrack.Flag4ch)
                         flags |= CdFlags.FourChannel;
 
                     return new[]
@@ -1497,14 +1497,14 @@ namespace Aaru.DiscImages
                     };
                 }
                 case SectorTagType.CdTrackIsrc:
-                    return dicTrack.Isrc == null ? null : Encoding.UTF8.GetBytes(dicTrack.Isrc);
+                    return aaruTrack.Isrc == null ? null : Encoding.UTF8.GetBytes(aaruTrack.Isrc);
 
                 case SectorTagType.CdTrackText:
                     throw new FeatureSupportedButNotImplementedImageException("Feature not yet implemented");
                 default: throw new ArgumentException("Unsupported tag requested", nameof(tag));
             }
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case CDRWIN_TRACK_TYPE_MODE1:
                 case CDRWIN_TRACK_TYPE_MODE2_FORM1:
@@ -1624,11 +1624,11 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            _imageStream = dicTrack.TrackFile.DataFilter.GetDataForkStream();
+            _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
-               Seek((long)dicTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -1663,22 +1663,22 @@ namespace Aaru.DiscImages
 
         public byte[] ReadSectorsLong(ulong sectorAddress, uint length, uint track)
         {
-            var dicTrack = new CdrWinTrack
+            var aaruTrack = new CdrWinTrack
             {
                 Sequence = 0
             };
 
             foreach(CdrWinTrack cdrwinTrack in _discImage.Tracks.Where(cdrwinTrack => cdrwinTrack.Sequence == track))
             {
-                dicTrack = cdrwinTrack;
+                aaruTrack = cdrwinTrack;
 
                 break;
             }
 
-            if(dicTrack.Sequence == 0)
+            if(aaruTrack.Sequence == 0)
                 throw new ArgumentOutOfRangeException(nameof(track), "Track does not exist in disc image");
 
-            if(length > dicTrack.Sectors)
+            if(length > aaruTrack.Sectors)
                 throw new ArgumentOutOfRangeException(nameof(length),
                                                       "Requested more sectors than present in track, won't cross tracks");
 
@@ -1686,7 +1686,7 @@ namespace Aaru.DiscImages
             uint sectorSize;
             uint sectorSkip;
 
-            switch(dicTrack.TrackType)
+            switch(aaruTrack.TrackType)
             {
                 case CDRWIN_TRACK_TYPE_MODE1:
                 case CDRWIN_TRACK_TYPE_MODE2_FORM1:
@@ -1738,11 +1738,11 @@ namespace Aaru.DiscImages
 
             byte[] buffer = new byte[sectorSize * length];
 
-            _imageStream = dicTrack.TrackFile.DataFilter.GetDataForkStream();
+            _imageStream = aaruTrack.TrackFile.DataFilter.GetDataForkStream();
             var br = new BinaryReader(_imageStream);
 
             br.BaseStream.
-               Seek((long)dicTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
+               Seek((long)aaruTrack.TrackFile.Offset + (long)(sectorAddress * (sectorOffset + sectorSize + sectorSkip)),
                     SeekOrigin.Begin);
 
             if(sectorOffset == 0 &&
@@ -1776,7 +1776,7 @@ namespace Aaru.DiscImages
             foreach(CdrWinTrack cdrTrack in _discImage.Tracks)
                 if(cdrTrack.Session == session)
                 {
-                    var dicTrack = new Track
+                    var aaruTrack = new Track
                     {
                         Indexes             = cdrTrack.Indexes, TrackDescription = cdrTrack.Title,
                         TrackPregap         = cdrTrack.Pregap,
@@ -1789,22 +1789,22 @@ namespace Aaru.DiscImages
                         TrackBytesPerSector = CdrWinTrackTypeToCookedBytesPerSector(cdrTrack.TrackType)
                     };
 
-                    if(!cdrTrack.Indexes.TryGetValue(0, out dicTrack.TrackStartSector))
-                        cdrTrack.Indexes.TryGetValue(1, out dicTrack.TrackStartSector);
+                    if(!cdrTrack.Indexes.TryGetValue(0, out aaruTrack.TrackStartSector))
+                        cdrTrack.Indexes.TryGetValue(1, out aaruTrack.TrackStartSector);
 
-                    dicTrack.TrackEndSector = (dicTrack.TrackStartSector + cdrTrack.Sectors) - 1;
+                    aaruTrack.TrackEndSector = (aaruTrack.TrackStartSector + cdrTrack.Sectors) - 1;
 
                     if(cdrTrack.TrackType == CDRWIN_TRACK_TYPE_CDG)
                     {
-                        dicTrack.TrackSubchannelFilter = cdrTrack.TrackFile.DataFilter;
-                        dicTrack.TrackSubchannelFile   = cdrTrack.TrackFile.DataFilter.GetFilename();
-                        dicTrack.TrackSubchannelOffset = cdrTrack.TrackFile.Offset;
-                        dicTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
+                        aaruTrack.TrackSubchannelFilter = cdrTrack.TrackFile.DataFilter;
+                        aaruTrack.TrackSubchannelFile   = cdrTrack.TrackFile.DataFilter.GetFilename();
+                        aaruTrack.TrackSubchannelOffset = cdrTrack.TrackFile.Offset;
+                        aaruTrack.TrackSubchannelType   = TrackSubchannelType.RawInterleaved;
                     }
                     else
-                        dicTrack.TrackSubchannelType = TrackSubchannelType.None;
+                        aaruTrack.TrackSubchannelType = TrackSubchannelType.None;
 
-                    tracks.Add(dicTrack);
+                    tracks.Add(aaruTrack);
                 }
 
             return tracks;

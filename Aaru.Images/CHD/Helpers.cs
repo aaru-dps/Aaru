@@ -55,8 +55,8 @@ namespace Aaru.DiscImages
 
         ulong GetAbsoluteSector(ulong relativeSector, uint track)
         {
-            tracks.TryGetValue(track, out Track dicTrack);
-            return dicTrack.TrackStartSector + relativeSector;
+            tracks.TryGetValue(track, out Track aaruTrack);
+            return aaruTrack.TrackStartSector + relativeSector;
         }
 
         byte[] GetHunk(ulong hunkNo)

@@ -52,7 +52,7 @@ namespace Aaru.Commands.Device
             Handler = CommandHandler.Create(GetType().GetMethod(nameof(Invoke)));
         }
 
-        public static int Invoke(bool debug, bool verbose, string dicRemoteHost)
+        public static int Invoke(bool debug, bool verbose, string aaruRemoteHost)
         {
             MainClass.PrintCopyright();
 
@@ -71,7 +71,7 @@ namespace Aaru.Commands.Device
                                                                    out string serverVersion,
                                                                    out string serverOperatingSystem,
                                                                    out string serverOperatingSystemVersion,
-                                                                   out string serverArchitecture, dicRemoteHost);
+                                                                   out string serverArchitecture, aaruRemoteHost);
 
             if(isRemote)
             {
@@ -88,7 +88,7 @@ namespace Aaru.Commands.Device
             {
                 devices = devices.OrderBy(d => d.Path).ToArray();
 
-                if(dicRemoteHost is null)
+                if(aaruRemoteHost is null)
                 {
                     AaruConsole.WriteLine("{0,-22}|{1,-16}|{2,-24}|{3,-24}|{4,-10}|{5,-10}", "Path", "Vendor", "Model",
                                          "Serial", "Bus", "Supported?");

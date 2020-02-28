@@ -52,7 +52,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 throw new ArgumentException();
             }
 
@@ -179,7 +179,7 @@ namespace Aaru.Devices.Remote
 
                 if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
                 {
-                    AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                    AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                     return false;
                 }
 
@@ -254,7 +254,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return new DeviceInfo[0];
             }
 
@@ -355,7 +355,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 lastError = -1;
                 return false;
             }
@@ -451,7 +451,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return -1;
             }
 
@@ -543,7 +543,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return -1;
             }
 
@@ -634,7 +634,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return -1;
             }
 
@@ -725,7 +725,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return -1;
             }
 
@@ -818,7 +818,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return -1;
             }
 
@@ -890,7 +890,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return DeviceType.Unknown;
             }
 
@@ -957,7 +957,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return false;
             }
 
@@ -1067,7 +1067,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return false;
             }
 
@@ -1147,7 +1147,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return false;
             }
 
@@ -1220,7 +1220,7 @@ namespace Aaru.Devices.Remote
 
             if (hdr.remote_id != Consts.RemoteId || hdr.packet_id != Consts.PacketId)
             {
-                AaruConsole.ErrorWriteLine("Received data is not a DIC Remote Packet...");
+                AaruConsole.ErrorWriteLine("Received data is not an Aaru Remote Packet...");
                 return false;
             }
 
