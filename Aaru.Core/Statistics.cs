@@ -744,7 +744,7 @@ namespace Aaru.Core
                         });
 
                         byte[] jsonBytes = Encoding.UTF8.GetBytes(json);
-                        var    request   = WebRequest.Create("https://www.discimagechef.app/api/uploadstatsv2");
+                        var    request   = WebRequest.Create("https://www.aaru.app/api/uploadstatsv2");
 
                         ((HttpWebRequest)request).UserAgent =
                             $"Aaru {typeof(Version).Assembly.GetName().Version}";
@@ -1096,7 +1096,7 @@ namespace Aaru.Core
                         xs.Deserialize(fs); // Just to test validity of stats file
                         fs.Seek(0, SeekOrigin.Begin);
 
-                        var request = WebRequest.Create("https://www.discimagechef.app/api/uploadstats");
+                        var request = WebRequest.Create("https://www.aaru.app/api/uploadstats");
 
                         ((HttpWebRequest)request).UserAgent =
                             $"Aaru {typeof(CommonTypes.Interop.Version).Assembly.GetName().Version}";

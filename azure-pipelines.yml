@@ -131,7 +131,7 @@ steps:
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
-    serverUrl: 'ftp://www.discimagechef.app'
+    serverUrl: 'ftp://www.aaru.app'
     username: 'ftpuser'
     password: '$(FtpPassword)'
     rootDirectory: '$(Build.ArtifactStagingDirectory)'

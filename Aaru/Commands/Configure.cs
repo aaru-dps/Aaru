@@ -114,7 +114,7 @@ namespace Aaru.Commands
 
             AaruConsole.WriteLine("Sharing a report with us will send it to our server, that's in the european union territory, where it\n"      +
                                  "will be manually analyzed by an european union citizen to remove any trace of personal identification\n"      +
-                                 "from it. Once that is done, it will be shared in our stats website, https://www.discimagechef.app\n"          +
+                                 "from it. Once that is done, it will be shared in our stats website, https://www.aaru.app\n"          +
                                  "These report will be used to improve Aaru support, and in some cases, to provide emulation of the\n" +
                                  "devices to other open-source projects. In any case, no information linking the report to you will be stored.");
 

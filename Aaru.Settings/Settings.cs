@@ -257,7 +257,7 @@ namespace Aaru.Settings
             {
                 switch(ptId)
                 {
-                    // In case of macOS or iOS settings will be saved in ~/Library/Preferences/com.claunia.discimagechef.plist
+                    // In case of macOS or iOS settings will be saved in ~/Library/Preferences/com.claunia.aaru.plist
                     case PlatformID.MacOSX:
                     case PlatformID.iOS:
                     {
@@ -486,7 +486,7 @@ namespace Aaru.Settings
 
                 switch(ptId)
                 {
-                    // In case of macOS or iOS settings will be saved in ~/Library/Preferences/com.claunia.discimagechef.plist
+                    // In case of macOS or iOS settings will be saved in ~/Library/Preferences/com.claunia.aaru.plist
                     case PlatformID.MacOSX:
                     case PlatformID.iOS:
                     {
