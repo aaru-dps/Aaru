@@ -101,6 +101,7 @@ namespace Aaru.DiscImages
                 var regexDicMediaType           = new Regex(REGEX_DIC_MEDIA_TYPE);
                 var regexApplicationVersion     = new Regex(REGEX_APPLICATION_VERSION);
                 var regexDumpExtent             = new Regex(REGEX_DUMP_EXTENT);
+                var regexAaruMediaType          = new Regex(REGEX_AARU_MEDIA_TYPE);
 
                 // Initialize all RegEx matches
                 Match matchTrack;
@@ -170,6 +171,7 @@ namespace Aaru.DiscImages
                     Match matchDicMediaType       = regexDicMediaType.Match(line);
                     Match matchApplicationVersion = regexApplicationVersion.Match(line);
                     Match matchDumpExtent         = regexDumpExtent.Match(line);
+                    Match matchAaruMediaType      = regexAaruMediaType.Match(line);
 
                     if(inTruripDiscHash)
                     {
@@ -317,7 +319,15 @@ namespace Aaru.DiscImages
                         AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA DIC MEDIA-TYPE at line {0}",
                                                   lineNumber);
 
-                        _discImage.DicMediaType = matchDicMediaType.Groups[1].Value;
+                        _discImage.AaruMediaType = matchDicMediaType.Groups[1].Value;
+                    }
+                    else if(matchAaruMediaType.Success &&
+                            !inTrack)
+                    {
+                        AaruConsole.DebugWriteLine("CDRWin plugin", "Found REM METADATA AARU MEDIA-TYPE at line {0}",
+                                                  lineNumber);
+
+                        _discImage.AaruMediaType = matchAaruMediaType.Groups[1].Value;
                     }
                     else if(matchDiskType.Success &&
                             !inTrack)
@@ -794,8 +804,8 @@ namespace Aaru.DiscImages
                     _discImage.Tracks.Add(cueTracks[t - 1]);
                 }
 
-                if(!string.IsNullOrWhiteSpace(_discImage.DicMediaType) &&
-                   Enum.TryParse(_discImage.DicMediaType, true, out MediaType mediaType))
+                if(!string.IsNullOrWhiteSpace(_discImage.AaruMediaType) &&
+                   Enum.TryParse(_discImage.AaruMediaType, true, out MediaType mediaType))
                 {
                     _discImage.MediaType = mediaType;
                 }

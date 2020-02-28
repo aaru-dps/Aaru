@@ -172,6 +172,7 @@ namespace Aaru.DiscImages
         const string REGEX_TRURIP_TRACK_SHA1    = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{40}$";
         const string REGEX_TRURIP_TRACK_UNKNOWN = @"\bREM\s+(Gap|Trk)\s+(?<number>\d{2}):\s+[\da-f]{8,}$";
         const string REGEX_DIC_MEDIA_TYPE       = @"\bREM\s+METADATA DIC MEDIA-TYPE:\s+(?<mediatype>.+)$";
+        const string REGEX_AARU_MEDIA_TYPE       = @"\bREM\s+METADATA AARU MEDIA-TYPE:\s+(?<mediatype>.+)$";
         const string REGEX_APPLICATION_VERSION  = @"\bREM\s+Ripping Tool Version:\s+(?<application>.+)$";
         const string REGEX_DUMP_EXTENT =
             @"\bREM\s+METADATA DUMP EXTENT:\s+(?<application>.+)\s+\|\s+(?<version>.+)\s+\|\s+(?<os>.+)\s+\|\s+(?<manufacturer>.+)\s+\|\s+(?<model>.+)\s+\|\s+(?<firmware>.+)\s+\|\s+(?<serial>.+)\s+\|\s+(?<start>\d+):(?<end>\d+)$";

@@ -131,8 +131,8 @@ namespace Aaru.DiscImages
             public bool IsTrurip;
             /// <summary>Disc image hashes</summary>
             public Dictionary<string, string> DiscHashes;
-            /// <summary>DIC media type</summary>
-            public string DicMediaType;
+            /// <summary>Aaru media type</summary>
+            public string AaruMediaType;
         }
     }
 }

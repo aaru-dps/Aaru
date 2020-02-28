@@ -441,7 +441,7 @@ namespace Aaru.DiscImages
 
             _descriptorStream.WriteLine("REM ORIGINAL MEDIA-TYPE: {0}", MediaTypeToCdrwinType(_imageInfo.MediaType));
 
-            _descriptorStream.WriteLine("REM METADATA DIC MEDIA-TYPE: {0}", _imageInfo.MediaType);
+            _descriptorStream.WriteLine("REM METADATA AARU MEDIA-TYPE: {0}", _imageInfo.MediaType);
 
             if(!string.IsNullOrEmpty(_imageInfo.Application))
             {
