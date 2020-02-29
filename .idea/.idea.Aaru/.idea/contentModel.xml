@@ -84,6 +84,7 @@
         </e>
       </e>
       <e p="Aaru.Checksums" t="IncludeRecursive">
+        <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Checksums.csproj" t="IncludeRecursive" />
         <e p="Adler32Context.cs" t="Include" />
@@ -118,6 +119,7 @@
         </e>
       </e>
       <e p="Aaru.CommonTypes" t="IncludeRecursive">
+        <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.CommonTypes.csproj" t="IncludeRecursive" />
         <e p="Enums" t="Include">
@@ -233,6 +235,7 @@
         </e>
       </e>
       <e p="Aaru.Console" t="IncludeRecursive">
+        <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Console.csproj" t="IncludeRecursive" />
         <e p="AaruConsole.cs" t="Include" />
@@ -456,6 +459,7 @@
         </e>
       </e>
       <e p="Aaru.Decoders" t="IncludeRecursive">
+        <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="ATA" t="Include">
           <e p="Identify.cs" t="Include" />
@@ -706,6 +710,7 @@
         </e>
       </e>
       <e p="Aaru.Dto" t="IncludeRecursive">
+        <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Dto.csproj" t="IncludeRecursive" />
         <e p="CdOffsetDto.cs" t="Include" />
@@ -1344,6 +1349,7 @@
         </e>
       </e>
       <e p="Aaru.Helpers" t="IncludeRecursive">
+        <e p=".editorconfig" t="Include" />
         <e p=".gitignore" t="Include" />
         <e p="Aaru.Helpers.csproj" t="IncludeRecursive" />
         <e p="ArrayFill.cs" t="Include" />
