@@ -113,10 +113,6 @@ namespace Aaru
 
             Statistics.LoadStats();
 
-            if(Settings.Settings.Current.Stats != null &&
-               Settings.Settings.Current.Stats.ShareStats)
-                Task.Run(Statistics.SubmitStats);
-
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             Statistics.SaveStats();
