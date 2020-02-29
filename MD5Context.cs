@@ -37,114 +37,90 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums
 {
-    /// <summary>
-    ///     Wraps up .NET MD5 implementation to a Init(), Update(), Final() context.
-    /// </summary>
+    /// <summary>Wraps up .NET MD5 implementation to a Init(), Update(), Final() context.</summary>
     public class Md5Context : IChecksum
     {
-        MD5 md5Provider;
+        readonly MD5 md5Provider;
 
-        /// <summary>
-        ///     Initializes the MD5 hash provider
-        /// </summary>
-        public Md5Context()
-        {
-            md5Provider = MD5.Create();
-        }
+        /// <summary>Initializes the MD5 hash provider</summary>
+        public Md5Context() => md5Provider = MD5.Create();
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
-        public void Update(byte[] data, uint len)
-        {
-            md5Provider.TransformBlock(data, 0, (int)len, data, 0);
-        }
+        public void Update(byte[] data, uint len) => md5Provider.TransformBlock(data, 0, (int)len, data, 0);
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
-        public void Update(byte[] data)
-        {
-            Update(data, (uint)data.Length);
-        }
+        public void Update(byte[] data) => Update(data, (uint)data.Length);
 
-        /// <summary>
-        ///     Returns a byte array of the hash value.
-        /// </summary>
+        /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
             md5Provider.TransformFinalBlock(new byte[0], 0, 0);
+
             return md5Provider.Hash;
         }
 
-        /// <summary>
-        ///     Returns a hexadecimal representation of the hash value.
-        /// </summary>
+        /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
             md5Provider.TransformFinalBlock(new byte[0], 0, 0);
-            StringBuilder md5Output = new StringBuilder();
+            var md5Output = new StringBuilder();
 
-            foreach(byte h in md5Provider.Hash) md5Output.Append(h.ToString("x2"));
+            foreach(byte h in md5Provider.Hash)
+                md5Output.Append(h.ToString("x2"));
 
             return md5Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of a file
-        /// </summary>
+        /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
         {
-            MD5        localMd5Provider = MD5.Create();
-            FileStream fileStream       = new FileStream(filename, FileMode.Open);
-            byte[]     result           = localMd5Provider.ComputeHash(fileStream);
+            var    localMd5Provider = MD5.Create();
+            var    fileStream       = new FileStream(filename, FileMode.Open);
+            byte[] result           = localMd5Provider.ComputeHash(fileStream);
             fileStream.Close();
+
             return result;
         }
 
-        /// <summary>
-        ///     Gets the hash of a file in hexadecimal and as a byte array.
-        /// </summary>
+        /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string File(string filename, out byte[] hash)
         {
-            MD5        localMd5Provider = MD5.Create();
-            FileStream fileStream       = new FileStream(filename, FileMode.Open);
+            var localMd5Provider = MD5.Create();
+            var fileStream       = new FileStream(filename, FileMode.Open);
             hash = localMd5Provider.ComputeHash(fileStream);
-            StringBuilder md5Output = new StringBuilder();
+            var md5Output = new StringBuilder();
 
-            foreach(byte h in hash) md5Output.Append(h.ToString("x2"));
+            foreach(byte h in hash)
+                md5Output.Append(h.ToString("x2"));
 
             fileStream.Close();
 
             return md5Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash)
         {
-            MD5 localMd5Provider = MD5.Create();
+            var localMd5Provider = MD5.Create();
             hash = localMd5Provider.ComputeHash(data, 0, (int)len);
-            StringBuilder md5Output = new StringBuilder();
+            var md5Output = new StringBuilder();
 
-            foreach(byte h in hash) md5Output.Append(h.ToString("x2"));
+            foreach(byte h in hash)
+                md5Output.Append(h.ToString("x2"));
 
             return md5Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);

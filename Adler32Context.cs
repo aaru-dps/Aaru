@@ -36,26 +36,20 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums
 {
-    /// <summary>
-    ///     Implements the Adler-32 algorithm
-    /// </summary>
+    /// <summary>Implements the Adler-32 algorithm</summary>
     public class Adler32Context : IChecksum
     {
         const ushort ADLER_MODULE = 65521;
         ushort       sum1, sum2;
 
-        /// <summary>
-        ///     Initializes the Adler-32 sums
-        /// </summary>
+        /// <summary>Initializes the Adler-32 sums</summary>
         public Adler32Context()
         {
             sum1 = 1;
             sum2 = 0;
         }
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
@@ -67,31 +61,23 @@ namespace Aaru.Checksums
             }
         }
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
-        public void Update(byte[] data)
-        {
-            Update(data, (uint)data.Length);
-        }
+        public void Update(byte[] data) => Update(data, (uint)data.Length);
 
-        /// <summary>
-        ///     Returns a byte array of the hash value.
-        /// </summary>
+        /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final()
         {
             uint finalSum = (uint)((sum2 << 16) | sum1);
+
             return BigEndianBitConverter.GetBytes(finalSum);
         }
 
-        /// <summary>
-        ///     Returns a hexadecimal representation of the hash value.
-        /// </summary>
+        /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            uint          finalSum    = (uint)((sum2 << 16) | sum1);
-            StringBuilder adlerOutput = new StringBuilder();
+            uint finalSum    = (uint)((sum2 << 16) | sum1);
+            var  adlerOutput = new StringBuilder();
 
             for(int i = 0; i < BigEndianBitConverter.GetBytes(finalSum).Length; i++)
                 adlerOutput.Append(BigEndianBitConverter.GetBytes(finalSum)[i].ToString("x2"));
@@ -99,24 +85,21 @@ namespace Aaru.Checksums
             return adlerOutput.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of a file
-        /// </summary>
+        /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
         {
             File(filename, out byte[] hash);
+
             return hash;
         }
 
-        /// <summary>
-        ///     Gets the hash of a file in hexadecimal and as a byte array.
-        /// </summary>
+        /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string File(string filename, out byte[] hash)
         {
-            FileStream fileStream = new FileStream(filename, FileMode.Open);
+            var fileStream = new FileStream(filename, FileMode.Open);
 
             ushort localSum1 = 1;
             ushort localSum2 = 0;
@@ -131,18 +114,17 @@ namespace Aaru.Checksums
 
             hash = BigEndianBitConverter.GetBytes(finalSum);
 
-            StringBuilder adlerOutput = new StringBuilder();
+            var adlerOutput = new StringBuilder();
 
-            foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
+            foreach(byte h in hash)
+                adlerOutput.Append(h.ToString("x2"));
 
             fileStream.Close();
 
             return adlerOutput.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
         /// <param name="hash">Byte array of the hash value.</param>
@@ -161,16 +143,15 @@ namespace Aaru.Checksums
 
             hash = BigEndianBitConverter.GetBytes(finalSum);
 
-            StringBuilder adlerOutput = new StringBuilder();
+            var adlerOutput = new StringBuilder();
 
-            foreach(byte h in hash) adlerOutput.Append(h.ToString("x2"));
+            foreach(byte h in hash)
+                adlerOutput.Append(h.ToString("x2"));
 
             return adlerOutput.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);

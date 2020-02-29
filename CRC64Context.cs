@@ -36,9 +36,7 @@ using Aaru.CommonTypes.Interfaces;
 
 namespace Aaru.Checksums
 {
-    /// <summary>
-    ///     Implements a CRC64 algorithm
-    /// </summary>
+    /// <summary>Implements a CRC64 algorithm</summary>
     public class Crc64Context : IChecksum
     {
         public const ulong CRC64_ECMA_POLY = 0xC96C5795D7870F42;
@@ -48,20 +46,22 @@ namespace Aaru.Checksums
         readonly ulong[] table;
         ulong            hashInt;
 
-        /// <summary>
-        ///     Initializes the CRC64 table and seed as CRC64-ECMA
-        /// </summary>
+        /// <summary>Initializes the CRC64 table and seed as CRC64-ECMA</summary>
         public Crc64Context()
         {
             hashInt = CRC64_ECMA_SEED;
 
             table = new ulong[256];
+
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
+
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (entry >> 1) ^ CRC64_ECMA_POLY;
-                    else entry                 = entry >> 1;
+                    if((entry & 1) == 1)
+                        entry = (entry >> 1) ^ CRC64_ECMA_POLY;
+                    else
+                        entry = entry >> 1;
 
                 table[i] = entry;
             }
@@ -69,20 +69,22 @@ namespace Aaru.Checksums
             finalSeed = CRC64_ECMA_SEED;
         }
 
-        /// <summary>
-        ///     Initializes the CRC16 table with a custom polynomial and seed
-        /// </summary>
+        /// <summary>Initializes the CRC16 table with a custom polynomial and seed</summary>
         public Crc64Context(ulong polynomial, ulong seed)
         {
             hashInt = seed;
 
             table = new ulong[256];
+
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
+
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (entry >> 1) ^ polynomial;
-                    else entry                 = entry >> 1;
+                    if((entry & 1) == 1)
+                        entry = (entry >> 1) ^ polynomial;
+                    else
+                        entry = entry >> 1;
 
                 table[i] = entry;
             }
@@ -90,36 +92,26 @@ namespace Aaru.Checksums
             finalSeed = seed;
         }
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of buffer to hash.</param>
         public void Update(byte[] data, uint len)
         {
-            for(int i = 0; i < len; i++) hashInt = (hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xff)];
+            for(int i = 0; i < len; i++)
+                hashInt = (hashInt >> 8) ^ table[data[i] ^ (hashInt & 0xff)];
         }
 
-        /// <summary>
-        ///     Updates the hash with data.
-        /// </summary>
+        /// <summary>Updates the hash with data.</summary>
         /// <param name="data">Data buffer.</param>
-        public void Update(byte[] data)
-        {
-            Update(data, (uint)data.Length);
-        }
+        public void Update(byte[] data) => Update(data, (uint)data.Length);
 
-        /// <summary>
-        ///     Returns a byte array of the hash value.
-        /// </summary>
+        /// <summary>Returns a byte array of the hash value.</summary>
         public byte[] Final() => BigEndianBitConverter.GetBytes(hashInt ^= finalSeed);
 
-        /// <summary>
-        ///     Returns a hexadecimal representation of the hash value.
-        /// </summary>
+        /// <summary>Returns a hexadecimal representation of the hash value.</summary>
         public string End()
         {
-            StringBuilder crc64Output = new StringBuilder();
+            var crc64Output = new StringBuilder();
 
             for(int i = 0; i < BigEndianBitConverter.GetBytes(hashInt ^= finalSeed).Length; i++)
                 crc64Output.Append(BigEndianBitConverter.GetBytes(hashInt ^= finalSeed)[i].ToString("x2"));
@@ -127,42 +119,41 @@ namespace Aaru.Checksums
             return crc64Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of a file
-        /// </summary>
+        /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>
         public static byte[] File(string filename)
         {
             File(filename, out byte[] localHash);
+
             return localHash;
         }
 
-        /// <summary>
-        ///     Gets the hash of a file in hexadecimal and as a byte array.
-        /// </summary>
+        /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string File(string filename, out byte[] hash) =>
             File(filename, out hash, CRC64_ECMA_POLY, CRC64_ECMA_SEED);
 
-        /// <summary>
-        ///     Gets the hash of a file in hexadecimal and as a byte array.
-        /// </summary>
+        /// <summary>Gets the hash of a file in hexadecimal and as a byte array.</summary>
         /// <param name="filename">File path.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string File(string filename, out byte[] hash, ulong polynomial, ulong seed)
         {
-            FileStream fileStream = new FileStream(filename, FileMode.Open);
+            var fileStream = new FileStream(filename, FileMode.Open);
 
             ulong localhashInt = seed;
 
             ulong[] localTable = new ulong[256];
+
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
+
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (entry >> 1) ^ polynomial;
-                    else entry                 = entry >> 1;
+                    if((entry & 1) == 1)
+                        entry = (entry >> 1) ^ polynomial;
+                    else
+                        entry = entry >> 1;
 
                 localTable[i] = entry;
             }
@@ -173,27 +164,24 @@ namespace Aaru.Checksums
             localhashInt ^= seed;
             hash         =  BigEndianBitConverter.GetBytes(localhashInt);
 
-            StringBuilder crc64Output = new StringBuilder();
+            var crc64Output = new StringBuilder();
 
-            foreach(byte h in hash) crc64Output.Append(h.ToString("x2"));
+            foreach(byte h in hash)
+                crc64Output.Append(h.ToString("x2"));
 
             fileStream.Close();
 
             return crc64Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, uint len, out byte[] hash) =>
             Data(data, len, out hash, CRC64_ECMA_POLY, CRC64_ECMA_SEED);
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="len">Length of the data buffer to hash.</param>
         /// <param name="hash">Byte array of the hash value.</param>
@@ -204,12 +192,16 @@ namespace Aaru.Checksums
             ulong localhashInt = seed;
 
             ulong[] localTable = new ulong[256];
+
             for(int i = 0; i < 256; i++)
             {
                 ulong entry = (ulong)i;
+
                 for(int j = 0; j < 8; j++)
-                    if((entry & 1) == 1) entry = (entry >> 1) ^ polynomial;
-                    else entry                 = entry >> 1;
+                    if((entry & 1) == 1)
+                        entry = (entry >> 1) ^ polynomial;
+                    else
+                        entry = entry >> 1;
 
                 localTable[i] = entry;
             }
@@ -220,16 +212,15 @@ namespace Aaru.Checksums
             localhashInt ^= seed;
             hash         =  BigEndianBitConverter.GetBytes(localhashInt);
 
-            StringBuilder crc64Output = new StringBuilder();
+            var crc64Output = new StringBuilder();
 
-            foreach(byte h in hash) crc64Output.Append(h.ToString("x2"));
+            foreach(byte h in hash)
+                crc64Output.Append(h.ToString("x2"));
 
             return crc64Output.ToString();
         }
 
-        /// <summary>
-        ///     Gets the hash of the specified data buffer.
-        /// </summary>
+        /// <summary>Gets the hash of the specified data buffer.</summary>
         /// <param name="data">Data buffer.</param>
         /// <param name="hash">Byte array of the hash value.</param>
         public static string Data(byte[] data, out byte[] hash) => Data(data, (uint)data.Length, out hash);

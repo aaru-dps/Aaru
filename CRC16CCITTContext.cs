@@ -28,7 +28,7 @@ namespace Aaru.Checksums
             0x9ff8, 0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
         };
 
-        public CRC16CCITTContext() : base(CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true) { }
+        public CRC16CCITTContext() : base(CRC16_CCITT_POLY, CRC16_CCITT_SEED, _ccittCrc16Table, true) {}
 
         /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>

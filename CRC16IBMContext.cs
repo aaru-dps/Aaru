@@ -29,7 +29,7 @@ namespace Aaru.Checksums
             0x8641, 0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040
         };
 
-        public CRC16IBMContext() : base(CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false) { }
+        public CRC16IBMContext() : base(CRC16_IBM_POLY, CRC16_IBM_SEED, _ibmCrc16Table, false) {}
 
         /// <summary>Gets the hash of a file</summary>
         /// <param name="filename">File path.</param>
